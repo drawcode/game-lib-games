@@ -18,7 +18,6 @@ public enum GameDraggableCanvasMode {
 	CREATING
 }
 
-
 public enum GameDraggableEditEnum {
     StateNotEditing = 0,
     StateEditing = 1
@@ -75,9 +74,9 @@ public class GameDraggableEditor : MonoBehaviour {
 	public Transform lastGrabbed;
 	
 	public float grabDistance = 10.0f;
-	public int grabLayerMask;
+	//public int grabLayerMask;
 	public Vector3 grabOffset; //delta between transform transform position and hit point
-	public bool  useToggleDrag = true; // Didn't know which style you prefer. 
+	public bool  useToggleDrag = false; // Didn't know which style you prefer. 
 	
 	public string prefabRootPath = "";
 	
@@ -952,7 +951,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		else {
 	        if(grabbed) {
 	           //restore the original layermask
-	           grabbed.gameObject.layer = grabLayerMask;
+	           grabbed.gameObject.layer = LayerMask.NameToLayer("drag");
 	        }
 	        grabbed = null;
 	    }
@@ -991,7 +990,7 @@ public class GameDraggableEditor : MonoBehaviour {
 					if(gameDraggableLevelItem != null) {
 						grabbed = gameDraggableLevelItem.transform;
 						GameDraggableLevelItem levelItem = gameDraggableLevelItem.GetComponent<GameDraggableLevelItem>();
-						if(levelItem != null) {
+						if(levelItem != null && levelItem.gameLevelItemAsset != null) {
 							assetCodeCreating = levelItem.gameLevelItemAsset.asset_code;
 						}
 					}
@@ -1001,8 +1000,8 @@ public class GameDraggableEditor : MonoBehaviour {
 							GameDraggableEditorMessages.editorGrabbedObjectChanged, lastGrabbed.gameObject);
 					}
 		            //set the object to ignore raycasts
-		            grabLayerMask = grabbed.gameObject.layer;
-		            grabbed.gameObject.layer = 2;
+		            //grabLayerMask = grabbed.gameObject.layer;
+		            grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
 		            //now immediately do another raycast to calculate the offset
 		            if (Physics.Raycast(ray, out hit)) {
 		                grabOffset = grabbed.position - hit.point;
