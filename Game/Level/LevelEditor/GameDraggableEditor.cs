@@ -1526,7 +1526,9 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject GetCurrentDraggableObject() {
 		if(isInst) {
-			return Instance.grabbed.gameObject;
+			if(Instance.grabbed != null) {
+				return Instance.grabbed.gameObject;
+			}
 		}
 		return null;
 	}
