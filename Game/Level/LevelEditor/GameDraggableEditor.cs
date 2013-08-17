@@ -951,7 +951,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		else {
 	        if(grabbed) {
 	           //restore the original layermask
-	           grabbed.gameObject.layer = LayerMask.NameToLayer("drag");
+	           //grabbed.gameObject.layer = LayerMask.NameToLayer("drag");
 	        }
 	        grabbed = null;
 	    }
@@ -1001,7 +1001,7 @@ public class GameDraggableEditor : MonoBehaviour {
 					}
 		            //set the object to ignore raycasts
 		            //grabLayerMask = grabbed.gameObject.layer;
-		            grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
+		            //grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
 		            //now immediately do another raycast to calculate the offset
 		            if (Physics.Raycast(ray, out hit)) {
 		                grabOffset = grabbed.position - hit.point;
