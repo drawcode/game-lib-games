@@ -96,14 +96,14 @@ public class UIPanelDialogEditItems : UIAppPanel {
 					Destroy(t.gameObject);
 				}
 				
-				if(GameShooterController.Instance == null) {
+				if(GameDraggableEditor.Instance == null) {
 					yield break;
 				}
 				
 				
-				GameObject go = GameShooterController.Instance.LoadSpriteUI(
+				GameObject go = GameDraggableEditor.LoadSpriteUI(
 					gameLevelItemObject, asset.code, Vector3.one);
-				gameLevelItemObject.ChangeLayersRecursively("UILayer");
+				gameLevelItemObject.ChangeLayersRecursively("UIEditor");
 				
 				float maxSize = 3;
 				
@@ -126,6 +126,28 @@ public class UIPanelDialogEditItems : UIAppPanel {
 						
 						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
 					}
+					else {
+						
+						float adjust = 1;
+						
+						Collider col = go.GetComponent<Collider>();
+						if(col != null) {
+							Bounds bounds = col.bounds;
+					
+							if(bounds.size.x > bounds.size.y) {
+								if(bounds.size.y > maxSize) {
+									adjust = maxSize/bounds.size.x;
+								}
+							}
+							else {
+								if(bounds.size.x > maxSize) {
+									adjust = maxSize/bounds.size.y;
+								}
+							}
+						}
+						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
+					}
+					
 				}
 				
 				item.transform.FindChild("ButtonGameLevelItemObject").GetComponent<UIButton>().name 

@@ -73,7 +73,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public Transform grabbed;
 	public Transform lastGrabbed;
 	
-	public float grabDistance = 10.0f;
+	public float grabDistance = 1000.0f;
 	//public int grabLayerMask;
 	public Vector3 grabOffset; //delta between transform transform position and hit point
 	public bool  useToggleDrag = false; // Didn't know which style you prefer. 
@@ -1176,8 +1176,10 @@ public class GameDraggableEditor : MonoBehaviour {
 	}	
 	
 	public string getResourcePath(string spriteCode) {	
-		string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
-		resourcePath = Path.Combine(resourcePath, spriteCode);
+		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
+		//resourcePath = Path.Combine(resourcePath, spriteCode);
+		string resourcePath = GameDraggableEditor.Instance.prefabRootPath
+			+ "levelitems/" + spriteCode;
 		return resourcePath;
 	}
 	
@@ -1764,7 +1766,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static void ShowUIPanelDialogMeta() {
 		if(isInst) {
-			
+			Instance.showUIPanelDialogMeta();
 		}
 	}
 		

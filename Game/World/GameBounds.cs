@@ -15,7 +15,7 @@ public class GameBounds : MonoBehaviour {
 	public GameObject boundaryTopRight;
 	public GameObject boundaryBottomLeft;
 	public GameObject boundaryBottomRight;
-	public GameObject boundaryBottomCeiling;
+	public GameObject boundaryTopCeiling;
 	public GameObject boundaryBottomAbyss;
 	
 	float lastBoundsCheck = 0f;
@@ -28,7 +28,7 @@ public class GameBounds : MonoBehaviour {
 		
 		if(point.x < boundaryTopRight.transform.position.x
 			&& point.x > boundaryTopLeft.transform.position.x 
-			&& point.y < boundaryBottomCeiling.transform.position.y
+			&& point.y < boundaryTopCeiling.transform.position.y
 			&& point.y > boundaryBottomAbyss.transform.position.y
 			&& point.z < boundaryTopLeft.transform.position.z
 			&& point.z > boundaryBottomLeft.transform.position.z) {
@@ -47,7 +47,7 @@ public class GameBounds : MonoBehaviour {
 				boundaryTopRight.transform.position.x - .5f);
 			point.y = Mathf.Clamp(point.y, 
 				boundaryBottomAbyss.transform.position.y + .5f, 
-				boundaryBottomCeiling.transform.position.y - .5f);
+				boundaryTopCeiling.transform.position.y - .5f);
 			point.z = Mathf.Clamp(point.z, 
 				boundaryBottomLeft.transform.position.z + .5f, 
 				boundaryTopLeft.transform.position.z - .5f);
