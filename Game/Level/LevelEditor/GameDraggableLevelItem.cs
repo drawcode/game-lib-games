@@ -73,7 +73,7 @@ public class GameDraggableLevelItem : MonoBehaviour {
 			
 			RemoveGameLevelItems();
 			
-			GameObject go = GameShooterController.Instance.LoadSprite(
+			GameObject go = GameDraggableEditor.LoadSprite(
 				gameLevelItemObject, spriteCode, Vector3.one.WithX(2f).WithY(2f).WithZ(2f) * .1f);
 			if(go != null) {
 				GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
@@ -98,7 +98,7 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public void LoadSpriteEffect(string spriteEffectCode) {
 		
 		if(gameLevelItemAsset != null) {
-			GameObject go = GameShooterController.Instance.LoadSpriteEffect(
+			GameObject go = GameDraggableEditor.LoadSpriteEffect(
 				gameLevelItemObject, gameLevelItemAsset.destroy_effect_code, Vector3.one.WithX(3).WithY(3).WithZ(3) * .1f);
 			if(go != null) {
 				PackedSprite sprite = go.GetComponent<PackedSprite>();
