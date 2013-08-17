@@ -27,10 +27,7 @@ public enum GameDraggableEditEnum {
 public class GameDraggableEditorMessages {
 	public static string editorGrabbedObjectChanged = "editor-grabbed-object-changed";
 	public static string editorAssetSelected = "editor-asset-selected";
-	
-    public static string StateEditOn = "app-stat-edit-on";
-    public static string StateEditOff = "app-stat-edit-off";
-	
+		
 	public static string GameControllerStarted = "game-controller-started";
 	public static string GameControllerReset = "game-controller-reset";
 	
@@ -39,7 +36,7 @@ public class GameDraggableEditorMessages {
 	public static string EditMeta = "edit-meta";
 	public static string EditReload = "edit-reload";
 	public static string EditSave = "edit-save";
-	public static string EditEnable = "edit-enable";
+	public static string EditState = "edit-state";
 }
 
 public class GameDraggableEditorButtons {
@@ -198,6 +195,8 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		//Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
 		
+		Messenger<GameDraggableEditEnum>.AddListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
+		
 		Messenger<GameObject>.AddListener(
 			GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
 		
@@ -236,6 +235,8 @@ public class GameDraggableEditor : MonoBehaviour {
 		Messenger<GameObject>.RemoveListener(
 			GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
 		
+		Messenger<GameDraggableEditEnum>.RemoveListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
+		
 		
 		 Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
 			FingerGestures_OnTap);
@@ -257,6 +258,17 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		 Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap, 
 			FingerGestures_OnDoubleTap);
+	}
+	
+	void OnEditStateHandler(GameDraggableEditEnum state) {
+	
+		if(state == GameDraggableEditEnum.StateEditing) {
+		
+		}
+		else if(state == GameDraggableEditEnum.StateNotEditing) {
+			
+		}
+	
 	}
 	
 	// EVENTS
@@ -851,7 +863,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public void EditEnable() {
 		//HideHUD();
 		//HideUIPanelEditButton();
-		ShowUIPanelEdit();
+		//ShowUIPanelEdit();
 		
 		GameDraggableEditor.ToggleStateEditing();
 		
@@ -859,15 +871,11 @@ public class GameDraggableEditor : MonoBehaviour {
 			if(labelButtonGameEdit != null) {
 				labelButtonGameEdit.text = "PLAY";
 			}
-			
-			GameShooter2DHUD.Instance.ShowEditState();
-			
+						
 			//HideHUD();
 			//HideUIPanelEditButton();
 			ShowUIPanelEdit();
 			GameDraggableEditor.editingEnabled = true;
-			
-			Messenger<bool>.Broadcast(GameDraggableEditorMessages.EditEnable, GameDraggableEditor.editingEnabled);
 		}
 		else if(!GameDraggableEditor.isEditing) {
 			if(labelButtonGameEdit != null) {
@@ -877,8 +885,6 @@ public class GameDraggableEditor : MonoBehaviour {
 			GameDraggableEditor.editingEnabled = false;
 			HideUIPanelEdit();
 			HideAllEditDialogs();
-			
-			Messenger<bool>.Broadcast(GameDraggableEditorMessages.EditEnable, GameDraggableEditor.editingEnabled);
 		}
 	}
 	
@@ -1083,12 +1089,12 @@ public class GameDraggableEditor : MonoBehaviour {
 		if(appEditState == GameDraggableEditEnum.StateNotEditing) {
 			changeStateEditing(GameDraggableEditEnum.StateEditing);
 			
-			editingEnabled = false;
+			editingEnabled = true;
 		}
 		else if(appEditState == GameDraggableEditEnum.StateEditing) {
 			changeStateEditing(GameDraggableEditEnum.StateNotEditing);
 				
-			editingEnabled = true;
+			editingEnabled = false;
 		}
 	}
 	
@@ -1117,10 +1123,10 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public void broadcastStateEditing() {		
 		if(appEditState == GameDraggableEditEnum.StateNotEditing) {
-			Messenger.Broadcast(GameDraggableEditorMessages.StateEditOff);
+			Messenger<GameDraggableEditEnum>.Broadcast(GameDraggableEditorMessages.EditState, appEditState);
 		}
 		else if(appEditState == GameDraggableEditEnum.StateEditing) {			
-			Messenger.Broadcast(GameDraggableEditorMessages.StateEditOn);
+			Messenger<GameDraggableEditEnum>.Broadcast(GameDraggableEditorMessages.EditState, appEditState);
 		}
 	}
 	

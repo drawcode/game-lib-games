@@ -14,21 +14,20 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public GameLevelItemAsset gameLevelItemAsset;
 		
 	void OnEnable() {		
-		Messenger.AddListener(GameDraggableEditorMessages.StateEditOn, OnStateEditOnHandler);
-		Messenger.AddListener(GameDraggableEditorMessages.StateEditOff, OnStateEditOffHandler);
+		Messenger<GameDraggableEditEnum>.AddListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
 	}
 	
 	void OnDisable() {		
-		Messenger.RemoveListener(GameDraggableEditorMessages.StateEditOn, OnStateEditOnHandler);
-		Messenger.RemoveListener(GameDraggableEditorMessages.StateEditOff, OnStateEditOffHandler);
+		Messenger<GameDraggableEditEnum>.RemoveListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
 	}
 	
-	void OnStateEditOnHandler() {
-		ShowAllGameLevelItems();
-	}
-		
-	void OnStateEditOffHandler() {
-		//HideAllGameLevelItems();
+	void OnEditStateHandler(GameDraggableEditEnum state) {
+		if(state == GameDraggableEditEnum.StateEditing) {
+			
+		}
+		else if(state == GameDraggableEditEnum.StateNotEditing) {
+			
+		}
 	}
 	
 	public void ShowAllGameLevelItems() {
