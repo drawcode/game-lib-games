@@ -1842,7 +1842,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		SetDialogState(false);
 	}
 	
-	public void ShowUIPanelDialogItems() {
+	public static void ShowUIPanelDialogItems() {
 		if(isInst) {
 			Instance.showUIPanelDialogItems();
 		}
