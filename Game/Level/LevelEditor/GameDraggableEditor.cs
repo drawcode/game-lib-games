@@ -74,13 +74,13 @@ public class GameDraggableEditor : MonoBehaviour {
 	public Transform lastGrabbed;
 	
 	public float grabDistance = 1000.0f;
-	//public int grabLayerMask;
+	public int grabLayerMask;
 	public Vector3 grabOffset; //delta between transform transform position and hit point
 	public bool  useToggleDrag = false; // Didn't know which style you prefer. 
 	
 	public string prefabRootPath = "";
 	
-	public Vector3 currentEditorPosition;
+	public Vector3 currentEditorPosition;	
 		
 	public static bool editingEnabled = false;
 	public string dragTag = "drag";
@@ -159,8 +159,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public static bool isEditing {
 		get {
 			if(isInst) {
-				if(editingEnabled 
-					&& appEditState == GameDraggableEditEnum.StateEditing) {
+				if(appEditState == GameDraggableEditEnum.StateEditing) {
 					return true;
 				}
 			}
@@ -322,6 +321,8 @@ public class GameDraggableEditor : MonoBehaviour {
 	void OnEditorGrabbedObjectChanged(GameObject grabbedObject) {
 		HideUIPanelEditAsset();
 		ShowUIPanelEditAssetButton();
+		
+		LogUtil.Log("GameDraggableEditor:OnEditorGrabbedObjectChanged:grabbedObject:", grabbedObject.name);
 	}
 	
 	
@@ -333,9 +334,11 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }
 
-		if(GetCurrentDraggableObject() != null) {
-        	DragObject(GetCurrentDraggableObject(), gesture.Position, gesture.DeltaMove);
-		}
+		//if(GetCurrentDraggableObject() != null) {
+        //	DragObject(GetCurrentDraggableObject(), gesture.Position, gesture.DeltaMove);
+		//}
+		
+		HandleFingerGesturesOnDragMove(gesture.Position, gesture.DeltaMove);
     }
 
     public void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {
@@ -373,6 +376,19 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }
         //ScaleCurrentObjects(delta);
+		
+		Vector2 fingerPos1 = Vector2.zero;
+		Vector2 fingerPos2 = Vector2.zero;
+		
+		if(gesture.Fingers.Count > 0) {
+			fingerPos1 = gesture.Fingers[0].Position;
+		}
+		
+		if(gesture.Fingers.Count > 1) {
+			fingerPos2 = gesture.Fingers[1].Position;
+		}
+		
+		HandleFingerGesturesOnPinchMove(fingerPos1, fingerPos2, delta);
     }
 
     private void FingerGestures_OnRotationMove(TwistGesture gesture) {
@@ -382,6 +398,19 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }
        // RotateCurrentObjects(Vector3.zero.WithY(rotationAngleDelta));
+		
+		Vector2 fingerPos1 = Vector2.zero;
+		Vector2 fingerPos2 = Vector2.zero;
+		
+		if(gesture.Fingers.Count > 0) {
+			fingerPos1 = gesture.Fingers[0].Position;
+		}
+		
+		if(gesture.Fingers.Count > 1) {
+			fingerPos2 = gesture.Fingers[1].Position;
+		}
+		
+		HandleFingerGesturesOnRotationMove(fingerPos1, fingerPos2, rotationAngleDelta); 
     }
 
     private void FingerGestures_OnLongPress(LongPressGesture gesture) {
@@ -390,9 +419,11 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }
        
-		if(GetCurrentDraggableObject() != null) {
-        	LongPressObject(GetCurrentDraggableObject(), pos);                
-        }
+		//if(GetCurrentDraggableObject() != null) {
+        //	LongPressObject(GetCurrentDraggableObject(), pos);                
+        //}
+		
+		HandleFingerGesturesOnLongPress(pos);
     }
 
     public void LongPressObject(GameObject go, Vector2 pos) {
@@ -413,9 +444,11 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		bool allowTap = true;
         
-		if(GetCurrentDraggableObject() != null) {
-			TapObject(GetCurrentDraggableObject(), fingerPos, allowTap);
-        }
+		//if(GetCurrentDraggableObject() != null) {
+		//	TapObject(GetCurrentDraggableObject(), fingerPos, allowTap);
+        //}
+		
+		HandleFingerGesturesOnTap(fingerPos);
     }
 
     public void TapObject(GameObject go, Vector2 fingerPos, bool allowTap) {
@@ -480,12 +513,15 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }		        
 		
-		if(gesture.Taps == 2) {
+		if(gesture.Taps > 1) {
 		
             if (GetCurrentDraggableObject() != null) {
                 DoubleTapObject(GetCurrentDraggableObject(), gesture.Position);
             }
+			
+			HandleFingerGesturesOnDoubleTap(gesture.Position);
 		}
+		
 		
         //var fwd = transform.TransformDirection(Vector3.forward);
         ////Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
@@ -496,7 +532,7 @@ public class GameDraggableEditor : MonoBehaviour {
 
         //AppViewerAppController.Instance.ChangeActionNext();
     }
-
+	/*
     private void FingerGestures_OnTwoFingerSwipe(Vector2 startPos, 
 		FingerGestures.SwipeDirection direction, float velocity) {
         if (!IsInputAllowed()) {
@@ -518,7 +554,12 @@ public class GameDraggableEditor : MonoBehaviour {
 
             //AppViewerAppController.Instance.ChangeActionNext();
         }
+		
+		//HandleFingerGesturesOnTwoFingerSwipe(gesture
+		
+		//	HandleFingerGesturesOnDoubleTap(gesture.Position);
     }
+    */
 
     private void FingerGestures_OnSwipe(SwipeGesture gesture) { 		
 		//Vector2 startPos = gesture.StartPosition;
@@ -547,6 +588,8 @@ public class GameDraggableEditor : MonoBehaviour {
 				}
             //}
         }
+		
+		HandleFingerGesturesOnSwipe(gesture.Position, direction, gesture.Velocity);
     }
 		
 	
@@ -587,16 +630,7 @@ public class GameDraggableEditor : MonoBehaviour {
 			
 			GameObjectHelper.ResetObject(go);
 		}	
-	}
-        
-	void FingerGestures_OnTap(Vector2 fingerPos) {	
-		if(!IsInputAllowed()){
-			return;
-		}
-		
-		TapObject(GameDraggableEditor.GetCurrentSpriteObject(), fingerPos, true);
 	}	
-	
 	
 	void HandleFingerGesturesOnLongPress(Vector2 fingerPos) {
 		//LogUtil.Log("HandleFingerGesturesOnLongPress: " 
@@ -875,6 +909,8 @@ public class GameDraggableEditor : MonoBehaviour {
 			//HideUIPanelEditButton();
 			ShowUIPanelEdit();
 			GameDraggableEditor.editingEnabled = true;
+			
+			LogUtil.Log("EditEnable:editingEnabled:", editingEnabled);
 		}
 		else if(!GameDraggableEditor.isEditing) {
 			if(labelButtonGameEdit != null) {
@@ -884,6 +920,8 @@ public class GameDraggableEditor : MonoBehaviour {
 			GameDraggableEditor.editingEnabled = false;
 			HideUIPanelEdit();
 			HideAllEditDialogs();
+			
+			LogUtil.Log("EditEnable:editingEnabled:", editingEnabled);
 		}
 	}
 	
@@ -943,15 +981,17 @@ public class GameDraggableEditor : MonoBehaviour {
 	    if (Input.GetMouseButton(0)) {
 	        if (grabbed) {
 	            Drag();
+				LogUtil.Log("GameDraggableEditor:Drag:", grabbed.name);
 	        } 
 			else { 
 	            Grab();
+				LogUtil.Log("GameDraggableEditor:Grab:", true);
 	        }
 	    } 
 		else {
 	        if(grabbed) {
 	           //restore the original layermask
-	           //grabbed.gameObject.layer = LayerMask.NameToLayer("drag");
+	           grabbed.gameObject.layer = LayerMask.NameToLayer("drag");
 	        }
 	        grabbed = null;
 	    }
@@ -996,12 +1036,13 @@ public class GameDraggableEditor : MonoBehaviour {
 					}
 					if(lastGrabbed != grabbed) {
 						lastGrabbed = grabbed;
+						////currentDraggableGameObject = grabbed.gameObject;
 						Messenger<GameObject>.Broadcast(
 							GameDraggableEditorMessages.editorGrabbedObjectChanged, lastGrabbed.gameObject);
 					}
 		            //set the object to ignore raycasts
-		            //grabLayerMask = grabbed.gameObject.layer;
-		            //grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
+		            grabLayerMask = grabbed.gameObject.layer;
+		            grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
 		            //now immediately do another raycast to calculate the offset
 		            if (Physics.Raycast(ray, out hit)) {
 		                grabOffset = grabbed.position - hit.point;

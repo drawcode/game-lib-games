@@ -11,8 +11,29 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public GameObject gameLevelItemObject;
 	public GameObject dragHolder;
 	
-	public GameLevelItemAsset gameLevelItemAsset;
+	public GameLevelItemAsset gameLevelItemAsset;		
+			
+	void Awake() {
 		
+	}
+	
+	public virtual void Start() {
+		Init();
+	}
+	
+	public virtual void Init() {
+		
+		if(dragColliderObject != null) {
+			dragColliderObject.tag = "drag";
+		}
+		
+		LoadData();
+		
+		if(gameLevelItemAsset != null) {
+			LoadSprite(gameLevelItemAsset.asset_code);
+		}
+	}
+	
 	void OnEnable() {		
 		Messenger<GameDraggableEditEnum>.AddListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
 	}
@@ -43,26 +64,6 @@ public class GameDraggableLevelItem : MonoBehaviour {
 			foreach(Transform t in gameLevelItemObject.transform) {
 				t.gameObject.Hide();
 			}
-		}
-	}
-			
-	void Awake() {
-		
-	}
-	
-	public virtual void Start() {
-		Init();
-	}
-	
-	public virtual void Init() {
-		
-		if(dragColliderObject != null) {
-			dragColliderObject.tag = "drag";
-		}
-		
-		LoadData();
-		if(gameLevelItemAsset != null) {
-			LoadSprite(gameLevelItemAsset.asset_code);
 		}
 	}
 	
