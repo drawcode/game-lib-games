@@ -192,7 +192,7 @@ public class UIPanelEditAsset : UIAppPanel {
 			UIUtil.SetLabelValue(labelAssetEdit, itemAsset.asset_code);
 			UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.asset_code));
 			
-			GameDraggableLevelItem levelItem = GameShooterController.Instance.GetCurrentDraggableLevelItem();
+			GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
 			if(levelItem != null) {
 				levelItem.LoadSprite(itemAsset.asset_code);
 			}

@@ -126,7 +126,7 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public void DestroyMe() {
 		GameLevelItems.Current.level_items.RemoveAll(item => item.uuid == gameLevelItemAsset.uuid);		
 		
-		GameShooterController.Instance.ProcessStatDestroy();
+		//GameShooterIsoController.Instance.ProcessStatDestroy();
 		
 		Destroy (gameObject);
 	}

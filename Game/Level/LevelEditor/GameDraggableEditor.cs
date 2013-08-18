@@ -811,7 +811,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		//AppController.Instance.ChangeActionNext();
 		
 		if(Application.isEditor) {
-			GameShooter2DController.Instance.CycleCharacterTypesNext();
+			GameShooterIsoController.Instance.CycleCharacterTypesNext();
 		}
 
 	}
@@ -836,11 +836,11 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		if(direction == FingerGestures.SwipeDirection.Right
 			|| direction == FingerGestures.SwipeDirection.Down) {
-			GameShooter2DController.Instance.CycleCharacterTypesPrevious();
+			GameShooterIsoController.Instance.CycleCharacterTypesPrevious();
 		}
 		else if(direction == FingerGestures.SwipeDirection.Left
 			|| direction == FingerGestures.SwipeDirection.Up){
-			GameShooter2DController.Instance.CycleCharacterTypesNext();
+			GameShooterIsoController.Instance.CycleCharacterTypesNext();
 		}
 
 	}
@@ -1193,9 +1193,9 @@ public class GameDraggableEditor : MonoBehaviour {
 		if(GameDraggableEditor.isEditing) {
 			// add game draggable edit selected asset code if on
 			
-			if(!string.IsNullOrEmpty(GameDraggableEditor.Instance.assetCodeCreating)) {
+			if(!string.IsNullOrEmpty(assetCodeCreating)) {
 				GameLevelItemAsset itemAsset = new GameLevelItemAsset();
-				itemAsset.asset_code = GameDraggableEditor.Instance.assetCodeCreating;
+				itemAsset.asset_code = assetCodeCreating;
 				GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
 				gameLevelItemStep.position.x = (Input.mousePosition.x - Screen.width)/1000;
 				gameLevelItemStep.position.y = (Input.mousePosition.y - Screen.height)/1000;
@@ -1219,7 +1219,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public string getResourcePath(string spriteCode) {	
 		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
 		//resourcePath = Path.Combine(resourcePath, spriteCode);
-		string resourcePath = GameDraggableEditor.Instance.prefabRootPath
+		string resourcePath = prefabRootPath
 			+ "levelassets/" + spriteCode;
 		return resourcePath;
 	}
@@ -1438,7 +1438,7 @@ public class GameDraggableEditor : MonoBehaviour {
 							// dragLevelItem.gameLevelItemObject.transform.localScale * .1f;
 						dragLevelItem.LoadData();
 					
-						goLevelItem.transform.parent = GameShooter2DController.Instance.levelItemsContainerObject.transform;
+						goLevelItem.transform.parent = GameShooterIsoController.Instance.levelItemsContainerObject.transform;
 						goLevelItem.transform.localScale = Vector3.one;
 						goLevelItem.transform.position = Vector3.zero;
 						goLevelItem.transform.localPosition = Vector3.zero;
