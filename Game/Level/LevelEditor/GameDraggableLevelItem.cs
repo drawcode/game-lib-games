@@ -73,7 +73,7 @@ public class GameDraggableLevelItem : MonoBehaviour {
 			RemoveGameLevelItems();
 			
 			GameObject go = GameDraggableEditor.LoadSprite(
-				gameLevelItemObject, spriteCode, Vector3.one.WithX(2f).WithY(2f).WithZ(2f) * .1f);
+				gameLevelItemObject, spriteCode, Vector3.one);
 			if(go != null) {
 				GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
 				if(gameLevelSprite != null) {

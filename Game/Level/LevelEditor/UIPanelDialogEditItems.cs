@@ -96,16 +96,27 @@ public class UIPanelDialogEditItems : UIAppPanel {
 					Destroy(t.gameObject);
 				}
 				
+	        	Debug.Log("Load AppContentAsset: gameLevelItemObject.transform: " + gameLevelItemObject.transform.childCount);
+				
 				if(GameDraggableEditor.Instance == null) {
 					yield break;
 				}
 				
+	        	Debug.Log("Load AppContentAsset: GameDraggableEditor.Instance: " + true);
+				
+				string assetCode = asset.code;
+				if(assetCode.Contains("portal-")) {
+					assetCode = assetCode + "-sm";
+				}
 				
 				GameObject go = GameDraggableEditor.LoadSpriteUI(
-					gameLevelItemObject, asset.code, Vector3.one);
+					gameLevelItemObject, assetCode, Vector3.one);
+				
 				gameLevelItemObject.ChangeLayersRecursively("UIEditor");
 				
-				float maxSize = 3;
+	        	Debug.Log("Load AppContentAsset: go: " + go);
+				
+				float maxSize = 1;
 				
 				if(go != null) {
 					PackedSprite sprite = go.GetComponent<PackedSprite>();
@@ -145,6 +156,7 @@ public class UIPanelDialogEditItems : UIAppPanel {
 								}
 							}
 						}
+						adjust = adjust/2;
 						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
 					}
 					

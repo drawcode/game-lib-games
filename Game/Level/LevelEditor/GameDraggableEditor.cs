@@ -1170,7 +1170,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static string GetResourcePath(string spriteCode) {	
 		if(isInst) {
-			Instance.getResourcePath(spriteCode);
+			return Instance.getResourcePath(spriteCode);
 		}
 		return spriteCode;
 	}	
@@ -1179,7 +1179,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
 		//resourcePath = Path.Combine(resourcePath, spriteCode);
 		string resourcePath = GameDraggableEditor.Instance.prefabRootPath
-			+ "levelitems/" + spriteCode;
+			+ "levelassets/" + spriteCode;
 		return resourcePath;
 	}
 	
@@ -1198,6 +1198,8 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
+		
+		LogUtil.Log("LoadSprite:resourcePath:", resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 		if(prefabSprite != null) {
@@ -1237,6 +1239,8 @@ public class GameDraggableEditor : MonoBehaviour {
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
 		
+		LogUtil.Log("LoadSpriteUI:resourcePath:", resourcePath);
+		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 		if(prefabSprite != null) {
 			go = Instantiate(prefabSprite) as GameObject;
@@ -1271,6 +1275,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
+		LogUtil.Log("LoadSpriteEffect:resourcePath:", resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 		if(prefabSprite != null) {
