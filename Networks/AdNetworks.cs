@@ -192,7 +192,8 @@ public class AdNetworks : MonoBehaviour
 #endif
 		}
 	}
-	
+
+#if !UNITY_WEBPLAYER		
 	public AdMobBanner GetBannerAdmob(AdBanner banner) {
 		if(banner == AdBanner.Phone_320x50) {
 			return AdMobBanner.Phone_320x50;
@@ -210,7 +211,8 @@ public class AdNetworks : MonoBehaviour
 			return AdMobBanner.SmartBanner;
 		}
 	}
-#if !UNITY_ANDROID	
+#endif
+#if !UNITY_ANDROID && !UNITY_WEBPLAYER
 	public AdMobBannerType GetBannerTypeAdmob(AdBannerType bannerType) {
 		if(bannerType == AdBannerType.iPad_320x250) {
 			return AdMobBannerType.iPad_320x250;
@@ -232,6 +234,8 @@ public class AdNetworks : MonoBehaviour
 		}
 	}
 #endif
+	
+#if !UNITY_WEBPLAYER		
 	public AdMobLocation GetPlacementTypeAdmob(AdPlacementType bannerType) {
 		if(bannerType == AdPlacementType.BottomLeft) {
 			return AdMobLocation.BottomLeft;
@@ -258,7 +262,9 @@ public class AdNetworks : MonoBehaviour
 			return AdMobLocation.TopCenter;
 		}
 	}
-#if !UNITY_ANDROID	
+#endif
+	
+#if !UNITY_ANDROID && !UNITY_WEBPLAYER
 	public AdMobAdPosition GetPositionAdmob(AdPosition position) {
 		if(position == AdPosition.BottomLeft) {
 			return AdMobAdPosition.BottomLeft;

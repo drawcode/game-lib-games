@@ -64,6 +64,7 @@ public class ProductPurchase : MonoBehaviour
 	public GoogleIABEventListener productEventListener;
 	
 #endif
+#elif UNITY_WEBPLAYER
 #else
 	// Web/PC
 	public StoreKitManager productManager;
@@ -124,7 +125,11 @@ public class ProductPurchase : MonoBehaviour
 			LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Google Play IAB/Android added...");	
 			
 			GoogleIAB.init("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllfTLDqNeLzmIczqRP4Mramyc0Rd/RUlg+fBRO7VGRPMorv2UKWaxUqbKEYy10ldNu43anV3MHGliSX7wyED1v5GCt8syAeDT59wZZzY7aqMB3CBPmqfFm52ONY7BKaew/uWqjjn1w5Kq4BySLXyBTfrwlnqVsnMnW12lUGPpzgdBODe00JOk+DDjcZcunGB6xXxNA2wPO1pB8VSawVwfiztFd0l0ow0YPBu0JmhNvGwXfG2p0NcrTn0jNvoFXlHPqVb+t0DBETtUd/IckMbk4YZoT+7D0yy3LwwDZiPWmzTD8ODVE9U6zaB4NpXnaohYNPlbLyq0uDShX2dGGBVpwIDAQAB");
-#endif		
+#endif	
+			
+#elif UNITY_WEBPLAYER				
+			LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
+			
 #else	
 			// Web/PC - storekit stub for now...
 			productManager = productSystem.AddComponent<StoreKitManager>();				

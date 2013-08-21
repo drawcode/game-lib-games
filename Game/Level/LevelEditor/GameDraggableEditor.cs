@@ -1218,7 +1218,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public string getResourcePath(string spriteCode) {	
 		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
-		//resourcePath = Path.Combine(resourcePath, spriteCode);
+		//resourcePath = PathUtil.Combine(resourcePath, spriteCode);
 		string resourcePath = prefabRootPath
 			+ "levelassets/" + spriteCode;
 		return resourcePath;
