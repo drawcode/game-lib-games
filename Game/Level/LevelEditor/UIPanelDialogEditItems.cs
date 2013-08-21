@@ -116,7 +116,7 @@ public class UIPanelDialogEditItems : UIAppPanel {
 				
 	        	Debug.Log("Load AppContentAsset: go: " + go);
 				
-				float maxSize = 1;
+				float maxSize = .8f;
 				
 				if(go != null) {
 					PackedSprite sprite = go.GetComponent<PackedSprite>();

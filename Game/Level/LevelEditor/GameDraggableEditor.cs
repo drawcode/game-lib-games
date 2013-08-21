@@ -1723,7 +1723,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public void hideAllUIEditPanels() {		
 		HideUIPanelEditAsset();
 		HideUIPanelEditAssetButton();
-		HideUIPanelEditButton();
+		//HideUIPanelEditButton();
 	}
 	
 	public static void HideUIPanelEditAsset() {
@@ -1764,7 +1764,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public void hideUIPanelEditAssetButton() {
 		if(gameEditAssetButtonObject != null) {
-			TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(650));
+			TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(-650));
 		}
 		
 		//ShowHUD();
