@@ -807,13 +807,6 @@ public class GameDraggableEditor : MonoBehaviour {
 			
 			
 		}
-		
-		//AppController.Instance.ChangeActionNext();
-		
-		if(Application.isEditor) {
-			GameShooterIsoController.Instance.CycleCharacterTypesNext();
-		}
-
 	}
                 
 	public void TwoFingerSwipe( Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity ) {
@@ -836,11 +829,11 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		if(direction == FingerGestures.SwipeDirection.Right
 			|| direction == FingerGestures.SwipeDirection.Down) {
-			GameShooterIsoController.Instance.CycleCharacterTypesPrevious();
+			
 		}
 		else if(direction == FingerGestures.SwipeDirection.Left
 			|| direction == FingerGestures.SwipeDirection.Up){
-			GameShooterIsoController.Instance.CycleCharacterTypesNext();
+			
 		}
 
 	}
@@ -1438,7 +1431,7 @@ public class GameDraggableEditor : MonoBehaviour {
 							// dragLevelItem.gameLevelItemObject.transform.localScale * .1f;
 						dragLevelItem.LoadData();
 					
-						goLevelItem.transform.parent = GameShooterIsoController.Instance.levelItemsContainerObject.transform;
+						goLevelItem.transform.parent = levelItemsContainerObject.transform;
 						goLevelItem.transform.localScale = Vector3.one;
 						goLevelItem.transform.position = Vector3.zero;
 						goLevelItem.transform.localPosition = Vector3.zero;
@@ -1582,7 +1575,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public static GameObject GetCurrentDraggableObject() {
 		if(isInst) {
 			if(Instance.grabbed != null) {
-				return Instance.grabbed.gameObject;
+				return Instance.lastGrabbed.gameObject;
 			}
 		}
 		return null;
@@ -1598,7 +1591,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public GameDraggableLevelItem getCurrentDraggableLevelItem() {
 		Transform grabbedObject = GameDraggableEditor.GetCurrentGrabbedObject();
 		if(grabbedObject != null) {
-			return grabbedObject.gameObject.GetComponent<GameDraggableLevelItem>();
+			return lastGrabbed.gameObject.GetComponent<GameDraggableLevelItem>();
 		}
 		return null;
 	}
