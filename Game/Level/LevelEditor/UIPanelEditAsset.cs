@@ -192,7 +192,7 @@ public class UIPanelEditAsset : UIAppPanel {
 			UIUtil.SetLabelValue(labelAssetEdit, itemAsset.asset_code);
 			UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.asset_code));
 			
-			GameDraggableLevelItem levelItem = GameShooterController.Instance.GetCurrentDraggableLevelItem();
+			GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
 			if(levelItem != null) {
 				levelItem.LoadSprite(itemAsset.asset_code);
 			}
@@ -208,8 +208,8 @@ public class UIPanelEditAsset : UIAppPanel {
 	}
 	
 	public void SyncCurrenItemAsset() {
-		if(GameShooterController.Instance != null) {
-			itemAsset = GameShooterController.Instance.GetCurrentLevelItemAsset();
+		if(GameDraggableEditor.Instance != null) {
+			itemAsset = GameDraggableEditor.GetCurrentLevelItemAsset();
 		}
 	}
 	
@@ -316,11 +316,11 @@ public class UIPanelEditAsset : UIAppPanel {
 		
 		if(inputName == inputSprite.name) {
 			actionState = UIPanelEditAssetActionState.SELECT_ITEM;
-			GameShooterUIController.Instance.ShowUIPanelDialogItems();
+			GameDraggableEditor.ShowUIPanelDialogItems();
 		}
 		else if(inputName == inputSpriteEffect.name) {
 			actionState = UIPanelEditAssetActionState.SELECT_EFFECT;
-			GameShooterUIController.Instance.ShowUIPanelDialogItems();
+			GameDraggableEditor.ShowUIPanelDialogItems();
 		}
 	}
 	
@@ -389,30 +389,30 @@ public class UIPanelEditAsset : UIAppPanel {
 		if(itemAsset != null) {
 			if(buttonName == buttonGameEditAssetSave.name) {
 				SaveDataAsset();
-				GameShooterUIController.Instance.ResetAssetPanelRemoveDeselect();
+				////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
 				actionState = UIPanelEditAssetActionState.NONE;
 			}
 			else if(buttonName == buttonGameEditAssetDelete.name) {
 				
-				GameDraggableLevelItem levelItem = GameShooterController.Instance.GetCurrentDraggableLevelItem();
+				GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
 				if(levelItem != null) {
 					levelItem.DestroyMeAnimated();
 				}
 				
-				GameShooterUIController.Instance.ResetAssetPanelRemoveDeselect();
+				////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
 				actionState = UIPanelEditAssetActionState.NONE;
 			}		
 			else if(buttonName == buttonGameEditAssetDeselect.name) {
-				GameShooterUIController.Instance.ResetAssetPanelRemoveDeselect();
+				////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
 				actionState = UIPanelEditAssetActionState.NONE;
 			}		
 			else if(buttonName == buttonGameEditAssetSprite.name) {
 				actionState = UIPanelEditAssetActionState.SELECT_ITEM;
-				GameShooterUIController.Instance.ShowUIPanelDialogItems();
+				GameDraggableEditor.ShowUIPanelDialogItems();
 			}		
 			else if(buttonName == buttonGameEditAssetSpriteEffect.name) {
 				actionState = UIPanelEditAssetActionState.SELECT_EFFECT;
-				GameShooterUIController.Instance.ShowUIPanelDialogItems();
+				GameDraggableEditor.ShowUIPanelDialogItems();
 			}
 					
 			else if(buttonName == buttonGameEditAssetRotationReset.name) {

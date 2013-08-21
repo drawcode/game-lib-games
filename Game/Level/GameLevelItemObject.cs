@@ -17,7 +17,7 @@ public class GameLevelItemObject : MonoBehaviour {
 	}
 	
 	void Update(){
-		//if(GameDraggableEditor.Instance.grabbed != transform) {
+		//if(GameDraggableEditor.grabbed != transform) {
 		//	transform.position = latestPosition;
 		//}
 		//else {

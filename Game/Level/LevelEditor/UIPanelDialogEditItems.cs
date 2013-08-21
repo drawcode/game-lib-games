@@ -102,7 +102,7 @@ public class UIPanelDialogEditItems : UIAppPanel {
 					yield break;
 				}
 				
-	        	Debug.Log("Load AppContentAsset: GameDraggableEditor.Instance: " + true);
+	        	Debug.Log("Load AppContentAsset: GameDraggableEditor: " + true);
 				
 				string assetCode = asset.code;
 				if(assetCode.Contains("portal-")) {

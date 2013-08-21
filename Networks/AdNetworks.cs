@@ -174,7 +174,7 @@ public class AdNetworks : MonoBehaviour
 		if(Application.platform == RuntimePlatform.Android) {
 			LogUtil.Log("InitAdmob RuntimePlatform.Android..." + Application.platform);			
 #if UNITY_ANDROID
-			AdMob.init(PUBLISHER_ID_ADMOB_ANDROID, adNetworkTestingEnabled);			
+			AdMob.init(PUBLISHER_ID_ADMOB_ANDROID, PUBLISHER_ID_ADMOB_IOS);			
 			LogUtil.Log("InitAdmob Admob init..." + PUBLISHER_ID_ADMOB_ANDROID);
 #endif
 		}
@@ -210,7 +210,7 @@ public class AdNetworks : MonoBehaviour
 			return AdMobBanner.SmartBanner;
 		}
 	}
-	
+#if !UNITY_ANDROID	
 	public AdMobBannerType GetBannerTypeAdmob(AdBannerType bannerType) {
 		if(bannerType == AdBannerType.iPad_320x250) {
 			return AdMobBannerType.iPad_320x250;
@@ -231,7 +231,7 @@ public class AdNetworks : MonoBehaviour
 			return AdMobBannerType.SmartBannerLandscape;
 		}
 	}
-	
+#endif
 	public AdMobLocation GetPlacementTypeAdmob(AdPlacementType bannerType) {
 		if(bannerType == AdPlacementType.BottomLeft) {
 			return AdMobLocation.BottomLeft;
@@ -258,7 +258,7 @@ public class AdNetworks : MonoBehaviour
 			return AdMobLocation.TopCenter;
 		}
 	}
-	
+#if !UNITY_ANDROID	
 	public AdMobAdPosition GetPositionAdmob(AdPosition position) {
 		if(position == AdPosition.BottomLeft) {
 			return AdMobAdPosition.BottomLeft;
@@ -285,7 +285,7 @@ public class AdNetworks : MonoBehaviour
 			return AdMobAdPosition.TopCenter;
 		}
 	}
-		
+#endif
 	public static void ShowAd() {
 		if(Instance != null) {
 			Instance.showAd();
@@ -305,10 +305,10 @@ public class AdNetworks : MonoBehaviour
 	public void showAd(AdBannerType bannerType, AdPosition position) {
 		if(Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
-			AdMob.createBanner(
-				GetBannerTypeAdmob(bannerType), 
-				GetPlacementTypeAdmob(placementType)
-				);
+			//AdMob.createBanner(
+				//GetBannerTypeAdmob(bannerType), 
+				//GetPlacementTypeAdmob(placementType)
+				//);
 #endif
 		}
 		else if(Application.platform == RuntimePlatform.IPhonePlayer) {			
