@@ -35,7 +35,7 @@ public class Platforms
 	public void ShowWebView(string title, string url) {
 		if(Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
-			EtceteraAndroid.showWebView(title, url);
+			EtceteraAndroid.showWebView(url);
 #endif
 		}
 		else if(Application.platform == RuntimePlatform.IPhonePlayer) {
@@ -59,7 +59,7 @@ public class Platforms
 		if(Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
 			// TODO android
-			EtceteraAndroid.askForReview(3, 0, 3, "Review SupaSupaCross!", "Review SupaSupaCross if you like it.", "com.supasupagames.supasupacross");
+			//EtceteraAndroid.askForReview(3, 0, 3, "Review SupaSupaCross!", "Review SupaSupaCross if you like it.", "com.supasupagames.supasupacross");
 #endif
 		}
 		else if(Application.platform == RuntimePlatform.IPhonePlayer) {

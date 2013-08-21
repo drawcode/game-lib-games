@@ -36,7 +36,7 @@ public class SocialNetworks : MonoBehaviour
 			socialNetworkFacebookAndroid.AddComponent<FacebookManager>();
 			socialNetworkFacebookAndroid.AddComponent<FacebookEventListener>();
 
-			FacebookAndroid.init(FACEBOOK_APP_ID);
+			FacebookAndroid.init();
 			LogUtil.Log("LoadSocialLibs Facebook init..." + FACEBOOK_APP_ID);
 #endif
 		}
@@ -74,8 +74,8 @@ public class SocialNetworks : MonoBehaviour
 			LogUtil.Log("LoadSocialLibs RuntimePlatform.Android..." + Application.platform);			
 			
 			socialNetworkTwitterAndroid = new GameObject("TwitterAndroidManager");
-			socialNetworkTwitterAndroid.AddComponent<TwitterAndroidManager>();
-			socialNetworkTwitterAndroid.AddComponent<TwitterAndroidEventListener>();
+			socialNetworkTwitterAndroid.AddComponent<TwitterManager>();
+			socialNetworkTwitterAndroid.AddComponent<TwitterEventListener>();
 			
 			TwitterAndroid.init(TWITTER_KEY, TWITTER_SECRET);
 			LogUtil.Log("Twitter init..." + TWITTER_KEY);
@@ -150,7 +150,7 @@ public class SocialNetworks : MonoBehaviour
 		if(Application.platform == RuntimePlatform.Android)
 		{
 #if UNITY_ANDROID				
-			TwitterAndroid.postUpdate(message);
+			//TwitterAndroid.postUpdate(message);
 #endif
 		}
 		else if(Application.platform == RuntimePlatform.IPhonePlayer)
@@ -234,7 +234,7 @@ public class SocialNetworks : MonoBehaviour
 		if(Application.platform == RuntimePlatform.Android)
 		{
 #if UNITY_ANDROID				
-			FacebookAndroid.showPostMessageDialogWithOptions(url, title, linkToImage, caption);
+			//FacebookAndroid.showPostMessageDialogWithOptions(url, title, linkToImage, caption);
 #endif
 		}
 		else if(Application.platform == RuntimePlatform.IPhonePlayer)
