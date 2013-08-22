@@ -1221,7 +1221,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject LoadSprite(GameObject parent, string spriteCode, Vector3 scale) {
 		if(isInst) {
-			Instance.loadSprite(parent, spriteCode, scale);
+			return Instance.loadSprite(parent, spriteCode, scale);
 		}
 		return null;
 	}
@@ -1261,7 +1261,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject LoadSpriteUI(GameObject parent, string spriteCode, Vector3 scale) {
 		if(isInst) {
-			Instance.loadSpriteUI(parent, spriteCode, scale);
+			return Instance.loadSpriteUI(parent, spriteCode, scale);
 		}
 		return null;
 	}
@@ -1298,7 +1298,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject LoadSpriteEffect(GameObject parent, string spriteCode, Vector3 scale) {
 		if(isInst) {
-			Instance.loadSpriteEffect(parent, spriteCode, scale);
+			return Instance.loadSpriteEffect(parent, spriteCode, scale);
 		}
 		return null;
 	}
@@ -1553,7 +1553,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static bool IsLevelDestructableItemsComplete(GameObject go) {
 		if(isInst) {
-			Instance.isLevelDestructableItemsComplete(go);
+			return Instance.isLevelDestructableItemsComplete(go);
 		}
 		return false;
 	}
@@ -1574,7 +1574,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject GetCurrentDraggableObject() {
 		if(isInst) {
-			if(Instance.grabbed != null) {
+			if(Instance.lastGrabbed != null) {
 				return Instance.lastGrabbed.gameObject;
 			}
 		}
@@ -1583,7 +1583,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameDraggableLevelItem GetCurrentDraggableLevelItem() {
 		if(isInst) {
-			Instance.getCurrentDraggableLevelItem();
+			return Instance.getCurrentDraggableLevelItem();
 		}
 		return null;
 	}
@@ -1598,7 +1598,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameLevelItemAsset GetCurrentLevelItemAsset() {
 		if(isInst) {
-			Instance.getCurrentLevelItemAsset();
+			return Instance.getCurrentLevelItemAsset();
 		}	
 		return null;
 	}
@@ -1614,7 +1614,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public static GameObject GetCurrentSpriteObject() {
 		if(isInst) {
-			Instance.getCurrentSpriteObject();
+			return Instance.getCurrentSpriteObject();
 		}
 		return null;
 	}
