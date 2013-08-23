@@ -177,7 +177,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 			
 	public bool ShouldUpdate() {
-		if(editingEnabled) {
+		if(editingEnabled && isEditing) { // TOOD or special case moving objects upgrade
 			return true;
 		}
 		grabbed = null;
@@ -1154,11 +1154,31 @@ public class GameDraggableEditor : MonoBehaviour {
 		}
 	}
 	
+	GameCameraSmoothFollow cam;
+	
 	public void broadcastStateEditing() {		
+		if(cam == null) {
+			cam = ObjectUtil.FindObject<GameCameraSmoothFollow>();
+		}
+		
 		if(appEditState == GameDraggableEditEnum.StateNotEditing) {
+			
+			if(cam != null) {
+				cam.allowScrolling = false;
+				cam.allowZoom = false;
+				cam.Reset();
+			}
+			
 			Messenger<GameDraggableEditEnum>.Broadcast(GameDraggableEditorMessages.EditState, appEditState);
 		}
 		else if(appEditState == GameDraggableEditEnum.StateEditing) {			
+			
+			if(cam != null) {
+				cam.allowScrolling = true;
+				cam.allowZoom = true;
+				cam.Reset();
+			}
+			
 			Messenger<GameDraggableEditEnum>.Broadcast(GameDraggableEditorMessages.EditState, appEditState);
 		}
 	}
@@ -1757,7 +1777,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public void hideUIPanelEditAssetButton() {
 		if(gameEditAssetButtonObject != null) {
-			TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(-650));
+			TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(650));
 		}
 		
 		//ShowHUD();
