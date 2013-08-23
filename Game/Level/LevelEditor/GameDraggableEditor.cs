@@ -442,7 +442,7 @@ public class GameDraggableEditor : MonoBehaviour {
             return;
         }
 		
-		bool allowTap = true;
+		//bool allowTap = true;
         
 		//if(GetCurrentDraggableObject() != null) {
 		//	TapObject(GetCurrentDraggableObject(), fingerPos, allowTap);
@@ -470,7 +470,7 @@ public class GameDraggableEditor : MonoBehaviour {
             if (!deferTap) {
 
                 //var fwd = transform.TransformDirection(Vector3.forward);
-                //Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+                //Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
                 //RaycastHit hit;
                 //if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                     //print("hit an object:" + hit.transform.name);
@@ -524,7 +524,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		
         //var fwd = transform.TransformDirection(Vector3.forward);
-        ////Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+        ////Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
         ////RaycastHit hit;
         ////if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
         ////    print("double tap hit an object:" + hit.transform.name);
@@ -799,7 +799,7 @@ public class GameDraggableEditor : MonoBehaviour {
 			GameDraggableEditor.EditModeCreateAsset(fingerPos);
 			
 			//var fwd = transform.TransformDirection(Vector3.forward);
-			Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+			Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
 			RaycastHit hit;
 			if (Physics.Raycast (ray, out hit, Mathf.Infinity)) {
 				print ("double tap hit an object:" + hit.transform.name);
@@ -974,11 +974,11 @@ public class GameDraggableEditor : MonoBehaviour {
 	    if (Input.GetMouseButton(0)) {
 	        if (grabbed) {
 	            Drag();
-				LogUtil.Log("GameDraggableEditor:Drag:", grabbed.name);
+				//LogUtil.Log("GameDraggableEditor:Drag:", grabbed.name);
 	        } 
 			else { 
 	            Grab();
-				LogUtil.Log("GameDraggableEditor:Grab:", true);
+				//LogUtil.Log("GameDraggableEditor:Grab:", true);
 	        }
 	    } 
 		else {
@@ -1399,12 +1399,17 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadLevelItems() {
+		StartCoroutine(loadLevelItemsCo());
+	}
+	
+	public IEnumerator loadLevelItemsCo() {
 		GameLevelItem gameLevelItem = GameLevelItems.Current;
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 		
 		if(gameLevelItemAssets != null) {
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
 				LoadLevelItem(item);
+				yield return new WaitForEndOfFrame();
 			}
 		}
 	}
