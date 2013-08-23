@@ -315,6 +315,32 @@ public class GameDraggableEditor : MonoBehaviour {
 		else if(buttonName == GameDraggableEditorButtons.buttonEdit) {
 			EditEnable();
 		}
+		else if(buttonName.IndexOf(GameDraggableEditorButtons.buttonGameLevelItemObject) > -1) {
+			
+			string[] arrLevelId = buttonName.Split('$');
+
+			if(arrLevelId.Length > 0) {
+				string assetCodeCreating =  arrLevelId[1];
+				GameDraggableEditor.Instance.assetCodeCreating = assetCodeCreating;
+				Debug.Log("GameDraggableEditor.Instance.assetCodeCreating:" + GameDraggableEditor.Instance.assetCodeCreating);
+				
+				if(UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
+					
+					if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
+						UIPanelEditAsset.Instance.UpdateSprite(assetCodeCreating);
+					}		
+					else if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_EFFECT) {
+						UIPanelEditAsset.Instance.UpdateSpriteEffect(assetCodeCreating);
+					}		
+					
+					UIPanelEditAsset.Instance.actionState = UIPanelEditAssetActionState.NONE;
+				}
+				
+				HideUIPanelDialogItems();
+				ShowUIPanelEdit();
+			}
+			
+		}
 		
 	}	
 	
@@ -449,6 +475,20 @@ public class GameDraggableEditor : MonoBehaviour {
         //}
 		
 		HandleFingerGesturesOnTap(fingerPos);
+		
+		Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);	
+		Debug.Log("FingerGestures_OnDoubleTap:gesture.ElapsedTime:" + gesture.ElapsedTime);		
+		
+		//Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + );
+		
+		if(gesture.ElapsedTime < .08) {
+		
+            //if (GetCurrentDraggableObject() != null) {
+           //     DoubleTapObject(GetCurrentDraggableObject(), gesture.Position);
+            //}
+			
+			HandleFingerGesturesOnDoubleTap(gesture.Position);
+		}
     }
 
     public void TapObject(GameObject go, Vector2 fingerPos, bool allowTap) {
@@ -509,15 +549,20 @@ public class GameDraggableEditor : MonoBehaviour {
     }
 
     private void FingerGestures_OnDoubleTap(TapGesture gesture) {
+		
+		Debug.Log("FingerGestures_OnDoubleTap:gesture.Position:" + gesture.Position);
+		
         if (!IsInputAllowed()) {
             return;
-        }		        
+        }		       
+		
+		Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);
 		
 		if(gesture.Taps > 1) {
 		
-            if (GetCurrentDraggableObject() != null) {
-                DoubleTapObject(GetCurrentDraggableObject(), gesture.Position);
-            }
+            //if (GetCurrentDraggableObject() != null) {
+           //     DoubleTapObject(GetCurrentDraggableObject(), gesture.Position);
+            //}
 			
 			HandleFingerGesturesOnDoubleTap(gesture.Position);
 		}
@@ -793,10 +838,16 @@ public class GameDraggableEditor : MonoBehaviour {
 		}
 	}
 	
-	public void DoubleTap(Vector2 fingerPos) {		
+	public void DoubleTap(Vector2 fingerPos) {	
+		
+		Debug.Log("DoubleTap:fingerPos:" + fingerPos);
+		Debug.Log("DoubleTap:GameDraggableEditor.isEditing:" + GameDraggableEditor.isEditing);
+		
 		if(GameDraggableEditor.isEditing) {
 			
 			GameDraggableEditor.EditModeCreateAsset(fingerPos);
+			
+			Debug.Log("DoubleTap:EditModeCreateAsset:" + fingerPos);
 			
 			//var fwd = transform.TransformDirection(Vector3.forward);
 			Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
@@ -1206,12 +1257,14 @@ public class GameDraggableEditor : MonoBehaviour {
 		if(GameDraggableEditor.isEditing) {
 			// add game draggable edit selected asset code if on
 			
+			Debug.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
+			
 			if(!string.IsNullOrEmpty(assetCodeCreating)) {
 				GameLevelItemAsset itemAsset = new GameLevelItemAsset();
 				itemAsset.asset_code = assetCodeCreating;
 				GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
-				gameLevelItemStep.position.x = (Input.mousePosition.x - Screen.width)/1000;
-				gameLevelItemStep.position.y = (Input.mousePosition.y - Screen.height)/1000;
+				gameLevelItemStep.position.x = (Input.mousePosition.x - Screen.width)/100;
+				gameLevelItemStep.position.y = (Input.mousePosition.y - Screen.height)/100;
 				gameLevelItemStep.position.z = 0;
 				itemAsset.steps.Add(gameLevelItemStep);
 				GameDraggableEditor.LoadLevelItem(itemAsset);
@@ -1399,17 +1452,16 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadLevelItems() {
-		StartCoroutine(loadLevelItemsCo());
+		loadLevelItemsCo();
 	}
 	
-	public IEnumerator loadLevelItemsCo() {
+	public void loadLevelItemsCo() {
 		GameLevelItem gameLevelItem = GameLevelItems.Current;
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 		
 		if(gameLevelItemAssets != null) {
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
 				LoadLevelItem(item);
-				yield return new WaitForEndOfFrame();
 			}
 		}
 	}
