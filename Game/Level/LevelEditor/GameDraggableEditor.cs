@@ -122,9 +122,6 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	void Start() {
 		
-		prefabRootPath = ContentsConfig.contentRootFolder + "/"
-			+ ContentsConfig.contentAppFolder + "/version/shared/prefabs/"; 
-		
 		ShowUIPanelEditButton();
 	}
 

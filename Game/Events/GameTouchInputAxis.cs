@@ -116,7 +116,7 @@ public class GameTouchInputAxis : MonoBehaviour {
                 pad.localPosition = padPos;
             }				
 			
-			LogUtil.Log("axisInput:", axisInput);
+			//LogUtil.Log("axisInput:", axisInput);
 			
 			Messenger<string, Vector3>.Broadcast("input-axis", "input-axis-" + axisName, axisInput);
 		}
