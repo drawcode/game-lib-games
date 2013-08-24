@@ -77,9 +77,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public int grabLayerMask;
 	public Vector3 grabOffset; //delta between transform transform position and hit point
 	public bool  useToggleDrag = false; // Didn't know which style you prefer. 
-	
-	public string prefabRootPath = "";
-	
+		
 	public Vector3 currentEditorPosition;	
 		
 	public static bool editingEnabled = false;
@@ -1282,8 +1280,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public string getResourcePath(string spriteCode) {	
 		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
 		//resourcePath = PathUtil.Combine(resourcePath, spriteCode);
-		string resourcePath = prefabRootPath
-			+ "levelassets/" + spriteCode;
+		string resourcePath = Contents.appCacheVersionSharedPrefabLevelAssets + spriteCode;
 		return resourcePath;
 	}
 	
@@ -1411,7 +1408,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadDraggableContainerObject() {		
-		string path = prefabRootPath + "ui/GameDraggableLevelItem";
+		string path = Contents.appCacheVersionSharedPrefabLevelUI + "GameDraggableLevelItem";
 		LoadDraggableContainerObjectResources(path);
 	}
 	
