@@ -69,6 +69,14 @@ public class GameTouchInputAxis : MonoBehaviour {
 	}
 	
 	void Update() {
+	
+		bool mousePressed = Input.GetMouseButton(0);
+		
+		bool leftPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+		bool rightPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+		bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
+		bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+		
 		if(Input.touchCount > 0) {
 			foreach(Touch touch in Input.touches) {
 				PointHitTest(touch.position);			
@@ -76,6 +84,41 @@ public class GameTouchInputAxis : MonoBehaviour {
 		}
 		else if(Input.GetMouseButton(0)) {
 			PointHitTest(Input.mousePosition);
+		}
+		else if(leftPressed
+				|| rightPressed
+				|| upPressed
+				|| downPressed) {
+				
+				Vector3 axisInput = Vector3.zero;
+				
+				if(upPressed) {
+					axisInput.y = 1;
+				}
+				
+				if(leftPressed) {
+					axisInput.x = -1;
+				}
+				
+				if(downPressed) {
+					axisInput.y = -1;
+				}
+				
+				if(rightPressed) {
+					axisInput.x = 1;
+				}				
+				
+                if (pad != null) {
+                    Vector3 padPos = pad.localPosition;
+                    padPos.x = -axisInput.x;
+                    padPos.y = -axisInput.y;
+                    padPos.z = -axisInput.y;
+                    pad.localPosition = padPos;
+                }				
+				
+				LogUtil.Log("axisInput:", axisInput);
+				
+				Messenger<string, Vector3>.Broadcast("input-axis", "input-axis-" + axisName, axisInput);
 		}
 		else {
 			ResetPad();
