@@ -90,35 +90,35 @@ public class GameTouchInputAxis : MonoBehaviour {
 				|| upPressed
 				|| downPressed) {
 				
-				Vector3 axisInput = Vector3.zero;
-				
-				if(upPressed) {
-					axisInput.y = 1;
-				}
-				
-				if(leftPressed) {
-					axisInput.x = -1;
-				}
-				
-				if(downPressed) {
-					axisInput.y = -1;
-				}
-				
-				if(rightPressed) {
-					axisInput.x = 1;
-				}				
-				
-                if (pad != null) {
-                    Vector3 padPos = pad.localPosition;
-                    padPos.x = -axisInput.x;
-                    padPos.y = -axisInput.y;
-                    padPos.z = -axisInput.y;
-                    pad.localPosition = padPos;
-                }				
-				
-				LogUtil.Log("axisInput:", axisInput);
-				
-				Messenger<string, Vector3>.Broadcast("input-axis", "input-axis-" + axisName, axisInput);
+			Vector3 axisInput = Vector3.zero;
+			
+			if(upPressed) {
+				axisInput.y = 1;
+			}
+			
+			if(leftPressed) {
+				axisInput.x = -1;
+			}
+			
+			if(downPressed) {
+				axisInput.y = -1;
+			}
+			
+			if(rightPressed) {
+				axisInput.x = 1;
+			}				
+			
+            if (pad != null) {
+                Vector3 padPos = pad.localPosition;
+                padPos.x = -axisInput.x;
+                padPos.y = -axisInput.y;
+                padPos.z = -axisInput.y;
+                pad.localPosition = padPos;
+            }				
+			
+			LogUtil.Log("axisInput:", axisInput);
+			
+			Messenger<string, Vector3>.Broadcast("input-axis", "input-axis-" + axisName, axisInput);
 		}
 		else {
 			ResetPad();
