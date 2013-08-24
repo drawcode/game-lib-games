@@ -69,6 +69,10 @@ public class GameTouchInputAxis : MonoBehaviour {
 	}
 	
 	void Update() {
+		
+		if(!GameShooter2DController.Instance.isGameRunning) {
+			return;
+		}
 	
 		bool mousePressed = Input.GetMouseButton(0);
 		
