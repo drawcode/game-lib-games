@@ -70,9 +70,9 @@ public class GameTouchInputAxis : MonoBehaviour {
 	
 	void Update() {
 		
-		if(!GameShooter2DController.Instance.isGameRunning) {
-			return;
-		}
+		//if(!GameShooter2DController.Instance.isGameRunning) {
+		//	return;
+		//}
 	
 		bool mousePressed = Input.GetMouseButton(0);
 		
@@ -89,10 +89,11 @@ public class GameTouchInputAxis : MonoBehaviour {
 		else if(Input.GetMouseButton(0)) {
 			PointHitTest(Input.mousePosition);
 		}
-		else if(leftPressed
+		else if((leftPressed
 				|| rightPressed
 				|| upPressed
-				|| downPressed) {
+				|| downPressed)
+			&& axisName == "main") {
 				
 			Vector3 axisInput = Vector3.zero;
 			
