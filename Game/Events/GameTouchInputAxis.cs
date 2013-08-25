@@ -31,7 +31,7 @@ public class GameTouchInputAxis : MonoBehaviour {
 				
 				//Debug.Log("hit:" + hit.transform.gameObject.name);
 				
-				if(hit.transform.gameObject.name == gameObject.name) {		
+				if(hit.transform.gameObject == gameObject) {		
 					
 					axisInput.x = (hit.textureCoord.x - .5f) * 2;
 					axisInput.y = (hit.textureCoord.y - .5f) * 2;
