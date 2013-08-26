@@ -9,6 +9,9 @@ public class RotateObject : MonoBehaviour {
 
 	void Update () {
 		// Slowly rotate the object around its axis at 1 degree/second * variable.
+		if(transform == null) 
+			return;		
+		
  		transform.Rotate(Vector3.up * Time.deltaTime * RotateSpeedAlongY);
    	 	transform.Rotate(Vector3.forward * Time.deltaTime * RotateSpeedAlongZ);
    		transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeedAlongX);
