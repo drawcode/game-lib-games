@@ -1639,6 +1639,27 @@ public class GameDraggableEditor : MonoBehaviour {
 		}
 		
 		return true;
+	}	
+	
+	// ----------------------------------------------------------------------
+	
+	public static bool IsLevelItemsComplete(GameObject go, string nameLike) {
+		if(isInst) {
+			return Instance.isLevelItemsComplete(go, nameLike);
+		}
+		return false;
+	}
+	public bool isLevelItemsComplete(GameObject go, string nameLike) {
+		
+		foreach(GameDraggableLevelItem item in
+			go.GetComponentsInChildren<GameDraggableLevelItem>()) {
+		    GameLevelItemAsset gameLevelItemAsset = item.gameLevelItemAsset;	
+			if(gameLevelItemAsset.asset_code.ToLower().Contains(nameLike.ToLower())) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	// ----------------------------------------------------------------------
