@@ -93,7 +93,8 @@ public class GameTouchInputAxis : MonoBehaviour {
 				|| rightPressed
 				|| upPressed
 				|| downPressed)
-			&& axisName == "main") {
+			&& (axisName == "main"
+			|| axisName == "move")) {
 				
 			Vector3 axisInput = Vector3.zero;
 			
