@@ -17,7 +17,7 @@ public class AudioRecordObject : MonoBehaviour
 #if UNITY_IPHONE
 
 	public AudioRecorderManager audioManager;
-	//public AudioRecorderEventListener audioEventListener;
+	public AudioRecorderEventListener audioEventListener;
 #elif UNITY_ANDROID
 	public AudioRecorderAndroidManager audioManager;
 	public AudioRecorderAndroidEventListener audioEventListener;
@@ -64,7 +64,7 @@ public class AudioRecordObject : MonoBehaviour
 			
 #if UNITY_IPHONE							
 			audioManager = audioSystem.AddComponent<AudioRecorderManager>();				
-			//audioEventListener = audioSystem.AddComponent<AudioRecorderEventListener>();		
+			audioEventListener = audioSystem.AddComponent<AudioRecorderEventListener>();		
 			
 			LogUtil.Log("AudioObject::InitAudioSystem iOS added...");
 #elif UNITY_ANDROID
