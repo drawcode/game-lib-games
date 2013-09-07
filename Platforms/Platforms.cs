@@ -8,13 +8,14 @@ public class Platforms
 		
 	public static Platforms Instance {
 		get {
-		    if (instance == null) {
-		        lock (syncRoot) {
-		           if (instance == null) 
-		              instance = new Platforms();
-		        }
-		     }
-	    	return instance;
+				if (instance == null) {
+					lock (syncRoot) {
+						if (instance == null) 
+							instance = new Platforms();
+					}
+				}
+			
+			return instance;
 		}
 	}
 	
@@ -22,69 +23,89 @@ public class Platforms
 		
 	}
 	
-	public bool IsAmazonDevice() {
-		
-#if !UNITY_FLASH
+	public static bool IsAmazonDevice() {
 		if(SystemInfo.deviceModel.IndexOf("Kindle") > -1) {
 			return true;
 		}
-#endif
 		return false;
 	}
 	
-	public void ShowWebView(string title, string url) {
-		if(Application.platform == RuntimePlatform.Android) {
-#if UNITY_ANDROID
-			EtceteraAndroid.showWebView(url);
-#endif
-		}
-		else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-#if UNITY_IPHONE		
-			EtceteraBinding.showWebPage(url, false);
-#endif
-		}
-		else {
-			Application.OpenURL(url);
-		}
+	public static void ShowWebView(string title, string url) {
+		Instance.showWebView(title, url);
 	}
 	
-	public void PlayMovie(string url, bool showControls, bool supportLandscape, bool supportPortrait) {
-#if UNITY_ANDROID
+	public void showWebView(string title, string url) {
+
+#if UNITY_EDITOR
+		Application.OpenURL(url);
+#elif UNITY_ANDROID
+		EtceteraAndroid.showWebView(url);
+#elif UNITY_IPHONE		
+		EtceteraBinding.showWebPage(url, false);
+#else
+		Application.OpenURL(url);
+#endif
+	}
+	
+	public static void PlayMovie(string url, bool showControls, bool supportLandscape, bool supportPortrait) {
+		Instance.playMovie(url, showControls, supportLandscape, supportPortrait);
+	}
+	
+	public void playMovie(string url, bool showControls, bool supportLandscape, bool supportPortrait) {
+		
+#if UNITY_EDITOR
+		Application.OpenURL(url);
+#elif UNITY_ANDROID		
+		Application.OpenURL(url);
 #elif UNITY_IPHONE
 		EtceteraTwoBinding.playMovie(url, showControls, supportLandscape, supportPortrait);
 #endif
 	}
 	
-	public void AskForReview(int launchesToWait, string title, string message, string packageId) {
-		if(Application.platform == RuntimePlatform.Android) {
-#if UNITY_ANDROID
-			// TODO android
-			//EtceteraAndroid.askForReview(3, 0, 3, "Review SupaSupaCross!", "Review SupaSupaCross if you like it.", "com.supasupagames.supasupacross");
-#endif
-		}
-		else if(Application.platform == RuntimePlatform.IPhonePlayer) {
-			//Etcetera.ask
-		}
-		else {
-		}		
+	public static void AskForReview(string appName, string bundleId, int launchesToWait, string title, string message, string packageId) {
+		Instance.askForReview(appName, bundleId, launchesToWait, title, message, packageId);
 	}
 	
-	public void ShowEmailView(string to, string subject, string body, bool isHtml) {
+	public void askForReview(string appName, string bundleId, int launchesToWait, string title, string message, string packageId) {
+#if UNITY_ANDROID
+			EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
+#elif UNITY_IPHONE
+			//EtceteraBinding.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
+#endif		
+	}
+	
+	public static void ShowEmailView(string to, string subject, string body, bool isHtml) {
+		Instance.showEmailView(to, subject, body, isHtml);
+	}
+	
+	public void showEmailView(string to, string subject, string body, bool isHtml) {
 #if UNITY_IPHONE
-			if(EtceteraBinding.isEmailAvailable()) {
-				EtceteraBinding.showMailComposer(to, subject, "iOS: " + body, isHtml); 
-			}
-			else {
-				EtceteraBinding.showWebPage("mailto:" + to, false);
-			}
+		if(EtceteraBinding.isEmailAvailable()) {
+			EtceteraBinding.showMailComposer(to, subject, body + " -- Sent From iOS", isHtml); 
+		}
+		else {
+			EtceteraBinding.showWebPage("mailto:" + to, false);
+		}
 #elif UNITY_ANDROID
-			// TODO android
-			EtceteraAndroid.showEmailComposer(to, subject, "Android: " + body, isHtml);
+		EtceteraAndroid.showEmailComposer(to, subject, body + " -- Sent From Android", isHtml);
 #else
 		Application.OpenURL("mailto:" + to);
 #endif
 	}
 	
+	public static void SaveImageToLibrary(string name, string fileToSave) {
+		Instance.saveImageToLibrary(name, fileToSave);
+	}
+	
+	public void saveImageToLibrary(string name, string fileToSave) {
+#if UNITY_IPHONE
+		EtceteraBinding.saveImageToPhotoAlbum(fileToSave);
+#elif UNITY_ANDROID
+		EtceteraAndroid.saveImageToGallery(fileToSave, name);
+#else
+		// TODO save to server on web
+		// TODO save to desktop photos
+#endif	
+	}
 }
-
 
