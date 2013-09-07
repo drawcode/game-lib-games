@@ -523,10 +523,7 @@ public class GameNetworks : MonoBehaviour {
 	
 	public void loginNetwork() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE			
+#if GAMENETWORK_IOS_APPLE_GAMECENTER			
 		if(GameCenterBinding.isGameCenterAvailable()) {
 			GameCenterBinding.authenticateLocalPlayer();
 		}
@@ -549,10 +546,7 @@ public class GameNetworks : MonoBehaviour {
 	
 	public void getAchievements() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
 		GameCenterBinding.getAchievements();
 			
 		//Debug.Log("GameCenter GetAchievements...");
@@ -567,19 +561,13 @@ public class GameNetworks : MonoBehaviour {
 	
 	public void getAchievementsMetadata() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
 		GameCenterBinding.retrieveAchievementMetadata();
 			
 		//Debug.Log("GameCenter GetAchievements...");
 #endif		
 	}
-	
-#if UNITY_EDITOR	
-#elif UNITY_OSX
-#elif UNITY_IPHONE
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
 	
 	public static GameCenterAchievement GetGameCenterAchievement(string identifier) {
 		if(Instance != null) {
@@ -589,7 +577,7 @@ public class GameNetworks : MonoBehaviour {
 	}	
 	
 	public GameCenterAchievement getGameCenterAchievement(string identifier) {		
-		foreach(GameCenterAchievement achievement in achievementsNetwork) {
+		foreach(GameCenterAchievement achievement in gameCenterAchievementsNetwork) {
 			if(achievement.identifier == identifier)
 				return achievement;
 		}
@@ -598,10 +586,7 @@ public class GameNetworks : MonoBehaviour {
 #endif	
 	
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
 	public static GameCenterAchievementMetadata GetGameCenterAchievementMetadata(string identifier) {
 		if(Instance != null) {
 			Instance.getGameCenterAchievementMetadata(identifier);
@@ -611,7 +596,7 @@ public class GameNetworks : MonoBehaviour {
 	
 	public GameCenterAchievementMetadata getGameCenterAchievementMetadata(string identifier)
 	{		
-		foreach(GameCenterAchievementMetadata achievement in achievementsMetaNetwork) {
+		foreach(GameCenterAchievementMetadata achievement in gameCenterAchievementsMetaNetwork) {
 			if(achievement.identifier == identifier)
 				return achievement;
 		}
@@ -627,13 +612,9 @@ public class GameNetworks : MonoBehaviour {
 	
 	public void checkAchievementsState() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
-
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
 		// Sync from other devices.
-		foreach(GameCenterAchievement achievement in achievementsNetwork) {
+		foreach(GameCenterAchievement achievement in gameCenterAchievementsNetwork) {
 			bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(achievement.identifier);
 			bool remoteAchievementValue = achievement.completed;
 			
@@ -643,7 +624,7 @@ public class GameNetworks : MonoBehaviour {
 			}
 		}
 		
-		foreach(GameCenterAchievementMetadata meta in achievementsMetaNetwork) {
+		foreach(GameCenterAchievementMetadata meta in gameCenterAchievementsMetaNetwork) {
 			// TODO - pull down any new achievements from iTunesConnect
 			LogUtil.Log("GameCenterAchievementMetadata:" + meta.identifier);
 		}
@@ -1086,10 +1067,7 @@ public class GameNetworks : MonoBehaviour {
 	
 	private void InitEvents() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE			
+#if GAMENETWORK_IOS_APPLE_GAMECENTER		
 			GameCenterManager.playerAuthenticated += playerAuthenticated;
 			GameCenterManager.achievementsLoaded += achievementsLoaded;
 			GameCenterManager.achievementMetadataLoaded += achievementMetadataLoaded;
@@ -1098,10 +1076,7 @@ public class GameNetworks : MonoBehaviour {
 	
 	private void RemoveEvents() {
 
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE	
+#if GAMENETWORK_IOS_APPLE_GAMECENTER	
 			GameCenterManager.playerAuthenticated -= playerAuthenticated;
 			GameCenterManager.achievementsLoaded -= achievementsLoaded;
 			GameCenterManager.achievementMetadataLoaded -= achievementMetadataLoaded;
