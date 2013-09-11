@@ -70,32 +70,32 @@ public class SocialNetworks : MonoBehaviour {
 		
 	void OnEnable() {
 		FacebookManager.sessionOpenedEvent += facebookLogin;
-		FacebookManager.loginFailedEvent += facebookLoginFailed;
+		//FacebookManager.loginFailedEvent += facebookLoginFailed;
 		//FacebookManager.sessionInvalidatedEvent += facebookSessionInvalidatedEvent;
 
 		//FacebookManager.dialogCompletedEvent += facebokDialogCompleted;
 		FacebookManager.dialogCompletedWithUrlEvent += facebookDialogCompletedWithUrl;
 		//FacebookManager.dialogFailedEventdialogDidNotCompleteEvent += facebookDialogDidntComplete;
-		FacebookManager.dialogFailedEvent += facebookDialogFailed;
+		//FacebookManager.dialogFailedEvent += facebookDialogFailed;
 		FacebookManager.facebookComposerCompletedEvent += facebookComposerCompletedEvent;
 		
-		FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
-		FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
+		//FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
+		//FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
 	}
 
 	void OnDisable() {
 		// Remove all the event handlers when disabled
 		FacebookManager.sessionOpenedEvent -= facebookLogin;
-		FacebookManager.loginFailedEvent -= facebookLoginFailed;
+		//FacebookManager.loginFailedEvent -= facebookLoginFailed;
 
 		//FacebookManager.dialogCompletedEvent -= facebokDialogCompleted;
 		FacebookManager.dialogCompletedWithUrlEvent -= facebookDialogCompletedWithUrl;
 		//FacebookManager.dialogDidNotCompleteEvent -= facebookDialogDidntComplete;
-		FacebookManager.dialogFailedEvent -= facebookDialogFailed;
+		//FacebookManager.dialogFailedEvent -= facebookDialogFailed;
 		FacebookManager.facebookComposerCompletedEvent -= facebookComposerCompletedEvent;
 		
-		FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
-		FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
+		//FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
+		//FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
 	}
 	
 	// ##############################################################################################
