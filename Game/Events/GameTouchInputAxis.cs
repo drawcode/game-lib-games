@@ -70,7 +70,7 @@ public class GameTouchInputAxis : MonoBehaviour {
 	
 	void Update() {
 		
-		//if(!GameShooter2DController.Instance.isGameRunning) {
+		//if(!GameController.Instance.isGameRunning) {
 		//	return;
 		//}
 	
