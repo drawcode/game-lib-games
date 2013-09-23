@@ -382,7 +382,7 @@ public class SocialNetworks : MonoBehaviour {
 #if UNITY_IPHONE
 				FacebookBinding.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);		
 #elif UNITY_ANDROID
-				FacebookAndroid.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.EVERYONE);	
+				FacebookAndroid.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);	
 #else
 #endif
 				reAuthAttempts++;
@@ -674,8 +674,8 @@ public class SocialNetworks : MonoBehaviour {
 		LogUtil.Log("LoadSocialLibs RuntimePlatform.Android..." + Application.platform);			
 		
 		socialNetworkTwitterAndroid = new GameObject("TwitterAndroidManager");
-		socialNetworkTwitterAndroid.AddComponent<TwitterAndroidManager>();
-		socialNetworkTwitterAndroid.AddComponent<TwitterAndroidEventListener>();
+		socialNetworkTwitterAndroid.AddComponent<TwitterManager>();
+		socialNetworkTwitterAndroid.AddComponent<TwitterEventListener>();
 		
 		TwitterAndroid.init(TWITTER_KEY, TWITTER_SECRET);
 		LogUtil.Log("Twitter init..." + TWITTER_KEY);
@@ -745,7 +745,7 @@ public class SocialNetworks : MonoBehaviour {
 	
 	public void postMessageTwitter(string message) {
 #if UNITY_ANDROID				
-			TwitterAndroid.postUpdate(message);
+			//TwitterAndroid.postUpdate(message);
 #elif UNITY_IPHONE
 			TwitterBinding.postStatusUpdate(message);
 #elif UNITY_WEBPLAYER
@@ -762,7 +762,7 @@ public class SocialNetworks : MonoBehaviour {
 	
 	public void postMessageTwitter(string message, string pathToImage) {
 #if UNITY_ANDROID				
-			TwitterAndroid.postUpdate(message);
+			//TwitterAndroid.postUpdate(message);
 #elif UNITY_IPHONE
 			TwitterBinding.postStatusUpdate(message, pathToImage);
 #elif UNITY_WEBPLAYER
@@ -781,7 +781,7 @@ public class SocialNetworks : MonoBehaviour {
 	public void showComposerTwitter(string message) {
 #if UNITY_ANDROID				
 		// TODO, link, image path
-		TwitterAndroid.postUpdate(message);
+		//TwitterAndroid.postUpdate(message);
 #elif UNITY_IPHONE
 		TwitterBinding.showTweetComposer(message);
 #elif UNITY_WEBPLAYER
@@ -799,7 +799,7 @@ public class SocialNetworks : MonoBehaviour {
 	public void showComposerTwitter(string message, string pathToImage) {
 #if UNITY_ANDROID				
 		// TODO, link, image path
-		TwitterAndroid.postUpdate(message);
+		//TwitterAndroid.postUpdate(message);
 #elif UNITY_IPHONE
 		TwitterBinding.showTweetComposer(message, pathToImage);
 #elif UNITY_WEBPLAYER
@@ -817,7 +817,7 @@ public class SocialNetworks : MonoBehaviour {
 	public void showComposerTwitter(string message, string pathToImage, string link) {
 #if UNITY_ANDROID				
 		// TODO, link, image path
-		TwitterAndroid.postUpdate(message);
+		//TwitterAndroid.postUpdate(message);
 #elif UNITY_IPHONE
 		TwitterBinding.showTweetComposer(message, pathToImage, link);
 #elif UNITY_WEBPLAYER

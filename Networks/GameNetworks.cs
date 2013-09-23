@@ -2,7 +2,7 @@
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used. 
 
-#define GAMENETWORK_IOS_APPLE_GAMECENTER
+//#define GAMENETWORK_IOS_APPLE_GAMECENTER
 #define GAMENETWORK_ANDROID_GOOGLE_PLAY
 //#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
 //#define GAMENETWORK_ANDROID_SAMSUNG
