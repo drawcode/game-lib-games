@@ -1,3 +1,4 @@
+#define DEV
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,16 +68,26 @@ public class UIPanelSettingsAudio : UIPanelBase {
     void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
 
         //Debug.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
-
+		
+		bool changeAudio = true;
+		
+#if DEV		
+		if(Application.isEditor) {
+			GameProfiles.Current.SetAudioMusicVolume(0);
+			GameProfiles.Current.SetAudioEffectsVolume(0);
+			changeAudio = false;
+		}
+#endif
+		
+		if(!changeAudio) {
+			return;
+		}
+		
         if (sliderName == sliderEffectsVolume.name) {
-            GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
-			GameAudio.SetEffectsVolume(sliderValue);
-			GameState.Instance.SaveProfile();
+			GameAudio.SetProfileEffectsVolume(sliderValue);
         }
         else if (sliderName == sliderMusicVolume.name) {
-            GameProfiles.Current.SetAudioMusicVolume(sliderValue);
-			GameAudio.SetAmbienceVolume(sliderValue);
-			GameState.Instance.SaveProfile();
+			GameAudio.SetProfileAmbienceVolume(sliderValue);
         }
     }
 	
@@ -100,11 +111,15 @@ public class UIPanelSettingsAudio : UIPanelBase {
 		if(sliderMusicVolume != null) {
 			sliderMusicVolume.sliderValue = musicVolume;
 			sliderMusicVolume.ForceUpdate();
+			
+			GameAudio.SetProfileEffectsVolume(musicVolume);
 		}
 		
 		if(sliderEffectsVolume != null) {
 			sliderEffectsVolume.sliderValue = effectsVolume;
 			sliderEffectsVolume.ForceUpdate();
+			
+			GameAudio.SetProfileAmbienceVolume(effectsVolume);
 		}
 	}
 	
