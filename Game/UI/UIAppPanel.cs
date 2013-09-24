@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 using UnityEngine;
 
@@ -15,6 +16,8 @@ public class UIAppPanel : MonoBehaviour {
 	
 	public bool isVisible = false;
         
+	public string className = "";
+	
     public virtual void Start() {
         Init();
     }
@@ -22,6 +25,9 @@ public class UIAppPanel : MonoBehaviour {
     public virtual void Init() {
         if(GameGlobal.Instance == null) {
 			Application.LoadLevel("GameUISceneRoot");
+		}
+		else {
+			GetClassName();
 		}
     } 	
 	
@@ -55,5 +61,9 @@ public class UIAppPanel : MonoBehaviour {
 		}
 	}	
 	
-	
+	public string GetClassName() {
+		className = MethodBase.GetCurrentMethod().DeclaringType.Name;
+		Debug.Log("CLASS NAME:" + className);
+		return className;
+	}	
 }
