@@ -10,6 +10,11 @@ public enum UIAppPanelMode {
 	ModeList
 }
 
+public class UIAppPanelMessages {
+	public static string panelShow = "ui-app-panel-show";
+	public static string panelHide = "ui-app-panel-hide";
+}
+
 public class UIAppPanel : MonoBehaviour {
 	
 	public UIAppPanelMode panelMode = UIAppPanelMode.ModeMain;
@@ -27,7 +32,7 @@ public class UIAppPanel : MonoBehaviour {
 			Application.LoadLevel("GameUISceneRoot");
 		}
 		else {
-			GetClassName();
+			GetClassName(this);
 		}
     } 	
 	
@@ -61,8 +66,8 @@ public class UIAppPanel : MonoBehaviour {
 		}
 	}	
 	
-	public string GetClassName() {
-		className = MethodBase.GetCurrentMethod().DeclaringType.Name;
+	public string GetClassName(object item) {
+		className = item.GetType().Name;
 		Debug.Log("CLASS NAME:" + className);
 		return className;
 	}	
