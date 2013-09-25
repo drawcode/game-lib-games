@@ -74,6 +74,17 @@ public class BaseUIPanel {
     public static string panelResults = "PanelResults";
     public static string panelTrophyStatistics = "PanelTrophyStatistics";
     public static string panelTrophyAchievements = "PanelTrophyAchievements";
+	
+    public static string panelEquipment = "PanelEquipment";
+    public static string panelStatistics = "PanelStatistics";
+    public static string panelAchievements = "PanelAchievements";
+    public static string panelProducts = "PanelProducts";
+    public static string panelCustomize = "PanelCustomize";
+    public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
+    public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
+    public static string panelCustomizeAudio = "PanelCustomizeAudio";
+    public static string panelCustomSafety = "PanelCustomSafety";
+    public static string panelCustomSmarts = "panelCustomSmarts";
 }
 
 public class BaseUIController : MonoBehaviour { 
@@ -828,13 +839,13 @@ public class BaseUIController : MonoBehaviour {
 				}
 				else 
 				if(GameUIController.Instance.currentPanel 
-					== GameUIPanel.panelEquipmentAchievements
+					== BaseUIPanel.panelAchievements
 					|| GameUIController.Instance.currentPanel 
-					== GameUIPanel.panelEquipmentCustomize
+					== BaseUIPanel.panelCustomize
 					|| GameUIController.Instance.currentPanel 
-					== GameUIPanel.panelEquipmentProducts
+					== BaseUIPanel.panelProducts
 					|| GameUIController.Instance.currentPanel 
-					== GameUIPanel.panelEquipmentStatistics) {
+					== BaseUIPanel.panelStatistics) {
 						
 					GameUIController.ShowEquipment();		
 					
@@ -1158,15 +1169,15 @@ public class BaseUIController : MonoBehaviour {
 	// ------------------------------------------------------------
 	// EQUIPMENT - STATISTICS
 	
-    public static virtual void ShowEquipmentStatistics() {
+    public static virtual void ShowStatistics() {
 		if(isInst) {
-			Instance.showEquipmentStatistics();
+			Instance.showStatistics();
 		}
 	}
 	
-    public virtual void showEquipmentStatistics() {	
+    public virtual void showStatistics() {	
 		
-		currentPanel = BaseUIPanel.panelEquipmentStatistics;		
+		currentPanel = BaseUIPanel.panelStatistics;		
 		
 		HideAllPanelsNow();
 		
@@ -1178,13 +1189,13 @@ public class BaseUIController : MonoBehaviour {
 		GameUIPanelStatistics.Instance.AnimateIn();		
     } 
 	
-	public static virtual void HideEquipmentStatistics() {
+	public static virtual void HideStatistics() {
 		if(isInst) {
-			Instance.hideEquipmentStatistics();
+			Instance.hideStatistics();
 		}
 	}
     
-    public virtual void hideEquipmentStatistics() {
+    public virtual void hideStatistics() {
 		GameUIPanelStatistics.Instance.AnimateOut();
     }
 	
@@ -1192,15 +1203,15 @@ public class BaseUIController : MonoBehaviour {
 	// ------------------------------------------------------------
 	// EQUIPMENT - ACHIEVEMENTS
 	
-    public static virtual void ShowEquipmentAchievements() {
+    public static virtual void ShowAchievements() {
 		if(isInst) {
-			Instance.showEquipmentAchievements();
+			Instance.showAchievements();
 		}
 	}
 	
-    public virtual void showEquipmentAchievements() {	
+    public virtual void showAchievements() {	
 		
-		currentPanel = BaseUIPanel.panelEquipmentAchievements;		
+		currentPanel = BaseUIPanel.panelAchievements;		
 		
 		HideAllPanelsNow();
 		
@@ -1212,13 +1223,13 @@ public class BaseUIController : MonoBehaviour {
 		GameUIPanelAchievements.Instance.AnimateIn();		
     } 
 	
-	public static virtual void HideEquipmentAchievements() {
+	public static virtual void HideAchievements() {
 		if(isInst) {
-			Instance.hideEquipmentAchievements();
+			Instance.hideAchievements();
 		}
 	}
     
-    public virtual void hideEquipmentAchievements() {
+    public virtual void hideAchievements() {
 		GameUIPanelAchievements.Instance.AnimateOut();
     }
 	
@@ -1227,15 +1238,15 @@ public class BaseUIController : MonoBehaviour {
 	// ------------------------------------------------------------
 	// EQUIPMENT - ACHIEVEMENTS
 	
-    public static virtual void ShowEquipmentProducts() {
+    public static virtual void ShowProducts() {
 		if(isInst) {
-			Instance.showEquipmentProducts();
+			Instance.showProducts();
 		}
 	}
 	
-    public virtual void showEquipmentProducts() {	
+    public virtual void showProducts() {	
 		
-		currentPanel = BaseUIPanel.panelEquipmentProducts;		
+		currentPanel = BaseUIPanel.panelProducts;		
 		
 		HideAllPanelsNow();
 		
@@ -1247,13 +1258,13 @@ public class BaseUIController : MonoBehaviour {
 		GameUIPanelProducts.Instance.AnimateIn();		
     } 
 	
-	public static virtual void HideEquipmentProducts() {
+	public static virtual void HideProducts() {
 		if(isInst) {
-			Instance.hideEquipmentProducts();
+			Instance.hideProducts();
 		}
 	}
     
-    public virtual void hideEquipmentProducts() {
+    public virtual void hideProducts() {
 		GameUIPanelProducts.Instance.AnimateOut();
     }
 	
@@ -1261,15 +1272,15 @@ public class BaseUIController : MonoBehaviour {
 	// ------------------------------------------------------------
 	// EQUIPMENT - ACHIEVEMENTS
 	
-    public static virtual void ShowEquipmentCustomize() {
+    public static virtual void ShowCustomize() {
 		if(isInst) {
-			Instance.showEquipmentCustomize();
+			Instance.showCustomize();
 		}
 	}
 	
-    public virtual void showEquipmentCustomize() {	
+    public virtual void showCustomize() {	
 		
-		currentPanel = BaseUIPanel.panelEquipmentCustomize;		
+		currentPanel = BaseUIPanel.panelCustomize;		
 		
 		HideAllPanelsNow();
 		
@@ -1281,13 +1292,13 @@ public class BaseUIController : MonoBehaviour {
 		GameUIPanelCustomize.Instance.AnimateIn();		
     } 
 	
-	public static virtual void HideEquipmentCustomize() {
+	public static virtual void HideCustomize() {
 		if(isInst) {
-			Instance.hideEquipmentCustomize();
+			Instance.hideCustomize();
 		}
 	}
     
-    public virtual void hideEquipmentCustomize() {
+    public virtual void hideCustomize() {
 		GameUIPanelCustomize.Instance.AnimateOut();
     }
 	*/
@@ -1459,6 +1470,275 @@ public class BaseUIController : MonoBehaviour {
 		StartCoroutine(HideOverlay());
 		
     } 
+	
+	
+	// ------------------------------------------------------------
+	// EQUIPMENT - MAIN
+	
+    //public static void ShowEquipment() {
+	//	if(isInst) {
+	//		Instance.showEquipment();
+	//	}
+	//}
+	
+    public virtual void showEquipment() {	
+		
+		currentPanel = BaseUIPanel.panelEquipment;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("EQUIPMENT, PROGRESS + CUSTOMIZATION");
+		
+		GameUIPanelEquipment.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideEquipment() {
+	//	if(isInst) {
+	//		Instance.hideEquipment();
+	//	}
+	//}
+    
+    public virtual void hideEquipment() {
+		GameUIPanelEquipment.Instance.AnimateOut();
+    }
+	
+	
+	// ------------------------------------------------------------
+	// EQUIPMENT - STATISTICS
+	
+    //public static void ShowStatistics() {
+	//	if(isInst) {
+	//		Instance.showStatistics();
+	//	}
+	//}
+	
+    public virtual void showStatistics() {	
+		
+		currentPanel = BaseUIPanel.panelStatistics;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("STATISTICS");
+		
+		GameUIPanelStatistics.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideStatistics() {
+	//	if(isInst) {
+	//		Instance.hideStatistics();
+	//	}
+	//}
+    
+    public virtual void hideStatistics() {
+		GameUIPanelStatistics.Instance.AnimateOut();
+    }
+	
+		
+	// ------------------------------------------------------------
+	// EQUIPMENT - ACHIEVEMENTS
+	
+    //public static void ShowAchievements() {
+	//	if(isInst) {
+	//		Instance.showAchievements();
+	//	}
+	//}
+	
+    public virtual void showAchievements() {	
+		
+		currentPanel = BaseUIPanel.panelAchievements;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("ACHIEVEMENTS");
+		
+		GameUIPanelAchievements.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideAchievements() {
+	//	if(isInst) {
+	//		Instance.hideAchievements();
+	//	}
+	//}
+    
+    public virtual void hideAchievements() {
+		GameUIPanelAchievements.Instance.AnimateOut();
+    }
+		
+	// ------------------------------------------------------------
+	// EQUIPMENT - PRODUCTS
+	
+    //public static void ShowProducts() {
+	//	if(isInst) {
+	//		Instance.showProducts();
+	//	}
+	//}
+	
+    public virtual void showProducts() {	
+		
+		currentPanel = BaseUIPanel.panelProducts;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("POWERUPS");
+		
+		GameUIPanelProducts.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideProducts() {
+	//	if(isInst) {
+	//		Instance.hideProducts();
+	//	}
+	//}
+    
+    public virtual void hideProducts() {
+		GameUIPanelProducts.Instance.AnimateOut();
+    }	
+			
+	// ------------------------------------------------------------
+	// EQUIPMENT - CUSTOMIZE
+	
+    //public static void ShowCustomize() {
+	//	if(isInst) {
+	//		Instance.showCustomize();
+	//	}
+	//}
+	
+    public virtual void showCustomize() {	
+		
+		currentPanel = BaseUIPanel.panelCustomize;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("CUSTOMIZE");
+		
+		GameUIPanelCustomize.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideCustomize() {
+	//	if(isInst) {
+	//		Instance.hideCustomize();
+	//	}
+	//}
+	
+    public virtual void hideCustomize() {
+		GameUIPanelCustomize.Instance.AnimateOut();
+    }
+	
+	// ------------------------------------------------------------
+	// EQUIPMENT - CUSTOMIZE AUDIO
+	
+    //public static void ShowCustomizeAudio() {
+	//	if(isInst) {
+	//		Instance.showCustomizeAudio();
+	//	}
+	//}
+	
+	/*
+    public virtual void showCustomizeAudio() {	
+		
+		currentPanel = BaseUIPanel.panelCustomizeAudio;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("CUSTOMIZE");
+		
+		GameUIPanelCustomizeAudio.Instance.AnimateIn();		
+    } 
+    */
+	
+	//public static void HideCustomizeAudio() {
+	//	if(isInst) {
+	//		Instance.hideCustomizeAudio();
+	//	}
+	//}
+	
+    //public virtual void hideCustomizeAudio() {
+	//	GameUIPanelCustomizeAudio.Instance.AnimateOut();
+    //}
+		
+	// ------------------------------------------------------------
+	// EQUIPMENT - CUSTOMIZE CHARACTER COLORS	
+	
+	 //public static void ShowCustomizeCharacterColors() {
+	//	if(isInst) {
+	//		Instance.showCustomizeCharacterColors();
+	//	}
+	//}
+	
+    public virtual void showCustomizeCharacterColors() {	
+		
+		currentPanel = BaseUIPanel.panelCustomizeCharacterColors;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("CUSTOMIZE: PLAYER COLORS");
+		
+		GameUIPanelCustomizeCharacterColors.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideCustomizeCharacterColors() {
+	//	if(isInst) {
+	//		Instance.hideCustomizeCharacterColors();
+	//	}
+	//}
+    
+    public virtual void hideCustomizeCharacterColors() {
+		GameUIPanelCustomizeCharacterColors.Instance.AnimateOut();
+    }
+	
+	// ------------------------------------------------------------
+	// EQUIPMENT - CUSTOMIZE CHARACTER RPG	
+	
+	 //public static void ShowCustomizeCharacterRPG() {
+	//	if(isInst) {
+	//		Instance.showCustomizeCharacterRPG();
+	//	}
+	//}
+	
+    public virtual void showCustomizeCharacterRPG() {	
+		
+		currentPanel = BaseUIPanel.panelCustomizeCharacterRPG;		
+		
+		HideAllPanelsNow();
+		
+		GameUIPanelBackgrounds.Instance.AnimateInStarry();
+		
+		GameUIPanelHeader.Instance.AnimateInInternal();	
+		GameUIPanelHeader.ShowTitle("CUSTOMIZE: PLAYER SKILLS");
+		
+		GameUIPanelCustomizeCharacterRPG.Instance.AnimateIn();		
+    } 
+	
+	//public static void HideCustomizeCharacterRPG() {
+	//	if(isInst) {
+	//		Instance.hideCustomizeCharacterRPG();
+	//	}
+	//}
+    
+    public virtual void hideCustomizeCharacterRPG() {
+		GameUIPanelCustomizeCharacterRPG.Instance.AnimateOut();
+    }
 	
 	IEnumerator HideOverlay() {
 		yield return new WaitForSeconds(0.4f);

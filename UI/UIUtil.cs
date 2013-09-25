@@ -375,7 +375,18 @@ public class UIUtil {
                         return obj.isChecked;
                 }
                 return false;
-        }
+        }	
+	
+		public static bool IsButton(GameObject go) {
+			if(go == null)
+				return false;
+		
+			if(go.HasComponent<UIButton>() || go.HasComponent<UIImageButton>()) {
+				//LogUtil.Log("IsButtonClicked: " + buttonClickedName);
+				return true;
+			}
+			return false;
+		}
 	
 		public static bool IsButtonClicked(UIButton button, string buttonClickedName) {
 			if(button == null)
