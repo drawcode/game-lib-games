@@ -2098,7 +2098,7 @@ public class BaseUIController : MonoBehaviour {
 		else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameRestart) > -1) {
 			GameRestart();
 		}
-		else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameWorlds) > -1) {
+		else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameWorlds) > -1) { 
 			GameWorlds();
 		}
 		else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameContinue) > -1) {
@@ -2114,25 +2114,23 @@ public class BaseUIController : MonoBehaviour {
     }
 	
 	public virtual void HandleHUDButtons(string buttonName) {
-		if(buttonName == "ButtonAttack") {
-			if(GameController.Instance.currentGamePlayerController != null) {
-				GameController.Instance.currentGamePlayerController.Attack();
-			}
+		if(buttonName == "ButtonInputAttack") {
+			GameController.GamePlayerAttack();
 		}		
-		else if(buttonName == "ButtonAttackAlt") {
-			if(GameController.Instance.currentGamePlayerController != null) {
-				GameController.Instance.currentGamePlayerController.AttackAlt();
-			}
+		else if(buttonName == "ButtonInputAttackAlt") {
+			//GameController.GamePlayerAttackAlt();
 		}	
-		else if(buttonName == "ButtonAttackRight") {
-			if(GameController.Instance.currentGamePlayerController != null) {
-				GameController.Instance.currentGamePlayerController.AttackRight();
-			}
+		else if(buttonName == "ButtonInputAttackRight") {
+			//GameController.GamePlayerAttackRight();
 		}	
-		else if(buttonName == "ButtonSkill") {
-			if(GameController.Instance.currentGamePlayerController != null) {
-				GameController.Instance.currentGamePlayerController.Skill();
-			}
+		else if(buttonName == "ButtonInputSkill") {
+			//GameController.GamePlayerSkill();
+		}	
+		else if(buttonName == "ButtonInputUse") {
+			GameController.GamePlayerUse();
+		}	
+		else if(buttonName == "ButtonINputJump") {
+			GameController.GamePlayerJump();
 		}			
 	}
 	
