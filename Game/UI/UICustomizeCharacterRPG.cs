@@ -50,7 +50,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	public override void Init() {
 		base.Init();
 		
-		LoadData();
+		//loadData();
 	}
 	
     void OnEnable() {
@@ -108,25 +108,25 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 		
 		List<UICustomizeCharacterRPGItem> rpgItems = new List<UICustomizeCharacterRPGItem>();
 		
-		rpgItemSpeed.rpgCode = GameItemRPGAttributes.speed;
+		rpgItemSpeed.Load(GameItemRPGAttributes.speed);
 		rpgItems.Add(rpgItemSpeed);		
 		
-		rpgItemSpeed.rpgCode = GameItemRPGAttributes.health;
+		rpgItemHealth.Load(GameItemRPGAttributes.health);
 		rpgItems.Add(rpgItemHealth);		
 		
-		rpgItemSpeed.rpgCode = GameItemRPGAttributes.energy;
+		rpgItemEnergy.Load(GameItemRPGAttributes.energy);
 		rpgItems.Add(rpgItemEnergy);		
 		
-		rpgItemSpeed.rpgCode = GameItemRPGAttributes.attack;
+		rpgItemAttack.Load(GameItemRPGAttributes.attack);
 		rpgItems.Add(rpgItemAttack);		
 		
-		rpgItemSpeed.rpgCode = GameItemRPGAttributes.defense;
+		rpgItemDefense.Load(GameItemRPGAttributes.defense);
 		rpgItems.Add(rpgItemDefense);
 		
         foreach(UICustomizeCharacterRPGItem rpgItem in rpgItems) {
 			
-            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-            item.name = "AItem" + i;
+            //GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+            //item.name = "AItem" + i;
 			
             //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
             //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
@@ -136,7 +136,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 			
 			//item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;				
 							
-			i++;
+			//i++;
         }
 	}
 }

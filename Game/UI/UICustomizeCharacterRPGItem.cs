@@ -57,18 +57,33 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 		string displayName = "";
 		double val = 0.1f;
 		
-		gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacter().characterRPG;
+		//gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacter().characterRPG;
 		
 		if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
-			displayName = "Stiffarm";
+			displayName = RPGConfigs.displayNameAttack;
 		}
 		else if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
-			displayName = "Stiffarm";
+			displayName = RPGConfigs.displayNameDefense;
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.defense) {
+			displayName = RPGConfigs.displayNameDefense;
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.energy) {
+			displayName = RPGConfigs.displayNameEnergy;
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.health) {
+			displayName = RPGConfigs.displayNameHealth;
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.jump) {
+			displayName = RPGConfigs.displayNameJump;
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.speed) {
+			displayName = RPGConfigs.displayNameSpeed;
 		}
 		
 		
-		UIUtil.SetSliderValue(sliderProfileValue, (float)gameItemRPG.energy);
-		UIUtil.SetSliderValue(sliderCurrentValue, (float)gameItemRPG.energy);
+		//UIUtil.SetSliderValue(sliderProfileValue, (float)gameItemRPG.energy);
+		//UIUtil.SetSliderValue(sliderCurrentValue, (float)gameItemRPG.energy);
 	}
 	
 	public void SetName(string nameTo) {
