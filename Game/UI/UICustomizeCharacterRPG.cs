@@ -22,17 +22,15 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	public UIImageButton buttonSaveRPG;
 	public UIImageButton buttonBuyUpgrades;
 	
-	public UICustomizeCharacterRPGItem rpgItemHealth;
-	public UICustomizeCharacterRPGItem rpgItemEnergy;
-	public UICustomizeCharacterRPGItem rpgItemSpeed;
-	public UICustomizeCharacterRPGItem rpgItemAttack;
-	public UICustomizeCharacterRPGItem rpgItemDefense;
+	UICustomizeCharacterRPGItem rpgItemHealth;
+	UICustomizeCharacterRPGItem rpgItemEnergy;
+	UICustomizeCharacterRPGItem rpgItemSpeed;
+	UICustomizeCharacterRPGItem rpgItemAttack;
+	UICustomizeCharacterRPGItem rpgItemDefense;
 	
 	public static UICustomizeCharacterRPG Instance;
 	
 	public GameObject listItemPrefab;
-	
-	public string characterCode;
 		
 	public static bool isInst {
 		get {
@@ -125,8 +123,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 		
         foreach(UICustomizeCharacterRPGItem rpgItem in rpgItems) {
 			
-            //GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-            //item.name = "AItem" + i;
+            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.name = "AItem" + i;
 			
             //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
             //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
@@ -136,7 +134,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 			
 			//item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;				
 							
-			//i++;
+			i++;
         }
 	}
 }
