@@ -28,6 +28,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	UICustomizeCharacterRPGItem rpgItemAttack;
 	UICustomizeCharacterRPGItem rpgItemDefense;
 	
+	GameItemRPG gameItemRPG;
+	
 	public static UICustomizeCharacterRPG Instance;
 	
 	public GameObject listItemPrefab;
@@ -48,7 +50,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	public override void Init() {
 		base.Init();
 		
-		//loadData();
+		loadData();
 	}
 	
     void OnEnable() {
@@ -104,6 +106,14 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 		
 		SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
 		
+		gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
+		
+		rpgItemSpeed = new UICustomizeCharacterRPGItem();
+		rpgItemHealth = new UICustomizeCharacterRPGItem();
+		rpgItemEnergy = new UICustomizeCharacterRPGItem();
+		rpgItemAttack = new UICustomizeCharacterRPGItem();
+		//rpgItemDefense = new UICustomizeCharacterRPGItem();
+		
 		List<UICustomizeCharacterRPGItem> rpgItems = new List<UICustomizeCharacterRPGItem>();
 		
 		rpgItemSpeed.Load(GameItemRPGAttributes.speed);
@@ -118,8 +128,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 		rpgItemAttack.Load(GameItemRPGAttributes.attack);
 		rpgItems.Add(rpgItemAttack);		
 		
-		rpgItemDefense.Load(GameItemRPGAttributes.defense);
-		rpgItems.Add(rpgItemDefense);
+		//rpgItemDefense.Load(GameItemRPGAttributes.defense);
+		//rpgItems.Add(rpgItemDefense);
 		
         foreach(UICustomizeCharacterRPGItem rpgItem in rpgItems) {
 			

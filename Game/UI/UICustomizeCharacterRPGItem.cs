@@ -53,27 +53,11 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 	}
 	
 	public void LoadData() {
-		// TODO select characters
-		string displayName = "";
-		double val = 0.1f;
-		
+		double val = 0.1f;		
 		gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
-				
-		
+						
 		//UIUtil.SetSliderValue(sliderProfileValue, (float)gameItemRPG.energy);
-		//UIUtil.SetSliderValue(sliderCurrentValue, (float)gameItemRPG.energy);
-	}
-	
-	public void SetName(string nameTo) {
-		if(labelName != null) {
-			labelName.text = nameTo;
-		}
-	}
-	
-	public void Load(string rpgCodeTo) {
-		rpgCode = rpgCodeTo;
-				
-		LoadData();
+		//UIUtil.SetSliderValue(sliderCurrentValue, (float)gameItemRPG.energy);		
 		
 		string displayName = "";
 		
@@ -100,6 +84,18 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 		}
 		
 		SetName(displayName);
+	}
+	
+	public void SetName(string nameTo) {
+		if(labelName != null) {
+			labelName.text = nameTo;
+		}
+	}
+	
+	public void Load(string rpgCodeTo) {
+		rpgCode = rpgCodeTo;
+				
+		LoadData();
 	}
 		
 	public void Up(string rpgCode) {	
