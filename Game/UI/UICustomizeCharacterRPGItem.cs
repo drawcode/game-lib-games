@@ -21,6 +21,8 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 	public UIImageButton buttonRPGItemUp;
 	public UIImageButton buttonRPGItemDown;
 	
+	public UILabel labelName;
+	
 	void Start() {
 		LoadData();
 	}
@@ -51,15 +53,33 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 	}
 	
 	public void LoadData() {
-		gameItemRPG = new GameItemRPG();
-		gameItemRPG.attack = .1;
-		gameItemRPG.defense = .1;
-		gameItemRPG.energy = .1;
-		gameItemRPG.health = .1;
-		gameItemRPG.speed = .1;
+		// TODO select characters
+		string displayName = "";
+		double val = 0.1f;
+		
+		gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacter().characterRPG;
+		
+		if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
+			displayName = "Stiffarm";
+		}
+		else if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
+			displayName = "Stiffarm";
+		}
+		
 		
 		UIUtil.SetSliderValue(sliderProfileValue, (float)gameItemRPG.energy);
 		UIUtil.SetSliderValue(sliderCurrentValue, (float)gameItemRPG.energy);
+	}
+	
+	public void SetName(string nameTo) {
+		if(labelName != null) {
+			labelName.text = nameTo;
+		}
+	}
+	
+	public void Load(string rpgCodeTo) {
+		rpgCode = rpgCodeTo;
+		LoadData();
 	}
 		
 	public void Up(string rpgCode) {	

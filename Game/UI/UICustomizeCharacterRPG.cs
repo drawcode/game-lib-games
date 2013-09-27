@@ -20,6 +20,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	
 	public UIImageButton buttonResetRPG;
 	public UIImageButton buttonSaveRPG;
+	public UIImageButton buttonBuyUpgrades;
 	
 	public UICustomizeCharacterRPGItem rpgItemHealth;
 	public UICustomizeCharacterRPGItem rpgItemEnergy;
@@ -27,39 +28,115 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 	public UICustomizeCharacterRPGItem rpgItemAttack;
 	public UICustomizeCharacterRPGItem rpgItemDefense;
 	
+	public static UICustomizeCharacterRPG Instance;
 	
+	public GameObject listItemPrefab;
 	
 	public string characterCode;
-	
-	void Start() {
 		
+	public static bool isInst {
+		get {
+			if(Instance != null) {
+				return true;
+			}
+			return false;
+		}
 	}
 	
-	void OnEnable() {
-		Messenger<GameObject>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectHandler);
+	public override void Start() {
+		Init();
 	}
 	
-	void OnDisable() {
-		Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectHandler);	
-	}
-	
-	void OnButtonClickObjectHandler(GameObject go) {
+	public override void Init() {
+		base.Init();
 		
-		//if(go == buttonSaveRPG.gameObject) {
-		//
-		//}
-		//else if(go == buttonResetRPG.gameObject) {
-		//
-		//}
-	
+		LoadData();
 	}
 	
-	public static void Save(string rpgCode) {
-		//Messenger<string, double>.Broadcast(UIRPGItemMessages.rpgItemCodeUp, rpgCode, 1);
+    void OnEnable() {
+		Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 	}
-	
-	public static void Reset() {
 		
+    void OnDisable() {
+		Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 	}
-
+		
+    void OnButtonClickEventHandler(string buttonName) {
+		//Debug.Log("OnButtonClickEventHandler: " + buttonName);
+    }
+	
+	public void SetUpgradesAvailable(double upgradesAvailable) {
+		if(labelUpgradesAvailable != null) {
+			labelUpgradesAvailable.text = upgradesAvailable.ToString("N0");
+		}
+	}
+	
+	public static void LoadData() {
+		if(Instance != null) {
+			Instance.loadData();
+		}
+	}
+	
+	public void loadData() {
+		StartCoroutine(loadDataCo());
+	}
+	
+	IEnumerator loadDataCo() {		
+		
+		Debug.Log("LoadDataCo");
+		
+		if (listGridRoot != null) {
+			listGridRoot.DestroyChildren();
+			
+	        yield return new WaitForEndOfFrame();
+					
+			loadDataRPG();
+			
+	        yield return new WaitForEndOfFrame();
+	        listGridRoot.GetComponent<UIGrid>().Reposition();
+	        yield return new WaitForEndOfFrame();				
+        }
+	}	
+		
+	public void loadDataRPG() {
+		
+		Debug.Log("Load RPGs:");
+		
+		int i = 0;
+		
+		SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
+		
+		List<UICustomizeCharacterRPGItem> rpgItems = new List<UICustomizeCharacterRPGItem>();
+		
+		rpgItemSpeed.rpgCode = GameItemRPGAttributes.speed;
+		rpgItems.Add(rpgItemSpeed);		
+		
+		rpgItemSpeed.rpgCode = GameItemRPGAttributes.health;
+		rpgItems.Add(rpgItemHealth);		
+		
+		rpgItemSpeed.rpgCode = GameItemRPGAttributes.energy;
+		rpgItems.Add(rpgItemEnergy);		
+		
+		rpgItemSpeed.rpgCode = GameItemRPGAttributes.attack;
+		rpgItems.Add(rpgItemAttack);		
+		
+		rpgItemSpeed.rpgCode = GameItemRPGAttributes.defense;
+		rpgItems.Add(rpgItemDefense);
+		
+        foreach(UICustomizeCharacterRPGItem rpgItem in rpgItems) {
+			
+            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.name = "AItem" + i;
+			
+            //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
+            //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
+			
+			//double statValue = GameProfileStatistics.Current.GetStatisticValue(statistic.code);
+			//string displayValue = GameStatistics.Instance.GetStatisticDisplayValue(statistic, statValue);
+			
+			//item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;				
+							
+			i++;
+        }
+	}
 }
