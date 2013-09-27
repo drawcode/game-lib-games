@@ -57,7 +57,7 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 		string displayName = "";
 		double val = 0.1f;
 		
-		//gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacter().characterRPG;
+		gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
 		
 		if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
 			displayName = RPGConfigs.displayNameAttack;
