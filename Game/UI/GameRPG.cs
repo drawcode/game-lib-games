@@ -159,9 +159,9 @@ public class GameRPGMonitor {
 	
 	public void SetIncrementXP(double amount) {		
 		scoreUpdating = true;
-		double currentXP = GameProfiles.Current.GetProgressXP();
+		double currentXP = GameProfileRPGs.Current.GetGamePlayerProgressXP();
 		currentXP += amount;
-		GameProfiles.Current.SetProgressXP(currentXP);
+		GameProfileRPGs.Current.SetGamePlayerProgressXP(currentXP);
 		UpdateBonusXPScore();
 		//LogUtil.Log("GameRPG:SetIncrementXP: currentXP:" + currentXP);
 		SyncCurrentXP();

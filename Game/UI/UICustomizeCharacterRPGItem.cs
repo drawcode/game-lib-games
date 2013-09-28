@@ -34,7 +34,7 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
  
     void OnDisable() {
         Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectHandler);
-        Messenger<string, string, double>.RemoveListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);  
+        Messenger<string, string, double>.RemoveListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
     }
  
     void OnButtonClickObjectHandler(GameObject go) {
@@ -49,7 +49,8 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 
     void OnRPGItemHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
 
-        if(rpgCode == rpgCodeFrom && characterCode == characterCodeFrom) {
+        if(rpgCode == rpgCodeFrom && characterCode == characterCodeFrom
+            && UICustomizeCharacterRPG.Instance.upgradesAvailable > 0) {
 
             double val = currentValue + valFrom;
 

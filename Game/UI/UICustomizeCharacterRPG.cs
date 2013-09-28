@@ -15,7 +15,7 @@ public class UICustomizeCharacterRPGItemMessages {
 //Messenger<string, double>.Broadcast(UIRPGItemMessages.rpgItemCodeUp, rpgCode, 1);
 
 public class UICustomizeCharacterRPG: UIAppPanelBaseList {
-         
+
     public UILabel labelUpgradesAvailable;
     public UIImageButton buttonResetRPG;
     public UIImageButton buttonSaveRPG;
@@ -23,6 +23,19 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     GameItemRPG gameItemRPG;
     public static UICustomizeCharacterRPG Instance;
     public GameObject listItemPrefab;
+
+    public double upgradesAvailable = 0;
+
+    public void Awake() {
+
+        if(Instance != null && this != Instance) {
+            //There is already a copy of this script running
+            //Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
      
     public static bool isInst {
         get {
@@ -32,7 +45,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
             return false;
         }
     }
- 
+
     public override void Start() {
         Init();
     }
@@ -45,19 +58,37 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
  
     void OnEnable() {
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, string, double>.AddListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
     }
      
     void OnDisable() {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, string, double>.AddListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
     }
-     
+
+
+    void OnRPGItemHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
+
+        double modifier = 10;
+        double val = valFrom * modifier;
+
+        upgradesAvailable -= val;
+
+        if(upgradesAvailable < 0) {
+             upgradesAvailable = 0;
+        }
+
+        SetUpgradesAvailable(upgradesAvailable);
+    }
+
     void OnButtonClickEventHandler(string buttonName) {
         //Debug.Log("OnButtonClickEventHandler: " + buttonName);
     }
  
-    public void SetUpgradesAvailable(double upgradesAvailable) {
+    public void SetUpgradesAvailable(double upgradesAvailableTo) {
         if(labelUpgradesAvailable != null) {
-            labelUpgradesAvailable.text = upgradesAvailable.ToString("N0");
+            upgradesAvailable = upgradesAvailableTo;
+            labelUpgradesAvailable.text = upgradesAvailableTo.ToString("N0");
         }
     }
  
@@ -97,7 +128,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
      
         gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
-     
+
         List<string> rpgItems = new List<string>();
      
         rpgItems.Add(GameItemRPGAttributes.speed);   
@@ -118,6 +149,14 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
             }                
                          
             i++;
+        }
+    }
+
+    void Update() {
+
+        if(Input.GetKeyDown("u")) {
+            GameProfileRPGs.Current.AddUpgrades(5);
+            loadData();
         }
     }
 }
