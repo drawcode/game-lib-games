@@ -7,7 +7,8 @@ using UnityEngine;
 using Engine.Events;
 
 public class UICustomizeCharacterRPGItemMessages {
-    public static string rpgItemCodeChanged = "rpg-item-code-change";
+    public static string rpgItemCodeChanged = "rpg-item-code-changed";
+    public static string rpgUpgradesChanged = "rpg-upgrades-changed";
 }
 
 //Messenger<string, double>.AddListener(UIRPGItemMessages.rpgItemCodeUp, OnRPGItemCodeUp);
@@ -25,6 +26,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     public GameObject listItemPrefab;
 
     public double upgradesAvailable = 0;
+
+    public double modifierDisplay = 10;
 
     public void Awake() {
 
@@ -58,19 +61,18 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
  
     void OnEnable() {
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        Messenger<string, string, double>.AddListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
+        Messenger<string, string, double>.AddListener(UICustomizeCharacterRPGItemMessages.rpgUpgradesChanged, OnRPGUpgradesHandler);
+
     }
      
     void OnDisable() {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        Messenger<string, string, double>.AddListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
+        Messenger<string, string, double>.RemoveListener(UICustomizeCharacterRPGItemMessages.rpgUpgradesChanged, OnRPGUpgradesHandler);
     }
 
+    void OnRPGUpgradesHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
 
-    void OnRPGItemHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
-
-        double modifier = 10;
-        double val = valFrom * modifier;
+        double val = valFrom * modifierDisplay;
 
         upgradesAvailable -= val;
 

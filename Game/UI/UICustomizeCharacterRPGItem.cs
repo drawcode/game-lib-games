@@ -36,7 +36,7 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
         Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectHandler);
         Messenger<string, string, double>.RemoveListener(UICustomizeCharacterRPGItemMessages.rpgItemCodeChanged, OnRPGItemHandler);
     }
- 
+
     void OnButtonClickObjectHandler(GameObject go) {
 
         if(go == buttonRPGItemUp.gameObject) {
@@ -44,13 +44,14 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
         }
         else if(go == buttonRPGItemDown.gameObject) {
             Down();      
-        }    
+        }
     }
 
     void OnRPGItemHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
 
         if(rpgCode == rpgCodeFrom && characterCode == characterCodeFrom
-            && UICustomizeCharacterRPG.Instance.upgradesAvailable > 0) {
+            && ((valFrom > 0 && UICustomizeCharacterRPG.Instance.upgradesAvailable > 0)
+                || valFrom < 0)) {
 
             double val = currentValue + valFrom;
 
@@ -60,6 +61,10 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
             }
 
             currentValue += valFrom;
+
+            Messenger<string, string, double>.Broadcast(
+                UICustomizeCharacterRPGItemMessages.rpgUpgradesChanged,
+                rpgCodeFrom, characterCodeFrom, valFrom);
 
             UpdateControls();
         }
