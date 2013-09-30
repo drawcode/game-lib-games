@@ -21,12 +21,10 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     public UIImageButton buttonResetRPG;
     public UIImageButton buttonSaveRPG;
     public UIImageButton buttonBuyUpgrades;
-    GameItemRPG gameItemRPG;
+    GameItemRPG profileGameItemRPG;
     public static UICustomizeCharacterRPG Instance;
     public GameObject listItemPrefab;
-
     public double upgradesAvailable = 0;
-
     public double modifierDisplay = 10;
 
     public void Awake() {
@@ -77,7 +75,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         upgradesAvailable -= val;
 
         if(upgradesAvailable < 0) {
-             upgradesAvailable = 0;
+            upgradesAvailable = 0;
         }
 
         SetUpgradesAvailable(upgradesAvailable);
@@ -86,7 +84,11 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     void OnButtonClickEventHandler(string buttonName) {
         //Debug.Log("OnButtonClickEventHandler: " + buttonName);
     }
- 
+
+    public void HandleRPGItemChanged(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
+
+    }
+
     public void SetUpgradesAvailable(double upgradesAvailableTo) {
         if(labelUpgradesAvailable != null) {
             upgradesAvailable = upgradesAvailableTo;
@@ -129,7 +131,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
      
         SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
      
-        gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
+        profileGameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
 
         List<string> rpgItems = new List<string>();
      
