@@ -115,6 +115,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         }
 
         GameProfileCharacters.Current.SetCharacterRPG(currentCharacterCode, profileGameItemRPG);
+        GameProfileRPGs.Current.SetUpgrades(upgradesAvailable);
 
         GameState.SaveProfile();
 
