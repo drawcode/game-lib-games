@@ -286,7 +286,7 @@ public class UIGameCustomizeCharacter : MonoBehaviour {
 					currentPlayerColors.bootsGlovesColor.FromColor(colorBootsGloves);
 					currentPlayerColors.bootsSleevesPants.FromColor(colorSleevesPants);
 					GameProfiles.Current.SetCustomColors(currentPlayerColors);
-					GameState.Instance.SaveProfile();
+					GameState.SaveProfile();
 				}
 			});
 		}

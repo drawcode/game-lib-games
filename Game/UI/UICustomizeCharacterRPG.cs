@@ -21,7 +21,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     public UIImageButton buttonResetRPG;
     public UIImageButton buttonSaveRPG;
     public UIImageButton buttonBuyUpgrades;
-    GameItemRPG profileGameItemRPG;
+    GameProfileRPGItem profileGameItemRPG;
+    public string currentCharacterCode = "default";
     public static UICustomizeCharacterRPG Instance;
     public GameObject listItemPrefab;
     public double upgradesAvailable = 0;
@@ -82,7 +83,50 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     }
 
     void OnButtonClickEventHandler(string buttonName) {
-        //Debug.Log("OnButtonClickEventHandler: " + buttonName);
+
+        if(UIUtil.IsButtonClicked(buttonSaveRPG, buttonName)) {
+            SaveRPG();
+        }
+        //else if(UIUtil.IsButtonClicked(buttonResetRPG, buttonObj.name)) {
+        //    ResetRPG();
+        //}
+        else if(UIUtil.IsButtonClicked(buttonBuyUpgrades, buttonName)) {
+            BuyUpgrades();
+        }
+
+    }
+
+    public void SaveRPG() {
+        foreach(UICustomizeCharacterRPGItem item
+            in listGridRoot.GetComponentsInChildren<UICustomizeCharacterRPGItem>(true)) {
+
+            if(item.rpgCode.ToLower() == GameItemRPGAttributes.speed) {
+                profileGameItemRPG.SetSpeed(item.currentValue);
+            }
+            else if(item.rpgCode.ToLower() == GameItemRPGAttributes.energy) {
+                profileGameItemRPG.SetEnergy(item.currentValue);
+            }
+            else if(item.rpgCode.ToLower() == GameItemRPGAttributes.health) {
+                profileGameItemRPG.SetHealth(item.currentValue);
+            }
+            else if(item.rpgCode.ToLower() == GameItemRPGAttributes.attack) {
+                profileGameItemRPG.SetAttack(item.currentValue);
+            }
+        }
+
+        GameProfileCharacters.Current.SetCharacterRPG(currentCharacterCode, profileGameItemRPG);
+
+        GameState.SaveProfile();
+
+        loadData();
+    }
+
+    public void ResetRPG() {
+        loadData();
+    }
+
+    public void BuyUpgrades() {
+
     }
 
     public void HandleRPGItemChanged(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
@@ -101,7 +145,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
             Instance.loadData();
         }
     }
- 
+
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
@@ -135,7 +179,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
         List<string> rpgItems = new List<string>();
      
-        rpgItems.Add(GameItemRPGAttributes.speed);   
+        rpgItems.Add(GameItemRPGAttributes.speed);
         rpgItems.Add(GameItemRPGAttributes.health);      
         rpgItems.Add(GameItemRPGAttributes.energy);      
         rpgItems.Add(GameItemRPGAttributes.attack);          

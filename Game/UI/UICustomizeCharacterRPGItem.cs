@@ -12,7 +12,6 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
     public string characterCode = "default";
     public double currentValue = 0.1;
     public double profileValue = 0.1;
-    public GameItemRPG gameItemRPG;
     public UISlider sliderProfileValue;
     public UISlider sliderCurrentValue;
     public UIImageButton buttonRPGItemUp;
@@ -80,35 +79,35 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 
         currentValue = 0.1f;
 
-        gameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();    
+        GameProfileRPGItem profileItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
 
         if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
             displayName = RPGConfigs.displayNameAttack;
-            currentValue = gameItemRPG.attack;
+            currentValue = profileItemRPG.GetAttack();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
-            currentValue = gameItemRPG.defense;
+            currentValue = profileItemRPG.GetDefense();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
-            currentValue = gameItemRPG.defense;
+            currentValue = profileItemRPG.GetDefense();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.energy) {
             displayName = RPGConfigs.displayNameEnergy;
-            currentValue = gameItemRPG.energy;
+            currentValue = profileItemRPG.GetEnergy();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.health) {
             displayName = RPGConfigs.displayNameHealth;
-            currentValue = gameItemRPG.health;
+            currentValue = profileItemRPG.GetHealth();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.jump) {
             displayName = RPGConfigs.displayNameJump;
-            currentValue = gameItemRPG.jump;
+            currentValue = profileItemRPG.GetJump();
         }
         else if(rpgCode.ToLower() == GameItemRPGAttributes.speed) {
             displayName = RPGConfigs.displayNameSpeed;
-            currentValue = gameItemRPG.speed;
+            currentValue = profileItemRPG.GetSpeed();
         }
 
         UpdateControls();

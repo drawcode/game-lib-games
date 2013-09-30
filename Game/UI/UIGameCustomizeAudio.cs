@@ -309,7 +309,7 @@ public class UIGameCustomizeAudio : MonoBehaviour {
 					}
 										
 					GameProfiles.Current.SetCustomAudio(currentPlayerAudio);										
-					GameState.Instance.SaveProfile();
+					GameState.SaveProfile();
 				}
 			});
 		}

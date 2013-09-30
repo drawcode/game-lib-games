@@ -74,7 +74,7 @@ public class UIPanelSettingsProfile : UIPanelBase {
 		UIUtil.SetInputValue(inputProfileName, username);
 		GameProfiles.Current.ChangeUser(username);
 		GameProfiles.Current.username = username;
-		GameState.Instance.SaveProfile();
+		GameState.SaveProfile();
 	}
 		
 	public static void LoadData() {

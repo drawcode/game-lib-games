@@ -237,7 +237,7 @@ public class BaseUIController : MonoBehaviour {
     }    
     
     public virtual void OnApplicationQuit() {
-        GameState.Instance.SaveProfile();
+        GameState.SaveProfile();
     }
     
     public virtual void ShowMainMenuDelayed() {

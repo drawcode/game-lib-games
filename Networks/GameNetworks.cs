@@ -158,7 +158,7 @@ public class GameNetworks : MonoBehaviour {
 				LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: currentLoggedInUserNetwork: " + currentLoggedInUserNetwork);
 			
 				LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: changed: " + GameProfiles.Current.username);
-				GameState.Instance.ChangeUser(currentLoggedInUserNetwork);
+				GameState.ChangeUser(currentLoggedInUserNetwork);
 				LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: GameProfiles.Current.username: " + GameProfiles.Current.username);
 			}
 		}
@@ -676,9 +676,9 @@ public class GameNetworks : MonoBehaviour {
 		LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
 		
 		if(!string.IsNullOrEmpty(networkUsername)) {
-			//GameState.Instance.ChangeUser(networkUsername);
+			//GameState.ChangeUser(networkUsername);
 			//GameState.Instance.profile.SetThirdPartyNetworkUser(true);
-			//GameState.Instance.SaveProfile();
+			//GameState.SaveProfile();
 			
 			//Debug.Log("Logging in user GameCenter: " + networkUsername);
 		}
@@ -692,9 +692,9 @@ public class GameNetworks : MonoBehaviour {
 		LogUtil.Log("setLocalProfileToNetworkUsernameAndroidGooglePlay: " + networkUsername);
 		
 		if(!string.IsNullOrEmpty(networkUsername)) {
-			//GameState.Instance.ChangeUser(networkUsername);
+			//GameState.ChangeUser(networkUsername);
 			//GameState.Instance.profile.SetThirdPartyNetworkUser(true);
-			//GameState.Instance.SaveProfile();
+			//GameState.SaveProfile();
 			
 			//Debug.Log("Logging in user GameCenter: " + networkUsername);
 		}
