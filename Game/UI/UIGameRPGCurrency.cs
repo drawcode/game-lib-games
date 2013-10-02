@@ -11,6 +11,7 @@ public class UIGameRPGCurrency : UIGameRPGObject {
 
     public override void Start() {
         incrementValue = 1;
+        profileValue = 10;
         UpdateValue();
     }
 

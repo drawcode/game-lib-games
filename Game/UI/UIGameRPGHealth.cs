@@ -11,11 +11,17 @@ public class UIGameRPGHealth : UIGameRPGObject {
 
     public override void Start() {
         incrementValue = .1;
+        profileValue = 1;
         UpdateValue();
     }
 
     public override void UpdateValue() {
-        profileValue = GameProfileRPGs.Current.GetGamePlayerProgressHealth(1);
+        if(useGlobal) {
+            profileValue = GameProfileRPGs.Current.GetGamePlayerProgressHealth(1);
+        }
+        else {
+            profileValue = GameProfileCharacters.currentProgress.GetGamePlayerProgressHealth(1);
+        }
     }
 
     public override void UpdateInterval() {
@@ -40,10 +46,20 @@ public class UIGameRPGHealth : UIGameRPGObject {
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionHealthAdd) {
-            GameProfileRPGs.Current.AddGamePlayerProgressHealth(incrementValue);
+            if(useGlobal) {
+                GameProfileRPGs.Current.AddGamePlayerProgressHealth(incrementValue);
+            }
+            else {
+                GameProfileCharacters.currentProgress.AddGamePlayerProgressHealth(incrementValue);
+            }
         }
         else if(UIGameKeyCodes.isActionHealthSubtract) {
-            GameProfileRPGs.Current.SubtractGamePlayerProgressHealth(incrementValue);
+            if(useGlobal) {
+                GameProfileRPGs.Current.SubtractGamePlayerProgressHealth(incrementValue);
+            }
+            else {
+                GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(incrementValue);
+            }
         }
     }
 }

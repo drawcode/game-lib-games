@@ -13,6 +13,8 @@ public class UIGameRPGObject : MonoBehaviour {
     public double lastValue = 0;
     public double incrementValue = .1;
 
+    public bool useGlobal = false;
+
     public float lastTime = 0f;
 
     public UISlider sliderProgress;

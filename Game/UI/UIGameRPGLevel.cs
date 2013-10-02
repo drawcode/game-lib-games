@@ -11,11 +11,17 @@ public class UIGameRPGLevel : UIGameRPGObject {
 
     public override void Start() {
         incrementValue = 1;
+        profileValue = 1;
         UpdateValue();
     }
 
     public override void UpdateValue() {
-        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressLevel(1));
+        if(useGlobal) {
+            profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressLevel(1));
+        }
+        else {
+            profileValue = (int)Math.Round(GameProfileCharacters.currentProgress.GetGamePlayerProgressLevel(1));
+        }
     }
 
     public override void UpdateInterval() {
@@ -40,10 +46,20 @@ public class UIGameRPGLevel : UIGameRPGObject {
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionLevelAdd) {
-            GameProfileRPGs.Current.AddGamePlayerProgressLevel(incrementValue);
+            if(useGlobal) {
+                GameProfileRPGs.Current.AddGamePlayerProgressLevel(incrementValue);
+            }
+            else {
+                GameProfileCharacters.currentProgress.AddGamePlayerProgressLevel(incrementValue);
+            }
         }
         else if(UIGameKeyCodes.isActionLevelSubtract) {
-            GameProfileRPGs.Current.SubtractGamePlayerProgressLevel(incrementValue);
+            if(useGlobal) {
+                GameProfileRPGs.Current.SubtractGamePlayerProgressLevel(incrementValue);
+            }
+            else {
+                GameProfileCharacters.currentProgress.SubtractGamePlayerProgressLevel(incrementValue);
+            }
         }
     }
 }
