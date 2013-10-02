@@ -7,56 +7,43 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class UIGameRPGXP : MonoBehaviour {
+public class UIGameRPGXP : UIGameRPGObject {
 
-    public UILabel labelValue;
-
-    public int profileValue = 0;
-    public int lastValue = 0;
-
-    public float lastTime = 0f;
-
-    void Start() {
+    public override void Start() {
+        incrementValue = 1;
         UpdateValue();
     }
 
-    void UpdateValue() {
-        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressXP());
+    public override void UpdateValue() {
+        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressXP(10));
     }
 
-    void SetLabelValue(double val) {
-        if(labelValue != null) {
-            UIUtil.SetLabelValue(labelValue, val.ToString("N0"));
-        }
-    }
-
-    void Update() {
-
-        lastTime += Time.deltaTime;
-
+    public override void UpdateInterval() {
         if(lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
+    }
 
-        if(lastValue > profileValue) {
-            lastValue -= 1;
-        }
-        else if(profileValue > lastValue) {
-            lastValue += 1;
-        }
+    public override void HandleUpdate(bool updateTimeInterval) {
 
-        if(lastValue < 0) {
-            lastValue = 0;
+        lastTime += Time.deltaTime;
+
+        if(updateTimeInterval) {
+            UpdateInterval();
         }
 
-        SetLabelValue(lastValue);
+        base.HandleUpdate(false);
+    }
+
+    public override void Update() {
+        HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionXPAdd) {
-            GameProfileRPGs.Current.AddGamePlayerProgressXP(100);
+            GameProfileRPGs.Current.AddGamePlayerProgressXP(incrementValue * 100);
         }
         else if(UIGameKeyCodes.isActionXPSubtract) {
-            GameProfileRPGs.Current.SubtractGamePlayerProgressXP(100);
+            GameProfileRPGs.Current.SubtractGamePlayerProgressXP(incrementValue * 100);
         }
     }
 }

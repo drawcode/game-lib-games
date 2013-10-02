@@ -10,12 +10,18 @@ using Engine.Utility;
 
 public class UIGameKeyCodes {
 
-    public static KeyCode keyRPGCurrencyAdd = KeyCode.Alpha9;
-    public static KeyCode keyRPGCurrencySubtract = KeyCode.Alpha8;
-    public static KeyCode keyRPGUpgradesAdd = KeyCode.Alpha7;
-    public static KeyCode keyRPGUpgradesSubtract = KeyCode.Alpha6;
-    public static KeyCode keyRPGXPAdd = KeyCode.Alpha5;
-    public static KeyCode keyRPGXPSubtract = KeyCode.Alpha4;
+    public static KeyCode keyRPGCurrencyAdd = KeyCode.Alpha0;
+    public static KeyCode keyRPGCurrencySubtract = KeyCode.Alpha9;
+    public static KeyCode keyRPGUpgradesAdd = KeyCode.Alpha8;
+    public static KeyCode keyRPGUpgradesSubtract = KeyCode.Alpha7;
+    public static KeyCode keyRPGXPAdd = KeyCode.Alpha6;
+    public static KeyCode keyRPGXPSubtract = KeyCode.Alpha5;
+    public static KeyCode keyRPGEnergyAdd = KeyCode.Alpha4;
+    public static KeyCode keyRPGEnergySubtract = KeyCode.Alpha3;
+    public static KeyCode keyRPGHealthAdd = KeyCode.Alpha2;
+    public static KeyCode keyRPGHealthSubtract = KeyCode.Alpha1;
+    public static KeyCode keyRPGLevelAdd = KeyCode.O;
+    public static KeyCode keyRPGLevelSubtract = KeyCode.P;
 
     public static bool KeyAction(KeyCode keyCode) {
         return Input.GetKeyDown(keyCode);
@@ -49,6 +55,42 @@ public class UIGameKeyCodes {
     public static bool isActionXPSubtract {
         get {
             return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGXPSubtract);
+        }
+    }
+
+    public static bool isActionEnergyAdd {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGEnergyAdd);
+        }
+    }
+
+    public static bool isActionEnergySubtract {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGEnergySubtract);
+        }
+    }
+
+    public static bool isActionHealthAdd {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGHealthAdd);
+        }
+    }
+
+    public static bool isActionHealthSubtract {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGHealthSubtract);
+        }
+    }
+
+    public static bool isActionLevelAdd {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGLevelAdd);
+        }
+    }
+
+    public static bool isActionLevelSubtract {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGLevelSubtract);
         }
     }
 

@@ -7,15 +7,15 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class UIGameRPGCurrency : UIGameRPGObject {
+public class UIGameRPGHealth : UIGameRPGObject {
 
     public override void Start() {
-        incrementValue = 1;
+        incrementValue = .1;
         UpdateValue();
     }
 
     public override void UpdateValue() {
-        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetCurrency(10));
+        profileValue = GameProfileRPGs.Current.GetGamePlayerProgressHealth(1);
     }
 
     public override void UpdateInterval() {
@@ -39,11 +39,11 @@ public class UIGameRPGCurrency : UIGameRPGObject {
     public override void Update() {
         HandleUpdate(true);
 
-        if(UIGameKeyCodes.isActionCurrencyAdd) {
-            GameProfileRPGs.Current.AddCurrency(100);
+        if(UIGameKeyCodes.isActionHealthAdd) {
+            GameProfileRPGs.Current.AddGamePlayerProgressHealth(incrementValue);
         }
-        else if(UIGameKeyCodes.isActionCurrencySubtract) {
-            GameProfileRPGs.Current.SubtractCurrency(100);
+        else if(UIGameKeyCodes.isActionHealthSubtract) {
+            GameProfileRPGs.Current.SubtractGamePlayerProgressHealth(incrementValue);
         }
     }
 }
