@@ -43,6 +43,21 @@ public class BaseUIButtonNames {
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
 }
 
+public class BaseHUDButtonNames {
+    public static string buttonInputAttack = "ButtonInputAttack";
+    public static string buttonInputAttackRight = "ButtonInputAttackRight";
+    public static string buttonInputAttackLeft = "ButtonInputAttackLeft";
+    public static string buttonInputAttackAlt = "ButtonInputAttackAlt";
+    public static string buttonInputDefend = "ButtonInputDefend";
+    public static string buttonInputDefendRight = "ButtonInputDefendRight";
+    public static string buttonInputDefendLeft = "ButtonInputDefendLeft";
+    public static string buttonInputDefendAlt = "ButtonInputDefendAlt";
+    public static string buttonInputSkill = "ButtonInputSkill";
+    public static string buttonInputMagic = "ButtonInputMagic";
+    public static string buttonInputJump = "ButtonInputJump";
+    public static string buttonInputUse = "ButtonInputUse";
+}
+
 public class BaseUIPanel {
     public static string panelBlank = "PanelBlank";
     public static string panelInGame = "PanelInGame";
@@ -2192,22 +2207,40 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void HandleHUDButtons(string buttonName) {
-        if(buttonName == "ButtonInputAttack") {
+        if(buttonName == BaseHUDButtonNames.buttonInputAttack) {
             GameController.GamePlayerAttack();
         }
-        else if(buttonName == "ButtonInputAttackAlt") {
-            //GameController.GamePlayerAttackAlt();
+        else if(buttonName == BaseHUDButtonNames.buttonInputAttackAlt) {
+            GameController.GamePlayerAttackAlt();
         }
-        else if(buttonName == "ButtonInputAttackRight") {
-            //GameController.GamePlayerAttackRight();
+        else if(buttonName == BaseHUDButtonNames.buttonInputAttackRight) {
+            GameController.GamePlayerAttackRight();
         }
-        else if(buttonName == "ButtonInputSkill") {
-            //GameController.GamePlayerSkill();
+        else if(buttonName == BaseHUDButtonNames.buttonInputAttackLeft) {
+            GameController.GamePlayerAttackLeft();
         }
-        else if(buttonName == "ButtonInputUse") {
+        else if(buttonName == BaseHUDButtonNames.buttonInputDefend) {
+            GameController.GamePlayerDefend();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputDefendAlt) {
+            GameController.GamePlayerDefendAlt();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputDefendRight) {
+            GameController.GamePlayerDefendRight();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputDefendLeft) {
+            GameController.GamePlayerDefendLeft();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputSkill) {
+            GameController.GamePlayerSkill();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputMagic) {
+            GameController.GamePlayerMagic();
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputUse) {
             GameController.GamePlayerUse();
         }
-        else if(buttonName == "ButtonINputJump") {
+        else if(buttonName == BaseHUDButtonNames.buttonInputJump) {
             GameController.GamePlayerJump();
         }            
     }
