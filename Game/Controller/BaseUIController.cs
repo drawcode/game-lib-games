@@ -1956,7 +1956,7 @@ public class BaseUIController : MonoBehaviour {
  
     public virtual void hideAllAlertLayers() {
         hideUIPanelAlertBackground();
-        hideUIPanelDialogPause();
+        hideUIPanelPause();
         //hideUIPanelDialogResults();
     }
  
@@ -1990,12 +1990,14 @@ public class BaseUIController : MonoBehaviour {
     //   }
     //}
  
-    public virtual void showUIPanelDialogPause() {
+    public virtual void showUIPanelPause() {
         //HideAllAlertLayers();
         showUIPanelAlertBackground();
-        if(gamePauseDialogObject != null) {
-            TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(0));  
-        }
+        UIPanelPause.Instance.AnimateIn();
+
+        //if(gamePauseDialogObject != null) {
+        //    TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(0));
+        //}
     }
  
     //public static virtual void HideUIPanelDialogPause() {
@@ -2004,11 +2006,13 @@ public class BaseUIController : MonoBehaviour {
     //   }       
     //}
  
-    public virtual void hideUIPanelDialogPause() {
+    public virtual void hideUIPanelPause() {
         hideUIPanelAlertBackground();
-        if(gamePauseDialogObject != null) {
-            TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(5000));
-        }
+        UIPanelPause.Instance.AnimateOut();
+
+        //if(gamePauseDialogObject != null) {
+        //    TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(5000));
+       // }
     }
  
     /*
@@ -2066,119 +2070,9 @@ public class BaseUIController : MonoBehaviour {
         Debug.Log("OnButtonClickEventHandler: " + buttonName);
      
         hasBeenClicked = true;
-     
-        /*
-     if(buttonName.IndexOf("FreeDownloadButton") > -1) {
-         
-     }       
-     else if(buttonName.IndexOf("ButtonCloseAction") > -1) {
-         CloseAllActions();
-         gameButtonObject.Show();
-     }
-     
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonPlayLevel) > -1) {
-         
-         string[] arrLevelId = buttonName.Split('$');
 
-         if(arrLevelId.Length > 0) {
-             string levelId = arrLevelId[1];
-             
-             Debug.Log("ButtonPlayLevel: levelId:" + levelId);
-             
-             GameAppController.Instance.LoadLevel(levelId);
-         }
-         
-     }
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameLevelItemObject) > -1) {
-         
-         string[] arrLevelId = buttonName.Split('$');
-
-         if(arrLevelId.Length > 0) {
-             string assetCodeCreating =  arrLevelId[1];
-             GameDraggableEditor.assetCodeCreating = assetCodeCreating;
-             Debug.Log("GameDraggableEditor.assetCodeCreating:" + GameDraggableEditor.assetCodeCreating);
-             
-             if(UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
-                 
-                 if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
-                     UIPanelEditAsset.Instance.UpdateSprite(assetCodeCreating);
-                 }       
-                 else if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_EFFECT) {
-                     UIPanelEditAsset.Instance.UpdateSpriteEffect(assetCodeCreating);
-                 }       
-                 
-                 UIPanelEditAsset.Instance.actionState = UIPanelEditAssetActionState.NONE;
-             }
-             
-             HideUIPanelDialogItems();
-             ShowUIPanelEdit();
-         }
-         
-     }
-     
-     // UI       
-     
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonLevels) > -1) {
-         SetSectionLabelDelayed("Levels", .3f);
-         ShowPanelByName(BaseUIPanel.panelLevels);
-         // -[worldcode]-[page]
-     }    
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonLevel) > -1) {
-         SetSectionLabelDelayed("Level", .3f);
-         ShowPanelByName(BaseUIPanel.panelLevel);
-     }    
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonSettings) > -1) {
-         SetSectionLabelDelayed("Settings", .3f);
-         ShowPanelByName(BaseUIPanel.panelSettings);
-     }      
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonCredits) > -1) {
-         SetSectionLabelDelayed("Credits", .3f);
-         ShowPanelByName(BaseUIPanel.panelCredits);
-     }     
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonSocial) > -1) {
-         SetSectionLabelDelayed("Social", .3f);
-         ShowPanelByName(BaseUIPanel.panelSocial);
-     }   
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonTrophyStatistics) > -1) {
-         SetSectionLabelDelayed("Statistics", .3f);
-         ShowPanelByName(BaseUIPanel.panelTrophyStatistics);
-         UIPanelTrophyStatistics.LoadData();
-     }      
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonTrophyAchievements) > -1) {
-         SetSectionLabelDelayed("Achievements", .3f);
-         ShowPanelByName(BaseUIPanel.panelTrophyAchievements);
-         UIPanelTrophyAchievements.LoadData();
-     }    
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonWorlds) > -1) {
-         SetSectionLabelDelayed("Worlds", .3f);
-         ShowPanelByName(BaseUIPanel.panelWorlds);
-     }
-          
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterAchievements) > -1) {
-         GameNetworks.Instance.ShowAchievementsOrLogin();
-     }  
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterLeaderboards) > -1) {
-         GameNetworks.Instance.ShowLeaderboardsOrLogin();
-     }  
-     
-     else if(buttonName.IndexOf(BaseUIButtonNames.buttonMain) > -1) {
-         SetSectionLabelDelayed("Main", .3f);
-         
-         HideUIPanelEditButton();
-         HideAllUIEditPanels();
-         HideAllAlertLayers();
-         HideGameCanvas();
-         HideHUD();
-         HideAllEditDialogs();
-         
-         GameController.Instance.QuitGame();
-         
-         ShowPanelByName(BaseUIPanel.panelMain);
-     }       
-     */
-             
         // GAME
-         
+
         if(buttonName.IndexOf(BaseUIButtonNames.buttonGameQuit) > -1) {
             GameQuit();
         }
@@ -2202,8 +2096,118 @@ public class BaseUIController : MonoBehaviour {
                 NavigateBack(buttonName);
             }
         }
-     
+
         HandleHUDButtons(buttonName);
+     
+        /*
+        if(buttonName.IndexOf("FreeDownloadButton") > -1) {
+        
+        }       
+        else if(buttonName.IndexOf("ButtonCloseAction") > -1) {
+        CloseAllActions();
+        gameButtonObject.Show();
+        }
+        
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonPlayLevel) > -1) {
+        
+        string[] arrLevelId = buttonName.Split('$');
+        
+        if(arrLevelId.Length > 0) {
+        string levelId = arrLevelId[1];
+        
+        Debug.Log("ButtonPlayLevel: levelId:" + levelId);
+        
+        GameAppController.Instance.LoadLevel(levelId);
+        }
+        
+        }
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameLevelItemObject) > -1) {
+        
+        string[] arrLevelId = buttonName.Split('$');
+        
+        if(arrLevelId.Length > 0) {
+        string assetCodeCreating =  arrLevelId[1];
+        GameDraggableEditor.assetCodeCreating = assetCodeCreating;
+        Debug.Log("GameDraggableEditor.assetCodeCreating:" + GameDraggableEditor.assetCodeCreating);
+        
+        if(UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
+         
+         if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
+             UIPanelEditAsset.Instance.UpdateSprite(assetCodeCreating);
+         }       
+         else if(UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_EFFECT) {
+             UIPanelEditAsset.Instance.UpdateSpriteEffect(assetCodeCreating);
+         }       
+         
+         UIPanelEditAsset.Instance.actionState = UIPanelEditAssetActionState.NONE;
+        }
+        
+        HideUIPanelDialogItems();
+        ShowUIPanelEdit();
+        }
+        
+        }
+        
+        // UI       
+        
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonLevels) > -1) {
+            SetSectionLabelDelayed("Levels", .3f);
+            ShowPanelByName(BaseUIPanel.panelLevels);
+        // -[worldcode]-[page]
+        }    
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonLevel) > -1) {
+            SetSectionLabelDelayed("Level", .3f);
+            ShowPanelByName(BaseUIPanel.panelLevel);
+        }    
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonSettings) > -1) {
+            SetSectionLabelDelayed("Settings", .3f);
+            ShowPanelByName(BaseUIPanel.panelSettings);
+        }      
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonCredits) > -1) {
+            SetSectionLabelDelayed("Credits", .3f);
+            ShowPanelByName(BaseUIPanel.panelCredits);
+        }     
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonSocial) > -1) {
+            SetSectionLabelDelayed("Social", .3f);
+            ShowPanelByName(BaseUIPanel.panelSocial);
+        }   
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonTrophyStatistics) > -1) {
+            SetSectionLabelDelayed("Statistics", .3f);
+            ShowPanelByName(BaseUIPanel.panelTrophyStatistics);
+            UIPanelTrophyStatistics.LoadData();
+        }      
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonTrophyAchievements) > -1) {
+            SetSectionLabelDelayed("Achievements", .3f);
+            ShowPanelByName(BaseUIPanel.panelTrophyAchievements);
+            UIPanelTrophyAchievements.LoadData();
+        }    
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonWorlds) > -1) {
+            SetSectionLabelDelayed("Worlds", .3f);
+            ShowPanelByName(BaseUIPanel.panelWorlds);
+        }
+        
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterAchievements) > -1) {
+            GameNetworks.Instance.ShowAchievementsOrLogin();
+        }  
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterLeaderboards) > -1) {
+            GameNetworks.Instance.ShowLeaderboardsOrLogin();
+        }
+
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonMain) > -1) {
+            SetSectionLabelDelayed("Main", .3f);
+    
+            HideUIPanelEditButton();
+            HideAllUIEditPanels();
+            HideAllAlertLayers();
+            HideGameCanvas();
+            HideHUD();
+            HideAllEditDialogs();
+    
+            GameController.Instance.QuitGame();
+    
+            ShowPanelByName(BaseUIPanel.panelMain);
+        }
+     */
     }
  
     public virtual void HandleHUDButtons(string buttonName) {
