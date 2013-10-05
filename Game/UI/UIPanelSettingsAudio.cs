@@ -71,7 +71,7 @@ public class UIPanelSettingsAudio : UIPanelBase {
 		
 		bool changeAudio = true;
 		
-#if DEV		
+#if DEV2
 		if(Application.isEditor) {
 			GameProfiles.Current.SetAudioMusicVolume(0);
 			GameProfiles.Current.SetAudioEffectsVolume(0);
@@ -82,12 +82,20 @@ public class UIPanelSettingsAudio : UIPanelBase {
 		if(!changeAudio) {
 			return;
 		}
-		
-        if (sliderName == sliderEffectsVolume.name) {
-			GameAudio.SetProfileEffectsVolume(sliderValue);
+
+        if(sliderEffectsVolume != null) {
+            if (sliderName == sliderEffectsVolume.name) {
+    			GameAudio.SetProfileEffectsVolume(sliderValue);
+                GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
+            }
         }
-        else if (sliderName == sliderMusicVolume.name) {
-			GameAudio.SetProfileAmbienceVolume(sliderValue);
+
+
+        if(sliderMusicVolume != null) {
+            if (sliderName == sliderMusicVolume.name) {
+    			GameAudio.SetProfileAmbienceVolume(sliderValue);
+                GameProfiles.Current.SetAudioMusicVolume(sliderValue);
+            }
         }
     }
 	
@@ -96,6 +104,25 @@ public class UIPanelSettingsAudio : UIPanelBase {
 			Instance.loadData();
 		}
 	}
+
+    public void UpdateAudioValues() {
+        float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+        float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
+        
+        if(sliderMusicVolume != null) {
+            sliderMusicVolume.sliderValue = musicVolume;
+            sliderMusicVolume.ForceUpdate();
+
+            GameAudio.SetProfileEffectsVolume(musicVolume);
+        }
+        
+        if(sliderEffectsVolume != null) {
+            sliderEffectsVolume.sliderValue = effectsVolume;
+            sliderEffectsVolume.ForceUpdate();
+        
+            GameAudio.SetProfileAmbienceVolume(effectsVolume);
+        }
+    }
 	
 	public void loadData() {
 		StartCoroutine(loadDataCo());
@@ -105,22 +132,7 @@ public class UIPanelSettingsAudio : UIPanelBase {
 		
 		yield return new WaitForSeconds(1f);
 		
-		float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-		float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
-		
-		if(sliderMusicVolume != null) {
-			sliderMusicVolume.sliderValue = musicVolume;
-			sliderMusicVolume.ForceUpdate();
-			
-			GameAudio.SetProfileEffectsVolume(musicVolume);
-		}
-		
-		if(sliderEffectsVolume != null) {
-			sliderEffectsVolume.sliderValue = effectsVolume;
-			sliderEffectsVolume.ForceUpdate();
-			
-			GameAudio.SetProfileAmbienceVolume(effectsVolume);
-		}
+		UpdateAudioValues();
 	}
 	
 }

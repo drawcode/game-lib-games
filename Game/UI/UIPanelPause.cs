@@ -75,21 +75,26 @@ public class UIPanelPause : UIPanelBase {
 		
 #if DEV		
 		if(Application.isEditor) {
-			GameProfiles.Current.SetAudioMusicVolume(0);
-			GameProfiles.Current.SetAudioEffectsVolume(0);
-			changeAudio = false;
+			//GameProfiles.Current.SetAudioMusicVolume(0);
+			//GameProfiles.Current.SetAudioEffectsVolume(0);
+			//changeAudio = false;
 		}
 #endif
 		
 		if(!changeAudio) {
 			return;
 		}
-		
-        if (sliderName == sliderEffectsVolume.name) {
-			GameAudio.SetProfileEffectsVolume(sliderValue);
+
+        if(sliderEffectsVolume != null) {
+            if (sliderName == sliderEffectsVolume.name) {
+    			//GameAudio.SetProfileEffectsVolume(sliderValue);
+            }
         }
-        else if (sliderName == sliderMusicVolume.name) {
-			GameAudio.SetProfileAmbienceVolume(sliderValue);
+
+        if(sliderMusicVolume != null) {
+            if (sliderName == sliderMusicVolume.name) {
+			    //GameAudio.SetProfileAmbienceVolume(sliderValue);
+            }
         }
     }
 	

@@ -347,7 +347,7 @@ public class UIPanelEditAsset : UIAppPanel {
 	}
 	
     void OnSliderChangeEventHandler(string sliderName, float val) {
-    	Debug.Log("SliderEvents:OnSliderChange: sliderName: " + sliderName + " changeValue:" + val);
+    	//Debug.Log("SliderEvents:OnSliderChange: sliderName: " + sliderName + " changeValue:" + val);
 		
 		if(itemAsset != null) {
 			if(sliderName == sliderRotationSpeed.name) {
