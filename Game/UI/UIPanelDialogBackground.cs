@@ -32,8 +32,8 @@ public class UIPanelDialogBackground : UIPanelBase {
 	}	
 	
 	public override void Init() {
-		base.Init();	
-		
+		base.Init();
+
 		loadData();
 	}	
 	
