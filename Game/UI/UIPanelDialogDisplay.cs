@@ -73,6 +73,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
     public static void ShowDefault() {
         if(isInst) {
             Instance.AnimateIn();
+            Instance.loadData();
         }
     }
 
@@ -166,11 +167,23 @@ public class UIPanelDialogDisplay : UIPanelBase {
         }
     }
 
-    public void SetTitle(string titleTo) {
+    public static void SetTitle(string titleTo) {
+        if(isInst) {
+            Instance.setTitle(titleTo);
+        }
+    }
+
+    public void setTitle(string titleTo) {
         UIUtil.SetLabelValue(labelTitle, titleTo);
     }
 
-    public void SetDescription(string descriptionTo) {
+    public static void SetDescription(string descriptionTo) {
+        if(isInst) {
+            Instance.setDescription(descriptionTo);
+        }
+    }
+
+    public void setDescription(string descriptionTo) {
         UIUtil.SetLabelValue(labelDescription, descriptionTo);
     }
 
