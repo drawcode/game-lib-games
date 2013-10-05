@@ -86,7 +86,6 @@ public class UIPanelSettingsAudio : UIPanelBase {
         if(sliderEffectsVolume != null) {
             if (sliderName == sliderEffectsVolume.name) {
     			GameAudio.SetProfileEffectsVolume(sliderValue);
-                GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
             }
         }
 
@@ -94,7 +93,6 @@ public class UIPanelSettingsAudio : UIPanelBase {
         if(sliderMusicVolume != null) {
             if (sliderName == sliderMusicVolume.name) {
     			GameAudio.SetProfileAmbienceVolume(sliderValue);
-                GameProfiles.Current.SetAudioMusicVolume(sliderValue);
             }
         }
     }

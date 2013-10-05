@@ -87,14 +87,26 @@ public class UIPanelPause : UIPanelBase {
 
         if(sliderEffectsVolume != null) {
             if (sliderName == sliderEffectsVolume.name) {
-    			//GameAudio.SetProfileEffectsVolume(sliderValue);
+    			GameAudio.SetProfileEffectsVolume(sliderValue);
             }
         }
 
         if(sliderMusicVolume != null) {
             if (sliderName == sliderMusicVolume.name) {
-			    //GameAudio.SetProfileAmbienceVolume(sliderValue);
+			    GameAudio.SetProfileAmbienceVolume(sliderValue);
             }
+        }
+    }
+
+    public static void ShowDefault() {
+        if(isInst) {
+            Instance.AnimateIn();
+        }
+    }
+
+    public static void HideAll() {
+        if(isInst) {
+            Instance.AnimateOut();
         }
     }
 	
@@ -103,31 +115,36 @@ public class UIPanelPause : UIPanelBase {
 			Instance.loadData();
 		}
 	}
-	
-	public void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-		
-		float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-		float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
-		
-		if(sliderMusicVolume != null) {
-			sliderMusicVolume.sliderValue = musicVolume;
-			sliderMusicVolume.ForceUpdate();
-			
-			GameAudio.SetProfileEffectsVolume(musicVolume);
-		}
-		
-		if(sliderEffectsVolume != null) {
-			sliderEffectsVolume.sliderValue = effectsVolume;
-			sliderEffectsVolume.ForceUpdate();
-			
-			GameAudio.SetProfileAmbienceVolume(effectsVolume);
-		}
-	}
+
+
+    public void UpdateAudioValues() {
+        float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+        float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
+        
+        if(sliderMusicVolume != null) {
+            sliderMusicVolume.sliderValue = musicVolume;
+            sliderMusicVolume.ForceUpdate();
+
+            GameAudio.SetProfileEffectsVolume(musicVolume);
+        }
+        
+        if(sliderEffectsVolume != null) {
+            sliderEffectsVolume.sliderValue = effectsVolume;
+            sliderEffectsVolume.ForceUpdate();
+        
+            GameAudio.SetProfileAmbienceVolume(effectsVolume);
+        }
+    }
+ 
+    public void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+    
+    IEnumerator loadDataCo() {
+    
+        yield return new WaitForSeconds(1f);
+    
+        UpdateAudioValues();
+    }
 	
 }
