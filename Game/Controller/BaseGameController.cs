@@ -1567,6 +1567,7 @@ public class BaseGameController : MonoBehaviour {
 
         List<GameLevelItemAsset> levelItems = new List<GameLevelItemAsset>();
 
+        /*
         float gridHeight = 30f;
         float gridWidth = 200f;
         float gridDepth = 5f;
@@ -1618,6 +1619,7 @@ public class BaseGameController : MonoBehaviour {
                 }
             }
         }
+        */
         return levelItems;
     }
     

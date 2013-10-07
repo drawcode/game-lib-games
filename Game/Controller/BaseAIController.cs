@@ -107,7 +107,9 @@ public class BaseAIController : MonoBehaviour {
             if(containerSpawns != null) {
                 foreach(GamePlayerSpawn spawn
                     in containerSpawns.GetComponentsInChildren<GamePlayerSpawn>(true)) {
-                    spawns.Add(spawn.code, spawn);
+                    if(!spawns.ContainsKey(spawn.code)) {
+                        spawns.Add(spawn.code, spawn);
+                    }
                 }
             }
         }
