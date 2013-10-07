@@ -395,8 +395,8 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual GamePlayerController getCurrentController() {
-        if(GameController.CurrentGamePlayerController != null) {
-            return GameController.CurrentGamePlayerController;
+        if(GameController.Instance.currentGamePlayerController != null) {
+            return GameController.Instance.currentGamePlayerController;
         }
         return null;
     }
