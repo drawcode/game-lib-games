@@ -67,15 +67,15 @@ public class UIPanelDialogDisplay : UIPanelBase {
     void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonDialogOk, buttonName)) {
             HideAll();
-            GameController.Instance.GameRunningStateRun();
+            GameController.GameRunningStateRun();
         }
         else if(UIUtil.IsButtonClicked(buttonDialogGo, buttonName)) {
             HideAll();
-            GameController.Instance.GameRunningStateRun();
+            GameController.GameRunningStateRun();
         }
         else if(UIUtil.IsButtonClicked(buttonDialogCancel, buttonName)) {
             HideAll();
-            GameController.Instance.GameRunningStateRun();
+            GameController.GameRunningStateRun();
         }
 	}
 

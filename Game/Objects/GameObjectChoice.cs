@@ -14,7 +14,7 @@ public class GameObjectChoiceData {
     public string responseAnswer = "";
     public string displayAnswer = "";
     public string assetCode = "";
-    public bool isCorrect = false;
+    public bool isCorrect = true;
 }
 
 public class GameObjectChoice : GameObjectLevelBase {
@@ -73,11 +73,22 @@ public class GameObjectChoice : GameObjectLevelBase {
             if(assetItem != null) {
                 assetItem.SetLayerRecursively("Default");
                 assetItem.transform.parent = containerAsset.transform;
-                assetItem.ResetObject();
+                //assetItem.transform.position = containerAsset.transform.position;
+                //assetItem.transform.rotation = containerAsset.transform.rotation;
+                assetItem.transform.localPosition = Vector3.zero;
+                assetItem.transform.localRotation = Quaternion.identity;
 
                 foreach(Rigidbody rigidbody in assetItem.GetComponentsInChildren<Rigidbody>(true)) {
-                    rigidbody.gameObject.AddComponent<GameObjectChoiceAsset>();
+
+                    GameObject go = rigidbody.gameObject;
+
+                    go.AddComponent<GameObjectChoiceAsset>();
+                    go.ResetPosition(true);
+                    go.ResetRotation(true);
                 }
+
+                //assetItem.ResetPosition();
+                //assetItem.ResetRotation();
             }
         }
     }
@@ -132,7 +143,7 @@ public class GameObjectChoice : GameObjectLevelBase {
                 // Play incorrect
                 BroadcastChoice();
                 if(rigidbody != null) {
-                    rigidbody.AddExplosionForce(10f, transform.position, 10f);
+                    //rigidbody.AddExplosionForce(10f, transform.position, 10f);
                 }
             }
         }

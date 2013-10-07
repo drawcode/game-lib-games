@@ -105,6 +105,7 @@ public class BaseUIPanel {
 public class BaseUIController : MonoBehaviour { 
  
     public static BaseUIController Instance;
+
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
     public bool inModalAction = true;
@@ -662,7 +663,7 @@ public class BaseUIController : MonoBehaviour {
         //AppController.Instance.ChangeActionNext();
      
         if(Application.isEditor) {
-            GameController.Instance.CycleCharacterTypesNext();
+            GameController.CycleCharacterTypesNext();
         }
 
     }
@@ -687,11 +688,11 @@ public class BaseUIController : MonoBehaviour {
      
         if(direction == FingerGestures.SwipeDirection.Right
          || direction == FingerGestures.SwipeDirection.Down) {
-            GameController.Instance.CycleCharacterTypesPrevious();
+            GameController.CycleCharacterTypesPrevious();
         }
         else if(direction == FingerGestures.SwipeDirection.Left
          || direction == FingerGestures.SwipeDirection.Up) {
-            GameController.Instance.CycleCharacterTypesNext();
+            GameController.CycleCharacterTypesNext();
         }
     }
  
@@ -2250,27 +2251,27 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void GameContinue() {     
-        GameController.Instance.QuitGame();
+        GameController.QuitGame();
     }
  
     public virtual void GameWorlds() {       
-        GameController.Instance.QuitGame();
+        GameController.QuitGame();
     }
  
     public virtual void GameRestart() {
-        GameController.Instance.RestartGame();
+        GameController.RestartGame();
     }
  
     public virtual void GameResume() {
-        GameController.Instance.ResumeGame();
+        GameController.ResumeGame();
     }
  
     public virtual void GamePause() {
-        GameController.Instance.TogglePauseGame();
+        GameController.TogglePauseGame();
     }
  
     public virtual void GameQuit() {
-        GameController.Instance.QuitGame();
+        GameController.QuitGame();
         GameUIController.ShowMain();
     }
 }

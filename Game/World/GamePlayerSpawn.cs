@@ -1,12 +1,28 @@
 using UnityEngine;
 using System.Collections;
 
+public class GamePlayerSpawnArea {
+    public static string leftUpper = "left-upper";
+    public static string rightUpper = "right-upper";
+    public static string middleUpper = "middle-upper";
+
+    public static string leftMiddle = "left-middle";
+    public static string rightMiddle = "right-middle";
+    public static string middleMiddle = "middle-middle";
+
+    public static string leftLower = "left-lower";
+    public static string rightLower = "right-lower";
+    public static string middleLower = "middle-lower";
+}
+
 public class GamePlayerSpawn : MonoBehaviour {
 	
 	public Vector3 distance;
 	public GameObject spawnBouncyBaseObject;
 	public GameObject spawnBouncyObject;
 	public GameObject spawnAnchorObject;
+
+    public string code = GamePlayerSpawnArea.middleMiddle;
 		
 	void Start () {
 		//StartCoroutine(StartAnimating());

@@ -31,7 +31,8 @@ public class GameObjectChoiceAsset : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision) {
 
-        if(collision.transform != null) {
+        if(gameObjectChoice != null
+            && collision.transform != null) {
             GamePlayerController gamePlayerController
                 = collision.transform.GetComponent<GamePlayerController>();
             if(gamePlayerController != null) {
