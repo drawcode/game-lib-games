@@ -159,8 +159,24 @@ public class GameDraggableLevelItem : MonoBehaviour {
 		LoadSprite(gameLevelItemAsset.asset_code);
 		yield break;		
 	}
-	
-	void Update() {
+
+    public void Freeze() {
+        gameObject.FreezeRigidBodies();
+    }
+
+    public void UnFreeze() {
+        gameObject.UnFreezeRigidBodies();
+    }
+ 
+    void Update() {
+
+        if(!GameConfigs.isGameRunning && !GameDraggableEditor.isEditing) {
+            Freeze();
+        }
+        else {
+            UnFreeze();
+        }
+
 		if(dragHolder != null) {
 			if(GameDraggableEditor.isEditing) {
 				

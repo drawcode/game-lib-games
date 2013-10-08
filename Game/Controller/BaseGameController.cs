@@ -1676,19 +1676,26 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual GameLevelItemAsset getLevelItemAsset(string asset_code,
-        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity) {
+        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity,
+        Vector2 rangeScale,
+        Vector2 rangeRotation) {
 
         return GameController.GetLevelItemAssetRandom(
-            asset_code, 0, physicsType, destructable, reactive, kinematic, gravity);
+            asset_code, 0, physicsType, destructable,
+            reactive, kinematic, gravity,
+            rangeScale, rangeRotation);
     }
     
     public virtual GameLevelItemAsset getLevelItemAssetRandom(string asset_code, int countLimit,
-        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity) {
+        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity,
+        Vector2 rangeScale,
+        Vector2 rangeRotation) {
 
         return GameController.GetLevelItemAssetFull(
             GameController.GetRandomVectorInGameBounds(),
             asset_code, 0, physicsType,
-            destructable, reactive, kinematic, gravity);
+            destructable, reactive, kinematic, gravity,
+            rangeScale, rangeRotation);
     }
     
     public virtual GameLevelItemAsset getLevelItemAssetFull(
@@ -1699,12 +1706,25 @@ public class BaseGameController : MonoBehaviour {
         bool destructable, 
         bool reactive, 
         bool kinematic, 
-        bool gravity) {
+        bool gravity,
+        Vector2 rangeScale,
+        Vector2 rangeRotation) {
         
         GameLevelItemAssetStep step = new GameLevelItemAssetStep();
         step.position.FromVector3(startPosition);
-        step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.5f, 1.2f));
-        step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
+
+        step.scale.FromVector3(
+            Vector3.one *
+            UnityEngine.Random.Range(rangeScale.x, rangeScale.y));
+
+        //rangeScale, 1.2f));
+
+        step.rotation.FromVector3(
+            Vector3.zero
+                .WithZ(
+                    UnityEngine.Random.Range(rangeRotation.x, rangeRotation.y)));
+
+        //step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
 
         GameLevelItemAsset asset = new GameLevelItemAsset();
         if(countLimit == 0) {
@@ -1728,14 +1748,18 @@ public class BaseGameController : MonoBehaviour {
         
         for(int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom("portal", 5,
-            GameLevelItemAssetPhysicsType.physicsStatic, true, false, false, false);
+            GameLevelItemAssetPhysicsType.physicsStatic, true, false, false, false,
+                Vector2.zero.WithX(.7f).WithY(1.2f),
+                Vector2.zero.WithX(-.1f).WithY(.1f));
             levelItems.Add(asset);
         }
         
         
         for(int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {          
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom("box",3,
-            GameLevelItemAssetPhysicsType.physicsStatic, false, true, false, true);
+            GameLevelItemAssetPhysicsType.physicsStatic, false, true, false, true,
+                Vector2.zero.WithX(.7f).WithY(1.2f),
+                Vector2.zero.WithX(-.1f).WithY(.1f));
             levelItems.Add(asset);
         }
 
