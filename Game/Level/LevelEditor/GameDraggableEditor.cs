@@ -1300,27 +1300,40 @@ public class GameDraggableEditor : MonoBehaviour {
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
 		
-		LogUtil.Log("LoadSprite:resourcePath:", resourcePath);
+		Debug.Log("LoadSprite:resourcePath:" + resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
+
 		if(prefabSprite != null) {
+
+            Debug.Log("LoadSprite:check:prefabSprite:" + prefabSprite.name);
+
 			go = Instantiate(prefabSprite) as GameObject;
+
 			if(go != null) {
-				go.transform.parent = parent.transform;
-				if(parent != null) {
+
+                Debug.Log("LoadSprite:go.name:" + go.name);
+
+                go.transform.parent = parent.transform;
+
+                if(parent != null) {
 					//go.transform.position = parent.transform.position;
 					go.transform.position = Vector3.zero;
 				}
 				else {
 					go.transform.position = Vector3.zero;
 				}
-				go.transform.localScale = scale;
+
+                go.transform.localScale = scale;
 				go.transform.localPosition = Vector3.zero;
 				go.transform.localRotation = Quaternion.identity;
 				
 				go.AddComponent<GameLevelSprite>();
 			}
 		}
+        else {
+            Debug.Log("NOT FOUND: LoadSprite:resourcePath:" + resourcePath);
+        }
 		return go;
 	}
 	
@@ -1376,10 +1389,12 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
-		LogUtil.Log("LoadSpriteEffect:resourcePath:", resourcePath);
+
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
+
 		if(prefabSprite != null) {
+
 			go = Instantiate(prefabSprite) as GameObject;
 			if(go != null) {
 				go.transform.parent = parent.transform;
@@ -1394,6 +1409,8 @@ public class GameDraggableEditor : MonoBehaviour {
 				go.transform.localRotation = Quaternion.identity;
 				
 				go.AddComponent<GameLevelSpriteEffect>();
+
+                Debug.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
 			}
 		}
 		return go;
@@ -1455,6 +1472,9 @@ public class GameDraggableEditor : MonoBehaviour {
 		
 		if(gameLevelItemAssets != null) {
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
+
+                Debug.Log("loadLevelItemsCo:" + item.asset_code);
+
 				LoadLevelItem(item);
 			}
 		}
@@ -1489,14 +1509,21 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadLevelItem(UnityEngine.Object prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
-		if(gameLevelItemAsset != null) {
-			if(prefabGameLevelItemContainer != null) {
-				GameObject goLevelItem = Instantiate(prefabGameLevelItemContainer) as GameObject;
-				if(goLevelItem != null) {
+
+        Debug.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
+
+        if(gameLevelItemAsset != null) {
+
+            if(prefabGameLevelItemContainer != null) {
+
+                GameObject goLevelItem = Instantiate(prefabGameLevelItemContainer) as GameObject;
+
+                if(goLevelItem != null) {
 					
 					GameDraggableLevelItem dragLevelItem = goLevelItem.GetComponent<GameDraggableLevelItem>();
 					
 					if(dragLevelItem != null) {
+
 						dragLevelItem.gameLevelItemAsset = gameLevelItemAsset;
 						//dragLevelItem.gameLevelItemObject.transform.localScale = 
 							// dragLevelItem.gameLevelItemObject.transform.localScale * .1f;

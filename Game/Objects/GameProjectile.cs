@@ -19,7 +19,7 @@ public class GameProjectile : MonoBehaviour {
         }
         
         void OnCollisionEnter(Collision collision) {
-                if(!GameAppController.shouldRunGame) {
+                if(!GameController.shouldRunGame) {
                         return;
                 }
                 
@@ -49,7 +49,7 @@ public class GameProjectile : MonoBehaviour {
         
         void OnTriggerEnter(Collider collider) {
                 // Check if we hit an actual destroyable sprite
-                if(!GameAppController.shouldRunGame) {
+                if(!GameController.shouldRunGame) {
                         return;
                 }
                 

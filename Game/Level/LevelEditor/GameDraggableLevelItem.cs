@@ -35,11 +35,13 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	}
 	
 	void OnEnable() {		
-		Messenger<GameDraggableEditEnum>.AddListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
+		Messenger<GameDraggableEditEnum>.AddListener(
+            GameDraggableEditorMessages.EditState, OnEditStateHandler);
 	}
 	
 	void OnDisable() {		
-		Messenger<GameDraggableEditEnum>.RemoveListener(GameDraggableEditorMessages.EditState, OnEditStateHandler);
+		Messenger<GameDraggableEditEnum>.RemoveListener(
+            GameDraggableEditorMessages.EditState, OnEditStateHandler);
 	}
 	
 	void OnEditStateHandler(GameDraggableEditEnum state) {
@@ -75,10 +77,19 @@ public class GameDraggableLevelItem : MonoBehaviour {
 			
 			GameObject go = GameDraggableEditor.LoadSprite(
 				gameLevelItemObject, spriteCode, Vector3.one);
+
+            //Debug.Log("LoadSprite:exists:" + go != null);
+
 			if(go != null) {
+
+                //Debug.Log("LoadSprite:" + go.name);
+
 				GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
-				if(gameLevelSprite != null) {
+
+                if(gameLevelSprite != null) {
 					gameLevelSprite.gameDraggableLevelItem = this;
+
+                    //Debug.Log("LoadSprite:gameLevelSprite:" + gameLevelSprite.name);
 				}
 				//go.transform.parent.transform.parent.transform.parent.transform.parent.position = Vector3.zero;
 				//go.transform.parent.transform.parent.transform.parent.transform.parent.localPosition = Vector3.zero;
@@ -98,8 +109,12 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public void LoadSpriteEffect(string spriteEffectCode) {
 		
 		if(gameLevelItemAsset != null) {
+
 			GameObject go = GameDraggableEditor.LoadSpriteEffect(
-				gameLevelItemObject, gameLevelItemAsset.destroy_effect_code, Vector3.one.WithX(3).WithY(3).WithZ(3) * .1f);
+				gameLevelItemObject,
+                gameLevelItemAsset.destroy_effect_code,
+                Vector3.one.WithX(3).WithY(3).WithZ(3) * .1f);
+
 			if(go != null) {
 				PackedSprite sprite = go.GetComponent<PackedSprite>();
 				if(sprite != null) {
@@ -125,7 +140,9 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	
 	public void DestroyMe() {
 		GameLevelItems.Current.level_items.RemoveAll(item => item.uuid == gameLevelItemAsset.uuid);		
-		
+
+        Debug.Log("GameDraggableLevelItem:destroying..." + name);
+
 		//GameController.Instance.ProcessStatDestroy();
 		
 		Destroy (gameObject);

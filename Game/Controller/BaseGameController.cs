@@ -317,6 +317,18 @@ public class BaseGameController : MonoBehaviour {
             return itemContainerObject.transform.childCount;
         }
     }
+
+    public static bool shouldRunGame {
+        get {
+
+            if(GameDraggableEditor.isEditing) {
+                return false;
+            }
+
+            return true;
+
+        }
+    }
     
     // ---------------------------------------------------------------------
     
@@ -645,6 +657,46 @@ public class BaseGameController : MonoBehaviour {
 
     // LEVELS
 
+    public virtual void loadLevel(string code) {
+
+        GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
+    
+        GameLevelItems.Current.code = code;
+    
+        // Clear items from LevelContainer
+        GameController.Reset();
+
+        // Change data codes
+        GameLevels.Instance.ChangeCurrentAbsolute(code);
+        GameLevelItems.Instance.ChangeCurrentAbsolute(code);
+
+        // Prepare game level items for this mode
+        GameController.LoadLevelItems();
+    
+        // Load in the level assets
+        GameDraggableEditor.LoadLevelItems();
+    
+        // Load the game levelitems for the game level code
+        GameController.StartGame(code);
+    
+        GameHUD.Instance.SetLevelInit(GameLevels.Current);
+    
+        GameHUD.Instance.AnimateIn();
+    
+        //GameUI.Instance.ToggleGameUI();
+    
+    }
+    
+    public virtual void loadLevelItems() {
+        GameLevelItems.Current.level_items
+            = GameController.GetLevelRandomizedGrid();
+    }
+
+    public virtual void saveCurrentLevel() {
+        GameDraggableEditor.SaveCurrentLevel(
+            GameController.Instance.levelItemsContainerObject);
+    }
+
     public virtual void loadStartLevel(string levelCode) {
 
         string characterCode = GameProfileCharacters.Current.GetCurrentCharacterCode();
@@ -672,7 +724,7 @@ public class BaseGameController : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         
         GameHUD.Instance.ResetIndicators();
-        GameAppController.Instance.LoadLevel(levelCode);
+        GameController.LoadLevel(levelCode);
         
         // TODO load anim
         

@@ -17,6 +17,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
     public UIImageButton buttonDialogOk;
     public UIImageButton buttonDialogCancel;
     public UIImageButton buttonDialogGo;
+    public UIImageButton buttonDialogNext;
 
 	public void Awake() {
 		
@@ -41,18 +42,22 @@ public class UIPanelDialogDisplay : UIPanelBase {
 	public override void Init() {
 		base.Init();
 
-        SetTitle("");
-        SetDescription("");
-        HideButtonCancel();
-        HideButtonOk();
-        HideButtonGo();
-		
-		loadData();
+        Reset();
+
+        loadData();
 	}	
 	
 	public override void Start() {
 		Init();
 	}
+
+    public void Reset() {
+
+        SetTitle("");
+        SetDescription("");
+
+        HideAllButtons();
+    }
 	
     void OnEnable() {
 		Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
@@ -128,6 +133,18 @@ public class UIPanelDialogDisplay : UIPanelBase {
         }
     }
 
+    public static void HideButtonNext() {
+        if(isInst) {
+            Instance.hideButtonNext();
+        }
+    }
+
+    public static void HideAllButtons() {
+        if(isInst) {
+            Instance.hideAllButtons();
+        }
+    }
+
     public void showButtonOk() {
         showButton(buttonDialogOk);
     }
@@ -140,6 +157,10 @@ public class UIPanelDialogDisplay : UIPanelBase {
         showButton(buttonDialogGo);
     }
 
+    public void showButtonNext() {
+        showButton(buttonDialogNext);
+    }
+
     public void hideButtonOk() {
         hideButton(buttonDialogOk);
     }
@@ -150,6 +171,17 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
     public void hideButtonGo() {
         hideButton(buttonDialogGo);
+    }
+
+    public void hideButtonNext() {
+        hideButton(buttonDialogNext);
+    }
+
+    public void hideAllButtons() {
+        HideButtonOk();
+        HideButtonCancel();
+        HideButtonGo();
+        HideButtonCancel();
     }
 
     public static void ShowButton(UIImageButton button) {
@@ -210,9 +242,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
     
         yield return new WaitForSeconds(1f);
 
-        HideButtonOk();
-        HideButtonCancel();
-        HideButtonGo();
+        HideAllButtons();
     }
 	
 }
