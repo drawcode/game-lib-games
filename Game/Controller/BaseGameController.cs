@@ -1696,70 +1696,64 @@ public class BaseGameController : MonoBehaviour {
         return levelItems;
     }
     
-    public virtual GameLevelItemAsset getLevelItemAsset(string asset_code,
-        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity,
-        Vector2 rangeScale,
-        Vector2 rangeRotation) {
+    public virtual GameLevelItemAsset getLevelItemAsset(
+        GameLevelItemAssetData data) {
 
-        return GameController.GetLevelItemAssetRandom(
-            asset_code, 0, physicsType, destructable,
-            reactive, kinematic, gravity,
-            rangeScale, rangeRotation);
+        return GameController.GetLevelItemAssetRandom(data);
     }
     
-    public virtual GameLevelItemAsset getLevelItemAssetRandom(string asset_code, int countLimit,
-        string physicsType, bool destructable, bool reactive, bool kinematic, bool gravity,
-        Vector2 rangeScale,
-        Vector2 rangeRotation) {
+    public virtual GameLevelItemAsset getLevelItemAssetRandom(
+        GameLevelItemAssetData data) {
 
-        return GameController.GetLevelItemAssetFull(
-            GameController.GetRandomVectorInGameBounds(),
-            asset_code, 0, physicsType,
-            destructable, reactive, kinematic, gravity,
-            rangeScale, rangeRotation);
+        data.startPosition = GameController.GetRandomVectorInGameBounds();
+
+        return GameController.GetLevelItemAssetFull(data);
+    }
+
+    public virtual void syncLevelItem(Vector3 gridPos, GameLevelItemAssetData data) {
+        if(!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
+            //&& GameController.CheckBounds(gridPos)) {
+
+            GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
+
+            levelItems.Add(asset);
+
+            GameController.SetGameLevelGridSpaceFilled(gridPos, asset);
+        }
     }
     
     public virtual GameLevelItemAsset getLevelItemAssetFull(
-        Vector3 startPosition,
-        string asset_code, 
-        int countLimit, 
-        string physicsType, 
-        bool destructable, 
-        bool reactive, 
-        bool kinematic, 
-        bool gravity,
-        Vector2 rangeScale,
-        Vector2 rangeRotation) {
+        GameLevelItemAssetData data) {
         
         GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-        step.position.FromVector3(startPosition);
+        step.position.FromVector3(data.startPosition);
 
         step.scale.FromVector3(
             Vector3.one *
-            UnityEngine.Random.Range(rangeScale.x, rangeScale.y));
+            UnityEngine.Random.Range(data.rangeScale.x, data.rangeScale.y));
 
         //rangeScale, 1.2f));
 
         step.rotation.FromVector3(
             Vector3.zero
                 .WithZ(
-                    UnityEngine.Random.Range(rangeRotation.x, rangeRotation.y)));
+                    UnityEngine.Random.Range(data.rangeRotation.x, data.rangeRotation.y)));
 
         //step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
 
         GameLevelItemAsset asset = new GameLevelItemAsset();
-        if(countLimit == 0) {
-            asset.asset_code = asset_code;
+        if(data.countLimit == 0) {
+            asset.asset_code = data.asset_code;
         }
         else {
-            asset.asset_code = asset_code + "-" + UnityEngine.Random.Range(1, countLimit).ToString();
+            asset.asset_code = data.asset_code + "-" + UnityEngine.Random.Range(1, data.countLimit).ToString();
         }
 
-        asset.physics_type = physicsType;
-        asset.destructable = destructable;
-        asset.reactive = reactive;
-        asset.kinematic = kinematic;
-        asset.gravity = gravity;
+        asset.physics_type = data.physicsType;
+        asset.destructable = data.destructable;
+        asset.reactive = data.reactive;
+        asset.kinematic = data.kinematic;
+        asset.gravity = data.gravity;
         asset.steps.Add(step);
 
         return asset;
@@ -1768,19 +1762,37 @@ public class BaseGameController : MonoBehaviour {
     public virtual List<GameLevelItemAsset> getLevelRandomized(List<GameLevelItemAsset> levelItems) {
         
         for(int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
-            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom("portal", 5,
-            GameLevelItemAssetPhysicsType.physicsStatic, true, false, false, false,
-                Vector2.zero.WithX(.7f).WithY(1.2f),
-                Vector2.zero.WithX(-.1f).WithY(.1f));
+
+            GameLevelItemAssetData data = new GameLevelItemAssetData();
+            data.asset_code = "portal";
+            data.countLimit = 5;
+            data.destructable = true;
+            data.gravity = true;
+            data.kinematic = true;
+            data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
+            data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+
+            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
+
             levelItems.Add(asset);
         }
         
         
-        for(int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {          
-            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom("box",3,
-            GameLevelItemAssetPhysicsType.physicsStatic, false, true, false, true,
-                Vector2.zero.WithX(.7f).WithY(1.2f),
-                Vector2.zero.WithX(-.1f).WithY(.1f));
+        for(int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
+
+            GameLevelItemAssetData data = new GameLevelItemAssetData();
+            data.asset_code = "box";
+            data.countLimit = 3;
+            data.destructable = true;
+            data.gravity = true;
+            data.kinematic = true;
+            data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
+            data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+
+            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
+
             levelItems.Add(asset);
         }
 
