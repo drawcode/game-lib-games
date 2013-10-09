@@ -412,6 +412,16 @@ public class UIUtil {
         }
         return false;
     }
+
+    public static void SetSpriteColor(GameObject go, Color colorTo) {
+        if(go == null)
+            return;
+
+        if(go != null) {
+            UITweenerUtil.ColorTo(go,
+                 UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
+        }
+    }
  
     public static void SetButtonColor(UIButton buttonTo, Color colorTo) {            
         if(buttonTo == null)
