@@ -228,76 +228,38 @@ public class UIPanelBase : UIAppPanel {
 		AnimateOutRightTop(time, delay);
 		AnimateOutTop(time, delay);
 		AnimateOutBottom(time, delay);	
-		
-		//Invoke("HidePanel", delay + .5f);
+
+        isVisible = false;
+
+        StartCoroutine(HidePanelCo(delay + .5f));
 	}
+
+    public IEnumerator HidePanelCo(float delay) {
+        yield return new WaitForSeconds(delay);
+
+        if(!isVisible) {
+            HidePanel();
+        }
+    }
 	
 	public virtual void HidePanel() {
-		if(panelCenterObject != null) {
-        	panelCenterObject.Hide();		
-		}
-		if(panelLeftObject != null) {
-        	panelLeftObject.Hide();		
-		}
-		if(panelLeftBottomObject != null) {
-        	panelLeftBottomObject.Hide();		
-		}
-		if(panelLeftTopObject != null) {
-        	panelLeftTopObject.Hide();		
-		}
-		if(panelRightObject != null) {
-        	panelRightObject.Hide();		
-		}
-		if(panelRightBottomObject != null) {
-        	panelRightBottomObject.Hide();		
-		}
-		if(panelRightTopObject != null) {
-        	panelRightTopObject.Hide();		
-		}
-		if(panelTopObject != null) {
-        	panelTopObject.Hide();		
-		}
-		if(panelBottomObject != null) {
-        	panelBottomObject.Hide();		
-		}
-		
-		if(panelContainer != null) {
-        	panelContainer.Hide();		
-		}
+
+        if(!isVisible) {
+
+    		if(panelContainer != null) {
+            	panelContainer.Hide();
+    		}
+
+        }
 	}
 	
 	public virtual void ShowPanel() {
-		
-		if(panelCenterObject != null) {
-        	panelCenterObject.Show();		
-		}
+
+        isVisible = true;
+
 		if(panelContainer != null) {
         	panelContainer.Show();		
 		}		
-		if(panelLeftObject != null) {
-        	panelLeftObject.Show();		
-		}
-		if(panelLeftBottomObject != null) {
-        	panelLeftBottomObject.Show();		
-		}
-		if(panelLeftTopObject != null) {
-        	panelLeftTopObject.Show();		
-		}
-		if(panelRightObject != null) {
-        	panelRightObject.Show();		
-		}
-		if(panelRightBottomObject != null) {
-        	panelRightBottomObject.Show();		
-		}
-		if(panelRightTopObject != null) {
-        	panelRightTopObject.Show();		
-		}
-		if(panelTopObject != null) {
-        	panelTopObject.Show();		
-		}
-		if(panelBottomObject != null) {
-        	panelBottomObject.Show();		
-		}
 	}
 	
 	void Update() {
