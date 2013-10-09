@@ -197,7 +197,10 @@ public class BaseGameController : MonoBehaviour {
     public GameModeGlobal gameMode = GameModeGlobal.GameModeArcade;
     
     public UnityEngine.Object prefabDraggableContainer;
-    
+
+    public Dictionary<string, GameLevelItemAsset> levelGrid = null;
+    public List<GameLevelItemAsset> levelItems = null;
+
     public GameObject levelBoundaryContainerObject;
     public GameObject levelContainerObject;
     public GameObject levelItemsContainerObject;
@@ -1600,6 +1603,76 @@ public class BaseGameController : MonoBehaviour {
     
     // LEVEL ITEMS, DATA, RANDOMIZER
 
+    public virtual string getGameLevelGridKey(Vector3 gridPos) {
+        string key = "pos" +
+        "-" + ((int)gridPos.x).ToString() +
+        "-" + ((int)gridPos.y).ToString() +
+        "-" + ((int)gridPos.z).ToString();
+        //LogUtil.Log("gameLevelKey:" + key);
+        return key;
+    }
+
+    public virtual bool isGameLevelGridSpaceFilled(Vector3 gridPos) {
+
+        bool filled = false;
+
+        GameController.CheckGameLevelGrid();
+
+        string key = GameController.GetGameLevelGridKey(gridPos);
+
+        if(levelGrid.ContainsKey(key)) {
+            filled = true;
+        }
+
+        LogUtil.Log("gameLevelSpaceFilled: key:" + key + " filled:" +  filled);
+
+        return filled;
+    }
+
+    public virtual void setGameLevelGridSpaceFilled(Vector3 gridPos, GameLevelItemAsset asset) {
+
+        GameController.CheckGameLevelGrid();
+
+        string key = GameController.GetGameLevelGridKey(gridPos);
+
+        if(levelGrid.ContainsKey(key)) {
+            levelGrid[key] = asset;
+            LogUtil.Log("SetLevelSpaceFilled: key:" + key);
+        }
+        else {
+            levelGrid.Add(key, asset);
+            LogUtil.Log("SetLevelSpaceFilled: key:" + key);
+        }
+    }
+
+    public virtual void checkGameLevelItems() {
+        if(levelItems == null) {
+            levelItems = new List<GameLevelItemAsset>();
+        }
+    }
+
+    public virtual void checkGameLevelGrid() {
+        if(levelGrid == null) {
+            levelGrid = new Dictionary<string, GameLevelItemAsset>();
+        }
+    }
+
+    public virtual void clearGameLevelItems() {
+        GameController.CheckGameLevelItems();
+
+        if(levelItems != null) {
+            levelItems.Clear();
+        }
+    }
+
+    public virtual void clearGameLevelGrid() {
+        GameController.CheckGameLevelGrid();
+
+        if(levelGrid != null) {
+            levelGrid.Clear();
+        }
+    }
+
     public virtual List<GameLevelItemAsset> getLevelRandomized() {
 
         List<GameLevelItemAsset> levelItems = new List<GameLevelItemAsset>();
@@ -1617,61 +1690,9 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual List<GameLevelItemAsset> getLevelRandomizedGrid() {
 
-        List<GameLevelItemAsset> levelItems = new List<GameLevelItemAsset>();
+        GameController.ClearGameLevelItems();
+        GameController.ClearGameLevelGrid();
 
-        /*
-        float gridHeight = 30f;
-        float gridWidth = 200f;
-        float gridDepth = 5f;
-        float gridBoxSize = 5f;
-
-        for(int z = 0; z < gridDepth / gridBoxSize; z++) {
-
-            for(int y = 0; y < gridHeight / gridBoxSize; y++) {
-
-                for(int x = 0; x < gridWidth / gridBoxSize; x++) {
-    
-                    // Random chance of filling this, also port in level layout types from text
-
-                    int randomChance = UnityEngine.Random.Range(0, 150);
-
-                    if(randomChance > 10 && randomChance < 15) {
-                        // Fill level item
-                        for(int a = 0; a < UnityEngine.Random.Range(1, 2); a++) {
-
-                            Vector3 gridPos = Vector3.zero
-                             .WithX(((gridBoxSize * x) + (a * gridBoxSize)) - gridWidth / 2)
-                                 .WithY((gridBoxSize * y) + 1)
-                                 .WithZ((gridBoxSize * z));
-
-                            GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(gridPos, "portal", 5,
-                                GameLevelItemAssetPhysicsType.physicsStatic, true, false, false, false);
-
-                            levelItems.Add(asset);
-                        }
-                    }
-    
-                    if(randomChance <= 8) {
-
-                        // Fill level item
-
-                        for(int a = 0; a < UnityEngine.Random.Range(1, 5); a++) {
-
-                            Vector3 gridPos = Vector3.zero
-                             .WithX(((gridBoxSize * x) + gridBoxSize + (a * 5)) - gridWidth / 2)
-                             .WithY(((gridBoxSize * y)) + 1)
-                             .WithZ(((gridBoxSize * z)));
-
-                            GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(gridPos, "padding", 5,
-                                GameLevelItemAssetPhysicsType.physicsStatic, true, false, false, false);
-
-                            levelItems.Add(asset);
-                        }
-                    }
-                }
-            }
-        }
-        */
         return levelItems;
     }
     
