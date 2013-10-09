@@ -42,6 +42,11 @@ public class UIGameRPGXP : UIGameRPGObject {
     }
 
     public override void Update() {
+
+        if(GameConfigs.isGameRunning) {
+            return;
+        }
+
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionXPAdd) {

@@ -77,6 +77,11 @@ public class UIGameRPGObject : MonoBehaviour {
 
 
     public virtual void Update() {
+        
+        if(GameConfigs.isGameRunning) {
+            return;
+        }
+
         HandleUpdate(true);
     }
 }

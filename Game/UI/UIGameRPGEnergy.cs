@@ -43,6 +43,11 @@ public class UIGameRPGEnergy : UIGameRPGObject {
     }
 
     public override void Update() {
+
+        if(GameConfigs.isGameRunning) {
+            return;
+        }
+        
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionEnergyAdd) {

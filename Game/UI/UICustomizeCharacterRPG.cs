@@ -203,6 +203,14 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
     void Update() {
 
+        if(GameConfigs.isGameRunning) {
+            return;
+        }
+
+        if(!isVisible) {
+            return;
+        }
+
         if(Input.GetKeyDown("u")) {
             GameProfileRPGs.Current.AddUpgrades(5);
             loadData();
