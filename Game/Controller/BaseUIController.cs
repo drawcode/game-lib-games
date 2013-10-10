@@ -12,6 +12,19 @@ public enum BaseUIStates {
     InGame,
     InEdit
 }
+
+public class UIControllerMessages {
+    public static string uiPanelAnimateIn = "ui-panel-animate-in";
+    public static string uiPanelAnimateOut = "ui-panel-animate-out";
+    public static string uiPanelAnimateType = "ui-panel-animate-type";
+}
+
+public class UIControllerAnimateTypes {
+    public static string uiPanelAnimateTypeIn = "ui-panel-animate-type-in";
+    public static string uiPanelAnimateTypeOut = "ui-panel-animate-type-out";
+    public static string uiPanelAnimateTypeInBetween = "ui-panel-animate-type-in-between";
+    public static string uiPanelAnimateTypeInternal = "ui-panel-animate-type-internal";
+}
  
 public class BaseUIButtonNames { 
     public static string buttonBack = "ButtonBack";
@@ -80,6 +93,7 @@ public class BaseUIPanel {
     public static string panelGameModeTraining = "PanelGameModeTraining";
     public static string panelGameModeTrainingMode = "PanelGameModeTrainingMode";
     public static string panelGameModeTrainingModeChoice = "PanelGameModeTrainingModeChoice";
+    public static string panelGameModeTrainingModeCollection = "PanelGameModeTrainingModeChoice";
     public static string panelGameModeTrainingModeContent = "PanelGameModeTrainingModeContent";
     public static string panelGameModeTrainingModeRPGHealth = "PanelGameModeTrainingModeRPGHealth";
     public static string panelGameModeTrainingModeRPGEnergy = "PanelGameModeTrainingModeRPGEnergy";
@@ -204,6 +218,68 @@ public class BaseUIController : MonoBehaviour {
         //Invoke("ShowMainMenuDelayed", 10);
         HideAllPanels();
         showMain();
+    }
+
+    public void broadcastUIMessageAnimateIn(string objName) {
+        Messenger<string>.Broadcast(UIControllerMessages.uiPanelAnimateIn, objName);
+    }
+
+    public void broadcastUIMessageAnimateOut(string objName) {
+        Messenger<string>.Broadcast(UIControllerMessages.uiPanelAnimateOut, objName);
+    }
+
+    public void broadcastUIMessageAnimateType(string objName, string code) {
+        Messenger<string, string>.Broadcast(UIControllerMessages.uiPanelAnimateType, objName, code);
+    }
+
+    public void showUIPanel(object obj, string panelCode, string title) {
+        Type objType = obj.GetType();
+        string objName = objType.Name;
+        showUIPanel(objName, panelCode, title);
+    }
+
+    public void showUIPanel(Type objType, string panelCode, string title) {
+        showUIPanel(objType.Name, panelCode, title);
+    }
+
+    public void showUIPanel(string objName, string panelCode, string title) {
+
+        currentPanel = panelCode;
+
+        HideAllPanelsNow();
+
+        broadcastUIMessageAnimateType(
+            "GameUIPanelBackgrounds",
+            UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
+
+        //GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+        broadcastUIMessageAnimateType(
+            "GameUIPanelHeader",
+            UIControllerAnimateTypes.uiPanelAnimateTypeInternal); // starry
+
+        //GameUIPanelHeader.Instance.AnimateInInternal();
+
+        GameUIPanelHeader.ShowTitle(title);
+
+        broadcastUIMessageAnimateIn(objName); // animate in
+
+        //GameUIPanelGameModeTrainingModeChoiceQuiz.Instance.AnimateIn();
+    }
+
+    public void hideUIPanel(object obj) {
+        Type objType = obj.GetType();
+        string objName = objType.Name;
+        hideUIPanel(objName); // animate out
+    }
+
+    public void hideUIPanel(Type objType) {
+        string objName = objType.Name;
+        hideUIPanel(objName); // animate out
+    }
+
+    public void hideUIPanel(string objName) {
+        broadcastUIMessageAnimateOut(objName); // animate out
     }
  
     public virtual void HideAllPanels() {
@@ -1051,18 +1127,11 @@ public class BaseUIController : MonoBehaviour {
     //   }
     //}
  
-    public virtual void showGameModeTraining() { 
-     
-        currentPanel = BaseUIPanel.panelGameModeTraining;
-     
-        HideAllPanelsNow();
-     
-        GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-        GameUIPanelHeader.Instance.AnimateInInternal();  
-        GameUIPanelHeader.ShowTitle("PLAY TRAINING");
-     
-        GameUIPanelGameModeTraining.Instance.AnimateIn();        
+    public virtual void showGameModeTraining() {
+        showUIPanel(
+            typeof(GameUIPanelGameModeTraining),
+            BaseUIPanel.panelGameModeTraining,
+            "PLAY TRAINING");
     } 
  
     //public static virtual void HideGameModeTraining() {
@@ -1072,7 +1141,8 @@ public class BaseUIController : MonoBehaviour {
     //}
 
     public virtual void hideGameModeTraining() {
-        GameUIPanelGameModeTraining.Instance.AnimateOut();
+        hideUIPanel(
+            typeof(GameUIPanelGameModeTraining));
     }
 
     // ------------------------------------------------------------
@@ -1096,6 +1166,7 @@ public class BaseUIController : MonoBehaviour {
         GameUIPanelGameModeTrainingMode.Instance.AnimateOut();
     }
 
+    /*
     // ------------------------------------------------------------
     // GAME MODE - TRAINING MODE CHOICE/QUIZ
 
@@ -1158,6 +1229,8 @@ public class BaseUIController : MonoBehaviour {
     public virtual void hideGameModeTrainingModeRPGEnergy() {
         GameUIPanelGameModeTrainingModeRPGEnergy.Instance.AnimateOut();
     }
+
+    */
  
     // ------------------------------------------------------------
     // GAME MODE - CHALLENGE

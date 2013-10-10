@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+using Engine.Events;
+
 public class UIPanelBase : UIAppPanel {
 	
 	public GameObject panelLeftObject;
@@ -42,7 +44,37 @@ public class UIPanelBase : UIAppPanel {
 	public float topOpenY = 0f;
 	[NonSerialized]
 	public float topClosedY = 2500f;
-			
+
+    public virtual void OnEnable() {
+        Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
+        Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
+        Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
+    }
+
+    public virtual void OnDisable() {
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
+        Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
+    }
+
+    public virtual void OnUIControllerPanelAnimateIn(string classNameTo) {
+        if(className == classNameTo) {
+            AnimateIn();
+        }
+    }
+
+    public virtual void OnUIControllerPanelAnimateOut(string classNameTo) {
+        if(className == classNameTo) {
+            AnimateOut();
+        }
+    }
+
+    public virtual void OnUIControllerPanelAnimateType(string classNameTo, string code) {
+        if(className == classNameTo) {
+           //
+        }
+    }
+
 	public override void Start() {
 		base.Start();		
 	}

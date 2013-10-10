@@ -40,7 +40,18 @@ public enum GameControllerType {
 public enum GameModeGlobal {
     GameModeArcade, // ARCADE
     GameModeTraining, // TRAINING
-    GameModeChallenge // CAREER
+    GameModeChallenge, // CAREER
+    GameModeEndless, // ENDLESS
+    GameModeCustom // CUSTOM
+}
+
+public enum GameModeType {
+    GameModeTypeDefault,
+    GameModeTypeCustom,
+    GameModeTypeChoice,
+    GameModeTypeCollection,
+    GameModeTypeContent,
+    GameModeTypeTips
 }
 
 public enum GameModeArcade {

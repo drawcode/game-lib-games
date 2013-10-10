@@ -20,7 +20,7 @@ public class UIAppPanel : MonoBehaviour {
 	public UIAppPanelMode panelMode = UIAppPanelMode.ModeMain;
 	
 	public bool isVisible = false;
-        
+
 	public string className = "";
 	
     public virtual void Start() {
