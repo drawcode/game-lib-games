@@ -133,6 +133,8 @@ public class GameGameRuntimeData {
     public double coins = 0;
     public string levelCode = "";
     public double score = 0;
+
+    public bool outOfBounds = false;
     
     public GameGameRuntimeData() {
         Reset();
@@ -144,6 +146,7 @@ public class GameGameRuntimeData {
         coins = 0;
         levelCode = "";
         score = 0;
+        outOfBounds = false;
         ResetTimeDefault();
     }
     
@@ -260,7 +263,6 @@ public class BaseGameController : MonoBehaviour {
     public string contentDisplayCode = "default";
 
     public bool isGameOver = false;
-    public bool isPlayerOutOfBounds = false;
     public bool updateFingerNavigate = false;
     
     // CUSTOM
@@ -1387,9 +1389,9 @@ public class BaseGameController : MonoBehaviour {
 
         Debug.Log("GamePlayerOutOfBoundsDelayed:");
 
-        isPlayerOutOfBounds = true;
+        runtimeData.outOfBounds = true;
 
-        Debug.Log("GamePlayerOutOfBoundsDelayed:isPlayerOutOfBounds:" + isPlayerOutOfBounds);
+        Debug.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
 
         gameState = GameStateGlobal.GameStarted;
 
@@ -1540,8 +1542,8 @@ public class BaseGameController : MonoBehaviour {
                     }
                 }
     
-                if(isPlayerOutOfBounds) {
-                    Debug.Log("CheckForGameOver:isPlayerOutOfBounds:" + isPlayerOutOfBounds);
+                if(runtimeData.outOfBounds) {
+                    Debug.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
                     Debug.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
@@ -1586,8 +1588,8 @@ public class BaseGameController : MonoBehaviour {
             pointNormalized.Normalize();
             pointNormalized = pointNormalized.normalized;
 
-            Debug.Log("directionNormal:" + directionNormal);
-            Debug.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
+            //Debug.Log("directionNormal:" + directionNormal);
+            //Debug.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
     
             updateFingerNavigate = true;
     
@@ -1601,10 +1603,10 @@ public class BaseGameController : MonoBehaviour {
                 directionAllow.Normalize();
                 var directionAllowNormal = directionAllow.normalized;
     
-                Debug.Log("directionAllowNormal:" + directionAllowNormal);
-                Debug.Log("touchPos:" + touchPos);
-                Debug.Log("pointNormalized:" + pointNormalized);
-                Debug.Log("point:" + point);
+                //Debug.Log("directionAllowNormal:" + directionAllowNormal);
+                //Debug.Log("touchPos:" + touchPos);
+                //Debug.Log("pointNormalized:" + pointNormalized);
+                //Debug.Log("point:" + point);
     
                 if(pointNormalized.y < .2f) {
                     if(pointNormalized.x < .2f) {
@@ -1616,24 +1618,19 @@ public class BaseGameController : MonoBehaviour {
                     }
                 }
 
-                Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
+                //Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
             }
         
             if(updateFingerNavigate) {
 
-                Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
-                Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+                //Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
+                //Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
 
                 Vector3 axisInput = Vector3.zero;
                 axisInput.x = directionNormal.x;
                 axisInput.y = directionNormal.y;
 
                 GameController.SendInputAxisMessage("move", axisInput);
-
-                //currentGamePlayerController.thirdPersonController.verticalInput = directionNormal.y;
-                //currentGamePlayerController.thirdPersonController.horizontalInput = directionNormal.x;
-                //currentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
-                //currentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
             }
         }
     }
