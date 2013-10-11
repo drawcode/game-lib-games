@@ -261,6 +261,7 @@ public class BaseGameController : MonoBehaviour {
 
     public bool isGameOver = false;
     public bool isPlayerOutOfBounds = false;
+    public bool updateFingerNavigate = false;
     
     // CUSTOM
     
@@ -756,6 +757,19 @@ public class BaseGameController : MonoBehaviour {
     
     // ---------------------------------------------------------------------
     // PROFILE
+
+    public virtual void saveGameStates() {
+        GameProfiles.Current.SetCurrentAppMode(AppModes.Current.code);
+        GameProfiles.Current.SetCurrentAppModeType(AppModeTypes.Current.code);
+        GameProfiles.Current.SetCurrentAppState(AppStates.Current.code);
+        GameProfiles.Current.SetCurrentAppContentState(AppContentStates.Current.code);
+        GameState.SaveProfile();
+    }
+
+    public virtual void changeGameStates(string appContentState) {
+        AppContentStates.Instance.ChangeState(appContentState);
+        GameController.SaveGameStates();
+    }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
     
     public virtual void loadProfileCharacter(string characterCode) {
 
@@ -946,7 +960,7 @@ public class BaseGameController : MonoBehaviour {
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
     }
-
+    /*
     // ---------------------------------------------------------------------
     // GAME MODES
     
@@ -982,6 +996,7 @@ public class BaseGameController : MonoBehaviour {
             return false;
         }
     }
+    */
 
     // ---------------------------------------------------------------------
     // CHARACTER TYPES
@@ -1504,19 +1519,22 @@ public class BaseGameController : MonoBehaviour {
             
                 bool gameOverMode = false;
     
-                if(isGameModeArcade) {
+                if(AppModes.Instance.isAppModeGameArcade) {
                     if(currentGamePlayerController.runtimeData.health <= 0f
                     || runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
                 }
-                else if(isGameModeChallenge) {
+                else if(AppModes.Instance.isAppModeGameChallenge) {
                     if(currentGamePlayerController.runtimeData.health <= 0f
                     || runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
                 }
-                else if(isGameModeTraining) {
+                else if(AppModes.Instance.isAppModeGameTraining) {
+
+                    // TODO other modes
+
                     if(runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
@@ -1568,10 +1586,10 @@ public class BaseGameController : MonoBehaviour {
             pointNormalized.Normalize();
             pointNormalized = pointNormalized.normalized;
 
-            //Debug.Log("directionNormal:" + directionNormal);
-            //Debug.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
+            Debug.Log("directionNormal:" + directionNormal);
+            Debug.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
     
-            bool updateFingerNavigate = true;
+            updateFingerNavigate = true;
     
             if(controlInputTouchOnScreen) {
                 // If on screen controls are on don't do touch navigate just off the edge of the
@@ -1583,10 +1601,10 @@ public class BaseGameController : MonoBehaviour {
                 directionAllow.Normalize();
                 var directionAllowNormal = directionAllow.normalized;
     
-                //Debug.Log("directionAllowNormal:" + directionAllowNormal);
-                //Debug.Log("touchPos:" + touchPos);
-                //Debug.Log("pointNormalized:" + pointNormalized);
-                //Debug.Log("point:" + point);
+                Debug.Log("directionAllowNormal:" + directionAllowNormal);
+                Debug.Log("touchPos:" + touchPos);
+                Debug.Log("pointNormalized:" + pointNormalized);
+                Debug.Log("point:" + point);
     
                 if(pointNormalized.y < .2f) {
                     if(pointNormalized.x < .2f) {
@@ -1598,16 +1616,33 @@ public class BaseGameController : MonoBehaviour {
                     }
                 }
 
-                //Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
+                Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
             }
         
             if(updateFingerNavigate) {
-                currentGamePlayerController.thirdPersonController.verticalInput = directionNormal.y;
-                currentGamePlayerController.thirdPersonController.horizontalInput = directionNormal.x;
-                currentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
-                currentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
+
+                Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
+                Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+
+                Vector3 axisInput = Vector3.zero;
+                axisInput.x = directionNormal.x;
+                axisInput.y = directionNormal.y;
+
+                GameController.SendInputAxisMessage("move", axisInput);
+
+                //currentGamePlayerController.thirdPersonController.verticalInput = directionNormal.y;
+                //currentGamePlayerController.thirdPersonController.horizontalInput = directionNormal.x;
+                //currentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
+                //currentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
             }
         }
+    }
+
+    public virtual void sendInputAxisMessage(string axisNameTo, Vector3 axisInputTo) {
+        Messenger<string, Vector3>.Broadcast(
+            GameTouchInputMessages.inputAxis,
+            GameTouchInputMessages.inputAxis + "-" + axisNameTo, axisInputTo
+            );
     }
 
     // -------------------------------------------------------
@@ -1934,7 +1969,7 @@ public class BaseGameController : MonoBehaviour {
                 GameController.HandleTouchInputPoint(touch.position);
             }
         }
-        else if(Input.GetMouseButtonDown(0)) {
+        else if(Input.GetMouseButton(0)) {
             GameController.HandleTouchInputPoint(Input.mousePosition);
         }
         else {
