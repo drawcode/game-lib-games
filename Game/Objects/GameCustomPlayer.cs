@@ -10,15 +10,20 @@ public class GameCustomPlayer : GameCustomBase {
 		SetCustomColors();
 	}
 	
-	void OnEnable() {
+	public override void OnEnable() {
+        base.OnEnable();
+
 		Messenger.AddListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
 	}
 	
-	void OnDisable() {
+	public override void OnDisable() {
+        base.OnDisable();
+
 		Messenger.RemoveListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
 	}
 	
 	void OnCustomizationColorsPlayerChangedHandler() {
+        Debug.Log("OnCustomizationColorsPlayerChangedHandler");
 		SetCustomColors(gameObject);
 	}
 }

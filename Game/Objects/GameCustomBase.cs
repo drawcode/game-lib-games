@@ -28,16 +28,18 @@ public class GameCustomBase : MonoBehaviour {
 		//FindMaterials();
 	}
 	
-	void OnEnable() {
+	public virtual void OnEnable() {
 		Messenger.AddListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
 	}
 	
-	void OnDisable() {
+	public virtual void OnDisable() {
 		Messenger.RemoveListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
 	}
 	
 	void BaseOnCustomizationColorsChangedHandler() {
 		SetCustomColors();
+
+        Debug.Log("BaseOnCustomizationColorsChangedHandler");
 	}
 	
 	public void SetCustomColors() {

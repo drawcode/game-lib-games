@@ -264,8 +264,8 @@ public class BaseGameController : MonoBehaviour {
         
         GameController.LoadCharacterTypes();
         GameDraggableEditor.LoadDraggableContainerObject();
-        
-        Messenger.Broadcast("custom-colors-changed");
+
+        GameCustomController.Instance.BroadcastCustomColorsSync();
     }
 
     public virtual void OnEnable() {

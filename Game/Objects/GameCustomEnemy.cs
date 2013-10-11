@@ -9,16 +9,16 @@ public class GameCustomEnemy : GameCustomBase {
 	void Start() {
 		//freezeRotation = false;
 	}
-	
-	void OnEnable() {
-		Messenger.AddListener(GameCustomMessages.customColorsChanged, OnCustomizationColorsChangedHandler);
-	}
-	
-	void OnDisable() {
-		Messenger.RemoveListener(GameCustomMessages.customColorsChanged, OnCustomizationColorsChangedHandler);
-	}
-	
-	void OnCustomizationColorsChangedHandler() {
-		SetCustomColors(gameObject);
-	}
+
+    public override void OnEnable() {
+        base.OnEnable();
+    
+        //Messenger.AddListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
+    }
+    
+    public override void OnDisable() {
+        base.OnDisable();
+    
+        //Messenger.RemoveListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
+    }
 }
