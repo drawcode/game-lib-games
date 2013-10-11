@@ -37,46 +37,17 @@ public enum GameControllerType {
     Perspective3D
 }
 
-public enum GameModeGlobal {
-    GameModeArcade, // ARCADE
-    GameModeTraining, // TRAINING
-    GameModeChallenge, // CAREER
-    GameModeEndless, // ENDLESS
-    GameModeCustom // CUSTOM
-}
-
-public enum GameModeType {
-    GameModeTypeDefault,
-    GameModeTypeCustom,
-    GameModeTypeChoice,
-    GameModeTypeCollection,
-    GameModeTypeContent,
-    GameModeTypeTips
-}
-
-public enum GameModeArcade {
-    GameModeArcadeDefault
-}
-
-public enum GameModeChallenge {
-    GameModeChallengeDefault
-}
-
-public enum GameModeTraining {
-    GameModeTrainingChoice,
-    GameModeTrainingCollect,
-    GameModeTrainingContent,
-    GameModeTrainingTips,
-    GameModeTrainingTipsControls,
-    GameModeTrainingRPGEnergy,
-    GameModeTrainingRPGHealth
-}
-
-public enum GameModeTrainingChoice {
+public enum GameModeChoiceFlowState {
     GameModeTrainingChoiceOverview,
     GameModeTrainingChoiceDisplayItem,
     GameModeTrainingChoiceAnswer,
     GameModeTrainingChoiceResults,
+}
+
+public enum GameModeCollectionFlowState {
+    GameModeTrainingCollectionOverview,
+    GameModeTrainingCollectionDisplayItem,
+    GameModeTrainingCollectionResults,
 }
 
 public class GamePlayerMessages {
@@ -208,7 +179,6 @@ public class BaseGameController : MonoBehaviour {
     public bool isAdvancing = false;
 
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
-    public GameModeGlobal gameMode = GameModeGlobal.GameModeArcade;
     
     public UnityEngine.Object prefabDraggableContainer;
 
@@ -306,6 +276,8 @@ public class BaseGameController : MonoBehaviour {
         Messenger<GameDirectorActor>.AddListener(
             GameDirectorMessages.gameDirectorSpawnActor,
             OnGameDirectorActorLoad);
+
+        Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
     }
     
     public virtual void OnDisable() {
@@ -316,6 +288,8 @@ public class BaseGameController : MonoBehaviour {
         Messenger<GameDirectorActor>.RemoveListener(
             GameDirectorMessages.gameDirectorSpawnActor,
             OnGameDirectorActorLoad);
+
+        Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
     }
 
 
@@ -350,6 +324,10 @@ public class BaseGameController : MonoBehaviour {
     // ---------------------------------------------------------------------
     
     // EVENTS
+
+    public virtual void OnProfileShouldBeSavedEventHandler() {
+        GameState.SaveProfile();
+    }
     
     public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
     

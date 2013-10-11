@@ -22,7 +22,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     public UIImageButton buttonSaveRPG;
     public UIImageButton buttonBuyUpgrades;
     GameProfileRPGItem profileGameItemRPG;
-    public string currentCharacterCode = "default";
+    string currentCharacterCode = "default";
     public static UICustomizeCharacterRPG Instance;
     public GameObject listItemPrefab;
     public double upgradesAvailable = 0;
@@ -114,6 +114,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
             }
         }
 
+        Debug.Log("profileGameItemRPG:attack:" + profileGameItemRPG.GetAttack());
+
         GameProfileCharacters.Current.SetCharacterRPG(currentCharacterCode, profileGameItemRPG);
         GameProfileRPGs.Current.SetUpgrades(upgradesAvailable);
 
@@ -176,7 +178,9 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
      
         SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
      
-        profileGameItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
+        profileGameItemRPG = GameProfileCharacters.Current.GetCharacterRPG(currentCharacterCode);
+
+        Debug.Log("profileGameItemRPG:attack2:" + profileGameItemRPG.GetAttack());
 
         List<string> rpgItems = new List<string>();
      
