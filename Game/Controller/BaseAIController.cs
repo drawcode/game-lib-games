@@ -247,10 +247,30 @@ public class BaseAIController : MonoBehaviour {
     
         currentActorCount = GameController.Instance.characterActorsCount;
     }
+
+    bool stopDirector = true;
     
     public virtual void Update() {
+
+        if(Input.GetKey(KeyCode.RightControl)) {
+            if(Input.GetKey(KeyCode.G)) {
+                runDirector = false;
+            }
+            else if(Input.GetKey(KeyCode.H)) {
+                runDirector = true;
+            }
+            else if(Input.GetKey(KeyCode.J)) {
+                // kill all enemies
+
+                GameController.Instance.levelActorsContainerObject.DestroyChildren();
+            }
+        }
+
+        if(stopDirector) {
+            return;
+        }
     
-        if(!runDirector
+        if(!runDirector && stopDirector
         || GameDraggableEditor.isEditing) {
             return;
         }

@@ -23,7 +23,7 @@ public class GameCustomPlayer : GameCustomBase {
 	}
 	
 	void OnCustomizationColorsPlayerChangedHandler() {
-        Debug.Log("OnCustomizationColorsPlayerChangedHandler");
+        //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
 		SetCustomColors(gameObject);
 	}
 }

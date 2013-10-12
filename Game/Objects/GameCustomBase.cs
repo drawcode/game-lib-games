@@ -39,7 +39,7 @@ public class GameCustomBase : MonoBehaviour {
 	void BaseOnCustomizationColorsChangedHandler() {
 		SetCustomColors();
 
-        Debug.Log("BaseOnCustomizationColorsChangedHandler");
+        //Debug.Log("BaseOnCustomizationColorsChangedHandler");
 	}
 	
 	public void SetCustomColors() {
@@ -102,7 +102,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerHelmets) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorHelmet:" + color);
+			//LogUtil.Log("SetMaterialColors colorHelmet:" + color);
 		}
 		
 		if(materialPlayerHelmetFacemasks != null) {
@@ -111,7 +111,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerHelmetFacemasks) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorHelmetFacemask:" + color);
+			//LogUtil.Log("SetMaterialColors colorHelmetFacemask:" + color);
 		}
 		
 		if(materialPlayerHelmetHighlights != null) {
@@ -120,7 +120,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerHelmetHighlights) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorHelmetHighlight:" + color);
+			//LogUtil.Log("SetMaterialColors colorHelmetHighlight:" + color);
 		}
 				
 		if(materialPlayerJerseys != null) {
@@ -129,7 +129,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerJerseys) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorJersey:" + color );
+			//LogUtil.Log("SetMaterialColors colorJersey:" + color );
 		}
 		
 		if(materialPlayerJerseyHighlights != null) {
@@ -138,7 +138,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerJerseyHighlights) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorJerseyHighlight:" + color);
+			//LogUtil.Log("SetMaterialColors colorJerseyHighlight:" + color);
 		}
 		
 		if(materialPlayerPants != null) {
@@ -147,7 +147,7 @@ public class GameCustomBase : MonoBehaviour {
 			foreach(Material m in materialPlayerPants) {
 				m.color = color;
 			}
-			LogUtil.Log("SetMaterialColors colorPants:" + color);
+			//LogUtil.Log("SetMaterialColors colorPants:" + color);
 		}
 	}
 		

@@ -534,7 +534,8 @@ public class BaseUIController : MonoBehaviour {
         }
     }
 
-    public virtual void FingerGestures_OnSwipe(SwipeGesture gesture) {       
+    public virtual void FingerGestures_OnSwipe(SwipeGesture gesture) {
+
         //Vector2 startPos = gesture.StartPosition;
         FingerGestures.SwipeDirection direction = gesture.Direction;
         //float velocity = gesture.Velocity;
@@ -562,6 +563,88 @@ public class BaseUIController : MonoBehaviour {
             }
             GamePlayerProgress.Instance.ProcessProgressSwipes();
             //}
+        }
+
+        /*
+        Vector2 swipeDirectionValue = gesture.Move;
+
+        Vector3 dir = GameController.CurrentGamePlayerController.thirdPersonController.movementDirection;//GameController.CurrentGamePlayerController.transform.position;//swipeDirectionValue;//GameController.CurrentGamePlayerController.thirdPersonController.aimingDirection;
+
+        Vector3 dirMovement =
+            Vector3.zero
+                .WithX(GameController.CurrentGamePlayerController.thirdPersonController.horizontalInput)
+                .WithY(GameController.CurrentGamePlayerController.thirdPersonController.verticalInput);
+
+        float angle =  Vector3.Angle(
+            swipeDirectionValue,
+            dirMovement);
+        float force = 100f;
+
+        if(angle > 320 && angle < 45) { // forwardish
+            Debug.Log("swipe controller: FORWARD :angle:" + angle);
+            GameController.CurrentGamePlayerController.Boost(force);
+        }
+        else if(angle < 225 && angle > 135) { // backish
+            Debug.Log("swipe controller: BACK :angle:" + angle);
+            GameController.CurrentGamePlayerController.Spin(force);
+        }
+        else if(angle > 45 && angle < 135) { // leftish
+            Debug.Log("swipe controller: LEFT :angle:" + angle);
+            GameController.CurrentGamePlayerController.StrafeLeft(force);
+        }
+        else if(angle > 320 && angle < 225) { // rightish
+            Debug.Log("swipe controller: RIGHT :angle:" + angle);
+            GameController.CurrentGamePlayerController.StrafeRight(force);
+        }
+        */
+        float force = 20f;
+        //Debug.Log("SWIPE:Move:" + gesture.Move);
+        float angleGesture = gesture.Move.CrossAngle();
+        float anglePlayer = GameController.CurrentGamePlayerController.transform.rotation.eulerAngles.y;
+        float distance = Vector2.Distance(Vector2.zero, gesture.Move);
+
+        force = distance;
+
+        force = Mathf.Clamp(force, 0f, 60f);
+
+        //angleGesture = Mathf.Abs(angleGesture - anglePlayer);
+        //anglePlayer = 0;
+
+        float angleDiff = angleGesture - anglePlayer;
+
+        Debug.Log("SWIPE:angleGesture:" + angleGesture);
+
+        Debug.Log("SWIPE:anglePlayer:" + anglePlayer);
+        Debug.Log("SWIPE:angleDiff:" + angleDiff);
+
+        if(angleDiff < 0) {
+            angleDiff = angleDiff + 360;
+            angleDiff = Mathf.Abs(angleDiff);
+        }
+        //if(angleDiff > 180) {
+        //    angleDiff = 360 - angleDiff;
+        //}
+
+        //Debug.Log("SWIPE:angleDiff2:" + angleDiff);
+
+        var forceVector = Quaternion.AngleAxis(angleDiff, transform.up) * GameController.CurrentGamePlayerController.transform.forward;
+        forceVector.y = 3f;
+
+        if(angleDiff > 320 || angleDiff <= 45) { // forwardish
+            Debug.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
+            GameController.CurrentGamePlayerController.Boost(forceVector, force * 1.2f);
+        }
+        else if(angleDiff < 225 && angleDiff >= 135) { // backish
+            Debug.Log("swipe controller: BACK :angleDiff:" + angleDiff);
+            GameController.CurrentGamePlayerController.Spin(forceVector, force * 1.8f);
+        }
+        else if(angleDiff > 45 && angleDiff < 135) { // rightish
+            Debug.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
+            GameController.CurrentGamePlayerController.StrafeRight(forceVector, force * 2f);
+        }
+        else if(angleDiff <= 320 && angleDiff >= 225) { // leftish
+            Debug.Log("swipe controller: LEFT :angleDiff:" + angleDiff);
+            GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
         }
     }
 
@@ -1064,11 +1147,12 @@ public class BaseUIController : MonoBehaviour {
     public virtual void showMain() {
      
         showUI();
-     
-        currentPanel = BaseUIPanel.panelMain;
-     
-        HideAllPanelsNow();
-     
+
+        showUIPanel(
+            typeof(GameUIPanelMain),
+            BaseUIPanel.panelMain,
+            "PLAY GAMEMODE");
+
         GameUIPanelBackgrounds.Instance.AnimateInScary();
      
         GameUIPanelHeader.Instance.AnimateInMain();
@@ -1076,6 +1160,7 @@ public class BaseUIController : MonoBehaviour {
         GameUIPanelFooter.Instance.AnimateInMain();
      
         GameUIPanelMain.Instance.AnimateIn();
+
     }
     
     //public static virtual void HideMain() {
@@ -1084,8 +1169,9 @@ public class BaseUIController : MonoBehaviour {
     //   }
     //}
  
-    public virtual void hideMain() {             
-        GameUIPanelMain.Instance.AnimateOut();
+    public virtual void hideMain() {
+        hideUIPanel(
+            typeof(GameUIPanelMain));
     }
  
     // ------------------------------------------------------------
