@@ -812,19 +812,22 @@ public class BaseUIController : MonoBehaviour {
     public Camera camHud = null;
     float updateTouchStartTime = 0f;
     float updateTouchMaxTime = 2f;
+    bool inputGestureDown = false;
+    bool inputGestureUp = false;
+    bool showPoints = false;
 
     public virtual void updateTouchLaunch() {
 
         if(!GameConfigs.isGameRunning) {
             return;
         }
-                
-        bool shouldTouch = true;
-        bool inputButtonDown = false;
-        bool inputAxisDown = false;
-        bool inputGestureDown = false;
-        bool inputGestureUp = false;
-        bool showPoints = false;
+
+        shouldTouch = true;
+        inputButtonDown = false;
+        inputAxisDown = false;
+        inputGestureDown = false;
+        inputGestureUp = false;
+        showPoints = false;
 
         bool inHitArea = false;
 
@@ -845,9 +848,24 @@ public class BaseUIController : MonoBehaviour {
                 camHud = Camera.main;
             }
         }
-////
+
+        bool hasTouches = false;
+        bool hasTouchesDown = false;
+        bool hasTouchesUp = false;
+        bool hasTouchesDownAllowed = false;
+        bool hasTouchesUpAllowed = false;
 
         if(Input.touches.Length > 0) {
+            hasTouches = true;
+        }
+
+        hasTouchesDown = checkIfTouchesDown();
+        hasTouchesUp = checkIfTouchesUp();
+        hasTouchesDownAllowed = checkIfTouchesDownAllowed();
+        hasTouchesUpAllowed = checkIfTouchesUpAllowed();
+////
+
+        if(hasTouches) {
             foreach(Touch t in Input.touches) {
                 //checkIfAllowedTouch(t.position);
             }
@@ -860,23 +878,16 @@ public class BaseUIController : MonoBehaviour {
             //return;
         }
                 
-        if((Input.GetMouseButton(0) || checkIfTouchesUpAllowed())
+        if(((Input.GetMouseButtonDown(0) && !hasTouchesDownAllowed) || hasTouchesDownAllowed)
                         && !inputAxisDown
                         && !inputButtonDown) {
             inputGestureDown = true;
         }
 
-        if((Input.GetMouseButton(0) || checkIfTouchesUpAllowed())
+        if(((Input.GetMouseButtonUp(0) && !hasTouchesUpAllowed) || hasTouchesUpAllowed)
                         && !inputAxisDown
                         && !inputButtonDown) {
             inputGestureUp = true;
-        }
-
-        if(Time.time > updateTouchStartTime + updateTouchMaxTime) {
-            updateTouchStartTime = 0f;
-            //positionStart = Vector3.zero;
-            //positionEnd = Vector3.zero;
-            showPoints = false;
         }
                 
         if(inputGestureDown
@@ -905,10 +916,16 @@ public class BaseUIController : MonoBehaviour {
                 }
             }
         }
-        else if((Input.GetMouseButtonUp(0) || checkIfTouchesUpAllowed())) {
+        else if(inputGestureUp) {
             if(positionEnd == Vector3.zero
                                 && positionStart != Vector3.zero) {
-                positionEnd = Input.mousePosition;
+
+                if(hasTouches) {
+                    positionEnd = lastUpAllowedPosition;
+                }
+                else {
+                    positionEnd = Input.mousePosition;
+                }
 
                 // launch
                 powerDistance = Vector3.Distance(positionStart, positionEnd);
@@ -920,7 +937,21 @@ public class BaseUIController : MonoBehaviour {
                 positionLastLaunchedNormalized = positionLastLaunch.normalized;
                                 
                 //LogUtil.Log("GetMouseButtonUp:posNormalized:" + posNormalized);
-                                
+
+                bool doAction = true;
+
+                if(Time.time > updateTouchStartTime + updateTouchMaxTime) {
+                    updateTouchStartTime = Time.time;
+                    doAction = false;
+                    showPoints = false;
+                }
+
+                if(!doAction) {
+                    positionStart = Vector3.zero;
+                    positionEnd = Vector3.zero;
+                    return;
+                }
+
                 if(GameController.CurrentGamePlayerController != null) {
                     if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
                         //Attack();
@@ -945,6 +976,7 @@ public class BaseUIController : MonoBehaviour {
                 }
                 showPoints = true;
                 positionStart = Vector3.zero;
+                positionEnd = Vector3.zero;
             }
         }
         else {
@@ -1079,23 +1111,26 @@ public class BaseUIController : MonoBehaviour {
         return allowedTouch;
     }
 
-
-
     public virtual bool checkIfTouchesDownAllowed() {
         foreach(Touch t in Input.touches) {
             if(t.phase == TouchPhase.Began) {
                 if(checkIfAllowedTouch(t.position)) {
+                    lastDownAllowedPosition = t.position;
                     return true;
                 }
             }
         }
         return false;
     }
-        
+
+    Vector3 lastDownAllowedPosition = Vector3.zero;
+    Vector3 lastUpAllowedPosition = Vector3.zero;
+
     public virtual bool checkIfTouchesUpAllowed() {
         foreach(Touch t in Input.touches) {
             if(t.phase == TouchPhase.Ended) {
                 if(checkIfAllowedTouch(t.position)) {
+                    lastUpAllowedPosition = t.position;
                     return true;
                 }
             }
