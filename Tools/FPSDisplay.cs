@@ -45,7 +45,7 @@ public class FPSDisplay: MonoBehaviour {
 		if(isInst) {
 			return Instance.lastFPS;
 		}
-		return 0f;
+		return 21f;
 	}
 	
 	// Update is called once per frame

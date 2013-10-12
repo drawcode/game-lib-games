@@ -58,14 +58,16 @@ public class BaseAIController : MonoBehaviour {
     public float difficultyLevelEpic = .99f;
      
     public float currentSpawnAmount = 1;
-    public float currentCharacterMin = 3;
+    public float currentCharacterMin = 5;
     public float currentCharacterTypeCount = 2; // TODO change to characters data
-    public float currentCharacterLimit = 0;
+    public float currentCharacterLimit = 15;
     public float currentFPS = 0;
     
     public int roundsCompleted = 0;
     public float lastPeriodicSeconds = 0f;
     public float currentActorCount = 0;
+
+    bool stopDirector = false;
     
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
     
@@ -98,7 +100,10 @@ public class BaseAIController : MonoBehaviour {
     }
 
     public virtual void init() {
+        GameAIController.CheckSpawns();
+    }
 
+    public virtual void checkSpawns() {
         if(spawns == null) {
             spawns = new Dictionary<string, GamePlayerSpawn>();
 
@@ -113,6 +118,18 @@ public class BaseAIController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public virtual GamePlayerSpawn getSpawn(string code) {
+
+        GameAIController.CheckSpawns();
+
+        foreach(KeyValuePair<string, GamePlayerSpawn> pair in spawns) {
+            if(pair.Key == code) {
+                return pair.Value;
+            }
+        }
+        return null;
     }
 
     // RUNNER/STOPPER
@@ -247,8 +264,6 @@ public class BaseAIController : MonoBehaviour {
     
         currentActorCount = GameController.Instance.characterActorsCount;
     }
-
-    bool stopDirector = true;
     
     public virtual void Update() {
 

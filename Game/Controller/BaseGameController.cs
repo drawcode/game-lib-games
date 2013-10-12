@@ -856,10 +856,30 @@ public class BaseGameController : MonoBehaviour {
         UnityEngine.Object prefabObject = Resources.Load(modelPath);
         Vector3 spawnLocation = Vector3.zero;
 
-        bool isZoned = false;
+        bool isZoned = true;
 
         if(isZoned) {
             // get left/right spawn location
+            string leftMiddle = "left-middle";
+            string rightMiddle = "right-middle";
+            string spawnCode = rightMiddle;
+            if(currentGameZone == GameZones.right) {
+                spawnCode = rightMiddle;
+            }
+            else if(currentGameZone == GameZones.left) {
+                spawnCode = leftMiddle;
+            }
+
+            GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
+            if(spawn != null) {
+                spawnLocation = spawn.gameObject.transform.position;
+            }
+            else {
+
+                // get random
+                spawnLocation = GameController.GetActorRandomSpawnLocation();
+            }
+
         }
         else {
             // get random
