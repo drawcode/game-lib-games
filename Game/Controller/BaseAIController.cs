@@ -277,7 +277,7 @@ public class BaseAIController : MonoBehaviour {
             return;
         }
     
-        if(GameController.Instance.isGameRunning) {
+        if(GameController.IsGameRunning) {
             // if game running spawn and direct characters and events
     
             GameAIController.HandlePeriodic();

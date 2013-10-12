@@ -88,6 +88,8 @@ public class BaseUIPanel {
     public static string panelSettingsAudio = "PanelSettingsAudio";
     public static string panelSettingsControls = "PanelSettingsControls";
     public static string panelSettingsProfile = "PanelSettingsProfile";
+    public static string panelSettingsHelp = "PanelSettingsHelp";
+    public static string panelSettingsCredits = "PanelSettingsCredits";
     public static string panelGameMode = "PanelGameMode";
     public static string panelGameModeArcade = "PanelGameModeArcade";
     public static string panelGameModeChallenge = "PanelGameModeChallenge";
@@ -2209,7 +2211,41 @@ public class BaseUIController : MonoBehaviour {
         hideUIPanel(
             typeof(GameUIPanelSettingsProfile));
     }
-     
+
+
+    // ------------------------------------------------------------
+    // SETTINGS - HELP
+
+    public virtual void showSettingsHelp() {
+        showUIPanel(
+            typeof(GameUIPanelSettingsHelp),
+            GameUIPanel.panelSettingsHelp,
+            "SETTINGS: HELP");
+    }
+
+    public virtual void hideSettingsHelp() {
+        hideUIPanel(
+            typeof(GameUIPanelSettingsHelp));
+    }
+
+    // ------------------------------------------------------------
+    // SETTINGS - CREDITS
+
+    public virtual void showSettingsCredits() {
+        showUIPanel(
+            typeof(GameUIPanelSettingsCredits),
+            GameUIPanel.panelSettingsCredits,
+            "SETTINGS: CREDITS");
+    }
+
+    public virtual void hideSettingsCredits() {
+        hideUIPanel(
+            typeof(GameUIPanelSettingsCredits));
+    }
+
+    // ------------------------------------------------------------
+    // RESULTS
+
     //
  
     //public static virtual void ShowUIPanelDialogResults() {
