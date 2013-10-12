@@ -13,10 +13,11 @@ public enum BaseUIStates {
     InEdit
 }
 
-public class UIControllerMessages {
+public class BaseUIControllerMessages {
     public static string uiPanelAnimateIn = "ui-panel-animate-in";
     public static string uiPanelAnimateOut = "ui-panel-animate-out";
     public static string uiPanelAnimateType = "ui-panel-animate-type";
+    public static string uiUpdateTouchLaunch = "ui-update-touch-launch";
 }
 
 public class UIControllerAnimateTypes {
@@ -119,7 +120,6 @@ public class BaseUIPanel {
 public class BaseUIController : MonoBehaviour { 
  
     public static BaseUIController Instance;
-
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
     public bool inModalAction = true;
@@ -135,6 +135,23 @@ public class BaseUIController : MonoBehaviour {
     public bool gameLoopsStarted = false;
     public bool inUIAudioPlaying = false;
     public GameObject currentDraggableGameObject = null;
+
+
+    public Vector3 positionStart;
+    public Vector3 positionEnd;
+    public Vector3 positionLastLaunch;
+    public float powerDistance;
+    public Vector3 positionLastLaunchedNormalized;
+
+    public GameObject pointStartObject;
+    public GameObject pointEndObject;
+
+    public UnityEngine.Object prefabPointStart;
+    public UnityEngine.Object prefabPointEnd;
+
+    public bool isCreatingStart = false;
+    public bool isCreatingEnd = false;
+
                  
     public virtual void Awake() {
      
@@ -336,9 +353,10 @@ public class BaseUIController : MonoBehaviour {
     }
     
     public virtual void Update() {
-            
+        //DetectSwipe();
+        GameUIController.UpdateTouchLaunch();
     }
- 
+
     public virtual void FingerGestures_OnDragMove(DragGesture gesture) { //Vector2 fingerPos, Vector2 delta) {
         //Vector2 fingerPos = gesture.Position;
         //Vector2 delta = gesture.TotalMove;
@@ -597,11 +615,153 @@ public class BaseUIController : MonoBehaviour {
             GameController.CurrentGamePlayerController.StrafeRight(force);
         }
         */
+    }
+
+    /*
+    public Vector3 swipeCurrentStartPoint;
+    public Vector3 swipeCurrentEndPoint;
+    public Vector3 swipePositionLastTouch;
+    public Vector3 swipePositionStart;
+    public Vector3 swipePositionRelease;
+
+    public void UpdateProjectile() {
+            
+        if(gameState == GameGameState.GamePause
+                    || GameDraggableEditor.isEditing) {
+            return;
+        }
+
+        if(gameState == GameGameState.GameStarted
+                    && runtimeData.timeRemaining > 0) {
+                            
+            // SHOOT
+                    
+            //CheckForGameOver();
+                    
+            bool touchDown = false;
+            bool touchUp = false;
+                    
+            if(Application.isEditor) {
+                touchDown = Input.GetMouseButtonDown(0);
+                touchUp = Input.GetMouseButtonUp(0);
+            }
+            else {
+                touchDown = Input.touches.Length > 0 ? true : false;
+                touchUp = !touchDown;
+            }
+                    
+            if(swipePositionStart != Vector3.zero
+                            && swipePositionRelease == Vector3.zero) {
+                            
+                swipeCurrentStartPoint = Input.mousePosition;
+                swipeCurrentEndPoint = swipeCurrentStartPoint;
+            }
+            else {                          
+                //launcherObject.transform.localScale = Vector3.one;
+                            
+                //if(launcherObject != null && launchAimerObject != null) {
+                //      swipeCurrentStartPoint = launcherObject.transform.position;
+                //      swipeCurrentEndPoint = launchAimerObject.transform.position;
+                swipeCurrentStartPoint.z = 0f;
+                swipeCurrentEndPoint.z = 0f;
+                //}
+            }
+
+            Vector3 angles = CardinalAngles(swipeCurrentStartPoint, swipeCurrentEndPoint);//Vector3.zero.WithZ (
+            //Vector3.Angle(swipeCurrentEndPoint, swipeCurrentStartPoint));//CardinalAngles(swipeCurrentStartPoint, swipeCurrentEndPoint);
+            //Debug.Log("cardinalAngles:" + cardinalAngles);                        
+                    
+            var dist = Vector3.Distance(swipeCurrentStartPoint, swipeCurrentEndPoint);
+                    
+            Quaternion rotationTo = Quaternion.Euler(0, 0, angles.z);
+
+            if(touchDown) {
+                            
+                swipePositionLastTouch = Input.mousePosition;
+                if(swipePositionStart == Vector3.zero) {
+                    swipePositionStart = swipePositionLastTouch;
+                    Debug.Log("swipePositionStart:" + swipePositionStart);
+                    swipePositionRelease = Vector3.zero;
+                }                               
+            }
+            else if(touchUp) {
+                if(swipePositionStart != Vector3.zero) {
+                    if(swipePositionRelease == Vector3.zero) {
+                        swipePositionRelease = Input.mousePosition;
+                        Debug.Log("swipePositionRelease:" + swipePositionRelease);
+                        // Shoot
+                                            
+                        Quaternion rotationProjectile = Quaternion.Euler(90, 0, 0);
+                            
+                        GameObject projectileObject = Instantiate(
+                                                    prefabProjectile, //Resources.Load("Prefabs/GameProjectile"), 
+                                                    currentGamePlayerController.gamePlayerModelHolderModel.transform.position, 
+                                                    Quaternion.Euler(90, 0, 0)
+                                            ) as GameObject;
+                                            
+                                            
+                        Debug.Log("rotationProjectile:" + rotationProjectile);
+                                            
+                        projectileObject.transform.rotation = rotationProjectile;
+                                            
+                        //Debug.Log("launcherObject.transform.position:" + launcherObject.transform.position);
+                        //Debug.Log("launchAimerObject.transform.position:" + launchAimerObject.transform.position);
+                                            
+                        swipeCurrentStartPoint = swipePositionRelease;
+                        swipeCurrentEndPoint = swipePositionStart;
+                        swipeCurrentStartPoint.z = 0f;
+                        swipeCurrentEndPoint.z = 0f;
+                                            
+                        Vector3 crossProduct = Vector3.Cross(swipeCurrentStartPoint, swipeCurrentEndPoint);         
+                                            
+                        var angle = Vector3.Angle(swipeCurrentStartPoint, swipeCurrentEndPoint);
+                        Debug.Log("Angle to other: " + angle);  
+                                            
+                        //var forward = transform.forward;
+                        if(crossProduct.y < 0) {
+                            //Do left stuff
+                            //launcherObject.transform.Rotate(0, 0, -angle);
+                        }
+                        else {
+                            //Do right stuff
+                            //launcherObject.transform.Rotate(0, 0, angle);
+                        }
+                                            
+                        //gameProjectile.direction = crossProduct;
+                        Debug.Log("crossProduct to other: " + crossProduct);    
+                                            
+                        var distLaunch = Vector3.Distance(swipeCurrentStartPoint, swipeCurrentEndPoint);
+                        print("Distance to other: " + distLaunch);
+                        //distLaunch = 1;
+                                            
+                        Debug.Log("Rotation:" + projectileObject.transform.rotation);
+                        Debug.Log("angle:" + angle);
+                                            
+                        var shootVector = swipeCurrentStartPoint - swipeCurrentEndPoint;                  
+                        var multiplier = .001f;//.05f;
+                        float forceAdd = distLaunch * multiplier;
+                        Debug.Log("forceAdd:" + forceAdd);
+                        forceAdd = Mathf.Clamp(forceAdd, .01f, .9f);
+                        projectileObject.rigidbody.AddForce(-shootVector * forceAdd);//, ForceMode.Impulse);
+                                            
+                        swipePositionStart = Vector3.zero;
+                        swipePositionRelease = Vector3.zero;
+                                            
+                        ShootOne();
+                    }
+                }
+            }
+        }
+    }
+    */
+
+    public virtual void handleTouchLaunch(Vector2 move) {
+
         float force = 20f;
-        //Debug.Log("SWIPE:Move:" + gesture.Move);
-        float angleGesture = gesture.Move.CrossAngle();
+        //Debug.Log("SWIPE:move:" + move);
+        float angleGesture = move.CrossAngle();
         float anglePlayer = GameController.CurrentGamePlayerController.transform.rotation.eulerAngles.y;
-        float distance = Vector2.Distance(Vector2.zero, gesture.Move);
+        float distance = Vector2.Distance(Vector2.zero, move);
 
         force = distance;
 
@@ -628,7 +788,8 @@ public class BaseUIController : MonoBehaviour {
         //Debug.Log("SWIPE:angleDiff2:" + angleDiff);
 
         var forceVector = Quaternion.AngleAxis(angleDiff, transform.up) * GameController.CurrentGamePlayerController.transform.forward;
-        forceVector.y = 3f;
+
+        //forceVector.y = 0f;
 
         if(angleDiff > 320 || angleDiff <= 45) { // forwardish
             Debug.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
@@ -647,6 +808,363 @@ public class BaseUIController : MonoBehaviour {
             GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
         }
     }
+
+    public Camera camHud = null;
+    float updateTouchStartTime = 0f;
+    float updateTouchMaxTime = 2f;
+
+    public virtual void updateTouchLaunch() {
+
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+                
+        bool shouldTouch = true;
+        bool inputButtonDown = false;
+        bool inputAxisDown = false;
+        bool inputGestureDown = false;
+        bool inputGestureUp = false;
+        bool showPoints = false;
+
+        bool inHitArea = false;
+
+        if((Input.mousePosition.x > Screen.width / 3
+            && Input.mousePosition.x < Screen.width - Screen.width / 3)
+            && (Input.mousePosition.y > Screen.height / 4
+            && Input.mousePosition.y < Screen.height - Screen.height / 3)) {
+            inHitArea = true;
+        }
+
+        if(camHud == null) {
+            foreach(Camera camItem in Camera.allCameras) {
+                if(camItem.cullingMask == LayerMask.NameToLayer("UIHUDScaled")) {
+                    camHud = camItem;
+                }
+            }
+            if(camHud == null) {
+                camHud = Camera.main;
+            }
+        }
+////
+
+        if(Input.touches.Length > 0) {
+            foreach(Touch t in Input.touches) {
+                //checkIfAllowedTouch(t.position);
+            }
+        }
+        else {
+            checkIfAllowedTouch(Input.mousePosition);
+        }
+
+        if(!shouldTouch) {
+            //return;
+        }
+                
+        if((Input.GetMouseButton(0) || checkIfTouchesUpAllowed())
+                        && !inputAxisDown
+                        && !inputButtonDown) {
+            inputGestureDown = true;
+        }
+
+        if((Input.GetMouseButton(0) || checkIfTouchesUpAllowed())
+                        && !inputAxisDown
+                        && !inputButtonDown) {
+            inputGestureUp = true;
+        }
+
+        if(Time.time > updateTouchStartTime + updateTouchMaxTime) {
+            updateTouchStartTime = 0f;
+            //positionStart = Vector3.zero;
+            //positionEnd = Vector3.zero;
+            showPoints = false;
+        }
+                
+        if(inputGestureDown
+                        //&& (Input.mousePosition.x > Screen.width / 4 
+                        //|| Input.mousePosition.y > Screen.height / 4)
+                        //&& (Input.mousePosition.x < Screen.width - (Screen.width / 5) 
+                        //&& Input.mousePosition.y < Screen.height - (Screen.height / 5) )
+                        ) {
+            if(positionStart == Vector3.zero) {
+                positionEnd = Vector3.zero;
+                positionStart = Input.mousePosition;
+                showPoints = true;
+                updateTouchStartTime = Time.time;
+                //LogUtil.Log("GetMouseButtonDown:positionStart:" + positionStart);
+                //LogUtil.Log("GetMouseButtonDown:positionEnd:" + positionEnd);
+                //LogUtil.Log("GetMouseButtonDown:positionLastLaunch:" + positionLastLaunch);
+            }
+                        
+                
+            if(GameController.CurrentGamePlayerController != null) {
+                if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
+                    Vector3 dir = positionStart - Input.mousePosition;
+                    Vector3 posNormalized = dir.normalized;
+                    //gamePlayerController.UpdateAim(-posNormalized.x, -posNormalized.y);
+                    showPoints = true;
+                }
+            }
+        }
+        else if((Input.GetMouseButtonUp(0) || checkIfTouchesUpAllowed())) {
+            if(positionEnd == Vector3.zero
+                                && positionStart != Vector3.zero) {
+                positionEnd = Input.mousePosition;
+
+                // launch
+                powerDistance = Vector3.Distance(positionStart, positionEnd);
+                positionLastLaunch = positionStart - positionEnd;
+                //LogUtil.Log("GetMouseButtonUp:positionEnd:" + positionEnd);
+                //LogUtil.Log("GetMouseButtonUp:positionStart:" + positionStart);
+                //LogUtil.Log("GetMouseButtonUp:positionLastLaunch:" + positionLastLaunch);
+                                
+                positionLastLaunchedNormalized = positionLastLaunch.normalized;
+                                
+                //LogUtil.Log("GetMouseButtonUp:posNormalized:" + posNormalized);
+                                
+                if(GameController.CurrentGamePlayerController != null) {
+                    if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
+                        //Attack();
+                        //gamePlayerController.gamePlayerModelHolderModel.
+                        //gamePlayerController.UpdateAim(-positionLastLaunchNormalized.x, -positionLastLaunchNormalized.y);
+                        //Attack();
+                                                
+                        //PhysicsUtil.PlotTrajectory(transform.position, positionLastLaunchNormalized, .1f, 4f);
+
+
+                        Messenger<Vector3>.Broadcast(UIControllerMessages.uiUpdateTouchLaunch, positionLastLaunchedNormalized);
+                        Debug.Log("positionLastLaunchedNormalized:" + positionLastLaunchedNormalized);
+                        Debug.Log("positionLastLaunch:" + positionLastLaunch);
+                        Debug.Log("powerDistance:" + powerDistance);
+
+                        Vector2 touchLaunch = Vector2.zero.WithX(-positionLastLaunchedNormalized.x).WithY(-positionLastLaunchedNormalized.y);
+
+                        GameUIController.HandleTouchLaunch(touchLaunch);
+
+                        //ResetAimDelayed(.8f);
+                    }
+                }
+                showPoints = true;
+                positionStart = Vector3.zero;
+            }
+        }
+        else {
+                                
+        }
+                
+        if(showPoints) {                
+            if(positionStart != Vector3.zero) {
+                //showStartPoint(positionStart);
+            }
+                                        
+            if(positionEnd != Vector3.zero) {
+                //showEndPoint(positionEnd);
+            }
+        }
+        else {
+            //hidePoints();
+        }
+    }
+        
+    public virtual void hidePoints() {
+        hideStartPoint();
+        hideEndPoint();
+    }
+        
+    public virtual void hideStartPoint() {
+        if(pointStartObject != null) {
+            pointStartObject.transform.position = Vector3.zero.WithY(3000);
+        }
+    }
+        
+    public virtual void hideEndPoint() {
+        if(pointEndObject != null) {
+            pointEndObject.transform.position = Vector3.zero.WithY(3000);
+        }
+    }
+        
+    public virtual void showStartPoint(Vector3 pos) {
+        //
+                
+        if(pointStartObject == null) {
+                
+            if(!isCreatingStart) {
+                isCreatingStart = true;
+                if(prefabPointStart == null) {
+                    prefabPointStart = Resources.Load(
+                                                Contents.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
+                }
+                pointStartObject = Instantiate(prefabPointStart) as GameObject;         
+            }
+        }
+                
+        if(pointStartObject != null) {
+            pointStartObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
+        }
+    }
+        
+    public virtual void showEndPoint(Vector3 pos) {
+                
+        if(pointEndObject == null) {
+            if(!isCreatingEnd) {
+                isCreatingEnd = true;
+                if(prefabPointEnd == null) {
+                    prefabPointEnd = Resources.Load(
+                                                Contents.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
+                }
+                pointEndObject = Instantiate(prefabPointEnd) as GameObject;     
+            }
+        }
+                
+        if(pointEndObject != null) {
+            pointEndObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
+        }
+    }
+
+    public bool allowedTouch = true;
+    public bool inputButtonDown = false;
+    public bool inputAxisDown = false;
+    public bool shouldTouch = false;
+
+    public virtual bool checkIfAllowedTouch(Vector3 pos) {
+
+        Ray screenRay = camHud.ScreenPointToRay(pos);
+
+        RaycastHit hit;
+
+        if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
+
+            if(hit.transform.name.Contains("ButtonInput")
+                                || hit.transform.name.Contains("ButtonInput")
+                                || hit.transform.name.Contains("ButtonInput")
+                                || hit.transform.name.Contains("Axis")) {
+                inputButtonDown = true;
+                shouldTouch = false;
+                allowedTouch = false;
+            }
+
+            if(allowedTouch) {
+                if(hit.transform.gameObject.HasComponent<GameTouchInputAxis>()) {
+                    // not over axis controller
+                    inputAxisDown = true;
+                    shouldTouch = false;
+                    allowedTouch = false;
+                }
+    
+                if(hit.transform.gameObject.HasComponent<GameTouchInputAxis>()) {
+                    // not over axis controller
+                    inputAxisDown = true;
+                    shouldTouch = false;
+                    allowedTouch = false;
+                }
+    
+                if(hit.transform.gameObject.HasComponent<UIButton>()) {
+                    // not over button
+                    inputButtonDown = true;
+                    shouldTouch = false;
+                    allowedTouch = false;
+                }
+    
+                if(hit.transform.gameObject.HasComponent<UIImageButton>()) {
+                    // not over button
+                    inputButtonDown = true;
+                    shouldTouch = false;
+                    allowedTouch = false;
+                }
+            }
+
+            Debug.Log("hit:" + hit);
+            Debug.Log("hit.transform.name:" + hit.transform.name);
+        }
+
+        return allowedTouch;
+    }
+
+
+
+    public virtual bool checkIfTouchesDownAllowed() {
+        foreach(Touch t in Input.touches) {
+            if(t.phase == TouchPhase.Began) {
+                if(checkIfAllowedTouch(t.position)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+        
+    public virtual bool checkIfTouchesUpAllowed() {
+        foreach(Touch t in Input.touches) {
+            if(t.phase == TouchPhase.Ended) {
+                if(checkIfAllowedTouch(t.position)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public virtual bool checkIfTouchesDown() {
+        foreach(Touch t in Input.touches) {
+            if(t.phase == TouchPhase.Began) {
+                return true;
+            }
+        }
+        return false;
+    }
+        
+    public virtual bool checkIfTouchesUp() {
+        foreach(Touch t in Input.touches) {
+            if(t.phase == TouchPhase.Ended) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /*
+    public virtual void DetectSwipe() {
+        if(Input.touchCount > 0 || Input.GetMouseButtonDown(0)) {
+
+            var startPos = Vector2.zero;
+            var startTime = 0f;
+            var touch = Input.touches[0];
+            bool couldBeSwipe = false;
+            float comfortZone = 500f;
+            float minSwipeTime = .2f;
+            float minSwipeDist = .2f;
+            float maxSwipeTime = 1.7f;
+
+            switch(touch.phase) {
+            case TouchPhase.Began:
+                couldBeSwipe = true;
+                startPos = touch.position;
+                startTime = Time.time;
+                break;
+
+            case TouchPhase.Moved:
+                if(Mathf.Abs(touch.position.y - startPos.y) > comfortZone) {
+                    couldBeSwipe = false;
+                }
+                break;
+            case TouchPhase.Stationary:
+                couldBeSwipe = false;
+                break;
+            case TouchPhase.Ended:
+                var swipeTime = Time.time - startTime;
+                var swipeDist = (touch.position - startPos).magnitude;
+                if(couldBeSwipe && (swipeTime < maxSwipeTime) && (swipeDist > minSwipeDist)) {
+                    // It's a swiiiiiiiiiiiipe!
+                    var swipeDirection = Mathf.Sign(touch.position.y - startPos.y);
+                    // Do something here in reaction to the swipe.
+
+                    Debug.Log("swipeDirection:" + swipeDirection);
+                    Debug.Log("swipeTime:" + swipeTime);
+                    Debug.Log("swipeDist:" + swipeDist);
+                }
+                break;
+            }
+        }
+    }
+    */
 
     public virtual void HandleFingerGesturesOnLongPress(Vector2 fingerPos) {
         //LogUtil.Log("HandleFingerGesturesOnLongPress: " 
@@ -2079,7 +2597,7 @@ public class BaseUIController : MonoBehaviour {
 
         //if(gamePauseDialogObject != null) {
         //    TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(5000));
-       // }
+        // }
     }
  
     /*
