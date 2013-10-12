@@ -859,19 +859,28 @@ public class BaseUIController : MonoBehaviour {
             hasTouches = true;
         }
 
-        hasTouchesDown = checkIfTouchesDown();
-        hasTouchesUp = checkIfTouchesUp();
+        lastDownAllowedPosition = Vector3.zero;
+        lastUpAllowedPosition = Vector3.zero;
+
+        //hasTouchesDown = checkIfTouchesDown();
+        //hasTouchesUp = checkIfTouchesUp();
         hasTouchesDownAllowed = checkIfTouchesDownAllowed();
         hasTouchesUpAllowed = checkIfTouchesUpAllowed();
 ////
 
         if(hasTouches) {
-            foreach(Touch t in Input.touches) {
-                //checkIfAllowedTouch(t.position);
-            }
+            //Debug.Log("hasTouches: " + hasTouches);
         }
-        else {
-            checkIfAllowedTouch(Input.mousePosition);
+        if(hasTouchesDownAllowed) {
+            Debug.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
+        }
+        if(hasTouchesUpAllowed) {
+            Debug.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
+        }
+
+        if(!hasTouches) {
+            lastDownAllowedPosition = Input.mousePosition;
+            checkIfAllowedTouch(lastDownAllowedPosition);
         }
 
         if(!shouldTouch) {
@@ -898,14 +907,14 @@ public class BaseUIController : MonoBehaviour {
                         ) {
             if(positionStart == Vector3.zero) {
                 positionEnd = Vector3.zero;
-                positionStart = Input.mousePosition;
+                positionStart = lastDownAllowedPosition;
                 showPoints = true;
                 updateTouchStartTime = Time.time;
                 //LogUtil.Log("GetMouseButtonDown:positionStart:" + positionStart);
                 //LogUtil.Log("GetMouseButtonDown:positionEnd:" + positionEnd);
                 //LogUtil.Log("GetMouseButtonDown:positionLastLaunch:" + positionLastLaunch);
             }
-                        
+
                 
             if(GameController.CurrentGamePlayerController != null) {
                 if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
@@ -948,7 +957,6 @@ public class BaseUIController : MonoBehaviour {
 
                 if(!doAction) {
                     positionStart = Vector3.zero;
-                    positionEnd = Vector3.zero;
                     return;
                 }
 
@@ -1063,6 +1071,11 @@ public class BaseUIController : MonoBehaviour {
 
         RaycastHit hit;
 
+        allowedTouch = true;
+        inputButtonDown = false;
+        inputAxisDown = false;
+        shouldTouch = false;
+
         if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
             if(hit.transform.name.Contains("ButtonInput")
@@ -1104,8 +1117,8 @@ public class BaseUIController : MonoBehaviour {
                 }
             }
 
-            Debug.Log("hit:" + hit);
-            Debug.Log("hit.transform.name:" + hit.transform.name);
+            //Debug.Log("hit:" + hit);
+            //Debug.Log("hit.transform.name:" + hit.transform.name);
         }
 
         return allowedTouch;
