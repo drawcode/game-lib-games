@@ -190,8 +190,9 @@ public class BaseAIController : MonoBehaviour {
 
         currentFPS = FPSDisplay.GetCurrentFPS();
     
-        if((currentActorCount < currentCharacterLimit
-        && currentFPS > 20f) || currentActorCount < currentCharacterMin) {
+        if(currentActorCount < currentCharacterLimit
+       // && currentFPS > 20f)
+            || currentActorCount < currentCharacterMin) {
         
             // do some spawning
     
@@ -208,7 +209,6 @@ public class BaseAIController : MonoBehaviour {
             scale = UnityEngine.Random.Range(.7f, 1.5f);
             speed = UnityEngine.Random.Range(.7f, 1.2f);
 
-
             GameDirectorActor actor = new GameDirectorActor();
             actor.SetRandomCharacter(randomCharacter);
             actor.speed = speed;
@@ -216,19 +216,6 @@ public class BaseAIController : MonoBehaviour {
             actor.scale = scale;
 
             GameAIController.LoadCharacter(actor);
-
-            /*
-            if(randomCharacter == 1) {
-                for(int i = 0; i < currentSpawnAmount; i++) {
-                    GameController.Instance.LoadEnemyBot1(scale, speed, attack);
-                }
-            }
-            else if(randomCharacter == 2) {
-                for(int i = 0; i < currentSpawnAmount; i++) {
-                    GameController.Instance.LoadEnemyBot1(scale, speed, attack);
-                }
-            }
-            */
         }
     }
 

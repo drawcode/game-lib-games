@@ -870,15 +870,20 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
-            if(spawn != null) {
-                spawnLocation = spawn.gameObject.transform.position;
-            }
-            else {
+            //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
+            //if(spawn != null) {
+            //    spawnLocation = spawn.gameObject.transform.position;
+            //}
+            //else {
 
                 // get random
-                spawnLocation = GameController.GetActorRandomSpawnLocation();
-            }
+                if(currentGameZone == GameZones.right) {
+                    spawnLocation = Vector3.zero.WithX(80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                }
+                else if(currentGameZone == GameZones.left) {
+                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                }
+            //}
 
         }
         else {
