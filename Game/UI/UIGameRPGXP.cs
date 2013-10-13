@@ -11,6 +11,7 @@ public class UIGameRPGXP : UIGameRPGObject {
 
     public override void Start() {
         incrementValue = 1;
+        profileValue = 10;
         UpdateValue();
     }
 

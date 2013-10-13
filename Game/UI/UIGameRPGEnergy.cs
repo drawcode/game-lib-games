@@ -10,7 +10,7 @@ using Engine.Utility;
 public class UIGameRPGEnergy : UIGameRPGObject {
 
     public override void Start() {
-        incrementValue = .1;
+        incrementValue = .01;
         profileValue = 1;
         UpdateValue();
     }

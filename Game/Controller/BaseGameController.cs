@@ -37,19 +37,6 @@ public enum GameControllerType {
     Perspective3D
 }
 
-public enum GameModeChoiceFlowState {
-    GameModeTrainingChoiceOverview,
-    GameModeTrainingChoiceDisplayItem,
-    GameModeTrainingChoiceAnswer,
-    GameModeTrainingChoiceResults,
-}
-
-public enum GameModeCollectionFlowState {
-    GameModeTrainingCollectionOverview,
-    GameModeTrainingCollectionDisplayItem,
-    GameModeTrainingCollectionResults,
-}
-
 public class GamePlayerMessages {
 
     public static string PlayerAnimation = "playerAnimation";

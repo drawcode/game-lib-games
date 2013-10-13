@@ -11,7 +11,7 @@ public class UIGameRPGObject : MonoBehaviour {
 
     public double profileValue = 0;
     public double lastValue = 0;
-    public double incrementValue = .1;
+    public double incrementValue = .01;
 
     public bool useGlobal = false;
 
@@ -61,10 +61,10 @@ public class UIGameRPGObject : MonoBehaviour {
         }
 
         if(lastValue > profileValue) {
-            lastValue -= incrementValue / 10;
+            lastValue -= incrementValue;
         }
         else if(profileValue > lastValue) {
-            lastValue += incrementValue / 10;
+            lastValue += incrementValue;
         }
 
         if(lastValue < 0) {
