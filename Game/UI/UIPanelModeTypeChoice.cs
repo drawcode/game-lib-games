@@ -13,13 +13,15 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public GameObject containerChoiceOverview;
     public GameObject containerChoiceDisplayItem;
-    public GameObject containerChoiceAnswer;
+    public GameObject containerChoiceResultItem;
     public GameObject containerChoiceResults;
 
     // GLOBAL CHOICE
     public UILabel labelOverviewTip;
     public UILabel labelOverviewType;
     public UILabel labelOverviewStatus;
+
+    public UIImageButton buttonAdvance;
 
     public AppModeTypeChoiceFlowState flowState = AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview;
 

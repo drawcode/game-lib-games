@@ -35,6 +35,8 @@ public class GameObjectChoice : GameObjectLevelBase {
 
     public Color startColor = Color.red;
 
+    public bool isUI = false;
+
     public override void Start() {
         base.Start();
 
@@ -51,6 +53,10 @@ public class GameObjectChoice : GameObjectLevelBase {
         }
 
         SetChoiceParticleSystemColors();
+
+        if(isUI) {
+            gameObject.SetLayerRecursively("UIOverlay");
+        }
     }
 
     public void SetChoiceParticleSystemColors() {
@@ -71,12 +77,19 @@ public class GameObjectChoice : GameObjectLevelBase {
                 assetCode));
 
             if(assetItem != null) {
-                assetItem.SetLayerRecursively("Default");
+                if(isUI) {
+                    assetItem.SetLayerRecursively("UIOverlay");
+                }
+                else {
+                    assetItem.SetLayerRecursively("Default");
+                }
                 assetItem.transform.parent = containerAsset.transform;
                 //assetItem.transform.position = containerAsset.transform.position;
                 //assetItem.transform.rotation = containerAsset.transform.rotation;
                 assetItem.transform.localPosition = Vector3.zero;
                 assetItem.transform.localRotation = Quaternion.identity;
+                assetItem.transform.localRotation = Quaternion.identity;
+                assetItem.transform.localScale = Vector3.one;
 
                 foreach(Rigidbody rigidbody in assetItem.GetComponentsInChildren<Rigidbody>(true)) {
 
