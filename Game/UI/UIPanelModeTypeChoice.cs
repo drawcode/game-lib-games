@@ -17,11 +17,59 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public GameObject containerChoiceResults;
 
     // GLOBAL CHOICE
+
+    // OVERVIEW
+
     public UILabel labelOverviewTip;
     public UILabel labelOverviewType;
     public UILabel labelOverviewStatus;
 
-    public UIImageButton buttonAdvance;
+    public UILabel labelOverviewTitle;
+    public UILabel labelOverviewBlurb;
+    public UILabel labelOverviewBlurb2;
+    public UILabel labelOverviewNextSteps;
+
+    public UIImageButton buttonOverviewAdvance;
+
+    // DISPLAY ITEM
+
+    public UILabel labelDisplayItemTip;
+    public UILabel labelDisplayItemType;
+    public UILabel labelDisplayItemStatus;
+
+    public UILabel labelDisplayItemTitle;
+    public UILabel labelDisplayItemBlurb;
+    public UILabel labelDisplayItemBlurb2;
+    public UILabel labelDisplayItemNextSteps;
+
+    public UIImageButton buttonDisplayItemAdvance;
+
+    // RESULT ITEM
+
+    public UILabel labelResultItemTip;
+    public UILabel labelResultItemType;
+    public UILabel labelResultItemStatus;
+
+    public UILabel labelResultItemTitle;
+    public UILabel labelResultItemBlurb;
+    public UILabel labelResultItemBlurb2;
+    public UILabel labelResultItemNextSteps;
+
+    public UIImageButton buttonResultItemAdvance;
+
+    // RESULTS
+
+    public UILabel labelResultsTip;
+    public UILabel labelResultsType;
+    public UILabel labelResultsStatus;
+
+    public UILabel labelResultsTitle;
+    public UILabel labelResultsBlurb;
+    public UILabel labelResultsBlurb2;
+    public UILabel labelResultsNextSteps;
+
+    public UIImageButton buttonResultsAdvance;
+
 
     public AppModeTypeChoiceFlowState flowState = AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview;
 
@@ -85,9 +133,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     void OnButtonClickEventHandler(string buttonName) {
-        if(UIUtil.IsButtonClicked(buttonAdvance, buttonName)) {
-            HideAll();
-        }
+        //if(UIUtil.IsButtonClicked(button, buttonName)) {
+           // HideAll();
+
+            //GameController.LoadLevelAssets("1-1");
+        //}
     }
 
     // SET CONTENT
@@ -164,6 +214,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         CheckChoicesData();
         HideStates();
 
+        Debug.Log("UIPanelModeTypeChoice:ShowCurrentState:flowState:" + flowState);
+
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
             DisplayStateOverview();
         }
@@ -194,7 +246,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void DisplayStateOverview() {
+
+        Debug.Log("UIPanelModeTypeChoice:DisplayStateOverview:flowState:" + flowState);
+
         SetStatus(GetStatusOverview());
+
+        ShowOverview();
     }
 
     // SHOW / HIDE
@@ -207,7 +264,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void ShowOverview() {
-        AnimateInTop(containerChoiceOverview);
+        AnimateInBottom(containerChoiceOverview);
     }
 
     public void HideOverview() {
@@ -215,41 +272,52 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void ShowDisplayItem() {
-        AnimateInTop(containerChoiceDisplayItem);
+        AnimateInBottom(containerChoiceDisplayItem);
     }
 
     public void HideDisplayItem() {
-        AnimateOutTop(containerChoiceDisplayItem);
+        AnimateOutBottom(containerChoiceDisplayItem);
     }
 
     public void ShowResultItem() {
-        AnimateInTop(containerChoiceResultItem);
+        AnimateInBottom(containerChoiceResultItem);
     }
 
     public void HideResultItem() {
-        AnimateOutTop(containerChoiceResultItem);
+        AnimateOutBottom(containerChoiceResultItem);
     }
 
     public void ShowResults() {
-        AnimateInTop(containerChoiceResults);
+        AnimateInBottom(containerChoiceResults);
     }
 
     public void HideResults() {
-        AnimateOutTop(containerChoiceResults);
+        AnimateOutBottom(containerChoiceResults);
     }
 
     public void DisplayStateDisplayItem() {
+        Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
+
         SetStatus(GetStatusItemProgress());
 
         ShowDisplayItem();
     }
 
     public void DisplayStateResultItem() {
+        Debug.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
+
         SetStatus(GetStatusItemProgress());
+
+        ShowResultItem();
     }
 
     public void DisplayStateResults() {
+
+        Debug.Log("UIPanelModeTypeChoice:DisplayStateResults:flowState:" + flowState);
+
         SetStatus("Results");
+
+        ShowResults();
     }
 
 
@@ -279,6 +347,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
+
+        ShowOverview();
     }
 
     public override void AnimateIn() {

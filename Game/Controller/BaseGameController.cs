@@ -748,7 +748,7 @@ public class BaseGameController : MonoBehaviour {
 
     // LEVELS
 
-    public virtual void loadLevel(string code) {
+    public virtual void loadLevelAssets(string code) {
 
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
@@ -766,6 +766,12 @@ public class BaseGameController : MonoBehaviour {
     
         // Load in the level assets
         GameDraggableEditor.LoadLevelItems();
+    
+    }
+
+    public virtual void loadLevel(string code) {
+
+        GameController.LoadLevelAssets(code);
     
         // Load the game levelitems for the game level code
         ////GameController.StartGame(code);
@@ -1271,6 +1277,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void prepareGame(string levelCode) {
+        GameController.Reset();
         GameController.ChangeGameState(GameStateGlobal.GamePrepare);
     }
 
@@ -1392,19 +1399,33 @@ public class BaseGameController : MonoBehaviour {
         //GameRunningStateRun();
     }
 
-    public virtual void onGamePrepare() {
-        GameController.StartGame(GameLevels.Current.code);
+    public virtual void onGamePrepare(bool startGame) {
+
+        GameController.StartLevelStats();
+
+        GameController.ResetRuntimeData();
+
+        GameUIController.HideUI(true);
+        GameUIController.HideHUD();
+
+        if(allowedEditing) {
+            GameDraggableEditor.ShowUIPanelEditButton();
+        }
+
+        if(startGame) {
+            GameController.StartGame(GameLevels.Current.code);
+        }
     }
     
     public virtual void onGameStarted() {
 
         GameController.StartLevelStats();
-    
+
         GameController.ResetRuntimeData();
-    
+
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
-    
+
         if(allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
