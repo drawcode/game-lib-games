@@ -63,10 +63,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 	
     void OnEnable() {
         Messenger<AppContentChoiceItem>.AddListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
     
     void OnDisable() {
         Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
 
     void OnAppContentChoiceItemHandler(AppContentChoiceItem choiceItem) {
@@ -81,10 +83,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
             appContentChoicesData.SetChoice(choiceData);
         }
     }
-	
-    void OnButtonClickEventHandler(string buttonName) {
 
-	}
+    void OnButtonClickEventHandler(string buttonName) {
+        if(UIUtil.IsButtonClicked(buttonAdvance, buttonName)) {
+            HideAll();
+        }
+    }
 
     // SET CONTENT
 
@@ -139,15 +143,10 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     // STATES
 
-    public void CheckAppContentChoicesData() {
-        if(appContentChoicesData == null) {
-            appContentChoicesData = new AppContentChoicesData();
-        }
-    }
-
     public void ProcessNextItem() {
 
-        CheckAppContentChoicesData();
+        CheckChoices();
+        CheckChoicesData();
 
         bool correctOnly = true;
 
@@ -160,20 +159,30 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
     }
 
-    public void ChangeState(AppModeTypeChoiceFlowState state) {
+    public void ShowCurrentState() {
+        CheckChoices();
+        CheckChoicesData();
+        HideStates();
 
-        if(state == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
+        if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
             DisplayStateOverview();
         }
-        else if(state == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
+        else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
             DisplayStateDisplayItem();
         }
-        else if(state == AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem) {
+        else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem) {
             DisplayStateResultItem();
         }
-        else if(state == AppModeTypeChoiceFlowState.AppModeTypeChoiceResults) {
+        else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResults) {
             DisplayStateResults();
         }
+    }
+
+    public void ChangeState(AppModeTypeChoiceFlowState state) {
+
+        flowState = state;
+
+        ShowCurrentState();
     }
 
     public string GetStatusItemProgress() {
@@ -188,8 +197,51 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         SetStatus(GetStatusOverview());
     }
 
+    // SHOW / HIDE
+
+    public void HideStates() {
+        HideOverview();
+        HideDisplayItem();
+        HideResultItem();
+        HideResults();
+    }
+
+    public void ShowOverview() {
+        AnimateInTop(containerChoiceOverview);
+    }
+
+    public void HideOverview() {
+        AnimateOutTop(containerChoiceOverview);
+    }
+
+    public void ShowDisplayItem() {
+        AnimateInTop(containerChoiceDisplayItem);
+    }
+
+    public void HideDisplayItem() {
+        AnimateOutTop(containerChoiceDisplayItem);
+    }
+
+    public void ShowResultItem() {
+        AnimateInTop(containerChoiceResultItem);
+    }
+
+    public void HideResultItem() {
+        AnimateOutTop(containerChoiceResultItem);
+    }
+
+    public void ShowResults() {
+        AnimateInTop(containerChoiceResults);
+    }
+
+    public void HideResults() {
+        AnimateOutTop(containerChoiceResults);
+    }
+
     public void DisplayStateDisplayItem() {
         SetStatus(GetStatusItemProgress());
+
+        ShowDisplayItem();
     }
 
     public void DisplayStateResultItem() {
@@ -227,6 +279,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
+    }
+
+    public override void AnimateIn() {
+        base.AnimateIn();
+    }
+
+    public override void AnimateOut() {
+        base.AnimateOut();
+
+        HideStates();
     }
 	
 }
