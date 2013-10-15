@@ -8,7 +8,7 @@ using Engine.Events;
 
 public class UIPanelSettingsProfile : UIPanelBase {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public UIImageButton buttonClose;

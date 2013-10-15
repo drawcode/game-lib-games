@@ -11,9 +11,9 @@ public class UIPanelDialogEditItemsFilter {
 	public static string levelEffect = "level-effects";
 }
 
-public class UIPanelDialogEditItems : UIAppPanel {
+public class UIPanelDialogEditItems : UIAppPanelBaseList {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public static UIPanelDialogEditItems Instance;

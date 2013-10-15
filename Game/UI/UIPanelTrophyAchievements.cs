@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class UIPanelTrophyAchievements : UIAppPanel {
+public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	public UILabel labelPoints;
 

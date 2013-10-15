@@ -7,43 +7,46 @@ using UnityEngine;
 using Engine.Events;
 
 public class UIPanelBase : UIAppPanel {
-	
-	public GameObject panelLeftObject;
-	public GameObject panelLeftBottomObject;
-	public GameObject panelLeftTopObject;
-	public GameObject panelRightObject;
-	public GameObject panelRightBottomObject;
-	public GameObject panelRightTopObject;
-	public GameObject panelTopObject;
-	public GameObject panelBottomObject;
-	public GameObject panelCenterObject;
-	
-	public GameObject panelContainer;	
 
-	[NonSerialized]
-	public float durationShow = .45f;
-	[NonSerialized]
-	public float durationHide = .45f;
-	[NonSerialized]
-	public float durationDelayShow = .5f;
-	[NonSerialized]
-	public float durationDelayHide = 0f;
-	[NonSerialized]
-	public float leftOpenX = 0f;
-	[NonSerialized]
-	public float leftClosedX = -2500f;
-	[NonSerialized]
-	public float rightOpenX = 0f;
-	[NonSerialized]
-	public float rightClosedX = 2500f;
-	[NonSerialized]
-	public float bottomOpenY = 0f;
-	[NonSerialized]
-	public float bottomClosedY = -2500f;
-	[NonSerialized]
-	public float topOpenY = 0f;
-	[NonSerialized]
-	public float topClosedY = 2500f;
+    public GameObject listGridRoot; 
+    public UIGrid listGrid;
+    public UIPanel panelClipped;
+    public GameObject panelLeftObject;
+    public GameObject panelLeftBottomObject;
+    public GameObject panelLeftTopObject;
+    public GameObject panelRightObject;
+    public GameObject panelRightBottomObject;
+    public GameObject panelRightTopObject;
+    public GameObject panelTopObject;
+    public GameObject panelBottomObject;
+    public GameObject panelCenterObject;
+    public GameObject panelContainer;
+    [NonSerialized]
+    public float durationShow = .45f;
+    [NonSerialized]
+    public float durationHide = .45f;
+    [NonSerialized]
+    public float durationDelayShow = .5f;
+    [NonSerialized]
+    public float durationDelayHide = 0f;
+    [NonSerialized]
+    public float leftOpenX = 0f;
+    [NonSerialized]
+    public float leftClosedX = -2500f;
+    [NonSerialized]
+    public float rightOpenX = 0f;
+    [NonSerialized]
+    public float rightClosedX = 2500f;
+    [NonSerialized]
+    public float bottomOpenY = 0f;
+    [NonSerialized]
+    public float bottomClosedY = -2500f;
+    [NonSerialized]
+    public float topOpenY = 0f;
+    [NonSerialized]
+    public float topClosedY = 2500f;
+
+    public int increment = 0;
 
     public virtual void OnEnable() {
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
@@ -71,13 +74,13 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
 
-	public override void Start() {
-		base.Start();		
-	}
+    public override void Start() {
+        base.Start();        
+    }
 
     // CENTER
 
@@ -88,7 +91,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutCenter(GameObject go) {
         AnimateOutCenter(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInCenter(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -120,7 +123,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeft(GameObject go) {
         AnimateOutLeft(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInLeft(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -152,7 +155,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeftBottom(GameObject go) {
         AnimateOutLeftBottom(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInLeftBottom(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -184,7 +187,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeftTop(GameObject go) {
         AnimateOutLeftTop(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInLeftTop(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -199,7 +202,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeftTop(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay,  Vector3.zero.WithX(leftClosedX));
+            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
     }
 
@@ -216,7 +219,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRight(GameObject go) {
         AnimateOutRight(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInRight(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -248,7 +251,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRightBottom(GameObject go) {
         AnimateOutRightBottom(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInRightBottom(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -280,7 +283,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRightTop(GameObject go) {
         AnimateOutRightTop(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInRightTop(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -330,10 +333,10 @@ public class UIPanelBase : UIAppPanel {
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
         }
     }
-	
-	public virtual void AnimateOutTop(float time, float delay) {
+ 
+    public virtual void AnimateOutTop(float time, float delay) {
         AnimateInTop(panelTopObject, time, delay);
-	}
+    }
 
     // BOTTOM
 
@@ -344,7 +347,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutBottom(GameObject go) {
         AnimateOutBottom(go, durationHide, durationDelayHide);
     }
-	
+ 
     public virtual void AnimateInBottom(GameObject go, float time, float delay) {
         if(go != null) {
             UITweenerUtil.MoveTo(go,
@@ -368,66 +371,68 @@ public class UIPanelBase : UIAppPanel {
     }
 
     // ANIMATE
-	
-	public virtual void AnimateIn() {
-		
-		//AnimateOut(0f, 0f);
-		
-		ShowPanel();
-		
-		float time = durationShow;
-		float delay = durationDelayShow;
-		
-		AnimateIn(time, delay);
-	}
-	
-	public virtual void AnimateIn(float time, float delay) {
-				
-		AnimateInCenter(time, delay);
-		AnimateInLeft(time, delay);
-		AnimateInLeftBottom(time, delay);
-		AnimateInLeftTop(time, delay);
-		AnimateInRight(time, delay);
-		AnimateInRightBottom(time, delay);
-		AnimateInRightTop(time, delay);
-		AnimateInTop(time, delay);
-		AnimateInBottom(time, delay);
-	}
-	
-	public virtual void AnimateOut() {
-		
-		float time = durationHide;
-		float delay = durationDelayHide;
-		
-		AnimateOut(time, delay);
-	}
-	
-	public virtual void AnimateOutNow() {
-		
-		float time = 0f;
-		float delay = 0f;
-		
-		AnimateOut(time, delay);
-	}
-	
-	public virtual void AnimateOut(float time, float delay) {
-		
-		AdNetworks.HideAd();
-		
-		AnimateOutCenter(time, delay);
-		AnimateOutLeft(time, delay);
-		AnimateOutLeftBottom(time, delay);
-		AnimateOutLeftTop(time, delay);
-		AnimateOutRight(time, delay);
-		AnimateOutRightBottom(time, delay);
-		AnimateOutRightTop(time, delay);
-		AnimateOutTop(time, delay);
-		AnimateOutBottom(time, delay);	
+ 
+    public virtual void AnimateIn() {
+     
+        //AnimateOut(0f, 0f);
+     
+        ShowPanel();
+     
+        float time = durationShow;
+        float delay = durationDelayShow;
+     
+        AnimateIn(time, delay);
+    }
+ 
+    public virtual void AnimateIn(float time, float delay) {
+             
+        AnimateInCenter(time, delay);
+        AnimateInLeft(time, delay);
+        AnimateInLeftBottom(time, delay);
+        AnimateInLeftTop(time, delay);
+        AnimateInRight(time, delay);
+        AnimateInRightBottom(time, delay);
+        AnimateInRightTop(time, delay);
+        AnimateInTop(time, delay);
+        AnimateInBottom(time, delay);
+    }
+ 
+    public virtual void AnimateOut() {
+     
+        float time = durationHide;
+        float delay = durationDelayHide;
+     
+        AnimateOut(time, delay);
+    }
+ 
+    public virtual void AnimateOutNow() {
+     
+        float time = 0f;
+        float delay = 0f;
+     
+        AnimateOut(time, delay);
+    }
+ 
+    public virtual void AnimateOut(float time, float delay) {
+     
+        AdNetworks.HideAd();
+     
+        AnimateOutCenter(time, delay);
+        AnimateOutLeft(time, delay);
+        AnimateOutLeftBottom(time, delay);
+        AnimateOutLeftTop(time, delay);
+        AnimateOutRight(time, delay);
+        AnimateOutRightBottom(time, delay);
+        AnimateOutRightTop(time, delay);
+        AnimateOutTop(time, delay);
+        AnimateOutBottom(time, delay);   
 
         isVisible = false;
 
+        ListClear();
+
         StartCoroutine(HidePanelCo(delay + .5f));
-	}
+    }
 
     public IEnumerator HidePanelCo(float delay) {
         yield return new WaitForSeconds(delay);
@@ -436,29 +441,128 @@ public class UIPanelBase : UIAppPanel {
             HidePanel();
         }
     }
-	
-	public virtual void HidePanel() {
+ 
+    public virtual void HidePanel() {
 
         if(!isVisible) {
 
-    		if(panelContainer != null) {
-            	panelContainer.Hide();
-    		}
+            if(panelContainer != null) {
+                panelContainer.Hide();
+            }
 
         }
-	}
-	
-	public virtual void ShowPanel() {
+    }
+ 
+    public virtual void ShowPanel() {
 
         isVisible = true;
 
-		if(panelContainer != null) {
-        	panelContainer.Show();		
-		}		
-	}
-	
-	void Update() {
-		
-	}
+        if(panelContainer != null) {
+            panelContainer.Show();       
+        }        
+    }
+ 
+    void Update() {
+     
+    }
+
+    //
+    //
+    //
+
+
+    public void ListContainerScale(GameObject listObject, float scaleTo) {
+        if(listObject != null) {
+            Vector3 currentScale = listObject.transform.localScale;
+         
+            float screenWidth = 640;
+            float screenHeight = 960;
+         
+            scaleTo = Mathf.Clamp(scaleTo / (screenWidth / screenHeight), .5f, 2f);
+         
+            currentScale = currentScale.WithX(scaleTo).WithY(scaleTo).WithZ(scaleTo);
+         
+            listObject.transform.localScale = currentScale;
+        }
+    }
+ 
+    public void ListScale(GameObject listObject, float scaleTo) {
+        if(listObject != null) {
+            Vector3 currentScale = listObject.transform.localScale;
+         
+            float screenWidth = 640;
+            float screenHeight = 960;
+         
+            scaleTo = Mathf.Clamp(scaleTo / (screenWidth / screenHeight), .5f, 2f);
+         
+            currentScale = currentScale.WithX(scaleTo).WithY(scaleTo).WithZ(scaleTo);
+         
+            listObject.transform.localScale = currentScale;
+        }
+    }
+ 
+    public void PanelScale(UIPanel panel) {     
+        if(panelClipped != null) {
+            Vector4 range = panelClipped.clipRange;
+            range.x = 0f;
+            //range.y = 0f;
+            range.z = 2500f;
+            //range.y = 2500f;
+            //range.w = 380f;
+            panelClipped.clipRange = range;
+        }
+    }
+ 
+    public void ListScale(float scaleTo) {
+        if(listGridRoot != null) {
+            ListScale(listGridRoot, scaleTo);
+        }
+     
+        PanelScale(panelClipped);
+     
+        ListReposition();
+    }
+
+    public void ListClear() {
+        ListClear(listGridRoot);
+    }
+ 
+    public void ListClear(GameObject listObject) {
+        if(listObject != null) {
+            foreach(Transform item in listObject.transform) {
+                Destroy(item.gameObject);
+            }
+        }
+    }
+
+    public void ListReposition() {  
+        increment = 0;
+        if(listGrid != null) {
+            RepositionList(listGrid, listGridRoot);         
+        }
+    }
+ 
+    public void ListReposition(UIGrid grid, GameObject gridObject) {    
+        increment = 0;
+        if(grid != null) {
+            RepositionList(grid, gridObject);           
+        }
+    }
+ 
+    public void RepositionList(UIGrid grid, GameObject gridObject) {
+        if(grid != null) {
+            grid.Reposition();          
+            if(gridObject.transform.parent != null) {
+                UIDraggablePanel[] dragPanels = gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
+                if(dragPanels != null) {                    
+                    foreach(UIDraggablePanel panel 
+                     in dragPanels) {
+                        panel.ResetPosition();
+                        break;
+                    }
+                }
+            }           
+        }
+    }
 }
 

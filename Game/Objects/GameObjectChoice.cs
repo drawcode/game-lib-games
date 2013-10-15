@@ -9,17 +9,23 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
+public class GameObjectChoiceMessages {
+    public static string gameChoiceDataResponse = "game-choice-data-response";
+}
+
 public class GameObjectChoiceData {
-    public string code = "";
-    public string responseAnswer = "";
-    public string displayAnswer = "";
-    public string assetCode = "";
-    public bool isCorrect = true;
+    public string choiceCode = "";
+    public string choiceType = "";
+    public string choiceItemCode = "";
+    public string choiceItemDisplay = "";
+    public string choiceItemAssetCode = "";
+    public bool choiceItemIsCorrect = true;
 }
 
 public class GameObjectChoice : GameObjectLevelBase {
 
     public AppContentChoice appContentChoice;
+    public AppContentChoiceItem appContentChoiceItem;
 
     public GameObjectChoiceData choiceData;
 
@@ -46,7 +52,7 @@ public class GameObjectChoice : GameObjectLevelBase {
     public override void LoadData() {
         base.LoadData();
 
-        LoadChoice("question-1", true, code, "true","barrel-1");
+        LoadChoice("question-1", "correct", true, code, "true","barrel-1");
 
         if(containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);
@@ -106,45 +112,52 @@ public class GameObjectChoice : GameObjectLevelBase {
         }
     }
 
-    public void LoadChoice(AppContentChoice choice) {
+    public void LoadChoiceItem(AppContentChoice choice, AppContentChoiceItem choiceItem) {
         appContentChoice = choice;
+        appContentChoiceItem = choiceItem;
 
         LoadChoice(
             appContentChoice.code,
-            true,
-            appContentChoice.display_name,
-            appContentChoice.display_name, "barrel-1");
+            appContentChoice.type,
+            appContentChoiceItem.IsTypeCorrect(),
+            appContentChoiceItem.display,
+            appContentChoiceItem.code, "barrel-1");
     }
 
+
     public void LoadChoice(
-        string code,
-        bool isCorrect,
-        string displayAnswer,
-        string responseAnswer,
-        string assetCode) {
+        string choiceCode,
+        string choiceType,
+        bool choiceItemIsCorrect,
+        string choiceItemDisplay,
+        string choiceItemCode,
+        string choiceItemAssetCode) {
 
         choiceData = new GameObjectChoiceData();
-        choiceData.code = code;
-        choiceData.isCorrect = isCorrect;
-        choiceData.displayAnswer = displayAnswer;
-        choiceData.responseAnswer = responseAnswer;
-        choiceData.assetCode = assetCode;
+        choiceData.choiceCode = choiceCode;
+        choiceData.choiceType = choiceType;
+        choiceData.choiceItemIsCorrect = choiceItemIsCorrect;
+        choiceData.choiceItemDisplay = choiceItemDisplay;
+        choiceData.choiceItemCode = choiceItemCode;
+        choiceData.choiceItemAssetCode = choiceItemAssetCode;
 
-        LoadAsset(assetCode);
+        LoadAsset(choiceItemAssetCode);
 
-        UIUtil.SetLabelValue(labelResponse, choiceData.displayAnswer);
+        UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
     }
 
     public void BroadcastChoice() {
-        Messenger<GameObjectChoiceData>.Broadcast("game-choice-data-response", choiceData);
+        Messenger<GameObjectChoiceData>.Broadcast(
+            GameObjectChoiceMessages.gameChoiceDataResponse, choiceData);
     }
 
     public void OnCollisionEnter(Collision collision) {
 
         // If the human player hit us, check the score/choice and correct or incorrect message broadcast
 
+
         if(choiceData != null) {
-            if(choiceData.isCorrect) {
+            if(choiceData.choiceItemIsCorrect) {
                 // Play correct
                 if(containerEffectsCorrect != null) {
                     containerEffectsCorrect.PlayParticleSystem(true);

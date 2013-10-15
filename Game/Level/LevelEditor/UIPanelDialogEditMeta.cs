@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class UIPanelDialogEditMeta : UIAppPanel {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public UIInput inputName;

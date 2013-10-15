@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class UIPanelTrophyStatistics : UIAppPanel {
+public class UIPanelTrophyStatistics : UIAppPanelBaseList {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public static UIPanelTrophyStatistics Instance;		

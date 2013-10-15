@@ -15,7 +15,7 @@ public enum UIPanelEditAssetActionState {
 
 public class UIPanelEditAsset : UIAppPanel {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public static UIPanelEditAsset Instance;

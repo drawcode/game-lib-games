@@ -36,13 +36,15 @@ public class UIAppPanelBaseListViews: UIAppPanelBaseList {
 	public UIPanel panelClippedAppContentStateDetail;
 	
 	public UIAppPanelContentState currentState = UIAppPanelContentState.DEFAULT;
-		
-    void OnEnable() {
+
+    public override void OnEnable() {
+        base.OnEnable();
        // Messenger<DeviceOrientation>.AddListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
 		//Messenger<float>.AddListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);		
     }
-    
-    void OnDisable() {
+
+    public override void OnDisable() {
+        base.OnDisable();
        // Messenger<DeviceOrientation>.RemoveListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
 		//Messenger<float>.RemoveListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);		
     }	

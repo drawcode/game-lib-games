@@ -9,7 +9,6 @@ using Engine.Events;
 
 public class UIPanelPause : UIPanelBase {
 
-	public GameObject listGridRoot;
     public GameObject listItemPrefab;
 	
     public UIImageButton buttonResume;

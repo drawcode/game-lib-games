@@ -9,7 +9,7 @@ using Engine.Events;
 
 public class UIPanelSettingsAudio : UIPanelBase {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 	
 	public UIImageButton buttonClose;

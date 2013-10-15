@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class UIPanelLevels : UIAppPanel {
+public class UIPanelLevels : UIAppPanelBaseList {
  
-    public GameObject listGridRoot;
+    
     public GameObject listItemPrefab;
     public GameObject listItemSetPrefab;
      

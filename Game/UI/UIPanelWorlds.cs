@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class UIPanelWorlds : UIAppPanel {
+public class UIPanelWorlds : UIAppPanelBaseList {
 	
-	public GameObject listGridRoot;
+	
     public GameObject listItemPrefab;
 		
 	void Awake() {

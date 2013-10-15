@@ -12,6 +12,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
 	public static UIPanelModeTypeChoice Instance;
 
+    public GameObject prefabListItem;
+
     public GameObject containerChoiceOverview;
     public GameObject containerChoiceDisplayItem;
     public GameObject containerChoiceResultItem;
@@ -103,7 +105,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 	public override void Init() {
 		base.Init();
 
-		loadData();
+		//loadData();
 	}	
 	
 	public override void Start() {
@@ -428,6 +430,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         AnimateInBottom(containerChoiceDisplayItem);
 
         ContentPause();
+
+        loadDataChoice();
     }
 
     public void HideDisplayItem() {
@@ -503,6 +507,30 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 		}
 	}
 
+    public void loadDataChoice() {
+        StartCoroutine(loadDataChoiceCo());
+    }
+
+    IEnumerator loadDataChoiceCo() {
+
+        // load list item
+
+        if (listGridRoot != null) {
+
+            ListClear(listGridRoot);
+
+            yield return new WaitForEndOfFrame();
+
+            if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
+                loadDataChoiceItems();
+            }
+
+            yield return new WaitForEndOfFrame();
+            ListReposition(listGrid, listGridRoot);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
@@ -513,17 +541,59 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         Reset();
 
         ShowCurrentState();
+
+        loadDataChoice();
+    }
+
+    public void loadDataChoiceItems() {
+     
+     Debug.Log("loadDataChoiceItems:");
+
+     int i = 0;
+
+        foreach(AppContentChoiceItem choiceItem in GetCurrentChoice().choices) {
+         
+            GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
+            item.name = "AItem" + i;
+
+            foreach(GameObjectChoice choiceObject in item.GetComponentsInChildren<GameObjectChoice>(true)) {
+                if(i == 0) {
+                    choiceObject.startColor = Color.red;
+                }
+                else if(i == 1) {
+                    choiceObject.startColor = Color.blue;
+                }
+                else if(i == 2) {
+                    choiceObject.startColor = Color.yellow;
+                }
+                else if(i == 3) {
+                    choiceObject.startColor = Color.red;
+                }
+
+                choiceObject.LoadChoiceItem(GetCurrentChoice(), choiceItem);
+            }
+
+            //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = achievement.display_name;
+            //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = achievement.description;
+
+             //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;
+             //UISprite iconSprite = iconObject.GetComponent<UISprite>();
+    
+             // Get trophy icon
+             
+             i++;
+        }
+
     }
 
     public override void AnimateIn() {
         base.AnimateIn();
 
-        loadData();
-
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
+        ListClear();
     }
 	
 }

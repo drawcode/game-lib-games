@@ -12,12 +12,14 @@ public class UIAppPanelBaseList : UIAppPanelBase {
 	
 	public float currentScale = 1f;
 		
-    void OnEnable() {
+    public override void OnEnable() {
+        base.OnEnable();
         //Messenger<DeviceOrientation>.AddListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
 		//Messenger<float>.AddListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);		
     }
-    
-    void OnDisable() {
+
+    public override void OnDisable() {
+        base.OnDisable();
         //Messenger<DeviceOrientation>.RemoveListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
 		//Messenger<float>.RemoveListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);		
     }
