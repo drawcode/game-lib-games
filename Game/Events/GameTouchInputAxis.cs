@@ -78,18 +78,19 @@ public class GameTouchInputAxis : MonoBehaviour {
         }
  
         bool mousePressed = Input.GetMouseButton(0);
+        bool touchPressed = Input.touchCount > 0 ? true : false;
      
         bool leftPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
         bool rightPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
         bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
         bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
      
-        if(Input.touchCount > 0) {
+        if(touchPressed) {
             foreach(Touch touch in Input.touches) {
                 PointHitTest(touch.position);            
             }            
         }
-        else if(Input.GetMouseButton(0)) {
+        else if(mousePressed) {
             PointHitTest(Input.mousePosition);
         }
         else if((leftPressed

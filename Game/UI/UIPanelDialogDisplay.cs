@@ -59,12 +59,12 @@ public class UIPanelDialogDisplay : UIPanelBase {
         HideAllButtons();
     }
 	
-    void OnEnable() {
+    public override void OnEnable() {
 		Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
     }
     
-    void OnDisable() {
+    public override void OnDisable() {
 		Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
     }

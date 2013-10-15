@@ -1091,6 +1091,8 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
+            Debug.Log("spawnCode:" + spawnCode);
+
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {
             //    spawnLocation = spawn.gameObject.transform.position;
@@ -1876,7 +1878,7 @@ public class BaseGameController : MonoBehaviour {
 
         if(currentGamePlayerController != null) {
             var playerPos = currentGamePlayerController.transform.position;
-            var touchPos = Camera.mainCamera.ScreenToWorldPoint(point);
+            var touchPos = Camera.main.ScreenToWorldPoint(point);
     
             var direction = touchPos - playerPos;
             direction.Normalize();
@@ -1902,7 +1904,7 @@ public class BaseGameController : MonoBehaviour {
     
                 var directionAllow = touchPos - center;
                 directionAllow.Normalize();
-                var directionAllowNormal = directionAllow.normalized;
+                //var directionAllowNormal = directionAllow.normalized;
     
                 //Debug.Log("directionAllowNormal:" + directionAllowNormal);
                 //Debug.Log("touchPos:" + touchPos);

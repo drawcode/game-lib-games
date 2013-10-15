@@ -51,12 +51,16 @@ public class UIPanelSettingsProfile : UIPanelBase {
 		loadData();
 	}
 	
-	void OnEnable() {
+	public override void OnEnable() {
+        base.OnEnable();
+
 		Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnProfileInputChanged);
 	}
 	
-	void OnDisable() {
-		Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnProfileInputChanged);
+	public override void OnDisable() {
+        base.OnDisable();
+        
+        Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnProfileInputChanged);
 	}
 	
 	void OnProfileInputChanged(string controlName, string data) {

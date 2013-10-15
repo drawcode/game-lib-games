@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
@@ -111,12 +112,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     // EVENTS
 	
-    void OnEnable() {
+    public override void OnEnable() {
+        base.OnEnable();
         Messenger<AppContentChoiceItem>.AddListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
     
-    void OnDisable() {
+    public override void OnDisable() {
+        base.OnDisable();
         Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
@@ -129,7 +132,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         choiceData.choices.Add(choiceItem);
         choiceData.choiceData = "";
 
-        if(currentChoice != null) {
+        if(appContentChoicesData != null) {
             appContentChoicesData.SetChoice(choiceData);
         }
     }
@@ -210,6 +213,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void LoadChoices(int total) {
 
         CheckChoices();
+
         CheckChoicesData();
 
         choices.Clear();
@@ -239,9 +243,10 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void ProcessNextItem() {
 
         CheckChoices();
+
         CheckChoicesData();
 
-        bool correctOnly = true;
+        //bool correctOnly = true;
 
         if(appContentChoicesData.choices.Count < choices.Count) {
             // Process next question
@@ -253,8 +258,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void ShowCurrentState() {
+
         CheckChoices();
+
         CheckChoicesData();
+
         HideStates();
 
         Debug.Log("UIPanelModeTypeChoice:ShowCurrentState:flowState:" + flowState);
@@ -293,6 +301,21 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         return string.Format("{0} questions", choices.Count);
     }
 
+    // CHOICES DATA
+
+    public AppContentChoice GetCurrentChoice() {
+        CheckChoices();
+        CheckChoicesData();
+
+        if(choices != null) {
+            if(choices.Count > 0) {
+                return choices[choices.Keys.ToList()[currentChoice]];
+            }
+        }
+
+        return null;
+    }
+
     // DISPLAY
 
     public void DisplayStateOverview() {
@@ -305,11 +328,30 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void DisplayStateDisplayItem() {
+
         Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
+
+        UpdateDisplayItemData();
+
+        ShowDisplayItem();
+    }
+
+    public void UpdateDisplayItemData() {
 
         UIUtil.SetLabelValue(labelDisplayItemStatus, GetStatusItemProgress());
 
-        ShowDisplayItem();
+        AppContentChoice choice = GetCurrentChoice();
+
+        string choiceTitle = "Loading...";
+        string choiceQuestion = "Loading...";
+
+        if(choice != null) {
+            choiceTitle = "Question";
+            choiceQuestion = choice.display_name + choice.code;
+        }
+
+        UIUtil.SetLabelValue(labelDisplayItemTitle, choiceTitle);
+        UIUtil.SetLabelValue(labelDisplayItemQuestion, choiceQuestion);
     }
 
     public void DisplayStateResultItem() {
@@ -332,6 +374,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     // SHOW / HIDE
 
     public void HideStates() {
+
+        UIPanelDialogBackground.HideAll();
+
         HideOverview();
         HideDisplayItem();
         HideResultItem();
@@ -349,45 +394,72 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void ShowOverview() {
+
         HideStates();
+
+        UIPanelDialogBackground.ShowDefault();
+
         Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+
         AnimateInBottom(containerChoiceOverview);
+
         ContentPause();
     }
 
     public void HideOverview() {
+
         Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+
         AnimateOutBottom(containerChoiceOverview, 0f, 0f);
+
         ContentRun();
     }
 
     // DISPLAY ITEM
 
     public void ShowDisplayItem() {
+
         HideStates();
+
+        UIPanelDialogBackground.ShowDefault();
+
         Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
+
         AnimateInBottom(containerChoiceDisplayItem);
+
         ContentPause();
     }
 
     public void HideDisplayItem() {
+
         Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
+
         AnimateOutBottom(containerChoiceDisplayItem, 0f, 0f);
+
         ContentRun();
     }
 
     // RESULT ITEM
 
     public void ShowResultItem() {
+
         HideStates();
+
+        UIPanelDialogBackground.ShowDefault();
+
         Debug.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
+
         AnimateInBottom(containerChoiceResultItem);
+
         ContentPause();
     }
 
     public void HideResultItem() {
+
         Debug.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
+
         AnimateOutBottom(containerChoiceResultItem, 0f, 0f);
+
         ContentRun();
     }
 

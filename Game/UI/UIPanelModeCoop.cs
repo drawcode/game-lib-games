@@ -41,12 +41,12 @@ public class UIPanelModeCoop : UIPanelBase {
 		Init();
 	}
 	
-    void OnEnable() {
-
+    public override void OnEnable() {
+        base.OnEnable();
     }
     
-    void OnDisable() {
-
+    public override void OnDisable() {
+        base.OnDisable();
     }
 	
     void OnButtonClickEventHandler(string buttonName) {

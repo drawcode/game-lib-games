@@ -48,17 +48,19 @@ public class UIPanelSettingsAudio : UIPanelBase {
 	public override void Start() {
 		Init();
 	}
-	
-    void OnEnable() {
-		Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-		Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
-
+ 
+    public override void OnEnable() {
+        base.OnEnable();
+        
+        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
     }
     
-    void OnDisable() {
-		Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-		Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
+    public override void OnDisable() {
+        base.OnDisable();
 
+        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
     }
 	
     void OnButtonClickEventHandler(string buttonName) {

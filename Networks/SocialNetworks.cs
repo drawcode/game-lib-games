@@ -344,7 +344,7 @@ public class SocialNetworks : MonoBehaviour {
 	}
 	
 	public int reAuthAttempts = 0;
-	Hashtable htFacebook = null;
+	public Hashtable htFacebook = null;
 		
 	public void getProfileDataFacebook() {  
 	

@@ -41,11 +41,11 @@ public class UIPanelDialogBackground : UIPanelBase {
 		Init();
 	}
 	
-    void OnEnable() {
+    public override void OnEnable() {
 
     }
     
-    void OnDisable() {
+    public override void OnDisable() {
 
     }
 	

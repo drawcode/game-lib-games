@@ -121,7 +121,8 @@ public class BaseUIPanel {
 
 public class BaseUIController : MonoBehaviour { 
  
-    public static BaseUIController Instance;
+    public static BaseUIController BaseInstance;
+
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
     public bool inModalAction = true;
@@ -401,7 +402,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void FingerGestures_OnPinchMove(PinchGesture gesture) {
         //Vector2 fingerPos1 = gesture.Fingers[0].Position;
         //Vector2 fingerPos2 = gesture.
-        float delta = gesture.Delta;
+        //float delta = gesture.Delta;
         
         if(!IsInputAllowed()) {
             return;
@@ -411,7 +412,7 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void FingerGestures_OnRotationMove(TwistGesture gesture) {
         //Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {
-        float rotationAngleDelta = gesture.DeltaRotation;
+        //float rotationAngleDelta = gesture.DeltaRotation;
         if(!IsInputAllowed()) {
             return;
         }
@@ -439,13 +440,13 @@ public class BaseUIController : MonoBehaviour {
     }
 
     public virtual void FingerGestures_OnTap(TapGesture gesture) {//Vector2 fingerPos) {
-        Vector2 fingerPos = gesture.Position;
+        //Vector2 fingerPos = gesture.Position;
         //LogUtil.Log("FingerGestures_OnTap", fingerPos);
         if(!IsInputAllowed()) {
             return;
         }
      
-        bool allowTap = true;
+        //bool allowTap = true;
         
         if(currentDraggableGameObject != null) {
             //TapObject(currentDraggableGameObject, fingerPos, allowTap);
@@ -471,7 +472,7 @@ public class BaseUIController : MonoBehaviour {
             if(!deferTap) {
 
                 //var fwd = transform.TransformDirection(Vector3.forward);
-                //Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+                //Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
                 //RaycastHit hit;
                 //if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 //print("hit an object:" + hit.transform.name);
@@ -522,7 +523,7 @@ public class BaseUIController : MonoBehaviour {
         }
      
         //var fwd = transform.TransformDirection(Vector3.forward);
-        ////Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+        ////Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
         ////RaycastHit hit;
         ////if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
         ////    print("double tap hit an object:" + hit.transform.name);
@@ -831,13 +832,13 @@ public class BaseUIController : MonoBehaviour {
         inputGestureUp = false;
         showPoints = false;
 
-        bool inHitArea = false;
+        //bool inHitArea = false;
 
         if((Input.mousePosition.x > Screen.width / 3
             && Input.mousePosition.x < Screen.width - Screen.width / 3)
             && (Input.mousePosition.y > Screen.height / 4
             && Input.mousePosition.y < Screen.height - Screen.height / 3)) {
-            inHitArea = true;
+            //inHitArea = true;
         }
 
         if(camHud == null) {
@@ -852,8 +853,8 @@ public class BaseUIController : MonoBehaviour {
         }
 
         bool hasTouches = false;
-        bool hasTouchesDown = false;
-        bool hasTouchesUp = false;
+        //bool hasTouchesDown = false;
+        //bool hasTouchesUp = false;
         bool hasTouchesDownAllowed = false;
         bool hasTouchesUpAllowed = false;
 
@@ -920,8 +921,8 @@ public class BaseUIController : MonoBehaviour {
                 
             if(GameController.CurrentGamePlayerController != null) {
                 if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
-                    Vector3 dir = positionStart - Input.mousePosition;
-                    Vector3 posNormalized = dir.normalized;
+                    //Vector3 dir = positionStart - Input.mousePosition;
+                    //Vector3 posNormalized = dir.normalized;
                     //gamePlayerController.UpdateAim(-posNormalized.x, -posNormalized.y);
                     showPoints = true;
                 }
@@ -1383,7 +1384,7 @@ public class BaseUIController : MonoBehaviour {
             GameDraggableEditor.EditModeCreateAsset(fingerPos);
          
             //var fwd = transform.TransformDirection(Vector3.forward);
-            Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+            Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 print("double tap hit an object:" + hit.transform.name);
@@ -1511,7 +1512,7 @@ public class BaseUIController : MonoBehaviour {
          
          if(!GameObjectHelper.deferTap) {
              //var fwd = transform.TransformDirection(Vector3.forward);
-             Ray ray = Camera.mainCamera.ScreenPointToRay(Vector3.zero);
+             Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
              RaycastHit hit;
              if (Physics.Raycast (ray, out hit, Mathf.Infinity)) {
                  print ("hit an object:" + hit.transform.name);
