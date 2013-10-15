@@ -1342,31 +1342,61 @@ public class BaseGameController : MonoBehaviour {
     }
 
     // -------------------------------------------------------
-    // GAME STATES / HANDLERS   
+    // GAME STATES / HANDLERS
+
+    public virtual void gameSetTimeScale(float timeScale) {
+        Time.timeScale = timeScale;
+    }
+
+    // STOPPED
     
     public virtual void gameRunningStateStopped() {
-        Time.timeScale = 1f;
+        gameRunningStateStopped(1f);
+    }
+
+    public virtual void gameRunningStateStopped(float timeScale) {
+        gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.STOPPED;
         GameController.Instance.gameState = GameStateGlobal.GameNotStarted;
     }
-    
+
+    // PAUSED
+
     public virtual void gameRunningStatePause() {
-        Time.timeScale = 0f;
+        gameRunningStatePause(0f);
+    }
+
+    public virtual void gameRunningStatePause(float timeScale) {
+        gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.PAUSED;
         GameController.Instance.gameState = GameStateGlobal.GamePause;
     }
+
+    // RUN
     
     public virtual void gameRunningStateRun() {
-        Time.timeScale = 1f;
+       gameRunningStateRun(1f);
+    }
+    
+    public virtual void gameRunningStateRun(float timeScale) {
+        gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.RUNNING;
         GameController.Instance.gameState = GameStateGlobal.GameStarted;
     }
 
+    // CONTENT
+
     public virtual void gameRunningStateContent() {
-        Time.timeScale = 1f;
+        gameRunningStateContent(1f);
+    }
+
+    public virtual void gameRunningStateContent(float timeScale) {
+        gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.PAUSED;
         GameController.Instance.gameState = GameStateGlobal.GameContentDisplay;
     }
+
+    // EVENTS ON
 
     public virtual void onGameContentDisplay() {
         // Show runtime content display data
@@ -1397,6 +1427,18 @@ public class BaseGameController : MonoBehaviour {
         }
     
         //GameRunningStateRun();
+    }
+
+    public virtual void onGameContentDisplayPause() {
+        GameDraggableEditor.HideAllEditDialogs();
+        UIPanelDialogBackground.ShowDefault();
+        GameController.GameRunningStatePause();
+    }
+    
+    public virtual void onGameContentDisplayResume() {
+        GameDraggableEditor.HideAllEditDialogs();
+        UIPanelDialogBackground.HideAll();
+        GameController.GameRunningStateRun();
     }
 
     public virtual void onGamePrepare(bool startGame) {

@@ -342,7 +342,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutBottom(GameObject go) {
-        AnimateInBottom(go, durationHide, durationDelayHide);
+        AnimateOutBottom(go, durationHide, durationDelayHide);
     }
 	
     public virtual void AnimateInBottom(GameObject go, float time, float delay) {

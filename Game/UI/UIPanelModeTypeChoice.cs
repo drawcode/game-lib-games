@@ -76,6 +76,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public AppContentChoicesData appContentChoicesData;
 
     int currentChoice = 0;
+    public int choicesToLoad = 5;
     public AppContentChoice currentAppContentChoice;
 
 	public void Awake() {
@@ -107,6 +108,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 	public override void Start() {
 		Init();
 	}
+
+    // EVENTS
 	
     void OnEnable() {
         Messenger<AppContentChoiceItem>.AddListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
@@ -146,13 +149,15 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
     }
 
+    // ADVANCE/NEXT
+
     public void Advance() {
 
         Debug.Log("Advance:flowState:" + flowState);
 
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
-            // show first question
-            ShowDisplayItem();
+
+            ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem);
         }
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
 
@@ -160,21 +165,20 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             //GameController.LoadLevelAssets("1-1");
 
-            ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
-
-            HideAll();
+            //ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
+            HideStates();
         }
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem) {
 
+            HideStates();
             NextChoice();
 
-            HideAll();
         }
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResults) {
 
             // set check game over flow
 
-            HideAll();
+            HideStates();
         }
     }
 
@@ -217,13 +221,17 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         choicesFilter.Shuffle();
 
         int countChoices = choicesFilter.Count;
+        Debug.Log("LoadChoices:countChoices:" + countChoices);
 
         // select total choices to try
 
         for(int i = 0; i < total; i++) {
             AppContentChoice choice = choicesFilter[i];
             choices.Add(choice.code, choice);
+            Debug.Log("LoadChoices:choice.code:" + choice.code);
         }
+
+        Debug.Log("LoadChoices:choices.Count:" + choices.Count);
     }
 
     // STATES
@@ -278,7 +286,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     // STATUS/TEXT
 
     public string GetStatusItemProgress() {
-        return string.Format("question: {0} / {1} ", appContentChoicesData.choices.Count, choices.Count);
+        return string.Format("question: {0} / {1} ", appContentChoicesData.choices.Count + 1, choices.Count);
     }
 
     public string GetStatusOverview() {
@@ -332,50 +340,70 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     // OVERLAY
 
+    public void ContentPause() {
+        GameController.GameRunningStateContent();
+    }
+
+    public void ContentRun() {
+        GameController.GameRunningStateRun();
+    }
+
     public void ShowOverview() {
+        HideStates();
         Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
         AnimateInBottom(containerChoiceOverview);
+        ContentPause();
     }
 
     public void HideOverview() {
         Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
-        AnimateOutTop(containerChoiceOverview);
+        AnimateOutBottom(containerChoiceOverview, 0f, 0f);
+        ContentRun();
     }
 
     // DISPLAY ITEM
 
     public void ShowDisplayItem() {
+        HideStates();
         Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
         AnimateInBottom(containerChoiceDisplayItem);
+        ContentPause();
     }
 
     public void HideDisplayItem() {
         Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
-        AnimateOutBottom(containerChoiceDisplayItem);
+        AnimateOutBottom(containerChoiceDisplayItem, 0f, 0f);
+        ContentRun();
     }
 
     // RESULT ITEM
 
     public void ShowResultItem() {
+        HideStates();
         Debug.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
         AnimateInBottom(containerChoiceResultItem);
+        ContentPause();
     }
 
     public void HideResultItem() {
         Debug.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
-        AnimateOutBottom(containerChoiceResultItem);
+        AnimateOutBottom(containerChoiceResultItem, 0f, 0f);
+        ContentRun();
     }
 
     // RESULTS
 
     public void ShowResults() {
+        HideStates();
         Debug.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
         AnimateInBottom(containerChoiceResults);
+        ContentPause();
     }
 
     public void HideResults() {
         Debug.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
-        AnimateOutBottom(containerChoiceResults);
+        AnimateOutBottom(containerChoiceResults, 0f, 0f);
+        ContentRun();
     }
 
     // SHOW/LOAD
@@ -392,6 +420,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
     }
 
+    public void Reset() {
+        HideStates();
+        LoadChoices(choicesToLoad);
+    }
+
 	public static void LoadData() {
 		if(Instance != null) {
 			Instance.loadData();
@@ -399,20 +432,22 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 	}
 
     public void loadData() {
-
-        HideStates();
-
         StartCoroutine(loadDataCo());
     }
     
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
+
+        Reset();
+
+        ShowCurrentState();
     }
 
     public override void AnimateIn() {
         base.AnimateIn();
 
         loadData();
+
     }
 
     public override void AnimateOut() {
