@@ -2737,7 +2737,7 @@ public class BaseUIController : MonoBehaviour {
     }
             
     public virtual void OnButtonClickEventHandler(string buttonName) {
-        Debug.Log("OnButtonClickEventHandler: " + buttonName);
+        //Debug.Log("OnButtonClickEventHandler: " + buttonName);
      
         hasBeenClicked = true;
 

@@ -52,7 +52,7 @@ public class GameObjectChoice : GameObjectLevelBase {
     public override void LoadData() {
         base.LoadData();
 
-        LoadChoice("question-1", "correct", true, code, "true","barrel-1");
+        //LoadChoice("question-1", "correct", true, code, "true","barrel-1");
 
         if(containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);
@@ -142,6 +142,9 @@ public class GameObjectChoice : GameObjectLevelBase {
         choiceData.choiceItemAssetCode = choiceItemAssetCode;
 
         LoadAsset(choiceItemAssetCode);
+
+        Debug.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
+        Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
 
         UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
     }

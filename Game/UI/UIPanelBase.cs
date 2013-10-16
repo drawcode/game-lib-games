@@ -529,9 +529,7 @@ public class UIPanelBase : UIAppPanel {
  
     public void ListClear(GameObject listObject) {
         if(listObject != null) {
-            foreach(Transform item in listObject.transform) {
-                Destroy(item.gameObject);
-            }
+            listObject.DestroyChildren();
         }
     }
 

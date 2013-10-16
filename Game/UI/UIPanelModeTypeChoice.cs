@@ -218,6 +218,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         CheckChoicesData();
 
+        ListClear(listGridRoot);
+
         choices.Clear();
         appContentChoicesData = new AppContentChoicesData();
 
@@ -296,11 +298,36 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     // STATUS/TEXT
 
     public string GetStatusItemProgress() {
-        return string.Format("question: {0} / {1} ", appContentChoicesData.choices.Count + 1, choices.Count);
+        CheckChoices();
+        CheckChoicesData();
+
+        int countUser = 1;
+
+        if(appContentChoicesData != null) {
+            if(appContentChoicesData.choices != null) {
+                countUser = appContentChoicesData.choices.Count + 1;
+            }
+        }
+
+        int count = 1;
+
+        if(choices != null) {
+            count = choices.Count;
+        }
+
+        return string.Format("question: {0} / {1} ", countUser, count);
     }
 
     public string GetStatusOverview() {
-        return string.Format("{0} questions", choices.Count);
+        CheckChoices();
+
+        int count = 1;
+
+        if(choices != null) {
+            count = choices.Count;
+        }
+
+        return string.Format("{0} questions", count);
     }
 
     // CHOICES DATA
@@ -322,7 +349,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void DisplayStateOverview() {
 
-        Debug.Log("UIPanelModeTypeChoice:DisplayStateOverview:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:DisplayStateOverview:flowState:" + flowState);
 
         UIUtil.SetLabelValue(labelOverviewStatus, GetStatusOverview());
 
@@ -331,7 +358,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void DisplayStateDisplayItem() {
 
-        Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
+        CheckChoices();
+        CheckChoicesData();
+
+        //Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
+
+        if(choices.Count == 0) {
+            LoadChoices(choicesToLoad);
+        }
+
+        Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:choices.Count:" + choices.Count);
 
         UpdateDisplayItemData();
 
@@ -344,20 +380,23 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         AppContentChoice choice = GetCurrentChoice();
 
-        string choiceTitle = "Loading...";
-        string choiceQuestion = "Loading...";
-
         if(choice != null) {
-            choiceTitle = "Question";
-            choiceQuestion = choice.display_name + choice.code;
-        }
 
-        UIUtil.SetLabelValue(labelDisplayItemTitle, choiceTitle);
-        UIUtil.SetLabelValue(labelDisplayItemQuestion, choiceQuestion);
+            string choiceTitle = "Loading...";
+            string choiceQuestion = "Loading...";
+    
+            if(choice != null) {
+                choiceTitle = "Question";
+                choiceQuestion = choice.display_name + choice.code;
+            }
+
+            UIUtil.SetLabelValue(labelDisplayItemTitle, choiceTitle);
+            UIUtil.SetLabelValue(labelDisplayItemQuestion, choiceQuestion);
+        }
     }
 
     public void DisplayStateResultItem() {
-        Debug.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
 
         UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
 
@@ -366,7 +405,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void DisplayStateResults() {
 
-        Debug.Log("UIPanelModeTypeChoice:DisplayStateResults:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:DisplayStateResults:flowState:" + flowState);
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
 
@@ -401,7 +440,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceOverview);
 
@@ -410,7 +449,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void HideOverview() {
 
-        Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
 
         AnimateOutBottom(containerChoiceOverview, 0f, 0f);
 
@@ -425,7 +464,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceDisplayItem);
 
@@ -436,7 +475,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void HideDisplayItem() {
 
-        Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
 
         AnimateOutBottom(containerChoiceDisplayItem, 0f, 0f);
 
@@ -451,7 +490,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        Debug.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceResultItem);
 
@@ -460,7 +499,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void HideResultItem() {
 
-        Debug.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
 
         AnimateOutBottom(containerChoiceResultItem, 0f, 0f);
 
@@ -471,13 +510,13 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void ShowResults() {
         HideStates();
-        Debug.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
         AnimateInBottom(containerChoiceResults);
         ContentPause();
     }
 
     public void HideResults() {
-        Debug.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
+        //Debug.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
         AnimateOutBottom(containerChoiceResults, 0f, 0f);
         ContentRun();
     }
@@ -546,42 +585,50 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     public void loadDataChoiceItems() {
+
+        int i = 0;
      
-     Debug.Log("loadDataChoiceItems:");
+        Debug.Log("loadDataChoiceItems:" + i);
 
-     int i = 0;
+        AppContentChoice choice = GetCurrentChoice();
 
-        foreach(AppContentChoiceItem choiceItem in GetCurrentChoice().choices) {
-         
-            GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
-            item.name = "AItem" + i;
+        if(choice != null) {
 
-            foreach(GameObjectChoice choiceObject in item.GetComponentsInChildren<GameObjectChoice>(true)) {
-                if(i == 0) {
-                    choiceObject.startColor = Color.red;
-                }
-                else if(i == 1) {
-                    choiceObject.startColor = Color.blue;
-                }
-                else if(i == 2) {
-                    choiceObject.startColor = Color.yellow;
-                }
-                else if(i == 3) {
-                    choiceObject.startColor = Color.red;
-                }
-
-                choiceObject.LoadChoiceItem(GetCurrentChoice(), choiceItem);
-            }
-
-            //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = achievement.display_name;
-            //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = achievement.description;
-
-             //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;
-             //UISprite iconSprite = iconObject.GetComponent<UISprite>();
-    
-             // Get trophy icon
+            foreach(AppContentChoiceItem choiceItem in choice.choices) {
              
-             i++;
+                GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
+                item.name = "AItem" + i;
+
+                GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
+
+                if(choiceObject != null) {
+    
+                    if(i == 0) {
+                        choiceObject.startColor = Color.red;
+                    }
+                    else if(i == 1) {
+                        choiceObject.startColor = Color.blue;
+                    }
+                    else if(i == 2) {
+                        choiceObject.startColor = Color.yellow;
+                    }
+                    else if(i == 3) {
+                        choiceObject.startColor = Color.red;
+                    }
+    
+                    choiceObject.LoadChoiceItem(choice, choiceItem);
+                }
+    
+                //item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = achievement.display_name;
+                //item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = achievement.description;
+    
+                 //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;
+                 //UISprite iconSprite = iconObject.GetComponent<UISprite>();
+        
+                 // Get trophy icon
+                 
+                 i++;
+            }
         }
 
     }
@@ -589,11 +636,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public override void AnimateIn() {
         base.AnimateIn();
 
+        ShowCurrentState();
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
-        ListClear();
+        ListClear(listGridRoot);
     }
 	
 }
