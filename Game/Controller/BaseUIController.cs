@@ -1091,28 +1091,28 @@ public class BaseUIController : MonoBehaviour {
             }
 
             if(allowedTouch) {
-                if(hit.transform.gameObject.HasComponent<GameTouchInputAxis>()) {
+                if(hit.transform.gameObject.Has<GameTouchInputAxis>()) {
                     // not over axis controller
                     inputAxisDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.HasComponent<GameTouchInputAxis>()) {
+                if(hit.transform.gameObject.Has<GameTouchInputAxis>()) {
                     // not over axis controller
                     inputAxisDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.HasComponent<UIButton>()) {
+                if(hit.transform.gameObject.Has<UIButton>()) {
                     // not over button
                     inputButtonDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.HasComponent<UIImageButton>()) {
+                if(hit.transform.gameObject.Has<UIImageButton>()) {
                     // not over button
                     inputButtonDown = true;
                     shouldTouch = false;

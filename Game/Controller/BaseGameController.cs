@@ -59,7 +59,7 @@ public enum GameStateGlobal {
     GameContentDisplay, // dialog or in progress choice/content/collection status
 }
 
-public class GameActorItem {
+public class GameActorDataItem {
     public float health = 1f;
     public float difficulty = .3f;
     public float scale = 1f;
@@ -69,6 +69,20 @@ public class GameActorItem {
     
     public string characterCode = "character-enemy-goblin";
     public string prefabCode = "GameEnemyGobln";
+}
+
+public class GameItemDataItem {
+    public float health = 0f;
+    public float difficulty = .3f;
+    public float scale = 0f;
+    public float speed = 0f;
+    public float attack = 0f;
+    public float defense = 0f;
+
+    public GamePlayerItemType type = GamePlayerItemType.Coin;
+
+    public string itemCode = "coin";
+    public string prefabCode = "GamePlayerItemCoin";
 }
 
 public class GameMessages {
@@ -369,9 +383,13 @@ public class BaseGameController : MonoBehaviour {
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
 
-        Messenger<GameDirectorActor>.AddListener(
-            GameDirectorMessages.gameDirectorSpawnActor,
-            OnGameDirectorActorLoad);
+        Messenger<GameAIDirectorData>.AddListener(
+            GameAIDirectorMessages.gameAIDirectorSpawnActor,
+            OnGameAIDirectorData);
+
+        Messenger<GameItemDirectorData>.AddListener(
+            GameItemDirectorMessages.gameItemDirectorSpawnItem,
+            OnGameItemDirectorData);
 
         Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
     }
@@ -381,9 +399,13 @@ public class BaseGameController : MonoBehaviour {
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
 
-        Messenger<GameDirectorActor>.RemoveListener(
-            GameDirectorMessages.gameDirectorSpawnActor,
-            OnGameDirectorActorLoad);
+        Messenger<GameAIDirectorData>.RemoveListener(
+            GameAIDirectorMessages.gameAIDirectorSpawnActor,
+            OnGameAIDirectorData);
+
+        Messenger<GameItemDirectorData>.RemoveListener(
+            GameItemDirectorMessages.gameItemDirectorSpawnItem,
+            OnGameItemDirectorData);
 
         Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
     }
@@ -482,8 +504,11 @@ public class BaseGameController : MonoBehaviour {
         }
     }
 
-    public virtual void OnGameDirectorActorLoad(GameDirectorActor actor) {
+    public virtual void OnGameAIDirectorData(GameAIDirectorData actor) {
 
+    }
+
+    public virtual void OnGameItemDirectorData(GameItemDirectorData item) {
 
     }
 
@@ -502,6 +527,18 @@ public class BaseGameController : MonoBehaviour {
             return GameController.Instance.currentGamePlayerController;
         }
         return null;
+    }
+
+    // SCORING
+
+    public virtual void gamePlayerScores(double val) {
+
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        //runtimeData.scores += scoresAdd;
+        Messenger<double>.Broadcast(GameMessages.scores, val);
     }
  
     // ATTACK
@@ -703,17 +740,7 @@ public class BaseGameController : MonoBehaviour {
             }
         }
 
-        if(zones != currentGameZone) {
-            currentGameZone = zones;
-
-            if(zones == GameZones.left) {
-
-            }
-            else if(zones == GameZones.right) {
-
-            }
-
-        }
+        GameController.GoalZoneChange(zones);
     }
 
     // ---------------------------------------------------------------------
@@ -992,7 +1019,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void loadEnemyBot1(float scale, float speed, float attack) {
-        GameActorItem character = new GameActorItem();
+        GameActorDataItem character = new GameActorDataItem();
         character.characterCode = "character-enemy-bot1";
         character.prefabCode = "GameEnemyBot1";
         character.scale = scale;
@@ -1001,8 +1028,24 @@ public class BaseGameController : MonoBehaviour {
         GameController.LoadActor(character);
     }
 
-    public virtual void loadActor(GameActorItem character) {
+    public virtual void loadActor(GameActorDataItem character) {
         StartCoroutine(loadActorCo(character));
+    }
+
+    public virtual void loadItemData(GameItemDirectorData data) {
+        GameItemDataItem item = new GameItemDataItem();
+        if(item.type == GamePlayerItemType.Coin) {
+            item.itemCode = "coin";
+            item.prefabCode = "GamePlayerItemCoin";
+        }
+        item.scale = data.scale;
+        item.attack = data.attack;
+        item.speed = data.speed;
+        GameController.LoadItem(item);
+    }
+
+    public virtual void loadItem(GameItemDataItem item) {
+        StartCoroutine(loadItemCo(item));
     }
 
     public virtual Vector3 getCurrentPlayerPosition() {
@@ -1015,7 +1058,7 @@ public class BaseGameController : MonoBehaviour {
         return currentPlayerPosition;
     }
 
-    public virtual Vector3 getActorRandomSpawnLocation() {
+    public virtual Vector3 getRandomSpawnLocation() {
         Vector3 spawnLocation = Vector3.zero;
         Vector3 currentPlayerPosition = GameController.CurrentPlayerPosition;
 
@@ -1053,21 +1096,21 @@ public class BaseGameController : MonoBehaviour {
         return spawnLocation;
     }
 
-    public virtual string getCharacterModelPath(GameActorItem character) {
+    public virtual string getCharacterModelPath(GameActorDataItem character) {
         string modelPath = Contents.appCacheVersionSharedPrefabCharacters;
         // TODO load up dater
         modelPath = PathUtil.Combine(modelPath, "GameEnemyBot1");
         return modelPath;
     }
 
-    public virtual string getCharacterType(GameActorItem character) {
+    public virtual string getCharacterType(GameActorDataItem character) {
         string type = "bot1";
         // TODO load up
         type = "bot1";
         return type;
     }
 
-    public virtual IEnumerator loadActorCo(GameActorItem character) {
+    public virtual IEnumerator loadActorCo(GameActorDataItem character) {
 
         string modelPath = GameController.GetCharacterModelPath(character);
         string characterType = GameController.GetCharacterType(character);
@@ -1111,7 +1154,7 @@ public class BaseGameController : MonoBehaviour {
         }
         else {
             // get random
-            spawnLocation = GameController.GetActorRandomSpawnLocation();
+            spawnLocation = GameController.GetRandomSpawnLocation();
         }
 
         if(prefabObject == null) {
@@ -1152,6 +1195,106 @@ public class BaseGameController : MonoBehaviour {
 
             //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
         }
+    }
+
+    public virtual string getItemPath(GameItemDataItem item) {
+        string modelPath = Contents.appCacheVersionSharedPrefabLevelItems;
+        modelPath = PathUtil.Combine(modelPath, item.prefabCode);
+        return modelPath;
+    }
+
+    public virtual string getItemType(GameItemDataItem item) {
+        string type = "coin";
+        type = item.itemCode;
+        return type;
+    }
+
+    public virtual IEnumerator loadItemCo(GameItemDataItem item) {
+
+        string modelPath = GameController.GetItemPath(item);
+        //string characterType = GameController.GetItemType(item);
+
+        // TODO data and pooling and network
+    
+        UnityEngine.Object prefabObject = Resources.Load(modelPath);
+        Vector3 spawnLocation = Vector3.zero;
+
+        bool isZoned = true;
+
+        if(isZoned) {
+            // get left/right spawn location
+            string leftMiddle = "left-middle";
+            string rightMiddle = "right-middle";
+            string spawnCode = rightMiddle;
+            if(currentGameZone == GameZones.right) {
+                spawnCode = rightMiddle;
+            }
+            else if(currentGameZone == GameZones.left) {
+                spawnCode = leftMiddle;
+            }
+
+            Debug.Log("spawnCode:" + spawnCode);
+
+            //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
+            //if(spawn != null) {
+            //    spawnLocation = spawn.gameObject.transform.position;
+            //}
+            //else {
+
+                // get random
+                if(currentGameZone == GameZones.right) {
+                    spawnLocation = Vector3.zero.WithX(80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                }
+                else if(currentGameZone == GameZones.left) {
+                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                }
+            //}
+
+        }
+        else {
+            // get random
+            spawnLocation = GameController.GetRandomSpawnLocation();
+        }
+
+        if(prefabObject == null) {
+            yield break;
+        }
+    
+        GameObject spawnObj = Instantiate(
+            prefabObject, spawnLocation, Quaternion.identity) as GameObject;
+    
+        spawnObj.transform.parent = levelActorsContainerObject.transform;
+        GameHUD.Instance.AddIndicator(spawnObj, "pickup");
+
+        /*
+        GamePlayerController characterGamePlayerController
+            = characterObject.GetComponentInChildren<GamePlayerController>();
+
+        characterGamePlayerController.transform.localScale
+            = characterGamePlayerController.transform.localScale * character.scale;
+
+        // Wire up ai controller to setup player health, speed, attack etc.
+
+        //characterGamePlayerController.runtimeData.
+
+        if(characterGamePlayerController != null) {
+            characterObject.Hide();
+            yield return new WaitForEndOfFrame();
+            // wire up properties
+    
+            // TODO network and player target
+            //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
+            //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
+            //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
+            characterObject.Show();
+
+            // Add indicator to HUD
+
+            GameHUD.Instance.AddIndicator(characterObject, characterType);
+
+            //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+        }
+        */
     }
 
 
@@ -1339,8 +1482,8 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual void updateDirectors(bool run) {
-        GameAIController.Instance.runDirector = run;
-        GameItemController.Instance.runDirector = run;
+        GameAIController.Run(run);
+        GameItemController.Run(run);
     }
 
     // -------------------------------------------------------
@@ -1703,6 +1846,67 @@ public class BaseGameController : MonoBehaviour {
         GameController.CheckForGameOver();
     }
 
+    // -------------------------------------------------------
+
+    // GAME PLAYER GOAL ZONE
+
+    public virtual void goalZoneChange() {
+        if(currentGameZone == GameZones.left) {
+            GameController.GoalZoneChange(GameZones.right);
+        }
+        else if(currentGameZone == GameZones.right) {
+            GameController.GoalZoneChange(GameZones.left);
+        }
+    }
+
+    public virtual void goalZoneChange(GameZones goalZone) {
+        if(currentGameZone == goalZone) {
+            return;
+        }
+
+        if(goalZone == GameZones.left) {
+            currentGameZone = goalZone;
+        }
+        else if(goalZone == GameZones.right) {
+            currentGameZone = goalZone;
+        }
+
+        GameController.HandleGoalZoneChange();
+    }
+
+    // -------------------------------------------------------
+
+    // HANDLE GOAL ZONE CHANGE
+
+    public virtual void handleGoalZoneChange() {
+        if(currentGameZone == GameZones.left) {
+            // move goal markers
+        }
+        else if(currentGameZone == GameZones.right) {
+            // move goal markers
+        }
+    }
+
+    // -------------------------------------------------------
+
+    // GAME PLAYER GOAL ZONE
+
+    public virtual void gamePlayerGoalZone(GameObject goalObject) {
+
+    }
+
+    public virtual void gamePlayerGoalZoneDelayed(GameObject goalObject, float delay) {
+        StartCoroutine(gamePlayerGoalZoneDelayedCo(goalObject, delay));
+    }
+
+    public virtual IEnumerator gamePlayerGoalZoneDelayedCo(GameObject goalObject, float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        Debug.Log("gamePlayerGoalZoneDelayedCo:");
+
+        GameController.GoalZoneChange();
+    }
 
     // -------------------------------------------------------
 

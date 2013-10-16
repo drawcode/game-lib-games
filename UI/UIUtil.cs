@@ -384,7 +384,7 @@ public class UIUtil {
         if(go == null)
             return false;
      
-        if(go.HasComponent<UIButton>() || go.HasComponent<UIImageButton>()) {
+        if(go.Has<UIButton>() || go.Has<UIImageButton>()) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }

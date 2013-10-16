@@ -9,8 +9,8 @@ using Engine.Events;
 
 // This is the AI Director.
 
-public class GameDirectorMessages {
-    public static string gameDirectorSpawnActor = "game-director-spawn-actor";
+public class GameAIDirectorMessages {
+    public static string gameAIDirectorSpawnActor = "game-ai-director-spawn-actor";
 }
 
 public enum GameAIDifficulty {
@@ -21,7 +21,7 @@ public enum GameAIDifficulty {
 }
 
 
-public class GameDirectorActor {
+public class GameAIDirectorData {
     public float speed = .3f;
     public float attack = .3f;
     public float scale = .3f;
@@ -30,7 +30,7 @@ public class GameDirectorActor {
 
     public GameProfileRPGItem actorRPG;
 
-    public GameDirectorActor() {
+    public GameAIDirectorData() {
         Reset();
     }
 
@@ -67,7 +67,7 @@ public class BaseAIController : MonoBehaviour {
     public float lastPeriodicSeconds = 0f;
     public float currentActorCount = 0;
 
-    bool stopDirector = false;
+    public bool stopDirector = false;
     
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
     
@@ -133,6 +133,10 @@ public class BaseAIController : MonoBehaviour {
     }
 
     // RUNNER/STOPPER
+
+    public virtual void run(bool run) {
+        runDirector = run;
+    }
 
     public virtual void run() {
         runDirector = true;
@@ -209,7 +213,7 @@ public class BaseAIController : MonoBehaviour {
             scale = UnityEngine.Random.Range(.7f, 1.5f);
             speed = UnityEngine.Random.Range(.7f, 1.2f);
 
-            GameDirectorActor actor = new GameDirectorActor();
+            GameAIDirectorData actor = new GameAIDirectorData();
             actor.SetRandomCharacter(randomCharacter);
             actor.speed = speed;
             actor.attack = attack;
@@ -221,11 +225,11 @@ public class BaseAIController : MonoBehaviour {
 
     // MESSAGING
 
-    public virtual void broadcastCharacterMessage(GameDirectorActor actor) {
-        Messenger<GameDirectorActor>.Broadcast(GameDirectorMessages.gameDirectorSpawnActor, actor);
+    public virtual void broadcastCharacterMessage(GameAIDirectorData actor) {
+        Messenger<GameAIDirectorData>.Broadcast(GameAIDirectorMessages.gameAIDirectorSpawnActor, actor);
     }
 
-    public virtual void loadCharacter(GameDirectorActor actor) {
+    public virtual void loadCharacter(GameAIDirectorData actor) {
         GameAIController.BroadcastCharacterMessage(actor);
     }
 
@@ -245,7 +249,7 @@ public class BaseAIController : MonoBehaviour {
             GameAIController.DirectAI();
         }
     }
-    
+
     public virtual void handleUpdate() {
         // do on update always
     
@@ -272,7 +276,7 @@ public class BaseAIController : MonoBehaviour {
             return;
         }
     
-        if(!runDirector && stopDirector
+        if(!runDirector || stopDirector
         || GameDraggableEditor.isEditing) {
             return;
         }
