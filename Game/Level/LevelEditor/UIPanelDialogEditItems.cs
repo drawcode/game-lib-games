@@ -96,13 +96,13 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 					Destroy(t.gameObject);
 				}
 				
-	        	Debug.Log("Load AppContentAsset: gameLevelItemObject.transform: " + gameLevelItemObject.transform.childCount);
+	        	//Debug.Log("Load AppContentAsset: gameLevelItemObject.transform: " + gameLevelItemObject.transform.childCount);
 				
 				if(GameDraggableEditor.Instance == null) {
 					yield break;
 				}
-				
-	        	Debug.Log("Load AppContentAsset: GameDraggableEditor: " + true);
+				//
+	        	//Debug.Log("Load AppContentAsset: GameDraggableEditor: " + true);
 				
 				string assetCode = asset.code;
 				if(assetCode.Contains("portal-")) {
@@ -114,7 +114,7 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 				
 				gameLevelItemObject.ChangeLayersRecursively("UIEditor");
 				
-	        	Debug.Log("Load AppContentAsset: go: " + go);
+	        	//Debug.Log("Load AppContentAsset: go: " + go);
 				
 				float maxSize = .8f;
 				

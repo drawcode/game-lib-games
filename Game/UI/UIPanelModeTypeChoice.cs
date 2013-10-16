@@ -82,6 +82,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public int choicesToLoad = 5;
     public AppContentChoice currentAppContentChoice;
 
+    public Color colorA = Color.red;
+    public Color colorB = Color.blue;
+    public Color colorC = Color.red;
+    public Color colorD = Color.red;
+
 	public void Awake() {
 		
         if (Instance != null && this != Instance) {
@@ -161,6 +166,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         Debug.Log("Advance:flowState:" + flowState);
 
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
+
+            // Load new set of questions.
+            LoadChoices(choicesToLoad);
 
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem);
         }
@@ -432,6 +440,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void ContentRun() {
         GameController.GameRunningStateRun();
+        //HideStates();
     }
 
     public void ShowOverview() {
@@ -476,6 +485,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void HideDisplayItem() {
 
         //Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
+
+        listGridRoot.DestroyChildren();
 
         AnimateOutBottom(containerChoiceDisplayItem, 0f, 0f);
 
@@ -604,16 +615,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                 if(choiceObject != null) {
     
                     if(i == 0) {
-                        choiceObject.startColor = Color.red;
+                        choiceObject.startColor = colorA;//Color.red;
                     }
                     else if(i == 1) {
-                        choiceObject.startColor = Color.blue;
+                        choiceObject.startColor = colorB;//Color.blue;
                     }
                     else if(i == 2) {
-                        choiceObject.startColor = Color.yellow;
+                        choiceObject.startColor = colorC;//Color.yellow;
                     }
                     else if(i == 3) {
-                        choiceObject.startColor = Color.red;
+                        choiceObject.startColor = colorD;//Color.red;
                     }
     
                     choiceObject.LoadChoiceItem(choice, choiceItem);
@@ -641,7 +652,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public override void AnimateOut() {
         base.AnimateOut();
-        ListClear(listGridRoot);
+
+        HideStates();
     }
 	
 }
