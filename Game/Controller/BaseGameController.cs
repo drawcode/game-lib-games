@@ -301,6 +301,7 @@ public class BaseGameController : MonoBehaviour {
     public GameObject levelActorsContainerObject;
     public GameObject levelZonesContainerObject;
     public GameObject levelSpawnsContainerObject;
+    public GameObject levelMarkersContainerObject;
     public GameObject itemContainerObject;
     
     public GameObject gameContainerObject;
