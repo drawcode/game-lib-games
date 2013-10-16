@@ -566,12 +566,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         // load list item
 
         if (listGridRoot != null) {
+            yield return new WaitForEndOfFrame();
 
             ListClear(listGridRoot);
 
             yield return new WaitForEndOfFrame();
 
-            if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
+            if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem
+                && listGridRoot.transform.childCount == 0) {
                 loadDataChoiceItems();
             }
 
