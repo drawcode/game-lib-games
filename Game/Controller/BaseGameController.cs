@@ -1860,9 +1860,9 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void goalZoneChange(GameZones goalZone) {
-        if(currentGameZone == goalZone) {
-            return;
-        }
+        //if(currentGameZone == goalZone) {
+        //    return;
+        //}
 
         if(goalZone == GameZones.left) {
             currentGameZone = goalZone;
