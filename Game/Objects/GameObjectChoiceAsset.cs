@@ -31,6 +31,11 @@ public class GameObjectChoiceAsset : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision) {
 
+        if(gameObjectChoice != null) {
+            gameObjectChoice.HandleCollision(collision);
+        }
+
+        /*
         if(gameObjectChoice != null
             && collision.transform != null) {
             GamePlayerController gamePlayerController
@@ -42,6 +47,7 @@ public class GameObjectChoiceAsset : MonoBehaviour {
                 }
             }
         }
+        */
 
     }
 

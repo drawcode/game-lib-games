@@ -43,6 +43,8 @@ public class GameObjectChoice : GameObjectLevelBase {
 
     public bool isUI = false;
 
+    public bool hasBroadcasted = false;
+
     public override void Start() {
         base.Start();
 
@@ -52,10 +54,13 @@ public class GameObjectChoice : GameObjectLevelBase {
     public override void LoadData() {
         base.LoadData();
 
-        //LoadChoice("question-1", "correct", true, code, "true","barrel-1");
+        LoadChoice("question-1", "correct", true, code, "false","barrel-1");
 
         if(containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);
+        }
+        if(containerEffectsIncorrect != null) {
+            containerEffectsIncorrect.StopParticleSystem(true);
         }
 
         SetChoiceParticleSystemColors();
@@ -141,6 +146,16 @@ public class GameObjectChoice : GameObjectLevelBase {
         choiceData.choiceItemCode = choiceItemCode;
         choiceData.choiceItemAssetCode = choiceItemAssetCode;
 
+        if(appContentChoice == null) {
+            appContentChoice = AppContentChoices.Instance.GetByCode(choiceCode);
+
+            foreach(AppContentChoiceItem choiceItem in appContentChoice.choices) {
+                if(choiceItem.code == choiceItemCode) {
+                    appContentChoiceItem = choiceItem;
+                }
+            }
+        }
+
         LoadAsset(choiceItemAssetCode);
 
         //Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
@@ -150,34 +165,121 @@ public class GameObjectChoice : GameObjectLevelBase {
     }
 
     public void BroadcastChoice() {
-        Messenger<GameObjectChoiceData>.Broadcast(
-            GameObjectChoiceMessages.gameChoiceDataResponse, choiceData);
+
+        if(!hasBroadcasted) {
+
+            hasBroadcasted = true;
+
+            Debug.Log("GameObjectChoice:BroadcastChoice:" + appContentChoiceItem.code);
+
+            Messenger<GameObjectChoiceData>.Broadcast(
+                GameObjectChoiceMessages.gameChoiceDataResponse, choiceData);
+
+            //Messenger<AppContentChoiceItem>.Broadcast(
+            //    AppContentChoiceMessages.appContentChoiceItem, appContentChoiceItem);
+
+       // Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+        }
     }
 
-    public void OnCollisionEnter(Collision collision) {
+    public void BroadcastChoiceDelayed(float delay) {
+        if(!hasBroadcasted) {
+            StartCoroutine(BroadcastChoiceDelayedCo(delay));
+        }
+    }
 
-        // If the human player hit us, check the score/choice and correct or incorrect message broadcast
+    public IEnumerator BroadcastChoiceDelayedCo(float delay) {
+        yield return new WaitForSeconds(delay);
+        BroadcastChoice();
+    }
 
+    public void HandleChoiceData() {
+
+        Debug.Log("GameObjectChoice:HandleChoiceData:" + name);
 
         if(choiceData != null) {
-            if(choiceData.choiceItemIsCorrect) {
+
+            if(!choiceData.choiceItemIsCorrect) {
+
                 // Play correct
                 if(containerEffectsCorrect != null) {
-                    containerEffectsCorrect.PlayParticleSystem(true);
-                    BroadcastChoice();
+
+                    if(containerEffectsCorrect != null) {
+                        containerEffectsCorrect.PlayParticleSystem(true);
+                    }
+
+                    BroadcastChoiceDelayed(2f);
                 }
 
             }
             else {
+
                 // Play incorrect
-                BroadcastChoice();
+
+                if(containerEffectsIncorrect != null) {
+                    containerEffectsIncorrect.PlayParticleSystem(true);
+                }
+
+                BroadcastChoiceDelayed(2f);
+
+                if(gamePlayerController != null) {
+                    gamePlayerController.AddImpact(Vector3.back, 1f);
+                }
+
                 if(rigidbody != null) {
-                    //rigidbody.AddExplosionForce(10f, transform.position, 10f);
+                    rigidbody.AddExplosionForce(100f, transform.position, 50f);
+                }
+            }
+        }
+    }
+
+    GamePlayerController gamePlayerController = null;
+
+    public void HandleCollision(Collision collision) {
+
+        // If the human player hit us, check the score/choice and correct or incorrect message broadcast
+
+        Debug.Log("GameObjectChoice:OnCollisionEnter:" + collision.transform.name);
+
+        GameObject go = collision.collider.transform.gameObject;
+
+        Debug.Log("GameObjectChoice:go:" + go.name);
+
+        if(go.name.Contains("GamePlayerObject")) {
+
+            gamePlayerController = GameController.GetGamePlayerController(go);
+
+            if(gamePlayerController != null) {
+
+                if(gamePlayerController.IsPlayerControlled) {
+
+                    HandleChoiceData();
                 }
             }
         }
 
+        if(gamePlayerController == null
+            && (go.name.Contains("Helmet")
+            || go.name.Contains("Facemask"))) {
+
+            Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+
+            gamePlayerController = GameController.GetGamePlayerControllerParent(go);
+
+            if(gamePlayerController != null) {
+
+                Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+
+                if(gamePlayerController.IsPlayerControlled) {
+
+                    HandleChoiceData();
+                }
+            }
+        }
     }
 
+    public void OnCollisionEnter(Collision collision) {
 
+        HandleCollision(collision);
+    }
 }

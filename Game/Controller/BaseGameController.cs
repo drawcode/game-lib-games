@@ -298,6 +298,7 @@ public class BaseGameController : MonoBehaviour {
     public GameObject levelBoundaryContainerObject;
     public GameObject levelContainerObject;
     public GameObject levelItemsContainerObject;
+    public GameObject levelItemsTempContainerObject;
     public GameObject levelActorsContainerObject;
     public GameObject levelZonesContainerObject;
     public GameObject levelSpawnsContainerObject;
@@ -526,6 +527,28 @@ public class BaseGameController : MonoBehaviour {
     public virtual GamePlayerController getCurrentController() {
         if(GameController.Instance.currentGamePlayerController != null) {
             return GameController.Instance.currentGamePlayerController;
+        }
+        return null;
+    }
+
+
+    public virtual GamePlayerController getGamePlayerController(GameObject go) {
+        if(go != null) {
+            GamePlayerController gamePlayerController = go.GetComponentInChildren<GamePlayerController>();
+            if(gamePlayerController != null) {
+                return gamePlayerController;
+            }
+        }
+        return null;
+    }
+
+    public virtual GamePlayerController getGamePlayerControllerParent(GameObject go) {
+        if(go != null) {
+            GamePlayerCollision gamePlayerCollision = go.Get<GamePlayerCollision>();
+            GamePlayerController gamePlayerController = gamePlayerCollision.gamePlayerController;
+            if(gamePlayerController != null) {
+                return gamePlayerController;
+            }
         }
         return null;
     }

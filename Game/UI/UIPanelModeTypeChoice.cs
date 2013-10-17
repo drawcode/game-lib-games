@@ -115,28 +115,71 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     // EVENTS
 	
     public override void OnEnable() {
+
         base.OnEnable();
-        Messenger<AppContentChoiceItem>.AddListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+
+        Messenger<GameObjectChoiceData>.AddListener(
+            GameObjectChoiceMessages.gameChoiceDataResponse,
+            OnAppContentChoiceItemHandler);
+
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
     
     public override void OnDisable() {
+
         base.OnDisable();
-        Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+
+        Messenger<GameObjectChoiceData>.RemoveListener(
+            GameObjectChoiceMessages.gameChoiceDataResponse,
+            OnAppContentChoiceItemHandler);
+
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
 
-    void OnAppContentChoiceItemHandler(AppContentChoiceItem choiceItem) {
+    public void BroadcastAppContentChoiceItem(AppContentChoiceItem choiceItem) {
+        //if(choiceItem == null) {
+        //    return;
+        //}
+
+        //Messenger<AppContentChoiceItem>.Broadcast(AppContentChoiceMessages.appContentChoiceItem, choiceItem);
+    }
+
+    AppContentChoice appContentChoice = null;
+    AppContentChoiceItem appContentChoiceItem = null;
+
+    AppContentChoiceItem currentChoiceItem = null;
+    AppContentChoiceData currentChoiceData = null;
+
+    void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
         CheckChoicesData();
 
         AppContentChoiceData choiceData = new AppContentChoiceData();
-        choiceData.choiceCode = choiceItem.code;
-        choiceData.choices.Add(choiceItem);
+        choiceData.choiceCode = data.choiceCode;
+
+        appContentChoice = AppContentChoices.Instance.GetByCode(data.choiceCode);
+        appContentChoiceItem = null;
+
+        if(appContentChoice != null) {
+            foreach(AppContentChoiceItem choiceItem in appContentChoice.choices) {
+                if(choiceItem.code == data.choiceItemCode) {
+                    appContentChoiceItem = choiceItem;
+                }
+            }
+        }
+
+        choiceData.choices.Add(appContentChoiceItem);
         choiceData.choiceData = "";
 
         if(appContentChoicesData != null) {
             appContentChoicesData.SetChoice(choiceData);
         }
+
+        currentChoiceData = choiceData;
+        currentChoiceItem = appContentChoiceItem;
+
+        SaveChoiceState();
+
+        ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
     }
 
     void OnButtonClickEventHandler(string buttonName) {
@@ -152,6 +195,13 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         else if(UIUtil.IsButtonClicked(buttonResultsAdvance, buttonName)) {
             Advance();
         }
+    }
+
+    // SAVE STATE
+
+    public void SaveChoiceState() {
+        string data = Engine.Data.Json.JsonMapper.ToJson(appContentChoicesData);
+        Debug.Log("SaveChoiceState:" + data);
     }
 
     // ADVANCE/NEXT
@@ -397,14 +447,10 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:choices.Count:" + choices.Count);
 
         if(chosen) {
-            
-            ShowResultItem();
-
+            ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
         }
         else {
-
             UpdateDisplayItemData();
-
             ShowDisplayItem();
         }
 
@@ -437,8 +483,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void DisplayStateResultItem() {
         //Debug.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
 
-        UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
-
         UpdateResultItemData();
 
         ShowResultItem();
@@ -453,20 +497,27 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         AppContentChoice choice = GetCurrentChoice();
 
-        bool choiceCorrect = true;
+        string typeValue = "CORRECT";
+        string codeValue = "FALSE";
 
-        if(choiceCorrect) {
+        if(currentChoiceData.CheckChoices(true)) {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
+            typeValue = "CORRECT!";
         }
         else {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
+            typeValue = "INCORRECT...";
+        }
+
+        if(appContentChoiceItem != null) {
+            codeValue = appContentChoiceItem.display;
         }
 
         if(choice != null) {
 
-            string choiceResultType = "Loading...";
-            string choiceResultValue = "Loading...";
-            string choiceResultDescription = "Loading...";
+            string choiceResultType = typeValue;
+            string choiceResultValue = codeValue;
+            string choiceResultDescription = choice.description + choice.code;
 
             if(choice != null) {
                 //choiceQuestion = choice.display_name + choice.code;
@@ -742,6 +793,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     else if(i == 3) {
                         choiceObject.startColor = UIColors.colorOrange;//Color.red;
                     }
+                    else if(i == 4) {
+                        choiceObject.startColor = UIColors.colorPurple;//Color.red;
+                    }
     
                     choiceObject.LoadChoiceItem(choice, choiceItem);
                 }
@@ -778,6 +832,18 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
         else if(modifiderKey && Input.GetKeyDown(KeyCode.RightBracket)) {
             chosen = true;
+        }
+        else if(modifiderKey && Input.GetKeyDown(KeyCode.Backslash)) {
+            AppContentChoiceItem item = null;
+
+            foreach(KeyValuePair<string, AppContentChoice> choice in choices) {
+                foreach(AppContentChoiceItem choiceItem in choice.Value.choices) {
+                    item = choiceItem;
+                    break;
+                }
+            }
+
+            BroadcastAppContentChoiceItem(item);
         }
     }
 	

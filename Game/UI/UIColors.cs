@@ -15,7 +15,7 @@ public static class UIColors  {
 
     public static Color colorRed {
         get {
-            return ColorHelper.FromRGB(255, 30, 20);
+            return ColorHelper.FromRGB(172, 22, 11);
         }
     }
 
