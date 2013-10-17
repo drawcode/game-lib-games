@@ -210,7 +210,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void NextChoice() {
         currentChoice += 1;
 
-        if(currentChoice >= choices.Count) {
+        if(currentChoice > choices.Count) {
             // Advance to results
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResults);
         }
@@ -396,12 +396,15 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:choices.Count:" + choices.Count);
 
-        UpdateDisplayItemData();
-
         if(chosen) {
+            
             ShowResultItem();
+
         }
         else {
+
+            UpdateDisplayItemData();
+
             ShowDisplayItem();
         }
 
@@ -409,6 +412,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void UpdateDisplayItemData() {
         Debug.Log("UIPanelModeTypeChoice:UpdateDisplayItemData");
+
+        UIColors.UpdateColors();
 
         UIUtil.SetLabelValue(labelDisplayItemStatus, GetStatusItemProgress());
 
@@ -434,23 +439,35 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
 
+        UpdateResultItemData();
+
         ShowResultItem();
     }
-
 
     public void UpdateResultItemData() {
         Debug.Log("UIPanelModeTypeChoice:UpdateResultItemData");
 
         UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
 
+        UIColors.UpdateColors();
+
         AppContentChoice choice = GetCurrentChoice();
+
+        bool choiceCorrect = true;
+
+        if(choiceCorrect) {
+            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
+        }
+        else {
+            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
+        }
 
         if(choice != null) {
 
             string choiceResultType = "Loading...";
             string choiceResultValue = "Loading...";
             string choiceResultDescription = "Loading...";
-    
+
             if(choice != null) {
                 //choiceQuestion = choice.display_name + choice.code;
             }
@@ -467,7 +484,36 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
 
+        UpdateDisplayStateResultsData();
+
         ShowResults();
+    }
+
+
+    public void UpdateDisplayStateResultsData() {
+        Debug.Log("UIPanelModeTypeChoice:UpdateDisplayStateResultsData");
+
+        UIColors.UpdateColors();
+
+        UIUtil.SetLabelValue(labelResultsStatus, "Results");
+
+        /*
+        AppContentChoice choice = GetCurrentChoice();
+
+        if(choice != null) {
+
+            string choiceTitle = "Loading...";
+            string choiceQuestion = "Loading...";
+    
+            if(choice != null) {
+                choiceTitle = "Question";
+                choiceQuestion = choice.display_name + choice.code;
+            }
+
+            UIUtil.SetLabelValue(labelDisplayItemTitle, choiceTitle);
+            UIUtil.SetLabelValue(labelDisplayItemQuestion, choiceQuestion);
+        }
+        */
     }
 
     // SHOW / HIDE
@@ -504,6 +550,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         AnimateInBottom(containerChoiceOverview);
 
         ContentPause();
+
+        UIColors.UpdateColors();
     }
 
     public void HideOverview() {
@@ -524,6 +572,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         HideStates();
 
         StartCoroutine(ShowDisplayItemCo());
+
+        UIColors.UpdateColors();
     }
 
     IEnumerator ShowDisplayItemCo() {
@@ -537,6 +587,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         AnimateInBottom(containerChoiceDisplayItem);
 
         loadDataChoice();
+
+        UIColors.UpdateColors();
 
         ContentPause();
 

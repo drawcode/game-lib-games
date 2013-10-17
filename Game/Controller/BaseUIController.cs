@@ -286,6 +286,7 @@ public class BaseUIController : MonoBehaviour {
 
         // TODO base
         GameCustomController.Instance.BroadcastCustomColorsSync();
+        UIColors.UpdateColors();
 
         //GameUIPanelGameModeTrainingModeChoiceQuiz.Instance.AnimateIn();
     }
