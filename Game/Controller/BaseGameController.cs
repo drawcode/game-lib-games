@@ -193,7 +193,13 @@ public class GameLevelGridData {
     }
 
     public static GameLevelGridData GetDefault() {
-        return new GameLevelGridData();
+
+        GameLevelGridData data = new GameLevelGridData();
+
+        data.SetAssets("barrel-1", 10);
+        data.RandomizeAssetsInAssetMap();
+
+        return data;
     }
 
     public string[,,] GetAssetMap() {
@@ -222,14 +228,14 @@ public class GameLevelGridData {
     }
 
     public void SetAssetsInAssetMap(Vector3 pos, string code) {
-        if(pos.x > gridWidth) {
-            pos.x = gridWidth;
+        if(pos.x > gridWidth - 1) {
+            pos.x = gridWidth - 1;
         }
-        if(pos.y > gridHeight) {
-            pos.y = gridHeight;
+        if(pos.y > gridHeight - 1) {
+            pos.y = gridHeight - 1;
         }
-        if(pos.z > gridDepth) {
-            pos.z = gridDepth;
+        if(pos.z > gridDepth - 1) {
+            pos.z = gridDepth - 1;
         }
 
         assetMap[(int)pos.x,(int)pos.y,(int)pos.z] = code;
@@ -239,22 +245,26 @@ public class GameLevelGridData {
         foreach(AppContentAsset asset in assets) {
             string row = "";
 
-            int x = 1;
-            int y = 1;
-            int z = 1;
+            int x = 0;
+            int y = 0;
+            int z = 0;
+
+            Debug.Log("RandomizeAssetsInAssetMap:row" + row);
 
             while(string.IsNullOrEmpty(row)) {
 
-                x = UnityEngine.Random.Range(1, (int)gridWidth);
-                y = UnityEngine.Random.Range(1, (int)gridHeight);
-                z = UnityEngine.Random.Range(1, (int)gridDepth);
-
-                row = assetMap[x,y,z];
+                x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
+                y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
+                z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
                 if(string.IsNullOrEmpty(row)) {
                     Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
                     SetAssetsInAssetMap(pos, asset.code);
                 }
+
+                row = assetMap[x,y,z];
+
+            Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
             }
         }
     }
