@@ -1267,10 +1267,16 @@ public class BaseGameController : MonoBehaviour {
 
                 // get random
                 if(currentGameZone == GameZones.right) {
-                    spawnLocation = Vector3.zero.WithX(80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero
+                        .WithX(UnityEngine.Random.Range(10, 80))
+                        .WithY(30f)
+                        .WithZ(UnityEngine.Random.Range(-20, 20));
                 }
                 else if(currentGameZone == GameZones.left) {
-                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero
+                        .WithX(UnityEngine.Random.Range(-80, -10))
+                        .WithY(30f)
+                        .WithZ(UnityEngine.Random.Range(-20, 20));
                 }
             //}
 

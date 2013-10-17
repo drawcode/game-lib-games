@@ -419,6 +419,10 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         if(choices != null) {
             if(choices.Count > 0) {
+                if(currentChoice > choices.Count) {
+                    currentChoice = choices.Count - 1;
+                }
+
                 return choices[choices.Keys.ToList()[currentChoice]];
             }
         }
