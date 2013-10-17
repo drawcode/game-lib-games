@@ -51,9 +51,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public UILabel labelResultItemType;
     public UILabel labelResultItemStatus;
 
-    public UILabel labelResultItemChoiceAnswer;
-    public UILabel labelResultItemChoiceResult;
-    public UILabel labelResultItemChoiceValue;
+    public UILabel labelResultItemChoiceDescription;
+    public UILabel labelResultItemChoiceResultValue;
+    public UILabel labelResultItemChoiceResultType;
     public UILabel labelResultItemNextSteps;
 
     public UIImageButton buttonResultItemAdvance;
@@ -81,11 +81,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     int currentChoice = 0;
     public int choicesToLoad = 5;
     public AppContentChoice currentAppContentChoice;
-
-    public Color colorA = Color.red;
-    public Color colorB = Color.blue;
-    public Color colorC = Color.red;
-    public Color colorD = Color.red;
 
 	public void Awake() {
 		
@@ -161,11 +156,15 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     // ADVANCE/NEXT
 
+    bool chosen = false;
+
     public void Advance() {
 
         Debug.Log("Advance:flowState:" + flowState);
 
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
+
+            chosen = false;
 
             // Load new set of questions.
             LoadChoices(choicesToLoad);
@@ -175,15 +174,19 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
 
             // Set question info and level info if not loaded
-
             //GameController.LoadLevelAssets("1-1");
 
-            //ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
-            HideStates();
+            if(chosen) {
+                ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
+            }
+            else {
+                HideStates();
+            }
         }
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem) {
 
             HideStates();
+            ResetChoiceItem();
             NextChoice();
 
         }
@@ -195,12 +198,24 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
     }
 
+    public void ResetChoices() {
+        currentChoice = 0;
+        LoadChoices(choicesToLoad);
+    }
+
+    public void ResetChoiceItem() {
+        chosen = false;
+    }
+
     public void NextChoice() {
         currentChoice += 1;
 
-        if(appContentChoicesData.choices.Count >= choices.Count) {
+        if(currentChoice >= choices.Count) {
             // Advance to results
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResults);
+        }
+        else {
+            ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem);
         }
         //
             //GameController.LoadLevelAssets("1-1");
@@ -319,9 +334,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         if(appContentChoicesData != null) {
             if(appContentChoicesData.choices != null) {
-                countUser = appContentChoicesData.choices.Count + 1;
+                //countUser = appContentChoicesData.choices.Count + 1;
             }
         }
+
+        countUser = currentChoice + 1;
 
         int count = 1;
 
@@ -381,7 +398,13 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         UpdateDisplayItemData();
 
-        ShowDisplayItem();
+        if(chosen) {
+            ShowResultItem();
+        }
+        else {
+            ShowDisplayItem();
+        }
+
     }
 
     public void UpdateDisplayItemData() {
@@ -412,6 +435,30 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
 
         ShowResultItem();
+    }
+
+
+    public void UpdateResultItemData() {
+        Debug.Log("UIPanelModeTypeChoice:UpdateResultItemData");
+
+        UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
+
+        AppContentChoice choice = GetCurrentChoice();
+
+        if(choice != null) {
+
+            string choiceResultType = "Loading...";
+            string choiceResultValue = "Loading...";
+            string choiceResultDescription = "Loading...";
+    
+            if(choice != null) {
+                //choiceQuestion = choice.display_name + choice.code;
+            }
+
+            UIUtil.SetLabelValue(labelResultItemChoiceDescription, choiceResultDescription);
+            UIUtil.SetLabelValue(labelResultItemChoiceResultValue, choiceResultValue);
+            UIUtil.SetLabelValue(labelResultItemChoiceResultType, choiceResultType);
+        }
     }
 
     public void DisplayStateResults() {
@@ -561,7 +608,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void Reset() {
         HideStates();
-        LoadChoices(choicesToLoad);
+        ResetChoices();
     }
 
 	public static void LoadData() {
@@ -632,16 +679,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                 if(choiceObject != null) {
     
                     if(i == 0) {
-                        choiceObject.startColor = colorA;//Color.red;
+                        choiceObject.startColor = UIColors.colorGreen;//Color.red;
                     }
                     else if(i == 1) {
-                        choiceObject.startColor = colorB;//Color.blue;
+                        choiceObject.startColor = UIColors.colorYellow;//Color.blue;
                     }
                     else if(i == 2) {
-                        choiceObject.startColor = colorC;//Color.yellow;
+                        choiceObject.startColor = UIColors.colorBlue;//Color.yellow;
                     }
                     else if(i == 3) {
-                        choiceObject.startColor = colorD;//Color.red;
+                        choiceObject.startColor = UIColors.colorOrange;//Color.red;
                     }
     
                     choiceObject.LoadChoiceItem(choice, choiceItem);
@@ -668,6 +715,18 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         base.AnimateOut();
 
         HideStates();
+    }
+
+    public void Update() {
+
+        bool modifiderKey = Input.GetKey(KeyCode.RightControl);
+
+        if(modifiderKey && Input.GetKeyDown(KeyCode.LeftBracket)) {
+            chosen = false;
+        }
+        else if(modifiderKey && Input.GetKeyDown(KeyCode.RightBracket)) {
+            chosen = true;
+        }
     }
 	
 }
