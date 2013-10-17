@@ -143,10 +143,10 @@ public class GameObjectChoice : GameObjectLevelBase {
 
         LoadAsset(choiceItemAssetCode);
 
-        Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
+        //Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
 
         UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
-        Debug.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
+        //Debug.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
     }
 
     public void BroadcastChoice() {

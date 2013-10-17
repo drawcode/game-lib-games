@@ -356,6 +356,11 @@ public class BaseUIController : MonoBehaviour {
     }
     
     public virtual void Update() {
+
+        if(Input.GetKeyDown(KeyCode.Space)) {
+            GameController.GamePlayerUse();
+        }
+
         //DetectSwipe();
         GameUIController.UpdateTouchLaunch();
     }
@@ -2767,7 +2772,7 @@ public class BaseUIController : MonoBehaviour {
             }
         }
 
-        HandleHUDButtons(buttonName);
+        GameUIController.HandleHUDButtons(buttonName);
      
         /*
         if(buttonName.IndexOf("FreeDownloadButton") > -1) {
@@ -2879,39 +2884,73 @@ public class BaseUIController : MonoBehaviour {
         }
      */
     }
+
+    float lastPressAttack = 0;
+    float lastPressAttackAlt = 0;
+    float lastPressAttackRight = 0;
+    float lastPressAttackLeft = 0;
+    float lastPressDefend = 0;
+    float lastPressDefendAlt = 0;
+    float lastPressDefendRight = 0;
+    float lastPressDefendLeft = 0;
+    float lastPressSkill = 0;
+    float lastPressMagic = 0;
+    float lastPressUse = 0;
+    float lastPressJump = 0;
+
+    public bool AllowPress(float lastTime) {
+
+        if(lastTime + .1f < Time.time) {
+            lastTime = Time.time;
+            return true;
+        }
+
+        return true;
+    }
  
-    public virtual void HandleHUDButtons(string buttonName) {
-        if(buttonName == BaseHUDButtonNames.buttonInputAttack) {
+    public virtual void handleHUDButtons(string buttonName) {
+        if(AllowPress(lastPressAttack)
+            && buttonName == BaseHUDButtonNames.buttonInputAttack) {
             GameController.GamePlayerAttack();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputAttackAlt) {
+        else if(AllowPress(lastPressAttackAlt)
+            && buttonName == BaseHUDButtonNames.buttonInputAttackAlt) {
             GameController.GamePlayerAttackAlt();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputAttackRight) {
+        else if(AllowPress(lastPressAttackRight)
+            && buttonName == BaseHUDButtonNames.buttonInputAttackRight) {
             GameController.GamePlayerAttackRight();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputAttackLeft) {
+        else if(AllowPress(lastPressAttackLeft)
+            && buttonName == BaseHUDButtonNames.buttonInputAttackLeft) {
             GameController.GamePlayerAttackLeft();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputDefend) {
+        else if(AllowPress(lastPressDefend)
+            && buttonName == BaseHUDButtonNames.buttonInputDefend) {
             GameController.GamePlayerDefend();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputDefendAlt) {
+        else if(AllowPress(lastPressDefendAlt)
+            && buttonName == BaseHUDButtonNames.buttonInputDefendAlt) {
             GameController.GamePlayerDefendAlt();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputDefendRight) {
+        else if(AllowPress(lastPressDefendRight)
+            && buttonName == BaseHUDButtonNames.buttonInputDefendRight) {
             GameController.GamePlayerDefendRight();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputDefendLeft) {
+        else if(AllowPress(lastPressDefendLeft)
+            && buttonName == BaseHUDButtonNames.buttonInputDefendLeft) {
             GameController.GamePlayerDefendLeft();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputSkill) {
+        else if(AllowPress(lastPressSkill)
+            && buttonName == BaseHUDButtonNames.buttonInputSkill) {
             GameController.GamePlayerSkill();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputMagic) {
+        else if(AllowPress(lastPressMagic)
+            && buttonName == BaseHUDButtonNames.buttonInputMagic) {
             GameController.GamePlayerMagic();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputUse) {
+        else if(AllowPress(lastPressUse)
+            && buttonName == BaseHUDButtonNames.buttonInputUse) {
             GameController.GamePlayerUse();
         }
         else if(buttonName == BaseHUDButtonNames.buttonInputJump) {
