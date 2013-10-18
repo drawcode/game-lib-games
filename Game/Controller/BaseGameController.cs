@@ -1501,7 +1501,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void restartGame() {
         GameController.Reset();
-        GameController.StartGame(GameLevels.Current.code);
+        GameController.PrepareGame(GameLevels.Current.code);
     }
 
     public virtual void startGame(string levelCode) {
@@ -1568,9 +1568,17 @@ public class BaseGameController : MonoBehaviour {
     public virtual void stopDirectors() {
         GameController.UpdateDirectors(false);
     }
-    
+
     public virtual void updateDirectors(bool run) {
+        GameController.UpdateDirectorAI(run);
+        GameController.UpdateDirectorItem(run);
+    }
+
+    public virtual void updateDirectorAI(bool run) {
         GameAIController.Run(run);
+    }
+
+    public virtual void updateDirectorItem(bool run) {
         GameItemController.Run(run);
     }
 
@@ -2445,8 +2453,8 @@ public class BaseGameController : MonoBehaviour {
             data.gravity = true;
             data.kinematic = true;
             data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-            data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-            data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+            //data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            //data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
 
@@ -2463,8 +2471,8 @@ public class BaseGameController : MonoBehaviour {
             data.gravity = true;
             data.kinematic = true;
             data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-            data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-            data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+            //data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            //data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
 

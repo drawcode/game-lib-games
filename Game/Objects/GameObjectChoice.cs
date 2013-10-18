@@ -55,7 +55,7 @@ public class GameObjectChoice : GameObjectLevelBase {
     public override void LoadData() {
         base.LoadData();
 
-        //LoadChoice("question-1", "correct", true, code, "false","barrel-1");
+        LoadChoice("question-1", "correct", true, code, "false","barrel-1");
 
         if(containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);

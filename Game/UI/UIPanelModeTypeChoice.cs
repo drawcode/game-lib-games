@@ -54,6 +54,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public UILabel labelResultItemChoiceDescription;
     public UILabel labelResultItemChoiceResultValue;
     public UILabel labelResultItemChoiceResultType;
+    public UILabel labelResultItemChoiceDisplayName;
     public UILabel labelResultItemNextSteps;
 
     public UIImageButton buttonResultItemAdvance;
@@ -69,7 +70,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public UILabel labelResultsScorePercentageValue;
     public UILabel labelResultsScoreFractionValue;
 
+    public UISlider sliderScore;
+
     public UIImageButton buttonResultsAdvance;
+    public UIImageButton buttonResultsReplay;
+    public UIImageButton buttonResultsModes;
 
     // GLOBAL
 
@@ -79,7 +84,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public AppContentChoicesData appContentChoicesData;
 
     int currentChoice = 0;
-    public int choicesToLoad = 5;
+    public int choicesToLoad = 3;
     public AppContentChoice currentAppContentChoice;
 
 	public void Awake() {
@@ -200,6 +205,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         else if(UIUtil.IsButtonClicked(buttonResultsAdvance, buttonName)) {
             Advance();
         }
+        else if(UIUtil.IsButtonClicked(buttonResultsReplay, buttonName)) {
+            Reset();
+            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
+        }
+        else if(UIUtil.IsButtonClicked(buttonResultsModes, buttonName)) {
+            Reset();
+            GameUIController.ShowGameMode();
+        }
     }
 
     // SAVE STATE
@@ -267,15 +280,15 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void NextChoice() {
         currentChoice += 1;
 
-        if(currentChoice > choices.Count) {
+        if(currentChoice > choices.Count - 1) {
             // Advance to results
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResults);
         }
         else {
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem);
+            LoadLevelAssets();
         }
 
-        LoadLevelAssets();
     }
 
     // SET CONTENT
@@ -572,14 +585,22 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         if(currentChoiceData.CheckChoices(true)) {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
             typeValue = "CORRECT!";
+            GameAudioController.Instance.PlayCheer1();
+            GameAudioController.Instance.PlayWhistle();
         }
         else {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
             typeValue = "INCORRECT...";
+            GameAudioController.Instance.PlayWhistle();
+            GameAudioController.Instance.PlayOh();
         }
 
-        if(appContentChoiceItem != null) {
-            codeValue = appContentChoiceItem.display;
+        foreach(AppContentChoiceItem choiceItem in choice.choices) {
+            if(choiceItem != null) {
+                if(choiceItem.IsTypeCorrect()) {
+                    codeValue = choiceItem.display;
+                }
+            }
         }
 
         if(choice != null) {
@@ -587,11 +608,13 @@ public class UIPanelModeTypeChoice : UIPanelBase {
             string choiceResultType = typeValue;
             string choiceResultValue = codeValue;
             string choiceResultDescription = choice.description;
+            string choiceResultDisplayName = choice.display_name;
 
             if(choice != null) {
                 //choiceQuestion = choice.display_name + choice.code;
             }
 
+            UIUtil.SetLabelValue(labelResultItemChoiceDisplayName, choiceResultDisplayName);
             UIUtil.SetLabelValue(labelResultItemChoiceDescription, choiceResultDescription);
             UIUtil.SetLabelValue(labelResultItemChoiceResultValue, choiceResultValue);
             UIUtil.SetLabelValue(labelResultItemChoiceResultType, choiceResultType);
@@ -616,6 +639,31 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         UIColors.UpdateColors();
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
+
+        GameAudioController.Instance.PlayCheer1();
+
+        double timeCompleted = 30; // TODO
+        double coins = 500;
+        double choicesCorrect = appContentChoicesData.GetChoicesCorrect();
+        double choicesIncorrect = 2;
+        double choiceTotal = choices.Count;
+        double choicesResult = choicesCorrect / choiceTotal;
+
+        coins = choicesCorrect * 50;
+
+        string scoreFractionValue = string.Format("{0}/{1}", choicesCorrect, choiceTotal);
+        string scorePercentageValue = choicesResult.ToString("P0");
+        //string scoreTitleValue = ;
+        //string scoreTypeValue = "4/5";
+        string scoreCoinsValue = coins.ToString("N0");
+
+        UIUtil.SetSliderValue(sliderScore, choicesResult);
+
+        UIUtil.SetLabelValue(labelResultsScoreFractionValue, scoreFractionValue);
+        UIUtil.SetLabelValue(labelResultsScorePercentageValue, scorePercentageValue);
+        //UIUtil.SetLabelValue(labelResultsTitle, choiceResultValue);
+        //UIUtil.SetLabelValue(labelResultsType, choiceResultType);
+        UIUtil.SetLabelValue(labelResultsCoinsValue, scoreCoinsValue);
 
         /*
         AppContentChoice choice = GetCurrentChoice();
@@ -780,7 +828,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void Reset() {
         HideStates();
+        flowState = AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview;
         ResetChoices();
+        ResetChoiceItem();
     }
 
 	public static void LoadData() {
