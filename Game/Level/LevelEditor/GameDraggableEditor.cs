@@ -1467,10 +1467,17 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadLevelItemsCo() {
+
 		GameLevelItem gameLevelItem = GameLevelItems.Current;
+
+        Debug.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
+
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
+
+        Debug.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
 		
 		if(gameLevelItemAssets != null) {
+
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
 
                 Debug.Log("loadLevelItemsCo:" + item.asset_code);

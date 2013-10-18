@@ -202,6 +202,17 @@ public class GameLevelGridData {
         return data;
     }
 
+    public static GameLevelGridData GetModeTypeChoice(int choiceCount) {
+
+        GameLevelGridData data = new GameLevelGridData();
+
+        data.SetAssets("game-choice-item", choiceCount);
+        data.SetAssets("barrel-1", 9);
+        data.RandomizeAssetsInAssetMap();
+
+        return data;
+    }
+
     public string[,,] GetAssetMap() {
         return assetMap;
     }
@@ -809,7 +820,13 @@ public class BaseGameController : MonoBehaviour {
 
     // LEVELS
 
+    public virtual void loadLevelAssets() {
+        GameController.LoadLevelAssets(GameLevels.Current.code);
+    }
+
     public virtual void loadLevelAssets(string code) {
+
+        Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
 
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
@@ -832,11 +849,14 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadLevel(string code) {
 
-        GameController.LoadLevelAssets(code);
-    
+
+        Debug.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
+
         // Load the game levelitems for the game level code
         ////GameController.StartGame(code);
         GameController.PrepareGame(code);
+
+        GameController.LoadLevelAssets(code);
     
         GameHUD.Instance.SetLevelInit(GameLevels.Current);
     
@@ -915,8 +935,12 @@ public class BaseGameController : MonoBehaviour {
                     Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz);
 
+                    //
+
+
+
                     GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
+                        = GameController.GetLevelRandomizedGrid(GameLevelGridData.GetModeTypeChoice(4));
                     updated = true;
                 }
 
@@ -974,6 +998,8 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadStartLevel(string levelCode) {
 
+        Debug.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
+
         string characterCode = GameProfileCharacters.Current.GetCurrentCharacterCode();
         GameController.LoadCharacterStartLevel(characterCode, levelCode);
     }
@@ -987,6 +1013,8 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual IEnumerator startLevelCo(string levelCode) {
+
+        Debug.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
         GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
@@ -1033,6 +1061,8 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void loadProfileCharacter(string characterCode) {
 
+        Debug.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
+
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
         string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
@@ -1043,6 +1073,10 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual void loadCharacterStartLevel(string characterCode, string levelCode) {
+
+        Debug.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
+            " levelCode:" + levelCode);
+
         loadProfileCharacter(characterCode);
         ////GameHUD.Instance.ShowCharacter(characterCode);
         
@@ -1457,12 +1491,12 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void startGame(string levelCode) {
-        GameController.Reset();
+        //GameController.Reset();
         GameController.ChangeGameState(GameStateGlobal.GameStarted);
     }
 
     public virtual void prepareGame(string levelCode) {
-        GameController.Reset();
+        //GameController.Reset();
         GameController.ChangeGameState(GameStateGlobal.GamePrepare);
     }
 
@@ -1628,8 +1662,9 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void onGamePrepare(bool startGame) {
 
-        GameController.StartLevelStats();
+        Debug.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
 
+        ////GameController.Reset();
         GameController.ResetRuntimeData();
 
         GameUIController.HideUI(true);
@@ -1645,6 +1680,8 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual void onGameStarted() {
+
+        Debug.Log("GAME START FLOW: STEP #8: onGameStarted");
 
         GameController.StartLevelStats();
 
@@ -2288,109 +2325,29 @@ public class BaseGameController : MonoBehaviour {
         GameController.ClearGameLevelGrid();
 
         /*
-        levelItems = base.getLevelRandomizedGrid(gameLevelGridData);
-
-        for(int z = 0; z < (int)gameLevelGridData.gridDepth; z++) {
-
-            for(int y = 0; y < (int)gameLevelGridData.gridHeight; y++) {
-
-                for(int x = 0; x < (int)gameLevelGridData.gridWidth; x++) {
-
-                    // Random chance of filling this, also port in level layout types from text
-
-                    float posX = gameLevelGridData.gridBoxSize * x;
-                    float posY = gameLevelGridData.gridBoxSize * y;
-                    float posZ = gameLevelGridData.gridBoxSize * z;
-                    
-                    if(gameLevelGridData.centeredX) {
-                        posX = posX -
-                            ((gameLevelGridData.gridWidth *
-                                gameLevelGridData.gridBoxSize) / 2);
-                    }
-                    
-                    if(gameLevelGridData.centeredY) {
-                        posY = posY -
-                            ((gameLevelGridData.gridHeight *
-                                gameLevelGridData.gridBoxSize) / 2);
-                    }
-                    
-                    if(gameLevelGridData.centeredZ) {
-                        posZ = posZ -
-                            ((gameLevelGridData.gridDepth *
-                                gameLevelGridData.gridBoxSize) / 2);
-                    }
-                    
+            if(randomChance <= 8) {
+    
+                // Fill level item
+    
+                for(int a = 0; a < UnityEngine.Random.Range(1, 5); a++) {
+    
                     Vector3 gridPos = Vector3.zero
-                        .WithX(posX)
-                        .WithY(posY)
-                        .WithZ(posZ);
-
-                    int randomChance = UnityEngine.Random.Range(0, 1000);
-
-                    if(randomChance >= 10 && randomChance < 15) {
-                        // Fill level item
-                        //for(int a = 0; a < UnityEngine.Random.Range(1, 2); a++) {
-
-                        GameLevelItemAssetData data = new GameLevelItemAssetData();
-                        data.startPosition = gridPos;
-                        data.asset_code = "barrel-1";
-                        data.destructable = false;
-                        data.gravity = true;
-                        data.kinematic = true;
-                        data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-                        data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-                        data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
-
-                        SyncLevelItem(gridPos, data);
-                        //}
-                    }
-
-
-                    if(randomChance >= 15 && randomChance < 16) {
-                        GameLevelItemAssetData data = new GameLevelItemAssetData();
-                        data.startPosition = gridPos;
-                        data.asset_code = "padding-1";
-                        data.destructable = false;
-                        data.gravity = true;
-                        data.kinematic = true;
-                        data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-                        data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-                        data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
-
-                        SyncLevelItem(gridPos, data);
-                    }
-
-
-
-                    if(randomChance <= 8) {
-
-                        // Fill level item
-
-                        for(int a = 0; a < UnityEngine.Random.Range(1, 5); a++) {
-
-                            Vector3 gridPos = Vector3.zero
-                             .WithX(((gridBoxSize * x)))
-                             .WithY(((gridBoxSize * y)) + 1)
-                             .WithZ(((gridBoxSize * z) + gridBoxSize + (a * 5)) - gridWidth / 2);
-
-                            GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(gridPos, "padding-1", 5,
-                                GameLevelItemAssetPhysicsType.physicsOnStart, true, false, false, false,
-                                Vector2.zero.WithX(1f).WithY(1f),
-                                Vector2.zero.WithX(0f).WithY(0f));
-
-                            levelItems.Add(asset);
-                        }
-                    }
-
+                     .WithX(((gridBoxSize * x)))
+                     .WithY(((gridBoxSize * y)) + 1)
+                     .WithZ(((gridBoxSize * z) + gridBoxSize + (a * 5)) - gridWidth / 2);
+    
+                    GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(gridPos, "padding-1", 5,
+                        GameLevelItemAssetPhysicsType.physicsOnStart, true, false, false, false,
+                        Vector2.zero.WithX(1f).WithY(1f),
+                        Vector2.zero.WithX(0f).WithY(0f));
+    
+                    levelItems.Add(asset);
                 }
             }
-        }
-
-        return levelItems;*/
+        */
 
         return levelItems;
     }
-
 
     public virtual List<GameLevelItemAsset> getLevelRandomizedGridAssets(GameLevelGridData gameLevelGridData) {
 

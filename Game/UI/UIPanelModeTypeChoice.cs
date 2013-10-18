@@ -267,8 +267,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         else {
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem);
         }
-        //
-            //GameController.LoadLevelAssets("1-1");
+
+        LoadLevelAssets();
     }
 
     // SET CONTENT
@@ -423,11 +423,20 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     currentChoice = choices.Count - 1;
                 }
 
-                return choices[choices.Keys.ToList()[currentChoice]];
+                List<string> keys = choices.Keys.ToList();
+                if(keys.Count > currentChoice) {
+                    return choices[keys[currentChoice]];
+                }
             }
         }
 
         return null;
+    }
+
+    public void LoadLevelAssets() {
+
+       // GameController.LoadLevelAssets(AppContentStates.Current.code);
+        //GameController.LoadLevelAssets("1-1");
     }
 
     // DISPLAY
@@ -439,6 +448,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         UIUtil.SetLabelValue(labelOverviewStatus, GetStatusOverview());
 
         ShowOverview();
+
+        LoadLevelAssets();
     }
 
     public void DisplayStateDisplayItem() {
