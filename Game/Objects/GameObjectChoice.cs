@@ -45,29 +45,74 @@ public class GameObjectChoice : GameObjectLevelBase {
     public bool isUI = false;
 
     public bool hasBroadcasted = false;
+    public bool hasLoadedChoice = false;
+
+    public string uuid = "";
+
+    public void OnEnable() {
+        Messenger.AddListener(
+            GameObjectChoiceMessages.gameChoiceObjectDataLoad,
+            OnGameChoiceObjectDataLoadHandler);
+    }
+
+    public void OnDisable() {
+        Messenger.RemoveListener(
+            GameObjectChoiceMessages.gameChoiceObjectDataLoad,
+            OnGameChoiceObjectDataLoadHandler);
+    }
 
     public override void Start() {
         base.Start();
 
+        uuid = System.Guid.NewGuid().ToString();
+
         LoadData();
+    }
+
+    public void OnGameChoiceObjectDataLoadHandler() {
+        if(!hasLoadedChoice) {
+            // recieve the message and load if it is this object
+        }
     }
 
     public override void LoadData() {
         base.LoadData();
 
-        LoadChoice("question-1", "correct", true, code, "false","barrel-1");
+        //LoadChoice("question-1", "correct", true, code, "false","barrel-1");
 
-        if(containerEffectsCorrect != null) {
-            containerEffectsCorrect.StopParticleSystem(true);
-        }
-        if(containerEffectsIncorrect != null) {
-            containerEffectsIncorrect.StopParticleSystem(true);
-        }
+        StopCorrect();
+        StopIncorrect();
 
         SetChoiceParticleSystemColors();
 
         if(isUI) {
             gameObject.SetLayerRecursively("UIOverlay");
+        }
+    }
+
+    public void PlayCorrect() {
+        if(containerEffectsCorrect != null) {
+            containerEffectsCorrect.PlayParticleSystem(true);
+        }
+        BroadcastChoiceDelayed(2f);
+    }
+
+    public void StopCorrect() {
+        if(containerEffectsCorrect != null) {
+            containerEffectsCorrect.StopParticleSystem(true);
+        }
+    }
+
+    public void PlayIncorrect() {
+        if(containerEffectsIncorrect != null) {
+            containerEffectsIncorrect.PlayParticleSystem(true);
+        }
+        BroadcastChoiceDelayed(2f);
+    }
+
+    public void StopIncorrect() {
+        if(containerEffectsIncorrect != null) {
+            containerEffectsIncorrect.StopParticleSystem(true);
         }
     }
 
@@ -83,7 +128,6 @@ public class GameObjectChoice : GameObjectLevelBase {
             containerEffectsAlwaysOn.PlayParticleSystem(true);
             Debug.Log("SetChoiceParticleSystemColors:colorTo:" + colorTo);
         }
-
     }
 
     public void LoadAsset(string assetCode) {
@@ -172,19 +216,21 @@ public class GameObjectChoice : GameObjectLevelBase {
             }
         }
 
-        Debug.Log("LoadChoice:choiceCode:" + choiceCode);
-        Debug.Log("LoadChoice:choiceType:" + choiceType);
-        Debug.Log("LoadChoice:choiceItemIsCorrect:" + choiceItemIsCorrect);
-        Debug.Log("LoadChoice:choiceItemDisplay:" + choiceItemDisplay);
+        //Debug.Log("LoadChoice:choiceCode:" + choiceCode);
+        //Debug.Log("LoadChoice:choiceType:" + choiceType);
+        //Debug.Log("LoadChoice:choiceItemIsCorrect:" + choiceItemIsCorrect);
+        //Debug.Log("LoadChoice:choiceItemDisplay:" + choiceItemDisplay);
         Debug.Log("LoadChoice:choiceItemCode:" + choiceItemCode);
-        Debug.Log("LoadChoice:choiceItemAssetCode:" + choiceItemAssetCode);
+        //Debug.Log("LoadChoice:choiceItemAssetCode:" + choiceItemAssetCode);
 
         LoadAsset(choiceItemAssetCode);
 
-        //Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
+        Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
 
         UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
         //Debug.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
+
+        hasLoadedChoice = true;
     }
 
     public void BroadcastChoice() {
@@ -222,35 +268,14 @@ public class GameObjectChoice : GameObjectLevelBase {
 
         if(choiceData != null) {
 
-            if(!choiceData.choiceItemIsCorrect) {
-
-                // Play correct
-                if(containerEffectsCorrect != null) {
-
-                    if(containerEffectsCorrect != null) {
-                        containerEffectsCorrect.PlayParticleSystem(true);
-                    }
-
-                    BroadcastChoiceDelayed(2f);
-                }
-
+            if(choiceData.choiceItemIsCorrect) {
+                PlayCorrect();
             }
             else {
-
-                // Play incorrect
-
-                if(containerEffectsIncorrect != null) {
-                    containerEffectsIncorrect.PlayParticleSystem(true);
-                }
-
-                BroadcastChoiceDelayed(2f);
+                PlayIncorrect();
 
                 if(gamePlayerController != null) {
-                    gamePlayerController.AddImpact(gamePlayerController.gameObject.transform.forward, -10f);
-                }
-
-                if(rigidbody != null) {
-                    rigidbody.AddExplosionForce(100f, transform.position, 50f);
+                    gamePlayerController.AddImpact(-gamePlayerController.gameObject.transform.forward, 10f);
                 }
             }
         }

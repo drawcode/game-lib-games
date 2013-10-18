@@ -13,6 +13,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 	public static UIPanelModeTypeChoice Instance;
 
     public GameObject prefabListItem;
+    public GameObject prefabLevelItem;
 
     public GameObject containerChoiceOverview;
     public GameObject containerChoiceDisplayItem;
@@ -85,6 +86,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     int currentChoice = 0;
     public int choicesToLoad = 3;
+    public double choicesCorrect = 0;
     public AppContentChoice currentAppContentChoice;
 
 	public void Awake() {
@@ -160,8 +162,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     AppContentChoiceItem currentChoiceItem = null;
     AppContentChoiceData currentChoiceData = null;
 
+    bool isCorrect = true;
+
     void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
         CheckChoicesData();
+
+        isCorrect = data.choiceItemIsCorrect;
 
         AppContentChoiceData choiceData = new AppContentChoiceData();
         choiceData.choiceCode = data.choiceCode;
@@ -270,6 +276,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void ResetChoices() {
         currentChoice = 0;
+        choicesCorrect = 0;
         LoadChoices(choicesToLoad);
     }
 
@@ -470,13 +477,48 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             int i = 0;
 
+            AppContentChoice choice = GetCurrentChoice();
+
+            Debug.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
+
+            foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
+
+                if(t.gameObject.Has<GameObjectChoice>()) {
+
+                    GameObjectChoice choiceObject = t.gameObject.Get<GameObjectChoice>();
+
+                    Color colorTo = GetColor(i);
+    
+                    if(choice != null) {
+                        if(choice.choices.Count > i) {
+                            AppContentChoiceItem choiceItem = choice.choices[i];
+                            choiceObject.LoadChoiceItem(choice, choiceItem, colorTo);
+                        }
+                        else {
+                            choiceObject.gameObject.Hide();
+                        }
+                    }
+                    else {
+                        choiceObject.gameObject.Hide();
+                    }
+
+    
+                    Debug.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
+                    //Debug.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
+                    Debug.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
+                    Debug.Log("OnGameLevelItemsLoadedHandler:i:" + i);
+    
+                    i++;
+
+                }
+            }
+
+            /*
             foreach(GameObjectChoice choiceObject
                 in GameController.Instance.levelItemsContainerObject
                 .GetList<GameObjectChoice>()) {
 
                 Color colorTo = GetColor(i);
-
-                AppContentChoice choice = GetCurrentChoice();
 
                 if(choice != null) {
                     if(choice.choices.Count > i) {
@@ -492,13 +534,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                 }
 
 
-                //Debug.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
+                Debug.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
                 //Debug.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
                 Debug.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
                 Debug.Log("OnGameLevelItemsLoadedHandler:i:" + i);
 
                 i++;
             }
+            */
         }
     }
 
@@ -582,11 +625,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         string typeValue = "CORRECT";
         string codeValue = "FALSE";
 
-        if(currentChoiceData.CheckChoices(true)) {
+        if(isCorrect) {//currentChoiceData.CheckChoices(true)) {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
             typeValue = "CORRECT!";
             GameAudioController.Instance.PlayCheer1();
             GameAudioController.Instance.PlayWhistle();
+            choicesCorrect += 1;
         }
         else {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
@@ -644,8 +688,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         double timeCompleted = 30; // TODO
         double coins = 500;
-        double choicesCorrect = appContentChoicesData.GetChoicesCorrect();
-        double choicesIncorrect = 2;
         double choiceTotal = choices.Count;
         double choicesResult = choicesCorrect / choiceTotal;
 
@@ -656,6 +698,8 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //string scoreTitleValue = ;
         //string scoreTypeValue = "4/5";
         string scoreCoinsValue = coins.ToString("N0");
+
+        GameProfileRPGs.Current.AddCurrency(coins);
 
         UIUtil.SetSliderValue(sliderScore, choicesResult);
 
@@ -911,7 +955,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         if(choice != null) {
 
+            float x = -60;
+
             foreach(AppContentChoiceItem choiceItem in choice.choices) {
+
+
+                // Add to list
 
                 GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
                 item.name = "AItem" + i;
@@ -919,11 +968,23 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                 GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
 
                 if(choiceObject != null) {
-
-                    choiceObject.startColor = GetColor(i);
-
-                    choiceObject.LoadChoiceItem(choice, choiceItem);
+                    choiceObject.LoadChoiceItem(choice, choiceItem, GetColor(i));
                 }
+
+                // Add to level
+
+                GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
+                    prefabLevelItem);
+                itemLevel.name = "AItem" + i;
+
+                GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
+
+                if(choiceObjectLevel != null) {
+                    choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
+                }
+
+                choiceObjectLevel.transform.position =
+                    Vector3.zero.WithX(x += (30*1)).WithZ(UnityEngine.Random.Range(20, 40));
 
                i++;
 

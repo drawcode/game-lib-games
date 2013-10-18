@@ -211,7 +211,7 @@ public class GameLevelGridData {
     public static GameLevelGridData GetModeTypeChoice(int choiceCount) {
 
         GameLevelGridData data = GameLevelGridData.GetBaseDefault();
-        data = AddAssets(data, "game-choice-item", choiceCount);
+        //data = AddAssets(data, "game-choice-item", choiceCount);
         data.RandomizeAssetsInAssetMap();
 
         return data;
