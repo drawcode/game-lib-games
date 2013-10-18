@@ -192,11 +192,17 @@ public class GameLevelGridData {
         centeredZ = centerZ;
     }
 
-    public static GameLevelGridData GetDefault() {
+    public static GameLevelGridData GetBaseDefault() {
 
         GameLevelGridData data = new GameLevelGridData();
+        data = AddAssets(data, "barrel-1", 10);
 
-        data.SetAssets("barrel-1", 10);
+        return data;
+    }
+
+    public static GameLevelGridData GetDefault() {
+
+        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
         data.RandomizeAssetsInAssetMap();
 
         return data;
@@ -204,12 +210,20 @@ public class GameLevelGridData {
 
     public static GameLevelGridData GetModeTypeChoice(int choiceCount) {
 
-        GameLevelGridData data = new GameLevelGridData();
-
-        data.SetAssets("game-choice-item", choiceCount);
-        data.SetAssets("barrel-1", 9);
+        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
+        data = AddAssets(data, "game-choice-item", choiceCount);
         data.RandomizeAssetsInAssetMap();
 
+        return data;
+    }
+
+    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode) {
+        data.SetAssets(assetCode, 1);
+        return data;
+    }
+
+    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode, int count) {
+        data.SetAssets(assetCode, count);
         return data;
     }
 

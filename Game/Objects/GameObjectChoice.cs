@@ -54,7 +54,7 @@ public class GameObjectChoice : GameObjectLevelBase {
     public override void LoadData() {
         base.LoadData();
 
-        LoadChoice("question-1", "correct", true, code, "false","barrel-1");
+        //LoadChoice("question-1", "correct", true, code, "false","barrel-1");
 
         if(containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);
@@ -129,7 +129,6 @@ public class GameObjectChoice : GameObjectLevelBase {
             appContentChoiceItem.code, "barrel-1");
     }
 
-
     public void LoadChoice(
         string choiceCode,
         string choiceType,
@@ -146,9 +145,8 @@ public class GameObjectChoice : GameObjectLevelBase {
         choiceData.choiceItemCode = choiceItemCode;
         choiceData.choiceItemAssetCode = choiceItemAssetCode;
 
-        if(appContentChoice == null) {
-            appContentChoice = AppContentChoices.Instance.GetByCode(choiceCode);
-
+        appContentChoice = AppContentChoices.Instance.GetByCode(choiceCode);
+        if(appContentChoice != null) {
             foreach(AppContentChoiceItem choiceItem in appContentChoice.choices) {
                 if(choiceItem.code == choiceItemCode) {
                     appContentChoiceItem = choiceItem;
@@ -223,7 +221,7 @@ public class GameObjectChoice : GameObjectLevelBase {
                 BroadcastChoiceDelayed(2f);
 
                 if(gamePlayerController != null) {
-                    gamePlayerController.AddImpact(Vector3.back, 1f);
+                    gamePlayerController.AddImpact(gamePlayerController.gameObject.transform.forward, -10f);
                 }
 
                 if(rigidbody != null) {

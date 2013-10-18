@@ -436,7 +436,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public void LoadLevelAssets() {
 
        // GameController.LoadLevelAssets(AppContentStates.Current.code);
-        //GameController.LoadLevelAssets("1-1");
+        GameController.LoadLevelAssets("1-1");
     }
 
     // DISPLAY
