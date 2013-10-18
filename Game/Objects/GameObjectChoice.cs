@@ -11,6 +11,7 @@ using Engine.Utility;
 
 public class GameObjectChoiceMessages {
     public static string gameChoiceDataResponse = "game-choice-data-response";
+    public static string gameChoiceObjectDataLoad = "game-choice-object-data-load";
 }
 
 public class GameObjectChoiceData {
@@ -71,14 +72,23 @@ public class GameObjectChoice : GameObjectLevelBase {
     }
 
     public void SetChoiceParticleSystemColors() {
+        SetChoiceParticleSystemColors(startColor);
+    }
+
+    public void SetChoiceParticleSystemColors(Color colorTo) {
+        startColor = colorTo;
         if(containerEffectsAlwaysOn != null) {
-            containerEffectsAlwaysOn.SetParticleSystemStartColor(startColor, true);
+            containerEffectsAlwaysOn.SetParticleSystemStartColor(colorTo, true);
+            containerEffectsAlwaysOn.StopParticleSystem(true);
+            containerEffectsAlwaysOn.PlayParticleSystem(true);
+            Debug.Log("SetChoiceParticleSystemColors:colorTo:" + colorTo);
         }
+
     }
 
     public void LoadAsset(string assetCode) {
 
-        if(containerAsset != null) {
+        if(containerAsset != null && containerAsset.transform.childCount == 0) {
 
             containerAsset.DestroyChildren();
 
@@ -117,6 +127,14 @@ public class GameObjectChoice : GameObjectLevelBase {
         }
     }
 
+    public void LoadChoiceItem(AppContentChoice choice, AppContentChoiceItem choiceItem, Color colorTo) {
+
+        Debug.Log("LoadChoiceItem:" + choice.code);
+
+        SetChoiceParticleSystemColors(colorTo);
+        LoadChoiceItem(choice, choiceItem);
+    }
+
     public void LoadChoiceItem(AppContentChoice choice, AppContentChoiceItem choiceItem) {
         appContentChoice = choice;
         appContentChoiceItem = choiceItem;
@@ -153,6 +171,13 @@ public class GameObjectChoice : GameObjectLevelBase {
                 }
             }
         }
+
+        Debug.Log("LoadChoice:choiceCode:" + choiceCode);
+        Debug.Log("LoadChoice:choiceType:" + choiceType);
+        Debug.Log("LoadChoice:choiceItemIsCorrect:" + choiceItemIsCorrect);
+        Debug.Log("LoadChoice:choiceItemDisplay:" + choiceItemDisplay);
+        Debug.Log("LoadChoice:choiceItemCode:" + choiceItemCode);
+        Debug.Log("LoadChoice:choiceItemAssetCode:" + choiceItemAssetCode);
 
         LoadAsset(choiceItemAssetCode);
 
@@ -237,11 +262,11 @@ public class GameObjectChoice : GameObjectLevelBase {
 
         // If the human player hit us, check the score/choice and correct or incorrect message broadcast
 
-        Debug.Log("GameObjectChoice:OnCollisionEnter:" + collision.transform.name);
+        //Debug.Log("GameObjectChoice:OnCollisionEnter:" + collision.transform.name);
 
         GameObject go = collision.collider.transform.gameObject;
 
-        Debug.Log("GameObjectChoice:go:" + go.name);
+        //Debug.Log("GameObjectChoice:go:" + go.name);
 
         if(go.name.Contains("GamePlayerObject")) {
 

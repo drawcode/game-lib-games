@@ -29,6 +29,8 @@ public class GameDraggableEditorMessages {
 		
 	public static string GameControllerStarted = "game-controller-started";
 	public static string GameControllerReset = "game-controller-reset";
+
+    public static string GameLevelItemsLoaded = "game-level-items-loaded";
 	
 	public static string EditPlay = "edit-play";
 	public static string EditItems = "edit-items";
@@ -1485,6 +1487,8 @@ public class GameDraggableEditor : MonoBehaviour {
 				LoadLevelItem(item);
 			}
 		}
+
+        Messenger.Broadcast(GameDraggableEditorMessages.GameLevelItemsLoaded);
 	}
 	
 	public static void ReloadLevelItems() {
