@@ -2177,6 +2177,14 @@ public class BaseGameController : MonoBehaviour {
     public virtual void handleTouchInputPoint(Vector3 point) {
         //&& currentGamePlayerController.thirdPersonController.aimingDirection != Vector3.zero) {
 
+        if(!isGameRunning) {
+            return;
+        }
+
+        if(!GameUIController.CheckIfAllowedTouch(point)) {
+            return;
+        }
+
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
 
@@ -2592,6 +2600,10 @@ public class BaseGameController : MonoBehaviour {
     
     // Update is called once per frame
     public virtual void Update () {
+
+        if(!isGameRunning) {
+            return;
+        }
     
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         //bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();

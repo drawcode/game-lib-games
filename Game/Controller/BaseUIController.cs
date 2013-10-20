@@ -155,6 +155,17 @@ public class BaseUIController : MonoBehaviour {
     public bool isCreatingStart = false;
     public bool isCreatingEnd = false;
 
+    public Camera camHud = null;
+    float updateTouchStartTime = 0f;
+    float updateTouchMaxTime = 2f;
+    bool inputGestureDown = false;
+    bool inputGestureUp = false;
+    bool showPoints = false;
+
+    public bool allowedTouch = true;
+    public bool inputButtonDown = false;
+    public bool inputAxisDown = false;
+    public bool shouldTouch = false;
                  
     public virtual void Awake() {
      
@@ -766,6 +777,10 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void handleTouchLaunch(Vector2 move) {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         float force = 20f;
         //Debug.Log("SWIPE:move:" + move);
         float angleGesture = move.CrossAngle();
@@ -796,7 +811,8 @@ public class BaseUIController : MonoBehaviour {
 
         //Debug.Log("SWIPE:angleDiff2:" + angleDiff);
 
-        var forceVector = Quaternion.AngleAxis(angleDiff, transform.up) * GameController.CurrentGamePlayerController.transform.forward;
+        var forceVector = Quaternion.AngleAxis(angleDiff, transform.up) *
+            GameController.CurrentGamePlayerController.transform.forward;
 
         //forceVector.y = 0f;
 
@@ -817,13 +833,6 @@ public class BaseUIController : MonoBehaviour {
             GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
         }
     }
-
-    public Camera camHud = null;
-    float updateTouchStartTime = 0f;
-    float updateTouchMaxTime = 2f;
-    bool inputGestureDown = false;
-    bool inputGestureUp = false;
-    bool showPoints = false;
 
     public virtual void updateTouchLaunch() {
 
@@ -1058,7 +1067,8 @@ public class BaseUIController : MonoBehaviour {
                 isCreatingEnd = true;
                 if(prefabPointEnd == null) {
                     prefabPointEnd = Resources.Load(
-                                                Contents.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
+                        Contents.appCacheVersionSharedPrefabWeapons +
+                        "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
                 pointEndObject = Instantiate(prefabPointEnd) as GameObject;     
             }
@@ -1068,11 +1078,6 @@ public class BaseUIController : MonoBehaviour {
             pointEndObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
         }
     }
-
-    public bool allowedTouch = true;
-    public bool inputButtonDown = false;
-    public bool inputAxisDown = false;
-    public bool shouldTouch = false;
 
     public virtual bool checkIfAllowedTouch(Vector3 pos) {
 
@@ -1090,7 +1095,8 @@ public class BaseUIController : MonoBehaviour {
             if(hit.transform.name.Contains("ButtonInput")
                                 || hit.transform.name.Contains("ButtonInput")
                                 || hit.transform.name.Contains("ButtonInput")
-                                || hit.transform.name.Contains("Axis")) {
+                                || hit.transform.name.Contains("Axis")
+                                || hit.transform.name.Contains("Ignore")) {
                 inputButtonDown = true;
                 shouldTouch = false;
                 allowedTouch = false;
@@ -1142,6 +1148,12 @@ public class BaseUIController : MonoBehaviour {
                 }
             }
         }
+        if(Input.GetMouseButtonDown(0)) {
+            if(checkIfAllowedTouch(Input.mousePosition)) {
+                lastDownAllowedPosition = Input.mousePosition;
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1157,6 +1169,12 @@ public class BaseUIController : MonoBehaviour {
                 }
             }
         }
+        if(Input.GetMouseButtonUp(0)) {
+            if(checkIfAllowedTouch(Input.mousePosition)) {
+                lastUpAllowedPosition = Input.mousePosition;
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1166,6 +1184,9 @@ public class BaseUIController : MonoBehaviour {
                 return true;
             }
         }
+        if(Input.GetMouseButtonDown(0)) {
+            return true;
+        }
         return false;
     }
         
@@ -1174,6 +1195,9 @@ public class BaseUIController : MonoBehaviour {
             if(t.phase == TouchPhase.Ended) {
                 return true;
             }
+        }
+        if(Input.GetMouseButtonUp(0)) {
+            return true;
         }
         return false;
     }
