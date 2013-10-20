@@ -89,6 +89,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public double choicesCorrect = 0;
     public AppContentChoice currentAppContentChoice;
 
+    AppContentChoice appContentChoice = null;
+    AppContentChoiceItem appContentChoiceItem = null;
+
+    AppContentChoiceItem currentChoiceItem = null;
+    AppContentChoiceData currentChoiceData = null;
+
+    bool isCorrect = true;
+
 	public void Awake() {
 		
         if (Instance != null && this != Instance) {
@@ -155,14 +163,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         //Messenger<AppContentChoiceItem>.Broadcast(AppContentChoiceMessages.appContentChoiceItem, choiceItem);
     }
-
-    AppContentChoice appContentChoice = null;
-    AppContentChoiceItem appContentChoiceItem = null;
-
-    AppContentChoiceItem currentChoiceItem = null;
-    AppContentChoiceData currentChoiceData = null;
-
-    bool isCorrect = true;
 
     void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
         CheckChoicesData();
@@ -269,7 +269,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceResults) {
 
             // set check game over flow
-
+            ShowResults();
             HideStates();
         }
     }
