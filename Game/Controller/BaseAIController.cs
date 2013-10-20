@@ -195,7 +195,7 @@ public class BaseAIController : MonoBehaviour {
         currentFPS = FPSDisplay.GetCurrentFPS();
     
         if(currentActorCount < currentCharacterLimit
-       // && currentFPS > 20f)
+         && currentFPS > 21f
             || currentActorCount < currentCharacterMin) {
         
             // do some spawning
