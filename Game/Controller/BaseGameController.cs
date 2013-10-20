@@ -1415,6 +1415,10 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void resetRuntimeData() {
+
+        GameController.ResetCurrentGamePlayer();
+        GameController.ResetLevelEnemies();
+
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
@@ -1686,7 +1690,6 @@ public class BaseGameController : MonoBehaviour {
 
         Debug.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
 
-        ////GameController.Reset();
         GameController.ResetRuntimeData();
 
         GameUIController.HideUI(true);
@@ -1706,8 +1709,6 @@ public class BaseGameController : MonoBehaviour {
         Debug.Log("GAME START FLOW: STEP #8: onGameStarted");
 
         GameController.StartLevelStats();
-
-        GameController.ResetRuntimeData();
 
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
