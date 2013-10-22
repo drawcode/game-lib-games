@@ -67,6 +67,12 @@ public class GameProjectile : MonoBehaviour {
         }
         
         void Update() {
+
+            if(!GameConfigs.isGameRunning) {
+                DestroyMe();
+                return;
+            }
+
         
                 if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing
                         || GameController.Instance.gameState == GameStateGlobal.GameResults

@@ -588,6 +588,47 @@ public class BaseGameController : MonoBehaviour {
         return null;
     }
 
+    public virtual GamePlayerController getGamePlayerControllerObject(GameObject go, bool onlyPlayerControlled) {
+
+        GamePlayerController gamePlayerController = null;
+
+        if(go == null) {
+            return gamePlayerController;
+        }
+
+        if(go.name.Contains("GamePlayerObject")) {
+
+            gamePlayerController = GameController.GetGamePlayerController(go);
+
+            if(gamePlayerController != null) {
+
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                    return gamePlayerController;
+                }
+            }
+        }
+
+        if(gamePlayerController == null
+            && (go.name.Contains("Helmet")
+            || go.name.Contains("Facemask"))) {
+
+            Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+
+            gamePlayerController = GameController.GetGamePlayerControllerParent(go);
+
+            if(gamePlayerController != null) {
+
+                Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                    return gamePlayerController;
+                }
+            }
+        }
+
+        return gamePlayerController;
+    }
+
     // SCORING
 
     public virtual void gamePlayerScores(double val) {

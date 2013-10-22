@@ -160,18 +160,27 @@ public class GameDraggableLevelItem : MonoBehaviour {
 		yield break;		
 	}
 
+    bool frozen = false;
+
     public void Freeze() {
+        frozen = true;
         gameObject.FreezeRigidBodies();
     }
 
     public void UnFreeze() {
+        frozen = false;
         gameObject.UnFreezeRigidBodies();
     }
  
     void Update() {
 
-        if(!GameConfigs.isGameRunning && !GameDraggableEditor.isEditing) {
-            Freeze();
+        if(!GameConfigs.isGameRunning) {
+            if(!GameDraggableEditor.isEditing) {
+                if(!frozen) {
+                    Freeze();
+                }
+            }
+            return;
         }
         else {
             UnFreeze();

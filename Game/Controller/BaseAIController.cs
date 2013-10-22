@@ -258,6 +258,10 @@ public class BaseAIController : MonoBehaviour {
     
     public virtual void Update() {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         if(Input.GetKey(KeyCode.RightControl)) {
             if(Input.GetKey(KeyCode.G)) {
                 runDirector = false;
