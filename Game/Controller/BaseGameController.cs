@@ -633,7 +633,7 @@ public class BaseGameController : MonoBehaviour {
     public virtual bool hasGamePlayerControllerObject(GameObject go, bool onlyPlayerControlled) {
 
         GamePlayerController gamePlayerController = null;
-        
+
         if(go == null) {
             return false;
         }
