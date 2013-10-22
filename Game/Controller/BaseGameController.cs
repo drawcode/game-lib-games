@@ -1435,7 +1435,7 @@ public class BaseGameController : MonoBehaviour {
             prefabObject, spawnLocation, Quaternion.identity) as GameObject;
     
         spawnObj.transform.parent = levelActorsContainerObject.transform;
-        GameHUD.Instance.AddIndicator(spawnObj, "pickup");
+        ////GameHUD.Instance.AddIndicator(spawnObj, "pickup");
 
         /*
         GamePlayerController characterGamePlayerController
