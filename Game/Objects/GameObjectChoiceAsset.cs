@@ -31,6 +31,10 @@ public class GameObjectChoiceAsset : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision) {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         if(gameObjectChoice != null) {
             gameObjectChoice.HandleCollision(collision);
         }

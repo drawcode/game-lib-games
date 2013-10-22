@@ -328,6 +328,10 @@ public class GameObjectChoice : GameObjectLevelBase {
 
     public void OnCollisionEnter(Collision collision) {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         HandleCollision(collision);
     }
 }
