@@ -1356,7 +1356,7 @@ public class BaseGameController : MonoBehaviour {
 
             // Add indicator to HUD
     
-            GameHUD.Instance.AddIndicator(characterObject, characterType);
+            GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, characterObject, characterType);
 
             //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
         }
@@ -1435,7 +1435,7 @@ public class BaseGameController : MonoBehaviour {
             prefabObject, spawnLocation, Quaternion.identity) as GameObject;
     
         spawnObj.transform.parent = levelActorsContainerObject.transform;
-        ////GameHUD.Instance.AddIndicator(spawnObj, "pickup");
+        GamePlayerIndicator.AddIndicator(spawnObj, GamePlayerIndicatorType.pickup);
 
         /*
         GamePlayerController characterGamePlayerController

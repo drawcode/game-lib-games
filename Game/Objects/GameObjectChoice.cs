@@ -86,7 +86,7 @@ public class GameObjectChoice : GameObjectLevelBase {
         SetChoiceParticleSystemColors();
 
         if(isUI) {
-            gameObject.SetLayerRecursively("UIOverlay");
+            gameObject.SetLayerRecursively("UIDialog");
         }
     }
 
