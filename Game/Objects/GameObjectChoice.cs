@@ -117,16 +117,38 @@ public class GameObjectChoice : GameObjectLevelBase {
     }
 
     public void SetChoiceParticleSystemColors() {
-        SetChoiceParticleSystemColors(startColor);
+        SetChoiceParticleSystemColorsAlwaysOn(startColor);
+        SetChoiceParticleSystemColorsCorrect(startColor, false);
     }
 
     public void SetChoiceParticleSystemColors(Color colorTo) {
+        SetChoiceParticleSystemColorsAlwaysOn(colorTo);
+        SetChoiceParticleSystemColorsCorrect(colorTo, false);
+    }
+
+    public void SetChoiceParticleSystemColorsAlwaysOn(Color colorTo) {
+        SetChoiceParticleSystemColors(containerEffectsAlwaysOn, colorTo, true);
+    }
+
+    public void SetChoiceParticleSystemColorsCorrect(Color colorTo, bool playNow) {
+        SetChoiceParticleSystemColors(containerEffectsCorrect, colorTo, playNow);
+    }
+
+    public void SetChoiceParticleSystemColorsIncorrect(Color colorTo, bool playNow) {
+        SetChoiceParticleSystemColors(containerEffectsIncorrect, colorTo, playNow);
+    }
+
+    public void SetChoiceParticleSystemColors(GameObject go, Color colorTo, bool playNow) {
         startColor = colorTo;
-        if(containerEffectsAlwaysOn != null) {
-            containerEffectsAlwaysOn.SetParticleSystemStartColor(colorTo, true);
-            containerEffectsAlwaysOn.StopParticleSystem(true);
-            containerEffectsAlwaysOn.PlayParticleSystem(true);
-            Debug.Log("SetChoiceParticleSystemColors:colorTo:" + colorTo);
+        if(go != null) {
+            go.SetParticleSystemStartColor(colorTo, true);
+
+            if(playNow) {
+                go.StopParticleSystem(true);
+                go.PlayParticleSystem(true);
+            }
+
+            Debug.Log("SetChoiceParticleSystemColors:go:" + go.name + " colorTo:" + colorTo);
         }
     }
 

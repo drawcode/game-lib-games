@@ -490,9 +490,17 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     Color colorTo = GetColor(i);
     
                     if(choice != null) {
+
+                        if(choice.choices != null) {
+                            choice.choices.Shuffle();
+                        }
+
                         if(choice.choices.Count > i) {
                             AppContentChoiceItem choiceItem = choice.choices[i];
                             choiceObject.LoadChoiceItem(choice, choiceItem, colorTo);
+
+                            GamePlayerIndicator.AddIndicator(
+                                choiceObject.gameObject, GamePlayerIndicatorType.choice, colorTo);
                         }
                         else {
                             choiceObject.gameObject.Hide();
