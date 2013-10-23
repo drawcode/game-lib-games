@@ -119,11 +119,13 @@ public class GameObjectChoice : GameObjectLevelBase {
     public void SetChoiceParticleSystemColors() {
         SetChoiceParticleSystemColorsAlwaysOn(startColor);
         SetChoiceParticleSystemColorsCorrect(startColor, false);
+        SetChoiceParticleSystemColorsIncorrect(startColor, false);
     }
 
     public void SetChoiceParticleSystemColors(Color colorTo) {
         SetChoiceParticleSystemColorsAlwaysOn(colorTo);
         SetChoiceParticleSystemColorsCorrect(colorTo, false);
+        SetChoiceParticleSystemColorsIncorrect(startColor, false);
     }
 
     public void SetChoiceParticleSystemColorsAlwaysOn(Color colorTo) {
