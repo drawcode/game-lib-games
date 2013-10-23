@@ -1433,9 +1433,18 @@ public class BaseGameController : MonoBehaviour {
     
         GameObject spawnObj = Instantiate(
             prefabObject, spawnLocation, Quaternion.identity) as GameObject;
+
+        string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
+
+        if(item.type == GamePlayerItemType.Coin) {
+            itemTypeString = "coin";
+        }
+        else if(item.type == GamePlayerItemType.Health) {
+            itemTypeString = "health";
+        }
     
         spawnObj.transform.parent = levelActorsContainerObject.transform;
-        GamePlayerIndicator.AddIndicator(spawnObj, GamePlayerIndicatorType.pickup);
+        GamePlayerIndicator.AddIndicator(spawnObj, itemTypeString);
 
         /*
         GamePlayerController characterGamePlayerController
