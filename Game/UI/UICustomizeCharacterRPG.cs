@@ -131,7 +131,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     }
 
     public void BuyUpgrades() {
-
+        GameUIController.ShowProducts(GameProductType.rpgUpgrade);
     }
 
     public void HandleRPGItemChanged(string rpgCodeFrom, string characterCodeFrom, double valFrom) {

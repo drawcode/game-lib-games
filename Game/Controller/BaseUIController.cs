@@ -2408,12 +2408,20 @@ public class BaseUIController : MonoBehaviour {
     //       Instance.showProducts();
     //   }
     //}
- 
+
+
     public virtual void showProducts() {
+        GameUIController.ShowProducts("");
+    }
+
+    public virtual void showProducts(string productType) {
+
+        string title = "PRODUCTS";
+
         showUIPanel(
             typeof(GameUIPanelProducts),
             GameUIPanel.panelProducts,
-            "POWERUPS");
+            title);
     } 
  
     //public static void HideProducts() {
