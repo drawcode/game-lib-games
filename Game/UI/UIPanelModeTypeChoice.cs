@@ -999,11 +999,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     if(choiceObjectLevel != null) {
                         choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
     
-                        GamePlayerIndicator.AddIndicator(itemLevel, GamePlayerIndicatorType.choice, GetColor(i));
+                        GamePlayerIndicator indicator = GamePlayerIndicator.AddIndicator(
+                            itemLevel, GamePlayerIndicatorType.choice, GetColor(i));
+
+                        if(indicator != null) {
+                            indicator.SetIndicatorColorEffects(GetColor(i));
+                        }
                     }
     
                     choiceObjectLevel.transform.position =
-                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(-40, 40)*1)).WithZ(UnityEngine.Random.Range(-40, 40));
+                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(20, 60)*1)).WithZ(UnityEngine.Random.Range(-30, 30));
                 }
 
                i++;
