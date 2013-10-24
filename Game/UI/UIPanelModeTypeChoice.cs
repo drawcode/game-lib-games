@@ -481,6 +481,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             Debug.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
 
+            /*
             foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
 
                 if(t.gameObject.Has<GameObjectChoice>()) {
@@ -498,9 +499,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                         if(choice.choices.Count > i) {
                             AppContentChoiceItem choiceItem = choice.choices[i];
                             choiceObject.LoadChoiceItem(choice, choiceItem, colorTo);
-
-                            GamePlayerIndicator.AddIndicator(
-                                choiceObject.gameObject, GamePlayerIndicatorType.choice, colorTo);
                         }
                         else {
                             choiceObject.gameObject.Hide();
@@ -520,6 +518,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
                 }
             }
+            */
+
+
 
             /*
             foreach(GameObjectChoice choiceObject
@@ -967,32 +968,43 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             foreach(AppContentChoiceItem choiceItem in choice.choices) {
 
-
                 // Add to list
 
-                GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
-                item.name = "AItem" + i;
+                string levelName = "choice" + choice.code + "-" + choiceItem.code + "-" + i;
 
-                GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
+                if(!listGridRoot.ContainsChild(levelName)) {
 
-                if(choiceObject != null) {
-                    choiceObject.LoadChoiceItem(choice, choiceItem, GetColor(i));
+                    GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
+                    item.name = levelName;
+
+                    GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
+
+                    if(choiceObject != null) {
+                        choiceObject.LoadChoiceItem(choice, choiceItem, GetColor(i));
+                    }
                 }
 
                 // Add to level
 
-                GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
-                    prefabLevelItem);
-                itemLevel.name = "AItem" + i;
+                string levelNameItem = "choice-item" + choice.code + "-" + choiceItem.code + "-" + i;
 
-                GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
+                if(!GameController.Instance.levelItemsContainerObject.ContainsChild(levelNameItem)) {
 
-                if(choiceObjectLevel != null) {
-                    choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
+                    GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
+                        prefabLevelItem);
+                    itemLevel.name = levelNameItem;
+    
+                    GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
+    
+                    if(choiceObjectLevel != null) {
+                        choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
+    
+                        GamePlayerIndicator.AddIndicator(itemLevel, GamePlayerIndicatorType.choice, GetColor(i));
+                    }
+    
+                    choiceObjectLevel.transform.position =
+                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(-40, 40)*1)).WithZ(UnityEngine.Random.Range(-40, 40));
                 }
-
-                choiceObjectLevel.transform.position =
-                    Vector3.zero.WithX(x += (30*1)).WithZ(UnityEngine.Random.Range(20, 40));
 
                i++;
 
