@@ -2330,7 +2330,7 @@ public class BaseUIController : MonoBehaviour {
         showUIPanel(
             typeof(GameUIPanelEquipment),
             GameUIPanel.panelEquipment,
-            "EQUIPMENT, PROGRESS + CUSTOMIZATION");
+            "PLAYER CUSTOMIZE + PROGRESS");
     } 
  
     //public static void HideEquipment() {

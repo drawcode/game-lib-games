@@ -311,12 +311,21 @@ public class UIUtil {
             obj.gameObject.Hide();
         }
     }
+
+    public static void UpdateLabelObject(GameObject parentGo, string key, string val) {
+        UpdateLabelObject(parentGo.transform, key, val);
+    }
  
     public static void UpdateLabelObject(Transform parentTransform, string key, string val) {
         Transform labelObject = parentTransform.FindChild(key);
         if(labelObject != null) {
             UILabel label = labelObject.GetComponent<UILabel>();
             SetLabelValue(label, val);
+        }
+        else {
+            foreach(Transform t in parentTransform) {
+                UpdateLabelObject(t.gameObject, key, val);
+            }
         }
     }
         

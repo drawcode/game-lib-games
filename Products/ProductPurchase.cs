@@ -194,8 +194,14 @@ public class ProductPurchase : MonoBehaviour
 		PurchaseProduct(PRODUCT_GAME_PURCHASE, 1);
 		LogUtil.LogProduct("ProductPurchase::PurchaseGame ...");
 	}
+
+    public static void PurchaseProduct(string code, int quantity) {
+        if(Instance != null) {
+            Instance.purchaseProduct(code, quantity);
+        }
+    }
 	
-	public void PurchaseProduct(string code, int quantity) {
+	public void purchaseProduct(string code, int quantity) {
 		code = code.Replace("-", "_");
 #if UNITY_IPHONE
 		StoreKitBinding.purchaseProduct(code, quantity);
