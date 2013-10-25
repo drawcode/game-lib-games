@@ -61,10 +61,29 @@ public class UIGameRPGObject : MonoBehaviour {
         }
 
         if(lastValue > profileValue) {
-            lastValue -= incrementValue;
+            //lastValue -= incrementValue;
+
+            double differenceValue = lastValue - profileValue;
+
+            if(differenceValue > 50) {
+                lastValue -= (differenceValue /  2) * incrementValue;
+            }
+            else {
+                lastValue -= incrementValue;
+            }
         }
         else if(profileValue > lastValue) {
+            //lastValue += incrementValue;
             lastValue += incrementValue;
+
+            double differenceValue = lastValue - profileValue;
+
+            if(differenceValue > 50) {
+                lastValue += (differenceValue /  2) * incrementValue;
+            }
+            else {
+                lastValue += incrementValue;
+            }
         }
 
         if(lastValue < 0) {
