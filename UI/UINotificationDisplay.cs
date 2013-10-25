@@ -47,31 +47,31 @@ public class UINotificationDisplay
 	public UILabel achievementTitle;
 	public UILabel achievementDescription;
 	public UILabel achievementScore;
-	public UIButton achievementIcon;
+	public UIImageButton achievementIcon;
 	
 	// Point
 	public UILabel pointTitle;
 	public UILabel pointDescription;
 	public UILabel pointScore;
-	public UIButton pointContinue;
+	public UIImageButton pointContinue;
 	
 	// Error
 	public UILabel errorTitle;
 	public UILabel errorDescription;
 	public UILabel errorScore;
-	public UIButton errorContinue;
+	public UIImageButton errorContinue;
 	
 	// Info
 	public UILabel infoTitle;
 	public UILabel infoDescription;
 	public UILabel infoScore;
-	public UIButton infoContinue;		
+	public UIImageButton infoContinue;
 	
 	// Tip
 	public UILabel tipTitle;
 	public UILabel tipDescription;
 	public UILabel tipScore;
-	public UIButton tipContinue;	
+	public UIImageButton tipContinue;
 	
 	float positionYOpenInGame = 0;
 	float positionYClosedInGame = 900;
@@ -420,7 +420,7 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(achievementTitle, notificationItem.title);
 					UIUtil.SetLabelValue(achievementDescription, notificationItem.description);
-					UIUtil.SetLabelValue(achievementScore, notificationItem.score);
+					UIUtil.SetLabelValue(achievementScore, "+" + notificationItem.score);
 					
 					found = true;
 				}
@@ -429,7 +429,7 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(pointTitle, notificationItem.title);
 					UIUtil.SetLabelValue(pointDescription, notificationItem.description);
-					UIUtil.SetLabelValue(pointScore, notificationItem.score);
+					UIUtil.SetLabelValue(pointScore, "+" + notificationItem.score);
 					
 					found = true;
 				}				
@@ -438,7 +438,7 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(infoTitle, notificationItem.title);
 					UIUtil.SetLabelValue(infoDescription, notificationItem.description);
-					UIUtil.SetLabelValue(infoScore, notificationItem.score);
+					UIUtil.SetLabelValue(infoScore, "");
 
 					
 					found = true;
@@ -448,7 +448,7 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(tipTitle, notificationItem.title);
 					UIUtil.SetLabelValue(tipDescription, notificationItem.description);
-					UIUtil.SetLabelValue(tipScore, notificationItem.score);
+					UIUtil.SetLabelValue(tipScore, "");
 					
 					found = true;
 				}				
@@ -457,7 +457,7 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(errorTitle, notificationItem.title);
 					UIUtil.SetLabelValue(errorDescription, notificationItem.description);
-					UIUtil.SetLabelValue(errorScore, notificationItem.score);
+					UIUtil.SetLabelValue(errorScore, "");
 					
 					found = true;
 				}

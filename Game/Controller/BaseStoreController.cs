@@ -131,7 +131,8 @@ public class BaseStoreController : MonoBehaviour {
                         GameStoreController.HandlePurchase(item.product, item.quantity);
                     }
                     else {
-    
+                        UINotificationDisplay.Instance.QueueError("Purchase Unsuccessful",
+                            "Not enough coins to purchase. Earn more coins by playing or training.");
     
                     }
                 }
