@@ -2715,11 +2715,11 @@ public class BaseGameController : MonoBehaviour {
             GameController.HandleTouchInputPoint(Input.mousePosition);
         }
         else {
-            if(currentGamePlayerController != null) {
-                currentGamePlayerController.thirdPersonController.verticalInput = 0f;
-                currentGamePlayerController.thirdPersonController.horizontalInput = 0f;
-                currentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
-                currentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
+            if(GameController.CurrentGamePlayerController != null) {
+                GameController.CurrentGamePlayerController.thirdPersonController.verticalInput = 0f;
+                GameController.CurrentGamePlayerController.thirdPersonController.horizontalInput = 0f;
+                GameController.CurrentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
+                GameController.CurrentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
             }
         }
         //}

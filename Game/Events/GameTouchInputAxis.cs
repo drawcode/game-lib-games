@@ -27,41 +27,62 @@ public class GameTouchInputAxis : MonoBehaviour {
     }
  
     void PointHitTest(Vector3 point) {
-        if(collisionCamera) {
+        if(collisionCamera != null) {
+
+            bool hitThis = false;
+
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
             if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
              
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
-             
-                if(hit.transform.gameObject == gameObject) {
-                 
-                    axisInput.x = (hit.textureCoord.x - .5f) * 2;
-                    axisInput.y = (hit.textureCoord.y - .5f) * 2;
 
-                    GameController.SendInputAxisMessage(axisName, axisInput);
-                 
-                    if(pad != null) {
-                        padPos = pad.localPosition;                              
-                        padPos.x = -Mathf.Clamp(axisInput.x * 1.5f, -1.2f, 1.2f);
-                        padPos.z = -Mathf.Clamp(axisInput.y * 1.5f, -1.2f, 1.2f);
-                        padPos.y = 0f;
-                        pad.localPosition = padPos;
+                GameObject hitObject = hit.transform.gameObject;
+
+                if(hitObject != null) {
+                    GameTouchInputAxis axisObject = hitObject.Get<GameTouchInputAxis>();
+                    if(axisObject != null) {
+                        //if(hit.transform.gameObject == gameObject) {
+                        if(axisObject.axisName == axisName) {
+                            hitThis = true;
+                       // }
+                        }
                     }
+                }
+             
+
+            }
+
+            if(hitThis) {
+                axisInput.x = (hit.textureCoord.x - .5f) * 2;
+                axisInput.y = (hit.textureCoord.y - .5f) * 2;
+
+                GameController.SendInputAxisMessage(axisName, axisInput);
+
+                if(pad != null) {
+                    padPos = pad.localPosition;
+                    padPos.x = -Mathf.Clamp(axisInput.x * 1.5f, -1.2f, 1.2f);
+                    padPos.z = -Mathf.Clamp(axisInput.y * 1.5f, -1.2f, 1.2f);
+                    padPos.y = 0f;
+                    pad.localPosition = padPos;
                 }
             }
             else {
                 ResetPad();
             }
+
         }
     }
 
     void ResetPad() {
-        //axisInput.x = 0f;
-        //axisInput.y =  0f;
 
-        //GameController.SendInputAxisMessage(axisName, axisInput);
-     
+        if(!axisName.Contains("move")) {
+            axisInput.x = 0f;
+            axisInput.y =  0f;
+
+            GameController.SendInputAxisMessage(axisName, axisInput);
+        }
+        
         if(pad != null) {
            Vector3 padPos = pad.localPosition;
            padPos.x = 0;

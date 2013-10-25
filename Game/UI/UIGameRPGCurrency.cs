@@ -11,12 +11,13 @@ public class UIGameRPGCurrency : UIGameRPGObject {
 
     public override void Start() {
         incrementValue = 1;
-        profileValue = 10;
+        profileValue = 1;
+        lastValue = 0;
         UpdateValue();
     }
 
     public override void UpdateValue() {
-        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetCurrency(10));
+        profileValue = (int)Math.Round(GameProfileRPGs.Current.GetCurrency());
     }
 
     public override void UpdateInterval() {
@@ -39,9 +40,9 @@ public class UIGameRPGCurrency : UIGameRPGObject {
 
     public override void Update() {
 
-        if(GameConfigs.isGameRunning) {
-            return;
-        }
+        //if(GameConfigs.isGameRunning) {
+        //    return;
+        //}
         
         HandleUpdate(true);
 
