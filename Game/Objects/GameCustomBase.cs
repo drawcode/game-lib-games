@@ -21,8 +21,8 @@ public class GameCustomBase : MonoBehaviour {
 	public List<Material> materialPlayerPants = new List<Material>();
 	
 	bool freezeRotation = false;
-	
-	public CustomPlayerColorsRunner colors;
+
+    GameProfileCustomItem colors;
 	
 	void Start() {
 		//FindMaterials();
@@ -48,11 +48,11 @@ public class GameCustomBase : MonoBehaviour {
 	
 	public void SetCustomColors(GameObject go) {
 	
-		colors = GameProfiles.Current.GetCustomColorsRunner();
+		colors = GameProfileCharacters.currentCustom;
 		SetMaterialColors(colors);		
 	}
 	
-	public void SetCustomColors(GameObject go, CustomPlayerColorsRunner colorsTo) {
+	public void SetCustomColors(GameObject go, GameProfileCustomItem colorsTo) {
 		colors = colorsTo;
 		SetMaterialColors(colors);
 	}	
@@ -92,12 +92,12 @@ public class GameCustomBase : MonoBehaviour {
 		
 	}
 	
-	public void SetMaterialColors(CustomPlayerColorsRunner colors) {
+	public void SetMaterialColors(GameProfileCustomItem colors) {
 		
 		FindMaterials();
 		
 		if(materialPlayerHelmets != null) {
-			Color color = colors.helmetColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmet);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmets) {
 				m.color = color;
@@ -106,7 +106,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerHelmetFacemasks != null) {
-			Color color = colors.helmetFacemaskColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmetFacemask);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmetFacemasks) {
 				m.color = color;
@@ -115,7 +115,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerHelmetHighlights != null) {
-			Color color = colors.helmetHighlightColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmetHighlights) {
 				m.color = color;
@@ -124,7 +124,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 				
 		if(materialPlayerJerseys != null) {
-			Color color = colors.jerseyColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorJersey);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerJerseys) {
 				m.color = color;
@@ -133,7 +133,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerJerseyHighlights != null) {
-			Color color = colors.jerseyHighlightColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorJerseyHighlight);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerJerseyHighlights) {
 				m.color = color;
@@ -142,7 +142,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerPants != null) {
-			Color color = colors.pantsColor.GetColor();
+			Color color = colors.GetCustomColor(GameCustomColorNames.colorPants);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerPants) {
 				m.color = color;
