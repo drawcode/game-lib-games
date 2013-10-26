@@ -61,25 +61,22 @@ public class UIGameRPGObject : MonoBehaviour {
         }
 
         if(lastValue > profileValue) {
-            //lastValue -= incrementValue;
 
             double differenceValue = lastValue - profileValue;
 
-            if(differenceValue > 50) {
-                lastValue -= (differenceValue /  2) * incrementValue;
+            if(Math.Abs(differenceValue) > 50) {
+                lastValue -= (Math.Round(Math.Abs(differenceValue) /  4)) * incrementValue;
             }
             else {
                 lastValue -= incrementValue;
             }
         }
         else if(profileValue > lastValue) {
-            //lastValue += incrementValue;
-            lastValue += incrementValue;
 
             double differenceValue = lastValue - profileValue;
 
-            if(differenceValue > 50) {
-                lastValue += (differenceValue /  2) * incrementValue;
+            if(Math.Abs(differenceValue) > 50) {
+                lastValue += (Math.Round(Math.Abs(differenceValue) /  4)) * incrementValue;
             }
             else {
                 lastValue += incrementValue;
