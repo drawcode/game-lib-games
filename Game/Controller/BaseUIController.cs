@@ -111,6 +111,7 @@ public class BaseUIPanel {
     public static string panelStatistics = "PanelStatistics";
     public static string panelAchievements = "PanelAchievements";
     public static string panelProducts = "PanelProducts";
+    public static string panelProductCurrency = "PanelProductCurrency";
     public static string panelCustomize = "PanelCustomize";
     public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
     public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
@@ -2371,7 +2372,21 @@ public class BaseUIController : MonoBehaviour {
         hideUIPanel(
             typeof(GameUIPanelStatistics));
     }
- 
+
+    // ------------------------------------------------------------
+    // PRODUCTS - CURRENCY
+
+    public virtual void showProductCurrency() {
+        showUIPanel(
+            typeof(GameUIPanelProductCurrency),
+            GameUIPanel.panelProductCurrency,
+            "COINS");
+    }
+    
+    public virtual void hideProductCurrency() {
+        hideUIPanel(
+            typeof(GameUIPanelProductCurrency));
+    }
      
     // ------------------------------------------------------------
     // EQUIPMENT - ACHIEVEMENTS
