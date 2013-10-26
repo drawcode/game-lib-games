@@ -20,6 +20,46 @@ public class GameStoreMessages {
 
 }
 
+public class GameStorePurchaseRecord : DataObject {
+    public bool successful = false;
+    public object data;
+    public string receipt = "";
+    public DateTime datePurchased;
+    public string messageTitle = "";
+    public string messageDescription = "";
+
+    public GameStorePurchaseRecord() {
+        Reset();
+    }
+
+    public void Reset() {
+        successful = false;
+        data = null;
+        receipt = "";
+        datePurchased = DateTime.Now;
+        messageTitle = "";
+        messageDescription = "";
+    }
+
+    public static GameStorePurchaseRecord Create(
+        bool success,
+        object data,
+        string receipt,
+        string title,
+        string message) {
+
+        GameStorePurchaseRecord record = new GameStorePurchaseRecord();
+        record.successful = success;
+        record.data = data;
+        record.receipt = receipt;
+        record.datePurchased = DateTime.Now;
+        record.messageTitle = title;
+        record.messageDescription = message;
+
+        return record;
+    }
+}
+
 public class GameStorePurchaseDataItem {
 
     public GameStorePurchaseType gameStorePurchaseType = GameStorePurchaseType.LOCAL;
@@ -92,11 +132,11 @@ public class BaseStoreController : MonoBehaviour {
 
     }
 
-    public virtual void onStorePurchaseSuccess(GameStorePurchaseData data) {
+    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {
 
     }
 
-    public virtual void onStorePurchaseFailed(GameStorePurchaseData data) {
+    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {
 
     }
 
@@ -104,11 +144,11 @@ public class BaseStoreController : MonoBehaviour {
 
     }
 
-    public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseData data) {
+    public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
 
     }
 
-    public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseData data) {
+    public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
 
     }
 
@@ -125,14 +165,21 @@ public class BaseStoreController : MonoBehaviour {
                 }
                 else {
                     // do local or server process and event
-    
+
                     if(checkIfCanPurchase(item.product)) { // has the money
     
                         GameStoreController.HandlePurchase(item.product, item.quantity);
                     }
                     else {
-                        UINotificationDisplay.Instance.QueueError("Purchase Unsuccessful",
-                            "Not enough coins to purchase. Earn more coins by playing or training.");
+
+                        GameStoreController.BroadcastPurchaseFailed(
+                            GameStorePurchaseRecord.Create(false,
+                                data, "",
+                                "Purchase Unsuccessful",
+                                "Not enough coins to purchase. Earn more coins by playing or training."));
+
+                        //UINotificationDisplay.Instance.QueueError("Purchase Unsuccessful",
+                         //   "Not enough coins to purchase. Earn more coins by playing or training.");
     
                     }
                 }
@@ -146,27 +193,27 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void broadcastPurchaseStarted(GameStorePurchaseData data) {
-
+        Messenger<GameStorePurchaseData>.Broadcast(GameStoreMessages.purchaseStarted, data);
     }
 
-    public virtual void broadcastPurchaseSuccess(GameStorePurchaseData data) {
-
+    public virtual void broadcastPurchaseSuccess(GameStorePurchaseRecord data) {
+        Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseSuccess, data);
     }
 
-    public virtual void broadcastPurchaseFailed(GameStorePurchaseData data) {
-
+    public virtual void broadcastPurchaseFailed(GameStorePurchaseRecord data) {
+        Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseFailed, data);
     }
 
     public virtual void broadcastThirdPartyPurchaseStarted(GameStorePurchaseData data) {
-
+        Messenger<GameStorePurchaseData>.Broadcast(GameStoreMessages.purchaseThirdPartyStarted, data);
     }
 
-    public virtual void broadcastThirdPartyPurchaseSuccess(GameStorePurchaseData data) {
-
+    public virtual void broadcastThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
+        Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartySuccess, data);
     }
 
-    public virtual void broadcastThirdPartyPurchaseFailed(GameStorePurchaseData data) {
-
+    public virtual void broadcastThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
+        Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartyFailed, data);
     }
 
     public virtual bool checkIfCanPurchase(GameProduct product) {
@@ -216,11 +263,15 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void handleInventory(GameProduct gameProduct, double quantity) {
 
+        string message = "Enjoy your new purchase.";
+
         if(gameProduct.type == GameProductType.rpgUpgrade) {
             // Add upgrades
 
             double val =  gameProduct.GetDefaultProductInfoByLocale().quantity;
             GameProfileRPGs.Current.AddUpgrades(val);
+
+            message = "Advance your character with your upgrades and get to top of the game";
 
         }
         else if(gameProduct.type == GameProductType.currency) {
@@ -239,6 +290,13 @@ public class BaseStoreController : MonoBehaviour {
             }
             */
         }
+
+        GameStoreController.BroadcastPurchaseSuccess(
+            GameStorePurchaseRecord.Create(true,
+                gameProduct, "",
+                "Purchase Successful",
+                message));
+
     }
 
     public virtual void handleCurrencyPurchase(GameProduct gameProduct, double quantity) {
