@@ -28,6 +28,10 @@ public class GameContentDisplayTypes {
 
     public static string gameCollectItemStart = "content-game-game-collect-item-start";
     public static string gameCollectItemResult = "content-game-game-collect-item-result";
+
+    public static string gameEnergy = "content-game-game-energy";
+    public static string gameHealth = "content-game-game-health";
+    public static string gameXP = "content-game-game-xp";
 }
 
 // GLOBAL
@@ -1408,16 +1412,24 @@ public class BaseGameController : MonoBehaviour {
 
                 // get random
                 if(currentGameZone == GameZones.right) {
+
                     spawnLocation = Vector3.zero
-                        .WithX(UnityEngine.Random.Range(10, 80))
-                        .WithY(30f)
-                        .WithZ(UnityEngine.Random.Range(-20, 20));
+                        .WithX(UnityEngine.Random.Range(
+                            0, gameBounds.boundaryTopRight.transform.position.x))
+                        .WithY(50f)
+                        .WithZ(UnityEngine.Random.Range(
+                                boundaryBottomLeft.transform.position.z,
+                                boundaryTopLeft.transform.position.z));
                 }
                 else if(currentGameZone == GameZones.left) {
+
                     spawnLocation = Vector3.zero
-                        .WithX(UnityEngine.Random.Range(-80, -10))
-                        .WithY(30f)
-                        .WithZ(UnityEngine.Random.Range(-20, 20));
+                        .WithX(UnityEngine.Random.Range(
+                            gameBounds.boundaryTopLeft.transform.position.x, 0))
+                        .WithY(50f)
+                        .WithZ(UnityEngine.Random.Range(
+                                gameBounds.boundaryBottomLeft.transform.position.z,
+                                gameBounds.boundaryTopLeft.transform.position.z));
                 }
             //}
 
@@ -1738,9 +1750,9 @@ public class BaseGameController : MonoBehaviour {
     public virtual void onGameContentDisplay() {
         // Show runtime content display data
         //GameRunningStatePause();
-
+    
         if(contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
-
+    
             GameController.GamePlayerOutOfBoundsDelayed(3f);
     
             UIPanelDialogBackground.ShowDefault();
@@ -1748,22 +1760,34 @@ public class BaseGameController : MonoBehaviour {
             //UIPanelDialogDisplay.SetDescription("RUN, BUT STAY IN BOUNDS...");
             UIPanelDialogDisplay.ShowDefault();
         }
-        else if(contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
-
-            GameController.GamePlayerOutOfBoundsDelayed(2f);
-    
-            UIPanelDialogBackground.ShowDefault();
-            UIPanelDialogDisplay.SetTitle("OUT OF BOUNDS");
-            UIPanelDialogDisplay.SetDescription("RUN, BUT STAY IN BOUNDS...");
-            UIPanelDialogDisplay.ShowDefault();
+        else if(contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
+            handleContentDialogEnergy();
+        }
+        else if(contentDisplayCode == GameContentDisplayTypes.gameHealth) {
+            handleContentDialogHealth();
+        }
+        else if(contentDisplayCode == GameContentDisplayTypes.gameXP) {
+            handleContentDialogXP();
         }
         else {
-
+        
             //AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz
             UIPanelDialogBackground.HideAll();
         }
     
         //GameRunningStateRun();
+    }
+
+    public void handleContentDialogEnergy() {
+        UIPanelDialogRPGEnergy.ShowDefault();
+    }
+
+    public void handleContentDialogHealth() {
+        UIPanelDialogRPGHealth.ShowDefault();
+    }
+
+    public void handleContentDialogXP() {
+        UIPanelDialogRPGXP.ShowDefault();
     }
 
     public virtual void onGameContentDisplayPause() {
