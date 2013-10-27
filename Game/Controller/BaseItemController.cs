@@ -58,9 +58,9 @@ public class BaseItemController : MonoBehaviour {
     public float difficultyLevelNormal = .5f;
     public float difficultyLevelHard = .9f;
     public float difficultyLevelEpic = .99f;
-    public float currentSpawnAmount = 2;
+    public float currentSpawnAmount = 1;
     public float currentItemMin = 3;
-    public float currentItemLimit = 18;
+    public float currentItemLimit = 9;
     public float currentFPS = 0;
     public int roundsCompleted = 0;
     float lastPeriodicSeconds = 0f;
@@ -314,7 +314,7 @@ public class BaseItemController : MonoBehaviour {
 
     public virtual void handlePeriodic() {
 
-        if(Time.time > lastPeriodicSeconds + 3f) {
+        if(Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
             lastPeriodicSeconds = Time.time;
             // every second
             GameItemController.Direct();

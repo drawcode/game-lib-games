@@ -63,11 +63,12 @@ public class UIPanelDialogRPGEnergy : UIPanelDialogRPGObject {
 
             // buy recharge
             Debug.Log("Recharge:");
+            GameStoreController.Purchase("recharge", 1);
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameUIController.ShowGameModeTrainingModeChoiceQuiz();
         }
-        else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();
         }
     }

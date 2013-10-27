@@ -60,7 +60,7 @@ public class BaseAIController : MonoBehaviour {
     public float currentSpawnAmount = 1;
     public float currentCharacterMin = 5;
     public float currentCharacterTypeCount = 2; // TODO change to characters data
-    public float currentCharacterLimit = 15;
+    public float currentCharacterLimit = 11;
     public float currentFPS = 0;
     
     public int roundsCompleted = 0;
@@ -194,8 +194,8 @@ public class BaseAIController : MonoBehaviour {
 
         currentFPS = FPSDisplay.GetCurrentFPS();
     
-        if(currentActorCount < currentCharacterLimit
-         && currentFPS > 21f
+        if((currentActorCount < currentCharacterLimit
+         && currentFPS > 20f)
             || currentActorCount < currentCharacterMin) {
         
             // do some spawning
@@ -210,8 +210,8 @@ public class BaseAIController : MonoBehaviour {
             float attack = .3f;
             float scale = 1f;
     
-            scale = UnityEngine.Random.Range(.7f, 1.5f);
-            speed = UnityEngine.Random.Range(.7f, 1.2f);
+            scale = UnityEngine.Random.Range(.8f, 1.6f);
+            speed = UnityEngine.Random.Range(.8f, 1.6f);
 
             GameAIDirectorData actor = new GameAIDirectorData();
             actor.SetRandomCharacter(randomCharacter);
@@ -243,7 +243,7 @@ public class BaseAIController : MonoBehaviour {
 
     public virtual void handlePeriodic() {
 
-        if(Time.time > lastPeriodicSeconds + 3f) {
+        if(Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(3, 10)) {
             lastPeriodicSeconds = Time.time;
             // every second
             GameAIController.DirectAI();

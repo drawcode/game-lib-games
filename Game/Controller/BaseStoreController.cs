@@ -274,6 +274,19 @@ public class BaseStoreController : MonoBehaviour {
             message = "Advance your character with your upgrades and get to top of the game";
 
         }
+        else if(gameProduct.type == GameProductType.powerup) {
+            // Add upgrades
+
+            if(gameProduct.code.Contains("rpg-recharge-health")) {
+                GameProfileCharacters.currentProgress.AddGamePlayerProgressHealth(1f);
+                message = "Recharging your health...";
+            }
+            else if(gameProduct.code.Contains("rpg-recharge-energy")) {
+                GameProfileCharacters.currentProgress.AddGamePlayerProgressEnergy(1f);
+                message = "Recharging your health...";
+            }
+
+        }
         else if(gameProduct.type == GameProductType.currency) {
             // Add skraight cash moneh
            GameStoreController.HandleCurrencyPurchase(gameProduct, quantity);

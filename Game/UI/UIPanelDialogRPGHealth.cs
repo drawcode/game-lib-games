@@ -12,7 +12,6 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
     public static UIPanelDialogRPGHealth Instance;
 
-
     public void Awake() {
 
         if (Instance != null && this != Instance) {
@@ -64,11 +63,13 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
             // buy recharge
             Debug.Log("Recharge:");
+            GameStoreController.Purchase("recharge", 1);
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
+            GameController.QuitGame();
             GameUIController.ShowGameModeTrainingModeChoiceQuiz();
         }
-        else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();
         }
     }

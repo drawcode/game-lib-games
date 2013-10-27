@@ -1286,7 +1286,7 @@ public class BaseGameController : MonoBehaviour {
 
         // TODO data and pooling and network
     
-        UnityEngine.Object prefabObject = Resources.Load(modelPath);
+        GameObject prefabObject = Resources.Load(modelPath) as GameObject;
         Vector3 spawnLocation = Vector3.zero;
 
         bool isZoned = true;
@@ -1332,6 +1332,9 @@ public class BaseGameController : MonoBehaviour {
     
         GameObject characterObject = Instantiate(
             prefabObject, spawnLocation, Quaternion.identity) as GameObject;
+
+        //GameObject characterObject =
+        //    ObjectPoolManager.createPooled(prefabObject, spawnLocation, Quaternion.identity);
     
         characterObject.transform.parent = levelActorsContainerObject.transform;
 
@@ -1384,8 +1387,18 @@ public class BaseGameController : MonoBehaviour {
         //string characterType = GameController.GetItemType(item);
 
         // TODO data and pooling and network
+
+        // 1) Without using the ObjectPoolManager:
+// Projectile bullet = Instantiate( bulletPrefab, position, rotation ) as Projectile;
+// Destroy( bullet.gameObject );
+//
+// 2) Using the ObjetPoolManager:
+// Projectile bullet = ObjectPoolManager.createPooled( bulletPrefab.gameObject, position, rotation ).GetComponent<Bullet>();
+// ObjectPoolManager.destroyPooled( bullet.gameObject );
+
+
     
-        UnityEngine.Object prefabObject = Resources.Load(modelPath);
+        GameObject prefabObject = Resources.Load(modelPath) as GameObject;
         Vector3 spawnLocation = Vector3.zero;
 
         bool isZoned = true;
@@ -1443,8 +1456,10 @@ public class BaseGameController : MonoBehaviour {
             yield break;
         }
     
-        GameObject spawnObj = Instantiate(
-            prefabObject, spawnLocation, Quaternion.identity) as GameObject;
+        //GameObject spawnObj = Instantiate(
+        //    prefabObject, spawnLocation, Quaternion.identity) as GameObject;
+        GameObject spawnObj =
+            ObjectPoolManager.createPooled(prefabObject, spawnLocation, Quaternion.identity);
 
         string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
 

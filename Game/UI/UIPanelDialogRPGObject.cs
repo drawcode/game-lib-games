@@ -57,16 +57,33 @@ public class UIPanelDialogRPGObject : UIPanelBase {
 
     }
 
+    // OVERLAY DIALOG
+
+    public void ContentPause() {
+        GameController.GameRunningStateContent();
+    }
+
+    public void ContentRun() {
+        GameController.GameRunningStateRun();
+        //HideStates();
+    }
+
     public void ShowContent() {
 
         UIPanelDialogBackground.ShowDefault();
 
         AnimateInBottom(containerContent);
 
+        ContentPause();
+
         UIColors.UpdateColors();
     }
 
     public void HideContent() {
+
+        UIPanelDialogBackground.HideAll();
+
+        ContentPause();
 
         AnimateOutBottom(containerContent, 0f, 0f);
     }
@@ -80,6 +97,7 @@ public class UIPanelDialogRPGObject : UIPanelBase {
     public override void AnimateOut() {
         base.AnimateOut();
 
+        HideContent();
     }
 
     public void Update() {
