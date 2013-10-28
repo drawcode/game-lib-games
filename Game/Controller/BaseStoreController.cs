@@ -278,8 +278,7 @@ public class BaseStoreController : MonoBehaviour {
             // Add upgrades
 
             if(gameProduct.code.Contains("rpg-recharge-full")) {
-                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
-                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
+                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(1f, 1f);
                 message = "Recharging your health + energy...";
             }
             else if(gameProduct.code.Contains("rpg-recharge-health")) {
