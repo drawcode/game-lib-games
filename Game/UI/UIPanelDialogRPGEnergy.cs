@@ -68,6 +68,7 @@ public class UIPanelDialogRPGEnergy : UIPanelDialogRPGObject {
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();
+            GameController.ResumeGame();
         }
     }
 

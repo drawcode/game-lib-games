@@ -708,8 +708,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //string scoreTypeValue = "4/5";
         string scoreCoinsValue = coins.ToString("N0");
 
-        GameProfileRPGs.Current.AddCurrency(coins);
-
         UIUtil.SetSliderValue(sliderScore, choicesResult);
 
         UIUtil.SetLabelValue(labelResultsScoreFractionValue, scoreFractionValue);
@@ -717,6 +715,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //UIUtil.SetLabelValue(labelResultsTitle, choiceResultValue);
         //UIUtil.SetLabelValue(labelResultsType, choiceResultType);
         UIUtil.SetLabelValue(labelResultsCoinsValue, scoreCoinsValue);
+
+        // REWARDS
+
+        GameProfileRPGs.Current.AddCurrency(coins);
+
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(coins * 2);
+
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
+
 
         /*
         AppContentChoice choice = GetCurrentChoice();

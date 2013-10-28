@@ -26,7 +26,7 @@ public class UIGameRPGHealth : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if(lastTime > 1f) {
+        if(lastTime > 3f) {
             lastTime = 0f;
             UpdateValue();
         }

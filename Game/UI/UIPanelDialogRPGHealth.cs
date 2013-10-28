@@ -60,10 +60,7 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
-
-            // buy recharge
-            Debug.Log("Recharge:");
-            GameStoreController.Purchase("recharge", 1);
+            GameStoreController.Purchase("rpg-recharge-full-1", 1);
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameController.QuitGame();
@@ -71,6 +68,7 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();
+            GameController.ResumeGame();
         }
     }
 
