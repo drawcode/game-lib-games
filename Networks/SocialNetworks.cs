@@ -69,6 +69,7 @@ public class SocialNetworks : MonoBehaviour {
 	}
 		
 	void OnEnable() {
+#if UNITY_ANDROID || UNITY_IPHONE
 		FacebookManager.sessionOpenedEvent += facebookLogin;
 		//FacebookManager.loginFailedEvent += facebookLoginFailed;
 		//FacebookManager.sessionInvalidatedEvent += facebookSessionInvalidatedEvent;
@@ -81,9 +82,12 @@ public class SocialNetworks : MonoBehaviour {
 		
 		//FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
 		//FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
+#endif
 	}
 
 	void OnDisable() {
+
+#if UNITY_ANDROID || UNITY_IPHONE
 		// Remove all the event handlers when disabled
 		FacebookManager.sessionOpenedEvent -= facebookLogin;
 		//FacebookManager.loginFailedEvent -= facebookLoginFailed;
@@ -96,6 +100,7 @@ public class SocialNetworks : MonoBehaviour {
 		
 		//FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
 		//FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
+#endif
 	}
 	
 	// ##############################################################################################
@@ -491,7 +496,10 @@ public class SocialNetworks : MonoBehaviour {
 		return FacebookBinding.getAccessToken();
 #elif UNITY_ANDROID
 		return FacebookAndroid.getAccessToken();
+#else
+        return "";
 #endif
+
 	}
 		
 	public static void LikeUrlFacebook(string urlLike) {
@@ -785,8 +793,8 @@ public class SocialNetworks : MonoBehaviour {
 #elif UNITY_IPHONE
 		TwitterBinding.showTweetComposer(message);
 #elif UNITY_WEBPLAYER
-		Application.ExternalCall("postMessageTwitter", message, pathToImage, link);			
-		LogUtil.Log(String.Format("Twitter posting for web: message:{0}", message));
+		//Application.ExternalCall("postMessageTwitter", message, pathToImage, link);
+		//LogUtil.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
 	}
 	
@@ -803,8 +811,8 @@ public class SocialNetworks : MonoBehaviour {
 #elif UNITY_IPHONE
 		TwitterBinding.showTweetComposer(message, pathToImage);
 #elif UNITY_WEBPLAYER
-		Application.ExternalCall("postMessageTwitter", message, pathToImage, link);			
-		LogUtil.Log(String.Format("Twitter posting for web: message:{0}", message));
+		//Application.ExternalCall("postMessageTwitter", message, pathToImage, link);
+		//LogUtil.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
 	}
 	
