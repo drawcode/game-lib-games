@@ -2786,6 +2786,7 @@ public class BaseUIController : MonoBehaviour {
         if(gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
+
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(-970));  
     }
             

@@ -16,12 +16,12 @@ public class UIGameRPGXP : UIGameRPGObject {
     }
 
     public override void UpdateValue() {
-        if(useGlobal) {
-            profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressXP(10));
-        }
-        else {
-            profileValue = (int)Math.Round(GameProfileCharacters.currentProgress.GetGamePlayerProgressXP(10));
-        }
+        //if(useGlobal) {
+        //    profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressXP(10));
+        //}
+        //else {
+        profileValue = (int)Math.Round(GameProfileCharacters.currentProgress.GetGamePlayerProgressXP(10));
+        //}
     }
 
     public override void UpdateInterval() {
@@ -44,27 +44,13 @@ public class UIGameRPGXP : UIGameRPGObject {
 
     public override void Update() {
 
-        if(GameConfigs.isGameRunning) {
-            return;
-        }
-
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionXPAdd) {
-            if(useGlobal) {
-                GameProfileRPGs.Current.AddGamePlayerProgressXP(incrementValue * 100);
-            }
-            else {
-                GameProfileCharacters.currentProgress.AddGamePlayerProgressXP(incrementValue * 100);
-            }
+            GameProfileCharacters.currentProgress.AddGamePlayerProgressXP(incrementValue * 100);
         }
         else if(UIGameKeyCodes.isActionXPSubtract) {
-            if(useGlobal) {
-                GameProfileRPGs.Current.SubtractGamePlayerProgressXP(incrementValue * 100);
-            }
-            else {
-                GameProfileCharacters.currentProgress.SubtractGamePlayerProgressXP(incrementValue * 100);
-            }
+            GameProfileCharacters.currentProgress.SubtractGamePlayerProgressXP(incrementValue * 100);
         }
     }
 }

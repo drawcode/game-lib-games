@@ -87,17 +87,12 @@ public class UIGameRPGObject : MonoBehaviour {
             lastValue = 0;
         }
 
-        SetProgress(profileValue);
+        SetProgress(lastValue);
         SetLabelValue(lastValue);
     }
 
 
     public virtual void Update() {
-        
-        if(GameConfigs.isGameRunning) {
-            return;
-        }
-
         HandleUpdate(true);
     }
 }

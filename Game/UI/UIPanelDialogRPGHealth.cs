@@ -67,7 +67,7 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameController.QuitGame();
-            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
+            GameUIController.ShowGameMode();
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();

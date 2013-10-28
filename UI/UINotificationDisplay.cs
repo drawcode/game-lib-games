@@ -324,7 +324,8 @@ public class UINotificationDisplay
 	}
 	
 	public void Update() {
-				
+
+        /*
 		if(Input.GetKeyDown(KeyCode.Alpha1)) {
 			//achievementNumber++;
 			QueueAchievement("achieve_test1");
@@ -351,6 +352,7 @@ public class UINotificationDisplay
 			//achievementNumber++;
 			QueuePoint("Point Here", "This is an point, do better!", 1);
 		}
+  */
 	}
 	
 	public bool Paused {

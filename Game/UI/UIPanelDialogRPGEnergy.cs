@@ -60,13 +60,11 @@ public class UIPanelDialogRPGEnergy : UIPanelDialogRPGObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
-
-            // buy recharge
-            Debug.Log("Recharge:");
-            GameStoreController.Purchase("recharge", 1);
+            GameStoreController.Purchase("rpg-recharge-full-1", 1);
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
-            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
+            GameController.QuitGame();
+            GameUIController.ShowGameMode();
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();

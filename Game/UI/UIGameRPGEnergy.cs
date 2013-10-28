@@ -12,16 +12,12 @@ public class UIGameRPGEnergy : UIGameRPGObject {
     public override void Start() {
         incrementValue = .01;
         profileValue = 1;
+        lastValue = 0;
         UpdateValue();
     }
 
     public override void UpdateValue() {
-        if(useGlobal) {
-            profileValue = GameProfileRPGs.Current.GetGamePlayerProgressEnergy(1);
-        }
-        else {
-            profileValue = GameProfileCharacters.currentProgress.GetGamePlayerProgressEnergy(1);
-        }
+        profileValue = GameProfileCharacters.currentProgress.GetGamePlayerProgressEnergy(1);
     }
 
     public override void UpdateInterval() {
@@ -44,27 +40,15 @@ public class UIGameRPGEnergy : UIGameRPGObject {
 
     public override void Update() {
 
-        //if(GameConfigs.isGameRunning) {
-        //    return;
-        //}
-        
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionEnergyAdd) {
-            if(useGlobal) {
-                GameProfileRPGs.Current.AddGamePlayerProgressEnergy(incrementValue);
-            }
-            else {
-                GameProfileCharacters.currentProgress.AddGamePlayerProgressEnergy(incrementValue);
-            }
+            Debug.Log("EnergyAdd:" + incrementValue);
+            GameProfileCharacters.currentProgress.AddGamePlayerProgressEnergy(.1f);
         }
         else if(UIGameKeyCodes.isActionEnergySubtract) {
-            if(useGlobal) {
-                GameProfileRPGs.Current.SubtractGamePlayerProgressEnergy(incrementValue);
-            }
-            else {
-                GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(incrementValue);
-            }
+            Debug.Log("EnergySubtract:" + incrementValue);
+            GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(.1f);
         }
     }
 }

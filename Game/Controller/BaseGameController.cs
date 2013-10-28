@@ -1866,14 +1866,14 @@ public class BaseGameController : MonoBehaviour {
         GameUIController.ShowUI();
     
         //ChangeGameState(GameStateGlobal.GameResults);
-        // Show dialog then dismiss to not started...
+
         GameController.Reset();
 
-        GameController.GameRunningStateStopped();
-    
         GameController.StopDirectors();
-    
-        //ChangeGameState(GameStateGlobal.GameNotStarted);
+
+        GameController.GameRunningStateStopped();
+
+        Time.timeScale = 1f;
     }
     
     public virtual void onGamePause() {
