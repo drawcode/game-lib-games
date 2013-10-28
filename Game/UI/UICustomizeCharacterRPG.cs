@@ -218,6 +218,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         }
 
         if(Input.GetKeyDown("u")) {
+            Debug.Log("Adding upgrades:" );
             GameProfileRPGs.Current.AddUpgrades(5);
             loadData();
         }

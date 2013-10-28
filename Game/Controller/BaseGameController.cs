@@ -1867,12 +1867,13 @@ public class BaseGameController : MonoBehaviour {
     
         //ChangeGameState(GameStateGlobal.GameResults);
 
+        GameController.QuitGameRunning();
+    }
+
+    public virtual void quitGameRunning() {
         GameController.Reset();
-
         GameController.StopDirectors();
-
         GameController.GameRunningStateStopped();
-
         Time.timeScale = 1f;
     }
     

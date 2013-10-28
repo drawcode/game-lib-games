@@ -44,11 +44,11 @@ public class UIGameRPGEnergy : UIGameRPGObject {
 
         if(UIGameKeyCodes.isActionEnergyAdd) {
             Debug.Log("EnergyAdd:" + incrementValue);
-            GameProfileCharacters.currentProgress.AddGamePlayerProgressEnergy(.1f);
+            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(incrementValue);
         }
         else if(UIGameKeyCodes.isActionEnergySubtract) {
             Debug.Log("EnergySubtract:" + incrementValue);
-            GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(.1f);
+            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(-incrementValue);
         }
     }
 }

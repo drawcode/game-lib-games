@@ -2783,9 +2783,12 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void hideGameCanvas() {
+
         if(gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
+
+        //GameController.QuitGameRunning();
 
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(-970));  
     }

@@ -48,10 +48,10 @@ public class UIGameRPGHealth : UIGameRPGObject {
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionHealthAdd) {
-            GameProfileCharacters.currentProgress.AddGamePlayerProgressHealth(incrementValue);
+            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(incrementValue);
         }
         else if(UIGameKeyCodes.isActionHealthSubtract) {
-            GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(incrementValue);
+            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(-incrementValue);
         }
     }
 }
