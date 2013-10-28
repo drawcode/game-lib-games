@@ -451,7 +451,7 @@ public class BaseStoreController : MonoBehaviour {
 #else
         void billingSupportedEvent(bool success) {
             LogUtil.LogProduct( "billingSupportedEvent: " + success );
-            IABAndroid.restoreTransactions();
+            //IABAndroid.restoreTransactions();
         }
         
         void purchaseSucceededEvent(string productId) {

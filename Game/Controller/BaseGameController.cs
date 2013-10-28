@@ -1795,13 +1795,19 @@ public class BaseGameController : MonoBehaviour {
 
     public void handleContentDialogEnergy() {
         UIPanelDialogRPGEnergy.ShowDefault();
+        UIPanelDialogRPGHealth.HideAll();
+        UIPanelDialogRPGXP.HideAll();
     }
 
     public void handleContentDialogHealth() {
+        UIPanelDialogRPGEnergy.HideAll();
         UIPanelDialogRPGHealth.ShowDefault();
+        UIPanelDialogRPGXP.HideAll();
     }
 
     public void handleContentDialogXP() {
+        UIPanelDialogRPGEnergy.HideAll();
+        UIPanelDialogRPGHealth.HideAll();
         UIPanelDialogRPGXP.ShowDefault();
     }
 
