@@ -17,7 +17,7 @@ public class UIGameRPGEnergy : UIGameRPGObject {
     }
 
     public override void UpdateValue() {
-        profileValue = GameProfileCharacters.currentProgress.GetGamePlayerProgressEnergy(1);
+        profileValue = Math.Round(GameProfileCharacters.currentProgress.GetGamePlayerProgressEnergy(1), 2);
     }
 
     public override void UpdateInterval() {

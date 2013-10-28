@@ -21,7 +21,7 @@ public class UIGameRPGHealth : UIGameRPGObject {
         //    profileValue = GameProfileRPGs.Current.GetGamePlayerProgressHealth(1);
         //}
         //else {
-        profileValue = GameProfileCharacters.currentProgress.GetGamePlayerProgressHealth(1);
+        profileValue = Math.Round(GameProfileCharacters.currentProgress.GetGamePlayerProgressHealth(1), 2);
         //}
     }
 
