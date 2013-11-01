@@ -376,8 +376,8 @@ public class BaseGameController : MonoBehaviour {
     public GameRunningState gameRunningState = GameRunningState.STOPPED;
     public GameControllerType gameControllerType = GameControllerType.Iso3D;
     
-    float currentTimeBlock = 0.0f;
-    float actionInterval = 1.3f;
+    float currentTimeBlockBase = 0.0f;
+    float actionIntervalBase = 1.3f;
 
     public float defaultLevelTime = 90;
 
@@ -1152,12 +1152,24 @@ public class BaseGameController : MonoBehaviour {
         GameProfiles.Current.SetCurrentAppModeType(AppModeTypes.Current.code);
         GameProfiles.Current.SetCurrentAppState(AppStates.Current.code);
         GameProfiles.Current.SetCurrentAppContentState(AppContentStates.Current.code);
+
+        LogUtil.Log("saveGameStates:AppModes.Current.code:" + AppModes.Current.code);
+        LogUtil.Log("saveGameStates:AppModeTypes.Current.code:" + AppModeTypes.Current.code);
+        LogUtil.Log("saveGameStates:AppStates.Current.code:" + AppStates.Current.code);
+        LogUtil.Log("saveGameStates:AppContentStates.Current.code:" + AppContentStates.Current.code);
+
         GameState.SaveProfile();
     }
 
     public virtual void changeGameStates(string appContentState) {
+
+        LogUtil.Log("changeGameStates:appContentState:" + appContentState);
+
         AppContentStates.Instance.ChangeState(appContentState);
         GameController.SaveGameStates();
+
+        LogUtil.Log("changeGameStates:appContentState:AFTER:" + appContentState);
+
     }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
     
     public virtual void loadProfileCharacter(string characterCode) {
@@ -2775,10 +2787,10 @@ public class BaseGameController : MonoBehaviour {
             return;
         }
         
-        currentTimeBlock += Time.deltaTime;     
+        currentTimeBlockBase += Time.deltaTime;
         
-        if(currentTimeBlock > actionInterval) {
-            currentTimeBlock = 0.0f;
+        if(currentTimeBlockBase > actionIntervalBase) {
+            currentTimeBlockBase = 0.0f;
         }       
         
         // debug/dev

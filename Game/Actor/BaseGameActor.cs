@@ -17,8 +17,8 @@ public class BaseGameActor : MonoBehaviour {
 	
 	public string uniqueId;	
 	
-	float currentTimeBlockLocal = 0.0f;
-	float actionIntervalLocal = 2.0f;	
+	public float currentTimeBlockLocal = 0.0f;
+	public float actionIntervalLocal = 2.0f;	
 	
 	public bool navigating = false;
 	
