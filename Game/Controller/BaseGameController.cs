@@ -1165,7 +1165,12 @@ public class BaseGameController : MonoBehaviour {
 
         LogUtil.Log("changeGameStates:appContentState:" + appContentState);
 
-        AppContentStates.Instance.ChangeState(appContentState);
+        //try {
+            AppContentStates.Instance.ChangeState(appContentState);
+        //}
+        //catch (Exception e) {
+        //    LogUtil.Log("ERROR:changeGameState:e:" + e.Message + e.StackTrace);
+        //}
         GameController.SaveGameStates();
 
         LogUtil.Log("changeGameStates:appContentState:AFTER:" + appContentState);

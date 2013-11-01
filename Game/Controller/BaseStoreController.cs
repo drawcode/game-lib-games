@@ -32,7 +32,8 @@ public class GameStorePurchaseRecord : DataObject {
         Reset();
     }
 
-    public void Reset() {
+    public override void Reset() {
+        base.Reset();
         successful = false;
         data = null;
         receipt = "";
@@ -342,7 +343,7 @@ public class BaseStoreController : MonoBehaviour {
 
     // THIRD PARTY EVENTS
 
-    bool purchaseProcessCompleted = false;
+    public bool purchaseProcessCompleted = false;
 
     public void HandleCancel() {
 

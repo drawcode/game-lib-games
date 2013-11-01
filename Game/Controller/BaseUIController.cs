@@ -2948,7 +2948,7 @@ public class BaseUIController : MonoBehaviour {
     float lastPressSkill = 0;
     float lastPressMagic = 0;
     float lastPressUse = 0;
-    float lastPressJump = 0;
+    //float lastPressJump = 0;
 
     public bool AllowPress(float lastTime) {
 

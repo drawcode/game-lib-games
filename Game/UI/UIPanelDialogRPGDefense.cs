@@ -12,14 +12,7 @@ public class UIPanelDialogRPGDefense : UIPanelDialogRPGObject {
 
     public static UIPanelDialogRPGDefense Instance;
 
-    public GameObject containerContent;
-
-    public UILabel labelTitle;
-
-    public UIImageButton buttonBuyRecharge;
-    public UIImageButton buttonEarn;
-
-    public void Awake() {
+    public override void Awake() {
 
         if (Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -113,8 +106,8 @@ public class UIPanelDialogRPGDefense : UIPanelDialogRPGObject {
 
     }
 
-    public void Update() {
-
+    public override void Update() {
+        base.Update();
     }
  
 }

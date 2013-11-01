@@ -12,7 +12,7 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
     public static UIPanelDialogRPGHealth Instance;
 
-    public void Awake() {
+    public override void Awake() {
 
         if (Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -106,8 +106,8 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
     }
 
-    public void Update() {
-
+    public override void Update() {
+        base.Update();
     }
  
 }

@@ -89,11 +89,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public double choicesCorrect = 0;
     public AppContentChoice currentAppContentChoice;
 
-    AppContentChoice appContentChoice = null;
-    AppContentChoiceItem appContentChoiceItem = null;
+    public AppContentChoice appContentChoice = null;
+    public AppContentChoiceItem appContentChoiceItem = null;
 
-    AppContentChoiceItem currentChoiceItem = null;
-    AppContentChoiceData currentChoiceData = null;
+    public AppContentChoiceItem currentChoiceItem = null;
+    public AppContentChoiceData currentChoiceData = null;
 
     bool isCorrect = true;
 
@@ -475,11 +475,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             Debug.Log("OnGameLevelItemsLoadedHandler2");
 
-            int i = 0;
+            //int i = 0;
 
-            AppContentChoice choice = GetCurrentChoice();
+            //AppContentChoice choice = GetCurrentChoice();
 
-            Debug.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
+           // Debug.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
 
             /*
             foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
@@ -695,7 +695,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         GameAudioController.Instance.PlayCheer1();
 
-        double timeCompleted = 30; // TODO
+        //double timeCompleted = 30; // TODO
         double coins = 500;
         double choiceTotal = choices.Count;
         double choicesResult = choicesCorrect / choiceTotal;

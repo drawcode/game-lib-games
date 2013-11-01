@@ -47,16 +47,16 @@ public class BaseGamePlayerUI : MonoBehaviour {
 	
     void Update() {
 
-        if(Application.isEditor && true == false) {
-    		if(Input.GetAxis("Horizontal") >= 0f
-    			|| Input.GetAxis("Vertical") >= 0f) {
-    			
-    			h = horizontalSpeed * Input.GetAxis("Horizontal");
-            	v = verticalSpeed * Input.GetAxis("Vertical");			
-    		
-    			RunAnimations();
-    		}
-        }
+        //if(Application.isEditor && true == false) {
+    	//	if(Input.GetAxis("Horizontal") >= 0f
+    	//		|| Input.GetAxis("Vertical") >= 0f) {
+    	//
+    	//		h = horizontalSpeed * Input.GetAxis("Horizontal");
+        //   	v = verticalSpeed * Input.GetAxis("Vertical");
+    	//
+    	//		RunAnimations();
+    	//	}
+        //}
 		
 		currentTimeBlock += Time.deltaTime;		
 		

@@ -192,7 +192,7 @@ public class BaseGamePlayerController : GameActor {
     public float currentTimeBlock = 0.0f;
     public float actionInterval = .33f;
 
-    bool initLoaded = false;
+    public bool initLoaded = false;
     float lastCollision = 0f;
 
     float lastHit = 0f;
@@ -1341,11 +1341,11 @@ public class BaseGamePlayerController : GameActor {
             DeviceUtil.Vibrate();
         }
         else {
-            bool allow = false;
+            //bool allow = false;
 
             if(lastHit + .3f < Time.time) {
                 lastHit = Time.time;
-                allow = true;
+                //allow = true;
             }
             else {
                 return;
@@ -1926,11 +1926,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        bool allowTackle = false;
+        //bool allowTackle = false;
 
         if(lastTackle + .1f < Time.time) {
             lastTackle = Time.time;
-            allowTackle = true;
+            //allowTackle = true;
         }
         else {
             return;
@@ -2645,11 +2645,11 @@ public class BaseGamePlayerController : GameActor {
         // If this is an enemy see if we should attack
      
         float attackRange = 10f;  // wihtin 6 yards
-        bool runUpdate = false;
+        //bool runUpdate = false;
 
         if(currentTimeBlock + actionInterval < Time.time) {
             currentTimeBlock = Time.time;
-            runUpdate = true;
+           // runUpdate = true;
         }
      
         if(controllerState == GamePlayerControllerState.ControllerAgent

@@ -23,7 +23,7 @@ public class UIPanelDialogRPGObject : UIPanelBase {
 
     public UISlider sliderValue;
 
-    public void Awake() {
+    public virtual void Awake() {
 
     }
 
@@ -100,7 +100,7 @@ public class UIPanelDialogRPGObject : UIPanelBase {
         HideContent();
     }
 
-    public void Update() {
+    public virtual void Update() {
 
     }
  
