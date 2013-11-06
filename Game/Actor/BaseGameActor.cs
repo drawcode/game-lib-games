@@ -69,7 +69,7 @@ public class BaseGameActor : MonoBehaviour {
 		return false;
 	}
 	
-	void CheckAnimationState() {
+	public virtual void CheckAnimationState() {
 		if(isJumping != lastJumping) {
 			lastJumping = isJumping;
 			PlayJump();
@@ -87,21 +87,18 @@ public class BaseGameActor : MonoBehaviour {
 		
 	}
 	
-	void CheckMoving() {
+	public virtual void CheckMoving() {
 		isMoving = false;
 		LogUtil.Log("isMoving:" + isMoving);
 	}
 	
-	void CheckJumping() {
+	public virtual void CheckJumping() {
 		isJumping = false;
 		lastJumping = false;
 		LogUtil.Log("isJumping:" + isJumping);
 	}
 	
-	
-	
-	
-	void Update() {
+	public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
