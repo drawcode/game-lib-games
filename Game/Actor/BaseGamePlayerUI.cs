@@ -24,15 +24,15 @@ public class BaseGamePlayerUI : MonoBehaviour {
     public float horizontalSpeed = 2.0f;
     public float verticalSpeed = 2.0f;
 
-    float h = 0;
-    float v = 0;
-    float u = 0;
+    public float h = 0;
+    public float v = 0;
+    public float u = 0;
 	
-	void Start() {
+	public virtual void Start() {
 		
 	}
 	
-	void RunAnimations() {
+	public virtual void RunAnimations() {
 		foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
 			anim.SetFloat("speed", v);
 			anim.SetFloat("strafe", h);
@@ -45,7 +45,7 @@ public class BaseGamePlayerUI : MonoBehaviour {
 		}
 	}
 	
-    void Update() {
+    public virtual void Update() {
 
         //if(Application.isEditor && true == false) {
     	//	if(Input.GetAxis("Horizontal") >= 0f

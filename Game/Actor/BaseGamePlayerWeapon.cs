@@ -8,25 +8,25 @@ using Engine.Utility;
 
 using UnityEngine;
 
-public class BaseGamePlayerWeapon : GameActor
-{
-	public Vector3 direction = Vector3.left;
-	
-	public List<GameObject> currentItems = new List<GameObject>();
-	
-	public bool isLoaded = true;
-	public bool isShooting = false;
-	public bool isAuto = false;
-	public bool useGameObjectProjectile = false;
-	
-	public ParticleSystem particleSystemAttackBlast1;
-	public ParticleSystem particleSystemAttackBlast2;
-	public ParticleSystem particleSystemAttackBlast3;	
-	
-	public ParticleSystem particleSystemAttackProjectile1;
-	public ParticleSystem particleSystemAttackProjectile2;
-		
-	void Awake() {
+public class BaseGamePlayerWeapon : GameActor {
+
+    public Vector3 direction = Vector3.left;
+    
+    public List<GameObject> currentItems = new List<GameObject>();
+    
+    public bool isLoaded = true;
+    public bool isShooting = false;
+    public bool isAuto = false;
+    public bool useGameObjectProjectile = false;
+
+    public ParticleSystem particleSystemAttackBlast1;
+    public ParticleSystem particleSystemAttackBlast2;
+    public ParticleSystem particleSystemAttackBlast3;
+    
+    public ParticleSystem particleSystemAttackProjectile1;
+    public ParticleSystem particleSystemAttackProjectile2;
+
+	public virtual void Awake() {
 		
 	}
 	
@@ -55,7 +55,7 @@ public class BaseGamePlayerWeapon : GameActor
 		}
 	}
 	
-	public void Load() {
+	public virtual void Load() {
 		currentItems = new List<GameObject>();
 		
 		LogUtil.Log("GamePlayerWeapon::Load:" + currentItems);
@@ -72,7 +72,7 @@ public class BaseGamePlayerWeapon : GameActor
 		// Destroy( bullet.gameObject );
 	}
 	
-	public void PlayParticleSystem(ParticleSystem particles) {
+	public virtual void PlayParticleSystem(ParticleSystem particles) {
 		if(particles != null) {
 			//if(!particles.isPlaying) {
 				particles.Play(true);
@@ -81,7 +81,7 @@ public class BaseGamePlayerWeapon : GameActor
 		}
 	}
 	
-	public void AttackEffects() {
+	public virtual void AttackEffects() {
 		
 		PlayParticleSystem(particleSystemAttackBlast1);
 		PlayParticleSystem(particleSystemAttackBlast2);
@@ -91,7 +91,7 @@ public class BaseGamePlayerWeapon : GameActor
 		PlayParticleSystem(particleSystemAttackProjectile2);
 	}
 	
-	public void Attack() {		
+	public virtual void Attack() {
 		AttackEffects();
 		PlayAttackSound();
 
@@ -100,22 +100,22 @@ public class BaseGamePlayerWeapon : GameActor
 
 	}
 
-	public void PlayAttackSound() {
+	public virtual void PlayAttackSound() {
 
 		GameAudio.PlayEffect(transform, "shotgun_shot2");
 		Invoke("PlayAttackPostSound", .5f);
 	}
 
-	public void PlayAttackPrepareSound() {
+	public virtual void PlayAttackPrepareSound() {
 
 	}
 
 
-	public void PlayAttackPostSound() {
+	public virtual void PlayAttackPostSound() {
 		GameAudio.PlayEffect(transform, "shotgun_load2");
 	}
 	
-	public void AttackPrimary() {
+	public virtual void AttackPrimary() {
 		
 		if(!useGameObjectProjectile) {
 		
@@ -190,7 +190,7 @@ public class BaseGamePlayerWeapon : GameActor
 		}
 	}
 	
-	void Update() {
+	public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
@@ -201,31 +201,31 @@ public class BaseGamePlayerWeapon : GameActor
 		}
 	}
 		
-	//void FixedUpdate () {
+	//public virtual void FixedUpdate () {
 	//
 	//}
 	
-	//void OnTriggerEnter(Collider collider) {
+	//public virtual void OnTriggerEnter(Collider collider) {
 	//
 	//}
 	
-	//void OnTriggerStay(Collider collider) {
+	//public virtual void OnTriggerStay(Collider collider) {
 	//
 	//}
 	
-	//void OnTriggerExit(Collider collider) {
+	//public virtual void OnTriggerExit(Collider collider) {
 	//
 	//}
 
-	//void OnCollisionEnter(Collision collision) {
+	//public virtual void OnCollisionEnter(Collision collision) {
 	//
 	//}
 	
-	//void OnCollisionStay(Collision collision) {
+	//public virtual void OnCollisionStay(Collision collision) {
 	//
 	//}
 		
-	//void OnCollisionExit(Collision collision) {
+	//public virtual void OnCollisionExit(Collision collision) {
 	//
 	//}
 	

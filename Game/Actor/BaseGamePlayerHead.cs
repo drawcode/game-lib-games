@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class BaseGamePlayerHead : MonoBehaviour {
 	
-	void Start() {
-	}
+	public virtual void Start() {
+
+    }
 	
 }
 

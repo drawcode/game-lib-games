@@ -6,15 +6,15 @@ using UnityEngine;
 
 using Engine.Utility;
 
-public class BaseGamePlayerProjectile : GameActor
-{
+public class BaseGamePlayerProjectile : GameActor {
+
 	public Vector3 direction = new Vector3(1f, 1f, 0f);
 	public float speed = 100;
 	public float liveTime = 5f;
 	
 	public GameObject projectileObject;
 	
-	void Awake() {
+	public virtual void Awake() {
 		Invoke("DestroyMe", liveTime);
 	}
 	
@@ -27,25 +27,25 @@ public class BaseGamePlayerProjectile : GameActor
 		
 	}
 	
-	public void Launch() {
+	public virtual void Launch() {
 		if(projectileObject != null) {
 			LogUtil.Log("GameProjectile::Launch::" + projectileObject);
 			rigidbody.AddForce(direction * speed);
 		}
 	}
 	
-	void Update() {
+	public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
         }
 	}
 		
-	//void FixedUpdate () {
+	//public virtual void FixedUpdate () {
 	//
 	//}
 	
-	void DestroyMe() {
+	public virtual void DestroyMe() {
 		ObjectPoolManager.destroyPooled(gameObject);
 	}
 	

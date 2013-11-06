@@ -15,21 +15,21 @@ public class BaseGamePlayerControllerAsset : MonoBehaviour {
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 5.0f;
     
-    void Start() {
+    public virtual void Start() {
     
     }
     
-    public void PlayOneShot(Animator animator, string paramName) {
+    public virtual void PlayOneShot(Animator animator, string paramName) {
         StartCoroutine(PlayOneShotCo(animator, paramName));
     }
     
-    public IEnumerator PlayOneShotCo ( Animator animator, string paramName ) {  
+    public virtual IEnumerator PlayOneShotCo ( Animator animator, string paramName ) {
         animator.SetBool( paramName, true );
         yield return null;
         animator.SetBool( paramName, false );
     }
     
-    void RunAnimations() {
+    public virtual void RunAnimations() {
         //foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
         //    anim.SetFloat("speed", v);
         //    anim.SetFloat("strafe", h);
@@ -42,7 +42,7 @@ public class BaseGamePlayerControllerAsset : MonoBehaviour {
         //}
     }
     
-    void Update() {
+    public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;

@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using Engine.Animation;
 using UnityEngine;
 
-public class BaseGamePlayerInventory : GameActor
-{
-	
-	public Dictionary<string, GamePlayerWeapon> weapons = new Dictionary<string, GamePlayerWeapon>();
+public class BaseGamePlayerInventory : GameActor {
+
+    public Dictionary<string, GamePlayerWeapon> weapons = new Dictionary<string, GamePlayerWeapon>();
 	public Dictionary<string, GamePlayerItem> items = new Dictionary<string, GamePlayerItem>();
 			
-	void Awake() {
+	public virtual void Awake() {
 		
 	}
 	

@@ -32,51 +32,51 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
     public bool canJump = true;
     public bool canCapeFly = true;
     public bool canWallJump = false;
-    private float jumpRepeatTime = 0.05f;
-    private float wallJumpTimeout = 0.15f;
-    private float jumpTimeout = 0.15f;
-    private float groundedTimeout = 0.25f;
+    public float jumpRepeatTime = 0.05f;
+    public float wallJumpTimeout = 0.15f;
+    public float jumpTimeout = 0.15f;
+    public float groundedTimeout = 0.25f;
 
     // The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
-    private float lockCameraTimer = 0.0f;
+    public float lockCameraTimer = 0.0f;
 
     // The current move direction in x-z
-    private Vector3 moveDirection = Vector3.zero;
+    public Vector3 moveDirection = Vector3.zero;
     // The current vertical speed
-    private float verticalSpeed = 0.0f;
+    public float verticalSpeed = 0.0f;
     // The current x-z move speed
     public float moveSpeed = 0.0f;
 
     // The last collision flags returned from controller.Move
-    private CollisionFlags collisionFlags;
+    public CollisionFlags collisionFlags;
 
     // Are we jumping? (Initiated with jump button and not grounded yet)
-    private bool jumping = false;
-    private bool jumpingReachedApex = false;
+    public bool jumping = false;
+    public bool jumpingReachedApex = false;
 
     // Are we moving backwards (This locks the camera to not do a 180 degree spin)
-    private bool movingBack = false;
+    public bool movingBack = false;
     // Is the user pressing any keys?
     public bool isMoving = false;
     // When did the user start walking (Used for going into trot after a while)
-    private float walkTimeStart = 0.0f;
+    public float walkTimeStart = 0.0f;
     // Last time the jump button was clicked down
-    private float lastJumpButtonTime = -10.0f;
+    public float lastJumpButtonTime = -10.0f;
     // Last time we performed a jump
-    private float lastJumpTime = -1.0f;
-    //private float lastShootTime = -1.0f;
+    public float lastJumpTime = -1.0f;
+    //public float lastShootTime = -1.0f;
     // Average normal of the last touched geometry
-    private Vector3 wallJumpContactNormal;
-    //private float wallJumpContactNormalHeight;
+    public Vector3 wallJumpContactNormal;
+    //public float wallJumpContactNormalHeight;
 
     // the height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
-    private float lastJumpStartHeight = 0.0f;
+    public float lastJumpStartHeight = 0.0f;
     // When did we touch the wall the first time during this jump (Used for wall jumping)
-    private float touchWallJumpTime = -1.0f;
-    private Vector3 inAirVelocity = Vector3.zero;
-    private float lastGroundedTime = 0.0f;
+    public float touchWallJumpTime = -1.0f;
+    public Vector3 inAirVelocity = Vector3.zero;
+    public float lastGroundedTime = 0.0f;
 
-    //private float lean = 0.0f;
+    //public float lean = 0.0f;
 
     // The vertical/horizontal input axes and jump button from user input, synchronized over network
     public float verticalInput = 0.0f;
@@ -93,17 +93,19 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
  
     //Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     //Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
+
+    public NavMeshAgent navMeshAgent = null;
  
-    void Awake() {
+    public virtual void Awake() {
         moveDirection = transform.TransformDirection(Vector3.forward);
     }
  
     // Update is called once per frame
-    public void Start() {
+    public virtual void Start() {
         //base.Start();
     }
  
-    public void UpdateSmoothedMovementDirection() {
+    public virtual void UpdateSmoothedMovementDirection() {
      
         if(removing) {
             return;
@@ -222,7 +224,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         }
     }
 
-    public void ApplyWallJump() {
+    public virtual void ApplyWallJump() {
         // We must actually jump against a wall for this to work
         if(!jumping)
             return;
@@ -256,7 +258,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         SendMessage("DidWallJump", null, SendMessageOptions.DontRequireReceiver);
     }
 
-    public void ApplyJumping() {
+    public virtual void ApplyJumping() {
         // Prevent jumping too fast after each other
         if(lastJumpTime + jumpRepeatTime > Time.time)
             return;
@@ -272,7 +274,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         }
     }
  
-    public void ApplyAttack() {  
+    public virtual void ApplyAttack() {  
         bool doAttack = false;
      
         if(verticalInput2 != 0f || horizontalInput2 != 0f) {
@@ -285,7 +287,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         }
     }
  
-    public void ApplyDie(bool removeMe) {
+    public virtual void ApplyDie(bool removeMe) {
      
         /*
      bool doAttack = false;
@@ -300,7 +302,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         SendMessage("Die", SendMessageOptions.DontRequireReceiver);
     }
 
-    public void ApplyGravity() {
+    public virtual void ApplyGravity() {
         // Apply gravity
         if(getUserInput)
             jumpButton = Input.GetButton("Jump");
@@ -328,28 +330,26 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
             verticalSpeed -= gravity * Time.deltaTime;
     }
 
-    public float CalculateJumpVerticalSpeed(float targetJumpHeight) {
+    public virtual float CalculateJumpVerticalSpeed(float targetJumpHeight) {
         // From the jump height and gravity we deduce the upwards speed 
         // for the character to reach at the apex.
         return Mathf.Sqrt(2 * targetJumpHeight * gravity);
     }
 
-    public void Jump() {
+    public virtual void Jump() {
         jumpButton = true;
     }
     
-    public void JumpStop() {
+    public virtual void JumpStop() {
         jumpButton = false;
     }
     
-    NavMeshAgent navMeshAgent = null;
-    
-    public void DidJump() {
+    public virtual void DidJump() {
         
         if(navMeshAgent == null) {
             navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         }
-        
+
         if(navMeshAgent != null) {
             if(navMeshAgent.enabled) {
                 navMeshAgent.Stop(true);
@@ -365,7 +365,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
     }
  
     // Update is called once per frame
-    public void Update() {
+    public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
@@ -441,32 +441,32 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
      
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit) {
+    public virtual void OnControllerColliderHit(ControllerColliderHit hit) {
         //   Debug.DrawRay(hit.point, hit.normal);
         if(hit.moveDirection.y > 0.01)
             return;
         wallJumpContactNormal = hit.normal;
     }
 
-    public float GetSpeed() {
+    public virtual float GetSpeed() {
         return moveSpeed;
     }
 
-    public bool IsJumping() {
+    public virtual bool IsJumping() {
         return jumping;
     }
 
-    public bool IsGrounded() {
+    public virtual bool IsGrounded() {
         return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
     }
 
-    public void SuperJump(float height) {
+    public virtual void SuperJump(float height) {
         verticalSpeed = CalculateJumpVerticalSpeed(height);
         collisionFlags = CollisionFlags.None;
         DidJump();
     }
 
-    public void SuperJump(float height, Vector3 jumpVelocity) {
+    public virtual void SuperJump(float height, Vector3 jumpVelocity) {
         verticalSpeed = CalculateJumpVerticalSpeed(height);
         inAirVelocity = jumpVelocity;
 
@@ -474,43 +474,43 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         DidJump();
     }
 
-    public Vector3 GetDirection() {
+    public virtual Vector3 GetDirection() {
         return moveDirection;
     }
 
-    public bool IsMovingBackwards() {
+    public virtual bool IsMovingBackwards() {
         return movingBack;
     }
 
-    public float GetLockCameraTimer() {
+    public virtual float GetLockCameraTimer() {
         return lockCameraTimer;
     }
 
-    public float GetLean() {
+    public virtual float GetLean() {
         return 1.0f;
     }
 
-    public bool HasJumpReachedApex() {
+    public virtual bool HasJumpReachedApex() {
         return jumpingReachedApex;
     }
 
-    public bool IsGroundedWithTimeout() {
+    public virtual bool IsGroundedWithTimeout() {
         return lastGroundedTime + groundedTimeout > Time.time;
     }
 
-    public bool IsCapeFlying() {
+    public virtual bool IsCapeFlying() {
         // * When falling down we use capeFlyGravity (only when holding down jump)
         if(getUserInput)
             jumpButton = Input.GetButton("Jump");
         return canCapeFly && verticalSpeed <= 0.0 && jumpButton && jumping;
     }
 
-    public void Reset() {
+    public virtual void Reset() {
         gameObject.tag = "Player";
         ResetPlayState();
     }
  
-    public void ResetPlayState() {   
+    public virtual void ResetPlayState() {   
         enabled = true;
         removing = false;
         transform.position = Vector3.zero;

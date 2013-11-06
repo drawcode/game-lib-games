@@ -40,19 +40,19 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     public GamePlayerItemType type = GamePlayerItemType.Generic;
     public Vector3 positionEnd = Vector3.zero;
     public bool floaty = true;
-    private float bottom;
+    public float bottom;
     public Transform cameraTransform;
     public bool allowCollect = false;
     public bool isCollecting = false;
     public float collectRange = 3f;
         
-    void Awake() {
+    public virtual void Awake() {
         bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);
         bobHeight = Mathf.Clamp(bobHeight, 0, 100);             
         bottom = transform.position.y;
     }
         
-    private void Start() {
+    public virtual void Start() {
         if(cameraTransform == null) {
             if(Camera.main != null) {
                 cameraTransform = Camera.main.transform;
@@ -63,17 +63,17 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         RevealCollect(UnityEngine.Random.Range(0f, 2f));
     }
         
-    public void RevealCollect(float delay) {
+    public virtual void RevealCollect(float delay) {
         StartCoroutine(RevealCollectCo(delay));
     }
         
-    IEnumerator RevealCollectCo(float delay) {
+    public virtual IEnumerator RevealCollectCo(float delay) {
         yield return new WaitForSeconds(delay);
         PlayContent();
         allowCollect = true;
     }
         
-    public void PlayContent() {
+    public virtual void PlayContent() {
         HideAll(0f);
                 
         FadeInObject(containerRun, 3f);
@@ -81,7 +81,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         PlayParticleSystem(particleSystemRunObject);
     }
         
-    public void StopContent() {
+    public virtual void StopContent() {
         HideAll(0f); 
                 
         FadeInObject(containerPost, .1f);
@@ -89,7 +89,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         PlayParticleSystem(particleSystemPostObject);
     }
                 
-    public void CollectContent() {
+    public virtual void CollectContent() {
                 
         if(!isCollecting) {
             LogUtil.Log("CollectContent:Collect", true);
@@ -128,7 +128,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         RemoveContent();
     }
                 
-    public void ResetContent() {            
+    public virtual void ResetContent() {            
         HideAllNow();
                 
         FadeInObject(containerPre, 2f);
@@ -136,35 +136,35 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         PlayParticleSystem(particleSystemPreObject);
     }
         
-    public void PlayParticleSystem(GameObject go) {
+    public virtual void PlayParticleSystem(GameObject go) {
         StartCoroutine(PlayParticleSystemCo(go));
     }
         
-    IEnumerator PlayParticleSystemCo(GameObject go) {
+    public virtual IEnumerator PlayParticleSystemCo(GameObject go) {
         yield return new WaitForSeconds(.5f);
         go.PlayParticleSystem(true);
     }
         
-    public void StopParticleSystem(GameObject go) {
+    public virtual void StopParticleSystem(GameObject go) {
         StartCoroutine(StopParticleSystemCo(go));
     }
         
-    IEnumerator StopParticleSystemCo(GameObject go) {
+    public virtual IEnumerator StopParticleSystemCo(GameObject go) {
         yield return new WaitForSeconds(.5f);
         go.StopParticleSystem(true);
     }
         
-    public void RemoveContent() {
+    public virtual void RemoveContent() {
         StopContent();
         gameObject.DestroyDelayed(0f);
         //ObjectPoolManager.destroyPooled(gameObject);
     }
         
-    public void HideAll(float delay) {
+    public virtual void HideAll(float delay) {
         StartCoroutine(HideAllCo(delay));
     }
         
-    IEnumerator HideAllCo(float delay) {
+    public virtual IEnumerator HideAllCo(float delay) {
                 
         yield return new WaitForSeconds(delay);
                 
@@ -177,7 +177,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         particleSystemRunObject.StopParticleSystem(true);
     }
         
-    public void HideAllNow() {
+    public virtual void HideAllNow() {
         FadeOutObjectNow(containerPre);
         FadeOutObjectNow(containerRun);
         FadeOutObjectNow(containerPost);
@@ -187,11 +187,11 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         particleSystemRunObject.StopParticleSystem(true);
     }
         
-    public void FadeInObject(GameObject go, float delay) {
+    public virtual void FadeInObject(GameObject go, float delay) {
         StartCoroutine(FadeInObjectCo(go, delay));
     }
         
-    IEnumerator FadeInObjectCo(GameObject go, float delay) {
+    public virtual IEnumerator FadeInObjectCo(GameObject go, float delay) {
                 
         yield return new WaitForSeconds(delay);
                 
@@ -204,7 +204,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         }
     }
         
-    public void FadeOutObject(GameObject go) {
+    public virtual void FadeOutObject(GameObject go) {
                 
         if(go != null) {                        
             Debug.Log("FadeOutObject:" + go.name);
@@ -214,7 +214,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         }
     }
         
-    public void FadeOutObjectNow(GameObject go) {
+    public virtual void FadeOutObjectNow(GameObject go) {
         if(go != null) {                        
             Debug.Log("FadeOutObjectNow:" + go.name);
             iTween.FadeTo(go, 0f, 0f);
@@ -222,37 +222,37 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         }
     }
         
-    public void ShowObject(GameObject go) {
+    public virtual void ShowObject(GameObject go) {
         if(go != null) {
             go.Show();
         }
     }
         
-    public void HideObjectDelayed(GameObject go, float delay) {
+    public virtual void HideObjectDelayed(GameObject go, float delay) {
         StartCoroutine(HideObjectCo(go, delay));
     }
 
-    public IEnumerator HideObjectCo(GameObject go, float delay) {
+    public virtual IEnumerator HideObjectCo(GameObject go, float delay) {
         yield return new WaitForSeconds(delay);
         if(go != null) {
             go.Hide();
         }
     }
         
-    public void HideObject(GameObject go) {
+    public virtual void HideObject(GameObject go) {
         if(go != null) {
             go.Hide();
         }
     }
         
     // Update is called once per frame
-    void FixedUpdate() {
+    public virtual void FixedUpdate() {
         if(cameraTransform != null) {
             //transform.LookAt(cameraTransform);
         }
     }
         
-    public GamePlayerController GetController(Transform transform) {
+    public virtual GamePlayerController GetController(Transform transform) {
         if(transform != null) {
             GamePlayerController gamePlayerController = transform.GetComponentInChildren<GamePlayerController>();
             if(gamePlayerController != null) {
@@ -262,21 +262,21 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         return null;
     }
                 
-    void UpdateCollect() {
+    public virtual void UpdateCollect() {
 
-    GameObject go = GameController.CurrentGamePlayerController.gameObject;
+        GameObject go = GameController.CurrentGamePlayerController.gameObject;
 
-    if(go != null) {
+        if(go != null) {
+    
+            if(Vector3.Distance(
+                go.transform.position,
+                transform.position)
+                    <= collectRange) {
+                    //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
 
-        if(Vector3.Distance(
-            go.transform.position,
-            transform.position)
-                <= collectRange) {
-                //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
-
-                GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
-
-                if(gamePlayerController != null && !gamePlayerController.dying) {
+                    GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+    
+                    if(gamePlayerController != null && !gamePlayerController.dying) {
 
                     if(gamePlayerController.IsPlayerControlled) {
                         CollectContent();
@@ -286,7 +286,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         }
     }
                 
-    public void UpdateBounds() {
+    public virtual void UpdateBounds() {
         if(GameController.ShouldUpdateBounds() && !isCollecting) {
             if(!GameController.CheckBounds(transform.position)) {
                 RemoveContent();
@@ -296,7 +296,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         
     bool handleClick = false;
         
-    public void Update() {
+    public virtual void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
@@ -374,19 +374,19 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         }
     }
                 
-    //void OnTriggerEnter(Collider collider) {
+    //public virtual void OnTriggerEnter(Collider collider) {
     //
     //}
         
-    //void OnTriggerStay(Collider collider) {
+    //public virtual void OnTriggerStay(Collider collider) {
     //
     //}
         
-    //void OnTriggerExit(Collider collider) {
+    //public virtual void OnTriggerExit(Collider collider) {
     //
     //}
         
-    void OnCollisionEnter(Collision collision) {
+    public virtual void OnCollisionEnter(Collision collision) {
         //// foreach (ContactPoint contact in collision.contacts) {
         //Debug.DrawRay(contact.point, contact.normal, Color.white);
         //LogUtil.Log("GamePlayerItem:OnCollisionEnter:", contact.otherCollider.transform.name);
@@ -417,11 +417,11 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         //    audio.Play();
     }
         
-    //void OnCollisionStay(Collision collision) {
+    //public virtual void OnCollisionStay(Collision collision) {
     //
     //}
                 
-    //void OnCollisionExit(Collision collision) {
+    //public virtual void OnCollisionExit(Collision collision) {
     //
     //}
         

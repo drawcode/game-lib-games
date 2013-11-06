@@ -16,13 +16,13 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 	public GamePlayerNavMeshAgentState agentState = GamePlayerNavMeshAgentState.PURSUE;
 	
 	// Use this for initialization
-	public void Start() {
+	public virtual void Start() {
 		agent = GetComponent<NavMeshAgent>();
 		nextDestination = transform.position;
 		NavigateToDestination();
 	}	
 	
-	public void StopAgent() {
+	public virtual void StopAgent() {
 		if(agent != null) {
             agent.Stop(true);
 			agentState = GamePlayerNavMeshAgentState.STOP;
@@ -30,7 +30,7 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 		}
 	}
 	
-	public void StartAgent() {
+	public virtual void StartAgent() {
 		if(agent != null) {
             agent.Resume();
 			agentState = GamePlayerNavMeshAgentState.PURSUE;
@@ -38,7 +38,7 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 		}
 	}
 	
-	public void NavigateToDestination() {				
+	public virtual void NavigateToDestination() {				
 		
 		if(agent != null) {
 			
@@ -51,7 +51,7 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 		}
 	}
 		
-	public Vector3 GetRandomLocation() {
+	public virtual Vector3 GetRandomLocation() {
 		return new Vector3(UnityEngine.Random.Range(-30, -30), 0, UnityEngine.Random.Range(-30, 30));
 	}
 	
@@ -60,7 +60,7 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 	//}
 	
 	// Update is called once per frame
-	public void Update () {
+	public virtual void Update () {
 
         if(!GameConfigs.isGameRunning) {
             StopAgent();
