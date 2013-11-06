@@ -32,11 +32,7 @@ public class BaseGameAudioEffects {
 	public static string audio_loop_game_2 = "audio_loop_game_2";
 	public static string audio_loop_game_3 = "audio_loop_game_3";
 	public static string audio_loop_game_4 = "audio_loop_game_4";
-	
-	
-	public static string audio_loop_music_grim_graveyard = "music-grim-graveyard";
-	
-	
+		
 	// Game sounds
 	public static string audio_effect_bike_1 = "audio_effect_bike_1";
 }

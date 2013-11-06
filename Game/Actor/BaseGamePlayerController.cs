@@ -2767,7 +2767,7 @@ public class BaseGamePlayerController : GameActor {
         HandlePlayerAliveStateLate();
     }
  
-    public virtual void Update() {
+    public override void Update() {
      
         if(!initialized) {
             return;

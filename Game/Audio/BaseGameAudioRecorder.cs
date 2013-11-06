@@ -55,7 +55,7 @@ public class BaseGameAudioRecorder {
 	
 	public Dictionary<string, AudioClip> loadedClips;
 		
-	public static BaseGameAudioRecorder Instance {
+	public static BaseGameAudioRecorder BaseInstance {
 	  get {
 	     if (instance == null) {
 	        lock (syncRoot) {

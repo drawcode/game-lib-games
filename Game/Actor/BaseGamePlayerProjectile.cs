@@ -34,7 +34,7 @@ public class BaseGamePlayerProjectile : GameActor {
 		}
 	}
 	
-	public virtual void Update() {
+	public override void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
