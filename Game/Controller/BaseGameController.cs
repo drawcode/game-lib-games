@@ -43,13 +43,13 @@ public enum GameControllerType {
     Perspective3D
 }
 
-//public class GamePlayerMessages {
+public class BaseGamePlayerMessages {
 
-//    public static string PlayerAnimation = "playerAnimation";
-//    public static string PlayerAnimationSkill = "skill";
-//    public static string PlayerAnimationAttack = "attack";
-//    public static string PlayerAnimationFall = "fall";
-//}
+    public static string PlayerAnimation = "playerAnimation";
+    public static string PlayerAnimationSkill = "skill";
+    public static string PlayerAnimationAttack = "attack";
+    public static string PlayerAnimationFall = "fall";
+}
 
 public enum GameStateGlobal {
     GameNotStarted,

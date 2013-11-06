@@ -56,6 +56,11 @@ public class BaseGamePlayerRuntimeData {
     public double hitCount = 0;
     public double hitLimit = 10;
     public double mass = 1;
+	
+    public double ammo = 10;
+    public double collectedAmmo = 0;
+    public double saves = 0;
+    public double savesLaunched = 0;
 }
 
 public class BaseGamePlayerRuntimeRPGData {
@@ -208,6 +213,21 @@ public class BaseGamePlayerController : GameActor {
     public float lastRPGModTime = 0f;
 
     bool playerSpin = false;
+	
+	public GameCameraSmoothFollow gameCameraSmoothFollow;
+	public GameCameraSmoothFollow gameCameraSmoothFollowGround;
+	public Vectrosity.VectorLine lineAim = null;
+	
+	public Vector3 positionStart = Vector3.zero;
+	public Vector3 positionRelease = Vector3.zero;
+	public Vector3 positionLastTouch = Vector3.zero;
+	
+	public Vector3 currentStartPoint = Vector3.zero;
+	public Vector3 currentEndPoint = Vector3.zero;
+	
+	public Vector3 currentPosition = Vector3.zero;
+	public Vector3 currentAimPosition = Vector3.zero;
+	public ParticleSystem gamePlayerEffectAim;
  
     // --------------------------------------------------------------------
     // INIT
@@ -1895,26 +1915,183 @@ public class BaseGamePlayerController : GameActor {
      }
      */
     }
+	
+	public virtual void ShootOne() {
+             
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+		
+		Shoot(1);		
+	}
+	
+	public virtual void Shoot(int number) {
+             
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+		
+		AnimateShoot();	
+		
+		//GameController.ProcessStatShot();
+		
+		runtimeData.savesLaunched += number;
+		Messenger<double>.Broadcast(GameMessages.launch, number);
+		Messenger<double>.Broadcast(GameMessages.ammo, -number);
+	}
+		
+	public virtual void FindGamePlayerCamera() {
+		if(gameCameraSmoothFollow == null || gameCameraSmoothFollowGround == null) {
+			foreach(GameCameraSmoothFollow cam in ObjectUtil.FindObjects<GameCameraSmoothFollow>()) {
+				if(cam.name.Contains("Ground")) {
+					gameCameraSmoothFollowGround = cam;
+				}
+				else {
+					gameCameraSmoothFollow = cam;
+				}
+			}
+		}
+	}	
+	
+	public virtual void UpdateAim(float x, float y) {
+		
+		FindGamePlayerCamera();
+		
+		GameObject model = gamePlayerModelHolder;
+		float cameraAdjustment = 8f;
+		float axisDeadZone = .05f;
+		
+		if(Math.Abs(x) > axisDeadZone
+			&& Math.Abs(y) > axisDeadZone) {
+			
+			currentPosition = model.transform.position;
+			
+			currentAimPosition = -currentPosition
+				.WithX(currentPosition.x + (x * 100))
+				.WithY(currentPosition.y + (y * 100));
+			
+			//float angle = Vector3.Angle(currentPosition, currentAimPosition);
+			float dist = Vector3.Distance(currentPosition, currentAimPosition);
+			
+			model.transform.localScale = Mathf.Clamp(dist * .1f, .5f, 1.3f) * Vector3.one;	
+			
+			Vector3 lookAtPos = model.transform.position + (currentAimPosition * 10);
+			
+			model.transform.LookAt(model.transform.position + (currentAimPosition * 10));
+			
+			float amount = Mathf.Abs(dist);
+			
+			if(gamePlayerEffectAim != null) {
+				gamePlayerEffectAim.enableEmission = true;
+				gamePlayerEffectAim.emissionRate = amount * 2;
+				gamePlayerEffectAim.startLifetime = amount / 400f;
+				gamePlayerEffectAim.startSpeed = amount;
+				gamePlayerEffectAim.Play();
+			}
+			
+			//lineAim..SetLine3D(Color.white, model.transform.position, lookAtPos);
+			
+			//LogUtil.Log("UpdateAim:currentAimPosition:", currentAimPosition);
+			
+			if(gameCameraSmoothFollow != null) {
+				gameCameraSmoothFollow.offset.x = 
+					(gameCameraSmoothFollow.offsetInitial.x + -(x * cameraAdjustment));
+				
+				gameCameraSmoothFollow.offset.y = 
+					(gameCameraSmoothFollow.offsetInitial.y + -(y * cameraAdjustment));
+				
+				gameCameraSmoothFollow.SetZoom(-((x + y) * cameraAdjustment));
+			}
+			if(gameCameraSmoothFollowGround != null) {
+				gameCameraSmoothFollowGround.offset.x = 
+					(gameCameraSmoothFollowGround.offsetInitial.x + -(x * cameraAdjustment));
+				
+				gameCameraSmoothFollowGround.offset.y = 
+					(gameCameraSmoothFollowGround.offsetInitial.y + -(y * cameraAdjustment));
+				
+				gameCameraSmoothFollowGround.SetZoom(-((x + y) * cameraAdjustment));
+			}			
+			
+		}
+		else {					
+			//AnimateShoot();			
+			model.transform.localScale = Vector3.one;
+			model.transform.rotation = gamePlayerHolder.transform.rotation;
+			//model.transform.LookAt(gamePlayerModelHolder.transform.position);
+			
+			if(gamePlayerEffectAim != null) {
+				gamePlayerEffectAim.enableEmission = false;
+				gamePlayerEffectAim.emissionRate = 1;
+				gamePlayerEffectAim.Stop();
+			}
+			
+			if(gameCameraSmoothFollow != null) {
+				gameCameraSmoothFollow.Reset();
+			}
+			if(gameCameraSmoothFollowGround != null) {
+				gameCameraSmoothFollowGround.Reset();
+			}
+		}
+	}
+	
+	public virtual void AnimateShoot() {
+		
+		if(gamePlayerModelHolderModel != null) {
+			foreach(Animation anim in gamePlayerModelHolderModel.GetComponentsInChildren<Animation>()) {
+				if(anim != null) {
+					//gamePlayerControllerObject.animation.Play("emo_06");
+					//anim["emo_09"].normalizedSpeed = 2f;
+					anim["emo_09"].normalizedSpeed = 2f;
+					anim.Play("emo_09", PlayMode.StopAll);
+					//anim.Blend("emo_08");
+					//gamePlayerControllerObject.animation.Play("emo_10");
+					//gamePlayerControllerObject.animation.CrossFade("emo_09");
+					break;
+				}
+			}
+		}
+	}
 
-    public virtual void Scores(double scoresAdd) {
+    public virtual void Scores(double valAdd) {
 
         if(!GameConfigs.isGameRunning) {
             return;
         }
 
         //runtimeData.scores += scoresAdd;
-        Messenger<double>.Broadcast(GameMessages.scores, scoresAdd);
+        Messenger<double>.Broadcast(GameMessages.scores, valAdd);
     }
  
-    public virtual void Score(double scoreAdd) {
+    public virtual void Score(double valAdd) {
              
         if(!GameConfigs.isGameRunning) {
             return;
         }
      
         //runtimeData.score += scoreAdd;
-        Messenger<double>.Broadcast(GameMessages.score, scoreAdd);
+        Messenger<double>.Broadcast(GameMessages.score, valAdd);
     }
+		
+	public virtual void Ammo(double valAdd) {
+             
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+		
+		runtimeData.ammo += valAdd;
+		runtimeData.collectedAmmo += valAdd;
+		Messenger<double>.Broadcast(GameMessages.ammo, valAdd);
+	}
+	
+	public virtual void Save(double valAdd) {
+             
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+		
+		runtimeData.saves += valAdd;
+		Messenger<double>.Broadcast(GameMessages.save, valAdd);
+	}
  
     public virtual void Tackle(GamePlayerController gamePlayerControllerTo) {
         Tackle(gamePlayerControllerTo, 1f);
