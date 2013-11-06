@@ -43,13 +43,13 @@ public enum GameControllerType {
     Perspective3D
 }
 
-public class GamePlayerMessages {
+//public class GamePlayerMessages {
 
-    public static string PlayerAnimation = "playerAnimation";
-    public static string PlayerAnimationSkill = "skill";
-    public static string PlayerAnimationAttack = "attack";
-    public static string PlayerAnimationFall = "fall";
-}
+//    public static string PlayerAnimation = "playerAnimation";
+//    public static string PlayerAnimationSkill = "skill";
+//    public static string PlayerAnimationAttack = "attack";
+//    public static string PlayerAnimationFall = "fall";
+//}
 
 public enum GameStateGlobal {
     GameNotStarted,
@@ -89,12 +89,15 @@ public class GameItemDataItem {
     public string prefabCode = "GamePlayerItemCoin";
 }
 
-public class GameMessages {
-    public static string scores = "game-shooter-scores";
-    public static string score = "game-shooter-score";
-    public static string ammo = "game-shooter-ammo";
-    public static string coin = "game-shooter-coin";
-    public static string state = "game-shooter-state";
+public class BaseGameMessages {
+    public static string scores = "game-shooter-scores";	
+	public static string score = "game-shooter-score";
+	public static string ammo = "game-shooter-ammo";
+	public static string save = "game-shooter-save";
+	public static string shot = "game-shooter-shot";
+	public static string coin = "game-shooter-coin";
+	public static string launch = "game-shooter-launch";
+	public static string state = "game-shooter-state";
 }
 
 public class GameStatCodes {
@@ -105,7 +108,7 @@ public class GameStatCodes {
     public static string score = "score";
 }
 
-public class GameGameRuntimeData {
+public class BaseGameGameRuntimeData {
     public double currentLevelTime = 0;
     public double timeRemaining = 90;
     public double coins = 0;
@@ -114,11 +117,11 @@ public class GameGameRuntimeData {
 
     public bool outOfBounds = false;
     
-    public GameGameRuntimeData() {
+    public BaseGameGameRuntimeData() {
         Reset();
     }
     
-    public void Reset() {
+    public virtual void Reset() {
         currentLevelTime = 0;
         timeRemaining = 90;
         coins = 0;
@@ -128,7 +131,7 @@ public class GameGameRuntimeData {
         ResetTimeDefault();
     }
     
-    public bool timeExpired {
+    public virtual bool timeExpired {
         get {
             if(timeRemaining <= 0) {
                 timeRemaining = 0;
@@ -138,21 +141,21 @@ public class GameGameRuntimeData {
         }
     }
     
-    public void SubtractTime(double delta) {
+    public virtual void SubtractTime(double delta) {
         if(timeRemaining > 0) {
             timeRemaining -= delta;
         }
     }
     
-    public void ResetTimeDefault() {
+    public virtual void ResetTimeDefault() {
         timeRemaining = 90;
     }
     
-    public void ResetTime(double timeTo) {
+    public virtual void ResetTime(double timeTo) {
         timeRemaining = timeTo;
     }
     
-    public void AppendTime(double timeAppend) {
+    public virtual void AppendTime(double timeAppend) {
         timeRemaining += timeAppend;
     }
 }
