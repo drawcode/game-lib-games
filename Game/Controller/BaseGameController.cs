@@ -2141,6 +2141,13 @@ public class BaseGameController : MonoBehaviour {
             // move goal markers
         }
     }
+    // -------------------------------------------------------
+
+    // GAME PLAYER GOAL ZONE COUNTDOWN
+
+    public virtual void gamePlayerGoalZoneCountdown(GameObject goalObject) {
+
+    }
 
     // -------------------------------------------------------
 

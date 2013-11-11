@@ -988,18 +988,8 @@ public class BaseGamePlayerController : GameActor {
                 GameController.GamePlayerOutOfBounds();
             }
             else if(colliderName.Contains("GameZone")) {
-                if(colliderName.Contains("GameZone5")) {
-                    GameAudioController.Instance.PlayYard5();
-                }
-                else if(colliderName.Contains("GameZone10")) {
-                    GameAudioController.Instance.PlayYard10();
-                }
-                else if(colliderName.Contains("GameZone15")) {
-                    GameAudioController.Instance.PlayYard15();
-                }
-                else if(colliderName.Contains("GameZone20")) {
-                    GameAudioController.Instance.PlayYard20();
-                }
+                LogUtil.Log("GameZone: " + colliderName);
+                GameController.GamePlayerGoalZoneCountdown(collider.transform.gameObject);
             }
         }
         
