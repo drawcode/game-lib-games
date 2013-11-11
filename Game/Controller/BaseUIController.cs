@@ -1831,7 +1831,7 @@ public class BaseUIController : MonoBehaviour {
 
     // ------------------------------------------------------------
     // GAME MODE - TRAINING MODE
-
+	
     public virtual void showGameModeTrainingMode() {
         showUIPanel(
             typeof(GameUIPanelGameModeTrainingMode),

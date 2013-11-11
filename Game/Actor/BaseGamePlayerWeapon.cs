@@ -201,33 +201,33 @@ public class BaseGamePlayerWeapon : GameActor {
 		}
 	}
 		
-	//public virtual void FixedUpdate () {
-	//
-	//}
+	public virtual void FixedUpdate () {
 	
-	//public virtual void OnTriggerEnter(Collider collider) {
-	//
-	//}
+	}
 	
-	//public virtual void OnTriggerStay(Collider collider) {
-	//
-	//}
+	public virtual void OnTriggerEnter(Collider collider) {
 	
-	//public virtual void OnTriggerExit(Collider collider) {
-	//
-	//}
+	}
+	
+	public virtual void OnTriggerStay(Collider collider) {
+	
+	}
+	
+	public virtual void OnTriggerExit(Collider collider) {
+	
+	}
 
-	//public virtual void OnCollisionEnter(Collision collision) {
-	//
-	//}
+	public virtual void OnCollisionEnter(Collision collision) {
 	
-	//public virtual void OnCollisionStay(Collision collision) {
-	//
-	//}
+	}
+	
+	public virtual void OnCollisionStay(Collision collision) {
+	
+	}
 		
-	//public virtual void OnCollisionExit(Collision collision) {
-	//
-	//}
+	public virtual void OnCollisionExit(Collision collision) {
+	
+	}
 	
 }
 
