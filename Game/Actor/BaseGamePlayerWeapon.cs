@@ -25,6 +25,8 @@ public class BaseGamePlayerWeapon : GameActor {
     
     public ParticleSystem particleSystemAttackProjectile1;
     public ParticleSystem particleSystemAttackProjectile2;
+	
+	public GamePlayerController gamePlayerController;
 
 	public virtual void Awake() {
 		
@@ -36,7 +38,9 @@ public class BaseGamePlayerWeapon : GameActor {
 	
 	public override void Init() {
 		
-		// TODO swap with data
+		if(gamePlayerController == null) {
+			gamePlayerController = gameObject.FindTypeAbove<GamePlayerController>();
+		}
 				
 		Load();
 		
