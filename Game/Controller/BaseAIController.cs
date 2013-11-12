@@ -27,6 +27,7 @@ public class GameAIDirectorData {
     public float scale = .3f;
     public int randomCharacter = 1;
     public float currentSpawnAmount = .3f;
+    public string characterCode = "";
 
     public GameProfileRPGItem actorRPG;
 

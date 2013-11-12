@@ -353,6 +353,7 @@ public class UINotificationDisplay
 			QueuePoint("Point Here", "This is an point, do better!", 1);
 		}
   */
+
 	}
 	
 	public bool Paused {

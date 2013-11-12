@@ -19,6 +19,7 @@ public enum GamePlayerIndicatorType {
     color,
     goal,
     choice,
+    zombie,
     bot1,
     bot2
 }
@@ -208,7 +209,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
     
     public static void ResetIndicators(GameObject parentObject) {
         if(parentObject != null) {
-            parentObject.DestroyChildren();
+            parentObject.DestroyChildren(GameConfigs.usePooledIndicators);
         }
     }
 

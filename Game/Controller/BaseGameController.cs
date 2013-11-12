@@ -106,6 +106,7 @@ public class GameStatCodes {
     public static string shots = "shots";
     public static string destroyed = "destroyed";
     public static string score = "score";
+    public static string highScore = "high-score";
 }
 
 public class BaseGameGameRuntimeData {
@@ -1360,6 +1361,8 @@ public class BaseGameController : MonoBehaviour {
         GamePlayerController characterGamePlayerController
             = characterObject.GetComponentInChildren<GamePlayerController>();
 
+        characterGamePlayerController.LoadCharacter(characterType);
+
         characterGamePlayerController.transform.localScale
             = characterGamePlayerController.transform.localScale * character.scale;
 
@@ -2198,7 +2201,7 @@ public class BaseGameController : MonoBehaviour {
     
         yield return new WaitForEndOfFrame();
     
-        GamePlayerProgress.Instance.SetStatHigh(GameStatCodes.score, totalScore);
+        GamePlayerProgress.Instance.SetStatHigh(GameStatCodes.highScore, totalScore);
         
         GameUIPanelResults.Instance.UpdateDisplay(currentGamePlayerController.runtimeData, 0f);
         
