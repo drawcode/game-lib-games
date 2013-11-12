@@ -820,18 +820,24 @@ public class BaseUIController : MonoBehaviour {
         if(angleDiff > 320 || angleDiff <= 45) { // forwardish
             Debug.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Boost(forceVector, force * 1.2f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.boosts, 1f);
         }
         else if(angleDiff < 225 && angleDiff >= 135) { // backish
             Debug.Log("swipe controller: BACK :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Spin(forceVector, force * 1.8f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.spins, 1f);
         }
         else if(angleDiff > 45 && angleDiff < 135) { // rightish
             Debug.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeRight(forceVector, force * 2f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
         }
         else if(angleDiff <= 320 && angleDiff >= 225) { // leftish
             Debug.Log("swipe controller: LEFT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
         }
     }
 
@@ -2773,6 +2779,8 @@ public class BaseUIController : MonoBehaviour {
         if(gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
+
+        //gameContainerObject.Show();
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(0));
     }
  
@@ -2785,8 +2793,10 @@ public class BaseUIController : MonoBehaviour {
     public virtual void hideGameCanvas() {
 
         if(gameContainerObject != null) {
-            TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
+            TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(-3000));
         }
+
+        //gameContainerObject.Hide();
 
         //GameController.QuitGameRunning();
 

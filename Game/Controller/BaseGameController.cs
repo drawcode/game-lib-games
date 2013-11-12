@@ -100,13 +100,44 @@ public class BaseGameMessages {
 	public static string state = "game-shooter-state";
 }
 
-public class GameStatCodes {
-    public static string wins = "wins";
-    public static string losses = "losses";
-    public static string shots = "shots";
-    public static string destroyed = "destroyed";
+public class BaseGameStatCodes {
+    
+    public static string timesPlayed = "times-played";//
+    public static string timePlayed = "time-played";//
+    public static string timesPlayedAction = "times-played-action";//
+
+    // totals
+    public static string wins = "wins";//--
+    public static string losses = "losses";//--
+    public static string shots = "shots";//--
+    public static string destroyed = "destroyed";//--
+
     public static string score = "score";
+    public static string scores = "scores";//--
+    public static string evaded = "evaded";
+    public static string kills = "kills";
+    public static string deaths = "deaths";
+    public static string hits = "hits";
+    public static string hitsReceived = "hits-received";
+    public static string xp = "xp";
+    public static string coins = "coins";
+
+    public static string cuts = "cuts";//
+    public static string cutsLeft = "cuts-left";//
+    public static string cutsRight = "cuts-right";//
+    public static string boosts = "boosts";//
+    public static string spins = "spins";//
+
+    // highs
     public static string highScore = "high-score";
+    public static string highScores = "high-scores";
+    public static string highXP = "high-xp";
+
+    // lows
+
+    // absolute
+
+    // accumulate (total)
 }
 
 public class BaseGameGameRuntimeData {
@@ -136,9 +167,15 @@ public class BaseGameGameRuntimeData {
         get {
             if(timeRemaining <= 0) {
                 timeRemaining = 0;
-            return true;
+                return true;
             }
             return false;
+        }
+    }
+
+    public virtual bool localPlayerWin {
+        get {
+            return !timeExpired;
         }
     }
     
@@ -2076,12 +2113,21 @@ public class BaseGameController : MonoBehaviour {
     // GAME PLAYER BOUNDS
     
     public virtual void gamePlayerOutOfBounds() {
+
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         GameAudioController.Instance.PlayWhistle();
         GameAudioController.Instance.PlayOh();
         GameController.GameContentDisplay(GameContentDisplayTypes.gamePlayerOutOfBounds);
     }
 
     public virtual void gamePlayerOutOfBoundsDelayed(float delay) {
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         StartCoroutine(gamePlayerOutOfBoundsDelayedCo(delay));
     }
 
@@ -2182,35 +2228,59 @@ public class BaseGameController : MonoBehaviour {
     public virtual IEnumerator processLevelStatsCo() {
          
         yield return new WaitForSeconds(.5f);
-    
-        double score = currentGamePlayerController.runtimeData.score;
-    
-        //int ammo = runtimeData.ammo;
-        //double currentLevelTime = runtimeData.currentLevelTime;
-        //double ammoScore = ammo * 10;
-        double totalScore = score; //(ammoScore + score);// * currentLevelTime * .5f;
-    
-        //GameUIPanelResults.Instance.SetScore(score.ToString("N0"));
-        //GameUIPanelResults.Instance.SetAmmo(ammo.ToString("N0") + " x 10 = " + ammoScore.ToString("N0"));
-        //GameUIPanelResults.Instance.SetAmmoScore(ammoScore.ToString("N0"));
-        //GameUIPanelResults.Instance.SetLevelCode(runtimeData.levelCode);
-        //GameUIPanelResults.Instance.SetLevelDisplayName(runtimeData.levelCode);
-        //GameUIPanelResults.Instance.SetTotalScore(totalScore.ToString("N0"));
-    
-        GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.score, totalScore);
-    
+
+        // TOTAL SCORES
+
+        GamePlayerProgress.Instance.SetStatTotal(
+            GameStatCodes.score,
+            currentGamePlayerController.runtimeData.score);
+
+        GamePlayerProgress.Instance.SetStatTotal(
+            GameStatCodes.xp,
+            currentGamePlayerController.runtimeData.totalScoreValue);
+
         yield return new WaitForEndOfFrame();
-    
-        GamePlayerProgress.Instance.SetStatHigh(GameStatCodes.highScore, totalScore);
-        
+
+        // HIGH SCORES
+
+        GamePlayerProgress.Instance.SetStatHigh(
+            GameStatCodes.highScore,
+            currentGamePlayerController.runtimeData.score);
+
+        GamePlayerProgress.Instance.SetStatHigh(
+            GameStatCodes.highXP,
+            currentGamePlayerController.runtimeData.totalScoreValue);
+
+        GamePlayerProgress.Instance.SetStatHigh(
+            GameStatCodes.highScores,
+            currentGamePlayerController.runtimeData.scores);
+
+        yield return new WaitForEndOfFrame();
+
+        // WINS / LOSSES
+
+        if(runtimeData.localPlayerWin) {
+            GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.wins, 1f);
+        }
+        else {
+            GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.losses, 1f);
+        }
+
+        // HANDLE RPG
+
+        GameProfileRPGs.Current.AddCurrency(runtimeData.coins);
+
+        // TODO by skill/RPG
+
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(
+            currentGamePlayerController.runtimeData.totalScoreValue);
+
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(
+            -UnityEngine.Random.Range(.01f, .05f),
+            -UnityEngine.Random.Range(.01f, .05f));
+
         GameUIPanelResults.Instance.UpdateDisplay(currentGamePlayerController.runtimeData, 0f);
-        
-        //if(runtimeData.localPlayerWin) {
-        //  GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.wins, 1f);
-        //}
-        //else {
-        //  GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.losses, 1f);
-        //}
+
         yield return new WaitForEndOfFrame();
              
         GameController.EndLevelStats();
@@ -2252,12 +2322,14 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void startLevelStats() {
         GamePlayerProgress.Instance.ProcessProgressPack("default");
-        GamePlayerProgress.Instance.ProcessProgressAction("level-" + GameLevels.Current.code);
+        GamePlayerProgress.Instance.ProcessProgressAction(GameLevels.Current.code);
+        GamePlayerProgress.Instance.ProcessProgressAction(AppModes.Current.code);
     }
     
     public virtual void endLevelStats() {
         GamePlayerProgress.Instance.EndProcessProgressPack("default");
-        GamePlayerProgress.Instance.EndProcessProgressAction("level-" + GameLevels.Current.code);
+        GamePlayerProgress.Instance.EndProcessProgressAction(GameLevels.Current.code);
+        GamePlayerProgress.Instance.EndProcessProgressAction(AppModes.Current.code);
     }
 
 

@@ -61,6 +61,12 @@ public class BaseGamePlayerRuntimeData {
     public double collectedAmmo = 0;
     public double saves = 0;
     public double savesLaunched = 0;
+
+    public virtual float totalScoreValue {
+        get {
+            return (float)(score + (coins * 50) + (scores * 500));
+        }
+    }
 }
 
 public class BaseGamePlayerRuntimeRPGData {
