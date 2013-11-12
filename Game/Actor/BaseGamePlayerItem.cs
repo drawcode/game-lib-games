@@ -156,8 +156,8 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         
     public virtual void RemoveContent() {
         StopContent();
-        gameObject.DestroyDelayed(0f);
-        //ObjectPoolManager.destroyPooled(gameObject);
+        GameObjectHelper.DestroyGameObject(
+            gameObject, GameConfigs.usePooledItems);
     }
         
     public virtual void HideAll(float delay) {

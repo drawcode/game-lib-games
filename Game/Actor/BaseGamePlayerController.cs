@@ -636,21 +636,21 @@ public class BaseGamePlayerController : GameActor {
         if(prefabNameObjectItem != null) {
             // Remove all current characters
             foreach(Transform t in gamePlayerModelHolderModel.transform) {
-                //if(!initLoaded) {
-                //    initLoaded = true;
+                if(!initLoaded) {
+                    initLoaded = true;
                     Destroy(t.gameObject);
-                //}
-                //else {
-                //    ObjectPoolManager.destroyPooled(t.gameObject);
-                //}
+                }
+                else {
+
+                    GameObjectHelper.DestroyGameObject(
+                        t.gameObject, GameConfigs.usePooledGamePlayers);
+                }
             }
      
             yield return new WaitForEndOfFrame();
-         
-            GameObject gameObjectLoad = Instantiate(prefabNameObjectItem) as GameObject;
 
-            //GameObject gameObjectLoad =
-            //    ObjectPoolManager.createPooled(prefabNameObjectItem, Vector3.zero, Quaternion.identity);
+            GameObject gameObjectLoad = GameObjectHelper.CreateGameObject(
+                prefabNameObjectItem, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
 
             gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
             gameObjectLoad.transform.localScale = Vector3.one;
@@ -1144,26 +1144,23 @@ public class BaseGamePlayerController : GameActor {
                 navMeshAgent.enabled = true;
             }
         }
+
         ResetPosition();
+
         impact = Vector3.zero;
         dying = false;
         effectWarpEnabled = true;
         effectWarpEnd = 0f;
-
     }
  
     public virtual void Remove() {
-     
         if(!IsPlayerControlled) {
 
             foreach(Transform t in gamePlayerModelHolderModel.transform) {
-                //Destroy(t.gameObject);
-                ObjectPoolManager.destroyPooled(t.gameObject);
+                GameObjectHelper.DestroyGameObject(t.gameObject, GameConfigs.usePooledGamePlayers);
             }
 
-            Destroy(gameObject);
-
-            //ObjectPoolManager.destroyPooled(gameObject);
+            GameObjectHelper.DestroyGameObject(gameObject, GameConfigs.usePooledGamePlayers);
         }
     }
  
@@ -1967,7 +1964,7 @@ public class BaseGamePlayerController : GameActor {
 			
 			Vector3 lookAtPos = model.transform.position + (currentAimPosition * 10);
 			
-			model.transform.LookAt(model.transform.position + (currentAimPosition * 10));
+			model.transform.LookAt(lookAtPos);
 			
 			float amount = Mathf.Abs(dist);
 			

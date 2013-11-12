@@ -121,9 +121,9 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
         if(prefabIndicator != null) {
 
-            GameObject indicator = Instantiate(prefabIndicator, Vector3.zero, Quaternion.identity) as GameObject;
+            GameObject indicator = GameObjectHelper.CreateGameObject(
+                prefabIndicator, Vector3.zero, Quaternion.identity, GameConfigs.usePooledIndicators);
 
-            //GameObject indicator = ObjectPoolManager.createPooled(prefabIndicator, Vector3.zero, Quaternion.identity);
             indicator.transform.parent = parentObject.transform;
             indicator.ResetPosition();
     
@@ -169,9 +169,9 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
         if(prefabIndicator != null) {
 
-            GameObject indicator = Instantiate(prefabIndicator, Vector3.zero, Quaternion.identity) as GameObject;
+            GameObject indicator = GameObjectHelper.CreateGameObject(
+                prefabIndicator, Vector3.zero, Quaternion.identity, GameConfigs.usePooledIndicators);
 
-            //GameObject indicator = ObjectPoolManager.createPooled(prefabIndicator, Vector3.zero, Quaternion.identity);
             indicator.transform.parent = parentObject.transform;
             indicator.ResetPosition();
     
@@ -254,9 +254,9 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
             if(prefabIndicatorType != null) {
 
-                //GameObject indicator = ObjectPoolManager.createPooled(prefabIndicatorType, Vector3.zero, Quaternion.identity);
-    
-                GameObject indicator = Instantiate(prefabIndicatorType, Vector3.zero, Quaternion.identity) as GameObject;
+                GameObject indicator = GameObjectHelper.CreateGameObject(
+                    prefabIndicatorType, Vector3.zero, Quaternion.identity, GameConfigs.usePooledIndicators);
+
                 indicator.transform.parent = indicatorObject.transform;
                 indicator.ResetPosition();
                 indicator.transform.localScale = indicator.transform.localScale * .1f;
@@ -339,11 +339,13 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
     }
 
     public virtual void DestroyMe() {
-        //foreach(Transform t in indicatorObject.transform) {
-        //    //Destroy(t.gameObject);
-        //    ObjectPoolManager.destroyPooled(t.gameObject);
-       // }
-        Destroy(gameObject);
+        foreach(Transform t in indicatorObject.transform) {
+            GameObjectHelper.DestroyGameObject(
+                t.gameObject, GameConfigs.usePooledIndicators);
+        }
+
+        GameObjectHelper.DestroyGameObject(
+            gameObject, GameConfigs.usePooledIndicators);
     }
  
     public virtual void UpdateIndicator(Vector3 relativePosition) {

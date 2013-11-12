@@ -46,7 +46,8 @@ public class BaseGamePlayerProjectile : GameActor {
 	//}
 	
 	public virtual void DestroyMe() {
-		ObjectPoolManager.destroyPooled(gameObject);
+        GameObjectHelper.DestroyGameObject(gameObject, GameConfigs.usePooledIndicators);
+
 	}
 	
 }

@@ -140,9 +140,15 @@ public class BaseGamePlayerWeapon : GameActor {
 					
 					Vector3 projectileStartPosition = transform.position;
 					projectileStartPosition.x = projectileStartPosition.x + 2f;
-					GamePlayerProjectile projectile = ObjectPoolManager.createPooled(currentItem.gameObject, 
-						projectileStartPosition, 
-						Quaternion.identity).GetComponent<GamePlayerProjectile>();//.AddComponent<GameProjectile>();
+
+                    GamePlayerProjectile projectile =
+                        GameObjectHelper.CreateGameObject(
+                            currentItem.gameObject,
+                            projectileStartPosition,
+                            Quaternion.identity,
+                            GameConfigs.usePooledProjectiles
+                            ).GetComponent<GamePlayerProjectile>();;
+
 					GameObject gameObject = currentItem;
 					if(projectile != null) {
 						

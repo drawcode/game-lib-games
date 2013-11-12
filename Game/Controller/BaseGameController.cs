@@ -1349,12 +1349,9 @@ public class BaseGameController : MonoBehaviour {
         if(prefabObject == null) {
             yield break;
         }
-    
-        GameObject characterObject = Instantiate(
-            prefabObject, spawnLocation, Quaternion.identity) as GameObject;
 
-        //GameObject characterObject =
-        //    ObjectPoolManager.createPooled(prefabObject, spawnLocation, Quaternion.identity);
+        GameObject characterObject = GameObjectHelper.CreateGameObject(
+            prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
     
         characterObject.transform.parent = levelActorsContainerObject.transform;
 
@@ -1475,11 +1472,9 @@ public class BaseGameController : MonoBehaviour {
         if(prefabObject == null) {
             yield break;
         }
-    
-        //GameObject spawnObj = Instantiate(
-        //    prefabObject, spawnLocation, Quaternion.identity) as GameObject;
-        GameObject spawnObj =
-            ObjectPoolManager.createPooled(prefabObject, spawnLocation, Quaternion.identity);
+
+        GameObject spawnObj = GameObjectHelper.CreateGameObject(
+            prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledItems) as GameObject;
 
         string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
 
