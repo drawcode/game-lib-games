@@ -56,6 +56,7 @@ public class BaseGamePlayerRuntimeData {
     public double hitCount = 0;
     public double hitLimit = 10;
     public double mass = 1;
+    public double evades = 0;
 	
     public double ammo = 10;
     public double collectedAmmo = 0;
@@ -234,6 +235,11 @@ public class BaseGamePlayerController : GameActor {
 	public Vector3 currentPosition = Vector3.zero;
 	public Vector3 currentAimPosition = Vector3.zero;
 	public ParticleSystem gamePlayerEffectAim;
+
+    public float distanceToPlayerControlledGamePlayer;
+    public float distanceEvade = 5f;
+    public bool isWithinEvadeRange = false;
+    public bool lastIsWithinEvadeRange = false;
  
     // --------------------------------------------------------------------
     // INIT
@@ -908,6 +914,7 @@ public class BaseGamePlayerController : GameActor {
     // --------------------------------------------------------------------
     // COLLISIONS/TRIGGERS
 
+    GamePlayerController collisionController = null;
 
     public virtual void HandleCollision(Collision collision) {
              
@@ -932,15 +939,36 @@ public class BaseGamePlayerController : GameActor {
                 if(parentName.Contains("HelmetContainer")
                  || parentName.Contains("Helmet")
                  || parentName.Contains("Facemask")
+                 || parentName.Contains("HitCollider")
                  || isObstacle) {
                  
                     if(isObstacle) {
                         if(IsPlayerState()) {
                             AudioAttack();
                             Score(1);
+                            GamePlayerProgress.SetStatHitsObstacles(1f);
                         }
                     }
                     else {
+
+                        // handle stat
+
+                        if(IsPlayerState()) {
+                            collisionController = GameController.GetGamePlayerControllerObject(
+                                contact.otherCollider.transform.gameObject, false);
+
+                            if(collisionController.IsPlayerControlled) {
+                                // we hit a player, so we are an enemy
+                                GamePlayerProgress.SetStatHitsReceived(1f);
+
+                            }
+                            else {
+                                // we hit an enemy, so we are the player
+                                GamePlayerProgress.SetStatHits(1f);
+                            }
+                        }
+
+                        // handle hit
     
                         float power = .1f;
     
@@ -1464,6 +1492,9 @@ public class BaseGamePlayerController : GameActor {
         if(Time.time > lastStrafeLeftTime + 1f) {
             gamePlayerControllerAnimation.DidStrafeLeft();
 
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
+
             lastStrafeLeftTime = Time.time;
             StartCoroutine(DidStrafeLeftCo(dir, power));
         }
@@ -1515,6 +1546,9 @@ public class BaseGamePlayerController : GameActor {
 
             gamePlayerControllerAnimation.DidStrafeRight();
 
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
+
             lastStrafeRightTime = Time.time;
             StartCoroutine(DidStrafeRightCo(dir, power));
         }
@@ -1564,6 +1598,7 @@ public class BaseGamePlayerController : GameActor {
             lastBoostTime = Time.time;
 
             gamePlayerControllerAnimation.DidBoost();
+            GamePlayerProgress.SetStatBoosts(1f);
             StartCoroutine(DidBoostCo(dir, power));
         }
     }
@@ -1622,6 +1657,8 @@ public class BaseGamePlayerController : GameActor {
             //iTween.RotateTo(gamePlayerModelHolderModel, iTween.Hash("y", Vector3.zero.WithY(0).y, "time", .2f, "delay", .41f, "easetype", "linear", "space", "local"));
 
             gamePlayerControllerAnimation.DidSpin();
+            GamePlayerProgress.SetStatSpins(1f);
+
             StartCoroutine(DidSpinCo(dir, power));
         }
     }
@@ -1684,6 +1721,13 @@ public class BaseGamePlayerController : GameActor {
         dying = true;
 
         gamePlayerControllerAnimation.DidDie();
+
+        if(IsPlayerControlled) {
+            GamePlayerProgress.SetStatDeaths(1f);
+        }
+        else {
+            GamePlayerProgress.SetStatKills(1f);
+        }
      
         if(gamePlayerControllerAnimation != null) {
             gamePlayerControllerAnimation.isDead = true;
@@ -1805,7 +1849,7 @@ public class BaseGamePlayerController : GameActor {
             
         //}
      
-        float distance = 5f;
+        float distance = 3f;
      
         //if(prefabName.IndexOf("norah") > -1) {
         //   distance = 300f;
@@ -2053,6 +2097,8 @@ public class BaseGamePlayerController : GameActor {
 
         //runtimeData.scores += scoresAdd;
         Messenger<double>.Broadcast(GameMessages.scores, valAdd);
+
+        GamePlayerProgress.SetStatScores(valAdd);
     }
  
     public virtual void Score(double valAdd) {
@@ -2063,6 +2109,8 @@ public class BaseGamePlayerController : GameActor {
      
         //runtimeData.score += scoreAdd;
         Messenger<double>.Broadcast(GameMessages.score, valAdd);
+
+        GamePlayerProgress.SetStatScore(valAdd);
     }
 		
 	public virtual void Ammo(double valAdd) {
@@ -2074,6 +2122,8 @@ public class BaseGamePlayerController : GameActor {
 		runtimeData.ammo += valAdd;
 		runtimeData.collectedAmmo += valAdd;
 		Messenger<double>.Broadcast(GameMessages.ammo, valAdd);
+
+        //GamePlayerProgress.SetStatScores(valAdd);
 	}
 	
 	public virtual void Save(double valAdd) {
@@ -2742,13 +2792,21 @@ public class BaseGamePlayerController : GameActor {
         else if(IsPlayerState()) {           
             if(thirdPersonController.aimingDirection != Vector3.zero) {
 
-                gamePlayerHolder.transform.rotation = Quaternion.LookRotation(thirdPersonController.aimingDirection);
+                //gamePlayerHolder.transform.rotation = Quaternion.LookRotation(thirdPersonController.aimingDirection);
+                gamePlayerModelHolder.transform.rotation = Quaternion.LookRotation(thirdPersonController.aimingDirection);
 
                 foreach(Transform t in gamePlayerModelHolderModel.transform) {
                     t.localRotation = Quaternion.identity;
                 }
 
-                thirdPersonController.ApplyAttack();
+                Attack();
+
+                //thirdPersonController.ApplyAttack();
+            }
+            else {
+                foreach(Transform t in gamePlayerModelHolderModel.transform) {
+                    t.localRotation = Quaternion.identity;
+                }
             }
          
             if(runtimeData.hitCount > 10) {
@@ -2828,37 +2886,56 @@ public class BaseGamePlayerController : GameActor {
          && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
 
             //if(runUpdate) {
-                GameObject go = GameController.CurrentGamePlayerController.gameObject;
+            GameObject go = GameController.CurrentGamePlayerController.gameObject;
 
-                if(go != null) {
+            if(go != null) {
 
-                float distance = Vector3.Distance(
+                // check distance for evades
+
+                distanceToPlayerControlledGamePlayer = Vector3.Distance(
                         go.transform.position,
                         transform.position);
 
-                    if(distance <= attackRange) {
-                        //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
-    
-                        // Turn towards player and attack!
+                if(distanceToPlayerControlledGamePlayer <= distanceEvade) {
+                    isWithinEvadeRange = true;
+                }
+                else {
+                    isWithinEvadeRange = false;
+                }
 
-                        GamePlayerController gamePlayerControllerHit
-                            = GameController.GetGamePlayerControllerObject(go, true);
+                if(lastIsWithinEvadeRange != isWithinEvadeRange) {
+                   if(lastIsWithinEvadeRange && isWithinEvadeRange) {
+                        // evaded!
+                        GamePlayerProgress.SetStatEvaded(1f);
+                    }
+                    lastIsWithinEvadeRange = isWithinEvadeRange;
+                }
 
-                        if(gamePlayerControllerHit != null
-                            && !gamePlayerControllerHit.dying) {
+                // check attack/lunge range
+
+                if(distanceToPlayerControlledGamePlayer <= attackRange) {
+                    //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
+
+                    // Turn towards player and attack!
+
+                    GamePlayerController gamePlayerControllerHit
+                        = GameController.GetGamePlayerControllerObject(go, true);
+
+                    if(gamePlayerControllerHit != null
+                        && !gamePlayerControllerHit.dying) {
 
 
-                            if(distance < attackRange / 2.5f) {
-                                // LEAP AT THEM within three
-                                Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - distance/2, 1f, 20f));
-                            }
-                            else {
-                                // PURSUE FASTER
-                                Tackle(gamePlayerControllerHit, 3.33f);
-                            }
+                        if(distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
+                            // LEAP AT THEM within three
+                            Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - distanceToPlayerControlledGamePlayer/2, 1f, 20f));
+                        }
+                        else {
+                            // PURSUE FASTER
+                            Tackle(gamePlayerControllerHit, 3.33f);
                         }
                     }
                 }
+            }
             //}
         }
         else if(controllerState == GamePlayerControllerState.ControllerPlayer

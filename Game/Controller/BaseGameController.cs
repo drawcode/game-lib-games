@@ -32,7 +32,10 @@ public class GameContentDisplayTypes {
     public static string gameEnergy = "content-game-game-energy";
     public static string gameHealth = "content-game-game-health";
     public static string gameXP = "content-game-game-xp";
+
+    public static string gameTutorial = "content-game-tutorial";
 }
+
 
 // GLOBAL
 
@@ -112,15 +115,19 @@ public class BaseGameStatCodes {
     public static string shots = "shots";//--
     public static string destroyed = "destroyed";//--
 
-    public static string score = "score";
+    public static string score = "score";//--
     public static string scores = "scores";//--
-    public static string evaded = "evaded";
+    public static string evaded = "evaded";//--
     public static string kills = "kills";
     public static string deaths = "deaths";
     public static string hits = "hits";
     public static string hitsReceived = "hits-received";
+    public static string hitsObstacles = "hits-obstacles";
     public static string xp = "xp";
     public static string coins = "coins";
+
+    public static string attacks = "attacks";//
+    public static string defends = "defends";//
 
     public static string cuts = "cuts";//
     public static string cutsLeft = "cuts-left";//
