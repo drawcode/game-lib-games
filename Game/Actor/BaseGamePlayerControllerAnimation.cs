@@ -1106,7 +1106,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.strafeLeft);
+            PlayOneShotFloat(GamePlayerAnimationType.strafe, -1f);
         }
     }
 
@@ -1131,7 +1131,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.strafeRight);
+            PlayOneShotFloat(GamePlayerAnimationType.strafe);
         }
     }
 
@@ -1256,6 +1256,21 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         if(!isLegacy) {
             if(animator != null) {
                 animator.SetFloat(paramName, 1.0f);
+                yield return null;
+                animator.SetFloat(paramName, 0.0f);
+            }
+        }
+    }
+
+    public virtual void PlayOneShotFloat(string paramName, float val) {
+        StartCoroutine(PlayOneShotFloatCo(paramName, val));
+    }
+ 
+    public virtual IEnumerator PlayOneShotFloatCo(string paramName, float val) {
+     
+        if(!isLegacy) {
+            if(animator != null) {
+                animator.SetFloat(paramName, val);
                 yield return null;
                 animator.SetFloat(paramName, 0.0f);
             }

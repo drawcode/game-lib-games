@@ -720,10 +720,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         GameProfileRPGs.Current.AddCurrency(coins);
 
-        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(coins * 2);
+        GamePlayerProgress.SetStatCoins(coins);
+        GamePlayerProgress.SetStatCoinsEarned(coins);
 
-        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
-        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
+        double xpEarned = coins * 2;
+
+        GamePlayerProgress.SetStatXP(xpEarned);
+
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(xpEarned);
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f); // refill
+        GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f); // refill
 
 
         /*

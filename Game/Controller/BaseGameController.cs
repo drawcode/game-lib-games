@@ -125,6 +125,9 @@ public class BaseGameStatCodes {
     public static string hitsObstacles = "hits-obstacles";
     public static string xp = "xp";
     public static string coins = "coins";
+    public static string coinsPickup = "coinsPickup";
+    public static string coinsPurchased = "coinsPurchased";
+    public static string coinsEarned = "coinsEarned";
 
     public static string attacks = "attacks";//
     public static string defends = "defends";//
@@ -2131,10 +2134,6 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void gamePlayerOutOfBoundsDelayed(float delay) {
-        if(!GameConfigs.isGameRunning) {
-            return;
-        }
-
         StartCoroutine(gamePlayerOutOfBoundsDelayedCo(delay));
     }
 
@@ -2238,29 +2237,16 @@ public class BaseGameController : MonoBehaviour {
 
         // TOTAL SCORES
 
-        GamePlayerProgress.Instance.SetStatTotal(
-            GameStatCodes.score,
-            currentGamePlayerController.runtimeData.score);
-
-        GamePlayerProgress.Instance.SetStatTotal(
-            GameStatCodes.xp,
-            currentGamePlayerController.runtimeData.totalScoreValue);
+        GamePlayerProgress.SetStatScore(currentGamePlayerController.runtimeData.score);
+        GamePlayerProgress.SetStatXP(currentGamePlayerController.runtimeData.totalScoreValue);
 
         yield return new WaitForEndOfFrame();
 
         // HIGH SCORES
 
-        GamePlayerProgress.Instance.SetStatHigh(
-            GameStatCodes.highScore,
-            currentGamePlayerController.runtimeData.score);
-
-        GamePlayerProgress.Instance.SetStatHigh(
-            GameStatCodes.highXP,
-            currentGamePlayerController.runtimeData.totalScoreValue);
-
-        GamePlayerProgress.Instance.SetStatHigh(
-            GameStatCodes.highScores,
-            currentGamePlayerController.runtimeData.scores);
+        GamePlayerProgress.SetStatHighScore(currentGamePlayerController.runtimeData.score);
+        GamePlayerProgress.SetStatHighScores(currentGamePlayerController.runtimeData.scores);
+        GamePlayerProgress.SetStatHighXP(currentGamePlayerController.runtimeData.totalScoreValue);
 
         yield return new WaitForEndOfFrame();
 

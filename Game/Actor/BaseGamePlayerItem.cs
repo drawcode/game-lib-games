@@ -98,6 +98,10 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
                 
             GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
             if(type == GamePlayerItemType.Coin) {
+
+                GamePlayerProgress.SetStatCoins(1f);
+                GamePlayerProgress.SetStatCoinsPickup(1f);
+
                 GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
             }
             else {
