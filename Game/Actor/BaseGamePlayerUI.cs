@@ -37,6 +37,9 @@ public class BaseGamePlayerUI : MonoBehaviour {
 			anim.SetFloat("speed", v);
 			anim.SetFloat("strafe", h);
 			anim.SetFloat("jump", u);
+			anim.SetFloat("death", 0);
+			anim.SetFloat("hit", 0);
+			anim.SetFloat("attack", 0);
 			//Avatar avatar = anim.avatar;
 			//RuntimeAnimatorController controller = anim.runtimeAnimatorController;
 
