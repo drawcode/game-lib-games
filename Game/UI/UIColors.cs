@@ -19,9 +19,15 @@ public static class UIColors  {
         }
     }
 
-    public static Color colorBlue {
+    public static Color colorLightBlue {
         get {
             return ColorHelper.FromRGB(0, 234, 255);
+        }
+    }
+
+    public static Color colorBlue {
+        get {
+            return ColorHelper.FromHex("006DB0");//.FromRGB(0, 234, 255);
         }
     }
 
@@ -50,13 +56,19 @@ public static class UIColors  {
 
     public static Color colorDark {
         get {
-            return ColorHelper.FromRGB(200, 200, 200);
+            return ColorHelper.FromRGB(10, 10, 10);
         }
     }
 
     public static Color colorLight {
         get {
-            return ColorHelper.FromRGB(10, 10, 10);
+            return ColorHelper.FromRGB(200, 200, 200);
+        }
+    }
+
+    public static Color colorWhite {
+        get {
+            return ColorHelper.FromRGB(255, 255, 255);
         }
     }
 
