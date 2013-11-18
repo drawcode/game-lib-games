@@ -504,18 +504,38 @@ public class BaseGameCustomController : MonoBehaviour {
                 string code = colorPresets.presets[currentSelectedColorPreset].code;
                 string name = colorPresets.presets[currentSelectedColorPreset].name;
 
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " code:" + code);
+
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " name:" + name);
+
                 GameCustomColorProperties properties = new GameCustomColorProperties();
 
                 foreach(GameCustomColorPropertiesItem item in colorsSetCustomPlayers) {
 
-                    Color color = colorPresets.presets[index].customItem.GetCustomColor(GameCustomColorNames.colorHelmet);
+                    Color color = colorPresets.presets[index].customItem.GetCustomColor(item.colorKey);
                     GameCustomColorPropertiesItem itemColor = new GameCustomColorPropertiesItem();
 
                     itemColor.colorKey = item.colorKey;
                     itemColor.color = color;
 
+                    
+                    LogUtil.Log("ChangeColorPreset:setting:", 
+                                " itemColor.colorKey:" +  itemColor.colorKey);
+
+                    
+                    LogUtil.Log("ChangeColorPreset:setting:", 
+                                " itemColor.color:" +  itemColor.color.ToString());
+
                     properties.items.Add(itemColor);
                 }
+
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " properties.items.Count:" + properties.items.Count);
                 
                 GameCustomController.SetColorProperties(
                     currentProfileCustomItem, properties
@@ -530,8 +550,6 @@ public class BaseGameCustomController : MonoBehaviour {
                 Messenger<string, string>.Broadcast(GameCustomMessages.customColorPresetChanged,
                                                     code, name);
 
-                //UIUtil.SetLabelValue(labelCurrentCustomColors, name);
-                
                 GameCustomController.SetMaterialColors(currentPlayerObject, currentProfileCustomItem);
             }
         }   
@@ -557,17 +575,30 @@ public class BaseGameCustomController : MonoBehaviour {
         
         if (properties != null) {
             foreach (GameCustomColorPropertiesItem item in properties.items) {
+                
+                LogUtil.Log("setColorProperties:setting:", 
+                            " item.colorKey:" + item.colorKey);
+
+                LogUtil.Log("setColorProperties:setting:", 
+                            " item.color:" + item.color);
+
                 profileCustomItem.SetCustomColor(item.colorKey, item.color);
             }
         }  
     }
         
     public virtual void setMaterialColors(GameObject go, GameProfileCustomItem profileCustomItem) {
+
+        LogUtil.Log("setMaterialColors:go null:", go == null);
+        LogUtil.Log("setMaterialColors:profileCustomItem null:", profileCustomItem == null);
         
         if (go == null) {
             return;
         }
-        
+
+        LogUtil.Log("setMaterialColors:", go.name);
+        //LogUtil.Log("setMaterialColors:", profileCustomItem.);
+
         GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
         
         save = true;
