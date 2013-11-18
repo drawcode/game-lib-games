@@ -297,7 +297,8 @@ public class BaseUIController : MonoBehaviour {
         broadcastUIMessageAnimateIn(objName); // animate in
 
         // TODO base
-        GameCustomController.Instance.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomColorsSync();
+
         UIColors.UpdateColors();
 
         //GameUIPanelGameModeTrainingModeChoiceQuiz.Instance.AnimateIn();

@@ -467,7 +467,7 @@ public class BaseGameController : MonoBehaviour {
         GameController.LoadCharacterTypes();
         GameDraggableEditor.LoadDraggableContainerObject();
 
-        GameCustomController.Instance.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomColorsSync();
     }
 
     public virtual void OnEnable() {
@@ -1237,7 +1237,7 @@ public class BaseGameController : MonoBehaviour {
         string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
         GameController.CurrentGamePlayerController.LoadCharacter(characterSkinCode);
     
-        GameCustomController.Instance.SetCustomColorsPlayer(
+        GameCustomController.SetCustomColorsPlayer(
             GameController.CurrentGamePlayerController.gameObject);
     }
     
@@ -1403,7 +1403,7 @@ public class BaseGameController : MonoBehaviour {
     
         characterObject.transform.parent = levelActorsContainerObject.transform;
 
-        GameCustomController.Instance.SetCustomColorsEnemy(characterObject);
+        GameCustomController.SetCustomColorsEnemy(characterObject);
     
         GamePlayerController characterGamePlayerController
             = characterObject.GetComponentInChildren<GamePlayerController>();

@@ -4,13 +4,6 @@ using System.Collections.Generic;
 
 using Engine.Events;
 
-public class GameCustomMessages {
-	public static string customColorsChanged = "custom-colors-changed";
-	public static string customColorChanged = "custom-color-changed";
-	public static string customColorsPlayerChanged = "custom-colors-player-changed";
-	public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
-}
-
 public class GameCustomBase : MonoBehaviour {
 	
 	public List<Material> materialPlayerHelmets = new List<Material>();
@@ -95,6 +88,10 @@ public class GameCustomBase : MonoBehaviour {
 	public void SetMaterialColors(GameProfileCustomItem colors) {
 		
 		FindMaterials();
+
+        if(colors == null) {
+            return;
+        }
 		
 		if(materialPlayerHelmets != null) {
 			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmet);
