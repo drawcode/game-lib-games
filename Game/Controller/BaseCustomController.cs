@@ -150,13 +150,7 @@ public class BaseCustomMessages {
 }
 
 public class BaseGameCustomColorNames {
-    
-    public static string colorHelmet = "color-helmet";
-    public static string colorHelmetFacemask = "color-helmet-facemask";
-    public static string colorHelmetHighlight = "color-helmet-highlight";
-    public static string colorJersey = "color-jersey";
-    public static string colorJerseyHighlight = "color-jersey-highlight";
-    public static string colorPants = "color-pants";
+
 }
 
 public class BaseGameCustomColors : DataObject {
@@ -485,15 +479,13 @@ public class BaseGameCustomController : MonoBehaviour {
     
     public virtual void changeColorPreset(int index) {
         
-        //LogUtil.Log("ChangeColorPreset:", " index:" + index);
+        LogUtil.Log("ChangeColorPreset:", " index:" + index);
         
         //LogUtil.Log("ChangeColorPreset:", 
         //            " colorPresets.presets.Count:" + colorPresets.presets.Count);
         
         //GameCustomController.FillDefaultCustomColorsPlayer();
 
-        GameObject go = null;
-        
         if (index < 0) {
             index = colorPresets.presets.Count - 1;    
         }
@@ -540,7 +532,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
                 //UIUtil.SetLabelValue(labelCurrentCustomColors, name);
                 
-                GameCustomController.SetMaterialColors(go, currentProfileCustomItem);
+                GameCustomController.SetMaterialColors(currentPlayerObject, currentProfileCustomItem);
             }
         }   
     }
