@@ -128,6 +128,7 @@ public class BaseGameStatCodes {
     public static string coinsPickup = "coinsPickup";
     public static string coinsPurchased = "coinsPurchased";
     public static string coinsEarned = "coinsEarned";
+    public static string ammo = "ammo";
 
     public static string attacks = "attacks";//
     public static string defends = "defends";//
@@ -137,11 +138,6 @@ public class BaseGameStatCodes {
     public static string cutsRight = "cuts-right";//
     public static string boosts = "boosts";//
     public static string spins = "spins";//
-
-    // highs
-    public static string highScore = "high-score";
-    public static string highScores = "high-scores";
-    public static string highXP = "high-xp";
 
     // lows
 
@@ -729,13 +725,9 @@ public class BaseGameController : MonoBehaviour {
     // SCORING
 
     public virtual void gamePlayerScores(double val) {
-
-        if(!GameConfigs.isGameRunning) {
-            return;
+        if(GameController.CurrentGamePlayerController != null) {
+            GameController.CurrentGamePlayerController.Scores(val);
         }
-
-        //runtimeData.scores += scoresAdd;
-        Messenger<double>.Broadcast(GameMessages.scores, val);
     }
  
     // ATTACK

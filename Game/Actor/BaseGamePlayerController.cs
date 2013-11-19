@@ -2094,41 +2094,44 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
-    public virtual void Scores(double valAdd) {
+    public virtual void Scores(double val) {
 
         if (!GameConfigs.isGameRunning) {
             return;
         }
+        
+        runtimeData.scores += val;
 
-        //runtimeData.scores += scoresAdd;
-        Messenger<double>.Broadcast(GameMessages.scores, valAdd);
+        Messenger<double>.Broadcast(GameMessages.scores, val);
 
-        GamePlayerProgress.SetStatScores(valAdd);
+        GamePlayerProgress.SetStatScores(val);
     }
  
-    public virtual void Score(double valAdd) {
+    public virtual void Score(double val) {
              
         if (!GameConfigs.isGameRunning) {
             return;
         }
      
-        //runtimeData.score += scoreAdd;
-        Messenger<double>.Broadcast(GameMessages.score, valAdd);
-
-        GamePlayerProgress.SetStatScore(valAdd);
+        runtimeData.score += val;
+        
+        Messenger<double>.Broadcast(GameMessages.score, val);
+        
+        GamePlayerProgress.SetStatScore(val);
     }
         
-    public virtual void Ammo(double valAdd) {
+    public virtual void Ammo(double val) {
              
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.ammo += valAdd;
-        runtimeData.collectedAmmo += valAdd;
-        Messenger<double>.Broadcast(GameMessages.ammo, valAdd);
+        runtimeData.ammo += val;
+        runtimeData.collectedAmmo += val;
 
-        //GamePlayerProgress.SetStatScores(valAdd);
+        Messenger<double>.Broadcast(GameMessages.ammo, val);
+
+        GamePlayerProgress.SetStatAmmo(val);
     }
     
     public virtual void Save(double valAdd) {

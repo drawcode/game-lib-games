@@ -320,6 +320,9 @@ public class BaseGameCustomController : MonoBehaviour {
         //item.SetCustomColor(GameCustomColorNames.colorJersey, new Color(0.448f, 0.093f, 0.042f, 1.000f));
         //item.SetCustomColor(GameCustomColorNames.colorJerseyHighlight, new Color(0.974f, 0.955f, 0.952f, 1.000f));
         //item.SetCustomColor(GameCustomColorNames.colorPants, new Color(0.979f, 0.943f, 0.938f, 1.000f));
+        if(colorsSetCustomPlayers == null) {
+            GameCustomController.FillSetCustomColorsAll();
+        }
 
         foreach(GameCustomColorPropertiesItem item in colorsSetCustomPlayers) {
             colors.SetCustomColor(item.colorKey, item.color);
