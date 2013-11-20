@@ -659,11 +659,11 @@ public class BaseGameController : MonoBehaviour {
             }
         }
 
-        if(gamePlayerController == null
-            && (go.name.Contains("Helmet")
-            || go.name.Contains("Facemask"))) {
+        if(gamePlayerController == null) {
+            //&& (go.name.Contains("Helmet")
+            //|| go.name.Contains("Facemask"))) {
 
-            Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            //Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 

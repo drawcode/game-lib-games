@@ -935,62 +935,87 @@ public class BaseGamePlayerController : GameActor {
             foreach (ContactPoint contact in collision.contacts) {
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
                      
-                string parentName = contact.otherCollider.transform.parent.name;
-                bool isObstacle = parentName.Contains("GameObstacle");       
+                Transform t = contact.otherCollider.transform;
+                string parentName = t.parent.name;
 
-                if (parentName.Contains("HelmetContainer")
+                bool isObstacle = parentName.Contains("GameObstacle");                  
+
+                bool isLevelObject = parentName.Contains("GameItemObject")
+                    || t.name.Contains("(Clone)")
+                        || parentName.Contains("(Clone)");                
+
+                bool isPlayerObject = 
+                    parentName.Contains("HelmetContainer")
                     || parentName.Contains("Helmet")
                     || parentName.Contains("Facemask")
-                    || parentName.Contains("HitCollider")
-                    || isObstacle) {
-                 
-                    if (isObstacle) {
-                        if (IsPlayerState()) {
-                            AudioAttack();
-                            Score(1);
-                            GamePlayerProgress.SetStatHitsObstacles(1f);
+                        || parentName.Contains("HitCollider")
+                        || parentName.Contains("GamePlayerCollider");
+                        //|| t.name.Contains("GamePlayerObject")
+                        //|| t.name.Contains("GamePlayerEnemy")
+                        //|| t.name.Contains("GameEnemy");  
+
+                if(isLevelObject) {
+                    GameLevelSprite sprite = t.gameObject.FindTypeAboveRecursive<GameLevelSprite>();
+                    if(sprite  == null) {
+                        sprite = t.parent.gameObject.GetComponentInChildren<GameLevelSprite>();
+                    }
+                    if(sprite != null) {                        
+                        isLevelObject = true;
+                    }
+                    else { 
+                        isLevelObject = false;
+                    }
+                }
+                                 
+                if (isObstacle || isLevelObject) {
+                    if (IsPlayerState()) {
+                        AudioAttack();
+                        Score(1);
+                        GamePlayerProgress.SetStatHitsObstacles(1f);
+                    }
+                }
+                else if (isPlayerObject){
+
+                    // handle stat
+
+                    //if (IsPlayerControlled) {
+                    collisionController = GameController.GetGamePlayerControllerObject(
+                        t.gameObject, false);
+
+                    if(collisionController != null) {
+
+                        if (!IsPlayerControlled) {
+                            // we hit a player, so we are an enemy
+                            GamePlayerProgress.SetStatHitsReceived(1f);
+
+                        }
+                        else {
+                            // we hit an enemy, so we are the player
+                            GamePlayerProgress.SetStatHits(1f);
                         }
                     }
-                    else {
+                    //}
 
-                        // handle stat
+                    // handle hit
 
-                        if (IsPlayerState()) {
-                            collisionController = GameController.GetGamePlayerControllerObject(
-                                contact.otherCollider.transform.gameObject, false);
+                    float power = .1f;
 
-                            if (collisionController.IsPlayerControlled) {
-                                // we hit a player, so we are an enemy
-                                GamePlayerProgress.SetStatHitsReceived(1f);
+                    runtimeData.health -= power;
 
-                            }
-                            else {
-                                // we hit an enemy, so we are the player
-                                GamePlayerProgress.SetStatHits(1f);
-                            }
-                        }
+                    //contact.normal.magnitude
 
-                        // handle hit
-    
-                        float power = .1f;
-    
-                        runtimeData.health -= power;
+                    Hit(power);
 
-                        //contact.normal.magnitude
+                    //GamePlayerProgress.Instance.ProcessProgressSpins
 
-                        Hit(power);
+                    //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
+                    //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
 
-                        //GamePlayerProgress.Instance.ProcessProgressSpins
-
-                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
-                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
-    
-                        Vector3 normal = contact.normal;
-                        float magnitude = contact.point.sqrMagnitude;
-                        float hitPower = (magnitude * (float)runtimeData.mass) / 110;
-                        Debug.Log("hitPower:" + hitPower);
-                        AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
-                    }
+                    Vector3 normal = contact.normal;
+                    float magnitude = contact.point.sqrMagnitude;
+                    float hitPower = (magnitude * (float)runtimeData.mass) / 110;
+                    Debug.Log("hitPower:" + hitPower);
+                    AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
                 }
                 break;
             }
@@ -2920,8 +2945,9 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 if (lastIsWithinEvadeRange != isWithinEvadeRange) {
-                    if (lastIsWithinEvadeRange && isWithinEvadeRange) {
+                    if (lastIsWithinEvadeRange && !isWithinEvadeRange) {
                         // evaded!
+                        GameController.CurrentGamePlayerController.Score(5);
                         GamePlayerProgress.SetStatEvaded(1f);
                     }
                     lastIsWithinEvadeRange = isWithinEvadeRange;
