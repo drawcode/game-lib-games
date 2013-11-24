@@ -1014,7 +1014,7 @@ public class BaseGamePlayerController : GameActor {
                     Vector3 normal = contact.normal;
                     float magnitude = contact.point.sqrMagnitude;
                     float hitPower = (magnitude * (float)runtimeData.mass) / 110;
-                    Debug.Log("hitPower:" + hitPower);
+                    //Debug.Log("hitPower:" + hitPower);
                     AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
                 }
                 break;
@@ -1601,7 +1601,7 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void Boost() {
-        Vector3 dir = transform.localPosition.WithZ(1);
+        Vector3 dir = transform.forward;
         float power = 10f + 5f * (float)runtimeRPGData.modifierAttack;
         Boost(dir, power);
     }
@@ -1612,7 +1612,7 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void Boost(float power) {
-        Vector3 dir = transform.localPosition.WithZ(1);
+        Vector3 dir = transform.forward;
         Boost(dir, power);
     }
 

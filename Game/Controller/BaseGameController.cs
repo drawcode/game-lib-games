@@ -659,7 +659,10 @@ public class BaseGameController : MonoBehaviour {
             }
         }
 
-        if(gamePlayerController == null) {
+        if(gamePlayerController == null
+           && (go.name.Contains("Game")
+            || go.name.Contains("Helmet")
+            || go.name.Contains("Facemask"))) {
             //&& (go.name.Contains("Helmet")
             //|| go.name.Contains("Facemask"))) {
 
@@ -702,7 +705,8 @@ public class BaseGameController : MonoBehaviour {
         }
 
         if(gamePlayerController == null
-            && (go.name.Contains("Helmet")
+           && (go.name.Contains("Game")
+            || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
             Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
@@ -1363,7 +1367,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            Debug.Log("spawnCode:" + spawnCode);
+            //Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {
@@ -1474,7 +1478,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            Debug.Log("spawnCode:" + spawnCode);
+            //Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {

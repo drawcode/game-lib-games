@@ -114,11 +114,11 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
          
         string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
     
-        Debug.Log("AddIndicator:modelPath:" + modelPath);
+        //Debug.Log("AddIndicator:modelPath:" + modelPath);
 
         GameObject prefabIndicator = Resources.Load(modelPath) as GameObject;
     
-        Debug.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
+        //Debug.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
 
         if(prefabIndicator != null) {
 
@@ -130,15 +130,15 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
     
             if(indicator != null) {
     
-                Debug.Log("AddIndicator:indicator:" + indicator.name);
+                //Debug.Log("AddIndicator:indicator:" + indicator.name);
     
                 GamePlayerIndicator indicatorObj = indicator.GetComponent<GamePlayerIndicator>();
     
                 if(indicatorObj != null) {
     
-                    Debug.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
-                    Debug.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
-                    Debug.Log("AddIndicator:target.transform.name:" + target.transform.name);
+                    //Debug.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
+                    //Debug.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
+                    //Debug.Log("AddIndicator:target.transform.name:" + target.transform.name);
     
                     indicatorObj.HideIndicator();
                     indicatorObj.indicatorType = GamePlayerIndicatorPlacementType.SCREEN;
@@ -162,11 +162,11 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         GameObject parentObject, GameObject target, string type, string gameIndicatorType) {
         string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
     
-        Debug.Log("AddIndicator:modelPath:" + modelPath);
+        //Debug.Log("AddIndicator:modelPath:" + modelPath);
 
         GameObject prefabIndicator = Resources.Load(modelPath) as GameObject;
     
-        Debug.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
+        //Debug.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
 
         if(prefabIndicator != null) {
 
@@ -178,15 +178,15 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
     
             if(indicator != null) {
     
-                Debug.Log("AddIndicator:indicator:" + indicator.name);
+                //Debug.Log("AddIndicator:indicator:" + indicator.name);
     
                 GamePlayerIndicator indicatorObj = indicator.GetComponent<GamePlayerIndicator>();
     
                 if(indicatorObj != null) {
     
-                    Debug.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
-                    Debug.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
-                    Debug.Log("AddIndicator:target.transform.name:" + target.transform.name);
+                    //Debug.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
+                    //Debug.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
+                    //Debug.Log("AddIndicator:target.transform.name:" + target.transform.name);
     
                     indicatorObj.HideIndicator();
                     indicatorObj.indicatorType = GamePlayerIndicatorPlacementType.SCREEN;
@@ -233,7 +233,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
  
     public virtual void SetGameIndicatorType(string gameIndicatorType) {
 
-        Debug.Log("GamePlayerIndicator:gameIndicatorType:" + gameIndicatorType);
+        //Debug.Log("GamePlayerIndicator:gameIndicatorType:" + gameIndicatorType);
 
         gameIndicatorTypeCode = gameIndicatorType;
 
@@ -247,11 +247,11 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         if(!indicatorObject.Has<GamePlayerIndicatorItem>()) {
             string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "indicator-" + gameIndicatorType;
     
-            Debug.Log("AddIndicator:modelPath:" + modelPath);
+            //Debug.Log("AddIndicator:modelPath:" + modelPath);
     
             GameObject prefabIndicatorType = Resources.Load(modelPath) as GameObject;
     
-            Debug.Log("AddIndicator:prefabIndicatorType:" + prefabIndicatorType.name);
+            //Debug.Log("AddIndicator:prefabIndicatorType:" + prefabIndicatorType.name);
 
             if(prefabIndicatorType != null) {
 
@@ -312,7 +312,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         if(!visible) {
             visible = true;
             indicatorObject.Show();
-            Debug.Log("ShowIndicator:visible:" + visible);
+            //Debug.Log("ShowIndicator:visible:" + visible);
         }
     }
 
@@ -324,7 +324,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         if(visible) {
             visible = false;
             indicatorObject.Hide();
-            Debug.Log("HideIndicator:visible:" + visible);
+            //Debug.Log("HideIndicator:visible:" + visible);
             if(destroy) {
                 DestroyMe();
             }

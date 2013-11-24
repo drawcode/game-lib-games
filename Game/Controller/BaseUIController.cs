@@ -798,10 +798,10 @@ public class BaseUIController : MonoBehaviour {
 
         float angleDiff = angleGesture - anglePlayer;
 
-        Debug.Log("SWIPE:angleGesture:" + angleGesture);
+        //Debug.Log("SWIPE:angleGesture:" + angleGesture);
 
-        Debug.Log("SWIPE:anglePlayer:" + anglePlayer);
-        Debug.Log("SWIPE:angleDiff:" + angleDiff);
+        //Debug.Log("SWIPE:anglePlayer:" + anglePlayer);
+        //Debug.Log("SWIPE:angleDiff:" + angleDiff);
 
         if(angleDiff < 0) {
             angleDiff = angleDiff + 360;
@@ -893,10 +893,10 @@ public class BaseUIController : MonoBehaviour {
             //Debug.Log("hasTouches: " + hasTouches);
         }
         if(hasTouchesDownAllowed) {
-            Debug.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
+            //Debug.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
         }
         if(hasTouchesUpAllowed) {
-            Debug.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
+            //Debug.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
         }
 
         if(!hasTouches) {
@@ -992,9 +992,9 @@ public class BaseUIController : MonoBehaviour {
 
 
                         Messenger<Vector3>.Broadcast(UIControllerMessages.uiUpdateTouchLaunch, positionLastLaunchedNormalized);
-                        Debug.Log("positionLastLaunchedNormalized:" + positionLastLaunchedNormalized);
-                        Debug.Log("positionLastLaunch:" + positionLastLaunch);
-                        Debug.Log("powerDistance:" + powerDistance);
+                        //Debug.Log("positionLastLaunchedNormalized:" + positionLastLaunchedNormalized);
+                        //Debug.Log("positionLastLaunch:" + positionLastLaunch);
+                        //Debug.Log("powerDistance:" + powerDistance);
 
                         Vector2 touchLaunch = Vector2.zero.WithX(-positionLastLaunchedNormalized.x).WithY(-positionLastLaunchedNormalized.y);
 
