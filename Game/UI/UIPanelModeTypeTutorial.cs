@@ -8,9 +8,9 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIPanelModeTypeChoice : UIPanelBase {
+public class UIPanelModeTypeTutorial : UIPanelBase {
 
-	public static UIPanelModeTypeChoice Instance;
+    public static UIPanelModeTypeTutorial Instance;
 
     public GameObject prefabListItem;
     public GameObject prefabLevelItem;

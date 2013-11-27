@@ -83,6 +83,7 @@ public class UINotificationDisplay
 	UINotificationState notificationState = UINotificationState.Hidden;
 	
 	public bool paused = false;
+    public bool coinRewards = true;
 	
     Queue<UINotificationItem> notificationQueue = new Queue<UINotificationItem>();
 	
@@ -410,6 +411,9 @@ public class UINotificationDisplay
 			GameObjectHelper.HideObject(notificationContainerInfo);
 		}	
 	}
+
+    double currentScore = 0;
+    double lastScore = 0;
 	
 	public void ProcessNextNotification() {
 		if(!Paused) {
@@ -423,6 +427,15 @@ public class UINotificationDisplay
 					ShowNotificationContainerType(notificationItem.notificationType);					
 					UIUtil.SetLabelValue(achievementTitle, notificationItem.title);
 					UIUtil.SetLabelValue(achievementDescription, notificationItem.description);
+
+                    if(coinRewards) {
+                        double score = Convert.ToDouble(notificationItem.score);
+                        score *= 50; // 50 coins per   
+                        lastScore = 0;
+                        currentScore = score;
+                        GameProfileRPGs.Current.AddCurrency(score);
+                    }
+
 					UIUtil.SetLabelValue(achievementScore, "+" + notificationItem.score);
 					
 					found = true;

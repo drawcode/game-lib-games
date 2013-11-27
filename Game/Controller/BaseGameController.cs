@@ -631,6 +631,15 @@ public class BaseGameController : MonoBehaviour {
     public virtual GamePlayerController getGamePlayerControllerParent(GameObject go) {
         if(go != null) {
             GamePlayerCollision gamePlayerCollision = go.Get<GamePlayerCollision>();
+
+            if(gamePlayerCollision != null) {
+                return null;
+            }
+
+            if(gamePlayerCollision.gamePlayerController == null) {
+                return null;
+            }
+               
             GamePlayerController gamePlayerController = gamePlayerCollision.gamePlayerController;
             if(gamePlayerController != null) {
                 return gamePlayerController;
@@ -1159,7 +1168,7 @@ public class BaseGameController : MonoBehaviour {
     public virtual void startLevel(string levelCode) {
         StartCoroutine(startLevelCo(levelCode));
     }
-
+       
     public virtual IEnumerator startLevelCo(string levelCode) {
 
         Debug.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
@@ -1582,6 +1591,8 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void reset() {
+        
+        GameController.StopDirectors();
 
         GameController.ResetRuntimeData();
         GameController.ResetCurrentGamePlayer();
@@ -1691,6 +1702,11 @@ public class BaseGameController : MonoBehaviour {
     public virtual void startGame(string levelCode) {
         //GameController.Reset();
         GameController.ChangeGameState(GameStateGlobal.GameStarted);
+    }
+        
+    public virtual void stopGame() {
+        GameController.ProcessLevelStats();
+        GameController.StopDirectors();
     }
 
     public virtual void prepareGame(string levelCode) {
@@ -1977,12 +1993,8 @@ public class BaseGameController : MonoBehaviour {
         //}
     
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
-
-        GameController.ProcessLevelStats();
-        //// Process stats
-        //StartCoroutine(processLevelStatsCo());
     
-        GameController.StopDirectors();
+        GameController.StopGame();
     }
     
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
@@ -2217,6 +2229,14 @@ public class BaseGameController : MonoBehaviour {
         Debug.Log("gamePlayerGoalZoneDelayedCo:");
 
         GameController.GoalZoneChange();
+    }
+
+    // GAME RUNTIME DATA
+    
+    public virtual void gameRuntimeTimeExtend(double extendAmount) {
+        if(runtimeData != null) {
+            runtimeData.AppendTime(extendAmount);
+        }
     }
 
     // -------------------------------------------------------
@@ -2831,11 +2851,7 @@ public class BaseGameController : MonoBehaviour {
     
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         //bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
-        
-        if(isGameRunning) {
-            GameController.CheckForGameOver();
-        }
-        
+                
         //if(controlInputTouchFinger) {
 
         if(Input.touchCount > 0) {
@@ -2862,6 +2878,10 @@ public class BaseGameController : MonoBehaviour {
         if(gameState == GameStateGlobal.GamePause
         || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
+        }
+        
+        if(isGameRunning) {
+            GameController.CheckForGameOver();
         }
         
         currentTimeBlockBase += Time.deltaTime;
