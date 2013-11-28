@@ -83,7 +83,6 @@ public class UINotificationDisplay
 	UINotificationState notificationState = UINotificationState.Hidden;
 	
 	public bool paused = false;
-    public bool coinRewards = true;
 	
     Queue<UINotificationItem> notificationQueue = new Queue<UINotificationItem>();
 	
@@ -428,11 +427,12 @@ public class UINotificationDisplay
 					UIUtil.SetLabelValue(achievementTitle, notificationItem.title);
 					UIUtil.SetLabelValue(achievementDescription, notificationItem.description);
 
-                    if(coinRewards) {
+                    if(GameConfigs.useCoinRewardsForAchievements) {
                         double score = Convert.ToDouble(notificationItem.score);
                         score *= 50; // 50 coins per   
                         lastScore = 0;
                         currentScore = score;
+                        notificationItem.score = score.ToString("N0");
                         GameProfileRPGs.Current.AddCurrency(score);
                     }
 
