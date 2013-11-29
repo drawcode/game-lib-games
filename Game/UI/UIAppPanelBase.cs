@@ -471,7 +471,7 @@ public class UIAppPanelBase : UIAppPanel {
         isVisible = false;
 
         if(hideObject) {
-            StartCoroutine(HidePanelCo(delay + .5f));
+            HidePanel(delay + .5f);
         }
     }
 
@@ -479,6 +479,17 @@ public class UIAppPanelBase : UIAppPanel {
         yield return new WaitForSeconds(delay);
 
         if(!isVisible) {
+            HidePanel();
+        }
+    }
+    
+    public void HidePanel(float delay) {
+        if(gameObject.activeSelf 
+           && panelContainer != null 
+           && panelContainer.activeSelf) {
+            StartCoroutine(HidePanelCo(delay));
+        }
+        else {
             HidePanel();
         }
     }

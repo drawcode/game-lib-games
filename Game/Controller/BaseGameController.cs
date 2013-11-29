@@ -33,7 +33,9 @@ public class GameContentDisplayTypes {
     public static string gameHealth = "content-game-game-health";
     public static string gameXP = "content-game-game-xp";
 
+    public static string gameTips = "content-game-tips";
     public static string gameTutorial = "content-game-tutorial";
+    public static string gameModeContentOverview = "content-game-mode-content-overview";
 }
 
 
@@ -1376,7 +1378,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            //Debug.Log("spawnCode:" + spawnCode);
+            Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {

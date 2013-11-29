@@ -950,19 +950,24 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public Color GetColor(int index) {
         if(index == 0) {
-            return UIColors.colorGreen;//Color.red;
+            return UIColors.colorGreen; 
+            //Color.red;
         }
         else if(index == 1) {
-            return UIColors.colorYellow;//Color.blue;
+            return UIColors.colorBlue;  
+            //Color.blue;
         }
         else if(index == 2) {
-            return UIColors.colorBlue;//Color.yellow;
+            return UIColors.colorOrange;    
+            //Color.yellow;
         }
         else if(index == 3) {
-            return UIColors.colorOrange;//Color.red;
-        }
+            return UIColors.colorPurple;    
+            //Color.red;
+        }   
         else if(index == 4) {
-            return UIColors.colorPurple;//Color.red;
+            return UIColors.colorRed;   
+            //Color.red;
         }
 
         return UIColors.colorGreen;
