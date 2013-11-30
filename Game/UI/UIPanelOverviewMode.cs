@@ -8,9 +8,9 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIPanelModeTypeOverview : UIPanelBase {
+public class UIPanelOverviewMode : UIPanelBase {
 
-    public static UIPanelModeTypeOverview Instance;
+    public static UIPanelOverviewMode Instance;
 
     public GameObject containerOverview;
 

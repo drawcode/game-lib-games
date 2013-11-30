@@ -14,7 +14,7 @@ public enum GameZones {
     right
 }
 
-public class GameContentDisplayTypes {
+public class BaseGameContentDisplayTypes {
     public static string gamePlayerOutOfBounds = "content-game-player-out-of-bounds";
 
     public static string gameChoices = "content-game-game-choices";
@@ -1872,19 +1872,40 @@ public class BaseGameController : MonoBehaviour {
         //GameRunningStateRun();
     }
 
-    public void handleContentDialogEnergy() {
+    public virtual void handleContentTutorial() {
+        
+        if(contentDisplayCode == GameContentDisplayTypes.gameTutorial) {            
+            UIPanelDialogBackground.ShowDefault();
+        }
+    }
+    
+    public virtual void handleContentTips() {
+        
+        if(contentDisplayCode == GameContentDisplayTypes.gameTips) {            
+            UIPanelDialogBackground.ShowDefault();
+        }
+    }
+    
+    public virtual void handleContentOverview() {
+        
+        if(contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
+            UIPanelOverviewMode.ShowDefault();
+        }
+    }
+
+    public virtual void handleContentDialogEnergy() {
         UIPanelDialogRPGEnergy.ShowDefault();
         UIPanelDialogRPGHealth.HideAll();
         UIPanelDialogRPGXP.HideAll();
     }
 
-    public void handleContentDialogHealth() {
+    public virtual void handleContentDialogHealth() {
         UIPanelDialogRPGEnergy.HideAll();
         UIPanelDialogRPGHealth.ShowDefault();
         UIPanelDialogRPGXP.HideAll();
     }
 
-    public void handleContentDialogXP() {
+    public virtual void handleContentDialogXP() {
         UIPanelDialogRPGEnergy.HideAll();
         UIPanelDialogRPGHealth.HideAll();
         UIPanelDialogRPGXP.ShowDefault();
