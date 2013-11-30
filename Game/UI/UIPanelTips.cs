@@ -42,6 +42,8 @@ public class UIPanelTips : UIAppPanelBaseList {
     public GameObject tipsBottomRightContainer;
     public GameObject tipsRightContainer;
     public GameObject tipsLeftContainer;
+
+    public UILabel labelCurrentTipStatus;
     
     public TipsMode tipsMode = TipsMode.Internal;
     
@@ -130,14 +132,14 @@ public class UIPanelTips : UIAppPanelBaseList {
            || gesture.Direction == FingerGestures.SwipeDirection.UpperRightDiagonal
            || gesture.Direction == FingerGestures.SwipeDirection.Down) {
             deferTap = true;
-            ShowTipsNext();
+            ShowTipsPrevious();
             
         }
         else if(gesture.Direction == FingerGestures.SwipeDirection.Left
                 || gesture.Direction == FingerGestures.SwipeDirection.LowerLeftDiagonal
                 || gesture.Direction == FingerGestures.SwipeDirection.Up) {
             deferTap = true;
-            ShowTipsPrevious();
+            ShowTipsNext();
             
         }
     }
@@ -303,6 +305,10 @@ public class UIPanelTips : UIAppPanelBaseList {
         ShowContainer(tipsBottomRightContainer, tipCode);
         ShowContainer(tipsRightContainer, tipCode);
         ShowContainer(tipsLeftContainer, tipCode);
+
+        UIUtil.SetLabelValue(
+            labelCurrentTipStatus, 
+            string.Format("Tip #{0} of {1}", currentTipIndex + 1, tipsTotal));
     }
     
     public void HideAllTipContainers() {
