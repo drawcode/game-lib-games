@@ -83,6 +83,8 @@ public class UIPanelTips : UIAppPanelBaseList {
         Messenger<float>.RemoveListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         
+        Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe, 
+                                            OnInputSwipe);
         Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
                                              OnInputTap);
     }
@@ -114,7 +116,7 @@ public class UIPanelTips : UIAppPanelBaseList {
     public override void Init() {
         base.Init();            
         AnimateIn();
-        ShowControlsLoad(); 
+        ShowControlsDefault();
         currentChangeDelay = 6f;
     }
     
@@ -290,7 +292,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         //AppViewerUIPanelActionTrackerSearch.HideTrackerDetectObject();
         //AppViewerUIPanelActionTrackerSearch.HideTrackerDetectLabel();
         
-        string tipCode = "tip" + (currentTipIndex + 1).ToString(); 
+        string tipCode = "tip-" + (currentTipIndex + 1).ToString(); 
         
         ShowContainer(tipsCenterContainer, tipCode);
         ShowContainer(tipsTopContainer, tipCode);
