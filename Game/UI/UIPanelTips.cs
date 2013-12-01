@@ -119,6 +119,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         base.Init();            
         AnimateIn();
         ShowControlsDefault();
+        ShowTipsFirst();
         currentChangeDelay = 6f;
     }
     
@@ -279,7 +280,9 @@ public class UIPanelTips : UIAppPanelBaseList {
         currentTipIndex = index;
         
         HideAllTipContainers();
-        StartCoroutine(ShowCurrentTipObjectsCo());
+        if(gameObject.activeSelf && gameObject.activeInHierarchy) {
+            StartCoroutine(ShowCurrentTipObjectsCo());
+        }
     }
     
     public IEnumerator ShowCurrentTipObjectsCo() {
@@ -368,17 +371,20 @@ public class UIPanelTips : UIAppPanelBaseList {
     }
     
     public void HideContainer(GameObject container) {
-        StartCoroutine(HideContainerCo(container));
+        if(container != null) {
+            if(!gameObject.activeSelf || !gameObject.activeInHierarchy 
+               || !container.activeSelf || !container.activeInHierarchy) {
+                container.HideChildren(true);
+            }
+            else {
+                StartCoroutine(HideContainerCo(container));
+            }
+        }
     }
     
     IEnumerator HideContainerCo(GameObject container) {
         if(container != null) {
-            //foreach(Transform t in container.transform) {
-            //UITweenerUtil.FadeTo(t.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .2f, 0f, 0f);
-            //}
-            if(container != null) {
-                container.HideChildren(true);
-            }
+            container.HideChildren(true);
         }
         
         yield return new WaitForSeconds(.1f);

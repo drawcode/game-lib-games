@@ -96,6 +96,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public AppContentChoiceData currentChoiceData = null;
 
     bool isCorrect = true;
+    bool chosen = false;
 
 	public void Awake() {
 		
@@ -164,7 +165,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //Messenger<AppContentChoiceItem>.Broadcast(AppContentChoiceMessages.appContentChoiceItem, choiceItem);
     }
 
-    void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
+    public void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
         CheckChoicesData();
 
         isCorrect = data.choiceItemIsCorrect;
@@ -198,7 +199,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
     }
 
-    void OnButtonClickEventHandler(string buttonName) {
+    public void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonDisplayItemAdvance, buttonName)) {
             Advance();
         }
@@ -229,8 +230,6 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     }
 
     // ADVANCE/NEXT
-
-    bool chosen = false;
 
     public void Advance() {
 
