@@ -16,6 +16,10 @@ public enum BaseUIStates {
 public class BaseUIControllerMessages {
     public static string uiPanelAnimateIn = "ui-panel-animate-in";
     public static string uiPanelAnimateOut = "ui-panel-animate-out";
+    public static string uiPanelAnimateInType = "ui-panel-animate-in-type";
+    public static string uiPanelAnimateOutType = "ui-panel-animate-out-type";
+    public static string uiPanelAnimateInClassType = "ui-panel-animate-in-class-type";
+    public static string uiPanelAnimateOutClassType = "ui-panel-animate-out-class-type";
     public static string uiPanelAnimateType = "ui-panel-animate-type";
     public static string uiUpdateTouchLaunch = "ui-update-touch-launch";
 }

@@ -1894,20 +1894,20 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void handleContentDialogEnergy() {
+        //UIPanelDialogRPGHealth.HideAll();
+        //UIPanelDialogRPGXP.HideAll();
         UIPanelDialogRPGEnergy.ShowDefault();
-        UIPanelDialogRPGHealth.HideAll();
-        UIPanelDialogRPGXP.HideAll();
     }
 
     public virtual void handleContentDialogHealth() {
-        UIPanelDialogRPGEnergy.HideAll();
+        //UIPanelDialogRPGEnergy.HideAll();
+        //UIPanelDialogRPGXP.HideAll();
         UIPanelDialogRPGHealth.ShowDefault();
-        UIPanelDialogRPGXP.HideAll();
     }
 
     public virtual void handleContentDialogXP() {
-        UIPanelDialogRPGEnergy.HideAll();
-        UIPanelDialogRPGHealth.HideAll();
+        //UIPanelDialogRPGEnergy.HideAll();
+        //UIPanelDialogRPGHealth.HideAll();
         UIPanelDialogRPGXP.ShowDefault();
     }
 

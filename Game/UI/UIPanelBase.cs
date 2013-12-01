@@ -6,6 +6,11 @@ using UnityEngine;
 
 using Engine.Events;
 
+public class UIPanelBaseTypes {
+    public static string typeDefault = "type-default";
+    public static string typeDialogHUD = "type-dialog-hud";
+}
+
 public class UIPanelBase : UIAppPanel {
 
     public GameObject listGridRoot; 
@@ -48,20 +53,40 @@ public class UIPanelBase : UIAppPanel {
 
     public int increment = 0;
 
+    public string panelType = UIPanelBaseTypes.typeDefault;
+
     public virtual void OnEnable() {
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
+        
+        Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateInType, OnUIControllerPanelAnimateInType);
+        Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOutType, OnUIControllerPanelAnimateOutType);
+        
+        Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateInClassType, OnUIControllerPanelAnimateInClassType);
+        Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateOutClassType, OnUIControllerPanelAnimateOutClassType);
+
         Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
     }
 
     public virtual void OnDisable() {
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
-        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);        
+        
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateInType, OnUIControllerPanelAnimateInType);
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOutType, OnUIControllerPanelAnimateOutType);
+        
+        Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateInClassType, OnUIControllerPanelAnimateInClassType);
+        Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateOutClassType, OnUIControllerPanelAnimateOutClassType);
+
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
     }
 
     public virtual void OnUIControllerPanelAnimateIn(string classNameTo) {
+
         if(className == classNameTo) {
+
+            HandleUniquePanelTypes();
+
             AnimateIn();
         }
     }
@@ -72,9 +97,42 @@ public class UIPanelBase : UIAppPanel {
         }
     }
 
+    public virtual void OnUIControllerPanelAnimateInType(string panelTypeTo) {
+        if(panelType == panelTypeTo) {
+            AnimateIn();
+        }
+    }
+    
+    public virtual void OnUIControllerPanelAnimateOutType(string panelTypeTo) {
+        if(panelType == panelTypeTo) {
+            AnimateOut();
+        }
+    }    
+    
+    public virtual void OnUIControllerPanelAnimateInClassType(string classNameTo, string panelTypeTo) {
+        if(className != classNameTo && panelType == panelTypeTo) {
+            AnimateIn();
+        }
+    }
+    
+    public virtual void OnUIControllerPanelAnimateOutClassType(string classNameTo, string panelTypeTo) {
+        if(className != classNameTo && panelType == panelTypeTo) {
+            AnimateOut();
+        }
+    }
+
     public virtual void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
             //
+        }
+    }
+
+    public virtual void HandleUniquePanelTypes() {
+        
+        if(panelType != UIPanelBaseTypes.typeDefault) {
+            // if this is a special panel, hide the others like it such as dialogs...modals
+            Messenger<string,string>.Broadcast(UIControllerMessages.uiPanelAnimateOutClassType, className, panelType);
+            LogUtil.Log("OnUIControllerPanelAnimateIn:", " className:" + className + " panelType:" + panelType);
         }
     }
 
@@ -375,6 +433,8 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateIn() {
      
         //AnimateOut(0f, 0f);
+        
+        HandleUniquePanelTypes();
      
         ShowPanel();
      

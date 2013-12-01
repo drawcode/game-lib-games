@@ -280,6 +280,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         currentTipIndex = index;
         
         HideAllTipContainers();
+
         if(gameObject.activeSelf && gameObject.activeInHierarchy) {
             StartCoroutine(ShowCurrentTipObjectsCo());
         }

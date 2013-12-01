@@ -23,7 +23,7 @@ public class UIPanelDialogRPGObject : UIPanelBase {
 
     public UISlider sliderValue;
 
-    public virtual void Awake() {
+    public virtual void Awake() {        
 
     }
 

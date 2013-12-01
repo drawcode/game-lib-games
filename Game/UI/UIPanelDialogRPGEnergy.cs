@@ -21,6 +21,8 @@ public class UIPanelDialogRPGEnergy : UIPanelDialogRPGObject {
         }
 
         Instance = this;
+        
+        panelType = UIPanelBaseTypes.typeDialogHUD;
     }
 
     public static bool isInst {

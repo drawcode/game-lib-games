@@ -31,6 +31,8 @@ public class UIPanelDialogRPGXP : UIPanelBase {
         }
      
         Instance = this; 
+
+        panelType = UIPanelBaseTypes.typeDialogHUD;
  }
  
  public static bool isInst {

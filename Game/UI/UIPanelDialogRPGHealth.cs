@@ -21,6 +21,8 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
         }
 
         Instance = this;
+        
+        panelType = UIPanelBaseTypes.typeDialogHUD;
     }
 
     public static bool isInst {

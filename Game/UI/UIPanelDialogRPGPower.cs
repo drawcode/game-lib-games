@@ -28,6 +28,8 @@ public class UIPanelDialogRPGPower : UIPanelBase {
         }
 
         Instance = this;
+        
+        panelType = UIPanelBaseTypes.typeDialogHUD;
     }
 
     public static bool isInst {

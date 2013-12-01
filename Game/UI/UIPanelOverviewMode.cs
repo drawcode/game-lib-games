@@ -45,6 +45,8 @@ public class UIPanelOverviewMode : UIPanelBase {
         }
         
         Instance = this;    
+
+        panelType = UIPanelBaseTypes.typeDialogHUD;
     }
     
     public static bool isInst {
@@ -58,6 +60,8 @@ public class UIPanelOverviewMode : UIPanelBase {
     
     public override void Init() {
         base.Init();
+
+        Ready();
     }
     
     public override void Start() {
@@ -300,15 +304,23 @@ public class UIPanelOverviewMode : UIPanelBase {
         //Debug.Log("UIPanelModeTypeChoice:loadData");
         StartCoroutine(loadDataCo());
     }
+
+    bool initialized = false;
     
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
 
         Reset();
 
-        ShowCurrentState();
-        
-        UpdateTipsStates();
+        if(!initialized) {
+            initialized = true;
+        }
+        else {            
+            
+            ShowCurrentState();
+            
+            UpdateTipsStates();
+        }
     }
 
     public override void AnimateIn() {
