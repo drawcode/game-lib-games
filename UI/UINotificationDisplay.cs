@@ -77,6 +77,9 @@ public class UINotificationDisplay
 	float positionYClosedInGame = 900;
 	
 	public static UINotificationDisplay Instance;	
+    
+    public double currentScore = 0;
+    public double lastScore = 0;
 	
 	UINotificationItem currentItem;
 	
@@ -410,9 +413,6 @@ public class UINotificationDisplay
 			GameObjectHelper.HideObject(notificationContainerInfo);
 		}	
 	}
-
-    double currentScore = 0;
-    double lastScore = 0;
 	
 	public void ProcessNextNotification() {
 		if(!Paused) {
@@ -432,8 +432,8 @@ public class UINotificationDisplay
                         score *= 50; // 50 coins per   
                         lastScore = 0;
                         currentScore = score;
-                        notificationItem.score = score.ToString("N0");
-                        GameProfileRPGs.Current.AddCurrency(score);
+                        notificationItem.score = currentScore.ToString("N0");
+                        GameProfileRPGs.Current.AddCurrency(currentScore);
                     }
 
 					UIUtil.SetLabelValue(achievementScore, "+" + notificationItem.score);

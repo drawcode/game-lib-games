@@ -1489,7 +1489,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            //Debug.Log("spawnCode:" + spawnCode);
+            Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {

@@ -11,6 +11,10 @@ public enum TipsMode {
     Internal
 }
 
+public class UIPanelTipsMessages {
+    public static string tipsCycle = "panel-tips-cycle";
+}
+
 public class UIPanelTips : UIAppPanelBaseList {
         
     public GameObject containerObject;
@@ -46,22 +50,13 @@ public class UIPanelTips : UIAppPanelBaseList {
     public UILabel labelCurrentTipStatus;
     
     public TipsMode tipsMode = TipsMode.Internal;
+
+    public bool hidden = true;
     
     bool deferTap = false;
-    
-    float lastUICheck = 0f;
-    bool hidden = false;
-    
+
     public void Awake() {
-        
-        //if (Instance != null && this != Instance) {
-        //    //There is already a copy of this script running
-        //    Destroy(gameObject);
-        //    return;
-        //}
-        //Instance = this;
-        
-        Init();
+
     }
         
     public override void OnEnable() {
@@ -89,6 +84,7 @@ public class UIPanelTips : UIAppPanelBaseList {
                                             OnInputSwipe);
         Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
                                              OnInputTap);
+
     }
     
     void OnButtonClickEventHandler(string buttonName) {
@@ -270,6 +266,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         tipsTotal = tipsCenterContainer.transform.childCount;
         
         if(index > tipsTotal - 1) {
+            Messenger<string>.Broadcast(UIPanelTipsMessages.tipsCycle, gameObject.name);
             index = 0;
         }
         
@@ -312,7 +309,7 @@ public class UIPanelTips : UIAppPanelBaseList {
 
         UIUtil.SetLabelValue(
             labelCurrentTipStatus, 
-            string.Format("Tip #{0} of {1}", currentTipIndex + 1, tipsTotal));
+            string.Format("Tip {0} of {1}", currentTipIndex + 1, tipsTotal));
     }
     
     public void HideAllTipContainers() {

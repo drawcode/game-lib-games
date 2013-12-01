@@ -77,6 +77,8 @@ public class UIPanelOverviewMode : UIPanelBase {
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
+
+        Messenger<string>.AddListener(UIPanelTipsMessages.tipsCycle, OnTipsCycleHandler);
     }
     
     public override void OnDisable() {
@@ -86,6 +88,24 @@ public class UIPanelOverviewMode : UIPanelBase {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
+
+        Messenger<string>.RemoveListener(UIPanelTipsMessages.tipsCycle, OnTipsCycleHandler);
+    }
+
+    string lastTipObjectName = "";
+
+    void OnTipsCycleHandler(string objName) {
+        if(objName != lastTipObjectName) {
+            lastTipObjectName = objName;
+            
+            if(flowState == AppOverviewFlowState.GameplayTips) {
+                ChangeTipsState(AppOverviewFlowState.Mode);
+            }
+            else {            
+                ChangeTipsState(AppOverviewFlowState.GameplayTips);
+            }
+
+        }
     }
 
     void OnButtonClickEventHandler(string buttonName) {
@@ -120,7 +140,6 @@ public class UIPanelOverviewMode : UIPanelBase {
         UpdateTipsStates();
     }
 
-
     public void UpdateTipsStates() {
     
         if(flowState == AppOverviewFlowState.GameplayTips) {
@@ -132,14 +151,14 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
     
     public void ShowTipsObjectGameplay() {
-        UIUtil.HideButton(buttonOverviewMode);
-        UIUtil.ShowButton(buttonOverviewTips);
+        UIUtil.HideButton(buttonOverviewTips);
+        UIUtil.ShowButton(buttonOverviewMode);
         ShowTipsObject("gameplay");    
     }
 
     public void ShowTipsObjectMode() {
-        UIUtil.HideButton(buttonOverviewTips);
-        UIUtil.ShowButton(buttonOverviewMode);
+        UIUtil.HideButton(buttonOverviewMode);
+        UIUtil.ShowButton(buttonOverviewTips);
         string currentAppContentState = AppContentStates.Current.code;
         ShowTipsObject(currentAppContentState);
     }
