@@ -9,6 +9,13 @@ using Engine.Events;
 public class UIPanelBaseTypes {
     public static string typeDefault = "type-default";
     public static string typeDialogHUD = "type-dialog-hud";
+    public static string typeModalHUD = "type-modal-hud";
+    public static string typeDialogUI = "type-dialog-ui";
+    public static string typeModalUI = "type-modal-ui";
+    public static string typeDialogDialog = "type-dialog-dialog";
+    public static string typeModalDialog = "type-modal-dialog";
+    public static string typeDialogOverlay = "type-dialog-overlay";
+    public static string typeModalOverlay = "type-modal-overlay";
 }
 
 public class UIPanelBase : UIAppPanel {
@@ -53,9 +60,12 @@ public class UIPanelBase : UIAppPanel {
 
     public int increment = 0;
 
-    public string panelType = UIPanelBaseTypes.typeDefault;
+    public List<string> panelTypes = new List<string>();//UIPanelBaseTypes.typeDefault;
 
     public virtual void OnEnable() {
+
+        panelTypes.Add(UIPanelBaseTypes.typeDefault);
+
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
         
@@ -98,25 +108,25 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void OnUIControllerPanelAnimateInType(string panelTypeTo) {
-        if(panelType == panelTypeTo) {
+        if(panelTypes.Contains(panelTypeTo)) {
             AnimateIn();
         }
     }
     
     public virtual void OnUIControllerPanelAnimateOutType(string panelTypeTo) {
-        if(panelType == panelTypeTo) {
+        if(panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
         }
     }    
     
     public virtual void OnUIControllerPanelAnimateInClassType(string classNameTo, string panelTypeTo) {
-        if(className != classNameTo && panelType == panelTypeTo) {
+        if(className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateIn();
         }
     }
     
     public virtual void OnUIControllerPanelAnimateOutClassType(string classNameTo, string panelTypeTo) {
-        if(className != classNameTo && panelType == panelTypeTo) {
+        if(className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
         }
     }
@@ -129,10 +139,17 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HandleUniquePanelTypes() {
         
-        if(panelType != UIPanelBaseTypes.typeDefault) {
+        if(panelTypes.Count > 1) {
             // if this is a special panel, hide the others like it such as dialogs...modals
-            Messenger<string,string>.Broadcast(UIControllerMessages.uiPanelAnimateOutClassType, className, panelType);
-            LogUtil.Log("OnUIControllerPanelAnimateIn:", " className:" + className + " panelType:" + panelType);
+            foreach(string panelType in panelTypes) {
+
+                if(panelType == UIPanelBaseTypes.typeDefault) {
+                    continue;
+                }
+
+                Messenger<string,string>.Broadcast(UIControllerMessages.uiPanelAnimateOutClassType, className, panelType);
+                LogUtil.Log("OnUIControllerPanelAnimateIn:", " className:" + className + " panelType:" + panelType);
+            }
         }
     }
 

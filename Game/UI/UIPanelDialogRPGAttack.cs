@@ -29,7 +29,7 @@ public class UIPanelDialogRPGAttack : UIPanelBase {
 
         Instance = this;
         
-        panelType = UIPanelBaseTypes.typeDialogHUD;
+        panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
     }
 
     public static bool isInst {
