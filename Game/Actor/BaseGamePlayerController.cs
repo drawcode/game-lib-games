@@ -186,8 +186,12 @@ public class BaseGamePlayerController : GameActor {
     Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
     [HideInInspector]
-    public float
-        incrementScore = 1f;
+    public float incrementScore = 1f;
+        
+    GameObject audioObjectFootsteps;
+    AudioClip audioObjectFootstepsClip;
+    AudioSource audioObjectFootstepsSource;
+
     float lastUpdateCommon = 0f;
     float lastAttackTime = 0;
     float lastBoostTime = 0;
@@ -227,6 +231,7 @@ public class BaseGamePlayerController : GameActor {
     public float distanceEvade = 5f;
     public bool isWithinEvadeRange = false;
     public bool lastIsWithinEvadeRange = false;
+
  
     // --------------------------------------------------------------------
     // INIT
@@ -306,6 +311,53 @@ public class BaseGamePlayerController : GameActor {
      
         initialized = true;      
     }
+
+    // SPEED
+
+    public virtual float gamePlayerMoveSpeed {
+        get {
+            return GamePlayerMoveSpeed();
+        }
+    }
+
+    public virtual float GamePlayerMoveSpeed() {
+
+        float currentSpeed = 0f;
+        
+        if(thirdPersonController != null) {
+            currentSpeed = thirdPersonController.GetSpeed();
+        }
+        
+        if(contextState == GamePlayerContextState.ContextFollowAgent
+           || contextState == GamePlayerContextState.ContextFollowAgentAttack
+           || contextState == GamePlayerContextState.ContextRandom) {
+
+            if(gamePlayerControllerAnimation.navAgent != null) {
+
+                if(gamePlayerControllerAnimation.navAgent.enabled) {                       
+                    //currentSpeed = navAgent.velocity.magnitude + 20;
+                    
+                    if(gamePlayerControllerAnimation.navAgent.velocity.magnitude > 0f) {
+                        currentSpeed = 15f;
+                    }
+                    else {
+                        currentSpeed = 0;    
+                    }
+                    
+                    if(gamePlayerControllerAnimation.navAgent.remainingDistance < gamePlayerControllerAnimation.navAgent.stoppingDistance + 1) {
+                        currentSpeed = 0;
+                    }
+                    
+                    if(currentSpeed < gamePlayerControllerAnimation.navAgent.speed) {
+                        //currentSpeed = 0;
+                    }
+                }
+            }
+        }
+
+        return currentSpeed;
+    }
+
  
     // --------------------------------------------------------------------
     // EFFECTS
@@ -618,6 +670,39 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         return null;
+    }
+
+    public virtual void LoadCharacterAttachedSounds() {
+        // TODO footsteps over different terrain
+        // Foosteps, breathing etc.
+
+        if(audioObjectFootsteps == null) {
+            audioObjectFootsteps = GameAudio.PlayEffectObject(transform, "audio_footsteps_default", false);
+            if(audioObjectFootsteps != null) {
+                if(audioObjectFootsteps.audio != null) {
+                    audioObjectFootstepsSource = audioObjectFootsteps.audio;
+
+                    if(audioObjectFootstepsClip == null && audioObjectFootstepsSource.clip != null) {
+                        audioObjectFootstepsClip = audioObjectFootsteps.audio.clip;
+                    }
+                }
+            }
+        }
+    }
+
+    public virtual void HandleCharacterAttachedSounds() {
+    
+        if(!GameConfigs.isGameRunning) {
+            audioObjectFootstepsSource.StopIfPlaying();
+        }
+
+        LoadCharacterAttachedSounds();
+
+        if(gamePlayerMoveSpeed > .1f) {
+            audioObjectFootstepsSource.volume = 1f;
+            audioObjectFootstepsSource.time = gamePlayerMoveSpeed/5f;
+        }
+    
     }
  
     public virtual void LoadCharacter(string prefabNameObject) {
@@ -3055,13 +3140,19 @@ public class BaseGamePlayerController : GameActor {
 
         HandlePlayerAliveStateLate();
     }
+
+    public virtual void UpdateAlways() {        
+        HandleCharacterAttachedSounds(); // always run to turn off audio when not playing.
+    }
  
     public override void Update() {
      
         if (!initialized) {
             return;
         }
-     
+
+        UpdateAlways();
+
         if (!GameController.IsGameRunning) {
             return;
         }

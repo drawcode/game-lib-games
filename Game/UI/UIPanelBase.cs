@@ -520,7 +520,14 @@ public class UIPanelBase : UIAppPanel {
 
         ListClear();
 
-        StartCoroutine(HidePanelCo(delay + .5f));
+        if(panelContainer != null) {
+            if(!panelContainer.activeSelf || panelContainer.activeInHierarchy) {
+                panelContainer.Hide();
+            }
+            else {
+                StartCoroutine(HidePanelCo(delay + .5f));
+            }
+        }
     }
 
     public IEnumerator HidePanelCo(float delay) {
