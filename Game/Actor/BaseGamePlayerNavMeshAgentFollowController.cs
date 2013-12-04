@@ -22,9 +22,11 @@ public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
 
     public virtual void StopAgent() {
         if(agent != null) {
-            agent.Stop(true);
-            agentState = GamePlayerNavMeshAgentState.STOP;
-            agent.destination = gameObject.transform.position;
+            if(agent.enabled) {
+                agent.destination = gameObject.transform.position;
+                agent.Stop(true);
+                agentState = GamePlayerNavMeshAgentState.STOP;
+            }
         }
     }
     

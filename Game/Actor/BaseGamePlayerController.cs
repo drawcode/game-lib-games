@@ -677,7 +677,7 @@ public class BaseGamePlayerController : GameActor {
         // Foosteps, breathing etc.
 
         if(audioObjectFootsteps == null) {
-            audioObjectFootsteps = GameAudio.PlayEffectObject(transform, "audio_footsteps_default", false);
+            audioObjectFootsteps = GameAudio.PlayEffectObject(transform, "audio_footsteps_default", true);
             if(audioObjectFootsteps != null) {
                 if(audioObjectFootsteps.audio != null) {
                     audioObjectFootstepsSource = audioObjectFootsteps.audio;
@@ -694,13 +694,14 @@ public class BaseGamePlayerController : GameActor {
     
         if(!GameConfigs.isGameRunning) {
             audioObjectFootstepsSource.StopIfPlaying();
+            return;
         }
 
         LoadCharacterAttachedSounds();
 
         if(gamePlayerMoveSpeed > .1f) {
-            audioObjectFootstepsSource.volume = 1f;
-            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) * 3;
+            ////audioObjectFootstepsSource.volume = 1f;
+            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + 1;
             LogUtil.Log("playSpeed", playSpeed);
             audioObjectFootstepsSource.pitch = playSpeed;
         }
@@ -1875,8 +1876,8 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StartNavAgent() {
         if (navMeshAgent != null) {
-            navMeshAgent.Resume();
             navMeshAgent.enabled = true;
+            navMeshAgent.Resume();
         }
         if (navMeshAgentController != null) {
             navMeshAgentController.StartAgent();
@@ -1889,8 +1890,10 @@ public class BaseGamePlayerController : GameActor {
     public virtual void StopNavAgent() {
 
         if (navMeshAgent != null) {
-            navMeshAgent.Stop(true);
-            navMeshAgent.enabled = false;
+            if(navMeshAgent.enabled) {
+                navMeshAgent.Stop(true);
+                navMeshAgent.enabled = false;
+            }
         }
         if (navMeshAgentController != null) {
             navMeshAgentController.StopAgent();
@@ -2976,7 +2979,9 @@ public class BaseGamePlayerController : GameActor {
         if (thirdPersonController != null) {
             if (thirdPersonController.IsJumping()) {
                 if (navMeshAgent != null) {
-                    navMeshAgent.Stop(true);
+                    if(navMeshAgent.enabled) {
+                        navMeshAgent.Stop(true);
+                    }
                 }
                 
                 if (gamePlayerShadow != null) {
@@ -2985,6 +2990,9 @@ public class BaseGamePlayerController : GameActor {
             }
             else {
                 if (navMeshAgent != null) {
+                    if(!navMeshAgent.enabled) {
+                        navMeshAgent.enabled = true;
+                    }
                     navMeshAgent.Resume();
                 }                       
                 

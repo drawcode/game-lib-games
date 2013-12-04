@@ -634,7 +634,7 @@ public class BaseGameController : MonoBehaviour {
         if(go != null) {
             GamePlayerCollision gamePlayerCollision = go.Get<GamePlayerCollision>();
 
-            if(gamePlayerCollision != null) {
+            if(gamePlayerCollision == null) {
                 return null;
             }
 
