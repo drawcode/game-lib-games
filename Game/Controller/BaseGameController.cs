@@ -100,7 +100,8 @@ public class BaseGameMessages {
 	public static string ammo = "game-shooter-ammo";
 	public static string save = "game-shooter-save";
 	public static string shot = "game-shooter-shot";
-	public static string coin = "game-shooter-coin";
+    public static string coin = "game-shooter-coin";
+    public static string health = "game-shooter-health";
 	public static string launch = "game-shooter-launch";
 	public static string state = "game-shooter-state";
 }
@@ -1278,13 +1279,22 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadItemData(GameItemDirectorData data) {
         GameItemDataItem item = new GameItemDataItem();
-        if(item.type == GamePlayerItemType.Coin) {
+        if(data.itemType == GamePlayerItemType.Coin) {
             item.itemCode = "coin";
             item.prefabCode = "GamePlayerItemCoin";
+            item.type = GamePlayerItemType.Coin;
+        }
+        else if(data.itemType == GamePlayerItemType.Health) {
+            item.itemCode = "health";
+            item.prefabCode = "GamePlayerItemHealth";
+            item.type = GamePlayerItemType.Health;
         }
         item.scale = data.scale;
         item.attack = data.attack;
         item.speed = data.speed;
+        
+        //LogUtil.Log("loadItemData:", data.itemType);
+        
         GameController.LoadItem(item);
     }
 
@@ -1536,7 +1546,7 @@ public class BaseGameController : MonoBehaviour {
         string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
 
         if(item.type == GamePlayerItemType.Coin) {
-            itemTypeString = "coin";
+            itemTypeString = GamePlayerIndicatorType.coin.ToString();
         }
         else if(item.type == GamePlayerItemType.Health) {
             itemTypeString = "health";
@@ -2339,7 +2349,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void advanceToResultsDelayed() {
         GameUIController.ShowUIPanelDialogResults();
-        //GameAudio.StartGameLoopForLap(4);
+        //GameAudio.StartGameLoop(4);
         isAdvancing = false;
         GameController.GameRunningStateStopped();
     }

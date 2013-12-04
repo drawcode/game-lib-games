@@ -35,6 +35,7 @@ public class GameItemDirectorData {
     }
 
     public void Reset() {
+        itemType = GamePlayerItemType.Coin;
         randomValue = SetRandomValue(1, 2);
         rpg = new GameProfileRPGItem();
         speed = .3f;
@@ -170,7 +171,7 @@ public class BaseItemController : MonoBehaviour {
                 currentSpawnAmount = 1;
             }
          
-            int randomValue = UnityEngine.Random.Range(0, 50);
+            int randomValue = UnityEngine.Random.Range(1, 80);
 
             float speed = .3f;
             float attack = .3f;
@@ -180,15 +181,15 @@ public class BaseItemController : MonoBehaviour {
             speed = UnityEngine.Random.Range(.7f, 1.2f);
 
             GameItemDirectorData item = new GameItemDirectorData();
-            item.SetRandomValue(1, randomValue);
+            item.randomValue = randomValue;
             item.speed = speed;
             item.attack = attack;
             item.scale = scale;
 
-            if(randomValue > 0 && randomValue < 20) {
+            if(randomValue > 0 && randomValue < 25) {
                 item.itemType = GamePlayerItemType.Coin;
             }
-            else if(randomValue > 20 && randomValue < 22) {
+            else if(randomValue > 30 && randomValue < 35) {
                 item.itemType = GamePlayerItemType.Health;
             }
 

@@ -88,7 +88,7 @@ public class BaseGameCameraSmoothFollow : MonoBehaviour {
 					
 	}
 		
-	public virtual void LateUpdate (){		
+	public virtual void LateUpdate() {		
 		
 		if(allowZoom && cam != null) {
 			if (Input.GetAxis("Mouse ScrollWheel") > 0) {

@@ -240,6 +240,8 @@ public class BaseGameGlobal : MonoBehaviour
         #else
         #endif
     }
+
+    public static float volumeEditor = 1f;
     
     public virtual void InitAudio() {    
 
@@ -269,14 +271,12 @@ public class BaseGameGlobal : MonoBehaviour
         #if DEV
         if(Application.isEditor) {
 
-            float tempVolume = 1f;
-
-            GameProfiles.Current.SetAudioMusicVolume(tempVolume);
-            GameProfiles.Current.SetAudioEffectsVolume(tempVolume);          
-            audioSystem.SetAmbienceVolume(tempVolume);
-            audioSystem.SetEffectsVolume(tempVolume);
-            GameAudio.SetEffectsVolume(tempVolume);
-            GameAudio.SetAmbienceVolume(tempVolume);
+            GameProfiles.Current.SetAudioMusicVolume(volumeEditor);
+            GameProfiles.Current.SetAudioEffectsVolume(volumeEditor);          
+            audioSystem.SetAmbienceVolume(volumeEditor);
+            audioSystem.SetEffectsVolume(volumeEditor);
+            GameAudio.SetEffectsVolume(volumeEditor);
+            GameAudio.SetAmbienceVolume(volumeEditor);
         }
         #endif
         

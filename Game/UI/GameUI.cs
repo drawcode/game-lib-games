@@ -102,12 +102,12 @@ public class GameUI : MonoBehaviour {
 		}
 		
 		//GameAudio.StopAmbience();
-		//GameAudio.StartGameLoopForLap(GameUIPanel.Instance.currentLevelNumber);
+		//GameAudio.StartGameLoop(GameUIPanel.Instance.currentLevelNumber);
 	}
 	
 	public void PlayUIAudio() {
 		
-		//GameAudio.StartGameLoopForLap(-1);
+		//GameAudio.StartGameLoop(-1);
 		//GameAudio.StartAmbience();
 	}
 	

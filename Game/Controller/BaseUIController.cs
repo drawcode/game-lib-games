@@ -1649,14 +1649,14 @@ public class BaseUIController : MonoBehaviour {
         }
      
         GameAudio.StopAmbience();
-        GameAudio.StartGameLoopForLap(UnityEngine.Random.Range(1, 3));
+        GameAudio.StartGameLoop(UnityEngine.Random.Range(1, 3));
         inUIAudioPlaying = false;
     }
  
     public virtual void HandleInUIAudio() {
      
         if(!inUIAudioPlaying) {
-            GameAudio.StartGameLoopForLap(-1);
+            GameAudio.StartGameLoop(-1);
             GameAudio.StartAmbience();
             inUIAudioPlaying = true;
         }

@@ -73,10 +73,10 @@ public class UIPanelSettingsAudio : UIPanelBase {
 		
 		bool changeAudio = true;
 		
-#if DEV2
+#if DEV
 		if(Application.isEditor) {
-			GameProfiles.Current.SetAudioMusicVolume(0);
-			GameProfiles.Current.SetAudioEffectsVolume(0);
+            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditor);
+            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditor);
 			changeAudio = false;
 		}
 #endif

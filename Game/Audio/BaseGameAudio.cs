@@ -343,9 +343,9 @@ public class BaseGameAudio {
 			AudioSystem.Instance.StartGameLoopsForLaps();
 	}
 	
-	public static void StartGameLoopForLap(int lap) {
+	public static void StartGameLoop(int lap) {
 		if(AudioSystem.Instance != null) {
-			AudioSystem.Instance.StartGameLoopForLap(lap);
+			AudioSystem.Instance.StartGameLoop(lap);
 			if(lap > 1) {
 				//GamePlayerProgress.Instance.SetAchievement(GameAchievements.ACHIEVE_MIX_IT_UP, true);
 			}

@@ -78,10 +78,10 @@ public class UIPanelPause : UIPanelBase {
 		
 		bool changeAudio = true;
 		
-#if DEV22		
+#if DEV	
 		if(Application.isEditor) {
-			GameProfiles.Current.SetAudioMusicVolume(0);
-			GameProfiles.Current.SetAudioEffectsVolume(0);
+            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditor);
+            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditor);
 			changeAudio = false;
 		}
 #endif

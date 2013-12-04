@@ -15,6 +15,7 @@ public enum GamePlayerIndicatorType {
     item,
     pickup,
     coin,
+    health,
     powerup,
     color,
     goal,

@@ -94,37 +94,55 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         if(!isCollecting) {
             LogUtil.Log("CollectContent:Collect", true);
                         
-            isCollecting = true;
+            isCollecting = true;            
+            
+            double totalValue = 1f;
+            double xpValue = 1f;
+            
+            GamePlayerProgress.SetStatXP(xpValue);            
+            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(xpValue);
+            
+            if(type == GamePlayerItemType.Coin) {
+            }
+                        
+            if(string.IsNullOrEmpty(title)) {
+                //title = "Points Earned";
+            }
+            
+            if(string.IsNullOrEmpty(description)) {
+                description = "...";
+            }
                 
             GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
+
             if(type == GamePlayerItemType.Coin) {
+                
+                Messenger<int>.Broadcast(GameMessages.coin, (int)totalValue);
+
+                GameController.CurrentGamePlayerController.runtimeData.coins += totalValue;
 
                 GamePlayerProgress.SetStatCoins(1f);
                 GamePlayerProgress.SetStatCoinsPickup(1f);
 
                 GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
+            }            
+            else if(type == GamePlayerItemType.Health) {   
+
+                totalValue = .1;
+                
+                Messenger<double>.Broadcast(GameMessages.health, totalValue);
+                                
+                GameController.CurrentGamePlayerController.runtimeData.hitCount -= 1;
+                GameController.CurrentGamePlayerController.runtimeData.health += totalValue;
+                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(totalValue); // refill
+                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(totalValue); // refill
+
+                GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_2);
+                
             }
             else {
                 GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_2);
             }
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_point_2);
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_point_3);
-                        
-            //if(type == GamePlayerCollectableType.Coin) {
-            //GameProfileRPGs.Current.SetGamePlayerProgressPointData(uuid, pointValue);
-            //GamePlayerProgress.Instance.ProcessProgressPoints();
-            //GameCommunityPlatformState.SaveProfile();
-                                
-            if(string.IsNullOrEmpty(title)) {
-                //title = "Points Earned";
-            }
-                                
-            if(string.IsNullOrEmpty(description)) {
-                description = "...";
-            }
-                                
-                                
-            Messenger<int>.Broadcast(GameMessages.coin, 1);
                                 
             //UINotificationDisplay.Instance.QueuePoint(title, description, pointValue);
             //}
