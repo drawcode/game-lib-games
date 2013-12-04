@@ -700,7 +700,9 @@ public class BaseGamePlayerController : GameActor {
 
         if(gamePlayerMoveSpeed > .1f) {
             audioObjectFootstepsSource.volume = 1f;
-            audioObjectFootstepsSource.time = gamePlayerMoveSpeed/5f;
+            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) * 3;
+            LogUtil.Log("playSpeed", playSpeed);
+            audioObjectFootstepsSource.pitch = playSpeed;
         }
     
     }
