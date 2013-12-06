@@ -231,7 +231,10 @@ public class BaseGamePlayerController : GameActor {
     public float distanceEvade = 5f;
     public bool isWithinEvadeRange = false;
     public bool lastIsWithinEvadeRange = false;
-
+    
+    // IDLE ACTIONS AFTER INACTION
+    public float delayIdleActions = 3.0f;
+    public float lastIdleActions = 0f;
  
     // --------------------------------------------------------------------
     // INIT
@@ -519,6 +522,8 @@ public class BaseGamePlayerController : GameActor {
         if (runtimeData.health <= 0f) {
             Die();
         }
+
+        //HandlePlayerInactionState();
     }
 
     public virtual void HandlePlayerAliveStateLate() {
@@ -527,6 +532,59 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandlePlayerAliveStateFixed() {
+
+    }
+
+    public virtual void HandlePlayerInactionState() {
+        
+        if(!IsPlayerControlled) {
+            return;
+        }
+
+        // update player controlled players to look at player and animate it inactive
+
+        bool update = false;
+
+        if(lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
+            lastIdleActions = Time.time;
+            if(thirdPersonController.moveSpeed == 0f) {
+                update = true;
+            }
+        }
+
+        if(!update) {
+            return;
+        }
+
+        // Look at camera
+
+        OnInputAxis(GameTouchInputAxis.inputAxisMove, Vector3.zero.WithY(-1));
+
+        // Randomize animations that are ok for idle
+
+        int randomize = UnityEngine.Random.Range(0, 5);
+
+        if(randomize == 0) {
+            for(int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
+                Jump();
+            }
+        }
+        else if(randomize == 1) {
+            for(int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
+                Idle();
+            }
+        }
+        else if(randomize == 2) {
+            for(int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
+                //StrafeLeft();
+            }
+        }
+        else if(randomize == 3) {
+            for(int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
+                //StrafeRight();
+            }
+        }
+
 
     }
  
@@ -705,6 +763,9 @@ public class BaseGamePlayerController : GameActor {
             //LogUtil.Log("playSpeed", playSpeed);
             audioObjectFootstepsSource.pitch = playSpeed;
         }
+        else {
+            audioObjectFootstepsSource.pitch = 0f;
+        }
     
     }
  
@@ -785,7 +846,7 @@ public class BaseGamePlayerController : GameActor {
  
     // --------------------------------------------------------------------
     // EVENTS
- 
+
     public virtual void OnInputAxis(string name, Vector3 axisInput) {
                      
         if (!GameConfigs.isGameRunning) {
@@ -796,7 +857,7 @@ public class BaseGamePlayerController : GameActor {
      
         //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
      
-        if (name == "input-axis-move") {
+        if (name == GameTouchInputAxis.inputAxisMove) {
          
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
          
@@ -811,7 +872,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
         }
-        else if (name == "input-axis-attack") {
+        else if (name == GameTouchInputAxis.inputAxisAttack) {
          
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
          
@@ -826,7 +887,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
         }
-        else if (name == "input-axis-move-horizontal") {
+        else if (name == GameTouchInputAxis.inputAxisMoveHorizontal) {
                 
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
             
@@ -850,7 +911,7 @@ public class BaseGamePlayerController : GameActor {
 
             }
         }
-        else if (name == "input-axis-move-vertical") {
+        else if (name == GameTouchInputAxis.inputAxisMoveVertical) {
                 
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
             
@@ -863,7 +924,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
         }
-        else if (name == "input-axis-attack-2d-side...") {
+        else if (name == GameTouchInputAxis.inputAxisAttack2DSide2) {
                 
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
             
@@ -889,26 +950,7 @@ public class BaseGamePlayerController : GameActor {
                     
             }
         }
-        else if (name == "input-axis-attack") {
-            
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
-            
-            if (thirdPersonController != null) {
-                    
-                //Debug.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
-                
-                if(axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-                    //if(axisInput.x != 0) {
-                    thirdPersonController.horizontalInput2 = axisInput.x;
-                    //}
-
-                    //if(axisInput.y > 0) {
-                    thirdPersonController.verticalInput2 = axisInput.y;
-                    //}
-                }
-            }
-        }
-        else if (name == "input-axis-attack-2d-side") {
+        else if (name == GameTouchInputAxis.inputAxisAttack2DSide) {
             
             //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
             
@@ -1529,6 +1571,17 @@ public class BaseGamePlayerController : GameActor {
         }
     }
  
+    
+    public virtual void Idle() {
+        if (isDead) {
+            return;
+        }
+        
+        //thirdPersonController.Idle();
+        
+        gamePlayerControllerAnimation.DidIdle();
+    }
+
     public virtual void Jump() {
         if (isDead) {
             return;
@@ -3153,6 +3206,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void UpdateAlways() {        
         HandleCharacterAttachedSounds(); // always run to turn off audio when not playing.
+        HandlePlayerInactionState();
     }
  
     public override void Update() {

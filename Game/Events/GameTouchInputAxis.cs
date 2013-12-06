@@ -13,6 +13,13 @@ public class GameTouchInputMessages {
 }
 
 public class GameTouchInputAxis : MonoBehaviour {
+    
+    public static string inputAxisMove = "input-axis-move";
+    public static string inputAxisAttack = "input-axis-attack";
+    public static string inputAxisMoveHorizontal = "input-axis-move-horizontal";
+    public static string inputAxisMoveVertical = "input-axis-move-vertical";
+    public static string inputAxisAttack2DSide = "input-axis-attack-2d-side";
+    public static string inputAxisAttack2DSide2 = "input-axis-attack-2d-side-2";
  
     public Camera collisionCamera;
     public Transform pad;// = gameObject.transform.FindChild("Pad");

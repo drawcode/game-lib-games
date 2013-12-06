@@ -521,7 +521,7 @@ public class UIPanelBase : UIAppPanel {
         ListClear();
 
         if(panelContainer != null) {
-            if(!panelContainer.activeSelf || panelContainer.activeInHierarchy) {
+            if(!panelContainer.activeSelf || !panelContainer.activeInHierarchy) {
                 panelContainer.Hide();
             }
             else {

@@ -1032,27 +1032,7 @@ public class BaseGameController : MonoBehaviour {
 
         // Load level items by game type....
 
-        if(AppModes.Instance.isAppModeGameArcade) {
-            Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
-                + AppModes.Instance.isAppModeGameArcade);
-
-            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
-
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
-                    + AppModeTypes.Instance.isAppModeTypeGameDefault);
-
-                if(AppContentStates.Instance.isAppContentStateGameArcade) {
-    
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
-                        + AppContentStates.Instance.isAppContentStateGameArcade);
-    
-                    GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
-                    updated = true;
-                }
-            }
-        }
-        else if(AppModes.Instance.isAppModeGameChallenge) {
+        if(AppModes.Instance.isAppModeGameChallenge) {
 
             Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameChallenge:"
                 + AppModes.Instance.isAppModeGameChallenge);
@@ -1143,6 +1123,28 @@ public class BaseGameController : MonoBehaviour {
                     + AppModeTypes.Instance.isAppModeTypeGameTips);
 
             }
+        }
+        else {
+           // if(AppModes.Instance.isAppModeGameArcade) {
+            Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
+                      + AppModes.Instance.isAppModeGameArcade);
+            
+            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
+                
+                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
+                          + AppModeTypes.Instance.isAppModeTypeGameDefault);
+                
+                if(AppContentStates.Instance.isAppContentStateGameArcade) {
+                    
+                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
+                              + AppContentStates.Instance.isAppContentStateGameArcade);
+                    
+                    GameLevelItems.Current.level_items
+                        = GameController.GetLevelRandomizedGrid();
+                    updated = true;
+                }
+            }
+            //}
         }
 
         if(!updated) {

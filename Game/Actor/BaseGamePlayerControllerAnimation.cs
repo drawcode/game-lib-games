@@ -1059,6 +1059,38 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
         }
     }
+
+    
+    // --------------
+    // ACTIONS - IDLE    
+    
+    public virtual void Idle() {
+        DidIdle();
+    }
+    
+    public virtual void DidIdle() {
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) {
+            if(actor.animation["idle"] != null) {
+                isRunningClampAnimation = true;
+                //PauseAnimationUpdate(1f);  
+                actor.animation.Play("idle", PlayMode.StopAll);
+            }
+        }
+        else {
+            ResetFloat(GamePlayerAnimationType.attack);
+            ResetFloat(GamePlayerAnimationType.hit);
+            ResetFloat(GamePlayerAnimationType.strafe);
+            ResetFloat(GamePlayerAnimationType.speed);
+            ResetFloat(GamePlayerAnimationType.run);
+            ResetFloat(GamePlayerAnimationType.walk);
+
+            PlayOneShotFloat(GamePlayerAnimationType.idle);
+        }
+    }
  
     // --------------
     // ACTIONS - JUMP    
@@ -1244,6 +1276,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             animator.SetBool(paramName, true);
             yield return null;
             animator.SetBool(paramName, false);          
+        }
+    }
+
+    public virtual void ResetFloat(string paramName) { 
+        if(!isLegacy) {
+            if(animator != null) {
+                animator.SetFloat(paramName, 0.0f);
+            }
         }
     }
  

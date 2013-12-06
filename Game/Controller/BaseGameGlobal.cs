@@ -268,7 +268,7 @@ public class BaseGameGlobal : MonoBehaviour
         
         
         //audioSystem.StartAmbience();
-        #if DEV
+        #if DEV2
         if(Application.isEditor) {
 
             GameProfiles.Current.SetAudioMusicVolume(volumeEditor);
