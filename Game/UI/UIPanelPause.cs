@@ -14,6 +14,7 @@ public class UIPanelPause : UIPanelBase {
     public UIImageButton buttonResume;
     public UIImageButton buttonRestart;
     public UIImageButton buttonQuit;
+    public UIImageButton buttonSettingsAudio;
 	
 	public static UIPanelPause Instance;
 	
@@ -92,13 +93,13 @@ public class UIPanelPause : UIPanelBase {
 
         if(sliderEffectsVolume != null) {
             if (sliderName == sliderEffectsVolume.name) {
-    			GameAudio.SetProfileEffectsVolume(sliderValue);
+    			//GameAudio.SetProfileEffectsVolume(sliderValue);
             }
         }
 
         if(sliderMusicVolume != null) {
             if (sliderName == sliderMusicVolume.name) {
-			    GameAudio.SetProfileAmbienceVolume(sliderValue);
+			    //GameAudio.SetProfileAmbienceVolume(sliderValue);
             }
         }
     }
@@ -149,7 +150,7 @@ public class UIPanelPause : UIPanelBase {
     
         yield return new WaitForSeconds(1f);
     
-        UpdateAudioValues();
+        //UpdateAudioValues();
     }
 	
 }

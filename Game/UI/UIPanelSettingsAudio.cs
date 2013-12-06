@@ -113,14 +113,14 @@ public class UIPanelSettingsAudio : UIPanelBase {
             sliderMusicVolume.sliderValue = musicVolume;
             sliderMusicVolume.ForceUpdate();
 
-            GameAudio.SetProfileEffectsVolume(musicVolume);
+            GameAudio.SetProfileAmbienceVolume(musicVolume);
         }
         
         if(sliderEffectsVolume != null) {
             sliderEffectsVolume.sliderValue = effectsVolume;
             sliderEffectsVolume.ForceUpdate();
         
-            GameAudio.SetProfileAmbienceVolume(effectsVolume);
+            GameAudio.SetProfileEffectsVolume(effectsVolume);
         }
     }
 	

@@ -52,6 +52,7 @@ public class BaseUIButtonNames {
     public static string buttonWorlds = "ButtonWorlds";
     public static string buttonLevels = "ButtonLevels";
     public static string buttonLevel = "ButtonLevel";
+    public static string buttonGameSettingsAudio = "ButtonGameSettingsAudio";
     public static string buttonGamePause = "ButtonGamePause";
     public static string buttonGameResume = "ButtonGameResume";
     public static string buttonGameRestart = "ButtonGameRestart";
@@ -2831,6 +2832,9 @@ public class BaseUIController : MonoBehaviour {
         }
         else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameContinue) > -1) {
             GameContinue();
+        }
+        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameSettingsAudio) > -1) {
+            GameUIController.ShowSettingsAudio();
         }
         else {
             if(buttonName == BaseUIButtonNames.buttonBack) {
