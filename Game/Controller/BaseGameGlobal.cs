@@ -241,7 +241,7 @@ public class BaseGameGlobal : MonoBehaviour
         #endif
     }
 
-    public static float volumeEditor = 1f;
+    public static float volumeEditor = 0f;
     
     public virtual void InitAudio() {    
 
@@ -268,7 +268,7 @@ public class BaseGameGlobal : MonoBehaviour
         
         
         //audioSystem.StartAmbience();
-        #if DEV2
+        #if DEV
         if(Application.isEditor) {
 
             GameProfiles.Current.SetAudioMusicVolume(volumeEditor);
