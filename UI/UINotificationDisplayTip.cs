@@ -32,8 +32,11 @@ public class UINotificationTipItem {
     }
 }
 
-public class UINotificationDisplayTips
+public class UINotificationDisplayTip
     : MonoBehaviour {
+    
+    public static UINotificationDisplayTip Instance;
+
     public GameObject notificationPanel;
     public GameObject notificationContainerAchievement;
     public GameObject notificationContainerPoint;
@@ -69,11 +72,12 @@ public class UINotificationDisplayTips
     public UILabel tipTitle;
     public UILabel tipDescription;
     public UILabel tipScore;
-    public UIButton tipContinue;
+    public UIImageButton tipContinue;
+
     float positionYOpenInGame = 0;
-    float positionYClosedInGame = -900;
-    public static UINotificationDisplayTips Instance;
+    float positionYClosedInGame = 900;
     UINotificationTipItem currentItem;
+
     UINotificationTipState notificationState = UINotificationTipState.Hidden;
     public bool paused = false;
     Queue<UINotificationTipItem> notificationQueue = new Queue<UINotificationTipItem>();
