@@ -732,11 +732,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
      
         if(isLegacy) {
-            if(actor.animation["jump"] != null) {
-                actor.animation.CrossFade("jump", 0.2f);
-                SendMessage("SyncAnimation", "jump", 
-                 SendMessageOptions.DontRequireReceiver);
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation["jump"] != null) {
+	                actor.animation.CrossFade("jump", 0.2f);
+	                SendMessage("SyncAnimation", "jump", 
+	                 SendMessageOptions.DontRequireReceiver);
+	            }
+			}
         }
         else if(isMecanim) {
             if(animator != null) {
@@ -766,10 +769,13 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         if(isLegacy) {
             //actor.animation.Play("jumpland");
             //SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-            if(actor.animation["jump"] != null) {
-                actor.animation.Play("jump");
-                SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation["jump"] != null) {
+	                actor.animation.Play("jump");
+	                SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
+	            }
+			}
         }
         else if(isMecanim) {
             if(animator != null) {
@@ -788,14 +794,17 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
 
         if(isLegacy) {
-            if(actor.animation["idle"] != null) {
-                if(actor.animation["idle"] != null
-                 && !isRunningClampAnimation) {
-                    actor.animation.CrossFade("idle");
-                    SendMessage("SyncAnimation", "idle",
-                     SendMessageOptions.DontRequireReceiver);
-                }
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation["idle"] != null) {
+	                if(actor.animation["idle"] != null
+	                 && !isRunningClampAnimation) {
+	                    actor.animation.CrossFade("idle");
+	                    SendMessage("SyncAnimation", "idle",
+	                     SendMessageOptions.DontRequireReceiver);
+	                }
+	            }
+			}
         }
         else if(isMecanim) {
             if(animator != null) {
@@ -968,12 +977,15 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
 
         if(isLegacy) {
-            if(actor.animation[animationName] != null) {
-                isRunningClampAnimation = true;
-                PauseAnimationUpdate(.5f);
-                actor.animation.Play(animationName, PlayMode.StopAll);
-                actor.animation.Play("hit", PlayMode.StopAll);
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation[animationName] != null) {
+	                isRunningClampAnimation = true;
+	                PauseAnimationUpdate(.5f);
+	                actor.animation.Play(animationName, PlayMode.StopAll);
+	                actor.animation.Play("hit", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             if(!isDead) {
@@ -1043,13 +1055,15 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             return;
         }
      
-        if(isLegacy) {
-            if(actor.animation["death"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);  
-                actor.animation.Play("death", PlayMode.StopAll);
-                actor.animation.Play("hit", PlayMode.StopAll);
-            }
+		if(isLegacy) {
+			if(actor.animation != null) {
+	            if(actor.animation["death"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);  
+	                actor.animation.Play("death", PlayMode.StopAll);
+	                actor.animation.Play("hit", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             if(!isDead) {
@@ -1074,11 +1088,13 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
         
         if(isLegacy) {
-            if(actor.animation["idle"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);  
-                actor.animation.Play("idle", PlayMode.StopAll);
-            }
+			if(actor.animation != null) {
+	            if(actor.animation["idle"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);  
+	                actor.animation.Play("idle", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             ResetFloat(GamePlayerAnimationType.attack);
@@ -1104,12 +1120,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             return;
         }
      
-        if(isLegacy) {
-            if(actor.animation["jump"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);  
-                actor.animation.Play("jump", PlayMode.StopAll);
-            }
+		if(isLegacy) {
+			if(actor.animation != null) {
+	            if(actor.animation["jump"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);  
+	                actor.animation.Play("jump", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             PlayOneShotFloat(GamePlayerAnimationType.jump);
@@ -1130,12 +1148,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             return;
         }
 
-        if(isLegacy) {
-            if(actor.animation["strafe_left"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);
-                actor.animation.Play("strafe_left", PlayMode.StopAll);
-            }
+		if(isLegacy) {
+			if(actor.animation != null) {
+	            if(actor.animation["strafe_left"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);
+	                actor.animation.Play("strafe_left", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             PlayOneShotFloat(GamePlayerAnimationType.strafe, -1f);
@@ -1156,11 +1176,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
 
         if(isLegacy) {
-            if(actor.animation["strafe_right"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);
-                actor.animation.Play("strafe_right", PlayMode.StopAll);
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation["strafe_right"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);
+	                actor.animation.Play("strafe_right", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             PlayOneShotFloat(GamePlayerAnimationType.strafe);
@@ -1182,11 +1205,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
 
         if(isLegacy) {
-            if(actor.animation["boost"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);
-                actor.animation.Play("boost", PlayMode.StopAll);
-            }
+			
+			if(actor.animation != null) {
+	            if(actor.animation["boost"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);
+	                actor.animation.Play("boost", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             PlayOneShotFloat(GamePlayerAnimationType.boost);
@@ -1208,11 +1234,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
 
         if(isLegacy) {
-            if(actor.animation["spin"] != null) {
-                isRunningClampAnimation = true;
-                //PauseAnimationUpdate(1f);
-                actor.animation.Play("spin", PlayMode.StopAll);
-            }
+			
+			if(actor.animation != null) {
+            	if(actor.animation["spin"] != null) {
+	                isRunningClampAnimation = true;
+	                //PauseAnimationUpdate(1f);
+	                actor.animation.Play("spin", PlayMode.StopAll);
+	            }
+			}
         }
         else {
             PlayOneShotFloat(GamePlayerAnimationType.spin);
@@ -1347,9 +1376,12 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         // We are turning the character controller 180 degrees around when doing a wall jump so the animation accounts for that.
         // But we really have to make sure that the animation is in full control so 
         // that we don't do weird blends between 180 degree apart rotations
-        if(actor.animation["walljump"] != null) {
-            actor.animation.Play("walljump");
-            SendMessage("SyncAnimation", "walljump");
-        }
+		
+		if(actor.animation != null) {
+	        if(actor.animation["walljump"] != null) {
+	            actor.animation.Play("walljump");
+	            SendMessage("SyncAnimation", "walljump");
+	        }
+		}
     }
 }
