@@ -5,10 +5,14 @@ using System.Collections.Generic;
 using Engine.Events;
 
 public class GameCustomPlayer : GameCustomBase {
+
+    public string customColorCode = "default";
 		
-	void Start() {
-		SetCustomColors();
-	}
+    void Start() {
+        if(customColorCode == "default") {
+		    SetCustomColors();
+	    }
+    }
 	
 	public override void OnEnable() {
         base.OnEnable();
@@ -23,7 +27,9 @@ public class GameCustomPlayer : GameCustomBase {
 	}
 	
 	void OnCustomizationColorsPlayerChangedHandler() {
-        //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
-		SetCustomColors(gameObject);
+        if(customColorCode == "default") {
+            //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
+		    SetCustomColors(gameObject);
+        }
 	}
 }
