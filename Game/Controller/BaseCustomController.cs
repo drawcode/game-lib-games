@@ -501,7 +501,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
         for(int i = 0; i < colorPresets.presets.Count; i++) {
             if(colorPresets.presets[i].code.ToLower() == code.ToLower()) {
-                changeColorPreset(i);
+                changeColorPresetObject(obj, i);
             }
         }
     }
