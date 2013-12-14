@@ -5,13 +5,9 @@ using System.Collections.Generic;
 using Engine.Events;
 
 public class GameCustomPlayer : GameCustomBase {
-
-    public string customColorCode = "default";
 		
     void Start() {
-        if(customColorCode == "default") {
-		    SetCustomColors();
-	    }
+        UpdatePlayer();
     }
 	
 	public override void OnEnable() {
@@ -26,10 +22,7 @@ public class GameCustomPlayer : GameCustomBase {
 		Messenger.RemoveListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
 	}
 	
-	void OnCustomizationColorsPlayerChangedHandler() {
-        if(customColorCode == "default") {
-            //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
-		    SetCustomColors(gameObject);
-        }
+    void OnCustomizationColorsPlayerChangedHandler() {
+       /// UpdatePlayer();
 	}
 }

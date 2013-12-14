@@ -175,9 +175,9 @@ public class BaseGameCustomController : MonoBehaviour {
     public List<GameCustomColorPropertiesItem> colorsSetCustomWorlds;
     public List<GameCustomColorPropertiesItem> colorsSetCustomLevels;
     
-    public GameCustomColorTriggers colorTriggers;
+    public GameCustomColorTriggers colorTriggers = new GameCustomColorTriggers();
 
-    public GameProfileCustomPresets colorPresets; 
+    public GameProfileCustomPresets colorPresets = new GameProfileCustomPresets();
     public GameProfileCustomItem currentProfileCustomItem;
     public GameProfileCustomItem initialProfileCustomItem;
     public GameObject currentPlayerObject;
@@ -478,6 +478,70 @@ public class BaseGameCustomController : MonoBehaviour {
     
     public virtual void changeColorPrevious() {        
         GameCustomController.ChangeColorPreset(currentSelectedColorPreset - 1);
+    }
+    
+    public virtual void changeColorPreset(string code) {
+        
+        if (colorPresets == null || colorPresets.presets == null) {
+            GameCustomController.LoadCustomColors();
+        }
+
+        for(int i = 0; i < colorPresets.presets.Count; i++) {
+            if(colorPresets.presets[i].code.ToLower() == code.ToLower()) {
+                changeColorPreset(i);
+            }
+        }
+    }
+    
+    public virtual void changeColorPresetObject(GameObject obj, string code) { 
+        
+        if (colorPresets == null || colorPresets.presets == null) {
+            GameCustomController.LoadCustomColors();
+        }
+
+        for(int i = 0; i < colorPresets.presets.Count; i++) {
+            if(colorPresets.presets[i].code.ToLower() == code.ToLower()) {
+                changeColorPreset(i);
+            }
+        }
+    }
+        
+    public virtual void changeColorPresetObject(GameObject obj, int index) {
+        
+        LogUtil.Log("ChangeColorPresetObject:", " index:" + index);
+        
+        //LogUtil.Log("ChangeColorPreset:", 
+        //            " colorPresets.presets.Count:" + colorPresets.presets.Count);
+        
+        //GameCustomController.FillDefaultCustomColorsPlayer();
+        
+        if (index < 0) {
+            index = colorPresets.presets.Count - 1;    
+        }
+        
+        if (index > colorPresets.presets.Count - 1) {
+            index = 0;
+        }
+        
+        //LogUtil.Log("ChangeColorPreset:filtered:", " index:" + index);
+        
+        if (colorPresets.presets != null) {
+            if (index > -1 && index < colorPresets.presets.Count) {
+                                
+                string code = colorPresets.presets[index].code;
+                string name = colorPresets.presets[index].name;
+                
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " code:" + code);
+                
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " name:" + name);
+                                 
+                GameCustomController.SetMaterialColors(obj, currentProfileCustomItem);
+            }
+        }   
     }
     
     public virtual void changeColorPreset(int index) {

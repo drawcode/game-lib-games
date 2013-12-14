@@ -16,6 +16,8 @@ public class GameCustomBase : MonoBehaviour {
 	bool freezeRotation = false;
 
     GameProfileCustomItem colors;
+    
+    public string customColorCode = "default";
 	
 	void Start() {
 		//FindMaterials();
@@ -28,13 +30,26 @@ public class GameCustomBase : MonoBehaviour {
 	public virtual void OnDisable() {
 		Messenger.RemoveListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
 	}
+    
+    public virtual void UpdatePlayer() {
+        if(customColorCode == "default") {
+            //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
+            SetCustomColors(gameObject);
+        }
+        else {
+            // load from current code
+            GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
+
+        }
+        
+    }
 	
 	void BaseOnCustomizationColorsChangedHandler() {
-		SetCustomColors();
+        UpdatePlayer();
 
         //Debug.Log("BaseOnCustomizationColorsChangedHandler");
 	}
-	
+    	
 	public void SetCustomColors() {
 		SetCustomColors(gameObject);
 	}
