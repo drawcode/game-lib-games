@@ -7,7 +7,7 @@ using Engine.Events;
 public class GameCustomPlayer : GameCustomBase {
 		
     void Start() {
-        UpdatePlayer();
+        //UpdatePlayer();
     }
 	
 	public override void OnEnable() {

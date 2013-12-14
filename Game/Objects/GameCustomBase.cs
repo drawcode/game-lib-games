@@ -18,6 +18,7 @@ public class GameCustomBase : MonoBehaviour {
     GameProfileCustomItem colors;
     
     public string customColorCode = "default";
+    public string lastCustomColorCode = "";
 	
 	void Start() {
 		//FindMaterials();
@@ -37,11 +38,12 @@ public class GameCustomBase : MonoBehaviour {
             SetCustomColors(gameObject);
         }
         else {
+            if(lastCustomColorCode != customColorCode) {
             // load from current code
-            GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
-
-        }
-        
+                GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
+                lastCustomColorCode = customColorCode;
+            }
+        }        
     }
 	
 	void BaseOnCustomizationColorsChangedHandler() {

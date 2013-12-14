@@ -241,7 +241,7 @@ public class BaseGameGlobal : MonoBehaviour
         #endif
     }
 
-    public static float volumeEditor = 0f;
+    public static float volumeEditor = 1f;
     
     public virtual void InitAudio() {    
 
