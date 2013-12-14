@@ -1642,15 +1642,26 @@ public class BaseUIController : MonoBehaviour {
     }    
  
     // CURRENT
- 
+    
     public virtual void HandleInGameAudio() {
+        HandleInGameAudio(true);
+    }
+ 
+    public virtual void HandleInGameAudio(bool playAudio) {
      
         if(!gameLoopsStarted) {          
             GameAudio.StartGameLoops();
         }
      
         GameAudio.StopAmbience();
-        GameAudio.StartGameLoop(UnityEngine.Random.Range(1, 3));
+
+        if(playAudio) {
+            int loopToPlay = UnityEngine.Random.Range(1, 4);
+
+            LogUtil.Log("HandleInGameAudio:", " loopToPlay:" + loopToPlay.ToString());
+
+            GameAudio.StartGameLoop(loopToPlay);
+        }
         inUIAudioPlaying = false;
     }
  

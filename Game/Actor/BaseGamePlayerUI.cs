@@ -65,7 +65,7 @@ public class BaseGamePlayerUI : MonoBehaviour {
 		
 		if(currentTimeBlock > actionInterval) {
 
-            actionInterval = UnityEngine.Random.Range(1, 4);
+            actionInterval = UnityEngine.Random.Range(1, 5);
 			currentTimeBlock = 0.0f;
 			
 			randomSpeed = UnityEngine.Random.Range(.0f, .9f);

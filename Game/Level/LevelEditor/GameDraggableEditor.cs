@@ -1250,11 +1250,11 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void editModeCreateAsset(Vector2 fingerPos) {
-		Debug.Log("EditModeCreateAsset");
+		//Debug.Log("EditModeCreateAsset");
 		if(GameDraggableEditor.isEditing) {
 			// add game draggable edit selected asset code if on
 			
-			Debug.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
+			//Debug.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
 			
 			if(!string.IsNullOrEmpty(assetCodeCreating)) {
 				GameLevelItemAsset itemAsset = new GameLevelItemAsset();
@@ -1302,19 +1302,19 @@ public class GameDraggableEditor : MonoBehaviour {
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
 		
-		Debug.Log("LoadSprite:resourcePath:" + resourcePath);
+		//Debug.Log("LoadSprite:resourcePath:" + resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 
 		if(prefabSprite != null) {
 
-            Debug.Log("LoadSprite:check:prefabSprite:" + prefabSprite.name);
+            //Debug.Log("LoadSprite:check:prefabSprite:" + prefabSprite.name);
 
 			go = Instantiate(prefabSprite) as GameObject;
 
 			if(go != null) {
 
-                Debug.Log("LoadSprite:go.name:" + go.name);
+                //Debug.Log("LoadSprite:go.name:" + go.name);
 
                 go.transform.parent = parent.transform;
 
@@ -1355,7 +1355,7 @@ public class GameDraggableEditor : MonoBehaviour {
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
 		
-		LogUtil.Log("LoadSpriteUI:resourcePath:", resourcePath);
+		//LogUtil.Log("LoadSpriteUI:resourcePath:", resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 		if(prefabSprite != null) {
@@ -1412,7 +1412,7 @@ public class GameDraggableEditor : MonoBehaviour {
 				
 				go.AddComponent<GameLevelSpriteEffect>();
 
-                Debug.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
+                //Debug.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
 			}
 		}
 		return go;
@@ -1472,17 +1472,17 @@ public class GameDraggableEditor : MonoBehaviour {
 
 		GameLevelItem gameLevelItem = GameLevelItems.Current;
 
-        Debug.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
+        //Debug.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
 
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 
-        Debug.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
+        //Debug.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
 		
 		if(gameLevelItemAssets != null) {
 
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
 
-                Debug.Log("loadLevelItemsCo:" + item.asset_code);
+                //Debug.Log("loadLevelItemsCo:" + item.asset_code);
 
 				LoadLevelItem(item);
 			}
@@ -1521,7 +1521,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public void loadLevelItem(UnityEngine.Object prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
 
-        Debug.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
+        //Debug.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
 
         if(gameLevelItemAsset != null) {
 

@@ -1941,7 +1941,7 @@ public class BaseGameController : MonoBehaviour {
 
         GameController.ResetRuntimeData();
 
-        GameUIController.HideUI(true);
+        //GameUIController.HideUI(true);
         GameUIController.HideHUD();
 
         if(allowedEditing) {

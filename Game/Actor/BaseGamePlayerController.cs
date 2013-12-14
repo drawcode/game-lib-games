@@ -2436,18 +2436,18 @@ public class BaseGamePlayerController : GameActor {
 
             if (isGirl) {
                 //GameAudio.PlayEffect(transform, "shotgun_shot");
-                int randAudio = UnityEngine.Random.Range(1, 4);
+                int randAudio = UnityEngine.Random.Range(1, 5);
                 GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             }
             else {
                 //GameAudio.PlayEffect(transform, "attack-sword-hit-1");
-                int randAudio = UnityEngine.Random.Range(1, 4);
+                int randAudio = UnityEngine.Random.Range(1, 5);
                 GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             }
         }
         else {
             //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 4);
+            int randAudio = UnityEngine.Random.Range(1, 5);
             GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             //}
         }
@@ -2470,18 +2470,18 @@ public class BaseGamePlayerController : GameActor {
 
             if (isGirl) {
                 //GameAudio.PlayEffect(transform, "hit-girl-grunt-2");
-                int randAudio = UnityEngine.Random.Range(1, 4);
+                int randAudio = UnityEngine.Random.Range(1, 5);
                 GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             }
             else {
                 //GameAudio.PlayEffect(transform, "hit-grunt-3");
-                int randAudio = UnityEngine.Random.Range(1, 4);
+                int randAudio = UnityEngine.Random.Range(1, 5);
                 GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             }
         }
         else {
             //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 4);
+            int randAudio = UnityEngine.Random.Range(1, 5);
             GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
             //}
         }
@@ -2507,18 +2507,18 @@ public class BaseGamePlayerController : GameActor {
 
             if (isGirl) {
                 //GameAudio.PlayEffect(transform, "hit-girl-grunt-2");
-                int randAudio = UnityEngine.Random.Range(1, 2);
+                int randAudio = UnityEngine.Random.Range(1, 3);
                 GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
             }
             else {
                 //GameAudio.PlayEffect(transform, "hit-grunt-3");
-                int randAudio = UnityEngine.Random.Range(1, 2);
+                int randAudio = UnityEngine.Random.Range(1, 3);
                 GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
             }
         }
         else {
             //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 2);
+            int randAudio = UnityEngine.Random.Range(1, 3);
             GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
             //}
         }
