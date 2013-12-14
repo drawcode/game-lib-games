@@ -44,6 +44,8 @@ public class BaseGameGlobal : MonoBehaviour
     
     public string masterserverPrefix = "drawlabs_";
     
+    public static float volumeEditor = 0f;
+    
     public virtual void Awake() {
         
         if (BaseInstance != null && this != BaseInstance) {
@@ -241,8 +243,6 @@ public class BaseGameGlobal : MonoBehaviour
         #endif
     }
 
-    public static float volumeEditor = 1f;
-    
     public virtual void InitAudio() {    
 
         /*
