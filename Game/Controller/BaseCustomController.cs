@@ -527,9 +527,11 @@ public class BaseGameCustomController : MonoBehaviour {
         
         if (colorPresets.presets != null) {
             if (index > -1 && index < colorPresets.presets.Count) {
+
+                GameProfileCustomPreset customPreset = colorPresets.presets[index];
                                 
-                string code = colorPresets.presets[index].code;
-                string name = colorPresets.presets[index].name;
+                string code = customPreset.code;
+                string name = customPreset.name;
                 
                 
                 LogUtil.Log("ChangeColorPreset:setting:", 
@@ -538,8 +540,37 @@ public class BaseGameCustomController : MonoBehaviour {
                 
                 LogUtil.Log("ChangeColorPreset:setting:", 
                             " name:" + name);
+                /*
+                GameCustomColorProperties properties = new GameCustomColorProperties();
+                
+                foreach(GameCustomColorPropertiesItem item in colorsSetCustomPlayers) {
+                    
+                    Color color = colorPresets.presets[index].customItem.GetCustomColor(item.colorKey);
+                    GameCustomColorPropertiesItem itemColor = new GameCustomColorPropertiesItem();
+                    
+                    itemColor.colorKey = item.colorKey;
+                    itemColor.color = color;
+                    
+                    
+                    LogUtil.Log("ChangeColorPreset:setting:", 
+                                " itemColor.colorKey:" +  itemColor.colorKey);
+                    
+                    
+                    LogUtil.Log("ChangeColorPreset:setting:", 
+                                " itemColor.color:" +  itemColor.color.ToString());
+                    
+                    properties.items.Add(itemColor);
+                }
+                
+                
+                LogUtil.Log("ChangeColorPreset:setting:", 
+                            " properties.items.Count:" + properties.items.Count);
+                
+                GameCustomController.SetColorProperties(
+                    currentProfileCustomItem, properties
+                    );*/
                                  
-                GameCustomController.SetMaterialColors(obj, currentProfileCustomItem);
+                GameCustomController.SetMaterialColors(obj, customPreset.customItem);
             }
         }   
     }
