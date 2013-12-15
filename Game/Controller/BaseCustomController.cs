@@ -423,6 +423,118 @@ public class BaseGameCustomController : MonoBehaviour {
         }
     }
     
+    public virtual Color getRandomizedColorFromContextUI() {
+        Color colorTo = UIColors.colorWhite;
+        
+        int randomColor = UnityEngine.Random.Range(0, 9);
+        
+        if(randomColor == 0) {
+            colorTo = UIColors.colorWhite;
+        }
+        else if(randomColor == 1) {
+            colorTo = UIColors.colorBlue;
+        }
+        else if(randomColor == 2) {
+            colorTo = UIColors.colorGreen;
+        }
+        else if(randomColor == 3) {
+            colorTo = UIColors.colorLightBlue;
+        }
+        else if(randomColor == 4) {
+            colorTo = UIColors.colorOrange;
+        }
+        else if(randomColor == 5) {
+            colorTo = UIColors.colorLight;
+        }
+        else if(randomColor == 6) {
+            colorTo = UIColors.colorPurple;
+        }
+        else if(randomColor == 7) {
+            colorTo = UIColors.colorRed;
+        }
+        else if(randomColor == 8) {
+            colorTo = UIColors.colorYellow;
+        }
+        else {
+            colorTo = UIColors.colorLight;
+        }
+
+        return colorTo;
+    }
+
+    public virtual Color getRandomizedColorFromContextCustomized() {
+
+        Color colorTo = UIColors.colorWhite;
+
+        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+        
+        int randomColor = UnityEngine.Random.Range(0, 8);
+        
+        if(randomColor == 1) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmet);
+        }
+        else if(randomColor == 2) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
+        }
+        else if(randomColor == 3) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorJersey);
+        }
+        else if(randomColor == 4) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorJerseyHighlight);
+        }
+        else if(randomColor == 5) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorPants);
+        }
+        else if(randomColor == 5) {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetFacemask);
+        }
+        else {
+            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
+        }
+
+        return colorTo;
+    }
+        
+    public virtual Color getRandomizedColorFromContext() {
+        
+        // Randomize or get customized colors
+
+        Color colorTo = UIColors.colorWhite;
+
+        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+        
+        int randomColor = UnityEngine.Random.Range(0, 4);
+        
+        if(randomColor < 2) {
+            colorTo = GameCustomController.GetRandomizedColorFromContextCustomized();
+        }
+        else {
+            colorTo = GameCustomController.GetRandomizedColorFromContextUI();        
+        }
+        
+        return colorTo;
+    }
+
+    public virtual Color getRandomizedColorFromContextEffects() {
+        
+        // Randomize or get customized colors
+
+        Color colorTo = UIColors.colorWhite;
+
+        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+        
+        int randomColor = UnityEngine.Random.Range(0, 4);
+
+        if(randomColor < 1) {
+            colorTo = GameCustomController.GetRandomizedColorFromContextCustomized();
+        }
+        else {
+            colorTo = GameCustomController.GetRandomizedColorFromContextUI();        
+        }
+
+        return colorTo;
+    }
+    
     public virtual void fillSetCustomColorsAll() {
         GameCustomController.FillSetCustomColorsPlayers();
         GameCustomController.FillSetCustomColorsBoosts();

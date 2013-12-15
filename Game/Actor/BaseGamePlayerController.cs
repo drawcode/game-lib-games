@@ -174,14 +174,24 @@ public class BaseGamePlayerController : GameActor {
     public float effectWarpEnd = 200f;
     public float effectWarpCurrent = 0f;
 
-    // efects - lines
-
+    // effects - lines
+    
+    float lastPlayerEffectsTrailUpdate = 0f;
     public GameObject gamePlayerTrailContainer;
     public GameObject gamePlayerTrailGround;
     public GameObject gamePlayerTrailBoost;
     public TrailRenderer trailRendererBoost;
     public TrailRenderer trailRendererGround;
+
+    // effects - follow
+    
+    float lastPlayerEffectsUpdate = 0f;
+    public GameObject gamePlayerEffectsContainer;
+    public GameObject gamePlayerEffectsGround;
+    public GameObject gamePlayerEffectsBoost;
+
     public Vector3 impact = Vector3.zero;
+
     float lastDie = 0f;
     Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
@@ -423,6 +433,99 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
+    public virtual void HandlePlayerEffectTrailGroundTick() {
+        if (gamePlayerTrailGround != null) {
+
+            // UPDATE color randomly
+            // TODO add other conditions to get colors, health, power etc
+            // Currently randomize player colors for effect
+
+            CheckTrailRendererGround();
+            
+            if (trailRendererGround != null) {
+
+                //Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
+                //trailRendererGround.gameObject.ColorTo(colorTo, 1f, 0f);
+            }
+        }
+    }
+
+    
+    
+    public virtual void HandlePlayerEffectTrailBoostTick() {
+        if (gamePlayerTrailBoost != null) {
+            
+            // UPDATE color randomly
+            // TODO add other conditions to get colors, health, power etc
+            // Currently randomize player colors for effect
+            
+            CheckTrailRendererBoost();
+            
+            if (gamePlayerTrailBoost != null) {
+                
+                //Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
+                //trailRendererBoost.gameObject.ColorTo(colorTo, 1f, 0f);
+            }
+        }
+    }
+
+    
+    // EFFECTS FOLLOW - GROUND/BACK/HEAD ETC
+    
+    public virtual void PlayerEffectsGroundFadeIn() {
+        UITweenerUtil.FadeTo(gamePlayerEffectsGround,
+                             UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 1f);
+    }
+    
+    public virtual void PlayerEffectsGroundFadeOut() {
+        UITweenerUtil.FadeTo(gamePlayerEffectsGround,
+                             UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 0f);
+    }
+    
+    public virtual void PlayerEffectEffectsBoostFadeIn() {
+        UITweenerUtil.FadeTo(gamePlayerEffectsBoost,
+                             UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 1f);
+    }
+    
+    public virtual void PlayerEffectEffectsBoostFadeOut() {
+        UITweenerUtil.FadeTo(gamePlayerEffectsBoost,
+                             UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 0f);
+    }
+    
+    public virtual void PlayerEffectsBoostTime(float time) {
+        if (gamePlayerEffectsBoost != null) {
+            gamePlayerEffectsBoost.SetParticleSystemEmissionRate(time, true);
+        }
+    }
+    public virtual void PlayerEffectsGroundTime(float time) {
+        if (gamePlayerEffectsGround != null) {
+            gamePlayerEffectsGround.SetParticleSystemEmissionRate(time, true);
+        }
+    }
+    
+    public virtual void HandlePlayerEffectsGroundTick() {
+        if (gamePlayerEffectsGround != null) {
+            
+            // UPDATE color randomly
+            // TODO add other conditions to get colors, health, power etc
+            // Currently randomize player colors for effect
+            
+            Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
+            gamePlayerEffectsGround.SetParticleSystemStartColor(colorTo, true);
+        }
+    }      
+    
+    public virtual void HandlePlayerEffectsBoostTick() {
+        if (gamePlayerEffectsBoost != null) {
+            
+            // UPDATE color randomly
+            // TODO add other conditions to get colors, health, power etc
+            // Currently randomize player colors for effect
+            
+            Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
+            gamePlayerEffectsBoost.SetParticleSystemStartColor(colorTo, true);
+        }
+    }  
 
     // WARP
      
@@ -2386,6 +2489,9 @@ public class BaseGamePlayerController : GameActor {
             runtimeData.hitCount++;
 
             if (IsPlayerControlled && damage) {
+
+                HandlePlayerEffectsStateChange();
+
                 UpdatePlayerProgress(
                     (float)(-.01f * Mathf.Clamp(force / 10f, .3f, 1f)),
                     (float)(-.01f * Mathf.Clamp(force / 10f, .3f, 1f)));
@@ -2403,20 +2509,47 @@ public class BaseGamePlayerController : GameActor {
         characterController.Move(impact * Time.deltaTime);
         //}
 
-        float trailTime =
-            (Math.Abs(impact.x) +
-            Math.Abs(impact.y) +
-            Math.Abs(impact.z)) * 5f;
-
-        if (IsPlayerControlled) {
-            PlayerEffectTrailBoostTime(trailTime * thirdPersonController.moveSpeed);
-            PlayerEffectTrailGroundTime(-trailTime + thirdPersonController.moveSpeed);
-        }
+        UpdatePlayerEffectsState();
 
         // consumes the impact energy each cycle:
         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
     }
- 
+
+    public virtual void HandlePlayerEffectsStateChange() {
+        lastPlayerEffectsTrailUpdate = 0;
+        lastPlayerEffectsUpdate = 0f;
+        UpdatePlayerEffectsState();
+    }
+
+    public virtual void  UpdatePlayerEffectsState() {        
+
+        float trailTime =
+            (Math.Abs(impact.x) +
+             Math.Abs(impact.y) +
+             Math.Abs(impact.z)) * 5f;
+        
+        if (IsPlayerControlled) {
+            PlayerEffectTrailBoostTime(trailTime * thirdPersonController.moveSpeed);
+            PlayerEffectTrailGroundTime(-trailTime + thirdPersonController.moveSpeed);
+
+            if(lastPlayerEffectsTrailUpdate + 4 < Time.time) {
+                lastPlayerEffectsTrailUpdate = Time.time;
+                HandlePlayerEffectTrailBoostTick();            
+                HandlePlayerEffectTrailGroundTick();  
+            }
+
+            if(lastPlayerEffectsUpdate + 4 < Time.time) {    
+                lastPlayerEffectsUpdate = Time.time;   
+                HandlePlayerEffectsGroundTick();         
+                HandlePlayerEffectsBoostTick();
+            }
+        }
+        
+        // consumes the impact energy each cycle:
+        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
+    }
+
+
     // --------------------------------------------------------------------
     // AUDIO
  
