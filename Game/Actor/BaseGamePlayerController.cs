@@ -185,10 +185,18 @@ public class BaseGamePlayerController : GameActor {
 
     // effects - follow
     
-    float lastPlayerEffectsUpdate = 0f;
+    float lastPlayerEffectsGroundUpdate = 0f;
+    float lastPlayerEffectsBoostUpdate = 0f;
+
     public GameObject gamePlayerEffectsContainer;
+
     public GameObject gamePlayerEffectsGround;
+    public Color gamePlayerEffectsGroundColorCurrent;
+    public Color gamePlayerEffectsGroundColorLast;
+
     public GameObject gamePlayerEffectsBoost;
+    public Color gamePlayerEffectsBoostColorCurrent;
+    public Color gamePlayerEffectsBoostColorLast;
 
     public Vector3 impact = Vector3.zero;
 
@@ -502,28 +510,76 @@ public class BaseGamePlayerController : GameActor {
             gamePlayerEffectsGround.SetParticleSystemEmissionRate(time, true);
         }
     }
+
+
+    public virtual void HandlePlayerEffectsObjectTick(
+        ref GameObject effectsObject, ref Color colorCurrent, ref Color colorLast, ref float lastTime, float speed) {
+
+        // UPDATE color randomly
+        // TODO add other conditions to get colors, health, power etc
+        // Currently randomize player colors for effect
+
+        float updateTime = 0;
+        bool immediate = lastTime < 0 ? true : false;
+        
+        
+        if(lastTime < 5 && lastTime >= 0) {    
+            lastTime += Time.deltaTime; 
+        }
+        else {             
+            lastTime = 0;
+            colorCurrent = GameCustomController.GetRandomizedColorFromContextEffects();
+        }
+        
+        if(immediate) {
+            updateTime = 1;
+        }
+        else {
+            updateTime = lastTime / speed;                
+        }
+        
+        colorLast = 
+            Color.Lerp(colorLast, 
+                       colorCurrent, 
+                       updateTime);
+        
+        effectsObject.SetParticleSystemStartColor(colorLast, true);
+    }
+
+
+    public virtual void HandlePlayerEffectsTick() {
+        
+        if(lastPlayerEffectsTrailUpdate + 4 < Time.time) {
+            lastPlayerEffectsTrailUpdate = Time.time;
+            HandlePlayerEffectTrailBoostTick();            
+            HandlePlayerEffectTrailGroundTick();  
+        }
+
+        HandlePlayerEffectsGroundTick();
+        HandlePlayerEffectsBoostTick();
+    }
     
     public virtual void HandlePlayerEffectsGroundTick() {
         if (gamePlayerEffectsGround != null) {
-            
-            // UPDATE color randomly
-            // TODO add other conditions to get colors, health, power etc
-            // Currently randomize player colors for effect
-            
-            Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
-            gamePlayerEffectsGround.SetParticleSystemStartColor(colorTo, true);
+
+            HandlePlayerEffectsObjectTick(ref gamePlayerEffectsGround, 
+                                          ref gamePlayerEffectsGroundColorCurrent, 
+                                          ref gamePlayerEffectsGroundColorLast, 
+                                          ref lastPlayerEffectsGroundUpdate,
+                                          5);
+
+
         }
     }      
-    
+
     public virtual void HandlePlayerEffectsBoostTick() {
         if (gamePlayerEffectsBoost != null) {
             
-            // UPDATE color randomly
-            // TODO add other conditions to get colors, health, power etc
-            // Currently randomize player colors for effect
-            
-            Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
-            gamePlayerEffectsBoost.SetParticleSystemStartColor(colorTo, true);
+            HandlePlayerEffectsObjectTick(ref gamePlayerEffectsBoost, 
+                                          ref gamePlayerEffectsBoostColorCurrent, 
+                                          ref gamePlayerEffectsBoostColorLast, 
+                                          ref lastPlayerEffectsBoostUpdate,
+                                          3);
         }
     }  
 
@@ -2517,7 +2573,8 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandlePlayerEffectsStateChange() {
         lastPlayerEffectsTrailUpdate = 0;
-        lastPlayerEffectsUpdate = 0f;
+        lastPlayerEffectsBoostUpdate = -1f;
+        lastPlayerEffectsGroundUpdate = -1f;
         UpdatePlayerEffectsState();
     }
 
@@ -2532,17 +2589,7 @@ public class BaseGamePlayerController : GameActor {
             PlayerEffectTrailBoostTime(trailTime * thirdPersonController.moveSpeed);
             PlayerEffectTrailGroundTime(-trailTime + thirdPersonController.moveSpeed);
 
-            if(lastPlayerEffectsTrailUpdate + 4 < Time.time) {
-                lastPlayerEffectsTrailUpdate = Time.time;
-                HandlePlayerEffectTrailBoostTick();            
-                HandlePlayerEffectTrailGroundTick();  
-            }
-
-            if(lastPlayerEffectsUpdate + 4 < Time.time) {    
-                lastPlayerEffectsUpdate = Time.time;   
-                HandlePlayerEffectsGroundTick();         
-                HandlePlayerEffectsBoostTick();
-            }
+            HandlePlayerEffectsTick();
         }
         
         // consumes the impact energy each cycle:
