@@ -21,7 +21,7 @@ public class GameCustomBase : MonoBehaviour {
     public string lastCustomColorCode = "";
 	
 	void Start() {
-		//FindMaterials();
+        UpdatePlayer();
 	}
 	
 	public virtual void OnEnable() {
@@ -36,14 +36,9 @@ public class GameCustomBase : MonoBehaviour {
         if(customColorCode == "default") {
             //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
             SetCustomColors(gameObject);
-        }
-        else {
-            if(lastCustomColorCode != customColorCode) {
-            // load from current code
-                GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
-                lastCustomColorCode = customColorCode;
-            }
-        }        
+        }   
+
+        // custom templates handled in tick
     }
 	
 	void BaseOnCustomizationColorsChangedHandler() {
@@ -164,8 +159,28 @@ public class GameCustomBase : MonoBehaviour {
 			//LogUtil.Log("SetMaterialColors colorPants:" + color);
 		}
 	}
+
+    public void HandleCustomPlayerTemplate() {
+        
+        if(customColorCode == "default") {
+            return;
+        }
+
+        if(lastCustomColorCode != customColorCode) {
+            
+            if(GameCustomController.CheckCustomColorPresetExists(customColorCode)) {
+                
+                // load from current code
+                GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
+                lastCustomColorCode = customColorCode;
+            }
+        }
+    }
 		
 	void Update() {
+
+        HandleCustomPlayerTemplate();
+
 		if(freezeRotation) {
 			gameObject.transform.rotation = Quaternion.identity;
 			gameObject.transform.localRotation = Quaternion.identity;
