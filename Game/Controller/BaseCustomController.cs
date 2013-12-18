@@ -162,6 +162,77 @@ public class BaseGameCustomColors : DataObject {
     //public static Color colorCardinalsRed = ColorHelper.FromRGB(135,6,25);//.FromHex("870619");
 }
 
+public class GameCustomColorMaterial {
+    public string characterCode;
+    public string code;
+    public string materialName;
+    public List<Material> materials;
+
+    public GameCustomColorMaterial(string characterCodeTo, string codeTo, string materialNameTo, List<Material> materialsTo) {
+
+        characterCode = characterCodeTo;
+        code = codeTo;
+        materialName = materialNameTo;
+        materials = materialsTo;
+    }
+
+}
+
+public class GameCustomColorMaterials {
+    public Dictionary<string, GameCustomColorMaterial> customColorItems;
+    
+    public GameCustomColorMaterials() {
+        Reset();
+    }
+    
+    public virtual void Reset() {
+        CheckDict();
+    }
+
+    public virtual void CheckDict() {
+        if(customColorItems == null) {
+            customColorItems = new Dictionary<string, GameCustomColorMaterial>();
+        }    
+    }
+    
+    public virtual void Set(string characterCode, string code, string materialName) {
+        Set(characterCode, code, materialName, new List<Material>());
+    }
+
+    public virtual void Set(string characterCode, string code, string materialName, List<Material> materials) {
+        
+        CheckDict();
+
+        string key = characterCode + "-" + code;
+
+        if(!customColorItems.ContainsKey(key)) {
+            customColorItems.Add(key, new GameCustomColorMaterial(characterCode, code, materialName, materials));
+        }
+        else {
+            GameCustomColorMaterial gameCustomColorMaterial = customColorItems[key];
+
+            if(gameCustomColorMaterial != null) {
+            
+            }
+        }
+    }
+
+    public virtual List<GameCustomColorMaterial> Get(string characterCode, string code) {
+        
+        CheckDict();
+        
+        return new List<GameCustomColorMaterial>(customColorItems.Values);
+    }
+
+    public virtual List<GameCustomColorMaterial> GetList() {
+
+        CheckDict();
+        
+        return new List<GameCustomColorMaterial>(customColorItems.Values);
+    }
+    
+}
+
 public class BaseGameCustomController : MonoBehaviour { 
         
     public bool runDirector = true;
@@ -175,9 +246,10 @@ public class BaseGameCustomController : MonoBehaviour {
     public List<GameCustomColorPropertiesItem> colorsSetCustomWorlds;
     public List<GameCustomColorPropertiesItem> colorsSetCustomLevels;
     
-    public GameCustomColorTriggers colorTriggers = new GameCustomColorTriggers();
+    public GameCustomColorTriggers colorTriggers;
+    public GameCustomColorMaterials colorMaterials;
 
-    public GameProfileCustomPresets colorPresets = new GameProfileCustomPresets();
+    public GameProfileCustomPresets colorPresets;
     public GameProfileCustomItem currentProfileCustomItem;
     public GameProfileCustomItem initialProfileCustomItem;
     public GameObject currentPlayerObject;
@@ -198,6 +270,8 @@ public class BaseGameCustomController : MonoBehaviour {
     public virtual void Init() {
         colorTriggers = new GameCustomColorTriggers();
         colorPresets = new GameProfileCustomPresets();
+        colorMaterials = new GameCustomColorMaterials();
+
         currentProfileCustomItem = GameProfileCharacters.currentCustom;
         initialProfileCustomItem = GameProfileCharacters.currentCustom;
                 
@@ -331,6 +405,14 @@ public class BaseGameCustomController : MonoBehaviour {
         GameProfileCharacters.Current.SetCharacterCustom(colors);
         
         return GameProfileCharacters.currentCustom;
+    }
+
+    public virtual void fillCustomColorMaterials() {
+        //PlayerHelmet
+
+        GameCustomColorMaterials materials = new GameCustomColorMaterials();
+
+
     }
     
     public virtual void setCustomColorsPlayer(GameObject go) {
@@ -828,6 +910,66 @@ public class BaseGameCustomController : MonoBehaviour {
         
         GameCustomController.BroadcastCustomColorsSync();
     }
+        
+    public virtual void loadCustomColorMaterials() {
+
+        /*
+        LogUtil.Log("LoadCustomColorMaterials:", " colorMaterials.customColorItems.Count:" + colorMaterials.customColorItems.Count);
+        
+        if (colorMaterials.customColorItems.Count == 0) {
+            string characterCode = "default";
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmet, "PlayerHelmet");
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmetFacemask, "PlayerHelmetFacemask");
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmetHighlight, "PlayerHelmetHighlight");
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorJersey, "PlayerJersey");
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorJerseyHighlight, "PlayerJerseyHighlight");
+            colorMaterials.Set(characterCode, GameCustomColorNames.colorPants, "PlayerPants");
+            
+        }
+        */
+    }
+
+    
+    public virtual void findCustomColorMaterials(string characterCode, GameObject go) {
+        if(go == null) {
+            return;
+        }
+        
+        foreach(GameCustomColorMaterial customColorMaterial 
+                in GameCustomController.Instance.colorMaterials.GetList()) {
+            
+            if(customColorMaterial.materials.Count == 0) {
+                customColorMaterial.materials = go.GetMaterials(customColorMaterial.materialName);
+            }
+        }        
+    }
+    
+    public virtual void setMaterialColors(string characterCode, GameObject go, GameProfileCustomItem colors) {
+                
+        if(colors == null) {
+            return;
+        }
+
+        findCustomColorMaterials(characterCode, go);
+
+        foreach(GameCustomColorMaterial customColorMaterial 
+                in GameCustomController.Instance.colorMaterials.GetList()) {
+            
+            if(customColorMaterial.materials.Count == 0) {
+                customColorMaterial.materials = go.GetMaterials(customColorMaterial.materialName);
+            }
+
+
+            if(customColorMaterial.materials != null) {
+                Color color = colors.GetCustomColor(customColorMaterial.code);
+                color.a = 1.0f;
+                foreach(Material m in customColorMaterial.materials) {
+                    m.color = color;
+                }
+            }
+        }
+    }
+
 
     public virtual void loadCustomColors() {
 
@@ -903,7 +1045,8 @@ public class BaseGameCustomController : MonoBehaviour {
         preset.code = "my";
         preset.name = "My Current Colors";
         preset.customItem = new GameProfileCustomItem();
-        
+
+
         preset.customItem.SetCustomColor(
             GameCustomColorNames.colorHelmet,
             currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorHelmet));

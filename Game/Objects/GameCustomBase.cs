@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Engine.Events;
 
+
 public class GameCustomBase : MonoBehaviour {
 	
 	public List<Material> materialPlayerHelmets = new List<Material>();
@@ -70,6 +71,8 @@ public class GameCustomBase : MonoBehaviour {
 		if(go == null) {
 			return;
 		}
+
+       // foreach(GameCustomColorMaterial material in GameCustomController.GEt
 		
 		if(materialPlayerHelmets.Count == 0) {
 			materialPlayerHelmets = go.GetMaterials("PlayerHelmet");
