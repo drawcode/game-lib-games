@@ -113,7 +113,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         // Spawn indicator
         // target new player
          
-        string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
     
         //Debug.Log("AddIndicator:modelPath:" + modelPath);
 
@@ -161,7 +161,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
     public virtual GamePlayerIndicator AddIndicatorItem(
         GameObject parentObject, GameObject target, string type, string gameIndicatorType) {
-        string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelUI + "GamePlayerIndicatorHUD";
     
         //Debug.Log("AddIndicator:modelPath:" + modelPath);
 
@@ -246,7 +246,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
         // If not load
 
         if(!indicatorObject.Has<GamePlayerIndicatorItem>()) {
-            string modelPath = Contents.appCacheVersionSharedPrefabLevelUI + "indicator-" + gameIndicatorType;
+            string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelUI + "indicator-" + gameIndicatorType;
     
             //Debug.Log("AddIndicator:modelPath:" + modelPath);
     

@@ -1353,7 +1353,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual string getCharacterModelPath(GameActorDataItem character) {
-        string modelPath = Contents.appCacheVersionSharedPrefabCharacters;
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabCharacters;
         // TODO load up dater
         modelPath = PathUtil.Combine(modelPath, "GameEnemyBot1");
         return modelPath;
@@ -1456,7 +1456,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual string getItemPath(GameItemDataItem item) {
-        string modelPath = Contents.appCacheVersionSharedPrefabLevelItems;
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelItems;
         modelPath = PathUtil.Combine(modelPath, item.prefabCode);
         return modelPath;
     }

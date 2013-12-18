@@ -204,7 +204,7 @@ public class BaseItemController : MonoBehaviour {
     }
  
     public IEnumerator LoadItemCo(GameItemDirectorData itemData) {
-        string modelPath = Contents.appCacheVersionSharedPrefabLevelItems;
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelItems;
         string characterType = "coin";
              
         if(type == GamePlayerItemType.Coin) {

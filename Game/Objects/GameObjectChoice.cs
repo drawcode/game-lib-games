@@ -162,7 +162,7 @@ public class GameObjectChoice : GameObjectLevelBase {
 
             GameObject assetItem = GameObjectHelper.LoadFromResources(
                 Path.Combine(
-                Contents.appCacheVersionSharedPrefabLevelAssets,
+                ContentPaths.appCacheVersionSharedPrefabLevelAssets,
                 assetCode));
 
             if(assetItem != null) {

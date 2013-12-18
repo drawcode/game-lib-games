@@ -1280,9 +1280,9 @@ public class GameDraggableEditor : MonoBehaviour {
 	}	
 	
 	public string getResourcePath(string spriteCode) {	
-		//string resourcePath = Contents.appShipCachePathShared.Replace(Application.dataPath, "");		
+		//string resourcePath = ContentPaths.appShipCachePathShared.Replace(Application.dataPath, "");		
 		//resourcePath = PathUtil.Combine(resourcePath, spriteCode);
-		string resourcePath = Contents.appCacheVersionSharedPrefabLevelAssets + spriteCode;
+		string resourcePath = ContentPaths.appCacheVersionSharedPrefabLevelAssets + spriteCode;
 		return resourcePath;
 	}
 	
@@ -1427,7 +1427,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	public void loadDraggableContainerObject() {		
-		string path = Contents.appCacheVersionSharedPrefabLevelUI + "GameDraggableLevelItem";
+		string path = ContentPaths.appCacheVersionSharedPrefabLevelUI + "GameDraggableLevelItem";
 		LoadDraggableContainerObjectResources(path);
 	}
 	

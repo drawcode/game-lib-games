@@ -936,7 +936,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual IEnumerator LoadCharacterFromPrefab(string prefabNameObject) {
         string path = 
-         Contents.appCacheVersionSharedPrefabCharacters + prefabNameObject;
+         ContentPaths.appCacheVersionSharedPrefabCharacters + prefabNameObject;
 
         GameObject prefabNameObjectItem = Resources.Load(path) as GameObject;
      

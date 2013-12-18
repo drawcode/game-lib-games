@@ -1057,7 +1057,7 @@ public class BaseUIController : MonoBehaviour {
                 isCreatingStart = true;
                 if(prefabPointStart == null) {
                     prefabPointStart = Resources.Load(
-                                                Contents.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
+                                                ContentPaths.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
                 pointStartObject = Instantiate(prefabPointStart) as GameObject;         
             }
@@ -1075,7 +1075,7 @@ public class BaseUIController : MonoBehaviour {
                 isCreatingEnd = true;
                 if(prefabPointEnd == null) {
                     prefabPointEnd = Resources.Load(
-                        Contents.appCacheVersionSharedPrefabWeapons +
+                        ContentPaths.appCacheVersionSharedPrefabWeapons +
                         "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
                 pointEndObject = Instantiate(prefabPointEnd) as GameObject;     
