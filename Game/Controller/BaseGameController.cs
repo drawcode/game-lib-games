@@ -1594,7 +1594,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void resetLevelEnemies() {
         if(levelActorsContainerObject != null) {
-            levelActorsContainerObject.DestroyChildren();
+            levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
     }
 

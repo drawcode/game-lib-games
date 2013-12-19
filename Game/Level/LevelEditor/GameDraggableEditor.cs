@@ -100,7 +100,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public GameObject gameEditDialogMetaObject;
 	public GameObject gameEditDialogItemsObject;
 	
-	public UnityEngine.Object prefabDraggableContainer;
+    public GameObject prefabDraggableContainer;
 	
 	public static GameObject levelItemsContainerObject;
 	
@@ -1440,7 +1440,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	public void loadDraggableContainerObjectResources(string path) {
 		if(prefabDraggableContainer == null) {
 			// Load from resources
-			prefabDraggableContainer = Resources.Load(path);
+			prefabDraggableContainer = Resources.Load(path) as GameObject;
 		}
 	}
 	
@@ -1454,7 +1454,7 @@ public class GameDraggableEditor : MonoBehaviour {
 	
 	public void clearLevelItems(GameObject levelContainer) {		
 		if(levelContainer != null) {
-			levelContainer.DestroyChildren();
+			levelContainer.DestroyChildren(GameConfigs.usePooledLevelItems);
 		}
 	}
 	
@@ -1513,21 +1513,23 @@ public class GameDraggableEditor : MonoBehaviour {
 	}
 	
 	
-	public static void LoadLevelItem(UnityEngine.Object prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
+    public static void LoadLevelItem(GameObject prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
 		if(isInst) {
 			Instance.loadLevelItem(prefabGameLevelItemContainer, gameLevelItemAsset);
 		}
 	}
 	
-	public void loadLevelItem(UnityEngine.Object prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
+	public void loadLevelItem(GameObject prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
 
         //Debug.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
 
         if(gameLevelItemAsset != null) {
 
             if(prefabGameLevelItemContainer != null) {
-
-                GameObject goLevelItem = Instantiate(prefabGameLevelItemContainer) as GameObject;
+                
+                GameObject goLevelItem = GameObjectHelper.CreateGameObject(
+                    prefabGameLevelItemContainer, Vector3.zero, Quaternion.identity, 
+                    GameConfigs.usePooledLevelItems) as GameObject;
 
                 if(goLevelItem != null) {
 					

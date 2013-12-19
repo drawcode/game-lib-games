@@ -229,13 +229,16 @@ public class BaseGamePlayerController : GameActor {
     Vector3 positionPlayer;
     Vector3 positionTackler;
     float lastTackle = 0f;
+    // RPG
     public GameProfileRPGItem currentRPGItem;
     public GameProfilePlayerProgressItem currentPlayerProgressItem;
     public double rpgModifierDefault = .4f;
     public float lastRPGModTime = 0f;
     bool playerSpin = false;
+    // CAMS
     public GameCameraSmoothFollow gameCameraSmoothFollow;
     public GameCameraSmoothFollow gameCameraSmoothFollowGround;
+    // LAUNCHING
     public Vectrosity.VectorLine lineAim = null;
     public Vector3 positionStart = Vector3.zero;
     public Vector3 positionRelease = Vector3.zero;
@@ -245,20 +248,28 @@ public class BaseGamePlayerController : GameActor {
     public Vector3 currentPosition = Vector3.zero;
     public Vector3 currentAimPosition = Vector3.zero;
     public ParticleSystem gamePlayerEffectAim;
+    // EVADING
     public float distanceToPlayerControlledGamePlayer;
     public float distanceEvade = 5f;
     public bool isWithinEvadeRange = false;
     public bool lastIsWithinEvadeRange = false;
+    public float distanceRandomDie = 30f;
+    public float timeMinimumRandomDie = 5f;
+    public float lastRandomDie = 5f;
+    public bool isInRandomDieRange = false;
+    public bool lastIsInRandomDieRange = false;
+
     
     // IDLE ACTIONS AFTER INACTION
     public float delayIdleActions = 3.0f;
     public float lastIdleActions = 0f;
+
+    //
  
     // --------------------------------------------------------------------
     // INIT
  
     public virtual void Awake() {
-        uuid = Gameverses.UniqueUtil.Instance.currentUniqueId;
     }
  
     public override void Start() {
@@ -310,16 +321,25 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void Init(GamePlayerControllerState controlState) {
+
+        Reset();
+
         controllerState = controlState;
      
         // TODO wire in network/local unique ids.
-        uuid = System.Guid.NewGuid().ToString();
+        if(IsPlayerControlled) {
+            uuid = Gameverses.UniqueUtil.Instance.currentUniqueId;
+        }
+        else {
+            uuid = UniqueUtil.Instance.CreateUUID4();
+        }
      
         SetRuntimeData(new GamePlayerRuntimeData());
              
         InitControls();
      
-        LoadCharacter(prefabName);       
+        LoadCharacter(prefabName);  
+
         LoadWeapons();
      
         // Add weapons and modifiers
@@ -948,7 +968,6 @@ public class BaseGamePlayerController : GameActor {
                     Destroy(t.gameObject);
                 }
                 else {
-
                     GameObjectHelper.DestroyGameObject(
                         t.gameObject, GameConfigs.usePooledGamePlayers);
                 }
@@ -1225,86 +1244,88 @@ public class BaseGamePlayerController : GameActor {
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
                      
                 Transform t = contact.otherCollider.transform;
-                string parentName = t.parent.name;
+                if(t.parent != null) {
+                    string parentName = t.parent.name;
 
-                bool isObstacle = parentName.Contains("GameObstacle");                  
+                    bool isObstacle = parentName.Contains("GameObstacle");                  
 
-                bool isLevelObject = parentName.Contains("GameItemObject")
-                    || t.name.Contains("(Clone)")
-                        || parentName.Contains("(Clone)");                
+                    bool isLevelObject = parentName.Contains("GameItemObject")
+                        || t.name.Contains("(Clone)")
+                            || parentName.Contains("(Clone)");                
 
-                bool isPlayerObject = 
-                    parentName.Contains("HelmetContainer")
-                    || parentName.Contains("Helmet")
-                    || parentName.Contains("Facemask")
-                        || parentName.Contains("HitCollider")
-                        || parentName.Contains("GamePlayerCollider");
-                        //|| t.name.Contains("GamePlayerObject")
-                        //|| t.name.Contains("GamePlayerEnemy")
-                        //|| t.name.Contains("GameEnemy");  
+                    bool isPlayerObject = 
+                        parentName.Contains("HelmetContainer")
+                        || parentName.Contains("Helmet")
+                        || parentName.Contains("Facemask")
+                            || parentName.Contains("HitCollider")
+                            || parentName.Contains("GamePlayerCollider");
+                            //|| t.name.Contains("GamePlayerObject")
+                            //|| t.name.Contains("GamePlayerEnemy")
+                            //|| t.name.Contains("GameEnemy");  
 
-                if(isLevelObject) {
-                    GameLevelSprite sprite = t.gameObject.FindTypeAboveRecursive<GameLevelSprite>();
-                    if(sprite  == null) {
-                        sprite = t.parent.gameObject.GetComponentInChildren<GameLevelSprite>();
-                    }
-                    if(sprite != null) {                        
-                        isLevelObject = true;
-                    }
-                    else { 
-                        isLevelObject = false;
-                    }
-                }
-                                 
-                if (isObstacle || isLevelObject) {
-                    if (IsPlayerState()) {
-                        AudioAttack();
-                        Score(1);
-                        GamePlayerProgress.SetStatHitsObstacles(1f);
-                    }
-                }
-                else if (isPlayerObject){
-
-                    // handle stat
-
-                    //if (IsPlayerControlled) {
-                    collisionController = GameController.GetGamePlayerControllerObject(
-                        t.gameObject, false);
-
-                    if(collisionController != null) {
-
-                        if (!IsPlayerControlled) {
-                            // we hit a player, so we are an enemy
-                            GamePlayerProgress.SetStatHitsReceived(1f);
-
+                    if(isLevelObject) {
+                        GameLevelSprite sprite = t.gameObject.FindTypeAboveRecursive<GameLevelSprite>();
+                        if(sprite  == null) {
+                            sprite = t.parent.gameObject.GetComponentInChildren<GameLevelSprite>();
                         }
-                        else {
-                            // we hit an enemy, so we are the player
-                            GamePlayerProgress.SetStatHits(1f);
+                        if(sprite != null) {                        
+                            isLevelObject = true;
+                        }
+                        else { 
+                            isLevelObject = false;
                         }
                     }
-                    //}
+                                     
+                    if (isObstacle || isLevelObject) {
+                        if (IsPlayerState()) {
+                            AudioAttack();
+                            Score(1);
+                            GamePlayerProgress.SetStatHitsObstacles(1f);
+                        }
+                    }
+                    else if (isPlayerObject){
 
-                    // handle hit
+                        // handle stat
 
-                    float power = .1f;
+                        //if (IsPlayerControlled) {
+                        collisionController = GameController.GetGamePlayerControllerObject(
+                            t.gameObject, false);
 
-                    runtimeData.health -= power;
+                        if(collisionController != null) {
 
-                    //contact.normal.magnitude
+                            if (!IsPlayerControlled) {
+                                // we hit a player, so we are an enemy
+                                GamePlayerProgress.SetStatHitsReceived(1f);
 
-                    Hit(power);
+                            }
+                            else {
+                                // we hit an enemy, so we are the player
+                                GamePlayerProgress.SetStatHits(1f);
+                            }
+                        }
+                        //}
 
-                    //GamePlayerProgress.Instance.ProcessProgressSpins
+                        // handle hit
 
-                    //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
-                    //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
+                        float power = .1f;
 
-                    Vector3 normal = contact.normal;
-                    float magnitude = contact.point.sqrMagnitude;
-                    float hitPower = (magnitude * (float)runtimeData.mass) / 110;
-                    //Debug.Log("hitPower:" + hitPower);
-                    AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
+                        runtimeData.health -= power;
+
+                        //contact.normal.magnitude
+
+                        Hit(power);
+
+                        //GamePlayerProgress.Instance.ProcessProgressSpins
+
+                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
+                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
+
+                        Vector3 normal = contact.normal;
+                        float magnitude = contact.point.sqrMagnitude;
+                        float hitPower = (magnitude * (float)runtimeData.mass) / 110;
+                        //Debug.Log("hitPower:" + hitPower);
+                        AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
+                    }
                 }
                 break;
             }
@@ -2999,6 +3020,8 @@ public class BaseGamePlayerController : GameActor {
                     actorShadow.objectShadow = gamePlayerShadow;
                 }
             }
+
+            StartNavAgent();
         }
     }
  
@@ -3026,8 +3049,8 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void RemoveMe() {
-        //Destroy(gameObject);
-        //ObjectPoolManager.destroyPooled(gameObject);
+        gamePlayerModelHolderModel.DestroyChildren(GameConfigs.usePooledGamePlayers);
+        gameObject.DestroyGameObject(1f, GameConfigs.usePooledGamePlayers);
     }
  
     public virtual bool CheckVisibility() {
@@ -3272,6 +3295,7 @@ public class BaseGamePlayerController : GameActor {
                     isWithinEvadeRange = false;
                 }
 
+
                 if (lastIsWithinEvadeRange != isWithinEvadeRange) {
                     if (lastIsWithinEvadeRange && !isWithinEvadeRange) {
                         // evaded!
@@ -3304,6 +3328,40 @@ public class BaseGamePlayerController : GameActor {
                             Tackle(gamePlayerControllerHit, 3.33f);
                         }
                     }
+                }
+
+                // CHECK RANDOM DIE RANGE
+
+                bool shouldRandomlyDie = false;
+                
+                if (distanceToPlayerControlledGamePlayer >= distanceRandomDie) {
+                    isInRandomDieRange = true;
+                }
+                else {
+                    isInRandomDieRange = false;
+                }
+
+                if(isInRandomDieRange) {
+                    if(lastRandomDie + timeMinimumRandomDie < Time.time) {
+                        lastRandomDie = Time.time;
+                        shouldRandomlyDie = true;
+                    }
+                }
+                
+                //public float distanceRandomDie = 30f;
+                //public float timeMinimumRandomDie = 5f;
+                
+                if (lastIsInRandomDieRange != isInRandomDieRange) {
+                    if (lastIsInRandomDieRange && !isInRandomDieRange) {
+                        // out of range random!
+                        //GameController.CurrentGamePlayerController.Score(5);
+                        //GamePlayerProgress.SetStatEvaded(1f);
+                    }
+                    lastIsWithinEvadeRange = isInRandomDieRange;
+                }
+
+                if(shouldRandomlyDie) {
+                    Die();
                 }
             }
             //}
