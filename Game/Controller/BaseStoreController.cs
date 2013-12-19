@@ -20,7 +20,7 @@ public class GameStoreMessages {
 
 }
 
-public class GameStorePurchaseRecord : DataObject {
+public class GameStorePurchaseRecord : DataObjectItem {
     public bool successful = false;
     public object data;
     public string receipt = "";

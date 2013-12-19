@@ -10,7 +10,7 @@ using Engine.Events;
 
 // color properties
 
-public class BaseGameCustomColorProperties : DataObject {
+public class BaseGameCustomColorProperties : DataObjectItem {
     
     public List<GameCustomColorPropertiesItem> items;
     
@@ -30,7 +30,7 @@ public class BaseGameCustomColorProperties : DataObject {
 
 // color properties item
 
-public class BaseGameCustomColorPropertiesItem : DataObject {
+public class BaseGameCustomColorPropertiesItem : DataObjectItem {
     
     public string colorKey = "";
     public Color color = Color.white;
@@ -54,7 +54,7 @@ public class BaseGameCustomColorPropertiesItem : DataObject {
 
 // color triggers
 
-public class BaseGameCustomColorTriggers : DataObject {
+public class BaseGameCustomColorTriggers : DataObjectItem {
     public List<GameCustomColorTrigger> items;
 
     public BaseGameCustomColorTriggers() {
@@ -117,7 +117,7 @@ public class BaseGameCustomColorTriggers : DataObject {
 
 // color trigger item
 
-public class BaseGameCustomColorTrigger : DataObject {
+public class BaseGameCustomColorTrigger : DataObjectItem {
     public bool editing = false;
     public string colorKey = "";
     
@@ -153,7 +153,7 @@ public class BaseGameCustomColorNames {
 
 }
 
-public class BaseGameCustomColors : DataObject {
+public class BaseGameCustomColors : DataObjectItem {
     
     public static Color colorWhite = Color.white;
     public static Color colorBlack = Color.black;
