@@ -1,5 +1,4 @@
 #define DEV
-
 using System;
 using System.IO;
 using System.Collections;
@@ -11,11 +10,7 @@ using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
 
-
-public class BaseGameGlobal : MonoBehaviour
-{
-    public static BaseGameGlobal BaseInstance;
-    
+public class BaseGameGlobal : MonoBehaviour {    
     public GameNetworks gameNetworks;
     public GameState state;
     public Contents contents;
@@ -25,44 +20,23 @@ public class BaseGameGlobal : MonoBehaviour
     
     public SocialNetworks socialNetworks;
     public ProductPurchase productPurchase;
-    
     public GameScreenScaler gameScreenScaler;
     //public GameMatchup matchup;
     public GameSocialGame socialGame;
-    public AudioSystem audioSystem; 
-    
+    public AudioSystem audioSystem;
     public Gameverses.GameNetworking networking;
     public Gameverses.GameversesGameObject gameversesGameObject;
-    
     public AudioRecordObject audioRecorder; 
     
     //public Gameverses.GameversesAPI gameversesAPI;
     
     public bool ENABLE_PRODUCT_UNLOCKS = true;
-    
     public string currentLevel = "Level1";
-    
     public string masterserverPrefix = "drawlabs_";
-    
     public static float volumeEditor = 0f;
     
     public virtual void Awake() {
-        
-        if (BaseInstance != null && this != BaseInstance) {
-            //There is already a copy of this script running
-            Destroy(this);
-            return;
-        }
-        
-        BaseInstance = this;
-        
-        DontDestroyOnLoad(gameObject);
-        
-        Init();     
-    }
-    
-    public static bool isReady {
-        get { return GameGlobal.Instance != null ? true : false; }
+        Init();
     }
     
     public virtual void OnEnable() {
@@ -82,7 +56,8 @@ public class BaseGameGlobal : MonoBehaviour
     }
     
     public virtual void InitContentSystemPost() {
-        
+
+        /*
         InitAudio();            
         
         InitNetwork();
@@ -109,9 +84,8 @@ public class BaseGameGlobal : MonoBehaviour
         
         InitPlayerProgress();
         
-        InitRaceSettings();
-        
         PrepareData();
+        */
         
         /*
         foreach(GameLoaderMeta meta in GameLoaderMetas.Instance.GetAll()) {
@@ -127,13 +101,15 @@ public class BaseGameGlobal : MonoBehaviour
     
     public virtual void Start() {
         
-    }   
+    }
     
     public virtual void PrepareData() {
-        
+
+        /*
         GameWorld world = new GameWorld();
         world.active = true;
-        world.SetAttributeStringValue("default", "default");;
+        world.SetAttributeStringValue("default", "default");
+        ;
         world.code = "";
         world.description = "";
         world.display_name = "";
@@ -148,8 +124,9 @@ public class BaseGameGlobal : MonoBehaviour
         world.type = "default";
         world.uuid = UniqueUtil.Instance.CreateUUID4();
         //world.
+        */
         
-        Debug.Log(JsonMapper.ToJson(world));
+        //Debug.Log(JsonMapper.ToJson(world));
     }
     
     public virtual void InitNetwork() { 
@@ -159,9 +136,10 @@ public class BaseGameGlobal : MonoBehaviour
     public virtual void InitContext() { 
         //gameScreenScaler = gameObject.AddComponent<GameScreenScaler>();   
         
-    }   
+    }
     
     public virtual IEnumerator InitContentCo() {
+        /*
         Debug.Log("Starting Contents");
         contents = gameObject.AddComponent<Contents>();
         
@@ -170,9 +148,13 @@ public class BaseGameGlobal : MonoBehaviour
         ContentsConfig.contentDefaultPackFolder = "game-drawlabs-brainball-1";
         ContentsConfig.contentVersion = "1.0";
         ContentsConfig.contentIncrement = 2;
+
         yield return StartCoroutine(contents.initCacheCo(true, false));       
         
         InitContentSystemPost();  
+        */
+
+        yield return new WaitForEndOfFrame();
     }
     
     public virtual void InitTracking() {
@@ -192,9 +174,9 @@ public class BaseGameGlobal : MonoBehaviour
     }
     
     public virtual void InitMatchupSettings() { 
-        MatchupServerSettings.IP = "matchup.drawlabs.com";
-        MatchupServerSettings.players = 4;
-        MatchupServerSettings.port = 25010;
+        //MatchupServerSettings.IP = "matchup.drawlabs.com";
+        //MatchupServerSettings.players = 4;
+        //MatchupServerSettings.port = 25010;
         //MatchupServerSettings.
         //socialGame = gameObject.AddComponent<GameSocialGame>();           
         //networking = gameObject.AddComponent<Gameverses.GameNetworking>();
@@ -203,11 +185,6 @@ public class BaseGameGlobal : MonoBehaviour
     public virtual void InitPurchase() {    
         productPurchase = gameObject.AddComponent<ProductPurchase>();   
         productPurchase.EnableProductUnlocks = ENABLE_PRODUCT_UNLOCKS;
-    }
-    
-    public virtual void InitRaceSettings() {
-        //raceSettings = ScriptableObject.CreateInstance<RaceSettings>();           
-        LogUtil.Log("GameGlobal InitRaceSettings init...");
     }
     
     public virtual void InitState() {
@@ -225,7 +202,7 @@ public class BaseGameGlobal : MonoBehaviour
     }
     
     public virtual void InitPlayerProgress() {
-        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             #if UNITY_IPHONE            
             gameNetworks = gameObject.AddComponent<GameNetworks>();         
             gameNetworks.loadNetwork(GameNetworkType.IOS_GAME_CENTER);
@@ -269,7 +246,7 @@ public class BaseGameGlobal : MonoBehaviour
         
         //audioSystem.StartAmbience();
         #if DEV
-        if(Application.isEditor) {
+        if (Application.isEditor) {
 
             GameProfiles.Current.SetAudioMusicVolume(volumeEditor);
             GameProfiles.Current.SetAudioEffectsVolume(volumeEditor);          
@@ -356,11 +333,11 @@ public class BaseGameGlobal : MonoBehaviour
     //}
     
     public virtual void OnQuitDialog(string result) {
-        if(result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
+        if (result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
             QuitGame(); 
         }
         else { 
-            if(AlertDialog.Instance.IsReady()) {
+            if (AlertDialog.Instance.IsReady()) {
                 AlertDialog.Instance.HideAlert();
             }           
         }
@@ -382,16 +359,16 @@ public class BaseGameGlobal : MonoBehaviour
         }
         #endif
         
-        if(Application.isEditor) {
-            if(Input.GetKeyDown(KeyCode.Comma)) {
+        if (Application.isEditor) {
+            if (Input.GetKeyDown(KeyCode.Comma)) {
                 string filename = "../screenshots/" + GameUIController.Instance.currentPanel +
                     "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
-                        + "-" + (screenshotCount++).ToString() + ".png";
+                    + "-" + (screenshotCount++).ToString() + ".png";
                 
-                if(GameController.IsGameRunning) {
+                if (GameController.IsGameRunning) {
                     filename = "../screenshots/" + GameUIController.Instance.currentPanel + "-gameplay-" +
                         "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
-                            + "-" + (screenshotCount++).ToString() + ".png";
+                        + "-" + (screenshotCount++).ToString() + ".png";
                 }
                 Application.CaptureScreenshot(filename);
             }

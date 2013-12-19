@@ -404,7 +404,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
         GameProfileCharacters.Current.SetCharacterCustom(colors);
         
-        return GameProfileCharacters.currentCustom;
+        return colors;
     }
 
     public virtual void fillCustomColorMaterials() {
