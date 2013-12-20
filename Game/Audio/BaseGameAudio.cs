@@ -226,7 +226,7 @@ public class BaseGameAudio {
 	
 	public static void PlayEffect(string audioEffectName) {
 		
-		LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
+		//LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
 		
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.PlayEffect(audioEffectName, 
@@ -235,7 +235,7 @@ public class BaseGameAudio {
 
 	public static void PlayEffect(Transform parentTransform, string audioEffectName) {
 
-		LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
+		//LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
 
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.PlayEffect(parentTransform, audioEffectName,
@@ -244,7 +244,7 @@ public class BaseGameAudio {
 
     public static GameObject PlayEffectObject(Transform parentTransform, string audioEffectName, bool loop) {
         
-        LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
+        //LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
         
         if(AudioSystem.Instance != null)
             return AudioSystem.Instance.PlayEffectObject(parentTransform, audioEffectName, loop, 
@@ -255,7 +255,7 @@ public class BaseGameAudio {
 
 	public static void PlayEffect(Transform parentTransform, string audioEffectName, bool loop) {
 
-		LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
+		//LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
 
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.PlayEffect(parentTransform, audioEffectName, loop, 
@@ -324,7 +324,7 @@ public class BaseGameAudio {
 	}
 	
 	public static void SetVolumeForRace(bool inRace) {
-		LogUtil.Log("AudioListener SetVolumeForRace:" + inRace);
+		//LogUtil.Log("AudioListener SetVolumeForRace:" + inRace);
 		if(GameGlobal.Instance != null) {
 			if(inRace) {
 				AudioListener.volume = (float)(GameProfiles.Current.GetAudioEffectsVolume() * .9);
@@ -345,11 +345,11 @@ public class BaseGameAudio {
 	
 	public static void StartGameLoop(int lap) {
         
-        LogUtil.Log("StartGameLoop:", " lap:" + lap.ToString());
+        //LogUtil.Log("StartGameLoop:", " lap:" + lap.ToString());
 
 		if(AudioSystem.Instance != null) {
             
-            LogUtil.Log("StartGameLoop:", " inst:" + true);
+            //LogUtil.Log("StartGameLoop:", " inst:" + true);
 
 			AudioSystem.Instance.StartGameLoop(lap);
 			if(lap > 1) {

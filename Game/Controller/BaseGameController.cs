@@ -684,7 +684,7 @@ public class BaseGameController : MonoBehaviour {
 
             if(gamePlayerController != null) {
 
-                Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+                //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
                 if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
@@ -721,13 +721,13 @@ public class BaseGameController : MonoBehaviour {
             || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
-            Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            //Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
             if(gamePlayerController != null) {
 
-                Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+                //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
                 if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return true;
@@ -1365,15 +1365,24 @@ public class BaseGameController : MonoBehaviour {
         type = "bot1";
         return type;
     }
+    
+    bool loadingCharacterContainer = false;
 
     public virtual IEnumerator loadActorCo(GameActorDataItem character) {
+
+        if(loadingCharacterContainer) {
+            yield break; 
+        }
+
+        loadingCharacterContainer = true;
 
         string modelPath = GameController.GetCharacterModelPath(character);
         string characterType = GameController.GetCharacterType(character);
 
         // TODO data and pooling and network
-    
-        GameObject prefabObject = Resources.Load(modelPath) as GameObject;
+
+        GameObject prefabObject = PrefabsPool.PoolPrefab(modelPath);
+
         Vector3 spawnLocation = Vector3.zero;
 
         bool isZoned = true;
@@ -1413,46 +1422,57 @@ public class BaseGameController : MonoBehaviour {
             spawnLocation = GameController.GetRandomSpawnLocation();
         }
 
-        if(prefabObject == null) {
+        if(prefabObject == null) {            
+            loadingCharacterContainer = false;
             yield break;
         }
 
         GameObject characterObject = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
+
+        if(characterObject != null) {
     
-        characterObject.transform.parent = levelActorsContainerObject.transform;
+            characterObject.transform.parent = levelActorsContainerObject.transform;
+            
+            characterObject.transform.localScale = Vector3.one;
+            characterObject.transform.position = Vector3.zero;
+            characterObject.transform.localPosition = Vector3.zero;
+        
+            GamePlayerController characterGamePlayerController
+                = characterObject.GetComponentInChildren<GamePlayerController>();
 
-        GameCustomController.SetCustomColorsEnemy(characterObject);
-    
-        GamePlayerController characterGamePlayerController
-            = characterObject.GetComponentInChildren<GamePlayerController>();
+            characterGamePlayerController.LoadCharacter(characterType);
 
-        characterGamePlayerController.LoadCharacter(characterType);
+            characterGamePlayerController.transform.localScale
+                = characterGamePlayerController.transform.localScale * character.scale;
+            
+            yield return new WaitForSeconds(2f);
 
-        characterGamePlayerController.transform.localScale
-            = characterGamePlayerController.transform.localScale * character.scale;
+            // Wire up ai controller to setup player health, speed, attack etc.
 
-        // Wire up ai controller to setup player health, speed, attack etc.
+            //characterGamePlayerController.runtimeData.
 
-        //characterGamePlayerController.runtimeData.
+            if(characterGamePlayerController != null) {
+                characterObject.Hide();
+                yield return new WaitForEndOfFrame();
+                // wire up properties
+        
+                // TODO network and player target
+                //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
+                //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
+                //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
+                characterObject.Show();
 
-        if(characterGamePlayerController != null) {
-            characterObject.Hide();
-            yield return new WaitForEndOfFrame();
-            // wire up properties
-    
-            // TODO network and player target
-            //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
-            //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
-            //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-            characterObject.Show();
+                // Add indicator to HUD
+        
+                GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, characterObject, characterType);
 
-            // Add indicator to HUD
-    
-            GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, characterObject, characterType);
-
-            //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+                //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+            }
         }
+        
+        loadingCharacterContainer = false;
+
     }
 
     public virtual string getItemPath(GameItemDataItem item) {
@@ -1469,22 +1489,9 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual IEnumerator loadItemCo(GameItemDataItem item) {
 
-        string modelPath = GameController.GetItemPath(item);
-        //string characterType = GameController.GetItemType(item);
+        string path = GameController.GetItemPath(item);
 
-        // TODO data and pooling and network
-
-        // 1) Without using the ObjectPoolManager:
-// Projectile bullet = Instantiate( bulletPrefab, position, rotation ) as Projectile;
-// Destroy( bullet.gameObject );
-//
-// 2) Using the ObjetPoolManager:
-// Projectile bullet = ObjectPoolManager.createPooled( bulletPrefab.gameObject, position, rotation ).GetComponent<Bullet>();
-// ObjectPoolManager.destroyPooled( bullet.gameObject );
-
-
-    
-        GameObject prefabObject = Resources.Load(modelPath) as GameObject;
+        GameObject prefabObject = PrefabsPool.PoolPrefab(path);
         Vector3 spawnLocation = Vector3.zero;
 
         bool isZoned = true;
@@ -1501,7 +1508,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            Debug.Log("spawnCode:" + spawnCode);
+           // Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {

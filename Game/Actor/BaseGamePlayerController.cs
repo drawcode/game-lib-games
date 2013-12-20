@@ -253,8 +253,8 @@ public class BaseGamePlayerController : GameActor {
     public float distanceEvade = 5f;
     public bool isWithinEvadeRange = false;
     public bool lastIsWithinEvadeRange = false;
-    public float distanceRandomDie = 30f;
-    public float timeMinimumRandomDie = 5f;
+    public float distanceRandomDie = 33f;
+    public float timeMinimumRandomDie = 3f;
     public float lastRandomDie = 5f;
     public bool isInRandomDieRange = false;
     public bool lastIsInRandomDieRange = false;
@@ -263,6 +263,9 @@ public class BaseGamePlayerController : GameActor {
     // IDLE ACTIONS AFTER INACTION
     public float delayIdleActions = 3.0f;
     public float lastIdleActions = 0f;
+
+    public GameObject currentPrefabNameObjectItem;
+    public string currentPrefabNameObject = "";
 
     //
  
@@ -951,56 +954,78 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadCharacter(string prefabNameObject) {
         prefabName = prefabNameObject;
         lastPrefabName = prefabNameObject;
+
+        Debug.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
+
         StartCoroutine(LoadCharacterFromPrefab(prefabName));
     }
+
+    bool loadingCharacter = false;
  
     public virtual IEnumerator LoadCharacterFromPrefab(string prefabNameObject) {
+        
+        if(loadingCharacter) {
+            yield break;
+        }
+
         string path = 
          ContentPaths.appCacheVersionSharedPrefabCharacters + prefabNameObject;
 
-        GameObject prefabNameObjectItem = Resources.Load(path) as GameObject;
-     
-        if (prefabNameObjectItem != null) {
+        loadingCharacter = true;
+        
+        Debug.Log("LoadCharacter:path:" + path);
+        
+        GameObject prefabObject = PrefabsPool.PoolPrefab(path);
+                
+        Debug.Log("LoadCharacter:prefabObject:" + prefabObject != null);
+
+        if (prefabObject != null) {
             // Remove all current characters
             foreach (Transform t in gamePlayerModelHolderModel.transform) {
-                if (!initLoaded) {
-                    initLoaded = true;
-                    Destroy(t.gameObject);
-                }
-                else {
-                    GameObjectHelper.DestroyGameObject(
-                        t.gameObject, GameConfigs.usePooledGamePlayers);
-                }
+                // Pool safely destroys either way
+                GameObjectHelper.DestroyGameObject(
+                    t.gameObject, GameConfigs.usePooledGamePlayers);
+
+                Debug.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
             }
      
             yield return new WaitForEndOfFrame();
 
             GameObject gameObjectLoad = GameObjectHelper.CreateGameObject(
-                prefabNameObjectItem, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
+                prefabObject, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
 
-            gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
-            gameObjectLoad.transform.localScale = Vector3.one;
-            gameObjectLoad.transform.position = Vector3.zero;
-            gameObjectLoad.transform.localPosition = Vector3.zero;
-            gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
-            //gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
+            if(gameObjectLoad != null) {           
 
-            foreach (Transform t in gameObjectLoad.transform) {
-                t.localRotation = gamePlayerModelHolderModel.transform.rotation;
-            }
-         
-            if (gamePlayerControllerAnimation != null) {
-                gamePlayerControllerAnimation.ResetAnimatedActor(gameObjectLoad);
-            }
+                gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
+                gameObjectLoad.transform.localScale = Vector3.one;
+                gameObjectLoad.transform.position = Vector3.zero;
+                gameObjectLoad.transform.localPosition = Vector3.zero;
+                gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
+                //gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
+                
+                Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
-            if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
-                gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
+                foreach (Transform t in gameObjectLoad.transform) {
+                    t.localRotation = gamePlayerModelHolderModel.transform.rotation;
+                }
+             
+                if (gamePlayerControllerAnimation != null) {
+                    gamePlayerControllerAnimation.ResetAnimatedActor(gameObjectLoad);
+                }
+
+                if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
+                    gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
+                }
+                
+                GameCustomController.SetCustomColorsEnemy(gameObject);
             }
         }
              
         ChangePlayerState(controllerState);
              
         LoadWeapons();
+
+        loadingCharacter = false;
     }
  
     // --------------------------------------------------------------------
@@ -3050,7 +3075,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void RemoveMe() {
         gamePlayerModelHolderModel.DestroyChildren(GameConfigs.usePooledGamePlayers);
-        gameObject.DestroyGameObject(1f, GameConfigs.usePooledGamePlayers);
+        gameObject.DestroyGameObject(3f, GameConfigs.usePooledGamePlayers);
     }
  
     public virtual bool CheckVisibility() {
@@ -3166,7 +3191,7 @@ public class BaseGamePlayerController : GameActor {
             //}
          
             if (runtimeData != null) {
-                if (runtimeData.hitCount > 5) {
+                if (runtimeData.hitCount > UnityEngine.Random.Range(5, 10)) {
                     Die();
                 }
             }            
@@ -3342,10 +3367,15 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 if(isInRandomDieRange) {
-                    if(lastRandomDie + timeMinimumRandomDie < Time.time) {
-                        lastRandomDie = Time.time;
+                    if(lastRandomDie >  UnityEngine.Random.Range(
+                        timeMinimumRandomDie, 
+                        timeMinimumRandomDie + timeMinimumRandomDie/2)) {
+                        
+                        lastRandomDie = 0;
                         shouldRandomlyDie = true;
                     }
+                    
+                    lastRandomDie += Time.deltaTime;
                 }
                 
                 //public float distanceRandomDie = 30f;
@@ -3361,7 +3391,7 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 if(shouldRandomlyDie) {
-                    Die();
+                    runtimeData.hitCount += 10; 
                 }
             }
             //}

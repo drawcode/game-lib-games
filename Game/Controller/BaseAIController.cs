@@ -244,11 +244,12 @@ public class BaseAIController : MonoBehaviour {
 
     public virtual void handlePeriodic() {
 
-        if(Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(3, 10)) {
-            lastPeriodicSeconds = Time.time;
-            // every second
+        if(lastPeriodicSeconds > UnityEngine.Random.Range(3, 10)) {
+            lastPeriodicSeconds = 0f;
             GameAIController.DirectAI();
         }
+
+        lastPeriodicSeconds += Time.deltaTime;
     }
 
     public virtual void handleUpdate() {
