@@ -406,7 +406,14 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                 if(gamePlayerController != null) {
                     // Hide/show off screen indicator
                     if(!gamePlayerController.controllerData.visible) {
-                        ShowIndicator();
+
+                        if(gamePlayerController.gameObject.activeInHierarchy) {                            
+                            ShowIndicator();
+                        }
+                        else {
+                            HideIndicator();
+                            return;
+                        }
                     }
                     else {
                         HideIndicator();
@@ -423,7 +430,14 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                 if(gamePlayerItem != null) {
                     // Hide/show off screen indicator
                     if(!gamePlayerItem.gameObject.IsRenderersVisibleByCamera(Camera.main)) {
-                        ShowIndicator();
+
+                        if(gamePlayerItem.gameObject.activeInHierarchy) {                            
+                            ShowIndicator();
+                        }
+                        else {
+                            HideIndicator();
+                            return;
+                        }
                     }
                     else {
                         HideIndicator();
@@ -447,7 +461,14 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                             return;
                         }
                         else {
-                            ShowIndicator();
+                            
+                            if(target.gameObject.activeInHierarchy) {                            
+                                ShowIndicator();
+                            }
+                            else {
+                                HideIndicator();
+                                return;
+                            }
                         }
                     }
                     else {

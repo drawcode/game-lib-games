@@ -7,7 +7,14 @@ using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
 
+public class BaseGamePlayerThirdPersonControllerData {
+    
+    public bool removing = false;
+}
+
 public class BaseGamePlayerThirdPersonController : MonoBehaviour {
+
+    public GamePlayerThirdPersonControllerData controllerData;
 
     // The speed when walking
     public float walkSpeed = 3.0f;
@@ -86,7 +93,6 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
     public bool jumpButton = false;
     public bool getUserInput = false;
     public bool isNetworked = false;
-    public bool removing = false;
     public Vector3 targetDirection = Vector3.zero;
     public Vector3 movementDirection = Vector3.zero;
     public Vector3 aimingDirection = Vector3.zero;
@@ -104,10 +110,14 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
     public virtual void Start() {
         //base.Start();
     }
+
+    public virtual void Init() {
+        controllerData = new GamePlayerThirdPersonControllerData();
+    }
  
     public virtual void UpdateSmoothedMovementDirection() {
      
-        if(removing) {
+        if(controllerData.removing) {
             return;
         }
      
@@ -298,7 +308,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
          }               
      }
      */
-        removing = removeMe;
+        controllerData.removing = removeMe;
         SendMessage("Die", SendMessageOptions.DontRequireReceiver);
     }
 
@@ -373,7 +383,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
      
         //base.Update();
              
-        if(removing) {
+        if(controllerData.removing) {
             return;
         }
 
@@ -512,7 +522,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
  
     public virtual void ResetPlayState() {   
         enabled = true;
-        removing = false;
+        controllerData.removing = false;
         transform.position = Vector3.zero;
     }
 }

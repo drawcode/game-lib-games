@@ -68,12 +68,13 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
         }
         else {
             //StartAgent();
+        }        
+        
+        if(agentState != GamePlayerNavMeshAgentState.PURSUE) {
+            nextDestination = gameObject.transform.position;
+            NavigateToDestination();
+            return;
         }
-		
-		if(agentState != GamePlayerNavMeshAgentState.PURSUE) {
-			return;
-		}
-		
 		
 		if(agent != null) {
 			if(agent.remainingDistance <= 50f || agent.isPathStale) {

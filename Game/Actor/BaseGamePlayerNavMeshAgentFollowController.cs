@@ -13,6 +13,8 @@ public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
 	public float agentDistance = 4f;
 	
 	public GamePlayerNavMeshAgentState agentState = GamePlayerNavMeshAgentState.PURSUE;
+
+    public GamePlayerController gamePlayerController;
 	
 	// Use this for initialization
 	public virtual void Start() {
@@ -20,8 +22,14 @@ public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
 		NavigateToDestination();
 	}
 
+    public virtual void FindGamePlayer() {
+        if(gamePlayerController == null) {
+            gamePlayerController = GetComponent<GamePlayerController>();
+        }
+    }
+
     public virtual void StopAgent() {
-        if(agent != null) {
+        if(agent != null && agentState != GamePlayerNavMeshAgentState.STOP) {
             if(agent.enabled) {
                 agent.destination = gameObject.transform.position;
                 agent.Stop(true);
@@ -31,7 +39,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
     }
     
     public virtual void StartAgent() {
-        if(agent != null) {
+        if(agent != null && agentState != GamePlayerNavMeshAgentState.PURSUE) {
             agent.Resume();
             agentState = GamePlayerNavMeshAgentState.PURSUE;
             NavigateToDestination();
@@ -79,13 +87,14 @@ public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
             StopAgent();
             return;
         }
-        else {
-            //StartAgent();
+
+        FindGamePlayer();
+        
+        if(gamePlayerController != null) {
+            if(gamePlayerController.isDead) {
+                StopAgent();
+            }
         }
-		
-		if(agentState != GamePlayerNavMeshAgentState.PURSUE) {
-			return;
-		}
 		
 		if(agent != null) {
 			if(agent.enabled) {

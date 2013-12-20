@@ -125,7 +125,6 @@ public class UIPanelDialogRPGAttack : UIPanelBase {
 
     public override void AnimateOut() {
         base.AnimateOut();
-
     }
 
     public void Update() {

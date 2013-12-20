@@ -1446,26 +1446,27 @@ public class BaseGameController : MonoBehaviour {
             characterGamePlayerController.transform.localScale
                 = characterGamePlayerController.transform.localScale * character.scale;
             
-            yield return new WaitForSeconds(2f);
+            //yield return new WaitForSeconds(2f);
 
             // Wire up ai controller to setup player health, speed, attack etc.
 
             //characterGamePlayerController.runtimeData.
 
             if(characterGamePlayerController != null) {
-                characterObject.Hide();
-                yield return new WaitForEndOfFrame();
+                //characterObject.Hide();
+                //yield return new WaitForEndOfFrame();
                 // wire up properties
         
                 // TODO network and player target
                 //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
                 //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
                 //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-                characterObject.Show();
+                //characterObject.Show();
 
                 // Add indicator to HUD
         
-                GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, characterObject, characterType);
+                //GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
+                //                                 characterObject, characterType);
 
                 //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
             }
@@ -1896,14 +1897,14 @@ public class BaseGameController : MonoBehaviour {
     public virtual void handleContentTutorial() {
         
         if(contentDisplayCode == GameContentDisplayTypes.gameTutorial) {            
-            UIPanelDialogBackground.ShowDefault();
+            //UIPanelDialogBackground.ShowDefault();
         }
     }
     
     public virtual void handleContentTips() {
         
         if(contentDisplayCode == GameContentDisplayTypes.gameTips) {            
-            UIPanelDialogBackground.ShowDefault();
+            //UIPanelDialogBackground.ShowDefault();
         }
     }
     

@@ -327,19 +327,14 @@ public class UIPanelOverviewMode : UIPanelBase {
     bool initialized = false;
     
     IEnumerator loadDataCo() {
+
+        Reset();   
+            
+        ShowCurrentState();
+        
+        UpdateTipsStates();
+        
         yield return new WaitForSeconds(1f);
-
-        Reset();
-
-        if(!initialized) {
-            initialized = true;
-        }
-        else {            
-            
-            ShowCurrentState();
-            
-            UpdateTipsStates();
-        }
     }
 
     public override void AnimateIn() {

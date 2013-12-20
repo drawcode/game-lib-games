@@ -105,7 +105,6 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
 
     public override void AnimateOut() {
         base.AnimateOut();
-
     }
 
     public override void Update() {
