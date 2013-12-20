@@ -298,7 +298,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
 
                     GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
     
-                    if(gamePlayerController != null && !gamePlayerController.dying) {
+                    if(gamePlayerController != null && !gamePlayerController.controllerData.dying) {
 
                     if(gamePlayerController.IsPlayerControlled) {
                         CollectContent();

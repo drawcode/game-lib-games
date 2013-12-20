@@ -405,7 +405,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
                 if(gamePlayerController != null) {
                     // Hide/show off screen indicator
-                    if(!gamePlayerController.visible) {
+                    if(!gamePlayerController.controllerData.visible) {
                         ShowIndicator();
                     }
                     else {
@@ -440,7 +440,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
 
                 if(target != null) {
                     // Hide/show off screen indicator
-                    if(target.gameObject != null) {
+                    if(target.gameObject != null && GameController.CurrentGamePlayerController != null) {
                         if(target.gameObject.IsRenderersVisibleByCamera()
                             || Vector3.Distance(target.position, GameController.CurrentGamePlayerController.transform.position) < 20f) {
                             HideIndicator();
@@ -449,6 +449,10 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                         else {
                             ShowIndicator();
                         }
+                    }
+                    else {
+                        HideIndicator();
+                        return;
                     }
                 }
             }
