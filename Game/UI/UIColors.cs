@@ -70,7 +70,7 @@ public static class UIColors  {
 
     public static Color colorLight {
         get {
-            return GameColors.GetColor("ui-light);
+            return GameColors.GetColor("ui-light");
             //ColorHelper.FromRGB(200, 200, 200);
         }
     }
