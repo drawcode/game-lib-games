@@ -987,7 +987,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData = new GamePlayerControllerData();
         }
 
-        Debug.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
+        //Debug.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
         if (controllerData.lastPrefabName != prefabName || controllerData.lastPrefabName == null || !isCharacterLoaded) {
             controllerData.lastPrefabName = prefabName;
             if (gameObject.activeInHierarchy) {
@@ -1007,11 +1007,11 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData.loadingCharacter = true;
         
-        Debug.Log("LoadCharacter:path:" + path);
+        //Debug.Log("LoadCharacter:path:" + path);
         
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
                 
-        Debug.Log("LoadCharacter:prefabObject:" + prefabObject != null);
+        //Debug.Log("LoadCharacter:prefabObject:" + prefabObject != null);
 
         if (prefabObject != null) {
             if(gamePlayerModelHolderModel.transform.childCount > 0) {
@@ -1021,7 +1021,7 @@ public class BaseGamePlayerController : GameActor {
                     GameObjectHelper.DestroyGameObject(
                         t.gameObject, GameConfigs.usePooledGamePlayers);
 
-                    Debug.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
+                    //Debug.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
                 }
             }
 
@@ -1037,7 +1037,7 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
                 //gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                 
-                Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
+                //Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
                 foreach (Transform t in gameObjectLoad.transform) {
                     t.localRotation = gamePlayerModelHolderModel.transform.rotation;
@@ -3372,6 +3372,8 @@ public class BaseGamePlayerController : GameActor {
         SyncNavAgent();  
      
     }
+
+    public float lastStateEvaded = 0f;
  
     public virtual void UpdateVisibleState() {
      
@@ -3414,7 +3416,7 @@ public class BaseGamePlayerController : GameActor {
      
         // If this is an enemy see if we should attack
      
-        float attackRange = 10f;  // wihtin 6 yards
+        float attackRange = 6f;  // wihtin 6 yards
         //bool runUpdate = false;
 
         if (controllerData.currentTimeBlock + controllerData.actionInterval < Time.time) {
@@ -3434,28 +3436,32 @@ public class BaseGamePlayerController : GameActor {
 
                 // check distance for evades
 
-                controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
-                        go.transform.position,
-                        transform.position);
+                if(lastStateEvaded > .3f) {
 
-                if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
-                    controllerData.isWithinEvadeRange = true;
-                }
-                else {
-                    controllerData.isWithinEvadeRange = false;
-                }
+                    lastStateEvaded += Time.deltaTime;
 
+                    controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
+                            go.transform.position,
+                            transform.position);
 
-                if (controllerData.lastIsWithinEvadeRange != controllerData.isWithinEvadeRange) {
-                    if (controllerData.lastIsWithinEvadeRange && !controllerData.isWithinEvadeRange) {
-                        // evaded!
-                        GameController.CurrentGamePlayerController.Score(5);
-                        GamePlayerProgress.SetStatEvaded(1f);
+                    if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
+                        controllerData.isWithinEvadeRange = true;
                     }
-                    controllerData.lastIsWithinEvadeRange = controllerData.isWithinEvadeRange;
+                    else {
+                        controllerData.isWithinEvadeRange = false;
+                    }
+
+
+                    if (controllerData.lastIsWithinEvadeRange != controllerData.isWithinEvadeRange) {
+                        if (controllerData.lastIsWithinEvadeRange && !controllerData.isWithinEvadeRange) {
+                            // evaded!
+                            GamePlayerProgress.SetStatEvaded(1f);
+                        }
+                        controllerData.lastIsWithinEvadeRange = controllerData.isWithinEvadeRange;
+                    }
                 }
 
-                // check attack/lunge range
+                    // check attack/lunge range
 
                 if (controllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
                     //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
@@ -3471,11 +3477,11 @@ public class BaseGamePlayerController : GameActor {
 
                         if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
                             // LEAP AT THEM within three
-                            Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 20f));
+                            Tackle(gamePlayerControllerHit, Mathf.Clamp(15f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 15f));
                         }
                         else {
                             // PURSUE FASTER
-                            Tackle(gamePlayerControllerHit, 3.33f);
+                            Tackle(gamePlayerControllerHit, 3.13f);
                         }
                     }
                 }

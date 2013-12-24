@@ -768,9 +768,9 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         if(isLegacy) {
 			
 			if(animationData.actor.animation != null) {
-	            if(animationData.actor.animation["jump"] != null) {
-	                animationData.actor.animation.CrossFade("jump", 0.2f);
-	                SendMessage("SyncAnimation", "jump", 
+                if(animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
+                    animationData.actor.animation.CrossFade(GamePlayerAnimationType.jump, 0.2f);
+                    SendMessage("SyncAnimation", GamePlayerAnimationType.jump, 
 	                 SendMessageOptions.DontRequireReceiver);
 	            }
 			}
@@ -796,17 +796,18 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     }
 
     public virtual void DidLand() {
-        if(animationData.actor == null) {
-            return;
-        }
+
 
         if(isLegacy) {
             //animationData.actor.animation.Play("jumpland");
             //SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-			
+            if(animationData.actor == null) {
+                return;
+            }
+
 			if(animationData.actor.animation != null) {
-	            if(animationData.actor.animation["jump"] != null) {
-	                animationData.actor.animation.Play("jump");
+                if(animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
+                    animationData.actor.animation.Play(GamePlayerAnimationType.jump);
 	                SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
 	            }
 			}
@@ -823,18 +824,19 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     // IDLE
  
     public virtual void AnimateIdle() {
-        if(animationData.actor == null) {
-            return;
-        }
 
         if(isLegacy) {
-			
+            
+            if(animationData.actor == null) {
+                return;
+            }
+
 			if(animationData.actor.animation != null) {
-	            if(animationData.actor.animation["idle"] != null) {
-	                if(animationData.actor.animation["idle"] != null
+                if(animationData.actor.animation[GamePlayerAnimationType.idle] != null) {
+                    if(animationData.actor.animation[GamePlayerAnimationType.idle] != null
                        && !animationData.isRunningClampAnimation) {
-	                    animationData.actor.animation.CrossFade("idle");
-	                    SendMessage("SyncAnimation", "idle",
+                        animationData.actor.animation.CrossFade(GamePlayerAnimationType.idle);
+                        SendMessage("SyncAnimation", GamePlayerAnimationType.idle,
 	                     SendMessageOptions.DontRequireReceiver);
 	                }
 	            }
@@ -850,12 +852,12 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     // --------------
     // HIT
  
-    public virtual void AnimateHit() {       
-        if(animationData.actor == null) {
-            return;
-        }
+    public virtual void AnimateHit() {   
 
-        if(isLegacy) {
+        if(isLegacy) {    
+            if(animationData.actor == null) {
+                return;
+            }
             if(animationData.actor.animation["hit"] != null) {
                 animationData.actor.animation.CrossFade("hit", 0.1f);
                 SendMessage("SyncAnimation", "hit", SendMessageOptions.DontRequireReceiver);
@@ -1089,21 +1091,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     }
  
     public virtual void DidDie() {   
-        if(animationData.isDead) {
-            return;
-        }
-     
+
 		if(isLegacy) {
             if(animationData.actor != null) {
     			if(animationData.actor.animation != null) {
-    	            if(animationData.actor.animation["death"] != null) {
+                    if(animationData.actor.animation[GamePlayerAnimationType.death] != null) {
                         animationData.isRunningClampAnimation = true;
-    	                animationData.actor.animation.Play("death", PlayMode.StopAll);
+                        animationData.actor.animation.Play(GamePlayerAnimationType.death, PlayMode.StopAll);
     	            }
-                    else if(animationData.actor.animation["hit"] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        animationData.actor.animation.Play("hit", PlayMode.StopAll);
-                    }
     			}
             }
         }
@@ -1132,10 +1127,10 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         if(isLegacy) {
             if(animationData.actor != null) {
     			if(animationData.actor.animation != null) {
-    	            if(animationData.actor.animation["idle"] != null) {
+                    if(animationData.actor.animation[GamePlayerAnimationType.idle] != null) {
                         animationData.isRunningClampAnimation = true;
     	                //PauseAnimationUpdate(1f);  
-    	                animationData.actor.animation.Play("idle", PlayMode.StopAll);
+                        animationData.actor.animation.Play(GamePlayerAnimationType.idle, PlayMode.StopAll);
     	            }
     			}
             }
@@ -1167,10 +1162,10 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         if(isLegacy) {
             if(animationData.actor != null) {
     			if(animationData.actor.animation != null) {
-    	            if(animationData.actor.animation["jump"] != null) {
+                    if(animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
                         animationData.isRunningClampAnimation = true;
     	                //PauseAnimationUpdate(1f);  
-    	                animationData.actor.animation.Play("jump", PlayMode.StopAll);
+                        animationData.actor.animation.Play(GamePlayerAnimationType.jump, PlayMode.StopAll);
     	            }
     			}
             }

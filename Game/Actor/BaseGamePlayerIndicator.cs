@@ -393,7 +393,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
             return;
         }
 
-        if(Time.time > lastUpdate + .01f) {
+        if(Time.time > lastUpdate + .05f) {
          
             lastUpdate = Time.time;
 

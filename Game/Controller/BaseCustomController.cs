@@ -582,8 +582,6 @@ public class BaseGameCustomController : MonoBehaviour {
         // Randomize or get customized colors
 
         Color colorTo = UIColors.colorWhite;
-
-        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
         
         int randomColor = UnityEngine.Random.Range(0, 4);
         
@@ -602,8 +600,6 @@ public class BaseGameCustomController : MonoBehaviour {
         // Randomize or get customized colors
 
         Color colorTo = UIColors.colorWhite;
-
-        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
         
         int randomColor = UnityEngine.Random.Range(0, 4);
 
