@@ -109,7 +109,7 @@ public class GameCustomBase : MonoBehaviour {
         }
 		
 		if(materialPlayerHelmets != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmet);
+			Color color = colors.GetCustomColor(GameCustomItemNames.helmet);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmets) {
 				m.color = color;
@@ -118,7 +118,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerHelmetFacemasks != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmetFacemask);
+			Color color = colors.GetCustomColor(GameCustomItemNames.helmetFacemask);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmetFacemasks) {
 				m.color = color;
@@ -127,7 +127,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerHelmetHighlights != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
+			Color color = colors.GetCustomColor(GameCustomItemNames.helmetHighlight);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerHelmetHighlights) {
 				m.color = color;
@@ -136,7 +136,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 				
 		if(materialPlayerJerseys != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorJersey);
+			Color color = colors.GetCustomColor(GameCustomItemNames.jersey);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerJerseys) {
 				m.color = color;
@@ -145,7 +145,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerJerseyHighlights != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorJerseyHighlight);
+			Color color = colors.GetCustomColor(GameCustomItemNames.jerseyHighlight);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerJerseyHighlights) {
 				m.color = color;
@@ -154,7 +154,7 @@ public class GameCustomBase : MonoBehaviour {
 		}
 		
 		if(materialPlayerPants != null) {
-			Color color = colors.GetCustomColor(GameCustomColorNames.colorPants);
+			Color color = colors.GetCustomColor(GameCustomItemNames.pants);
 			color.a = 1.0f;
 			foreach(Material m in materialPlayerPants) {
 				m.color = color;

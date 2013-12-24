@@ -144,12 +144,11 @@ public class BaseCustomMessages {
     public static string customColorChanged = "custom-color-changed";
     public static string customColorsPlayerChanged = "custom-colors-player-changed";
     public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
-
     public static string customColorPresetChanged = "custom-color-preset-changed";
 
 }
 
-public class BaseGameCustomColorNames {
+public class BaseGameCustomItemNames {
 
 }
 
@@ -388,12 +387,12 @@ public class BaseGameCustomController : MonoBehaviour {
     public virtual GameProfileCustomItem fillDefaultCustomColorsPlayer() {
         
         GameProfileCustomItem colors = new GameProfileCustomItem();
-        //item.SetCustomColor(GameCustomColorNames.colorHelmet, new Color(0.979f, 0.943f, 0.938f, 1.000f));
-        //item.SetCustomColor(GameCustomColorNames.colorHelmetFacemask, new Color(0.7f, 0.7f, 0.7f, 1.000f));
-        //item.SetCustomColor(GameCustomColorNames.colorHelmetHighlight, new Color(0.442f, 0.114f, 0.067f, 1.000f));
-        //item.SetCustomColor(GameCustomColorNames.colorJersey, new Color(0.448f, 0.093f, 0.042f, 1.000f));
-        //item.SetCustomColor(GameCustomColorNames.colorJerseyHighlight, new Color(0.974f, 0.955f, 0.952f, 1.000f));
-        //item.SetCustomColor(GameCustomColorNames.colorPants, new Color(0.979f, 0.943f, 0.938f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.helmet, new Color(0.979f, 0.943f, 0.938f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.helmetFacemask, new Color(0.7f, 0.7f, 0.7f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.helmetHighlight, new Color(0.442f, 0.114f, 0.067f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.jersey, new Color(0.448f, 0.093f, 0.042f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.jerseyHighlight, new Color(0.974f, 0.955f, 0.952f, 1.000f));
+        //item.SetCustomColor(GameCustomItemNames.pants, new Color(0.979f, 0.943f, 0.938f, 1.000f));
         if(colorsSetCustomPlayers == null) {
             GameCustomController.FillSetCustomColorsAll();
         }
@@ -452,12 +451,12 @@ public class BaseGameCustomController : MonoBehaviour {
         
         GameProfileCustomItem colors = new GameProfileCustomItem();
         
-        //colors.SetCustomColor(GameCustomColorNames.colorHelmet, Color.black);
-        //colors.SetCustomColor(GameCustomColorNames.colorHelmetFacemask, Color.gray);
-        //colors.SetCustomColor(GameCustomColorNames.colorHelmetHighlight, Color.gray);
-        //colors.SetCustomColor(GameCustomColorNames.colorJersey, Color.black);
-        //colors.SetCustomColor(GameCustomColorNames.colorJerseyHighlight, Color.gray);
-        //colors.SetCustomColor(GameCustomColorNames.colorPants, Color.black);
+        //colors.SetCustomColor(GameCustomItemNames.helmet, Color.black);
+        //colors.SetCustomColor(GameCustomItemNames.helmetFacemask, Color.gray);
+        //colors.SetCustomColor(GameCustomItemNames.helmetHighlight, Color.gray);
+        //colors.SetCustomColor(GameCustomItemNames.jersey, Color.black);
+        //colors.SetCustomColor(GameCustomItemNames.jerseyHighlight, Color.gray);
+        //colors.SetCustomColor(GameCustomItemNames.pants, Color.black);
                 
         foreach(GameCustomColorPropertiesItem item in colorsSetCustomPlayers) {
             colors.SetCustomColor(item.colorKey, item.color);
@@ -553,25 +552,25 @@ public class BaseGameCustomController : MonoBehaviour {
         int randomColor = UnityEngine.Random.Range(0, 8);
         
         if(randomColor == 1) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmet);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.helmet);
         }
         else if(randomColor == 2) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.helmetHighlight);
         }
         else if(randomColor == 3) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorJersey);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.jersey);
         }
         else if(randomColor == 4) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorJerseyHighlight);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.jerseyHighlight);
         }
         else if(randomColor == 5) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorPants);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.pants);
         }
         else if(randomColor == 5) {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetFacemask);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.helmetFacemask);
         }
         else {
-            colorTo = customItem.GetCustomColor(GameCustomColorNames.colorHelmetHighlight);
+            colorTo = customItem.GetCustomColor(GameCustomItemNames.helmetHighlight);
         }
 
         return colorTo;
@@ -914,12 +913,12 @@ public class BaseGameCustomController : MonoBehaviour {
         
         if (colorMaterials.customColorItems.Count == 0) {
             string characterCode = "default";
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmet, "PlayerHelmet");
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmetFacemask, "PlayerHelmetFacemask");
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorHelmetHighlight, "PlayerHelmetHighlight");
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorJersey, "PlayerJersey");
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorJerseyHighlight, "PlayerJerseyHighlight");
-            colorMaterials.Set(characterCode, GameCustomColorNames.colorPants, "PlayerPants");
+            colorMaterials.Set(characterCode, GameCustomItemNames.helmet, "PlayerHelmet");
+            colorMaterials.Set(characterCode, GameCustomItemNames.helmetFacemask, "PlayerHelmetFacemask");
+            colorMaterials.Set(characterCode, GameCustomItemNames.helmetHighlight, "PlayerHelmetHighlight");
+            colorMaterials.Set(characterCode, GameCustomItemNames.jersey, "PlayerJersey");
+            colorMaterials.Set(characterCode, GameCustomItemNames.jerseyHighlight, "PlayerJerseyHighlight");
+            colorMaterials.Set(characterCode, GameCustomItemNames.pants, "PlayerPants");
             
         }
         */
@@ -980,12 +979,12 @@ public class BaseGameCustomController : MonoBehaviour {
             
             AddCustomColorItem(
                 "my", "My Current Colors",
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.colorHelmet),
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.colorHelmetFacemask),
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.colorHelmetHighlight),
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.GameConfigColors.colorJersey),
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.GameConfigColors.colorJerseyHighlight),
-                currentProfileCustom.GetCustomColor(GameCustomColorNames.GameConfigColors.colorPants));
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.helmet),
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.helmetFacemask),
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.helmetHighlight),
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.GameConfigColors.colorJersey),
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.GameConfigColors.colorJerseyHighlight),
+                currentProfileCustom.GetCustomColor(GameCustomItemNames.GameConfigColors.colorPants));
             
             // --------------------------------------------------------------
             // TEAMS
@@ -1043,29 +1042,13 @@ public class BaseGameCustomController : MonoBehaviour {
         preset.customItem = new GameProfileCustomItem();
 
 
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorHelmet,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorHelmet));
-        
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorHelmetFacemask,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorHelmetFacemask));
-        
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorHelmetHighlight,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorHelmetHighlight));
-        
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorJersey,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorJersey));
-        
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorJerseyHighlight,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorJerseyHighlight));
-        
-        preset.customItem.SetCustomColor(
-            GameCustomColorNames.colorPants,
-            currentProfileCustomItem.GetCustomColor(GameCustomColorNames.colorPants));
+        foreach(AppContentAssetCustomItem custom in AppContentAssetCustomItems.Instance.GetAll()) {
+            if(custom.code == "") {
+                preset.customItem.SetCustomColor(
+                    custom.code,
+                    currentProfileCustomItem.GetCustomColor(custom.code));
+            }
+        }
 
         if(colorPresets != null) {
             if(colorPresets.presets != null) {
