@@ -68,7 +68,7 @@ public class UIAppPanel : MonoBehaviour {
 	
 	public string GetClassName(object item) {
 		className = item.GetType().Name;
-		Debug.Log("CLASS NAME:" + className);
+		//Debug.Log("CLASS NAME:" + className);
 		return className;
 	}	
 }

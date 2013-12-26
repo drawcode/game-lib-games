@@ -150,7 +150,7 @@ public class GameObjectChoice : GameObjectLevelBase {
                 go.PlayParticleSystem(true);
             }
 
-            Debug.Log("SetChoiceParticleSystemColors:go:" + go.name + " colorTo:" + colorTo);
+            //Debug.Log("SetChoiceParticleSystemColors:go:" + go.name + " colorTo:" + colorTo);
         }
     }
 
