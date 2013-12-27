@@ -3433,6 +3433,10 @@ public class BaseGamePlayerController : GameActor {
             GameObject go = GameController.CurrentGamePlayerController.gameObject;
 
             if (go != null) {
+                
+                controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
+                    go.transform.position,
+                    transform.position);
 
                 // check distance for evades
 
@@ -3440,9 +3444,6 @@ public class BaseGamePlayerController : GameActor {
 
                     lastStateEvaded += Time.deltaTime;
 
-                    controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
-                            go.transform.position,
-                            transform.position);
 
                     if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
                         controllerData.isWithinEvadeRange = true;

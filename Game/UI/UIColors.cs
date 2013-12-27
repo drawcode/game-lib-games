@@ -15,69 +15,69 @@ public static class UIColors  {
 
     public static Color colorRed {
         get {
-            return GameColors.GetColor("ui-red");
+            return AppColors.GetColor("ui-red");
             //ColorHelper.FromRGB(172, 22, 11);
         }
     }
 
     public static Color colorLightBlue {
         get {
-            return GameColors.GetColor("ui-light-blue");
+            return AppColors.GetColor("ui-light-blue");
             //ColorHelper.FromRGB(0, 234, 255);
         }
     }
 
     public static Color colorBlue {
         get {
-            return GameColors.GetColor("ui-blue");
+            return AppColors.GetColor("ui-blue");
             //ColorHelper.FromRGB(0,109,176);//ColorHelper.FromHex("006DB0");//.FromRGB(0, 234, 255);
         }
     }
 
     public static Color colorOrange {
         get {
-            return GameColors.GetColor("ui-orange");
+            return AppColors.GetColor("ui-orange");
             //ColorHelper.FromRGB(255, 121, 0);
         }
     }
     public static Color colorYellow {
         get {
-            return GameColors.GetColor("ui-yellow");
+            return AppColors.GetColor("ui-yellow");
             //ColorHelper.FromRGB(229, 213, 2);
         }
     }
 
     public static Color colorGreen {
         get {
-            return GameColors.GetColor("ui-green");
+            return AppColors.GetColor("ui-green");
             //ColorHelper.FromRGB(98, 184, 0);
         }
     }
 
     public static Color colorPurple {
         get {
-            return GameColors.GetColor("ui-purple");
+            return AppColors.GetColor("ui-purple");
             //ColorHelper.FromRGB(124, 12, 232);
         }
     }
 
     public static Color colorDark {
         get {
-            return GameColors.GetColor("ui-dark");
+            return AppColors.GetColor("ui-dark");
             //ColorHelper.FromRGB(10, 10, 10);
         }
     }
 
     public static Color colorLight {
         get {
-            return GameColors.GetColor("ui-light");
+            return AppColors.GetColor("ui-light");
             //ColorHelper.FromRGB(200, 200, 200);
         }
     }
 
     public static Color colorWhite {
         get {
-            return GameColors.GetColor("ui-white");
+            return AppColors.GetColor("ui-white");
             //ColorHelper.FromRGB(255, 255, 255);
         }
     }

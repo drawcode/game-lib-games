@@ -369,11 +369,18 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
             //indicateTemp.y = indicateTemp.y / 1000;
             //indicateTemp.z = 1f;
             //LogUtil.Log("indicateTemp2:" + indicateTemp);
-            indicatorObject.transform.localPosition = indicateTemp;
+
+            indicatorObject.transform.localPosition = 
+            //    Vector3.Lerp(
+                //indicatorObject.transform.localPosition, 
+                indicateTemp;
+            //, currentLateTickTime);
          
             //UITweenerUtil.MoveTo(indicatorObject, UITweener.Method.Linear, UITweener.Style.Once, .1f, 0f, indicateTemp);
         }
     }
+    
+    float currentLateTickTime = .3f;
 
     public virtual void LateUpdate() {
 
@@ -392,8 +399,10 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
             DestroyMe();
             return;
         }
+        
+        Vector3 relativePosition = Vector3.zero;
 
-        if(Time.time > lastUpdate + .05f) {
+        if(Time.time > lastUpdate + currentLateTickTime) {
          
             lastUpdate = Time.time;
 
@@ -477,76 +486,83 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                     }
                 }
             }
+        }
 
-            // target check
+        // target check
 
-            if(target == null) {
-                targetNotFoundCycles++;
+        if(target == null) {
+            targetNotFoundCycles++;
 
-                if(targetNotFoundCycles > 10000) {
-                    DestroyMe();
-                }
-
-                return;
-            }
-            else {
-                targetNotFoundCycles = 0;
+            if(targetNotFoundCycles > 10000) {
+                DestroyMe();
             }
 
-            if(gamePlayerIndicatorItem != null) {
-                gamePlayerIndicatorItem.transform.position = 
-                 gamePlayerIndicatorItem.transform.position.WithZ(
-                     (((transform.position.x) *
-                     (transform.position.y)) * .5f) - 1f);
+            return;
+        }
+        else {
+            targetNotFoundCycles = 0;
+        }
+
+        if(gamePlayerIndicatorItem != null) {
+            gamePlayerIndicatorItem.transform.position = 
+                //Vector3.Lerp(gamePlayerIndicatorItem.transform.position, 
+                             gamePlayerIndicatorItem.transform.position.WithZ(
+                (((transform.position.x) *
+                  (transform.position.y)) * .5f) - 1f);//, currentLateTickTime);
+        }
+     
+        if(clampToScreen && target != null) {
+            relativePosition = camTransform.InverseTransformPoint(target.position);
+            relativePosition.z = Mathf.Max(relativePosition.z, 1.0f);    
+         
+            UpdateIndicator(relativePosition);           
+         
+            if(indicatorType == GamePlayerIndicatorPlacementType.SCREEN) {
+         
+                /* maybe lerp periodically...
+             indicatorObject.transform.localPosition = Vector3.Lerp (
+                 indicatorObject.transform.localPosition, new Vector3(
+                     Mathf.Clamp(indicatorObject.transform.localPosition.x, -Screen.width/2 + clampBorderSize, Screen.width/2 - clampBorderSize),
+                     Mathf.Clamp(indicatorObject.transform.localPosition.y, -Screen.height/2 + clampBorderSize, Screen.height/2 - clampBorderSize),
+                     indicatorObject.transform.localPosition.z),
+                 Time.deltaTime * .1f);
+                */
+
+                float clampHeight = (clampBorderSize * ScreenUtil.relativeHeight);
+                float clampWidth = (clampBorderSize * ScreenUtil.relativeWidth);
+
+
+                indicatorObject.transform.localPosition = 
+                   // Vector3.Lerp(indicatorObject.transform.localPosition, 
+                    new Vector3(
+
+                    Mathf.Clamp(
+                    indicatorObject.transform.localPosition.x,
+                        -Screen.width / 2 + clampWidth,
+                        Screen.width / 2 - clampWidth),
+
+                    Mathf.Clamp(indicatorObject.transform.localPosition.y,
+                        -Screen.height / 2 + clampHeight,
+                        Screen.height / 2 - clampHeight),
+
+                        indicatorObject.transform.localPosition.z);
+                        //, currentLateTickTime);
+         
+            }
+            else {           
+
+                indicatorObject.transform.localPosition = 
+                    //Vector3.Lerp(indicatorObject.transform.localPosition, 
+                    new Vector3(
+                 Mathf.Clamp(indicatorObject.transform.localPosition.x, clampBorderSize, 1.0f - clampBorderSize),
+                 Mathf.Clamp(indicatorObject.transform.localPosition.y, clampBorderSize, 1.0f - clampBorderSize),
+                        indicatorObject.transform.localPosition.z);//, currentLateTickTime);
             }
          
-            Vector3 relativePosition = Vector3.zero;
-            if(clampToScreen && target != null) {
-                relativePosition = camTransform.InverseTransformPoint(target.position);
-                relativePosition.z = Mathf.Max(relativePosition.z, 1.0f);    
-             
-                UpdateIndicator(relativePosition);           
-             
-                if(indicatorType == GamePlayerIndicatorPlacementType.SCREEN) {
-             
-                    /* maybe lerp periodically...
-                 indicatorObject.transform.localPosition = Vector3.Lerp (
-                     indicatorObject.transform.localPosition, new Vector3(
-                         Mathf.Clamp(indicatorObject.transform.localPosition.x, -Screen.width/2 + clampBorderSize, Screen.width/2 - clampBorderSize),
-                         Mathf.Clamp(indicatorObject.transform.localPosition.y, -Screen.height/2 + clampBorderSize, Screen.height/2 - clampBorderSize),
-                         indicatorObject.transform.localPosition.z),
-                     Time.deltaTime * .1f);
-                    */
-
-                    float clampHeight = (clampBorderSize * ScreenUtil.relativeHeight);
-                    float clampWidth = (clampBorderSize * ScreenUtil.relativeWidth);
-
-                    indicatorObject.transform.localPosition = new Vector3(
-
-                        Mathf.Clamp(
-                        indicatorObject.transform.localPosition.x,
-                            -Screen.width / 2 + clampWidth,
-                            Screen.width / 2 - clampWidth),
-
-                        Mathf.Clamp(indicatorObject.transform.localPosition.y,
-                            -Screen.height / 2 + clampHeight,
-                            Screen.height / 2 - clampHeight),
-
-                     indicatorObject.transform.localPosition.z);
-             
-                }
-                else {           
-                    indicatorObject.transform.localPosition = new Vector3(
-                     Mathf.Clamp(indicatorObject.transform.localPosition.x, clampBorderSize, 1.0f - clampBorderSize),
-                     Mathf.Clamp(indicatorObject.transform.localPosition.y, clampBorderSize, 1.0f - clampBorderSize),
-                     indicatorObject.transform.localPosition.z);
-                }
-             
-            }
-            else {
-                relativePosition = cam.WorldToViewportPoint(target.position + offset); 
-                UpdateIndicator(relativePosition); 
-            }
+        }
+        else {
+            relativePosition = cam.WorldToViewportPoint(target.position + offset); 
+            UpdateIndicator(relativePosition); 
         }
     }
 }
