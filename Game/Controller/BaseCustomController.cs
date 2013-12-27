@@ -1043,11 +1043,11 @@ public class BaseGameCustomController : MonoBehaviour {
 
 
         foreach(AppContentAssetCustomItem custom in AppContentAssetCustomItems.Instance.GetAll()) {
-            if(custom.code == "") {
+            //if(custom.code == "character") {
                 preset.customItem.SetCustomColor(
                     custom.code,
                     currentProfileCustomItem.GetCustomColor(custom.code));
-            }
+            //}
         }
 
         if(colorPresets != null) {
