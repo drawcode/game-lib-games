@@ -7,13 +7,13 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public enum UIGameCustomAudioState {
+public enum UICustomAudioState {
 	STOPPED,
 	PLAYING,
 	RECORDING
 }
 
-public class UIGameCustomizeAudio : MonoBehaviour {
+public class UICustomizeAudio : MonoBehaviour {
 	/*
 	public string playerName = "default";
 	

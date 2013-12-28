@@ -145,6 +145,8 @@ public class BaseCustomMessages {
     public static string customColorsPlayerChanged = "custom-colors-player-changed";
     public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
     public static string customColorPresetChanged = "custom-color-preset-changed";
+    
+    public static string customTexturePresetChanged = "custom-texture-preset-changed";
 
 }
 
