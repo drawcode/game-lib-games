@@ -130,10 +130,12 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     void OnCheckboxChangedEventHandler(string checkboxName, bool selected) {
         
         //LogUtil.Log("OnCheckboxChangedEventHandler:", " checkboxName:" + checkboxName + " selected:" + selected);
-        
-        foreach(KeyValuePair<string,UICheckbox> pair in checkboxes) {
-            if(UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
-                checkboxes[pair.Key].isChecked = selected;
+        if(checkboxes != null) {
+
+            foreach(KeyValuePair<string,UICheckbox> pair in checkboxes) {
+                if(UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
+                    checkboxes[pair.Key].isChecked = selected;
+                }
             }
         }
     }

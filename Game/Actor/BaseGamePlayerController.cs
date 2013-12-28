@@ -1055,7 +1055,8 @@ public class BaseGamePlayerController : GameActor {
                     gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
                 }
 
-                GameCustomController.SetCustomColorsEnemy(gameObject);
+                // TODO ENEMIES
+                //GameCustomController.SetCustomColorsEnemy(gameObject);
             }
         }
              

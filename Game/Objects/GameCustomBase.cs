@@ -174,7 +174,7 @@ public class GameCustomBase : MonoBehaviour {
             if(GameCustomController.CheckCustomColorPresetExists(customColorCode)) {
                 
                 // load from current code
-                GameCustomController.ChangeColorPresetObject(gameObject, customColorCode);
+                GameCustomController.UpdateColorPresetObject(gameObject, AppColorPresets.Instance.GetByCode(customColorCode), false);
                 lastCustomColorCode = customColorCode;
             }
         }
