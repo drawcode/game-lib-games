@@ -285,7 +285,7 @@ public class BaseGameCustomController : MonoBehaviour {
         GameCustomController.SetCustomColorsPlayer(go, colors);
     }
         
-    public virtual void setCustomColorsPlayer(GameObject go, GameProfileCustomItem colors) {
+    public virtual void setCustomColorsPlayer(GameObject go, GameProfileCustomItem customItem) {
         
         GameCustomPlayer player = go.GetComponent<GameCustomPlayer>();
         
@@ -298,8 +298,8 @@ public class BaseGameCustomController : MonoBehaviour {
             }
         }
         
-        if (player != null) {            
-            player.SetMaterialColors(colors);
+        if (player != null) {       
+            //GameCustomController.SetMaterialColors(go, customItem);
         }
     }
     
@@ -423,7 +423,7 @@ public class BaseGameCustomController : MonoBehaviour {
         LogUtil.Log("setMaterialColors:", go.name);
         //LogUtil.Log("setMaterialColors:", profileCustomItem.);
 
-        GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
+        //GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
         
         save = true;
     }
