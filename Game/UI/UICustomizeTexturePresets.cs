@@ -40,33 +40,6 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         }
     }
 
-    public void UpdateObject(AppContentAssetTexturePreset preset) {
-    
-        if(currentObject != null) {
-
-            string path = ContentPaths.appCacheVersionSharedMaterials;
-            
-            //Debug.Log("UpdateObject:" + " path:" + path);
-
-            foreach(AppContentAssetCustomItem customItem in 
-                    AppContentAssetCustomItems.Instance.GetListByType(type)) {
-                
-                //Debug.Log("UpdateObject:" + " customItem:" + customItem.code);
-
-                foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
-
-                    if(prop.IsTypeTexture()) {
-                        string pathMaterial = path + prop.code + "-" + preset.code;
-                        currentObject.SetMaterialSwap(prop.code, pathMaterial);
-                        
-                        //Debug.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
-                        //Debug.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
-                    }
-                }
-            }
-        }
-    }
-
     public void ChangePresetNext() {
         ChangePreset(currentIndex + 1);
     }
@@ -99,11 +72,9 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
             // change character to currently selected texture preset
 
+            GameCustomController.UpdateTexturePresetObject(currentObject, preset, true);
 
-            UpdateObject(preset);
-
-            UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
-
+                UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
         }
     }
     

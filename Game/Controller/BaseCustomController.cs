@@ -269,14 +269,15 @@ public class BaseGameCustomController : MonoBehaviour {
     }
 
     public virtual void Init() {
-        colorTriggers = new GameCustomColorTriggers();
-        colorPresets = new GameProfileCustomPresets();
-        colorMaterials = new GameCustomColorMaterials();
+        /*
+        //colorTriggers = new GameCustomColorTriggers();
+        //colorPresets = new GameProfileCustomPresets();
+        //colorMaterials = new GameCustomColorMaterials();
 
-        currentProfileCustomItem = GameProfileCharacters.currentCustom;
-        initialProfileCustomItem = GameProfileCharacters.currentCustom;
+        //currentProfileCustomItem = GameProfileCharacters.currentCustom;
+        //initialProfileCustomItem = GameProfileCharacters.currentCustom;
                 
-        GameCustomController.FillSetCustomColorsAll();
+        //GameCustomController.FillSetCustomColorsAll();
 
         foreach(GameCustomColorPropertiesItem item in colorsSetCustomPlayers) {
 
@@ -289,6 +290,7 @@ public class BaseGameCustomController : MonoBehaviour {
         }
 
         GameCustomController.LoadCustomColors();
+        */
     }
         
     public virtual void OnEnable() {
@@ -298,6 +300,131 @@ public class BaseGameCustomController : MonoBehaviour {
     public virtual void OnDisable() {
         Messenger<Color>.RemoveListener(GameCustomMessages.customColorChanged, OnCustomColorChanged);
     }
+
+    // TEXTURE PRESETS
+
+    public virtual void updateTexturePresetObject(
+        GameObject go, string presetType, string presetCode, bool saveProfile) {
+        foreach(AppContentAssetTexturePreset preset in 
+                AppContentAssetTexturePresets.Instance.GetListByType(presetType)) {
+            if(presetCode == preset.code) {
+                updateTexturePresetObject(go, preset, saveProfile);
+            }
+        }
+    }
+
+    public virtual void updateTexturePresetObject(
+        GameObject go, AppContentAssetTexturePreset preset, bool saveProfile) {
+
+        if (preset == null) {
+            return;    
+        }
+
+        if(saveProfile)
+            GameProfileCharacters.currentCustom.SetCustomTexturePreset(preset.code);
+
+        if(go != null) {
+            
+            string path = ContentPaths.appCacheVersionSharedMaterials;
+            
+            //Debug.Log("UpdateObject:" + " path:" + path);
+            
+            foreach(AppContentAssetCustomItem customItem in 
+                    AppContentAssetCustomItems.Instance.GetListByType(preset.type)) {
+                                                
+                //Debug.Log("UpdateObject:" + " customItem:" + customItem.code);
+                
+                foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+                    
+                    if(prop.IsTypeTexture()) {
+
+                        string codeNew = prop.code + "-" + preset.code;
+
+                        string pathMaterial = path + codeNew;
+
+                        go.SetMaterialSwap(prop.code, pathMaterial);
+
+                        if(saveProfile)
+                            GameProfileCharacters.currentCustom.SetCustomTexture(prop.code, codeNew);
+                        
+                        //Debug.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
+                        //Debug.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
+                    }
+                }
+            }
+        }
+    }
+
+    // COLOR PRESETS
+        
+    public virtual void updateColorPresetObject(
+        GameObject go, string presetType, string presetCode, bool saveProfile) {
+        foreach(AppColorPreset preset in 
+                AppColorPresets.Instance.GetListByType(presetType)) {
+            if(presetCode == preset.code) {
+                updateColorPresetObject(go, preset, saveProfile);
+            }
+        }
+    }
+    
+    public virtual void updateColorPresetObject(
+        GameObject go, AppColorPreset preset, bool saveProfile) {
+
+        if(preset == null) {
+            return;
+        }
+
+        Dictionary<string, Color> colors = new Dictionary<string, Color>();
+
+        foreach(KeyValuePair<string,string> pair in preset.data) {
+            colors.Add(pair.Key, AppColors.GetColor(pair.Value));
+        }
+
+        if(colors.Count > 0) {
+            updateColorPresetObject(go, preset.type, colors, saveProfile);
+        }
+    }
+        
+    public virtual void updateColorPresetObject(
+        GameObject go, string type, Dictionary<string, Color> colors, bool saveProfile) {
+        
+        if(colors == null) {
+            return;
+        }
+        
+        if(saveProfile)
+            GameProfileCharacters.currentCustom.SetCustomColorPreset("custom");
+        
+        if(go != null) {
+            
+            foreach(AppContentAssetCustomItem customItem in 
+                    AppContentAssetCustomItems.Instance.GetListByType(type)) {
+                
+                //Debug.Log("updateColorPresetObject:" + " customItem:" + customItem.code);
+                
+                foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+                    
+                    if(prop.IsTypeColor()) {
+
+                        Color colorTo = colors[prop.code];
+                        
+                        if(saveProfile)
+                            GameProfileCharacters.currentCustom.SetCustomColor(prop.code, colorTo);
+                        
+                        go.SetMaterialColor(prop.code, colorTo);
+                        
+                        Debug.Log("updateColorPresetObject:preset:" + 
+                                  " prop.code:" + prop.code + 
+                                  " colorTo:" + colorTo.ToString());
+                    }
+                }
+            }
+            
+            GameCustomController.SetMaterialColors(go, GameProfileCharacters.currentCustom);
+        }
+    }
+
+    // COLORS
 
     public virtual void updateCustomColorInit(
         GameObject currentPlayerObjectTo, 
@@ -350,10 +477,10 @@ public class BaseGameCustomController : MonoBehaviour {
 
     public virtual void OnCustomColorChanged(Color color) { 
         
-        GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);   
+        //GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);   
         
-        GameCustomController.SetColorPropertiesTrigger(currentProfileCustomItem, color, colorTriggers);
-        GameCustomController.SetMaterialColors(currentPlayerObject, currentProfileCustomItem);
+        //GameCustomController.SetColorPropertiesTrigger(currentProfileCustomItem, color, colorTriggers);
+        //GameCustomController.SetMaterialColors(currentPlayerObject, currentProfileCustomItem);
     }
 
     public virtual void run() {
