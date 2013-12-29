@@ -287,6 +287,10 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerTrailGround;
     public GameObject gamePlayerTrailBoost;
 
+    // If this is an enemy see if we should attack
+    
+    public float attackRange = 12f;  // within 6 yards
+
     // --------------------------------------------------------------------
     // INIT
  
@@ -2125,14 +2129,14 @@ public class BaseGamePlayerController : GameActor {
         if (controllerData.thirdPersonController != null) {
             controllerData.thirdPersonController.controllerData.removing = true;
         }
-             
+                     
         if (isDead && controllerData.dying) {
             return;
         }
+        
+        controllerData.gamePlayerControllerAnimation.DidDie();
 
         controllerData.dying = true;
-
-        controllerData.gamePlayerControllerAnimation.DidDie();
 
         if (IsPlayerControlled) {
             GamePlayerProgress.SetStatDeaths(1f);
@@ -3415,9 +3419,6 @@ public class BaseGamePlayerController : GameActor {
             transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
         }
      
-        // If this is an enemy see if we should attack
-     
-        float attackRange = 6f;  // wihtin 6 yards
         //bool runUpdate = false;
 
         if (controllerData.currentTimeBlock + controllerData.actionInterval < Time.time) {
@@ -3479,11 +3480,11 @@ public class BaseGamePlayerController : GameActor {
 
                         if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
                             // LEAP AT THEM within three
-                            Tackle(gamePlayerControllerHit, Mathf.Clamp(15f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 15f));
+                            Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 20f));
                         }
                         else {
                             // PURSUE FASTER
-                            Tackle(gamePlayerControllerHit, 3.13f);
+                            Tackle(gamePlayerControllerHit, 3.23f);
                         }
                     }
                 }

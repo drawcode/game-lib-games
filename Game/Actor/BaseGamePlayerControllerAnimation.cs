@@ -1096,8 +1096,8 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             if(animationData.actor != null) {
     			if(animationData.actor.animation != null) {
                     if(animationData.actor.animation[GamePlayerAnimationType.death] != null) {
-                        animationData.isRunningClampAnimation = true;
                         animationData.actor.animation.Play(GamePlayerAnimationType.death, PlayMode.StopAll);
+                        animationData.isRunningClampAnimation = true;
     	            }
     			}
             }
