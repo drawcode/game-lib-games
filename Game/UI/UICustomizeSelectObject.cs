@@ -9,7 +9,7 @@ using Engine.Utility;
 
 public class UICustomizeSelectObject : UICustomizeObject {
     
-    public int currentIndex = 0;
+    public int currentIndex = -1;
     
     public UIImageButton buttonCycleLeft;
     public UIImageButton buttonCycleRight;

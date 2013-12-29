@@ -26,8 +26,6 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public override void Load() {
         base.Load();
-
-        ChangePreset(currentIndex);
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -48,41 +46,52 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         ChangePreset(currentIndex - 1);
     }
 
+    GameProfileCustomItem currentProfileCustomItem;
+
     public void ChangePreset(int index) {
 
         int countPresets = 
             AppContentAssetTexturePresets.Instance.GetListByType(type).Count;
 
-        if (index < 0) {
+        
+        if (index < -1) {
             index = countPresets - 1;    
         }
         
         if (index > countPresets - 1) {
-            index = 0;
+            index = -1;
         }
-
+        
         currentIndex = index;
         
-        Debug.Log("ChangePreset:texture:" + " index:" + index + " countPresets:" + countPresets);
+        if (index > -2 && index < countPresets) {
+            
+            if(index == -1) {                
+                
+                currentProfileCustomItem = GameProfileCharacters.currentCustom;
+                
+                UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Uniform");
+            }
+            else {
 
-        if (index > -1 && index < countPresets) {
+                AppContentAssetTexturePreset preset = 
+                    AppContentAssetTexturePresets.Instance.GetListByType(type)[currentIndex];
 
-            AppContentAssetTexturePreset preset = 
-                AppContentAssetTexturePresets.Instance.GetListByType(type)[currentIndex];
-            AppColorPreset presetColor = 
-                AppColorPresets.Instance.GetListByType(type)[currentIndex];
+                AppColorPreset presetColor = 
+                    AppColorPresets.Instance.GetListByType(type)[currentIndex];
 
-            // change character to currently selected texture preset
+                // change character to currently selected texture preset
 
-            GameProfileCustomItem profileCustomItem = GameProfileCharacters.currentCustom;
+                GameProfileCustomItem profileCustomItem = GameProfileCharacters.currentCustom;
 
-            profileCustomItem = GameCustomController.UpdateTexturePresetObject(profileCustomItem, currentObject, preset);
+                profileCustomItem = GameCustomController.UpdateTexturePresetObject(profileCustomItem, currentObject, preset);
 
-            profileCustomItem = GameCustomController.UpdateColorPresetObject(profileCustomItem, currentObject, presetColor);
+                //profileCustomItem = GameCustomController.UpdateColorPresetObject(profileCustomItem, currentObject, presetColor);
 
-            GameCustomController.SaveColors(profileCustomItem);
+                GameCustomController.SaveColors(profileCustomItem);
 
-            UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
+                UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
+            }
         }
     }
     
