@@ -6,7 +6,8 @@ using Engine.Events;
 
 public class GameCustomPlayer : GameCustomBase {
 		
-    void Start() {
+    public override void Start() {
+        base.Start();
         //UpdatePlayer();
     }
 	

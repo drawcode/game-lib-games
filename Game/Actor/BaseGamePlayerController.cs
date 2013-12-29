@@ -212,6 +212,7 @@ public class BaseGamePlayerController : GameActor {
  
     // asset
     public GamePlayerControllerAsset gamePlayerControllerAsset;
+    public GameCustomPlayer gameCustomPlayer;
      
     // player effects
     public GameObject gamePlayerEffectParticleObjects;
@@ -1033,6 +1034,17 @@ public class BaseGamePlayerController : GameActor {
                 prefabObject, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
 
             if (gameObjectLoad != null) {           
+
+                if (!gameObjectLoad.Has<GameCustomPlayer>()) {
+                    gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
+                }
+
+                if(gameCustomPlayer != null) {
+                    GameCustomInfo customInfo = new GameCustomInfo();
+                    customInfo.type = "default";
+                    customInfo.presetColorCode = "game-nfl-broncos";
+                    //gameCustomPlayer.Load();
+                }
 
                 gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
                 gameObjectLoad.transform.localScale = Vector3.one;

@@ -112,7 +112,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
                         //if (saveProfile)
                         profileCustomItem.SetCustomTexture(prop.code, codeNew);
-                        
+
                         //Debug.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
                         //Debug.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
                     }
@@ -125,6 +125,34 @@ public class BaseGameCustomController : MonoBehaviour {
 
     // COLOR PRESETS
 
+    public virtual GameProfileCustomItem updateColorPresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, string type) {
+               
+        Dictionary<string, Color> colors = new Dictionary<string, Color>();
+
+        foreach(AppContentAssetCustomItem customItem in 
+                AppContentAssetCustomItems.Instance.GetListByType(type)) {
+
+            //if(customItem.customCode != customCode) {
+            //    continue;
+            //}
+            
+            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+                                                
+                Color colorTo = profileCustomItem.GetCustomColor(prop.code);
+
+                if(colorTo != null) {
+                    colors.Add(prop.code, colorTo);
+                }
+            }
+
+            break;
+        }
+
+        Debug.Log("updateColorPresetObject:colors.Count:" + colors.Count);
+
+        return updateColorPresetObject(profileCustomItem, go, type, colors);
+    }
         
     public virtual GameProfileCustomItem updateColorPresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
@@ -196,19 +224,22 @@ public class BaseGameCustomController : MonoBehaviour {
         return profileCustomItem;
     }
 
-    public virtual GameProfileCustomItem fillDefaultCustomColors(string type) {
+    public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
+
+        if(customItemTo.HasData()) {
+            return customItemTo;
+        }
 
         // get a random
-        
-        GameProfileCustomItem customItem = new GameProfileCustomItem();
+
         int randomIndex = UnityEngine.Random.Range(1, AppColorPresets.Instance.GetListByType(type).Count - 1);
         AppColorPreset randomPreset = AppColorPresets.Instance.items[randomIndex];
 
-        customItem = loadColorPresetCustomItem(customItem, randomPreset);
+        customItemTo = loadColorPresetCustomItem(customItemTo, randomPreset);
+
+        GameCustomController.SaveColors(customItemTo);
         
-        GameProfileCharacters.Current.SetCharacterCustom(customItem);
-        
-        return customItem;
+        return customItemTo;
     }
     
     public virtual GameProfileCustomItem loadColorPresetCustomItem(AppColorPreset preset) { 
@@ -220,15 +251,15 @@ public class BaseGameCustomController : MonoBehaviour {
 
     public virtual GameProfileCustomItem loadColorPresetCustomItem(GameProfileCustomItem customItem, AppColorPreset preset) {        
         foreach (KeyValuePair<string, string> pair in preset.data) {            
-            customItem.SetCustomColor(GameCustomItemNames.helmet, AppColors.GetColor(preset.code));
+            customItem.SetCustomColor(pair.Key, AppColors.GetColor(preset.code));
         }
         return customItem;
     }
 
-    public virtual GameProfileCustomItem checkCustomColorInit(string type, GameProfileCustomItem customItem) {
+    public virtual GameProfileCustomItem checkCustomColorInit(GameProfileCustomItem customItem, string type) {
         if (customItem.attributes == null || customItem.attributes.Count == 0) {
             // Fill default colors
-            customItem = fillDefaultCustomColors(type);
+            customItem = fillDefaultCustomColors(customItem, type);
         }
         return customItem;
     }
@@ -261,6 +292,8 @@ public class BaseGameCustomController : MonoBehaviour {
     public virtual void broadcastCustomColorsSync() {
         GameCustomController.BroadcastCustomColorsChanged();
         GameCustomController.BroadcastCustomColorsPlayerChanged();
+
+        Debug.Log("broadcastCustomColorsSync");
     }
     
     public virtual void broadcastCustomColorsChanged() {

@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using Engine.Events;
 
 public class GameCustomEnemy : GameCustomBase {
-	
-	void Start() {
+    
+    public override void Start() {
+        base.Start();
 		//freezeRotation = false;
 	}
 
