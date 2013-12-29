@@ -3612,7 +3612,7 @@ public class BaseGamePlayerController : GameActor {
  
     public override void Update() {
      
-        if (!controllerData.initialized) {
+        if (controllerData != null && !controllerData.initialized) {
             return;
         }
 

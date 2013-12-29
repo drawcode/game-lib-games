@@ -71,6 +71,8 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
                 currentProfileCustomItem = GameProfileCharacters.currentCustom;
                 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Uniform");
+
+                GameCustomController.SetCustomColorsPlayer(currentObject, currentProfileCustomItem);
             }
             else {
 

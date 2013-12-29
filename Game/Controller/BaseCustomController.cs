@@ -236,20 +236,8 @@ public class BaseGameCustomController : MonoBehaviour {
     //
     
     public virtual bool checkCustomColorPresetExists(string code) {
-        if(colorPresets != null) {
-            if(colorPresets.presets != null) {
-                if(colorPresets.presets.Count > 0) {
-                    foreach(GameProfileCustomPreset preset in colorPresets.presets) {                
-                        if(preset.code == code) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
+        return AppColorPresets.Instance.CheckByCode(code);
     }
-
 
     //
 
@@ -304,7 +292,7 @@ public class BaseGameCustomController : MonoBehaviour {
         }
         
         if (player != null) {       
-            //GameCustomController.SetMaterialColors(go, customItem);
+            GameCustomController.SetMaterialColors(go, customItem);
         }
     }
     
@@ -428,7 +416,7 @@ public class BaseGameCustomController : MonoBehaviour {
         //LogUtil.Log("setMaterialColors:", go.name);
         //LogUtil.Log("setMaterialColors:", profileCustomItem.);
 
-        GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
+        //GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
         
         TriggerSave();
     }

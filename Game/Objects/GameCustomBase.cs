@@ -31,11 +31,13 @@ public class GameCustomBase : MonoBehaviour {
         if(customColorCode == "custom") {
             return;
         }
-
-        if(customColorCode == "default") {
+        else if(customColorCode == "default") {
             //Debug.Log("OnCustomizationColorsPlayerChangedHandler");
             SetCustomColors();
         }   
+        else {
+            
+        }
 
         // custom templates handled in tick
     }
@@ -50,14 +52,17 @@ public class GameCustomBase : MonoBehaviour {
         
         if(customColorCode == "custom") {
             return;
-        }
-        
-        if(customColorCode == "default") {
+        }        
+        else if(customColorCode == "default") {
+            
             GameCustomController.UpdateColorPresetObject(
                 gameObject, AppColorPresets.Instance.GetByCode(presetColorCodeDefault));
-        }
 
-        HandleCustomPlayerTemplate();
+            GameCustomController.SetCustomColorsPlayer(gameObject);
+        }
+        else {
+            HandleCustomPlayerTemplate();
+        }
 	}
 		
 
@@ -66,20 +71,18 @@ public class GameCustomBase : MonoBehaviour {
         if(customColorCode == "default") {
             return;
         }
-        
-        if(customColorCode == "custom") {
+        else if(customColorCode == "custom") {
             return;
         }
-
-        if(lastCustomColorCode != customColorCode) {
+        else if(lastCustomColorCode != customColorCode) {
             
-            //if(GameCustomController.CheckCustomColorPresetExists(customColorCode)) {
+            if(GameCustomController.CheckCustomColorPresetExists(customColorCode)) {
                 
                 // load from current code
                 GameCustomController.UpdateColorPresetObject(
                     gameObject, AppColorPresets.Instance.GetByCode(customColorCode));
                 lastCustomColorCode = customColorCode;
-            //}
+            }
         }
     }
 		

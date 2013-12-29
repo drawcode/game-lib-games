@@ -171,6 +171,8 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                 currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Color Preset");
+                
+                GameCustomController.SetCustomColorsPlayer(currentObject, currentProfileCustomItem);
             }
             else {
                 AppColorPreset preset = 
