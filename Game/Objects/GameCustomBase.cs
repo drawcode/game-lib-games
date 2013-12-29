@@ -58,7 +58,7 @@ public class GameCustomBase : MonoBehaviour {
             GameCustomController.UpdateColorPresetObject(
                 gameObject, AppColorPresets.Instance.GetByCode(presetColorCodeDefault));
 
-            GameCustomController.SetCustomColorsPlayer(gameObject);
+            //GameCustomController.SetCustomColorsPlayer(gameObject);
         }
         else {
             HandleCustomPlayerTemplate();

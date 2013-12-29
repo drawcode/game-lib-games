@@ -190,7 +190,7 @@ public class BaseGameCustomController : MonoBehaviour {
                 }
             }
 
-            GameCustomController.SetMaterialColors(go, profileCustomItem);
+            //GameCustomController.SetMaterialColors(go, profileCustomItem);
         }
         
         return profileCustomItem;
