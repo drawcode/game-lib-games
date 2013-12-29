@@ -39,8 +39,6 @@ public class BaseGameCustomController : MonoBehaviour {
     public bool runDirector = true;
     public float currentFPS = 0f;
     public float lastPeriodicSeconds = 0f;
-    public GameProfileCustomItem currentProfileCustomItem;
-    public GameProfileCustomItem initialProfileCustomItem;
     public GameProfileCustomPresets colorPresets;
     public int currentSelectedColorPreset = -1;
     float lastSave = 0f;
@@ -70,25 +68,26 @@ public class BaseGameCustomController : MonoBehaviour {
 
     // TEXTURE PRESETS
 
-    public virtual void updateTexturePresetObject(
-        GameObject go, string presetType, string presetCode, bool saveProfile) {
+    public virtual GameProfileCustomItem updateTexturePresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
         foreach (AppContentAssetTexturePreset preset in 
                 AppContentAssetTexturePresets.Instance.GetListByType(presetType)) {
             if (presetCode == preset.code) {
-                updateTexturePresetObject(go, preset, saveProfile);
+                return updateTexturePresetObject(profileCustomItem, go, preset);
             }
         }
+        return null;
     }
 
-    public virtual void updateTexturePresetObject(
-        GameObject go, AppContentAssetTexturePreset preset, bool saveProfile) {
+    public virtual GameProfileCustomItem updateTexturePresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, AppContentAssetTexturePreset preset) {
 
         if (preset == null) {
-            return;    
+            return null;    
         }
 
-        if (saveProfile)
-            GameProfileCharacters.currentCustom.SetCustomTexturePreset(preset.code);
+        //if (saveProfile)
+        profileCustomItem.SetCustomTexturePreset(preset.code);
 
         if (go != null) {
             
@@ -111,8 +110,8 @@ public class BaseGameCustomController : MonoBehaviour {
 
                         go.SetMaterialSwap(prop.code, pathMaterial);
 
-                        if (saveProfile)
-                            GameProfileCharacters.currentCustom.SetCustomTexture(prop.code, codeNew);
+                        //if (saveProfile)
+                        profileCustomItem.SetCustomTexture(prop.code, codeNew);
                         
                         //Debug.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
                         //Debug.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
@@ -120,75 +119,81 @@ public class BaseGameCustomController : MonoBehaviour {
                 }
             }
         }
+
+        return profileCustomItem;
     }
 
     // COLOR PRESETS
+
         
-    public virtual void updateColorPresetObject(
-        GameObject go, string presetType, string presetCode, bool saveProfile) {
+    public virtual GameProfileCustomItem updateColorPresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
         foreach (AppColorPreset preset in 
                 AppColorPresets.Instance.GetListByType(presetType)) {
             if (presetCode == preset.code) {
-                updateColorPresetObject(go, preset, saveProfile);
+                return updateColorPresetObject(profileCustomItem, go, preset);
             }
         }
+        return profileCustomItem;
     }
     
-    public virtual void updateColorPresetObject(
-        GameObject go, AppColorPreset preset, bool saveProfile) {
-
+    public virtual GameProfileCustomItem updateColorPresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, AppColorPreset preset) {
+        
         if (preset == null) {
-            return;
+            return profileCustomItem;
         }
-
+        
         Dictionary<string, Color> colors = new Dictionary<string, Color>();
-
+        
         foreach (KeyValuePair<string,string> pair in preset.data) {
             colors.Add(pair.Key, AppColors.GetColor(pair.Value));
         }
-
-        if (colors.Count > 0) {
-            updateColorPresetObject(go, preset.type, colors, saveProfile);
-        }
-    }
         
-    public virtual void updateColorPresetObject(
-        GameObject go, string type, Dictionary<string, Color> colors, bool saveProfile) {
+        if (colors.Count > 0) {
+            return updateColorPresetObject(profileCustomItem, go, preset.type, colors);
+        }
+        
+        return profileCustomItem;
+    }
+    
+    public virtual GameProfileCustomItem updateColorPresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, string type, Dictionary<string, Color> colors) {
         
         if (colors == null) {
-            return;
+            return profileCustomItem;
         }
         
-        if (saveProfile)
-            GameProfileCharacters.currentCustom.SetCustomColorPreset("custom");
+        profileCustomItem.SetCustomColorPreset(type);
         
         if (go != null) {
             
             foreach (AppContentAssetCustomItem customItem in 
-                    AppContentAssetCustomItems.Instance.GetListByType(type)) {
+                     AppContentAssetCustomItems.Instance.GetListByType(type)) {
                 
                 //Debug.Log("updateColorPresetObject:" + " customItem:" + customItem.code);
                 
                 foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
                     
                     if (prop.IsTypeColor()) {
-
+                        
                         Color colorTo = colors[prop.code];
                         
-                        if (saveProfile)
-                            GameProfileCharacters.currentCustom.SetCustomColor(prop.code, colorTo);
+                        profileCustomItem.SetCustomColor(prop.code, colorTo);
                         
                         go.SetMaterialColor(prop.code, colorTo);
                         
-                        Debug.Log("updateColorPresetObject:preset:" + 
-                            " prop.code:" + prop.code + 
-                            " colorTo:" + colorTo.ToString());
+                        //Debug.Log("updateColorPresetObject:preset:" + 
+                        //          " prop.code:" + prop.code + 
+                         //         " colorTo:" + colorTo.ToString());
                     }
                 }
             }
-            
-            GameCustomController.SetMaterialColors(go, GameProfileCharacters.currentCustom);
+
+            GameCustomController.SetMaterialColors(go, profileCustomItem);
         }
+        
+        return profileCustomItem;
     }
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(string type) {
@@ -280,9 +285,9 @@ public class BaseGameCustomController : MonoBehaviour {
         
     public virtual void setCustomColorsPlayer(GameObject go) {
         
-        GameProfileCustomItem colors = GameProfileCharacters.currentCustom;
+        GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
         
-        GameCustomController.SetCustomColorsPlayer(go, colors);
+        GameCustomController.SetCustomColorsPlayer(go, customItem);
     }
         
     public virtual void setCustomColorsPlayer(GameObject go, GameProfileCustomItem customItem) {
@@ -365,7 +370,7 @@ public class BaseGameCustomController : MonoBehaviour {
         else if (randomColor == 5) {
             colorTo = customItem.GetCustomColor(GameCustomItemNames.pants);
         }
-        else if (randomColor == 5) {
+        else if (randomColor == 6) {
             colorTo = customItem.GetCustomColor(GameCustomItemNames.helmetFacemask);
         }
         else {
@@ -413,23 +418,27 @@ public class BaseGameCustomController : MonoBehaviour {
             
     public virtual void setMaterialColors(GameObject go, GameProfileCustomItem profileCustomItem) {
 
-        LogUtil.Log("setMaterialColors:go null:", go == null);
-        LogUtil.Log("setMaterialColors:profileCustomItem null:", profileCustomItem == null);
+        //LogUtil.Log("setMaterialColors:go null:", go == null);
+        //LogUtil.Log("setMaterialColors:profileCustomItem null:", profileCustomItem == null);
         
         if (go == null) {
             return;
         }
 
-        LogUtil.Log("setMaterialColors:", go.name);
+        //LogUtil.Log("setMaterialColors:", go.name);
         //LogUtil.Log("setMaterialColors:", profileCustomItem.);
 
-        //GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
+        GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
         
+        TriggerSave();
+    }
+
+    public void TriggerSave() {
         save = true;
     }
 
     public virtual void saveColors() {
-        GameCustomController.SaveColors(currentProfileCustomItem);
+        GameCustomController.SaveColors(GameProfileCharacters.currentCustom);
     }
     
     public virtual void saveColors(GameProfileCustomItem profileCustomItem) {
@@ -438,7 +447,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
         GameState.SaveProfile();
         
-        LogUtil.Log("SaveColors:profileCustomItem:", profileCustomItem);
+        //LogUtil.Log("SaveColors:profileCustomItem:", profileCustomItem);
         
         GameCustomController.BroadcastCustomColorsSync();
     }

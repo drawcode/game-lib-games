@@ -108,7 +108,7 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                 }
             }        
             
-            GameCustomController.UpdateColorPresetObject(currentObject, type, colors, true);
+            GameCustomController.UpdateColorPresetObject(currentObject, type, colors);
         }
     }
     
@@ -171,8 +171,12 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                 AppColorPresets.Instance.GetListByType(type)[currentIndex];
             
             // change character to currently selected texture preset
+
+            GameProfileCustomItem profileCustomItem = GameProfileCharacters.currentCustom;
             
-            GameCustomController.UpdateColorPresetObject(currentObject, preset, true);
+            profileCustomItem = GameCustomController.UpdateColorPresetObject(profileCustomItem, currentObject, preset);
+            
+            GameCustomController.SaveColors(profileCustomItem);
             
             UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
         }
