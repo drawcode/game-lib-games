@@ -3468,7 +3468,8 @@ public class BaseGamePlayerController : GameActor {
         if (controllerState == GamePlayerControllerState.ControllerAgent
             && (contextState == GamePlayerContextState.ContextFollowAgentAttack
             || contextState == GamePlayerContextState.ContextFollowAgent)
-            && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
+            && GameController.Instance.gameState == GameStateGlobal.GameStarted
+            && isAlive) {
 
             //if(runUpdate) {
             GameObject go = GameController.CurrentGamePlayerController.gameObject;

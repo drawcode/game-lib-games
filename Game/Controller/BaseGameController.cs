@@ -249,7 +249,9 @@ public class GameLevelGridData {
     public static GameLevelGridData GetBaseDefault() {
 
         GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "barrel-1", 10);
+        data = AddAssets(data, "barrel-1", UnityEngine.Random.Range(5,10));
+        data = AddAssets(data, "box-1", UnityEngine.Random.Range(3, 6));
+        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(3, 6));
 
         return data;
     }
@@ -1016,11 +1018,11 @@ public class BaseGameController : MonoBehaviour {
         ////GameController.StartGame(code);
         GameController.PrepareGame(code);
 
-        GameController.LoadLevelAssets(code);
+        //GameController.LoadLevelAssets(code);
     
-        GameHUD.Instance.SetLevelInit(GameLevels.Current);
+        //GameHUD.Instance.SetLevelInit(GameLevels.Current);
     
-        GameHUD.Instance.AnimateIn();
+        //GameHUD.Instance.AnimateIn();
     
         //GameUI.Instance.ToggleGameUI();
     
@@ -1734,7 +1736,15 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void prepareGame(string levelCode) {
-        //GameController.Reset();
+
+        GameController.Reset();
+        
+        GameController.LoadLevelAssets(levelCode);
+        
+        GameHUD.Instance.SetLevelInit(GameLevels.Current);
+        
+        GameHUD.Instance.AnimateIn();
+
         GameController.ChangeGameState(GameStateGlobal.GamePrepare);
     }
 
