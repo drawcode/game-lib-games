@@ -68,6 +68,23 @@ public class BaseGameCustomController : MonoBehaviour {
 
     // TEXTURE PRESETS
 
+    // TODO use textures not preset...
+
+    public virtual GameProfileCustomItem updateTexturePresetObject(
+        GameProfileCustomItem profileCustomItem, GameObject go, string type) {
+
+        string profilePreset = profileCustomItem.GetCustomTexturePreset();
+
+        AppContentAssetTexturePreset preset = AppContentAssetTexturePresets.Instance.GetByCode(profilePreset);
+
+        if(preset != null) {
+            
+            return updateTexturePresetObject(profileCustomItem, go, preset);
+        }
+
+        return profileCustomItem;
+    }
+
     public virtual GameProfileCustomItem updateTexturePresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
         foreach (AppContentAssetTexturePreset preset in 
@@ -458,17 +475,18 @@ public class BaseGameCustomController : MonoBehaviour {
         save = true;
     }
 
-    public virtual void saveColors() {
-        GameCustomController.SaveColors(GameProfileCharacters.currentCustom);
+    public virtual void saveCustomItem() {
+        GameCustomController.SaveCustomItem(GameProfileCharacters.currentCustom);
     }
     
-    public virtual void saveColors(GameProfileCustomItem profileCustomItem) {
+    public virtual void saveCustomItem(GameProfileCustomItem profileCustomItem) {
         
         GameProfileCharacters.Current.SetCharacterCustom(profileCustomItem);
 
         GameState.SaveProfile();
         
-        //LogUtil.Log("SaveColors:profileCustomItem:", profileCustomItem);
+        Debug.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
+        Debug.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
         
         GameCustomController.BroadcastCustomColorsSync();
     }
@@ -560,7 +578,7 @@ public class BaseGameCustomController : MonoBehaviour {
             
             if (save) {
                 save = false;
-                GameCustomController.SaveColors();
+                GameCustomController.SaveCustomItem();
             }
         }
     }

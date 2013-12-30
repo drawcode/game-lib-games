@@ -165,26 +165,28 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         currentIndex = index;
         
         if (index > -2 && index < countPresets) {
+            
+            currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
             if(index == -1) {                
 
-                currentProfileCustomItem = GameProfileCharacters.currentCustom;
-
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Color Preset");
                 
-                GameCustomController.SetCustomColorsPlayer(currentObject, currentProfileCustomItem);
+                currentProfileCustomItem = 
+                    GameCustomController.UpdateColorPresetObject(
+                        currentProfileCustomItem, currentObject, type);
             }
             else {
                 AppColorPreset preset = 
                     AppColorPresets.Instance.GetListByType(type)[currentIndex];
                 
                 // change character to currently selected texture preset
-
-                GameProfileCustomItem profileCustomItem = GameProfileCharacters.currentCustom;
                 
-                profileCustomItem = GameCustomController.UpdateColorPresetObject(profileCustomItem, currentObject, preset);
+                currentProfileCustomItem = 
+                    GameCustomController.UpdateColorPresetObject(
+                        currentProfileCustomItem, currentObject, preset);
                 
-                GameCustomController.SaveColors(profileCustomItem);
+                GameCustomController.SaveCustomItem(currentProfileCustomItem);
                 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
             }

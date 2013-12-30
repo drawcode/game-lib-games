@@ -27,7 +27,7 @@ public class GameCustomInfo {
     public string presetColorCodeDefault = "game-nfl-cardinals";
     public string presetColorCode = "default";
 
-    public string presetTextureCodeDefault = "game-nfl-cardinals";
+    public string presetTextureCodeDefault = "fiestabowl";
     public string presetTextureCode = "default";
 
     public bool isCustomType {
@@ -131,7 +131,7 @@ public class GameCustomBase : MonoBehaviour {
         if(customInfo == null) {
             return;
         }
-
+        /*
         Debug.Log("UpdatePlayer"  
                   + " type:" + customInfo.type
                   + " presetType:" + customInfo.presetType
@@ -140,12 +140,13 @@ public class GameCustomBase : MonoBehaviour {
                   + " isCustomType:" + customInfo.isCustomType
                   + " isDefaultType:" + customInfo.isDefaultType
                   + " isExplicitType:" + customInfo.isExplicitType);
+                  */
 
         if(customInfo.isCustomType) {
             return;
         }
         else if(customInfo.isDefaultType) {
-            SetCustomColors();
+            SetCustom();
         }
     }
 	
@@ -154,17 +155,24 @@ public class GameCustomBase : MonoBehaviour {
 
         //Debug.Log("BaseOnCustomizationColorsChangedHandler");
 	}
+
+    public void SetCustom() {
+        SetCustomTextures();
+        SetCustomColors();
+    }
     	
 	public void SetCustomColors() {
         
         if(customInfo == null) {
             return;
         }
-        
+
+        /*
         Debug.Log("SetCustomColors"  
                   + " presetType:" + customInfo.presetType
                   + " presetColorCode:" + customInfo.presetColorCode
                   + " presetTextureCode:" + customInfo.presetTextureCode);
+                  */
 
         if(customInfo.isCustomType) {
             return;
@@ -175,8 +183,6 @@ public class GameCustomBase : MonoBehaviour {
 
             if(customItem != null) {
 
-                string type = "character";
-
                 if(!customItem.HasData()) {
                     
                     GameCustomController.UpdateColorPresetObject(
@@ -186,7 +192,7 @@ public class GameCustomBase : MonoBehaviour {
 
                     //customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
 
-                    GameCustomController.UpdateColorPresetObject(customItem, gameObject, type);
+                    GameCustomController.UpdateColorPresetObject(customItem, gameObject, customInfo.presetType);
                 }
             }
             else {                
@@ -195,10 +201,43 @@ public class GameCustomBase : MonoBehaviour {
                     gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
             }//GameCustomController.BroadcastCustomColorsChanged
         }
+	}
+
+    
+    public void SetCustomTextures() {
+        
+        if(customInfo == null) {
+            return;
+        }
+        
+        /*
+        Debug.Log("SetCustomTextures"  
+                  + " presetType:" + customInfo.presetType
+                  + " presetColorCode:" + customInfo.presetColorCode
+                  + " presetTextureCode:" + customInfo.presetTextureCode);
+                  */
+        
+        if(customInfo.isCustomType) {
+            return;
+        }        
+        else if(customInfo.isDefaultType) {
+            
+            GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+            
+            if(customItem != null) {
+             
+                GameCustomController.UpdateTexturePresetObject(customItem, gameObject, customInfo.presetType);
+            }
+            else {                
+                
+                GameCustomController.UpdateTexturePresetObject(
+                    gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
+            }//GameCustomController.BroadcastCustomColorsChanged
+        }
         else {
             HandleCustomPlayer();
         }
-	}
+    }
     
     public void HandleCustomPlayer() {
         HandleCustomPlayerTexture();
@@ -214,10 +253,15 @@ public class GameCustomBase : MonoBehaviour {
             
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
                 
+            AppContentAssetTexturePreset preset = 
+                AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
+            if(preset != null) {
                 // load from current code
-                //GameCustomController.UpdateTexturePresetObject(
-                //    gameObject, AppTexturePresets.Instance.GetByCode(customTextureCode));
-                lastCustomTextureCode = customTextureCode;
+                GameCustomController.UpdateTexturePresetObject(
+                    gameObject, preset);
+            }
+                
+            lastCustomTextureCode = customTextureCode;
             //}
         }
     }		

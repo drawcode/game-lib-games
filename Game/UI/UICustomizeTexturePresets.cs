@@ -66,13 +66,15 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         
         if (index > -2 && index < countPresets) {
             
-            if(index == -1) {                
-                
-                currentProfileCustomItem = GameProfileCharacters.currentCustom;
+            currentProfileCustomItem = GameProfileCharacters.currentCustom;
+            
+            if(index == -1) {
                 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Uniform");
 
-                GameCustomController.SetCustomColorsPlayer(currentObject, currentProfileCustomItem);
+                currentProfileCustomItem = 
+                    GameCustomController.UpdateTexturePresetObject(
+                        currentProfileCustomItem, currentObject, type);
             }
             else {
 
@@ -84,13 +86,13 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
                 // change character to currently selected texture preset
 
-                GameProfileCustomItem profileCustomItem = GameProfileCharacters.currentCustom;
-
-                profileCustomItem = GameCustomController.UpdateTexturePresetObject(profileCustomItem, currentObject, preset);
+                currentProfileCustomItem = 
+                    GameCustomController.UpdateTexturePresetObject(
+                        currentProfileCustomItem, currentObject, preset);
 
                 //profileCustomItem = GameCustomController.UpdateColorPresetObject(profileCustomItem, currentObject, presetColor);
 
-                GameCustomController.SaveColors(profileCustomItem);
+                GameCustomController.SaveCustomItem(currentProfileCustomItem);
 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, preset.display_name);
             }
