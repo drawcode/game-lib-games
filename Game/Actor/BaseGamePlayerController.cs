@@ -190,6 +190,11 @@ public class BaseGamePlayerControllerData {
     //float controllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
+        
+    public float modifierItemSpeedCurrent = 3.0f;
+    public float modifierItemSpeedMin = 1.0f;
+    public float modifierItemSpeedMax = 3.0f;
+    public float modifierItemSpeedLerpTime = 10f;
 
 }
 
@@ -2949,6 +2954,14 @@ public class BaseGamePlayerController : GameActor {
         controllerData.currentPlayerProgressItem = GameProfileCharacters.Current.GetCurrentCharacterProgress();
     }
 
+    public virtual void HandleItemProperties() {
+    
+        controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
+            controllerData.modifierItemSpeedCurrent, 
+            controllerData.modifierItemSpeedMin, 
+            controllerData.modifierItemSpeedLerpTime * Time.deltaTime);        
+    }
+
     public virtual void HandleRPGProperties() {
 
         if (IsPlayerControlled) {
@@ -2976,13 +2989,16 @@ public class BaseGamePlayerController : GameActor {
     
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.walkSpeed = Mathf.Clamp(
-                    5 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 4, 8);
+                    5 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 4, 8)
+                    * controllerData.modifierItemSpeedCurrent;
     
                 controllerData.thirdPersonController.trotSpeed = Mathf.Clamp(
-                    12 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 9, 14);
+                    12 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 9, 14)
+                    * controllerData.modifierItemSpeedCurrent;
     
                 controllerData.thirdPersonController.runSpeed = Mathf.Clamp(
-                    20 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 14, 28);
+                    20 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 14, 28)
+                    * controllerData.modifierItemSpeedCurrent;
     
                 controllerData.thirdPersonController.inAirControlAcceleration = 3;
                 controllerData.thirdPersonController.jumpHeight = .8f;
@@ -3368,6 +3384,8 @@ public class BaseGamePlayerController : GameActor {
         else if (IsNetworkPlayerState()) {            
 
         }
+
+        HandleItemProperties();
 
         // periodic      
      
