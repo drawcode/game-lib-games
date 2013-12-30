@@ -1401,11 +1401,11 @@ public class BaseGameController : MonoBehaviour {
 
             Debug.Log("spawnCode:" + spawnCode);
 
-            //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
-            //if(spawn != null) {
-            //    spawnLocation = spawn.gameObject.transform.position;
-            //}
-            //else {
+            GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
+            if(spawn != null) {
+                spawnLocation = spawn.gameObject.transform.position;
+            }
+            else {
 
                 // get random
                 if(currentGameZone == GameZones.right) {
@@ -1414,7 +1414,7 @@ public class BaseGameController : MonoBehaviour {
                 else if(currentGameZone == GameZones.left) {
                     spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
                 }
-            //}
+            }
 
         }
         else {

@@ -2956,6 +2956,15 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandleItemProperties() {
     
+
+        float tParam = 0f;
+        float valToBeLerped = 15f;
+        float speed = 0.3f;
+        if (tParam < 1) {
+            tParam += Time.deltaTime * speed; //This will increment tParam based on Time.deltaTime multiplied by a speed multiplier
+            valToBeLerped = Mathf.Lerp(0, 3, tParam);
+        }
+
         controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
             controllerData.modifierItemSpeedCurrent, 
             controllerData.modifierItemSpeedMin, 

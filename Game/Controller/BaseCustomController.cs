@@ -485,9 +485,9 @@ public class BaseGameCustomController : MonoBehaviour {
 
         GameState.SaveProfile();
         
-        Debug.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
-        Debug.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
-        Debug.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
+        //Debug.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
+        //Debug.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
+        //Debug.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
         
         GameCustomController.BroadcastCustomColorsSync();
     }
