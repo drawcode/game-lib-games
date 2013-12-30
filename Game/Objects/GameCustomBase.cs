@@ -177,9 +177,17 @@ public class GameCustomBase : MonoBehaviour {
 
                 string type = "character";
 
-                customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
+                if(!customItem.HasData()) {
+                    
+                    GameCustomController.UpdateColorPresetObject(
+                        gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+                }
+                else {
 
-                GameCustomController.UpdateColorPresetObject(customItem, gameObject, type);
+                    //customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
+
+                    GameCustomController.UpdateColorPresetObject(customItem, gameObject, type);
+                }
             }
             else {                
                 
@@ -204,13 +212,13 @@ public class GameCustomBase : MonoBehaviour {
         }
         else if(lastCustomTextureCode != customTextureCode) {
             
-            if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
+            //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
                 
                 // load from current code
                 //GameCustomController.UpdateTexturePresetObject(
                 //    gameObject, AppTexturePresets.Instance.GetByCode(customTextureCode));
                 lastCustomTextureCode = customTextureCode;
-            }
+            //}
         }
     }		
 
@@ -221,13 +229,13 @@ public class GameCustomBase : MonoBehaviour {
         }
         else if(lastCustomColorCode != customColorCode) {
             
-            if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
+            //if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
                 
                 // load from current code
                 GameCustomController.UpdateColorPresetObject(
                     gameObject, AppColorPresets.Instance.GetByCode(customColorCode));
                 lastCustomColorCode = customColorCode;
-            }
+            //}
         }
     }
 		
