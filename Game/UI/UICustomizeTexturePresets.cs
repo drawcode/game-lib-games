@@ -46,8 +46,6 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         ChangePreset(currentIndex - 1);
     }
 
-    GameProfileCustomItem currentProfileCustomItem;
-
     public void ChangePreset(int index) {
 
         int countPresets = 
@@ -66,15 +64,18 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         
         if (index > -2 && index < countPresets) {
             
+            if(initialProfileCustomItem == null) {
+                initialProfileCustomItem = GameProfileCharacters.currentCustom;
+            }
+            
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
             
             if(index == -1) {
                 
-                UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Uniform");
+                UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Uniform");
 
-                currentProfileCustomItem = 
-                    GameCustomController.UpdateTexturePresetObject(
-                        currentProfileCustomItem, currentObject, type);
+                GameCustomController.UpdateTexturePresetObject(
+                    initialProfileCustomItem, currentObject, type);
             }
             else {
 

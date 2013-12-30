@@ -72,6 +72,8 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     public virtual void OnCustomColorChanged(Color color) { 
         
         GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1); 
+        
+        currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
         foreach(AppContentAssetCustomItem customItem 
                 in AppContentAssetCustomItems.Instance.GetListByType(type)) {
@@ -94,7 +96,7 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                     }
                 }
 
-                Color colorTo = GameProfileCharacters.currentCustom.GetCustomColor(prop.code);
+                Color colorTo = currentProfileCustomItem.GetCustomColor(prop.code);
 
                 if(update) {
                     color.a = 1;
@@ -106,7 +108,9 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                 }
             }        
             
-            GameCustomController.UpdateColorPresetObject(currentObject, type, colors);
+            currentProfileCustomItem = GameCustomController.UpdateColorPresetObject(currentProfileCustomItem, currentObject, type, colors);
+            
+            GameCustomController.SaveCustomItem(currentProfileCustomItem);
         }
     }
     
@@ -145,9 +149,6 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     public void ChangePresetPrevious() {
         ChangePreset(currentIndex - 1);
     }
-
-    
-    GameProfileCustomItem currentProfileCustomItem;
     
     public void ChangePreset(int index) {
         
@@ -165,16 +166,19 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         currentIndex = index;
         
         if (index > -2 && index < countPresets) {
-            
+
+            if(initialProfileCustomItem == null) {
+                initialProfileCustomItem = GameProfileCharacters.currentCustom;
+            }
+
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
             if(index == -1) {                
 
-                UIUtil.SetLabelValue(labelCurrentDisplayName, "Select a Color Preset");
-                
-                currentProfileCustomItem = 
-                    GameCustomController.UpdateColorPresetObject(
-                        currentProfileCustomItem, currentObject, type);
+                UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Colors");
+
+                GameCustomController.UpdateColorPresetObject(
+                    initialProfileCustomItem, currentObject, type);
             }
             else {
                 AppColorPreset preset = 

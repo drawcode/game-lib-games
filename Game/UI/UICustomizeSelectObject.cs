@@ -16,6 +16,9 @@ public class UICustomizeSelectObject : UICustomizeObject {
 
     public UILabel labelCurrentDisplayName;
 
+    public GameProfileCustomItem currentProfileCustomItem;    
+    public GameProfileCustomItem initialProfileCustomItem;
+
     public override void Start() {
 
     }    
