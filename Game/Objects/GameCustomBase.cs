@@ -65,7 +65,13 @@ public class GameCustomBase : MonoBehaviour {
     
     bool freezeRotation = false;
 
+    bool initialized = false;
+
     public virtual void Start() {
+       Invoke("Init", 1);
+	}
+
+    public virtual void Init() {
 
         customInfo = new GameCustomInfo();
         customInfo.actorType = customActorType;
@@ -81,9 +87,9 @@ public class GameCustomBase : MonoBehaviour {
             customInfo.presetColorCode = customColorCode;
             customInfo.presetTextureCode = customTextureCode;
         }
-
+        
         Load(customInfo);
-	}
+    }
 	
 	public virtual void OnEnable() {
 		Messenger.AddListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
@@ -129,7 +135,7 @@ public class GameCustomBase : MonoBehaviour {
     public virtual void UpdatePlayer() {
 
         if(customInfo == null) {
-            return;
+            Init();
         }
         /*
         Debug.Log("UpdatePlayer"  
@@ -157,6 +163,11 @@ public class GameCustomBase : MonoBehaviour {
 	}
 
     public void SetCustom() {
+        
+        if(customInfo == null) {
+            Init();
+        }
+
         SetCustomTextures();
         SetCustomColors();
     }
@@ -167,12 +178,13 @@ public class GameCustomBase : MonoBehaviour {
             return;
         }
 
-        /*
-        Debug.Log("SetCustomColors"  
-                  + " presetType:" + customInfo.presetType
-                  + " presetColorCode:" + customInfo.presetColorCode
-                  + " presetTextureCode:" + customInfo.presetTextureCode);
-                  */
+
+        //Debug.Log("SetCustomColors"  
+        //          + " type:" + customInfo.type
+        //          + " presetType:" + customInfo.presetType
+        //          + " presetColorCode:" + customInfo.presetColorCode
+        //          + " presetTextureCode:" + customInfo.presetTextureCode);
+                  
 
         if(customInfo.isCustomType) {
             return;
@@ -180,6 +192,9 @@ public class GameCustomBase : MonoBehaviour {
         else if(customInfo.isDefaultType) {
 
             GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+            
+            //Debug.Log("SetCustomColors"  
+             //         + " customItem:" + customItem.ToJson());
 
             if(customItem != null) {
 
@@ -234,17 +249,24 @@ public class GameCustomBase : MonoBehaviour {
                     gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
             }//GameCustomController.BroadcastCustomColorsChanged
         }
-        else {
-            HandleCustomPlayer();
-        }
     }
     
     public void HandleCustomPlayer() {
+        
+        if(customInfo == null) {
+            Init();
+        }
+
         HandleCustomPlayerTexture();
         HandleCustomPlayerColor();
     }
     
     public void HandleCustomPlayerTexture() {
+
+        if(customInfo == null) {
+            Init();
+        }
+
 
         if(customInfo.isCustomType || customInfo.isDefaultType) {
             return;
@@ -267,6 +289,10 @@ public class GameCustomBase : MonoBehaviour {
     }		
 
     public void HandleCustomPlayerColor() {
+        
+        if(customInfo == null) {
+            Init();
+        }
         
         if(customInfo.isCustomType || customInfo.isDefaultType) {
             return;

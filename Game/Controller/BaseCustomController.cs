@@ -166,7 +166,7 @@ public class BaseGameCustomController : MonoBehaviour {
             break;
         }
 
-        Debug.Log("updateColorPresetObject:colors.Count:" + colors.Count);
+        //Debug.Log("updateColorPresetObject:colors.Count:" + colors.Count);
 
         return updateColorPresetObject(profileCustomItem, go, type, colors);
     }
@@ -268,7 +268,7 @@ public class BaseGameCustomController : MonoBehaviour {
 
     public virtual GameProfileCustomItem loadColorPresetCustomItem(GameProfileCustomItem customItem, AppColorPreset preset) {        
         foreach (KeyValuePair<string, string> pair in preset.data) {            
-            customItem.SetCustomColor(pair.Key, AppColors.GetColor(preset.code));
+            customItem.SetCustomColor(pair.Key, AppColors.GetColor(pair.Value));
         }
         return customItem;
     }
@@ -487,6 +487,7 @@ public class BaseGameCustomController : MonoBehaviour {
         
         Debug.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
         Debug.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
+        Debug.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
         
         GameCustomController.BroadcastCustomColorsSync();
     }
