@@ -2446,7 +2446,7 @@ public class BaseGameController : MonoBehaviour {
                     // TODO other modes
 
                     if(runtimeData.timeExpired) {
-                        gameOverMode = true;
+                        //gameOverMode = true;
                     }
                 }
     
