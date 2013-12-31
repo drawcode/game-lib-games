@@ -118,13 +118,13 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 	}	
 	
 	public override void Init() {
-		base.Init();
+		//base.Init();
 
 		//loadData();
 	}	
 	
 	public override void Start() {
-		Init();
+		//Init();
 	}
 
     // EVENTS
@@ -133,10 +133,11 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         base.OnEnable();
 
+        /*
         Messenger<GameObjectChoiceData>.AddListener(
             GameObjectChoiceMessages.gameChoiceDataResponse,
             OnAppContentChoiceItemHandler);
-
+*/
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
 
@@ -146,11 +147,11 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     public override void OnDisable() {
 
         base.OnDisable();
-
+        /*
         Messenger<GameObjectChoiceData>.RemoveListener(
             GameObjectChoiceMessages.gameChoiceDataResponse,
             OnAppContentChoiceItemHandler);
-
+*/
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
@@ -165,6 +166,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     void OnAppContentChoiceItemHandler(GameObjectChoiceData data) {
+        /*
         CheckChoicesData();
 
         isCorrect = data.choiceItemIsCorrect;
@@ -196,9 +198,11 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         SaveChoiceState();
 
         ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
+        */
     }
 
     void OnButtonClickEventHandler(string buttonName) {
+        /*
         if(UIUtil.IsButtonClicked(buttonDisplayItemAdvance, buttonName)) {
             Advance();
         }
@@ -219,14 +223,9 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
             Reset();
             GameUIController.ShowGameMode();
         }
+        */
     }
 
-    // SAVE STATE
-
-    public void SaveChoiceState() {
-        string data = Engine.Data.Json.JsonMapper.ToJson(appContentChoicesData);
-        Debug.Log("SaveChoiceState:" + data);
-    }
 
     // ADVANCE/NEXT
 
@@ -896,10 +895,10 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     public void Reset() {
-        HideStates();
+        //HideStates();
         flowState = AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview;
-        ResetChoices();
-        ResetChoiceItem();
+        //ResetChoices();
+        //ResetChoiceItem();
     }
 
 	public static void LoadData() {
@@ -926,7 +925,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
             yield return new WaitForEndOfFrame();
 
             if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
-                loadDataChoiceItems();
+                //loadDataChoiceItems();
             }
 
             yield return new WaitForEndOfFrame();
@@ -937,15 +936,10 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void loadData() {
         Debug.Log("UIPanelModeTypeChoice:loadData");
-        StartCoroutine(loadDataCo());
     }
     
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
-
-        Reset();
-
-        ShowCurrentState();
     }
 
     public Color GetColor(int index) {
@@ -970,74 +964,13 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void loadDataChoiceItems() {
 
-        Debug.Log("loadDataChoiceItems");
-
-        int i = 0;
-     
-        Debug.Log("loadDataChoiceItems:" + i);
-
-        AppContentChoice choice = GetCurrentChoice();
-
-        if(choice != null) {
-
-            float x = -60;
-
-            foreach(AppContentChoiceItem choiceItem in choice.choices) {
-
-                // Add to list
-
-                string levelName = "choice" + choice.code + "-" + choiceItem.code + "-" + i;
-
-                if(!listGridRoot.ContainsChild(levelName)) {
-
-                    GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
-                    item.name = levelName;
-
-                    GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
-
-                    if(choiceObject != null) {
-                        choiceObject.LoadChoiceItem(choice, choiceItem, GetColor(i));
-                    }
-                }
-
-                // Add to level
-
-                string levelNameItem = "choice-item" + choice.code + "-" + choiceItem.code + "-" + i;
-
-                if(!GameController.Instance.levelItemsContainerObject.ContainsChild(levelNameItem)) {
-
-                    GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
-                        prefabLevelItem);
-                    itemLevel.name = levelNameItem;
-    
-                    GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
-    
-                    if(choiceObjectLevel != null) {
-                        choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
-    
-                        GamePlayerIndicator indicator = GamePlayerIndicator.AddIndicator(
-                            itemLevel, GamePlayerIndicatorType.choice, GetColor(i));
-
-                        if(indicator != null) {
-                            indicator.SetIndicatorColorEffects(GetColor(i));
-                        }
-                    }
-    
-                    choiceObjectLevel.transform.position =
-                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(20, 60)*1)).WithZ(UnityEngine.Random.Range(-30, 30));
-                }
-
-               i++;
-
-            }
-        }
 
     }
 
     public override void AnimateIn() {
-        base.AnimateIn();
+        //base.AnimateIn();
 
-        ShowCurrentState();
+        //ShowCurrentState();
     }
 
     public override void AnimateOut() {
@@ -1048,26 +981,6 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void Update() {
 
-        bool modifiderKey = Input.GetKey(KeyCode.RightControl);
-
-        if(modifiderKey && Input.GetKeyDown(KeyCode.LeftBracket)) {
-            chosen = false;
-        }
-        else if(modifiderKey && Input.GetKeyDown(KeyCode.RightBracket)) {
-            chosen = true;
-        }
-        else if(modifiderKey && Input.GetKeyDown(KeyCode.Backslash)) {
-            AppContentChoiceItem item = null;
-
-            foreach(KeyValuePair<string, AppContentChoice> choice in choices) {
-                foreach(AppContentChoiceItem choiceItem in choice.Value.choices) {
-                    item = choiceItem;
-                    break;
-                }
-            }
-
-            BroadcastAppContentChoiceItem(item);
-        }
     }
 	
 }
