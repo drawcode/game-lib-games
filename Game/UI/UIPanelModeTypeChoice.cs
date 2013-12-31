@@ -699,7 +699,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         double choiceTotal = choices.Count;
         double choicesResult = choicesCorrect / choiceTotal;
 
-        coins = choicesCorrect * 50;
+        coins = choicesCorrect * 100;
 
         string scoreFractionValue = string.Format("{0}/{1}", choicesCorrect, choiceTotal);
         string scorePercentageValue = choicesResult.ToString("P0");
