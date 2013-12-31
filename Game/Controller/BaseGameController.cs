@@ -1184,7 +1184,7 @@ public class BaseGameController : MonoBehaviour {
 
         GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
-        
+
         if(currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }

@@ -114,9 +114,8 @@ public class GameCustomBase : MonoBehaviour {
     }
 
     public virtual void Load(GameCustomInfo customInfoTo) {
-        if(customInfoTo.presetColorCode != customInfo.presetColorCode) {
-
-        }
+        //if(customInfoTo.presetColorCode != customInfo.presetColorCode) {
+        //}
         Change(customInfo);
     }
 
@@ -150,7 +149,9 @@ public class GameCustomBase : MonoBehaviour {
                   */
 
         if(customInfo.isCustomType) {
-            return;
+            customColorCode = customInfo.presetColorCode;
+            customTextureCode = customInfo.presetTextureCode;
+            SetCustom();
         }
         else if(customInfo.isDefaultType) {
             SetCustom();
@@ -189,7 +190,8 @@ public class GameCustomBase : MonoBehaviour {
                   
 
         if(customInfo.isCustomType) {
-            return;
+            GameCustomController.UpdateColorPresetObject(
+                gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCode));
         }        
         else if(customInfo.isDefaultType) {
 
@@ -221,10 +223,11 @@ public class GameCustomBase : MonoBehaviour {
                 }//GameCustomController.BroadcastCustomColorsChanged
             }
             
-            else {                
+            else {    
                 
                 GameCustomController.UpdateColorPresetObject(
                     gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+
             }//GameCustomController.BroadcastCustomColorsChanged
         }
 	}
@@ -244,7 +247,8 @@ public class GameCustomBase : MonoBehaviour {
                   */
         
         if(customInfo.isCustomType) {
-            return;
+            GameCustomController.UpdateTexturePresetObject(
+                gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode));
         }        
         else if(customInfo.isDefaultType) {
             
@@ -318,11 +322,13 @@ public class GameCustomBase : MonoBehaviour {
         else if(lastCustomColorCode != customColorCode) {
             
             //if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
-                
+
                 // load from current code
                 GameCustomController.UpdateColorPresetObject(
                     gameObject, AppColorPresets.Instance.GetByCode(customColorCode));
                 lastCustomColorCode = customColorCode;
+
+
             //}
         }
     }

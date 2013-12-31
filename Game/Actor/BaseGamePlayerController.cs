@@ -1036,23 +1036,74 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
 
+            if(!IsPlayerControlled) {
+                // apply team 
+                
+                GameTeam team = GameTeams.Current;
+
+                // TODO randomize
+                
+                if(team != null) {
+                    foreach(GameTeamDataItem item in team.data.models) {
+                        prefabName = item.code;
+                        prefabNameObject = item.code;
+                        controllerData.lastPrefabName = item.code;
+                        break;
+                    }
+                }
+                
+            }
+
             GameObject gameObjectLoad = GameObjectHelper.CreateGameObject(
                 prefabObject, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
 
             if (gameObjectLoad != null) {           
 
-                if (IsPlayerControlled && !gameObjectLoad.Has<GameCustomPlayer>()) {
-                    gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
+                if (IsPlayerControlled) {                    
+                    if(!gameObjectLoad.Has<GameCustomPlayer>()) {
+                        gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
+                    }
+                    else {
+                        gameCustomPlayer = gameObjectLoad.GetComponent<GameCustomPlayer>();
+                    }
+                }
+                else {
+                    if(!gameObjectLoad.Has<GameCustomEnemy>()) {
+                        gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
+                    }
+                    else {
+                        gameCustomEnemy = gameObjectLoad.GetComponent<GameCustomEnemy>();
+                    }
+                }
+                
+                
+                if(!IsPlayerControlled) {
+                    // apply team 
+
+                    GameTeam team = GameTeams.Current;
+
+                    if(team != null) {
+                        GameCustomInfo customInfo = new GameCustomInfo();
+                        customInfo.type = GameCustomTypes.customType;
+
+                        foreach(GameTeamDataItem item in team.data.color_presets) {
+                            customInfo.presetColorCode = item.code;
+                        }
+                        
+                        foreach(GameTeamDataItem item in team.data.texture_presets) {
+                            customInfo.presetTextureCode = item.code;
+                        }
+
+                        gameCustomEnemy.Load(customInfo);
+                    }
+                    
                 }
 
-                if (!IsPlayerControlled && !gameObjectLoad.Has<GameCustomEnemy>()) {
-                    gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
-                }
 
                 if(gameCustomPlayer != null) {
-                    GameCustomInfo customInfo = new GameCustomInfo();
-                    customInfo.type = "default";
-                    customInfo.presetColorCode = "game-nfl-broncos";
+                    //GameCustomInfo customInfo = new GameCustomInfo();
+                    //customInfo.type = "default";
+                    //customInfo.presetColorCode = "game-nfl-broncos";
                     //gameCustomPlayer.Load();
                 }
 
