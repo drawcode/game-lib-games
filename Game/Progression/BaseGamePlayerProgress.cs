@@ -2000,7 +2000,7 @@ public class BaseGamePlayerProgress
                     //LogUtil.Log("GameCenter key after filter gc:" + key);
                     
                     bool isGCStat = false;
-                    isGCStat = IsGameCenterLeaderboard(key);    
+                    //isGCStat = IsGameCenterLeaderboard(key);    
                     
                     //LogUtil.Log("GameCenter key isGCStat:" + isGCStat);
                     if(isGCStat) {              

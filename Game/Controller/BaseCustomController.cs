@@ -244,7 +244,7 @@ public class BaseGameCustomController : MonoBehaviour {
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
 
         if(customItemTo.HasData()) {
-            //return customItemTo;
+            return customItemTo;
         }
 
         // get a random

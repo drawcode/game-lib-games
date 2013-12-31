@@ -68,6 +68,7 @@ public class GameCustomBase : MonoBehaviour {
     bool initialized = false;
 
     public virtual void Start() {
+
        Invoke("Init", 1);
 	}
 
@@ -120,10 +121,10 @@ public class GameCustomBase : MonoBehaviour {
     }
 
     public virtual void Change(GameCustomInfo customInfoTo) {
+
         customInfo = customInfoTo;
 
         UpdatePlayer();
-                
         /*
         GameCustomController.UpdateColorPresetObject(
             gameObject, AppColorPresets.Instance.GetByCode(presetColorCodeDefault));
@@ -163,12 +164,13 @@ public class GameCustomBase : MonoBehaviour {
 	}
 
     public void SetCustom() {
-        
+
         if(customInfo == null) {
             Init();
         }
 
         SetCustomTextures();
+
         SetCustomColors();
     }
     	
@@ -191,25 +193,34 @@ public class GameCustomBase : MonoBehaviour {
         }        
         else if(customInfo.isDefaultType) {
 
-            GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-            
-            //Debug.Log("SetCustomColors"  
-             //         + " customItem:" + customItem.ToJson());
+            if(customActorType == GameCustomActorTypes.heroType) {
 
-            if(customItem != null) {
+                GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+                
+                //Debug.Log("SetCustomColors"  
+                 //         + " customItem:" + customItem.ToJson());
 
-                if(!customItem.HasData()) {
+                if(customItem != null) {
+
+                    if(!customItem.HasData()) {
+                        
+                        GameCustomController.UpdateColorPresetObject(
+                            gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+                    }
+                    else {
+
+                        //customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
+
+                        GameCustomController.UpdateColorPresetObject(customItem, gameObject, customInfo.presetType);
+                    }
+                }
+                else {                
                     
                     GameCustomController.UpdateColorPresetObject(
                         gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
-                }
-                else {
-
-                    //customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
-
-                    GameCustomController.UpdateColorPresetObject(customItem, gameObject, customInfo.presetType);
-                }
+                }//GameCustomController.BroadcastCustomColorsChanged
             }
+            
             else {                
                 
                 GameCustomController.UpdateColorPresetObject(
@@ -237,17 +248,24 @@ public class GameCustomBase : MonoBehaviour {
         }        
         else if(customInfo.isDefaultType) {
             
-            GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-            
-            if(customItem != null) {
-             
-                GameCustomController.UpdateTexturePresetObject(customItem, gameObject, customInfo.presetType);
+            if(customActorType == GameCustomActorTypes.heroType) {
+                
+                GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+                
+                if(customItem != null) {
+                 
+                    GameCustomController.UpdateTexturePresetObject(customItem, gameObject, customInfo.presetType);
+                }
+                else {                
+                    
+                    GameCustomController.UpdateTexturePresetObject(
+                        gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
+                }//GameCustomController.BroadcastCustomColorsChanged
             }
             else {                
-                
                 GameCustomController.UpdateTexturePresetObject(
                     gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
-            }//GameCustomController.BroadcastCustomColorsChanged
+            }
         }
     }
     

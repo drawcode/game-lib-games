@@ -218,6 +218,7 @@ public class BaseGamePlayerController : GameActor {
     // asset
     public GamePlayerControllerAsset gamePlayerControllerAsset;
     public GameCustomPlayer gameCustomPlayer;
+    public GameCustomEnemy gameCustomEnemy;
      
     // player effects
     public GameObject gamePlayerEffectParticleObjects;
@@ -1040,8 +1041,12 @@ public class BaseGamePlayerController : GameActor {
 
             if (gameObjectLoad != null) {           
 
-                if (!gameObjectLoad.Has<GameCustomPlayer>()) {
+                if (IsPlayerControlled && !gameObjectLoad.Has<GameCustomPlayer>()) {
                     gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
+                }
+
+                if (!IsPlayerControlled && !gameObjectLoad.Has<GameCustomEnemy>()) {
+                    gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
                 }
 
                 if(gameCustomPlayer != null) {
@@ -1330,11 +1335,21 @@ public class BaseGamePlayerController : GameActor {
                 if (t.parent != null) {
                     string parentName = t.parent.name;
 
+                    // TODO make name recursion by depth limit, for now check three above.
+                    string parentParentName = "";
+                    string parentParentParentName = "";
+                    if(t.parent.parent != null) {
+                        parentParentName = t.parent.parent.name;                        
+                        if(t.parent.parent.parent != null) {
+                            parentParentParentName = t.parent.parent.parent.name;
+                        }
+                    }
+
                     bool isObstacle = parentName.Contains("GameObstacle");                  
 
                     bool isLevelObject = parentName.Contains("GameItemObject")
-                        || t.name.Contains("(Clone)")
-                        || parentName.Contains("(Clone)");                
+                        || parentParentName.Contains("GameItemObject")
+                        || parentParentParentName.Contains("GameItemObject");                
 
                     bool isPlayerObject = 
                         parentName.Contains("HelmetContainer")
@@ -2180,6 +2195,8 @@ public class BaseGamePlayerController : GameActor {
      
         AudioDie();
      
+        // TODO FADE OUT CLEANLY
+        /*
         // fade out 
         UnityEngine.SkinnedMeshRenderer[] skinRenderersCharacter 
          = gamePlayerHolder.GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -2188,6 +2205,7 @@ public class BaseGamePlayerController : GameActor {
          
             UITweenerUtil.FadeTo(skinRenderer.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 1f, 2f, 0f);        
         }
+        */
      
         Invoke("Remove", 3);
 
@@ -2820,6 +2838,10 @@ public class BaseGamePlayerController : GameActor {
     public virtual void UpdateNetworkContainer(string uniqueId) {
      
         uuid = uniqueId;
+        
+        if(!GameConfigs.networkEnabled) {
+            return;
+        }
      
         FindNetworkContainer(uniqueId);      
      
@@ -2837,6 +2859,9 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uniqueId) {
      
+        if(!GameConfigs.networkEnabled) {
+            return null;
+        }
      
         if (currentNetworkPlayerContainer != null) {
             if (currentNetworkPlayerContainer.uuid == uniqueId) {

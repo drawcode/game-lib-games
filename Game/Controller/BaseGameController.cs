@@ -249,9 +249,9 @@ public class GameLevelGridData {
     public static GameLevelGridData GetBaseDefault() {
 
         GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "barrel-1", UnityEngine.Random.Range(5,10));
-        data = AddAssets(data, "box-1", UnityEngine.Random.Range(3, 6));
-        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(3, 6));
+        data = AddAssets(data, "barrel-1", UnityEngine.Random.Range(4,8));
+        data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
+        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
 
         return data;
     }
@@ -537,7 +537,9 @@ public class BaseGameController : MonoBehaviour {
     // EVENTS
 
     public virtual void OnProfileShouldBeSavedEventHandler() {
-        GameState.SaveProfile();
+        if(!GameConfigs.isGameRunning) {
+            GameState.SaveProfile();
+        }
     }
     
     public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
@@ -1401,7 +1403,7 @@ public class BaseGameController : MonoBehaviour {
                 spawnCode = leftMiddle;
             }
 
-            Debug.Log("spawnCode:" + spawnCode);
+            //Debug.Log("spawnCode:" + spawnCode);
 
             GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             if(spawn != null) {
@@ -2204,15 +2206,15 @@ public class BaseGameController : MonoBehaviour {
 
         yield return new WaitForSeconds(delay);
 
-        Debug.Log("GamePlayerOutOfBoundsDelayed:");
+        //Debug.Log("GamePlayerOutOfBoundsDelayed:");
 
         runtimeData.outOfBounds = true;
 
-        Debug.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
+        //Debug.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
 
         gameState = GameStateGlobal.GameStarted;
 
-        Debug.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);
+        //Debug.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);
 
         GameController.CheckForGameOver();
     }
@@ -2281,7 +2283,7 @@ public class BaseGameController : MonoBehaviour {
 
         yield return new WaitForSeconds(delay);
 
-        Debug.Log("gamePlayerGoalZoneDelayedCo:");
+        //Debug.Log("gamePlayerGoalZoneDelayedCo:");
 
         GameController.GoalZoneChange();
     }
@@ -2449,9 +2451,9 @@ public class BaseGameController : MonoBehaviour {
                 }
     
                 if(runtimeData.outOfBounds) {
-                    Debug.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
+                    //Debug.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
-                    Debug.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
+                    //Debug.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
     
                 if(gameOverMode) {

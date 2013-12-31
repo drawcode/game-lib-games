@@ -8,6 +8,7 @@ public class GameCustomEnemy : GameCustomBase {
     
     public override void Start() {
         base.Start();
+        customActorType = GameCustomActorTypes.enemyType;
 		//freezeRotation = false;
 	}
 
