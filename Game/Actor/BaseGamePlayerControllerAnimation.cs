@@ -500,25 +500,45 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     }
  
     public virtual void FindAnimatedActor() {
-        if(animationData.actor != null) {                      
+        if(animationData.actor != null) {       
 
-            // LEGACY TYPE
-            if(animationData.actor.animation == null) {
-                foreach(Animation anim in animationData.actor.GetComponentsInChildren<Animation>()) {
-                    animationData.actor = anim.gameObject;
-                    animationType = GamePlayerControllerAnimationType.legacy;
-                    break;
-                }
-            }
-         
+  
+            
             // MECANIM
             if(animationData.animator == null) {
+
+                if(!animationData.gamePlayerController.IsPlayerControlled) {
+                    Debug.Log("FindAnimatedActor");
+                }
+
                 foreach(Animator anim in animationData.actor.GetComponentsInChildren<Animator>()) {
                     animationData.animator = anim;
                     animationData.actor = anim.gameObject;
                     animationType = GamePlayerControllerAnimationType.mecanim;
                     animationData.avatar = anim.avatar;
                     animationData.animationController = anim.runtimeAnimatorController;
+                    
+                    if(!animationData.gamePlayerController.IsPlayerControlled) {
+                        Debug.Log("FindAnimatedActor:found animator:");
+                    }
+                    break;
+                }
+            }
+             
+            // LEGACY TYPE
+            if(animationData.actor.animation == null && animationData.animator == null) {
+
+                if(!animationData.gamePlayerController.IsPlayerControlled) {
+                    Debug.Log("FindAnimatedActor");
+                }
+
+                foreach(Animation anim in animationData.actor.GetComponentsInChildren<Animation>()) {
+                    animationData.actor = anim.gameObject;
+                    animationType = GamePlayerControllerAnimationType.legacy;
+                    
+                    if(!animationData.gamePlayerController.IsPlayerControlled) {
+                        Debug.Log("FindAnimatedActor:found legacy:");
+                    }
                     break;
                 }
             }
@@ -539,19 +559,27 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
          
             //try {
          
-            var currentSpeed = 0f;
+            float currentSpeed = 0f;
          
             if(animationData.thirdPersonController != null) {
                 currentSpeed = animationData.thirdPersonController.GetSpeed();
             }
          
-            //Debug.Log("currentSpeed:" + currentSpeed);
+            if(!animationData.gamePlayerController.IsPlayerControlled) {
+                //Debug.Log("currentSpeed:" + currentSpeed);
+            }
             //Debug.Log("navAgent:" + navAgent);
          
             if(animationData.gamePlayerController != null) {
                 if(animationData.gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgent
                    || animationData.gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgentAttack
                    || animationData.gamePlayerController.contextState == GamePlayerContextState.ContextRandom) {
+
+                    
+                    if(!animationData.gamePlayerController.IsPlayerControlled) {
+                        //Debug.Log("currentSpeed11:" + currentSpeed);
+                    }
+
                     if(animationData.navAgent != null) {
                         if(animationData.navAgent.enabled) {                       
                             //currentSpeed = navAgent.velocity.magnitude + 20;
@@ -574,6 +602,10 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                         }
                     }
                 }
+            }
+                        
+            if(!animationData.gamePlayerController.IsPlayerControlled) {
+                //Debug.Log("currentSpeed22:" + currentSpeed);
             }
          
             float walkSpeed = 5f;
@@ -654,7 +686,12 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                     }
                 }
                 else if(isMecanim) {
-                    animationData.animator.SetFloat("speed", currentSpeed);
+                                        
+                    if(!animationData.gamePlayerController.IsPlayerControlled) {
+                        //Debug.Log("currentSpeed:isMecanim:" + currentSpeed);
+                    }
+
+                    animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
                 }
                 SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
             }
@@ -703,8 +740,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                     }
                 }
                 else if(isMecanim) {
+                    
+                    if(!animationData.gamePlayerController.IsPlayerControlled) {
+                        //Debug.Log("currentSpeed:isMecanim22:" + currentSpeed);
+                    }
+
                     if(animationData.animator != null) {
                         animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
+                        //Debug.Log("currentSpeed:isMecanim33:" + currentSpeed);
                     }
                 }
             }
@@ -715,6 +758,11 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                 }
                 else if(isMecanim) {
                     if(animationData.animator != null) {
+                        
+                        if(!animationData.gamePlayerController.IsPlayerControlled) {
+                            //Debug.Log("currentSpeed:isMecanimstop:" + currentSpeed);
+                        }
+
                         animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
                     }
                 }
@@ -926,7 +974,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         else {
             if(!animationData.isDead) {
                // animator.SetFloat(GamePlayerAnimationType.speed, .8f);
-                PlayOneShotFloat(GamePlayerAnimationType.attack);
+                //PlayOneShotFloat(GamePlayerAnimationType.attack);
             }
         }
 

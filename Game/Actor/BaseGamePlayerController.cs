@@ -1354,7 +1354,9 @@ public class BaseGamePlayerController : GameActor {
                     bool isPlayerObject = 
                         parentName.Contains("HelmetContainer")
                         || parentName.Contains("Helmet")
-                        || parentName.Contains("Facemask")
+                            || parentName.Contains("Facemask")
+                            || t.name.Contains("Helmet")
+                            || t.name.Contains("Facemask")
                         || parentName.Contains("HitCollider")
                         || parentName.Contains("GamePlayerCollider");
                     //|| t.name.Contains("GamePlayerObject")
@@ -2041,7 +2043,7 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }
-        LogUtil.Log("GamePlayerController:Boost:");
+        //LogUtil.Log("GamePlayerController:Boost:");
         if (Time.time > controllerData.lastBoostTime + 1f) {
             controllerData.lastBoostTime = Time.time;
 
@@ -3193,7 +3195,7 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.gamePlayerControllerAnimation = 
                     gameObject.AddComponent<GamePlayerControllerAnimation>();
             }
-            
+
             controllerData.gamePlayerControllerAnimation.Init();
 
             controllerData.gamePlayerControllerAnimation.animationData.torso = gamePlayerHolder.transform;
