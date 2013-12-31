@@ -281,7 +281,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         animationData.isDead = false;
      
         if(!isLegacy && animationData.animator != null) {
-            animationData.animator.SetFloat(GamePlayerAnimationType.speed, 0f);
+            animationData.animator.SetFloat(GamePlayerAnimationType.speed, 1f);
             animationData.animator.SetFloat(GamePlayerAnimationType.death, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.strafe, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.jump, 0f);
