@@ -48,7 +48,7 @@ public class BaseGamePlayerAnimationController : MonoBehaviour {
 	void Awake() {
 		Init();
 	}
-	
+    	
 	public void Init() {
 		thirdPersonController = GetComponent<GamePlayerThirdPersonController>();
 		navAgent = GetComponent<NavMeshAgent>();

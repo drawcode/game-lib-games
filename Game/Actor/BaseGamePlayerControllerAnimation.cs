@@ -513,12 +513,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             // MECANIM
             if(animationData.animator == null) {
                 foreach(Animator anim in animationData.actor.GetComponentsInChildren<Animator>()) {
-                    animationData.animator = anim;
-                    animationData.actor = anim.gameObject;
-                    animationType = GamePlayerControllerAnimationType.mecanim;
-                    animationData.avatar = anim.avatar;
-                    animationData.animationController = anim.runtimeAnimatorController;
-                    break;
+                    if(anim.runtimeAnimatorController != null 
+                       && anim.avatar != null) {
+                        animationData.animator = anim;
+                        animationData.actor = anim.gameObject;
+                        animationType = GamePlayerControllerAnimationType.mecanim;
+                        animationData.avatar = anim.avatar;
+                        animationData.animationController = anim.runtimeAnimatorController;
+                    }
                 }
             }
              
@@ -528,7 +530,6 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                 foreach(Animation anim in animationData.actor.GetComponentsInChildren<Animation>()) {
                     animationData.actor = anim.gameObject;
                     animationType = GamePlayerControllerAnimationType.legacy;
-                    break;
                 }
             }
         }
@@ -545,7 +546,9 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
              
         if(animationData.isRunning) {
-         
+                     
+            FindAnimatedActor();
+
             //try {
          
             float currentSpeed = 0f;
@@ -604,8 +607,6 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
                 walkSpeed = animationData.thirdPersonController.walkSpeed;
                 //Debug.Log("currentSpeed:" + thirdPersonController.walkSpeed);
             }
-         
-            FindAnimatedActor();
          
             if(animationData.actor == null || (animationData.actor.animation == null && animationData.animator == null)) {
                 return;

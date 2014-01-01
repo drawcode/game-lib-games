@@ -142,19 +142,19 @@ public class GameCustomBase : MonoBehaviour {
             Init();
         }
 
-        Debug.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
+        //Debug.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
 
         if(customInfo != null) {
             customColorCode = customInfo.presetColorCode;
             customTextureCode = customInfo.presetTextureCode;
             
-            Debug.Log("GameCustomBase:Change:customColorCode:" + customColorCode);
-            Debug.Log("GameCustomBase:Change:customTextureCode:" + customTextureCode);
+            //Debug.Log("GameCustomBase:Change:customColorCode:" + customColorCode);
+            //Debug.Log("GameCustomBase:Change:customTextureCode:" + customTextureCode);
 
             if(!string.IsNullOrEmpty(customInfo.teamCode)
                && customInfo.teamCode != "default") {
 
-                Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
+                //Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                 GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
 
@@ -165,7 +165,7 @@ public class GameCustomBase : MonoBehaviour {
                         teamCode = team.code;
                         customInfo.type = GameCustomTypes.teamType;
                         
-                        Debug.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
+                        //Debug.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
                         
                         GameTeamDataItem itemTexture = team.GetTexturePreset();
                         
@@ -179,7 +179,7 @@ public class GameCustomBase : MonoBehaviour {
                                 GameCustomController.UpdateTexturePresetObject(
                                     gameObject, preset);
                                 
-                                Debug.Log("Loading TEAM EXISTS TEXTURE:preset:" + preset.code);
+                                //Debug.Log("Loading TEAM EXISTS TEXTURE:preset:" + preset.code);
                             }
                         }
 
@@ -195,7 +195,7 @@ public class GameCustomBase : MonoBehaviour {
                                 GameCustomController.UpdateColorPresetObject(
                                     gameObject, preset);
                                 
-                                Debug.Log("Loading TEAM EXISTS COLOR:preset:" + preset.code);
+                                //Debug.Log("Loading TEAM EXISTS COLOR:preset:" + preset.code);
                             }
                         }
 
