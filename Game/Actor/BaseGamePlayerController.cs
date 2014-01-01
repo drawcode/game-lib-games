@@ -83,6 +83,7 @@ public class BaseGamePlayerControllerData {
     public GamePlayerControllerAnimation gamePlayerControllerAnimation;
         
     // gameplay    
+    public float lastAirCheck = 0f;
     public float lastUpdateCommon = 0f;
     public float lastAttackTime = 0;
     public float lastBoostTime = 0;
@@ -761,8 +762,10 @@ public class BaseGamePlayerController : GameActor {
 
         if (controllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
             controllerData.lastIdleActions = Time.time;
-            if (controllerData.thirdPersonController.moveSpeed == 0f) {
-                update = true;
+            if (controllerData.thirdPersonController != null) {
+                if (controllerData.thirdPersonController.moveSpeed == 0f) {
+                    update = true;
+                }
             }
         }
 
@@ -965,7 +968,11 @@ public class BaseGamePlayerController : GameActor {
     public virtual void HandleCharacterAttachedSounds() {
     
         if (!GameConfigs.isGameRunning) {
-            controllerData.audioObjectFootstepsSource.StopIfPlaying();
+            if(controllerData != null) {
+                if(controllerData.audioObjectFootstepsSource != null) {
+                controllerData.audioObjectFootstepsSource.StopIfPlaying();
+                }
+            }
             return;
         }
 
@@ -1095,7 +1102,7 @@ public class BaseGamePlayerController : GameActor {
                         if (team.data != null) {
                                                         
                             GameCustomInfo customInfo = new GameCustomInfo();
-                            customInfo.type = GameCustomTypes.explicitType;
+                            customInfo.type = GameCustomTypes.teamType;
                             customInfo.teamCode = team.code;
                             
                             gameCustomEnemy.Load(customInfo);
@@ -1631,8 +1638,18 @@ public class BaseGamePlayerController : GameActor {
     // --------------------------------------------------------------------
     // STATE/RESET
 
-    public virtual void ResetPositionDie() {        
-        gameObject.transform.position = gameObject.transform.position.WithY(0f);
+    public virtual void ResetPositionAir(float y) {    
+
+        if(controllerData.lastAirCheck > 1f) {
+            controllerData.lastAirCheck = 0;
+
+        gameObject.transform.position = Vector3.Lerp(
+            gameObject.transform.position, 
+            gameObject.transform.position.WithY(y), 
+            1 * Time.deltaTime);            
+        }
+
+        controllerData.lastAirCheck += Time.deltaTime;
     }
 
     public virtual void ResetPosition() {
@@ -2245,7 +2262,7 @@ public class BaseGamePlayerController : GameActor {
         
         StopNavAgent();
         
-        ResetPositionDie();
+        ResetPositionAir(0f);
      
         // TODO FADE OUT CLEANLY
         /*
@@ -3473,6 +3490,17 @@ public class BaseGamePlayerController : GameActor {
         }
 
         HandleItemProperties();
+
+        bool shouldBeGrounded = true;
+        if(controllerData.thirdPersonController != null) {
+            if(controllerData.thirdPersonController.IsJumping()) {
+                shouldBeGrounded = false;
+            }
+        }
+
+        if(shouldBeGrounded) {
+            ResetPositionAir(0f);
+        }
 
         // periodic      
      

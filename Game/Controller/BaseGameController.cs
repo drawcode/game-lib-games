@@ -330,7 +330,7 @@ public class GameLevelGridData {
             int y = 0;
             int z = 0;
 
-            Debug.Log("RandomizeAssetsInAssetMap:row" + row);
+            //Debug.Log("RandomizeAssetsInAssetMap:row" + row);
 
             while(string.IsNullOrEmpty(row)) {
 
@@ -345,7 +345,7 @@ public class GameLevelGridData {
 
                 row = assetMap[x,y,z];
 
-            Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
+            //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
             }
         }
     }
@@ -1164,7 +1164,7 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadStartLevel(string levelCode) {
 
-        Debug.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
+        //Debug.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
 
         string characterCode = GameProfileCharacters.Current.GetCurrentCharacterCode();
         GameController.LoadCharacterStartLevel(characterCode, levelCode);
@@ -1180,7 +1180,7 @@ public class BaseGameController : MonoBehaviour {
        
     public virtual IEnumerator startLevelCo(string levelCode) {
 
-        Debug.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
+        //Debug.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
         GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
@@ -1244,7 +1244,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void loadProfileCharacter(string characterCode) {
 
-        Debug.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
+        //Debug.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
 
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
@@ -1257,8 +1257,8 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void loadCharacterStartLevel(string characterCode, string levelCode) {
 
-        Debug.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
-            " levelCode:" + levelCode);
+        //Debug.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
+        //    " levelCode:" + levelCode);
 
         loadProfileCharacter(characterCode);
         ////GameHUD.Instance.ShowCharacter(characterCode);
@@ -1959,7 +1959,7 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void onGamePrepare(bool startGame) {
 
-        Debug.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
+        //Debug.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
 
         GameController.ResetRuntimeData();
 
@@ -1977,7 +1977,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void onGameStarted() {
 
-        Debug.Log("GAME START FLOW: STEP #8: onGameStarted");
+        //Debug.Log("GAME START FLOW: STEP #8: onGameStarted");
 
         GameController.StartLevelStats();
 
@@ -2038,7 +2038,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void onGameResults() {
 
-        LogUtil.Log("OnGameResults");
+        //LogUtil.Log("OnGameResults");
     
         //if(runtimeData.localPlayerWin){
         //GameUIPanelResults.Instance.ShowSuccess();

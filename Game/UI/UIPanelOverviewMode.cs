@@ -252,11 +252,11 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void OnGameLevelItemsLoadedHandler() {
 
-        Debug.Log("OnGameLevelItemsLoadedHandler");
+        //Debug.Log("OnGameLevelItemsLoadedHandler");
 
         if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
-            Debug.Log("OnGameLevelItemsLoadedHandler2");
+            //Debug.Log("OnGameLevelItemsLoadedHandler2");
         }
     }
 
@@ -266,16 +266,24 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         // Update team display
 
+        //Debug.Log("ShowOverview:");
+
         if(gameCustomPlayer == null) {
             gameCustomPlayer = gameObject.Get<GameCustomPlayer>();
+            
+            //Debug.Log("ShowOverview:gameCustomPlayer:");
         }
 
         if(gameCustomEnemy == null) {
             gameCustomEnemy = gameObject.Get<GameCustomEnemy>();
+            
+            //Debug.Log("ShowOverview:gameCustomEnemy:");
         }
 
         GameTeam team = GameTeams.Current;
         if(team != null) {
+            
+            //Debug.Log("ShowOverview:team:");
 
             UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
 
@@ -285,10 +293,14 @@ public class UIPanelOverviewMode : UIPanelBase {
 
             if(gameCustomEnemy != null) {
                 gameCustomEnemy.Load(
-                    GameCustomTypes.explicitType, 
+                    GameCustomTypes.teamType, 
                     GameCustomActorTypes.enemyType, 
                     team.GetColorPresetCode(), 
                     team.GetTexturePresetCode());
+                
+                //Debug.Log("ShowOverview:gameCustomEnemy:team.GetColorPresetCode():" + team.GetColorPresetCode());
+                //Debug.Log("ShowOverview:gameCustomEnemy:team.GetTexturePresetCode():" + team.GetTexturePresetCode());
+                //Debug.Log("ShowOverview:gameCustomEnemy:load:");
             }
         }
 

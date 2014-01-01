@@ -465,14 +465,14 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void OnGameLevelItemsLoadedHandler() {
 
-        Debug.Log("OnGameLevelItemsLoadedHandler");
+        //Debug.Log("OnGameLevelItemsLoadedHandler");
 
         if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
             //Messenger.Broadcast(GameDraggableEditorMessages.GameLevelItemsLoaded);
 
             // Match choices to level assets.
 
-            Debug.Log("OnGameLevelItemsLoadedHandler2");
+            //Debug.Log("OnGameLevelItemsLoadedHandler2");
 
             //int i = 0;
 

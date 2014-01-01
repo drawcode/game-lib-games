@@ -1727,7 +1727,7 @@ public class BaseUIController : MonoBehaviour {
  
     public virtual void hideUI(bool now) {   
      
-        Debug.Log("HideUI");  
+        //Debug.Log("HideUI");  
      
         uiVisible = false;
 
@@ -1751,7 +1751,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void showUI() {
-        Debug.Log("ShowUI");
+        //Debug.Log("ShowUI");
         uiVisible = true;        
         hideGameCanvas();        
         HandleInUIAudio();

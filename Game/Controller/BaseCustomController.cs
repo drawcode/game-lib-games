@@ -310,7 +310,7 @@ public class BaseGameCustomController : MonoBehaviour {
         GameCustomController.BroadcastCustomColorsChanged();
         GameCustomController.BroadcastCustomColorsPlayerChanged();
 
-        Debug.Log("broadcastCustomColorsSync");
+        //Debug.Log("broadcastCustomColorsSync");
     }
     
     public virtual void broadcastCustomColorsChanged() {

@@ -279,12 +279,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
      
     public virtual void ResetPlayState() {     
         if(!isLegacy && animationData.animator != null) {
-            animationData.animator.SetFloat(GamePlayerAnimationType.speed, 0f);
-            animationData.animator.SetFloat(GamePlayerAnimationType.death, 0f);
-            animationData.animator.SetFloat(GamePlayerAnimationType.strafe, 0f);
-            animationData.animator.SetFloat(GamePlayerAnimationType.jump, 0f);
-            animationData.animator.SetFloat(GamePlayerAnimationType.attack, 0f);
-            animationData.animator.SetFloat(GamePlayerAnimationType.hit, 0f);
+            //animationData.animator.SetFloat(GamePlayerAnimationType.idle, 0f);
+
+            ResetFloat(GamePlayerAnimationType.speed);
+            ResetFloat(GamePlayerAnimationType.death);
+            ResetFloat(GamePlayerAnimationType.strafe);
+            ResetFloat(GamePlayerAnimationType.jump);
+            ResetFloat(GamePlayerAnimationType.attack);
+            ResetFloat(GamePlayerAnimationType.hit);
         }
     }
 
@@ -849,7 +851,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         }
         else if(isMecanim) {
             if(animationData.animator != null) {
-                animationData.animator.SetFloat(GamePlayerAnimationType.jump, 1f);
+                PlayOneShotFloat(GamePlayerAnimationType.jump, 1f);
             }
         }
 
@@ -899,8 +901,8 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
         }
         else if(isMecanim) {
-            if(animationData.animator != null) {
-                animationData.animator.SetFloat(GamePlayerAnimationType.attack, 1f);
+            if(animationData.animator != null) {                
+                PlayOneShotFloat(GamePlayerAnimationType.attack, 1f);
             }
         }
     }
@@ -1065,7 +1067,8 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         else {
             if(!animationData.isDead) {
                 animationData.animator.SetFloat(GamePlayerAnimationType.speed, .8f);
-                animationData.animator.SetFloat("defend", 1f);
+                //animationData.animator.SetFloat("defend", 1f);
+
             }
         }
 
