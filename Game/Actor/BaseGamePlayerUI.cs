@@ -29,19 +29,36 @@ public class BaseGamePlayerUI : MonoBehaviour {
     public float u = 0;
 
     public bool runOnly = false;
+
+    bool running = false;
+
+    public virtual void Awake() {
+        running = false;
+    }
+
+    public virtual void OnEnable() {
+        running = false;
+    }
+    
+    public virtual void OnDisable() {
+        running = false;
+    }
 	
-	public virtual void Start() {
-		if(runOnly) {
-            foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
-                anim.SetFloat("speed", .9f);
-                anim.SetFloat("strafe", .05f);
-                anim.SetFloat("jump", .05f);
-                anim.SetFloat("death", 0f);
-                anim.SetFloat("hit", 0f);
-                anim.SetFloat("attack", 0f);
-            }
-        }
+	public virtual void Start() {        
+        running = false;
 	}
+
+    public virtual void AnimateRunOnly() {
+        foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
+            anim.SetFloat("speed", .9f);
+            anim.SetFloat("strafe", .05f);
+            anim.SetFloat("jump", .05f);
+            anim.SetFloat("death", 0f);
+            anim.SetFloat("hit", 0f);
+            anim.SetFloat("attack", 0f);
+            running = true;
+        }
+    }
 	
 	public virtual void RunAnimations() {
 		foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
@@ -72,6 +89,12 @@ public class BaseGamePlayerUI : MonoBehaviour {
     	//	}
         //}
         if(runOnly) {
+
+            if(runOnly && !running) {
+                AnimateRunOnly();
+                running = true;
+            }
+
             return;
         }
 		
