@@ -2630,7 +2630,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void hideHUD() {
-        Debug.Log("HideHUD");
+        //Debug.Log("HideHUD");
      
         hudVisible = false;    
      
@@ -2645,7 +2645,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void showHUD() {
-        Debug.Log("ShowHUD");
+        //Debug.Log("ShowHUD");
      
         hudVisible = true;    
              

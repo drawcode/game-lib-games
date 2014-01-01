@@ -211,7 +211,7 @@ public class UINotificationDisplay
 		
 		GameAchievement achievement 
 			= GameAchievements.Instance.GetByCodeAndPack(
-				achievementBaseCode, 
+                achievementCode, 
 				packCode//,
 				//appContentState
 			);

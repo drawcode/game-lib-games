@@ -115,12 +115,14 @@ public class GameCustomBase : MonoBehaviour {
 	public virtual void OnDisable() {
 		Messenger.RemoveListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
 	}
-
+    
+    /*
     public virtual void Load(string typeTo) {
         Load(typeTo, customActorType, typeTo, typeTo);
     }
-    
+
     public virtual void Load(string typeTo, string actorType, string presetColorCodeTo, string presetTextureCodeTo) {
+
         GameCustomInfo customInfoTo = new GameCustomInfo();
         customInfoTo.type = typeTo;
         customInfo.actorType = actorType;
@@ -129,6 +131,7 @@ public class GameCustomBase : MonoBehaviour {
 
         Load(customInfoTo);
     }
+    */
 
     public virtual void Load(GameCustomInfo customInfoTo) {
         Change(customInfo);
@@ -154,11 +157,12 @@ public class GameCustomBase : MonoBehaviour {
             if(!string.IsNullOrEmpty(customInfo.teamCode)
                && customInfo.teamCode != "default") {
 
-                //Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                 GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
 
                 if(team != null) {
+                    
+                    Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                     if(team.data != null) {
                         
@@ -170,33 +174,35 @@ public class GameCustomBase : MonoBehaviour {
                         GameTeamDataItem itemTexture = team.GetTexturePreset();
                         
                         if(itemTexture != null) {  
-                            customInfo.presetTextureCode = itemTexture.code;    
-                            
+                            customInfo.presetTextureCode = itemTexture.code;   
+                            lastCustomColorCode = "--";
+                            /*
                             AppContentAssetTexturePreset preset = 
                                 AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
                             if(preset != null) {
                                 // load from current code
                                 GameCustomController.UpdateTexturePresetObject(
                                     gameObject, preset);
-                                
+                                */
                                 //Debug.Log("Loading TEAM EXISTS TEXTURE:preset:" + preset.code);
-                            }
+                            //}
                         }
 
                         GameTeamDataItem itemColor = team.GetColorPreset();
 
                         if(itemColor != null) { 
-                            customInfo.presetColorCode = itemColor.code;     
-                            
+                            customInfo.presetColorCode = itemColor.code;    
+                        lastCustomTextureCode = "--";
+                            /*
                             AppColorPreset preset = 
                                 AppColorPresets.Instance.GetByCode(customInfo.presetColorCode);
                             if(preset != null) {
                                 // load from current code
                                 GameCustomController.UpdateColorPresetObject(
                                     gameObject, preset);
-                                
+                                */
                                 //Debug.Log("Loading TEAM EXISTS COLOR:preset:" + preset.code);
-                            }
+                            //}
                         }
 
                     } 
@@ -365,12 +371,16 @@ public class GameCustomBase : MonoBehaviour {
             Init();
         }
 
-        if(customInfo.isCustomType || customInfo.isDefaultType || customInfo.isTeamType) {
+        if(customInfo.isCustomType || customInfo.isDefaultType) {
             return;
         }
         else if(lastCustomTextureCode != customInfo.presetTextureCode) {
             
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
+            
+            Debug.Log("HandleCustomPlayerColor:changing:" + 
+                      " lastCustomColorCode:" + lastCustomTextureCode + 
+                      " customInfo.presetColorCode:" + customInfo.presetTextureCode);
                 
             AppContentAssetTexturePreset preset = 
                 AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
@@ -391,12 +401,16 @@ public class GameCustomBase : MonoBehaviour {
             Init();
         }
         
-        if(customInfo.isCustomType || customInfo.isDefaultType || customInfo.isTeamType) {
+        if(customInfo.isCustomType || customInfo.isDefaultType) {
             return;
         }
         else if(lastCustomColorCode != customInfo.presetColorCode) {
             
             //if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
+
+            Debug.Log("HandleCustomPlayerColor:changing:" + 
+                      " lastCustomColorCode:" + lastCustomColorCode + 
+                      " customInfo.presetColorCode:" + customInfo.presetColorCode);
 
                 // load from current code
                 GameCustomController.UpdateColorPresetObject(

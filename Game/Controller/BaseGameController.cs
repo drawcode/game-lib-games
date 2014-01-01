@@ -990,7 +990,7 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadLevelAssets(string code) {
 
-        Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
+       // Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
 
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
@@ -1014,7 +1014,7 @@ public class BaseGameController : MonoBehaviour {
     public virtual void loadLevel(string code) {
 
 
-        Debug.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
+        //Debug.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
 
         // Load the game levelitems for the game level code
         ////GameController.StartGame(code);

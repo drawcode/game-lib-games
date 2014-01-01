@@ -292,15 +292,14 @@ public class UIPanelOverviewMode : UIPanelBase {
             }
 
             if(gameCustomEnemy != null) {
-                gameCustomEnemy.Load(
-                    GameCustomTypes.teamType, 
-                    GameCustomActorTypes.enemyType, 
-                    team.GetColorPresetCode(), 
-                    team.GetTexturePresetCode());
-                
-                //Debug.Log("ShowOverview:gameCustomEnemy:team.GetColorPresetCode():" + team.GetColorPresetCode());
-                //Debug.Log("ShowOverview:gameCustomEnemy:team.GetTexturePresetCode():" + team.GetTexturePresetCode());
-                //Debug.Log("ShowOverview:gameCustomEnemy:load:");
+
+                GameCustomInfo customInfo = new GameCustomInfo();
+                customInfo.actorType = GameCustomActorTypes.enemyType;
+                customInfo.presetColorCode = team.GetColorPresetCode();
+                customInfo.presetTextureCode = team.GetTexturePresetCode();
+                customInfo.presetType = GameCustomTypes.teamType;
+                customInfo.teamCode = team.code;
+                gameCustomEnemy.Load(customInfo);
             }
         }
 
