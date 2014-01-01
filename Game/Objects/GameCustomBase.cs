@@ -14,13 +14,16 @@ public class GameCustomTypes {
     public static string customType = "custom"; // used for customizer, defualt to profile, then allow changes.
     public static string defaultType = "default"; // use profile
     public static string explicitType = "explicit"; // call out a preset set
+    public static string teamType = "team"; // call out a preset set
 }
 
 public class GameCustomInfo {
 
     public string type = GameCustomTypes.defaultType;
-    
+        
     public string actorType = GameCustomActorTypes.heroType;
+    
+    public string teamCode = "game-nfl-cardinals";
 
     public string presetType = "character";
 
@@ -47,9 +50,17 @@ public class GameCustomInfo {
             return type == GameCustomTypes.explicitType;
         }
     }
+    
+    public bool isTeamType {
+        get {
+            return type == GameCustomTypes.teamType;
+        }
+    }
 }
 
 public class GameCustomBase : MonoBehaviour {
+    
+    public string teamCode = "default";
 
     public string presetColorCodeDefault = "game-nfl-cardinals";        
 
@@ -76,7 +87,9 @@ public class GameCustomBase : MonoBehaviour {
 
         customInfo = new GameCustomInfo();
         customInfo.actorType = customActorType;
-        
+
+        customInfo.teamCode = teamCode;
+
         if(customColorCode == GameCustomTypes.customType) {
             customInfo.type = GameCustomTypes.customType;
         }
@@ -110,6 +123,7 @@ public class GameCustomBase : MonoBehaviour {
         customInfoTo.presetColorCode = presetColorCodeTo;
         customInfoTo.presetTextureCode = presetTextureCodeTo;
         customInfo.actorType = actorType;
+
         Load(customInfoTo);
     }
 
@@ -121,7 +135,45 @@ public class GameCustomBase : MonoBehaviour {
 
     public virtual void Change(GameCustomInfo customInfoTo) {
 
-        customInfo = customInfoTo;
+        customInfo = customInfoTo;      
+
+        if(customInfo == null) {
+            Init();
+        }
+
+        if(customInfo != null) {
+            customColorCode = customInfo.presetColorCode;
+            customTextureCode = customInfo.presetTextureCode;
+
+            if(!string.IsNullOrEmpty(customInfo.teamCode)
+               && customInfo.teamCode != "default") {
+
+                GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
+
+                if(team != null) {
+
+                    if(team.data != null) {
+                        
+                        teamCode = team.code;
+                        customInfo.type = GameCustomTypes.explicitType;
+
+                        GameTeamDataItem itemColor = team.GetColorPreset();
+
+                        if(itemColor != null) {
+                            customColorCode = itemColor.code;  
+                            customInfo.presetColorCode = customColorCode;                            
+                        }
+
+                        GameTeamDataItem itemTexture = team.GetTexturePreset();
+                        
+                        if(itemColor != null) {
+                            customTextureCode = itemTexture.code;   
+                            customInfo.presetTextureCode = customTextureCode;                       
+                        }
+                    } 
+                }
+            }
+        }
 
         UpdatePlayer();
         /*
@@ -149,9 +201,7 @@ public class GameCustomBase : MonoBehaviour {
                   */
 
         if(customInfo.isCustomType) {
-            customColorCode = customInfo.presetColorCode;
-            customTextureCode = customInfo.presetTextureCode;
-            SetCustom();
+            return;
         }
         else if(customInfo.isDefaultType) {
             SetCustom();
@@ -190,8 +240,7 @@ public class GameCustomBase : MonoBehaviour {
                   
 
         if(customInfo.isCustomType) {
-            GameCustomController.UpdateColorPresetObject(
-                gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCode));
+            return;
         }        
         else if(customInfo.isDefaultType) {
 
@@ -247,8 +296,7 @@ public class GameCustomBase : MonoBehaviour {
                   */
         
         if(customInfo.isCustomType) {
-            GameCustomController.UpdateTexturePresetObject(
-                gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode));
+            return;
         }        
         else if(customInfo.isDefaultType) {
             
@@ -298,7 +346,7 @@ public class GameCustomBase : MonoBehaviour {
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
                 
             AppContentAssetTexturePreset preset = 
-                AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
+                AppContentAssetTexturePresets.Instance.GetByCode(customTextureCode);
             if(preset != null) {
                 // load from current code
                 GameCustomController.UpdateTexturePresetObject(

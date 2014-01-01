@@ -30,6 +30,11 @@ public class UIPanelOverviewMode : UIPanelBase {
     public UIImageButton buttonOverviewTips;
     public UIImageButton buttonOverviewMode;
 
+    public GameCustomPlayer gameCustomPlayer;
+    public GameCustomEnemy gameCustomEnemy;
+    
+    public UILabel labelOverviewTeamEnemy;
+
     //public UIPanelTips tips
 
     // GLOBAL
@@ -258,6 +263,34 @@ public class UIPanelOverviewMode : UIPanelBase {
     public void ShowOverview() {
 
         HideStates();
+
+        // Update team display
+
+        if(gameCustomPlayer == null) {
+            gameCustomPlayer = gameObject.Get<GameCustomPlayer>();
+        }
+
+        if(gameCustomEnemy == null) {
+            gameCustomEnemy = gameObject.Get<GameCustomEnemy>();
+        }
+
+        GameTeam team = GameTeams.Current;
+        if(team != null) {
+
+            UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
+
+            if(gameCustomPlayer != null) {
+                gameCustomPlayer.Init();
+            }
+
+            if(gameCustomEnemy != null) {
+                gameCustomEnemy.Load(
+                    GameCustomTypes.explicitType, 
+                    GameCustomActorTypes.enemyType, 
+                    team.GetColorPresetCode(), 
+                    team.GetTexturePresetCode());
+            }
+        }
 
         flowState = AppOverviewFlowState.Mode;
 

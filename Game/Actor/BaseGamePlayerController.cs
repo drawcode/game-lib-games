@@ -190,7 +190,6 @@ public class BaseGamePlayerControllerData {
     //float controllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
-        
     public float modifierItemSpeedCurrent = 3.0f;
     public float modifierItemSpeedMin = 1.0f;
     public float modifierItemSpeedMax = 3.0f;
@@ -289,7 +288,6 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerEffectsBoost;
     public GameObject gamePlayerEffectsContainer;
     public GameObject gamePlayerEffectsGround;
-    
     public GameObject gamePlayerTrailContainer;
     public GameObject gamePlayerTrailGround;
     public GameObject gamePlayerTrailBoost;
@@ -1011,6 +1009,35 @@ public class BaseGamePlayerController : GameActor {
         
         if (controllerData.loadingCharacter) {
             yield break;
+        }          
+        
+        if (!IsPlayerControlled) {
+            // apply team 
+            
+            GameTeam team = GameTeams.Current;
+            
+            // TODO randomize
+            
+            if (team != null) {
+                if (team.data != null) {
+
+                    GameTeamDataItem item = team.GetModel();
+
+                    if(item != null) {
+                        prefabName = item.code;
+                        prefabNameObject = item.code;
+                        controllerData.lastPrefabName = item.code;                    
+                    }
+                    /*
+                    foreach (GameTeamDataItem item in team.data.models) {
+                        prefabName = item.code;
+                        prefabNameObject = item.code;
+                        controllerData.lastPrefabName = item.code;
+                        break;
+                    }
+*/
+                }
+            }            
         }
 
         string path = 
@@ -1025,7 +1052,7 @@ public class BaseGamePlayerController : GameActor {
         //Debug.Log("LoadCharacter:prefabObject:" + prefabObject != null);
 
         if (prefabObject != null) {
-            if(gamePlayerModelHolderModel.transform.childCount > 0) {
+            if (gamePlayerModelHolderModel.transform.childCount > 0) {
                 // Remove all current characters
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
                     // Pool safely destroys either way
@@ -1036,33 +1063,13 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
 
-            if(!IsPlayerControlled) {
-                // apply team 
-                
-                GameTeam team = GameTeams.Current;
-
-                // TODO randomize
-                
-                if(team != null) {
-                    if(team.data != null) {
-                        foreach(GameTeamDataItem item in team.data.models) {
-                            prefabName = item.code;
-                            prefabNameObject = item.code;
-                            controllerData.lastPrefabName = item.code;
-                            break;
-                        }
-                    }
-                }
-                
-            }
-
             GameObject gameObjectLoad = GameObjectHelper.CreateGameObject(
                 prefabObject, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
 
             if (gameObjectLoad != null) {           
 
                 if (IsPlayerControlled) {                    
-                    if(!gameObjectLoad.Has<GameCustomPlayer>()) {
+                    if (!gameObjectLoad.Has<GameCustomPlayer>()) {
                         gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
                     }
                     else {
@@ -1070,7 +1077,7 @@ public class BaseGamePlayerController : GameActor {
                     }
                 }
                 else {
-                    if(!gameObjectLoad.Has<GameCustomEnemy>()) {
+                    if (!gameObjectLoad.Has<GameCustomEnemy>()) {
                         gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
                     }
                     else {
@@ -1079,37 +1086,22 @@ public class BaseGamePlayerController : GameActor {
                 }
                 
                 
-                if(!IsPlayerControlled) {
+                if (!IsPlayerControlled) {
                     // apply team 
 
                     GameTeam team = GameTeams.Current;
 
-                    if(team != null) {
-                        if(team.data != null) {
+                    if (team != null) {
+                        if (team.data != null) {
                                                         
                             GameCustomInfo customInfo = new GameCustomInfo();
-                            customInfo.type = GameCustomTypes.customType;
-                            
-                            foreach(GameTeamDataItem item in team.data.color_presets) {
-                                customInfo.presetColorCode = item.code;
-                            }
-                            
-                            foreach(GameTeamDataItem item in team.data.texture_presets) {
-                                customInfo.presetTextureCode = item.code;
-                            }
+                            customInfo.type = GameCustomTypes.explicitType;
+                            customInfo.teamCode = team.code;
                             
                             gameCustomEnemy.Load(customInfo);
                         }
                     }
                     
-                }
-
-
-                if(gameCustomPlayer != null) {
-                    //GameCustomInfo customInfo = new GameCustomInfo();
-                    //customInfo.type = "default";
-                    //customInfo.presetColorCode = "game-nfl-broncos";
-                    //gameCustomPlayer.Load();
                 }
 
                 gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
@@ -1136,9 +1128,6 @@ public class BaseGamePlayerController : GameActor {
                 if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
                     gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
                 }
-
-                // TODO ENEMIES
-                //GameCustomController.SetCustomColorsEnemy(gameObject);
             }
         }
              
@@ -1394,9 +1383,9 @@ public class BaseGamePlayerController : GameActor {
                     // TODO make name recursion by depth limit, for now check three above.
                     string parentParentName = "";
                     string parentParentParentName = "";
-                    if(t.parent.parent != null) {
+                    if (t.parent.parent != null) {
                         parentParentName = t.parent.parent.name;                        
-                        if(t.parent.parent.parent != null) {
+                        if (t.parent.parent.parent != null) {
                             parentParentParentName = t.parent.parent.parent.name;
                         }
                     }
@@ -1410,9 +1399,9 @@ public class BaseGamePlayerController : GameActor {
                     bool isPlayerObject = 
                         parentName.Contains("HelmetContainer")
                         || parentName.Contains("Helmet")
-                            || parentName.Contains("Facemask")
-                            || t.name.Contains("Helmet")
-                            || t.name.Contains("Facemask")
+                        || parentName.Contains("Facemask")
+                        || t.name.Contains("Helmet")
+                        || t.name.Contains("Facemask")
                         || parentName.Contains("HitCollider")
                         || parentName.Contains("GamePlayerCollider");
                     //|| t.name.Contains("GamePlayerObject")
@@ -1642,6 +1631,10 @@ public class BaseGamePlayerController : GameActor {
     // --------------------------------------------------------------------
     // STATE/RESET
 
+    public virtual void ResetPositionDie() {        
+        gameObject.transform.position = gameObject.transform.position.WithY(0f);
+    }
+
     public virtual void ResetPosition() {
 
         foreach (Transform t in gamePlayerModelHolderModel.transform) {
@@ -1652,7 +1645,7 @@ public class BaseGamePlayerController : GameActor {
             t.rotation = Quaternion.Euler(0f, 180f, 0f);
         }
 
-        transform.position = Vector3.zero.WithY(1.5f);
+        //transform.position = Vector3.zero.WithY(1.5f);
     }
          
     public virtual void Reset() {
@@ -2209,24 +2202,23 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        //if (Time.time + 3f > controllerData.lastDie) {
-        //    controllerData.lastDie = Time.time;
-        //}
-        //else {
-        //    return;
-        //}
-
+        if (controllerData.lastDie + 3f < Time.time) {
+            controllerData.lastDie = Time.time;
+        }
+        else {
+            return;
+        }
+                     
+        if (isDead && controllerData.dying) {
+            return;
+        }
+                
         if (controllerData.thirdPersonController != null) {
             controllerData.thirdPersonController.controllerData.removing = true;
         }
-                     
-        if (isDead || controllerData.dying) {
-            return;
-        }
-
-        StopNavAgent();
         
         controllerData.gamePlayerControllerAnimation.DidDie();
+                
 
         controllerData.dying = true;
 
@@ -2250,6 +2242,10 @@ public class BaseGamePlayerController : GameActor {
         runtimeData.health = 0;
      
         AudioDie();
+        
+        StopNavAgent();
+        
+        ResetPositionDie();
      
         // TODO FADE OUT CLEANLY
         /*
@@ -2894,7 +2890,7 @@ public class BaseGamePlayerController : GameActor {
      
         uuid = uniqueId;
         
-        if(!GameConfigs.networkEnabled) {
+        if (!GameConfigs.networkEnabled) {
             return;
         }
      
@@ -2914,7 +2910,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uniqueId) {
      
-        if(!GameConfigs.networkEnabled) {
+        if (!GameConfigs.networkEnabled) {
             return null;
         }
      
@@ -3180,10 +3176,10 @@ public class BaseGamePlayerController : GameActor {
                 if (controllerData.navMeshAgent != null) {
                     //controllerData.navMeshAgent.enabled = false;
                     //if(!IsPlayerControlled) {
-                        controllerData.navMeshAgent.height = 3.19f;
-                        controllerData.navMeshAgent.radius = 1.29f;
-                        controllerData.navMeshAgent.baseOffset = -0.30f;
-                        controllerData.navMeshAgent.stoppingDistance = 3f;
+                    controllerData.navMeshAgent.height = 3.19f;
+                    controllerData.navMeshAgent.radius = 1.29f;
+                    controllerData.navMeshAgent.baseOffset = -0.30f;
+                    controllerData.navMeshAgent.stoppingDistance = 3f;
                     //}
                     
                     controllerData.navMeshAgent.speed = 
@@ -3376,7 +3372,7 @@ public class BaseGamePlayerController : GameActor {
              }
          }
          */
-            if(isDead) {
+            if (isDead) {
                 controllerData.navAgentRunning = true;
             }
         }
@@ -3433,7 +3429,7 @@ public class BaseGamePlayerController : GameActor {
             //}
          
             if (runtimeData != null) {
-                if (runtimeData.hitCount > UnityEngine.Random.Range(2,4)) {
+                if (runtimeData.hitCount > UnityEngine.Random.Range(2, 4)) {
                     Die();
                 }
             }            
@@ -3564,7 +3560,7 @@ public class BaseGamePlayerController : GameActor {
 
                 // check distance for evades
 
-                if(lastStateEvaded > .3f) {
+                if (lastStateEvaded > .3f) {
 
                     lastStateEvaded += Time.deltaTime;
 
@@ -3586,7 +3582,7 @@ public class BaseGamePlayerController : GameActor {
                     }
                 }
 
-                    // check attack/lunge range
+                // check attack/lunge range
 
                 if (controllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
                     //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {

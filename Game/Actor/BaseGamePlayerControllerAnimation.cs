@@ -366,6 +366,8 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
                      
         }
+
+        ResetPlayState();
      
         animationData.isRunning = true;
         animationData.isDead = false;
@@ -504,27 +506,16 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     }
  
     public virtual void FindAnimatedActor() {
-        if(animationData.actor != null) {       
-
-  
+        if(animationData.actor != null) {
             
             // MECANIM
             if(animationData.animator == null) {
-
-                if(!animationData.gamePlayerController.IsPlayerControlled) {
-                    Debug.Log("FindAnimatedActor");
-                }
-
                 foreach(Animator anim in animationData.actor.GetComponentsInChildren<Animator>()) {
                     animationData.animator = anim;
                     animationData.actor = anim.gameObject;
                     animationType = GamePlayerControllerAnimationType.mecanim;
                     animationData.avatar = anim.avatar;
                     animationData.animationController = anim.runtimeAnimatorController;
-                    
-                    if(!animationData.gamePlayerController.IsPlayerControlled) {
-                        Debug.Log("FindAnimatedActor:found animator:");
-                    }
                     break;
                 }
             }
@@ -532,17 +523,9 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             // LEGACY TYPE
             if(animationData.actor.animation == null && animationData.animator == null) {
 
-                if(!animationData.gamePlayerController.IsPlayerControlled) {
-                    Debug.Log("FindAnimatedActor");
-                }
-
                 foreach(Animation anim in animationData.actor.GetComponentsInChildren<Animation>()) {
                     animationData.actor = anim.gameObject;
                     animationType = GamePlayerControllerAnimationType.legacy;
-                    
-                    if(!animationData.gamePlayerController.IsPlayerControlled) {
-                        Debug.Log("FindAnimatedActor:found legacy:");
-                    }
                     break;
                 }
             }
@@ -1157,13 +1140,14 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         else {
             
             if(animationData.animator != null) {
-                //if(!animationData.isDead) {
-                HandleAnimatorState();
-                animationData.animator.SetFloat(GamePlayerAnimationType.death, 1f);
-                animationData.isDead = true;
+                if(!animationData.isDead) {
+                    HandleAnimatorState();
+                    animationData.isRunningClampAnimation = true;
+                    PauseAnimationUpdate(.5f);
+                    animationData.animator.SetFloat(GamePlayerAnimationType.death, 1f);
+                    animationData.isDead = true;
+                }                
             }
-                
-            //}
         }
     }
 
