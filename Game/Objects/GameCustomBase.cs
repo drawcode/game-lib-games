@@ -134,16 +134,12 @@ public class GameCustomBase : MonoBehaviour {
     */
 
     public virtual void Load(GameCustomInfo customInfoTo) {
-        Change(customInfo);
+        Change(customInfoTo);
     }
 
     public virtual void Change(GameCustomInfo customInfoTo) {
 
         customInfo = customInfoTo;      
-
-        if(customInfo == null) {
-            Init();
-        }
 
         //Debug.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
 
@@ -156,13 +152,12 @@ public class GameCustomBase : MonoBehaviour {
 
             if(!string.IsNullOrEmpty(customInfo.teamCode)
                && customInfo.teamCode != "default") {
-
+                
+                //Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                 GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
 
                 if(team != null) {
-                    
-                    Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                     if(team.data != null) {
                         
@@ -378,9 +373,9 @@ public class GameCustomBase : MonoBehaviour {
             
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
             
-            Debug.Log("HandleCustomPlayerColor:changing:" + 
-                      " lastCustomColorCode:" + lastCustomTextureCode + 
-                      " customInfo.presetColorCode:" + customInfo.presetTextureCode);
+            //Debug.Log("HandleCustomPlayerColor:changing:" + 
+            //          " lastCustomColorCode:" + lastCustomTextureCode + 
+            //          " customInfo.presetColorCode:" + customInfo.presetTextureCode);
                 
             AppContentAssetTexturePreset preset = 
                 AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
@@ -408,9 +403,9 @@ public class GameCustomBase : MonoBehaviour {
             
             //if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
 
-            Debug.Log("HandleCustomPlayerColor:changing:" + 
-                      " lastCustomColorCode:" + lastCustomColorCode + 
-                      " customInfo.presetColorCode:" + customInfo.presetColorCode);
+            //Debug.Log("HandleCustomPlayerColor:changing:" + 
+            //          " lastCustomColorCode:" + lastCustomColorCode + 
+             //         " customInfo.presetColorCode:" + customInfo.presetColorCode);
 
                 // load from current code
                 GameCustomController.UpdateColorPresetObject(

@@ -1251,8 +1251,8 @@ public class BaseGameController : MonoBehaviour {
         string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
         GameController.CurrentGamePlayerController.LoadCharacter(characterSkinCode);
     
-        GameCustomController.SetCustomColorsPlayer(
-            GameController.CurrentGamePlayerController.gameObject);
+        //GameCustomController.SetCustomColorsPlayer(
+        //    GameController.CurrentGamePlayerController.gameObject);
     }
     
     public virtual void loadCharacterStartLevel(string characterCode, string levelCode) {
@@ -2922,11 +2922,11 @@ public class BaseGameController : MonoBehaviour {
         else {
             if(GameController.CurrentGamePlayerController != null) {
 				
-				if(GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
+				if(GameController.CurrentGamePlayerController.thirdPersonController != null) {
+                    GameController.CurrentGamePlayerController.thirdPersonController.verticalInput = 0f;
+                    GameController.CurrentGamePlayerController.thirdPersonController.horizontalInput = 0f;
+                    GameController.CurrentGamePlayerController.thirdPersonController.verticalInput2 = 0f;
+                    GameController.CurrentGamePlayerController.thirdPersonController.horizontalInput2 = 0f;
 				}
             }
         }

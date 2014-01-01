@@ -268,6 +268,8 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         //Debug.Log("ShowOverview:");
 
+        GameCustomController.BroadcastCustomColorsChanged();
+
         if(gameCustomPlayer == null) {
             gameCustomPlayer = gameObject.Get<GameCustomPlayer>();
             
@@ -288,7 +290,7 @@ public class UIPanelOverviewMode : UIPanelBase {
             UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
 
             if(gameCustomPlayer != null) {
-                gameCustomPlayer.Init();
+                //gameCustomPlayer.Init();
             }
 
             if(gameCustomEnemy != null) {
@@ -297,7 +299,7 @@ public class UIPanelOverviewMode : UIPanelBase {
                 customInfo.actorType = GameCustomActorTypes.enemyType;
                 customInfo.presetColorCode = team.GetColorPresetCode();
                 customInfo.presetTextureCode = team.GetTexturePresetCode();
-                customInfo.presetType = GameCustomTypes.teamType;
+                customInfo.type = GameCustomTypes.teamType;
                 customInfo.teamCode = team.code;
                 gameCustomEnemy.Load(customInfo);
             }
