@@ -27,9 +27,20 @@ public class BaseGamePlayerUI : MonoBehaviour {
     public float h = 0;
     public float v = 0;
     public float u = 0;
+
+    public bool runOnly = false;
 	
 	public virtual void Start() {
-		
+		if(runOnly) {
+            foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
+                anim.SetFloat("speed", .9f);
+                anim.SetFloat("strafe", .05f);
+                anim.SetFloat("jump", .05f);
+                anim.SetFloat("death", 0f);
+                anim.SetFloat("hit", 0f);
+                anim.SetFloat("attack", 0f);
+            }
+        }
 	}
 	
 	public virtual void RunAnimations() {
@@ -60,6 +71,9 @@ public class BaseGamePlayerUI : MonoBehaviour {
     	//		RunAnimations();
     	//	}
         //}
+        if(runOnly) {
+            return;
+        }
 		
 		currentTimeBlock += Time.deltaTime;		
 		
