@@ -277,16 +277,20 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         Reset();
     }
      
-    public virtual void ResetPlayState() {
-        animationData.isDead = false;
-     
+    public virtual void ResetPlayState() {     
         if(!isLegacy && animationData.animator != null) {
-            animationData.animator.SetFloat(GamePlayerAnimationType.speed, 1f);
+            animationData.animator.SetFloat(GamePlayerAnimationType.speed, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.death, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.strafe, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.jump, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.attack, 0f);
             animationData.animator.SetFloat(GamePlayerAnimationType.hit, 0f);
+        }
+    }
+
+    public virtual void HandleAnimatorState() {        
+        if(!isLegacy && animationData.animator != null) {
+            ResetPlayState();
         }
     }
  
@@ -1151,11 +1155,15 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
             }
         }
         else {
-            if(!animationData.isDead) {
-                animationData.animator.SetFloat(GamePlayerAnimationType.speed, 0f);
+            
+            if(animationData.animator != null) {
+                //if(!animationData.isDead) {
+                HandleAnimatorState();
                 animationData.animator.SetFloat(GamePlayerAnimationType.death, 1f);
                 animationData.isDead = true;
             }
+                
+            //}
         }
     }
 

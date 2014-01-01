@@ -1044,11 +1044,13 @@ public class BaseGamePlayerController : GameActor {
                 // TODO randomize
                 
                 if(team != null) {
-                    foreach(GameTeamDataItem item in team.data.models) {
-                        prefabName = item.code;
-                        prefabNameObject = item.code;
-                        controllerData.lastPrefabName = item.code;
-                        break;
+                    if(team.data != null) {
+                        foreach(GameTeamDataItem item in team.data.models) {
+                            prefabName = item.code;
+                            prefabNameObject = item.code;
+                            controllerData.lastPrefabName = item.code;
+                            break;
+                        }
                     }
                 }
                 
@@ -1083,18 +1085,21 @@ public class BaseGamePlayerController : GameActor {
                     GameTeam team = GameTeams.Current;
 
                     if(team != null) {
-                        GameCustomInfo customInfo = new GameCustomInfo();
-                        customInfo.type = GameCustomTypes.customType;
-
-                        foreach(GameTeamDataItem item in team.data.color_presets) {
-                            customInfo.presetColorCode = item.code;
+                        if(team.data != null) {
+                                                        
+                            GameCustomInfo customInfo = new GameCustomInfo();
+                            customInfo.type = GameCustomTypes.customType;
+                            
+                            foreach(GameTeamDataItem item in team.data.color_presets) {
+                                customInfo.presetColorCode = item.code;
+                            }
+                            
+                            foreach(GameTeamDataItem item in team.data.texture_presets) {
+                                customInfo.presetTextureCode = item.code;
+                            }
+                            
+                            gameCustomEnemy.Load(customInfo);
                         }
-                        
-                        foreach(GameTeamDataItem item in team.data.texture_presets) {
-                            customInfo.presetTextureCode = item.code;
-                        }
-
-                        gameCustomEnemy.Load(customInfo);
                     }
                     
                 }
@@ -2204,20 +2209,22 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (Time.time + 3f > controllerData.lastDie) {
-            controllerData.lastDie = Time.time;
-        }
-        else {
-            return;
-        }
+        //if (Time.time + 3f > controllerData.lastDie) {
+        //    controllerData.lastDie = Time.time;
+        //}
+        //else {
+        //    return;
+        //}
 
         if (controllerData.thirdPersonController != null) {
             controllerData.thirdPersonController.controllerData.removing = true;
         }
                      
-        if (isDead && controllerData.dying) {
+        if (isDead || controllerData.dying) {
             return;
         }
+
+        StopNavAgent();
         
         controllerData.gamePlayerControllerAnimation.DidDie();
 
@@ -2230,21 +2237,17 @@ public class BaseGamePlayerController : GameActor {
             GamePlayerProgress.SetStatKills(1f);
         }
      
-        if (controllerData.gamePlayerControllerAnimation != null) {
-            controllerData.gamePlayerControllerAnimation.animationData.isDead = true;
-        }
-     
-        //if(controllerState == GamePlayerControllerState.ControllerAgent) {
-        StopNavAgent();
-        //}
-     
+        /*
         if (gamePlayerEffectDeath != null) {
             gamePlayerEffectDeath.Emit(1);
         }
+        */
      
         if (IsPlayerControlled) {
             PlayerEffectWarpFadeIn();
         }
+                
+        runtimeData.health = 0;
      
         AudioDie();
      
@@ -2262,7 +2265,6 @@ public class BaseGamePlayerController : GameActor {
      
         Invoke("Remove", 3);
 
-        runtimeData.health = 0;
     }
 
     public virtual void StartNavAgent() {
@@ -3118,7 +3120,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData.characterController.stepOffset = .3f;
             controllerData.characterController.radius = 1.67f;
             controllerData.characterController.height = 2.42f;
-            controllerData.characterController.center = new Vector3(0f, .8f, 0f);
+            controllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
 
             
             // 
@@ -3177,12 +3179,12 @@ public class BaseGamePlayerController : GameActor {
 
                 if (controllerData.navMeshAgent != null) {
                     //controllerData.navMeshAgent.enabled = false;
-                    if(!IsPlayerControlled) {
+                    //if(!IsPlayerControlled) {
                         controllerData.navMeshAgent.height = 3.19f;
                         controllerData.navMeshAgent.radius = 1.29f;
-                        controllerData.navMeshAgent.baseOffset = -0.34f;
+                        controllerData.navMeshAgent.baseOffset = -0.30f;
                         controllerData.navMeshAgent.stoppingDistance = 3f;
-                    }
+                    //}
                     
                     controllerData.navMeshAgent.speed = 
                         10 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
@@ -3374,7 +3376,9 @@ public class BaseGamePlayerController : GameActor {
              }
          }
          */
-            controllerData.navAgentRunning = true;
+            if(isDead) {
+                controllerData.navAgentRunning = true;
+            }
         }
         else if (IsPlayerState()) {
             TurnOffNavAgent();

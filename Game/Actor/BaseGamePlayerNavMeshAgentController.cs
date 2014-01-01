@@ -23,10 +23,10 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
 	}	
 	
 	public virtual void StopAgent() {
-		if(agent != null) {
+        if(agent != null) {
+            agentState = GamePlayerNavMeshAgentState.STOP;
+            agent.destination = gameObject.transform.position;
             agent.Stop(true);
-			agentState = GamePlayerNavMeshAgentState.STOP;
-			agent.destination = gameObject.transform.position;
 		}
 	}
 	
@@ -76,7 +76,7 @@ public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
             return;
         }
 		
-		if(agent != null) {
+        if(agent != null && agentState == GamePlayerNavMeshAgentState.PURSUE) {
 			if(agent.remainingDistance <= 50f || agent.isPathStale) {
 				// get next destination
 				nextDestination = GetRandomLocation();
