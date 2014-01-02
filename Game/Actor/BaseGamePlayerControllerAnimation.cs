@@ -228,8 +228,7 @@ public class BaseGamePlayerControllerAnimationData {
     public AnimationState animationAttackAlt;
     public AnimationState animationAttackLeft;
     public AnimationState animationAttackRight;
-    
-    public Transform torso;
+
     public GameObject actor;
 }
 
@@ -271,7 +270,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
         animationData = new GamePlayerControllerAnimationData();
         
         animationData.gamePlayerController = GetComponent<GamePlayerController>();
-        animationData.thirdPersonController = animationData.gamePlayerController.thirdPersonController;
+        animationData.thirdPersonController = animationData.gamePlayerController.controllerData.thirdPersonController;
         animationData.navAgent = GetComponent<NavMeshAgent>();
 
         Reset();
@@ -505,7 +504,7 @@ public class BaseGamePlayerControllerAnimation : MonoBehaviour {
     public virtual void ResetAnimatedActor(GameObject actorItem) {
         animationData.actor = actorItem;
         animationData.animator = null;
-        FindAnimatedActor();
+        //FindAnimatedActor();
     }
  
     public virtual void FindAnimatedActor() {
