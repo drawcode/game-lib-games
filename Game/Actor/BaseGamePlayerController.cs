@@ -1155,16 +1155,16 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void LoadWeapons() {
  
-        //if(weapons == null) {
-        //   weapons = new Dictionary<string, GamePlayerWeapon>();
-        //}
+        if(weapons == null) {
+           weapons = new Dictionary<string, GamePlayerWeapon>();
+        }
      
-        //if(weapons.Count == 0) {
-        //   // Lock and load...
-        //   GamePlayerWeapon weapon = gameObject.AddComponent<GamePlayerWeapon>();
-        //   weapon.gameObject.transform.parent = gameObject.transform;
-        //   weapons.Add(GamePlayerSlots.slotPrimary, weapon);
-        //}
+        if(weapons.Count == 0) {
+           // Lock and load...
+           GamePlayerWeapon weapon = gameObject.AddComponent<GamePlayerWeapon>();
+           weapon.gameObject.transform.parent = gameObject.transform;
+           weapons.Add(GamePlayerSlots.slotPrimary, weapon);
+        }
      
         // TODO attach for now, determinswitching.
     }
@@ -2370,7 +2370,9 @@ public class BaseGamePlayerController : GameActor {
         yield return new WaitForSeconds(.5f);
         ActionAttack();
     }
- 
+     
+    public float attackDistance = 50f;
+
     public virtual void CastAttack() {       
              
         if (!GameConfigs.isGameRunning) {
@@ -2380,8 +2382,6 @@ public class BaseGamePlayerController : GameActor {
         // if (Physics.Linecast(transform.position, controllerData.thirdPersonController.aimingDirection)) {
             
         //}
-     
-        float distance = 3f;
      
         //if(prefabName.IndexOf("norah") > -1) {
         //   distance = 300f;
@@ -2400,8 +2400,8 @@ public class BaseGamePlayerController : GameActor {
             directionAttack = controllerData.thirdPersonController.aimingDirection;
         }        
      
-        Debug.DrawRay(transform.position, directionAttack * distance);
-        hits = Physics.RaycastAll(transform.position, directionAttack, distance);
+        Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
         int i = 0;
         while (i < hits.Length) {
             RaycastHit hit = hits[i];
