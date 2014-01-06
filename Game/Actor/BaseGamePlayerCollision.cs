@@ -25,6 +25,74 @@ public class BaseGamePlayerCollision : MonoBehaviour {
             CancelInvoke("FindPlayerCollisionParent");
 		}
 	}
+
+    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+
+    public virtual void OnParticleCollision(GameObject other) {
+        
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        if(lastCollision + intervalCollision < Time.time) {
+            //lastCollision = Time.time;
+        }
+        else {
+           // return;
+        }
+        
+        if(gamePlayerController != null) {
+
+            /*
+            ParticleSystem particleSystem;
+            particleSystem = other.GetComponent<ParticleSystem>();
+            int safeLength = particleSystem.safeCollisionEventSize;
+            if (collisionEvents.Length < safeLength)
+                collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+            
+            int numCollisionEvents = particleSystem.GetCollisionEvents(gameObject, collisionEvents);
+            int i = 0;
+            while (i < numCollisionEvents) {
+                if (gameObject.rigidbody) {
+                    Vector3 pos = collisionEvents[i].intersection;
+                    Vector3 force = collisionEvents[i].velocity * 10;
+                    gamePlayerController.gameObject.rigidbody.AddForce(force);
+                }
+                i++;
+            }
+            */
+
+            //if(gamePlayerController.IsPlayerControlled) {
+            //}
+            //else {
+
+                Debug.Log("OnParticleCollision:" + other.name);
+                
+                float power = .1f;
+                
+                gamePlayerController.runtimeData.health -= power;
+                
+                //contact.normal.magnitude
+                
+                gamePlayerController.Hit(power);
+
+                int safeLength = particleSystem.safeCollisionEventSize;
+                if (collisionEvents.Length < safeLength)
+                    collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+                
+                int numCollisionEvents = particleSystem.GetCollisionEvents(other, collisionEvents);
+                int i = 0;
+                while (i < numCollisionEvents) {
+                    if (other.rigidbody) {
+                        Vector3 pos = collisionEvents[i].intersection;
+                        Vector3 force = collisionEvents[i].velocity * 10;
+                    gamePlayerController.rigidbody.AddForce(force);
+                    }
+                    i++;
+                }
+            //}
+        }
+    }
 	
 	public virtual void OnCollisionEnter(Collision collision) {
 

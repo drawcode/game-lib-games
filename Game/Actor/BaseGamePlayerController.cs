@@ -1160,10 +1160,15 @@ public class BaseGamePlayerController : GameActor {
         }
      
         if(weapons.Count == 0) {
-           // Lock and load...
-           GamePlayerWeapon weapon = gameObject.AddComponent<GamePlayerWeapon>();
-           weapon.gameObject.transform.parent = gameObject.transform;
-           weapons.Add(GamePlayerSlots.slotPrimary, weapon);
+
+            foreach(GamePlayerWeapon weapon in gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+
+                //weapon.gameObject.transform.parent = gamePlayerModelHolderWeapons.transform;
+                weapons.Add(GamePlayerSlots.slotPrimary, weapon);
+                weaponPrimary = weapon;
+
+                break;
+            }
         }
      
         // TODO attach for now, determinswitching.
@@ -1512,6 +1517,77 @@ public class BaseGamePlayerController : GameActor {
     //   }
     //}
     // }
+
+    public float lastCollision = 0f;
+    public float intervalCollision = .2f;
+    
+    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+    
+    public virtual void OnParticleCollision(GameObject other) {
+        
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        if(lastCollision + intervalCollision < Time.time) {
+            //lastCollision = Time.time;
+        }
+        else {
+            // return;
+        }
+
+            
+            /*
+            ParticleSystem particleSystem;
+            particleSystem = other.GetComponent<ParticleSystem>();
+            int safeLength = particleSystem.safeCollisionEventSize;
+            if (collisionEvents.Length < safeLength)
+                collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+            
+            int numCollisionEvents = particleSystem.GetCollisionEvents(gameObject, collisionEvents);
+            int i = 0;
+            while (i < numCollisionEvents) {
+                if (gameObject.rigidbody) {
+                    Vector3 pos = collisionEvents[i].intersection;
+                    Vector3 force = collisionEvents[i].velocity * 10;
+                    gamePlayerController.gameObject.rigidbody.AddForce(force);
+                }
+                i++;
+            }
+            */
+            
+            //if(gamePlayerController.IsPlayerControlled) {
+            //}
+            //else {
+            
+            Debug.Log("OnParticleCollision:" + other.name);
+            
+            float power = .1f;
+            
+            runtimeData.health -= power;
+            
+            //contact.normal.magnitude
+            
+            Hit(power);
+            
+        /*
+            int safeLength = particleSystem.safeCollisionEventSize;
+            if (collisionEvents.Length < safeLength)
+                collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+            
+            int numCollisionEvents = particleSystem.GetCollisionEvents(other, collisionEvents);
+            int i = 0;
+            while (i < numCollisionEvents) {
+                if (other.rigidbody) {
+                    Vector3 pos = collisionEvents[i].intersection;
+                    Vector3 force = collisionEvents[i].velocity * 10;
+                    rigidbody.AddForce(force);
+                }
+                i++;
+            }
+            */
+            //}
+    }
      
     public virtual void OnTriggerEnter(Collider collider) {
         // Check if we hit an actual destroyable sprite
