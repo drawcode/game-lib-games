@@ -88,6 +88,11 @@ public class BaseGamePlayerUI : MonoBehaviour {
     	//		RunAnimations();
     	//	}
         //}
+
+        if(GameConfigs.isGameRunning) {
+            return;
+        }
+
         if(runOnly) {
 
             if(runOnly && !running) {
