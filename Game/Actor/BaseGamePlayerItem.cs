@@ -45,7 +45,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     public bool allowCollect = false;
     public bool isCollecting = false;
     public float collectRange = 3f;
-        
+               
     public virtual void Awake() {
         bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);
         bobHeight = Mathf.Clamp(bobHeight, 0, 100);             
@@ -53,12 +53,32 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     }
         
     public virtual void Start() {
+        Reset();
+    }
+
+    public virtual void Reset() {
+        uuid = "";
+        title = "";
+        description = "";
+        pointValue = 1.0;
+        type = GamePlayerItemType.Generic;
+        positionEnd = Vector3.zero;
+        floaty = true;
+        collectRange = 3f;
+
         if(cameraTransform == null) {
             if(Camera.main != null) {
                 cameraTransform = Camera.main.transform;
             }
         }
+        
+        allowCollect = false;
+        isCollecting = false;
                 
+        bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);
+        bobHeight = Mathf.Clamp(bobHeight, 0, 100);             
+        bottom = transform.position.y;
+        
         ResetContent();
         RevealCollect(UnityEngine.Random.Range(0f, 2f));
     }

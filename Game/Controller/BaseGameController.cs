@@ -442,6 +442,15 @@ public class BaseGameController : MonoBehaviour {
     
     public GameZones currentGameZone = GameZones.right;
 
+    // CAMERAs
+
+    public List<Camera> camerasAlwaysOn;
+    public List<Camera> camerasGame;
+    public List<Camera> camerasUI;
+    public GameObject camerasContainerGame;
+    public GameObject cameraContainersUI;
+    public GameObject cameraContainersAlwaysOn;
+
     // ----------------------------------------------------------------------
 
     public virtual void Awake() {
@@ -455,6 +464,8 @@ public class BaseGameController : MonoBehaviour {
     public virtual void Init() {
 
         GameController.Reset();
+
+        GameController.InitCameras();
 
         foreach(GamePlayerController gamePlayerController in ObjectUtil.FindObjects<GamePlayerController>()) {
             if(gamePlayerController.uuid == UniqueUtil.Instance.currentUniqueId) {
@@ -2097,6 +2108,84 @@ public class BaseGameController : MonoBehaviour {
     // -------------------------------------------------------
     
     // GAME CAMERA
+    
+    public virtual void initCameras() {
+        
+        if(camerasAlwaysOn == null) {
+            camerasAlwaysOn = new List<Camera>();
+            
+            if(cameraContainersAlwaysOn != null) {
+                foreach(Camera cam 
+                        in cameraContainersAlwaysOn.GetComponentsInChildren<Camera>()) {
+                    if(!camerasAlwaysOn.Contains(cam)) {
+                        camerasAlwaysOn.Add(cam);
+                    }
+                }
+            }
+        }
+        
+        if(camerasGame == null) {
+            camerasGame = new List<Camera>();
+            if(camerasContainerGame != null) {
+                foreach(Camera cam 
+                        in camerasContainerGame.GetComponentsInChildren<Camera>()) {
+                    if(!camerasGame.Contains(cam)) {
+                        camerasGame.Add(cam);
+                    }
+                }
+            }
+        }
+        
+        if(camerasUI == null) {
+            camerasUI = new List<Camera>();
+            if(cameraContainersUI != null) {
+                foreach(Camera cam 
+                        in cameraContainersUI.GetComponentsInChildren<Camera>()) {
+                    if(!camerasUI.Contains(cam)) {
+                        camerasUI.Add(cam);
+                    }
+                }
+            }
+        }
+    }
+    
+    public virtual void showCameras(List<Camera> cams) {
+        StartCoroutine(showCamerasCo(cams));
+    }
+    
+    public virtual void hideCameras(List<Camera> cams) {
+        StartCoroutine(hideCamerasCo(cams));
+    }
+
+    public virtual IEnumerator showCamerasCo(List<Camera> cams) {
+
+        foreach(Camera cam in cams) {            
+            cam.gameObject.Show();
+            cam.gameObject.FadeTo(1f, .5f, .5f);
+        }
+        yield return new WaitForSeconds(2f);       
+    }
+    
+    public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
+        foreach(Camera cam in cams) {
+            cam.gameObject.FadeTo(0f, 1f, .5f);
+        }
+        yield return new WaitForSeconds(2f);
+        
+        foreach(Camera cam in cams) {  
+            cam.gameObject.Hide();
+        }
+    }
+    
+    public virtual void handleCamerasInGame() {
+        GameController.ShowCameras(camerasGame);
+        GameController.HideCameras(camerasUI);
+    }
+
+    public virtual void handleCamerasInUI() {
+        GameController.HideCameras(camerasGame);
+        GameController.ShowCameras(camerasUI);
+    }
     
     public virtual void changeGameCameraMode(GameCameraView cameraViewTo) {
         if(cameraViewTo == cameraView) {

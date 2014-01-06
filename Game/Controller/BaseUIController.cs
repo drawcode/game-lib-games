@@ -1741,6 +1741,8 @@ public class BaseUIController : MonoBehaviour {
         }
      
         HandleInGameAudio();
+        
+        GameController.HandleCamerasInGame();
             
     }
     
@@ -1755,6 +1757,8 @@ public class BaseUIController : MonoBehaviour {
         uiVisible = true;        
         hideGameCanvas();        
         HandleInUIAudio();
+        
+        GameController.HandleCamerasInUI();
     }   
      
     // ------------------------------------------------------------
