@@ -248,12 +248,16 @@ public class GameLevelGridData {
 
     public static GameLevelGridData GetBaseDefault() {
 
+        return GameLevels.GetLevelGridBaseDefault();
+
+        /*
         GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "barrel-1", UnityEngine.Random.Range(4,8));
+        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
         data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
         data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
 
         return data;
+        */
     }
 
     public static GameLevelGridData GetDefault() {
