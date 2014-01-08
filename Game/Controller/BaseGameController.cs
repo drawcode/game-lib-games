@@ -208,14 +208,14 @@ public class BaseGameGameRuntimeData {
 }
 
 public class GameLevelGridData {
-    public float gridHeight = 1f;
-    public float gridWidth = 120f;
-    public float gridDepth = 120f;
-    public float gridBoxSize = 4f;
+    public float gridHeight = GameLevels.gridHeight;
+    public float gridWidth = GameLevels.gridWidth;
+    public float gridDepth = GameLevels.gridDepth;
+    public float gridBoxSize = GameLevels.gridBoxSize;
 
-    public bool centeredX = true;
-    public bool centeredY = false;
-    public bool centeredZ = true;
+    public bool centeredX = GameLevels.centeredX;
+    public bool centeredY = GameLevels.centeredY;
+    public bool centeredZ = GameLevels.centeredZ;
 
     public List<AppContentAsset> assets;
 
