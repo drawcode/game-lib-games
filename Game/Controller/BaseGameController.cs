@@ -209,8 +209,8 @@ public class BaseGameGameRuntimeData {
 
 public class GameLevelGridData {
     public float gridHeight = 1f;
-    public float gridWidth = 45f;
-    public float gridDepth = 30f;
+    public float gridWidth = 120f;
+    public float gridDepth = 120f;
     public float gridBoxSize = 4f;
 
     public bool centeredX = true;
@@ -226,13 +226,13 @@ public class GameLevelGridData {
     }
 
     public void Reset() {
-        ResetGrid(1, 45, 30);
+        ResetGrid((int)gridHeight, (int)gridWidth, (int)gridDepth);
         ClearAssets();
         ClearMap();
     }
 
     public void ResetGrid(int height, int width, int depth) {
-        ResetGrid(height, width, depth, 4, true, false, true);
+        ResetGrid(height, width, depth, (int)gridBoxSize, true, false, true);
     }
 
     public void ResetGrid(int height, int width, int depth, int boxSize, bool centerX, bool centerY, bool centerZ) {
