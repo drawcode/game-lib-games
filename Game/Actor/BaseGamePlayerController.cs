@@ -1121,12 +1121,12 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.position = Vector3.zero;
                 gameObjectLoad.transform.localPosition = Vector3.zero;
                 gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
-                //gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
+                gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                 
                 //Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
                 foreach (Transform t in gameObjectLoad.transform) {
-                    t.localRotation = gamePlayerModelHolderModel.transform.rotation;
+                    //t.localRotation = gamePlayerModelHolderModel.transform.rotation;
                     GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
                                                      t.gameObject, "bot1");
                     break;
@@ -1740,7 +1740,7 @@ public class BaseGamePlayerController : GameActor {
             t.localPosition.Reset();
             t.rotation.Reset();
             t.localRotation.Reset();
-            t.rotation = Quaternion.Euler(0f, 180f, 0f);
+            t.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
 
         //transform.position = Vector3.zero.WithY(1.5f);
