@@ -456,7 +456,9 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void LongPressObject(GameObject go, Vector2 pos) {
         if(go != null) {
-            go.rigidbody.angularVelocity = Vector3.zero;
+            if(go.rigidbody != null) {
+                go.rigidbody.angularVelocity = Vector3.zero;
+            }
             deferTap = true;
 
             //ResetObject(go);
