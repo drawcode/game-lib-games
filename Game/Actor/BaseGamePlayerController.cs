@@ -372,7 +372,7 @@ public class BaseGamePlayerController : GameActor {
      
         LoadCharacter(prefabName);  
 
-        LoadWeapons();
+        //LoadWeapons();
      
         // Add weapons and modifiers
      
@@ -1152,26 +1152,75 @@ public class BaseGamePlayerController : GameActor {
  
     // --------------------------------------------------------------------
     // WEAPONS   
+
+    public List<string> weaponInventory;    
+    public int weaponInventoryIndex = 0;
+
+    public virtual void LoadInventory() {
+
+        Debug.Log("LoadInventory");
+    
+        if(weaponInventory == null) {
+            weaponInventory = new List<string>();
+        }
+
+        weaponInventory.Clear();
+
+        weaponInventory.Add("weapon-flame-thrower-1");
+        weaponInventory.Add("weapon-machine-gun-1");
+    }
+
+    
+    public virtual void UnloadWeapons() {
+        if(gamePlayerModelHolderWeapons != null) {
+            gamePlayerModelHolderWeapons.DestroyChildren();
+        }
+        
+        if(weapons == null) {
+            weapons = new Dictionary<string, GamePlayerWeapon>();
+        }
+
+        weapons.Clear();
+    }
  
     public virtual void LoadWeapons() {
- 
-        if(weapons == null) {
-           weapons = new Dictionary<string, GamePlayerWeapon>();
+        
+        Debug.Log("LoadWeapons");
+
+        LoadInventory();
+
+        LoadWeapon(weaponInventory[weaponInventoryIndex]);
+    }
+
+    public virtual void LoadWeapon(string code) {
+        
+        Debug.Log("LoadWeapon:code1:" + code);
+
+        GameObject go = AppContentAssets.LoadAsset("weapon", code);
+        
+        Debug.Log("LoadAsset:" + " go2:" + go != null);
+
+        if(go == null) {
+            return;
         }
-     
-        if(weapons.Count == 0) {
 
-            foreach(GamePlayerWeapon weapon in gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+        Debug.Log("LoadWeapon:code2:" + code);
+        
+        UnloadWeapons();
 
-                //weapon.gameObject.transform.parent = gamePlayerModelHolderWeapons.transform;
+        go.transform.parent = gamePlayerModelHolderWeapons.transform;
+                
+        if(go != null && weapons.Count == 0) {
+            
+            foreach(GamePlayerWeapon weapon in go.GetComponentsInChildren<GamePlayerWeapon>()) {
+                                
+                Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
+
                 weapons.Add(GamePlayerSlots.slotPrimary, weapon);
-                weaponPrimary = weapon;
-
+                weaponPrimary = weapon;                
                 break;
             }
         }
-     
-        // TODO attach for now, determinswitching.
     }
  
     // --------------------------------------------------------------------
