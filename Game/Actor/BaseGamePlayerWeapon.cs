@@ -214,7 +214,7 @@ public class BaseGamePlayerWeapon : GameActor {
 	public virtual void FixedUpdate () {
 	
 	}
-	
+
 	public virtual void OnTriggerEnter(Collider collider) {
 	
 	}
