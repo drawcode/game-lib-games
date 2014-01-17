@@ -1194,6 +1194,12 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void LoadWeapon(string code) {
         
+        UnloadWeapons();
+
+        if(!IsPlayerControlled) {
+            return;
+        }
+        
         Debug.Log("LoadWeapon:code1:" + code);
 
         GameObject go = AppContentAssets.LoadAsset("weapon", code);
@@ -1205,8 +1211,7 @@ public class BaseGamePlayerController : GameActor {
         }
 
         Debug.Log("LoadWeapon:code2:" + code);
-        
-        UnloadWeapons();
+
 
         go.transform.parent = gamePlayerModelHolderWeapons.transform;
                 
