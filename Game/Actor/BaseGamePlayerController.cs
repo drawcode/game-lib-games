@@ -1212,7 +1212,7 @@ public class BaseGamePlayerController : GameActor {
                 
         if(go != null && weapons.Count == 0) {
             
-            foreach(GamePlayerWeapon weapon in go.GetComponentsInChildren<GamePlayerWeapon>()) {
+            foreach(GamePlayerWeapon weapon in gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
                                 
                 Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
 
