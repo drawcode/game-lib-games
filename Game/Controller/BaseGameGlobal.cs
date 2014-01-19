@@ -350,12 +350,16 @@ public class BaseGameGlobal : MonoBehaviour {
     int screenshotCount = 1;
     
     public virtual void Update() {
+
+        AdNetworks.HandleAdUpdate();
+
         #if !UNITY_IPHONE       
         if (Input.GetKeyDown(KeyCode.Escape)) { 
             QuitGame();
             //if(AlertDialog.Instance.IsReady()) {
             //  AlertDialog.Instance.ShowAlertQuitDialog();
             //}
+
         }
         #endif
         

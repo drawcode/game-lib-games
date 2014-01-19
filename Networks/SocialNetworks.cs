@@ -44,10 +44,10 @@ public class SocialNetworks : MonoBehaviour {
 	public GameObject socialNetworkTwitterAndroid;
 	public GameObject socialNetworkiOS;
 		
-	public string FACEBOOK_APP_ID = GameCommunityConfig.socialFacebookAppId;// "133833223395676";
-	public string FACEBOOK_SECRET = GameCommunityConfig.socialFacebookSecret;//"133833223395676";
-	public string TWITTER_KEY = GameCommunityConfig.socialTwitterAppId;//"nQuQQSKCPg0uVl8Im1ykMQ";
-	public string TWITTER_SECRET = GameCommunityConfig.socialTwitterSecret;//;
+	public string FACEBOOK_APP_ID = AppConfigs.socialFacebookAppId;// "133833223395676";
+	public string FACEBOOK_SECRET = AppConfigs.socialFacebookSecret;//"133833223395676";
+	public string TWITTER_KEY = AppConfigs.socialTwitterAppId;//"nQuQQSKCPg0uVl8Im1ykMQ";
+	public string TWITTER_SECRET = AppConfigs.socialTwitterSecret;//;
 	
 	public static SocialNetworks Instance;	
 	[NonSerializedAttribute]
@@ -183,11 +183,11 @@ public class SocialNetworks : MonoBehaviour {
 	
 	// TODO cleanup...
 	public void loadSocialLibs() {		
-		if(GameCommunityConfig.featureEnableFacebook) {
+		if(AppConfigs.featureEnableFacebook) {
 			initFacebook();
 		}
 		
-		if(GameCommunityConfig.featureEnableTwitter) {
+		if(AppConfigs.featureEnableTwitter) {
 			initTwitter();
 		}
 		
@@ -280,7 +280,7 @@ public class SocialNetworks : MonoBehaviour {
 
 	public void showLoginFacebook() {
 		
-		var permissions = GameCommunityConfig.socialFacebookPermissionsRead;
+		var permissions = AppConfigs.socialFacebookPermissionsRead;
 		
 		dumpPermissionsToLog(permissions);
 		
@@ -311,10 +311,10 @@ public class SocialNetworks : MonoBehaviour {
 		* This is in the format fb319879304747058constructionBook
 		*/
 		
-		LogUtil.Log("Logging in facebook: urlscheme:" + GameCommunityConfig.appUrlScheme);
+		LogUtil.Log("Logging in facebook: urlscheme:" + AppConfigs.appUrlScheme);
 		
-		if(!string.IsNullOrEmpty(GameCommunityConfig.appUrlScheme)) {
-			FacebookBinding.loginWithReadPermissions(permissions, GameCommunityConfig.appUrlScheme);
+		if(!string.IsNullOrEmpty(AppConfigs.appUrlScheme)) {
+			FacebookBinding.loginWithReadPermissions(permissions, AppConfigs.appUrlScheme);
 		}
 		else {
 			FacebookBinding.loginWithReadPermissions(permissions);
@@ -375,7 +375,7 @@ public class SocialNetworks : MonoBehaviour {
 			}
 						
 			if(reauth && reAuthAttempts == 0) {
-				var permissions = GameCommunityConfig.socialFacebookPermissionsWrite;
+				var permissions = AppConfigs.socialFacebookPermissionsWrite;
 				
 				dumpPermissionsToLog(permissions);
 				
@@ -395,7 +395,7 @@ public class SocialNetworks : MonoBehaviour {
 				Invoke("ResetReAuthAttempts", 10);
 				
 			}
-			LogUtil.Log("getProfileDataFacebook: appUrlScheme: " + GameCommunityConfig.appUrlScheme);			
+			LogUtil.Log("getProfileDataFacebook: appUrlScheme: " + AppConfigs.appUrlScheme);			
 			LogUtil.Log("getProfileDataFacebook: key: " + SocialNetworksMessages.socialProfileData);
 			LogUtil.Log("getProfileDataFacebook: network: " + SocialNetworkTypes.facebook);
 			LogUtil.Log("getProfileDataFacebook: type: " + SocialNetworkDataTypes.profile);
