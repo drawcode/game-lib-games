@@ -91,6 +91,8 @@ public class AdNetworks : MonoBehaviour {
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
     public static AdNetworks Instance;
+
+    public bool tapjoyOpeningFullScreenAd = false;
     
     public void Awake() {
         
@@ -110,33 +112,243 @@ public class AdNetworks : MonoBehaviour {
     }
 
     void OnEnable() {
+        
+        // ------------
+        // CHARTBOOST
+
         // Listen to some interstitial-related events
         CBManager.didFailToLoadInterstitialEvent += chartboostDidFailToLoadInterstitialEvent;
         CBManager.didCloseInterstitialEvent += chartboostDidCloseInterstitialEvent;
         CBManager.didCacheInterstitialEvent += chartboostDidCacheInterstitialEvent;
         CBManager.didShowInterstitialEvent += chartboostDidShowInterstitialEvent;
-               
+        
+        // ------------
+        // VUNGLE
+
         Vungle.onAdViewedEvent += vungleOnAdViewedEvent;
         Vungle.onAdStartedEvent += vungleOnAdStartedEvent;
         Vungle.onAdEndedEvent += vungleOnAdEndedEvent;
+
+        // ------------
+        // TAPJOY
+
+        // Tapjoy Connect Events
+        TapjoyPlugin.connectCallSucceeded += tapjoyHandleTapjoyConnectSuccess;
+        TapjoyPlugin.connectCallFailed += tapjoyHandleTapjoyConnectFailed;
+        
+        // Tapjoy Virtual Currency Events
+        TapjoyPlugin.getTapPointsSucceeded += tapjoyHandleGetTapPointsSucceeded;
+        TapjoyPlugin.getTapPointsFailed += tapjoyHandleGetTapPointsFailed;
+        TapjoyPlugin.spendTapPointsSucceeded += tapjoyHandleSpendTapPointsSucceeded;
+        TapjoyPlugin.spendTapPointsFailed += tapjoyHandleSpendTapPointsFailed;
+        TapjoyPlugin.awardTapPointsSucceeded += tapjoyHandleAwardTapPointsSucceeded;
+        TapjoyPlugin.awardTapPointsFailed += tapjoyHandleAwardTapPointsFailed;
+        TapjoyPlugin.tapPointsEarned += tapjoyHandleTapPointsEarned;
+        
+        // Tapjoy Full Screen Ad Events
+        TapjoyPlugin.getFullScreenAdSucceeded += tapjoyHandleGetFullScreenAdSucceeded;
+        TapjoyPlugin.getFullScreenAdFailed += tapjoyHandleGetFullScreenAdFailed;
+        
+        // Tapjoy Display Ad Events
+        TapjoyPlugin.getDisplayAdSucceeded += tapjoyHandleGetDisplayAdSucceeded;
+        TapjoyPlugin.getDisplayAdFailed += tapjoyHandleGetDisplayAdFailed;
+        
+        // Tapjoy Video Ad Events
+        TapjoyPlugin.videoAdStarted += tapjoyHandleVideoAdStarted;
+        TapjoyPlugin.videoAdFailed += tapjoyHandleVideoAdFailed;
+        TapjoyPlugin.videoAdCompleted += tapjoyHandleVideoAdCompleted;
+        
+        // Tapjoy Ad View Closed Events
+        TapjoyPlugin.viewOpened += tapjoyHandleViewOpened;
+        TapjoyPlugin.viewClosed += tapjoyHandleViewClosed;
+        
+        // Tapjoy Show Offers Events
+        TapjoyPlugin.showOffersFailed += tapjoyHandleShowOffersFailed;
     }
     
     void OnDisable() {
+
+        // ------------
+        // CHARTBOOST
+
         // Remove event handlers
         CBManager.didFailToLoadInterstitialEvent -= chartboostDidFailToLoadInterstitialEvent;
         CBManager.didCloseInterstitialEvent -= chartboostDidCloseInterstitialEvent;
         CBManager.didCacheInterstitialEvent -= chartboostDidCacheInterstitialEvent;
         CBManager.didShowInterstitialEvent -= chartboostDidShowInterstitialEvent;
+        
+        // ------------
+        // VUNGLE
 
         Vungle.onAdViewedEvent -= vungleOnAdViewedEvent;
         Vungle.onAdStartedEvent -= vungleOnAdStartedEvent;
         Vungle.onAdEndedEvent -= vungleOnAdEndedEvent;
+        
+        // ------------
+        // TAPJOY
+                
+        // Tapjoy Connect Events
+        TapjoyPlugin.connectCallSucceeded -= tapjoyHandleTapjoyConnectSuccess;
+        TapjoyPlugin.connectCallFailed -= tapjoyHandleTapjoyConnectFailed;
+        
+        // Tapjoy Virtual Currency Events
+        TapjoyPlugin.getTapPointsSucceeded -= tapjoyHandleGetTapPointsSucceeded;
+        TapjoyPlugin.getTapPointsFailed -= tapjoyHandleGetTapPointsFailed;
+        TapjoyPlugin.spendTapPointsSucceeded -= tapjoyHandleSpendTapPointsSucceeded;
+        TapjoyPlugin.spendTapPointsFailed -= tapjoyHandleSpendTapPointsFailed;
+        TapjoyPlugin.awardTapPointsSucceeded -= tapjoyHandleAwardTapPointsSucceeded;
+        TapjoyPlugin.awardTapPointsFailed -= tapjoyHandleAwardTapPointsFailed;
+        TapjoyPlugin.tapPointsEarned -= tapjoyHandleTapPointsEarned;
+
+        // Tapjoy Full Screen Ad Events
+        TapjoyPlugin.getFullScreenAdSucceeded -= tapjoyHandleGetFullScreenAdSucceeded;
+        TapjoyPlugin.getFullScreenAdFailed -= tapjoyHandleGetFullScreenAdFailed;
+        
+        // Tapjoy Display Ad Events
+        TapjoyPlugin.getDisplayAdSucceeded -= tapjoyHandleGetDisplayAdSucceeded;
+        TapjoyPlugin.getDisplayAdFailed -= tapjoyHandleGetDisplayAdFailed;
+        
+        // Tapjoy Video Ad Events
+        TapjoyPlugin.videoAdStarted -= tapjoyHandleVideoAdStarted;
+        TapjoyPlugin.videoAdFailed -= tapjoyHandleVideoAdFailed;
+        TapjoyPlugin.videoAdCompleted -= tapjoyHandleVideoAdCompleted;
+        
+        // Tapjoy Ad View Closed Events
+        TapjoyPlugin.viewOpened -= tapjoyHandleViewOpened;
+        TapjoyPlugin.viewClosed -= tapjoyHandleViewClosed;
+        
+        // Tapjoy Show Offers Events
+        TapjoyPlugin.showOffersFailed -= tapjoyHandleShowOffersFailed;
     }
     
     public void Init() {        
         Invoke("admobInit", 1);
         Invoke("charboostInit", .5f);
         Invoke("vungleInit", .6f);
+        Invoke("tapjoyIni", .8f);
+    }
+    
+    // ----------------------------------------------------------------------
+    // TAPJOY - http://prime31.com/docs#comboVungle
+    
+    public void tapjoyInit() {
+
+        
+        // Enable logging.
+        TapjoyPlugin.EnableLogging(true);
+        // Connect to the Tapjoy servers.
+        if (Application.platform == RuntimePlatform.Android) {
+            TapjoyPlugin.RequestTapjoyConnect(
+                AppConfigs.publisherIdTapjoyAndroid, 
+                AppConfigs.publisherSecretTapjoyAndroid);
+        }
+        else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+            
+            Dictionary<String, String> dict = new Dictionary<String, String>();
+            dict.Add("TJC_OPTION_COLLECT_MAC_ADDRESS", TapjoyPlugin.MacAddressOptionOffWithVersionCheck);
+            TapjoyPlugin.RequestTapjoyConnect(
+                AppConfigs.publisherIdTapjoyiOS, 
+                AppConfigs.publisherSecretTapjoyiOS,
+                dict);                              
+        }
+        
+    }
+
+    // CONNECT
+    public void tapjoyHandleTapjoyConnectSuccess() {
+        Debug.Log("tapjoyHandleTapjoyConnectSuccess");
+    }
+    
+    public void tapjoyHandleTapjoyConnectFailed() {
+        Debug.Log("tapjoyHandleTapjoyConnectFailed");
+    }
+    
+    // VIRTUAL CURRENCY
+    void tapjoyHandleGetTapPointsSucceeded(int points) {
+        Debug.Log("tapjoyHandleGetTapPointsSucceeded: " + points);
+        //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
+    }
+    
+    public void tapjoyHandleGetTapPointsFailed() {
+        Debug.Log("tapjoyHandleGetTapPointsFailed");
+    }
+    
+    public void tapjoyHandleSpendTapPointsSucceeded(int points) {
+        Debug.Log("HandleSpendTapPointsSucceeded: " + points);
+        //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
+    }
+    
+    public void tapjoyHandleSpendTapPointsFailed() {
+        Debug.Log("HandleSpendTapPointsFailed");
+    }
+    
+    public void tapjoyHandleAwardTapPointsSucceeded() {
+        Debug.Log("HandleAwardTapPointsSucceeded");
+        //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
+    }
+    
+    public void tapjoyHandleAwardTapPointsFailed() {
+        Debug.Log("HandleAwardTapPointsFailed");
+    }
+    
+    public void tapjoyHandleTapPointsEarned(int points) {
+        Debug.Log("CurrencyEarned: " + points);
+        //tapPointsLabel = "Currency Earned: " + points;
+        
+        TapjoyPlugin.ShowDefaultEarnedCurrencyAlert();
+    }
+    
+    // FULL SCREEN ADS
+    public void tapjoyHandleGetFullScreenAdSucceeded() {
+        Debug.Log("HandleGetFullScreenAdSucceeded");
+        
+        TapjoyPlugin.ShowFullScreenAd();
+    }
+    
+    public void tapjoyHandleGetFullScreenAdFailed() {
+        Debug.Log("HandleGetFullScreenAdFailed");
+    }
+    
+    // DISPLAY ADS
+    public void tapjoyHandleGetDisplayAdSucceeded() {
+        Debug.Log("HandleGetDisplayAdSucceeded");
+        
+        if (!tapjoyOpeningFullScreenAd)
+            TapjoyPlugin.ShowDisplayAd();
+    }
+    
+    public void tapjoyHandleGetDisplayAdFailed() {
+        Debug.Log("HandleGetDisplayAdFailed");
+    }
+    
+    // VIDEO
+    public void tapjoyHandleVideoAdStarted() {
+        Debug.Log("HandleVideoAdStarted");
+    }
+    
+    public void tapjoyHandleVideoAdFailed() {
+        Debug.Log("HandleVideoAdFailed");
+    }
+    
+    public void tapjoyHandleVideoAdCompleted() {
+        Debug.Log("HandleVideoAdCompleted");
+    }
+    
+    // VIEW OPENED  
+    public void tapjoyHandleViewOpened(TapjoyViewType viewType) {
+        Debug.Log("HandleViewOpened of view type " + viewType.ToString());
+        tapjoyOpeningFullScreenAd = true;
+    }
+    
+    // VIEW CLOSED  
+    public void tapjoyHandleViewClosed(TapjoyViewType viewType) {
+        Debug.Log("HandleViewClosed of view type " + viewType.ToString());
+        tapjoyOpeningFullScreenAd = false;
+    }
+    
+    // OFFERS
+    public void tapjoyHandleShowOffersFailed() {
+        Debug.Log("HandleShowOffersFailed");
     }
     
     // ----------------------------------------------------------------------
@@ -233,11 +445,11 @@ public class AdNetworks : MonoBehaviour {
     
     public bool chartboostIsImpressionVisible() {
         return CBBinding.isImpressionVisible();
-    }    
+    }
     
     public void chartboostShowMoreApps() {
         CBBinding.showMoreApps();
-    }    
+    }
     
     public void chartboostTrackEvent(string eventIdentifier, double value, Dictionary<string,object> metaData) {
         //CBBinding.trackEvent(eventIdentifier, (float)value, metaData);
@@ -533,6 +745,7 @@ public class AdNetworks : MonoBehaviour {
         }
         
     }
+
     public static void SetVideoAdSoundEnabled(bool isEnabled) {
         if (Instance != null) {
             Instance.setVideoAdSoundEnabled(isEnabled);
@@ -560,10 +773,10 @@ public class AdNetworks : MonoBehaviour {
     }
 
     public void showVideoAd() {
-        if(vungleIsAdvertAvailable()) {
+        if (vungleIsAdvertAvailable()) {
             vungleDisplayAdvert(true);
         }
-    } 
+    }
 
     public static void ShowVideoAd(bool showCloseButtons) {
         if (Instance != null) {
@@ -572,10 +785,10 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showVideoAd(bool showCloseButtons) {
-        if(vungleIsAdvertAvailable()) {
+        if (vungleIsAdvertAvailable()) {
             vungleDisplayAdvert(showCloseButtons);
         }
-    } 
+    }
     
     public static void ShowVideoAdIncentivized(bool showCloseButton, string user) {
         if (Instance != null) {
@@ -584,7 +797,7 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showVideoAdIncentivized(bool showCloseButton, string user) {
-        if(vungleIsAdvertAvailable()) {
+        if (vungleIsAdvertAvailable()) {
             vungleDisplayIncentivizedAdvert(showCloseButton, user);
         }
     }
