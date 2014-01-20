@@ -208,14 +208,14 @@ public class BaseGameGameRuntimeData {
 }
 
 public class GameLevelGridData {
-    public float gridHeight = 1f;
-    public float gridWidth = 45f;
-    public float gridDepth = 30f;
-    public float gridBoxSize = 4f;
+    public float gridHeight = GameLevels.gridHeight;
+    public float gridWidth = GameLevels.gridWidth;
+    public float gridDepth = GameLevels.gridDepth;
+    public float gridBoxSize = GameLevels.gridBoxSize;
 
-    public bool centeredX = true;
-    public bool centeredY = false;
-    public bool centeredZ = true;
+    public bool centeredX = GameLevels.centeredX;
+    public bool centeredY = GameLevels.centeredY;
+    public bool centeredZ = GameLevels.centeredZ;
 
     public List<AppContentAsset> assets;
 
@@ -226,13 +226,13 @@ public class GameLevelGridData {
     }
 
     public void Reset() {
-        ResetGrid(1, 45, 30);
+        ResetGrid((int)gridHeight, (int)gridWidth, (int)gridDepth);
         ClearAssets();
         ClearMap();
     }
 
     public void ResetGrid(int height, int width, int depth) {
-        ResetGrid(height, width, depth, 4, true, false, true);
+        ResetGrid(height, width, depth, (int)gridBoxSize, true, false, true);
     }
 
     public void ResetGrid(int height, int width, int depth, int boxSize, bool centerX, bool centerY, bool centerZ) {
@@ -248,12 +248,16 @@ public class GameLevelGridData {
 
     public static GameLevelGridData GetBaseDefault() {
 
+        return GameLevels.GetLevelGridBaseDefault();
+
+        /*
         GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "barrel-1", UnityEngine.Random.Range(4,8));
+        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
         data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
         data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
 
         return data;
+        */
     }
 
     public static GameLevelGridData GetDefault() {

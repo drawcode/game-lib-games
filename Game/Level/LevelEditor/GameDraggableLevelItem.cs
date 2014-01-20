@@ -11,10 +11,13 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public GameObject gameLevelItemObject;
 	public GameObject dragHolder;
 	
-	public GameLevelItemAsset gameLevelItemAsset;		
+	public GameLevelItemAsset gameLevelItemAsset;	
+
+    public NavMeshAgent navAgent;
 			
 	void Awake() {
-		
+        //navAgent = gameObject.AddComponent<NavMeshAgent>();
+        //navAgent.
 	}
 	
 	public virtual void Start() {

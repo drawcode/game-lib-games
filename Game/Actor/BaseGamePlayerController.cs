@@ -372,7 +372,7 @@ public class BaseGamePlayerController : GameActor {
      
         LoadCharacter(prefabName);  
 
-        LoadWeapons();
+        //LoadWeapons();
      
         // Add weapons and modifiers
      
@@ -1121,12 +1121,12 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.position = Vector3.zero;
                 gameObjectLoad.transform.localPosition = Vector3.zero;
                 gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
-                //gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
+                gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                 
                 //Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
                 foreach (Transform t in gameObjectLoad.transform) {
-                    t.localRotation = gamePlayerModelHolderModel.transform.rotation;
+                    //t.localRotation = gamePlayerModelHolderModel.transform.rotation;
                     GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
                                                      t.gameObject, "bot1");
                     break;
@@ -1152,21 +1152,80 @@ public class BaseGamePlayerController : GameActor {
  
     // --------------------------------------------------------------------
     // WEAPONS   
+
+    public List<string> weaponInventory;    
+    public int weaponInventoryIndex = 0;
+
+    public virtual void LoadInventory() {
+
+        Debug.Log("LoadInventory");
+    
+        if(weaponInventory == null) {
+            weaponInventory = new List<string>();
+        }
+
+        weaponInventory.Clear();
+
+        weaponInventory.Add("weapon-flame-thrower-1");
+        weaponInventory.Add("weapon-machine-gun-1");
+    }
+
+    
+    public virtual void UnloadWeapons() {
+        if(gamePlayerModelHolderWeapons != null) {
+            gamePlayerModelHolderWeapons.DestroyChildren();
+        }
+        
+        if(weapons == null) {
+            weapons = new Dictionary<string, GamePlayerWeapon>();
+        }
+
+        weapons.Clear();
+    }
  
     public virtual void LoadWeapons() {
- 
-        if(weapons == null) {
-           weapons = new Dictionary<string, GamePlayerWeapon>();
+        
+        Debug.Log("LoadWeapons");
+
+        LoadInventory();
+
+        LoadWeapon(weaponInventory[weaponInventoryIndex]);
+    }
+
+    public virtual void LoadWeapon(string code) {
+        
+        UnloadWeapons();
+
+        if(!IsPlayerControlled) {
+            return;
         }
-     
-        if(weapons.Count == 0) {
-           // Lock and load...
-           GamePlayerWeapon weapon = gameObject.AddComponent<GamePlayerWeapon>();
-           weapon.gameObject.transform.parent = gameObject.transform;
-           weapons.Add(GamePlayerSlots.slotPrimary, weapon);
+        
+        Debug.Log("LoadWeapon:code1:" + code);
+
+        GameObject go = AppContentAssets.LoadAsset("weapon", code);
+        
+        Debug.Log("LoadAsset:" + " go2:" + go != null);
+
+        if(go == null) {
+            return;
         }
-     
-        // TODO attach for now, determinswitching.
+
+        Debug.Log("LoadWeapon:code2:" + code);
+
+
+        go.transform.parent = gamePlayerModelHolderWeapons.transform;
+                
+        if(go != null && weapons.Count == 0) {
+            
+            foreach(GamePlayerWeapon weapon in gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+                                
+                Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
+
+                weapons.Add(GamePlayerSlots.slotPrimary, weapon);
+                weaponPrimary = weapon;                
+                break;
+            }
+        }
     }
  
     // --------------------------------------------------------------------
@@ -1512,6 +1571,77 @@ public class BaseGamePlayerController : GameActor {
     //   }
     //}
     // }
+
+    public float lastCollision = 0f;
+    public float intervalCollision = .2f;
+    
+    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+    
+    public virtual void OnParticleCollision(GameObject other) {
+        
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        if(lastCollision + intervalCollision < Time.time) {
+            //lastCollision = Time.time;
+        }
+        else {
+            // return;
+        }
+
+            
+            /*
+            ParticleSystem particleSystem;
+            particleSystem = other.GetComponent<ParticleSystem>();
+            int safeLength = particleSystem.safeCollisionEventSize;
+            if (collisionEvents.Length < safeLength)
+                collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+            
+            int numCollisionEvents = particleSystem.GetCollisionEvents(gameObject, collisionEvents);
+            int i = 0;
+            while (i < numCollisionEvents) {
+                if (gameObject.rigidbody) {
+                    Vector3 pos = collisionEvents[i].intersection;
+                    Vector3 force = collisionEvents[i].velocity * 10;
+                    gamePlayerController.gameObject.rigidbody.AddForce(force);
+                }
+                i++;
+            }
+            */
+            
+            //if(gamePlayerController.IsPlayerControlled) {
+            //}
+            //else {
+            
+            Debug.Log("OnParticleCollision:" + other.name);
+            
+            float power = .1f;
+            
+            runtimeData.health -= power;
+            
+            //contact.normal.magnitude
+            
+            Hit(power);
+            
+        /*
+            int safeLength = particleSystem.safeCollisionEventSize;
+            if (collisionEvents.Length < safeLength)
+                collisionEvents = new ParticleSystem.CollisionEvent[safeLength];
+            
+            int numCollisionEvents = particleSystem.GetCollisionEvents(other, collisionEvents);
+            int i = 0;
+            while (i < numCollisionEvents) {
+                if (other.rigidbody) {
+                    Vector3 pos = collisionEvents[i].intersection;
+                    Vector3 force = collisionEvents[i].velocity * 10;
+                    rigidbody.AddForce(force);
+                }
+                i++;
+            }
+            */
+            //}
+    }
      
     public virtual void OnTriggerEnter(Collider collider) {
         // Check if we hit an actual destroyable sprite
@@ -1664,7 +1794,7 @@ public class BaseGamePlayerController : GameActor {
             t.localPosition.Reset();
             t.rotation.Reset();
             t.localRotation.Reset();
-            t.rotation = Quaternion.Euler(0f, 180f, 0f);
+            t.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
 
         //transform.position = Vector3.zero.WithY(1.5f);
