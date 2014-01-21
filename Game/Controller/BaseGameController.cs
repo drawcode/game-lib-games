@@ -16,23 +16,17 @@ public enum GameZones {
 
 public class BaseGameContentDisplayTypes {
     public static string gamePlayerOutOfBounds = "content-game-player-out-of-bounds";
-
     public static string gameChoices = "content-game-game-choices";
     public static string gameChoicesOverview = "content-game-game-choices-overview";
-
     public static string gameChoicesItemStart = "content-game-game-choices-item-start";
     public static string gameChoicesItemResult = "content-game-game-choices-item-result";
-
     public static string gameCollect = "content-game-game-collect";
     public static string gameCollectOverview = "content-game-game-collect-overview";
-
     public static string gameCollectItemStart = "content-game-game-collect-item-start";
     public static string gameCollectItemResult = "content-game-game-collect-item-result";
-
     public static string gameEnergy = "content-game-game-energy";
     public static string gameHealth = "content-game-game-health";
     public static string gameXP = "content-game-game-xp";
-
     public static string gameTips = "content-game-tips";
     public static string gameTutorial = "content-game-tutorial";
     public static string gameModeContentOverview = "content-game-mode-content-overview";
@@ -75,7 +69,6 @@ public class GameActorDataItem {
     public float speed = 1f;
     public float attack = 1f;
     public float defense = 1f;
-    
     public string characterCode = "character-enemy-goblin";
     public string prefabCode = "GameEnemyGobln";
 }
@@ -87,23 +80,21 @@ public class GameItemDataItem {
     public float speed = 0f;
     public float attack = 0f;
     public float defense = 0f;
-
     public GamePlayerItemType type = GamePlayerItemType.Coin;
-
     public string itemCode = "coin";
     public string prefabCode = "GamePlayerItemCoin";
 }
 
 public class BaseGameMessages {
-    public static string scores = "game-shooter-scores";	
-	public static string score = "game-shooter-score";
-	public static string ammo = "game-shooter-ammo";
-	public static string save = "game-shooter-save";
-	public static string shot = "game-shooter-shot";
+    public static string scores = "game-shooter-scores";
+    public static string score = "game-shooter-score";
+    public static string ammo = "game-shooter-ammo";
+    public static string save = "game-shooter-save";
+    public static string shot = "game-shooter-shot";
     public static string coin = "game-shooter-coin";
     public static string health = "game-shooter-health";
-	public static string launch = "game-shooter-launch";
-	public static string state = "game-shooter-state";
+    public static string launch = "game-shooter-launch";
+    public static string state = "game-shooter-state";
 }
 
 public class BaseGameStatCodes {
@@ -132,7 +123,6 @@ public class BaseGameStatCodes {
     public static string coinsPurchased = "coinsPurchased";
     public static string coinsEarned = "coinsEarned";
     public static string ammo = "ammo";
-
     public static string attacks = "attacks";//
     public static string defends = "defends";//
 
@@ -155,7 +145,6 @@ public class BaseGameGameRuntimeData {
     public double coins = 0;
     public string levelCode = "";
     public double score = 0;
-
     public bool outOfBounds = false;
     
     public BaseGameGameRuntimeData() {
@@ -174,7 +163,7 @@ public class BaseGameGameRuntimeData {
     
     public virtual bool timeExpired {
         get {
-            if(timeRemaining <= 0) {
+            if (timeRemaining <= 0) {
                 timeRemaining = 0;
                 return true;
             }
@@ -189,7 +178,7 @@ public class BaseGameGameRuntimeData {
     }
     
     public virtual void SubtractTime(double delta) {
-        if(timeRemaining > 0) {
+        if (timeRemaining > 0) {
             timeRemaining -= delta;
         }
     }
@@ -212,13 +201,10 @@ public class GameLevelGridData {
     public float gridWidth = GameLevels.gridWidth;
     public float gridDepth = GameLevels.gridDepth;
     public float gridBoxSize = GameLevels.gridBoxSize;
-
     public bool centeredX = GameLevels.centeredX;
     public bool centeredY = GameLevels.centeredY;
     public bool centeredZ = GameLevels.centeredZ;
-
     public List<AppContentAsset> assets;
-
     public string[,,] assetMap;
 
     public GameLevelGridData() {
@@ -235,7 +221,9 @@ public class GameLevelGridData {
         ResetGrid(height, width, depth, (int)gridBoxSize, true, false, true);
     }
 
-    public void ResetGrid(int height, int width, int depth, int boxSize, bool centerX, bool centerY, bool centerZ) {
+    public void ResetGrid(
+        int height, int width, int depth, int boxSize, 
+        bool centerX, bool centerY, bool centerZ) {
         gridHeight = (float)height;
         gridWidth = (float)width;
         gridDepth = (float)depth;
@@ -277,12 +265,16 @@ public class GameLevelGridData {
         return data;
     }
 
-    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode) {
+    public static GameLevelGridData AddAssets(
+        GameLevelGridData data, string assetCode) {
+
         data.SetAssets(assetCode, 1);
         return data;
     }
 
-    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode, int count) {
+    public static GameLevelGridData AddAssets(
+        GameLevelGridData data, string assetCode, int count) {
+
         data.SetAssets(assetCode, count);
         return data;
     }
@@ -296,38 +288,38 @@ public class GameLevelGridData {
     }
 
     public void ClearMap() {
-        assetMap = new string[(int)gridWidth,(int)gridHeight,(int)gridDepth];
+        assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
     }
 
     public void SetAssets(string code, int count) {
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             SetAsset(code);
         }
     }
 
     public void SetAsset(string code) {
         AppContentAsset asset = AppContentAssets.Instance.GetByCode(code);
-        if(asset != null) {
+        if (asset != null) {
             assets.Add(asset);
         }
     }
 
     public void SetAssetsInAssetMap(Vector3 pos, string code) {
-        if(pos.x > gridWidth - 1) {
+        if (pos.x > gridWidth - 1) {
             pos.x = gridWidth - 1;
         }
-        if(pos.y > gridHeight - 1) {
+        if (pos.y > gridHeight - 1) {
             pos.y = gridHeight - 1;
         }
-        if(pos.z > gridDepth - 1) {
+        if (pos.z > gridDepth - 1) {
             pos.z = gridDepth - 1;
         }
 
-        assetMap[(int)pos.x,(int)pos.y,(int)pos.z] = code;
+        assetMap[(int)pos.x, (int)pos.y, (int)pos.z] = code;
     }
 
     public void RandomizeAssetsInAssetMap() {
-        foreach(AppContentAsset asset in assets) {
+        foreach (AppContentAsset asset in assets) {
             string row = "";
 
             int x = 0;
@@ -336,20 +328,20 @@ public class GameLevelGridData {
 
             //Debug.Log("RandomizeAssetsInAssetMap:row" + row);
 
-            while(string.IsNullOrEmpty(row)) {
+            while (string.IsNullOrEmpty(row)) {
 
                 x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
                 y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
                 z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
-                if(string.IsNullOrEmpty(row)) {
+                if (string.IsNullOrEmpty(row)) {
                     Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
                     SetAssetsInAssetMap(pos, asset.code);
                 }
 
-                row = assetMap[x,y,z];
+                row = assetMap[x, y, z];
 
-            //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
+                //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
             }
         }
     }
@@ -371,7 +363,6 @@ public enum GameRunningState {
 public class BaseGameController : MonoBehaviour {
 
     public GamePlayerController currentGamePlayerController;
-
     public Dictionary<string, GamePlayerController> gamePlayerControllers;
     public Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
     public List<string> gameCharacterTypes = new List<string>();
@@ -379,17 +370,12 @@ public class BaseGameController : MonoBehaviour {
     //int lastCharacterTypeIndex = 0;
 
     public bool initialized = false;
-
     public bool allowedEditing = true;
     public bool isAdvancing = false;
-
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
-    
     public UnityEngine.Object prefabDraggableContainer;
-
     public Dictionary<string, GameLevelItemAsset> levelGrid = null;
     public List<GameLevelItemAsset> levelItems = null;
-
     public GameObject levelBoundaryContainerObject;
     public GameObject levelContainerObject;
     public GameObject levelItemsContainerObject;
@@ -399,46 +385,34 @@ public class BaseGameController : MonoBehaviour {
     public GameObject levelSpawnsContainerObject;
     public GameObject levelMarkersContainerObject;
     public GameObject itemContainerObject;
-    
     public GameObject gameContainerObject;
-    
     public GameObject boundaryEdgeObjectTopRight;
     public GameObject boundaryEdgeObjectTopLeft;
     public GameObject boundaryEdgeObjectBottomRight;
-    public GameObject boundaryEdgeObjectBottomLeft; 
-    
+    public GameObject boundaryEdgeObjectBottomLeft;
     public GameObject boundaryObjectTopRight;
     public GameObject boundaryObjectTopLeft;
     public GameObject boundaryObjectBottomRight;
     public GameObject boundaryObjectBottomLeft;
-    
     public GameBounds gameBounds;
-    
     public GameObject boundaryTopLeft;
     public GameObject boundaryTopRight;
     public GameObject boundaryBottomLeft;
     public GameObject boundaryBottomRight;
     public GameObject boundaryTopCeiling;
     public GameObject boundaryBottomAbyss;
-
     public GameObject gameEndZoneLeft;
     public GameObject gameEndZoneRight;
-    
-    public GameGameRuntimeData runtimeData; 
-    
+    public GameGameRuntimeData runtimeData;
     public Camera cameraGame;
     public Camera cameraGameGround;
     public GameCameraView cameraView = GameCameraView.ViewSide;
     public GameRunningState gameRunningState = GameRunningState.STOPPED;
     public GameControllerType gameControllerType = GameControllerType.Iso3D;
-    
     float currentTimeBlockBase = 0.0f;
     float actionIntervalBase = 1.3f;
-
     public float defaultLevelTime = 90;
-
     public string contentDisplayCode = "default";
-
     public bool isGameOver = false;
     public bool updateFingerNavigate = false;
     
@@ -471,8 +445,9 @@ public class BaseGameController : MonoBehaviour {
 
         GameController.InitCameras();
 
-        foreach(GamePlayerController gamePlayerController in ObjectUtil.FindObjects<GamePlayerController>()) {
-            if(gamePlayerController.uuid == UniqueUtil.Instance.currentUniqueId) {
+        foreach (GamePlayerController gamePlayerController in 
+                 ObjectUtil.FindObjects<GamePlayerController>()) {
+            if (gamePlayerController.uuid == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uuid);
                 break;
             }
@@ -499,7 +474,9 @@ public class BaseGameController : MonoBehaviour {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
+        Messenger.AddListener(
+            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            OnProfileShouldBeSavedEventHandler);
     }
     
     public virtual void OnDisable() {
@@ -515,7 +492,9 @@ public class BaseGameController : MonoBehaviour {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
+        Messenger.RemoveListener(
+            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            OnProfileShouldBeSavedEventHandler);
     }
 
 
@@ -538,7 +517,7 @@ public class BaseGameController : MonoBehaviour {
     public static bool shouldRunGame {
         get {
 
-            if(GameDraggableEditor.isEditing) {
+            if (GameDraggableEditor.isEditing) {
                 return false;
             }
 
@@ -552,14 +531,14 @@ public class BaseGameController : MonoBehaviour {
     // EVENTS
 
     public virtual void OnProfileShouldBeSavedEventHandler() {
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             GameState.SaveProfile();
         }
     }
     
     public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
     
-        if(state == GameDraggableEditEnum.StateEditing) {
+        if (state == GameDraggableEditEnum.StateEditing) {
             ////GameHUD.Instance.ShowCurrentCharacter();
         }
         else {
@@ -577,14 +556,15 @@ public class BaseGameController : MonoBehaviour {
     
         // Look for object by that uuid, if not create it
 
-        GamePlayerController[] playerControllers = ObjectUtil.FindObjects<GamePlayerController>();
+        GamePlayerController[] playerControllers = 
+            ObjectUtil.FindObjects<GamePlayerController>();
     
-        if(playerControllers.Length > 0) {
+        if (playerControllers.Length > 0) {
     
             bool found = false;
 
-            foreach(GamePlayerController gamePlayerController in playerControllers) {
-                if(gamePlayerController.uuid == uuid) {
+            foreach (GamePlayerController gamePlayerController in playerControllers) {
+                if (gamePlayerController.uuid == uuid) {
                     // already added
                     gamePlayerController.uuid = uuid;
                     gamePlayerController.UpdateNetworkContainer(uuid);
@@ -595,15 +575,17 @@ public class BaseGameController : MonoBehaviour {
                 }
             }
 
-            if(!found) {
+            if (!found) {
                 // create
                 // Prefabs/Characters/GamePlayerObject
     
                 UnityEngine.Object prefabGameplayer = Resources.Load("Prefabs/Characters/GamePlayerObject");
-                if(prefabGameplayer != null) {
+                if (prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
-                    GamePlayerController playerControllerOther = (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) as GameObject).GetComponent<GamePlayerController>();
+                    GamePlayerController playerControllerOther = 
+                        (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) 
+                         as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
                     playerControllerOther.uuid = uuid;
                     playerControllerOther.UpdateNetworkContainer(uuid);
@@ -633,17 +615,17 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual GamePlayerController getCurrentController() {
-        if(GameController.Instance.currentGamePlayerController != null) {
+        if (GameController.Instance.currentGamePlayerController != null) {
             return GameController.Instance.currentGamePlayerController;
         }
         return null;
     }
 
-
     public virtual GamePlayerController getGamePlayerController(GameObject go) {
-        if(go != null) {
-            GamePlayerController gamePlayerController = go.GetComponentInChildren<GamePlayerController>();
-            if(gamePlayerController != null) {
+        if (go != null) {
+            GamePlayerController gamePlayerController = 
+                go.GetComponentInChildren<GamePlayerController>();
+            if (gamePlayerController != null) {
                 return gamePlayerController;
             }
         }
@@ -651,47 +633,51 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual GamePlayerController getGamePlayerControllerParent(GameObject go) {
-        if(go != null) {
-            GamePlayerCollision gamePlayerCollision = go.Get<GamePlayerCollision>();
+        if (go != null) {
+            GamePlayerCollision gamePlayerCollision = 
+                go.Get<GamePlayerCollision>();
 
-            if(gamePlayerCollision == null) {
+            if (gamePlayerCollision == null) {
                 return null;
             }
 
-            if(gamePlayerCollision.gamePlayerController == null) {
+            if (gamePlayerCollision.gamePlayerController == null) {
                 return null;
             }
                
-            GamePlayerController gamePlayerController = gamePlayerCollision.gamePlayerController;
-            if(gamePlayerController != null) {
+            GamePlayerController gamePlayerController = 
+                gamePlayerCollision.gamePlayerController;
+            if (gamePlayerController != null) {
                 return gamePlayerController;
             }
         }
         return null;
     }
 
-    public virtual GamePlayerController getGamePlayerControllerObject(GameObject go, bool onlyPlayerControlled) {
+    public virtual GamePlayerController getGamePlayerControllerObject(
+        GameObject go, bool onlyPlayerControlled) {
 
         GamePlayerController gamePlayerController = null;
 
-        if(go == null) {
+        if (go == null) {
             return gamePlayerController;
         }
 
-        if(go.name.Contains("GamePlayerObject")) {
+        if (go.name.Contains("GamePlayerObject")) {
 
             gamePlayerController = GameController.GetGamePlayerController(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
-                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if (!onlyPlayerControlled 
+                    || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
                 }
             }
         }
 
-        if(gamePlayerController == null
-           && (go.name.Contains("Game")
+        if (gamePlayerController == null
+            && (go.name.Contains("Game")
             || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
             //&& (go.name.Contains("Helmet")
@@ -701,11 +687,11 @@ public class BaseGameController : MonoBehaviour {
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
                 //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
-                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if (!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
                 }
             }
@@ -714,29 +700,30 @@ public class BaseGameController : MonoBehaviour {
         return gamePlayerController;
     }
 
-
-    public virtual bool hasGamePlayerControllerObject(GameObject go, bool onlyPlayerControlled) {
+    public virtual bool hasGamePlayerControllerObject(
+        GameObject go, bool onlyPlayerControlled) {
 
         GamePlayerController gamePlayerController = null;
 
-        if(go == null) {
+        if (go == null) {
             return false;
         }
 
-        if(go.name.Contains("GamePlayerObject")) {
+        if (go.name.Contains("GamePlayerObject")) {
 
             gamePlayerController = GameController.GetGamePlayerController(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
-                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if (!onlyPlayerControlled 
+                    || gamePlayerController.IsPlayerControlled) {
                     return true;
                 }
             }
         }
 
-        if(gamePlayerController == null
-           && (go.name.Contains("Game")
+        if (gamePlayerController == null
+            && (go.name.Contains("Game")
             || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
@@ -744,11 +731,12 @@ public class BaseGameController : MonoBehaviour {
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
                 //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
-                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if (!onlyPlayerControlled 
+                    || gamePlayerController.IsPlayerControlled) {
                     return true;
                 }
             }
@@ -760,7 +748,7 @@ public class BaseGameController : MonoBehaviour {
     // SCORING
 
     public virtual void gamePlayerScores(double val) {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.Scores(val);
         }
     }
@@ -774,7 +762,7 @@ public class BaseGameController : MonoBehaviour {
     //}
     
     public virtual void gamePlayerAttack() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendAttack();
         }
     }
@@ -786,7 +774,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerAttackAlt() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendAttackAlt();
         }
     }
@@ -798,7 +786,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerAttackRight() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendAttackRight();
         }
     }
@@ -810,7 +798,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerAttackLeft() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendAttackLeft();
         }
     }
@@ -824,7 +812,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerDefend() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendDefend();
         }
     }
@@ -836,7 +824,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerDefendAlt() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendDefendAlt();
         }
     }
@@ -848,7 +836,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerDefendRight() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendDefendRight();
         }
     }
@@ -860,7 +848,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerDefendLeft() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.SendDefendLeft();
         }
     }
@@ -874,7 +862,7 @@ public class BaseGameController : MonoBehaviour {
     //}
     
     public virtual void gamePlayerJump() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.InputJump();
         }
     }
@@ -888,7 +876,7 @@ public class BaseGameController : MonoBehaviour {
     //}
     
     public virtual void gamePlayerUse() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.InputUse();
         }
     }
@@ -902,7 +890,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerSkill() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.InputSkill();
         }
     }
@@ -916,7 +904,7 @@ public class BaseGameController : MonoBehaviour {
     //}
 
     public virtual void gamePlayerMagic() {
-        if(GameController.CurrentGamePlayerController != null) {
+        if (GameController.CurrentGamePlayerController != null) {
             GameController.CurrentGamePlayerController.InputMagic();
         }
     }
@@ -926,21 +914,21 @@ public class BaseGameController : MonoBehaviour {
     // ZONES
 
     public virtual GameZone getGameZone(GameObject go) {
-        if(go != null) {
+        if (go != null) {
             return go.GetComponent<GameZone>();
         }
         return null;
     }
 
     public virtual GameGoalZone getGoalZone(GameObject go) {
-        if(go != null) {
+        if (go != null) {
             return go.GetComponent<GameGoalZone>();
         }
         return null;
     }
 
     public virtual GameBadZone getBadZone(GameObject go) {
-        if(go != null) {
+        if (go != null) {
             return go.GetComponent<GameBadZone>();
         }
         return null;
@@ -948,18 +936,18 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void changeGameZone(GameZones zones) {
 
-        if(gameEndZoneLeft == null) {
+        if (gameEndZoneLeft == null) {
             Transform gameEndZoneLeftTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneLeft");
-            if(gameEndZoneLeftTransform != null) {
+            if (gameEndZoneLeftTransform != null) {
                 gameEndZoneLeft = gameEndZoneLeftTransform.gameObject;
             }
         }
 
-        if(gameEndZoneLeft == null) {
+        if (gameEndZoneLeft == null) {
             Transform gameEndZoneRightTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneRight");
-            if(gameEndZoneRightTransform != null) {
+            if (gameEndZoneRightTransform != null) {
                 gameEndZoneRight = gameEndZoneRightTransform.gameObject;
             }
         }
@@ -972,7 +960,7 @@ public class BaseGameController : MonoBehaviour {
     // BOUNDS
     
     public virtual void initGameWorldBounds() {
-        if(gameBounds == null) {
+        if (gameBounds == null) {
             gameBounds = gameObject.AddComponent<GameBounds>();
             gameBounds.boundaryTopLeft = boundaryTopLeft;
             gameBounds.boundaryTopRight = boundaryTopRight;
@@ -1005,9 +993,10 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadLevelAssets(string code) {
 
-       // Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
+        // Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
 
-        GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
+        GameDraggableEditor.levelItemsContainerObject = 
+            GameController.Instance.levelItemsContainerObject;
     
         GameLevelItems.Current.code = code;
     
@@ -1051,17 +1040,17 @@ public class BaseGameController : MonoBehaviour {
 
         // Load level items by game type....
 
-        if(AppModes.Instance.isAppModeGameChallenge) {
+        if (AppModes.Instance.isAppModeGameChallenge) {
 
             Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameChallenge:"
                 + AppModes.Instance.isAppModeGameChallenge);
 
-            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
-                if(AppContentStates.Instance.isAppContentStateGameChallenge) {
+                if (AppContentStates.Instance.isAppContentStateGameChallenge) {
 
                     Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameChallenge:"
                         + AppContentStates.Instance.isAppContentStateGameChallenge);
@@ -1072,24 +1061,24 @@ public class BaseGameController : MonoBehaviour {
                 }
             }
         }
-        else if(AppModes.Instance.isAppModeGameTraining) {
+        else if (AppModes.Instance.isAppModeGameTraining) {
             Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameTraining:"
                 + AppModes.Instance.isAppModeGameTraining);
 
-            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
             }
-            else if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
+            else if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameChoice:"
                     + AppModeTypes.Instance.isAppModeTypeGameChoice);
 
                 // LOAD CHOICE GAME LEVEL ITEMS
 
-                if(AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
+                if (AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
 
                     Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz);
@@ -1104,7 +1093,7 @@ public class BaseGameController : MonoBehaviour {
                 }
 
             }
-            else if(AppModeTypes.Instance.isAppModeTypeGameCollection) {
+            else if (AppModeTypes.Instance.isAppModeTypeGameCollection) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameCollection:"
                     + AppModeTypes.Instance.isAppModeTypeGameCollection);
@@ -1130,13 +1119,13 @@ public class BaseGameController : MonoBehaviour {
                 }*/
 
             }
-            else if(AppModeTypes.Instance.isAppModeTypeGameContent) {
+            else if (AppModeTypes.Instance.isAppModeTypeGameContent) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameContent:"
                     + AppModeTypes.Instance.isAppModeTypeGameContent);
 
             }
-            else if(AppModeTypes.Instance.isAppModeTypeGameTips) {
+            else if (AppModeTypes.Instance.isAppModeTypeGameTips) {
 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameTips:"
                     + AppModeTypes.Instance.isAppModeTypeGameTips);
@@ -1144,19 +1133,19 @@ public class BaseGameController : MonoBehaviour {
             }
         }
         else {
-           // if(AppModes.Instance.isAppModeGameArcade) {
+            // if(AppModes.Instance.isAppModeGameArcade) {
             Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
-                      + AppModes.Instance.isAppModeGameArcade);
+                + AppModes.Instance.isAppModeGameArcade);
             
-            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
                 
                 Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
-                          + AppModeTypes.Instance.isAppModeTypeGameDefault);
+                    + AppModeTypes.Instance.isAppModeTypeGameDefault);
                 
-                if(AppContentStates.Instance.isAppContentStateGameArcade) {
+                if (AppContentStates.Instance.isAppContentStateGameArcade) {
                     
                     Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
-                              + AppContentStates.Instance.isAppContentStateGameArcade);
+                        + AppContentStates.Instance.isAppContentStateGameArcade);
                     
                     GameLevelItems.Current.level_items
                         = GameController.GetLevelRandomizedGrid();
@@ -1166,7 +1155,7 @@ public class BaseGameController : MonoBehaviour {
             //}
         }
 
-        if(!updated) {
+        if (!updated) {
             GameLevelItems.Current.level_items
                 = GameController.GetLevelRandomizedGrid();
         }
@@ -1200,7 +1189,7 @@ public class BaseGameController : MonoBehaviour {
         GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
 
-        if(currentGamePlayerController != null) {
+        if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
@@ -1214,7 +1203,7 @@ public class BaseGameController : MonoBehaviour {
         
         yield return new WaitForSeconds(1f);
         
-        if(currentGamePlayerController != null) {
+        if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeOut();
         }
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
@@ -1246,7 +1235,7 @@ public class BaseGameController : MonoBehaviour {
         LogUtil.Log("changeGameStates:appContentState:" + appContentState);
 
         //try {
-            AppContentStates.Instance.ChangeState(appContentState);
+        AppContentStates.Instance.ChangeState(appContentState);
         //}
         //catch (Exception e) {
         //    LogUtil.Log("ERROR:changeGameState:e:" + e.Message + e.StackTrace);
@@ -1281,7 +1270,7 @@ public class BaseGameController : MonoBehaviour {
         GameDraggableEditor.ChangeStateEditing(GameDraggableEditEnum.StateNotEditing);
         GameController.StartLevel(levelCode);
 
-       // GameController(levelCode);
+        // GameController(levelCode);
     }
 
     public virtual void loadEnemyBot1(float scale, float speed, float attack) {
@@ -1300,12 +1289,12 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadItemData(GameItemDirectorData data) {
         GameItemDataItem item = new GameItemDataItem();
-        if(data.itemType == GamePlayerItemType.Coin) {
+        if (data.itemType == GamePlayerItemType.Coin) {
             item.itemCode = "coin";
             item.prefabCode = "GamePlayerItemCoin";
             item.type = GamePlayerItemType.Coin;
         }
-        else if(data.itemType == GamePlayerItemType.Health) {
+        else if (data.itemType == GamePlayerItemType.Health) {
             item.itemCode = "health";
             item.prefabCode = "GamePlayerItemHealth";
             item.type = GamePlayerItemType.Health;
@@ -1325,8 +1314,8 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual Vector3 getCurrentPlayerPosition() {
         Vector3 currentPlayerPosition = Vector3.zero;
-        if(GameController.CurrentGamePlayerController != null) {
-            if(GameController.CurrentGamePlayerController.gameObject != null) {
+        if (GameController.CurrentGamePlayerController != null) {
+            if (GameController.CurrentGamePlayerController.gameObject != null) {
                 currentPlayerPosition = GameController.CurrentGamePlayerController.gameObject.transform.position;
             }
         }
@@ -1351,21 +1340,21 @@ public class BaseGameController : MonoBehaviour {
         //if (rect.Contains())
         //    print("Inside");
     
-        if(playerBottomLeft < boundaryBottomLeftPosition.x) {
+        if (playerBottomLeft < boundaryBottomLeftPosition.x) {
             playerBottomLeft = boundaryBottomLeftPosition.x;
         }
-        else if(playerBottomRight > boundaryBottomRightPosition.x) {
+        else if (playerBottomRight > boundaryBottomRightPosition.x) {
             playerBottomRight = boundaryBottomRightPosition.x;
         }
-        else if(playerTopRight < boundaryTopRightPosition.z) {
+        else if (playerTopRight < boundaryTopRightPosition.z) {
             playerTopRight = boundaryTopRightPosition.z;
         }
-        else if(playerTopLeft < boundaryTopLeftPosition.z) {
+        else if (playerTopLeft < boundaryTopLeftPosition.z) {
             playerTopLeft = boundaryTopLeftPosition.z;
         }
 
-        spawnLocation.z = UnityEngine.Random.Range(playerTopLeft,playerTopRight);
-        spawnLocation.x = UnityEngine.Random.Range(playerBottomLeft,playerBottomRight);
+        spawnLocation.z = UnityEngine.Random.Range(playerTopLeft, playerTopRight);
+        spawnLocation.x = UnityEngine.Random.Range(playerBottomLeft, playerBottomRight);
         spawnLocation.y = 0f;
 
         return spawnLocation;
@@ -1389,7 +1378,7 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual IEnumerator loadActorCo(GameActorDataItem character) {
 
-        if(loadingCharacterContainer) {
+        if (loadingCharacterContainer) {
             yield break; 
         }
 
@@ -1406,31 +1395,31 @@ public class BaseGameController : MonoBehaviour {
 
         bool isZoned = true;
 
-        if(isZoned) {
+        if (isZoned) {
             // get left/right spawn location
             string leftMiddle = "left-middle";
             string rightMiddle = "right-middle";
             string spawnCode = rightMiddle;
-            if(currentGameZone == GameZones.right) {
+            if (currentGameZone == GameZones.right) {
                 spawnCode = rightMiddle;
             }
-            else if(currentGameZone == GameZones.left) {
+            else if (currentGameZone == GameZones.left) {
                 spawnCode = leftMiddle;
             }
 
             //Debug.Log("spawnCode:" + spawnCode);
 
             GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
-            if(spawn != null) {
+            if (spawn != null) {
                 spawnLocation = spawn.gameObject.transform.position;
             }
             else {
 
                 // get random
-                if(currentGameZone == GameZones.right) {
+                if (currentGameZone == GameZones.right) {
                     spawnLocation = Vector3.zero.WithX(80f).WithZ(UnityEngine.Random.Range(-20, 20));
                 }
-                else if(currentGameZone == GameZones.left) {
+                else if (currentGameZone == GameZones.left) {
                     spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
                 }
             }
@@ -1441,7 +1430,7 @@ public class BaseGameController : MonoBehaviour {
             spawnLocation = GameController.GetRandomSpawnLocation();
         }
 
-        if(prefabObject == null) {            
+        if (prefabObject == null) {            
             loadingCharacterContainer = false;
             yield break;
         }
@@ -1449,7 +1438,7 @@ public class BaseGameController : MonoBehaviour {
         GameObject characterObject = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
 
-        if(characterObject != null) {
+        if (characterObject != null) {
     
             characterObject.transform.parent = levelActorsContainerObject.transform;
             
@@ -1471,7 +1460,7 @@ public class BaseGameController : MonoBehaviour {
 
             //characterGamePlayerController.runtimeData.
 
-            if(characterGamePlayerController != null) {
+            if (characterGamePlayerController != null) {
                 //characterObject.Hide();
                 //yield return new WaitForEndOfFrame();
                 // wire up properties
@@ -1516,19 +1505,19 @@ public class BaseGameController : MonoBehaviour {
 
         bool isZoned = true;
 
-        if(isZoned) {
+        if (isZoned) {
             // get left/right spawn location
             string leftMiddle = "left-middle";
             string rightMiddle = "right-middle";
             string spawnCode = rightMiddle;
-            if(currentGameZone == GameZones.right) {
+            if (currentGameZone == GameZones.right) {
                 spawnCode = rightMiddle;
             }
-            else if(currentGameZone == GameZones.left) {
+            else if (currentGameZone == GameZones.left) {
                 spawnCode = leftMiddle;
             }
 
-           // Debug.Log("spawnCode:" + spawnCode);
+            // Debug.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {
@@ -1536,27 +1525,27 @@ public class BaseGameController : MonoBehaviour {
             //}
             //else {
 
-                // get random
-                if(currentGameZone == GameZones.right) {
+            // get random
+            if (currentGameZone == GameZones.right) {
 
-                    spawnLocation = Vector3.zero
+                spawnLocation = Vector3.zero
                         .WithX(UnityEngine.Random.Range(
                             0, gameBounds.boundaryTopRight.transform.position.x))
                         .WithY(50f)
                         .WithZ(UnityEngine.Random.Range(
                                 boundaryBottomLeft.transform.position.z,
                                 boundaryTopLeft.transform.position.z));
-                }
-                else if(currentGameZone == GameZones.left) {
+            }
+            else if (currentGameZone == GameZones.left) {
 
-                    spawnLocation = Vector3.zero
+                spawnLocation = Vector3.zero
                         .WithX(UnityEngine.Random.Range(
                             gameBounds.boundaryTopLeft.transform.position.x, 0))
                         .WithY(50f)
                         .WithZ(UnityEngine.Random.Range(
                                 gameBounds.boundaryBottomLeft.transform.position.z,
                                 gameBounds.boundaryTopLeft.transform.position.z));
-                }
+            }
             //}
 
         }
@@ -1565,56 +1554,32 @@ public class BaseGameController : MonoBehaviour {
             spawnLocation = GameController.GetRandomSpawnLocation();
         }
 
-        if(prefabObject == null) {
+        if (prefabObject == null) {
             yield break;
         }
 
         GameObject spawnObj = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledItems) as GameObject;
 
+        GamePlayerItem gamePlayerItem = spawnObj.GetComponent<GamePlayerItem>();
+        if(gamePlayerItem != null) {
+            gamePlayerItem.floaty = false;
+        }
+
         string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
 
-        if(item.type == GamePlayerItemType.Coin) {
+        if (item.type == GamePlayerItemType.Coin) {
             itemTypeString = GamePlayerIndicatorType.coin.ToString();
         }
-        else if(item.type == GamePlayerItemType.Health) {
+        else if (item.type == GamePlayerItemType.Health) {
             itemTypeString = "health";
         }
     
-        if(spawnObj != null && levelActorsContainerObject != null) {
+        if (spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
             GamePlayerIndicator.AddIndicator(spawnObj, itemTypeString);
         }
 
-        /*
-        GamePlayerController characterGamePlayerController
-            = characterObject.GetComponentInChildren<GamePlayerController>();
-
-        characterGamePlayerController.transform.localScale
-            = characterGamePlayerController.transform.localScale * character.scale;
-
-        // Wire up ai controller to setup player health, speed, attack etc.
-
-        //characterGamePlayerController.runtimeData.
-
-        if(characterGamePlayerController != null) {
-            characterObject.Hide();
-            yield return new WaitForEndOfFrame();
-            // wire up properties
-    
-            // TODO network and player target
-            //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
-            //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
-            //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-            characterObject.Show();
-
-            // Add indicator to HUD
-
-            GameHUD.Instance.AddIndicator(characterObject, characterType);
-
-            //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
-        }
-        */
     }
 
 
@@ -1622,13 +1587,13 @@ public class BaseGameController : MonoBehaviour {
     // RESETS
     
     public virtual void resetLevelEnemies() {
-        if(levelActorsContainerObject != null) {
+        if (levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
     }
 
     public virtual void resetCurrentGamePlayer() {
-        if(currentGamePlayerController != null) {
+        if (currentGamePlayerController != null) {
             currentGamePlayerController.Reset();
         }
     }
@@ -1699,8 +1664,8 @@ public class BaseGameController : MonoBehaviour {
     // CHARACTER TYPES
     
     public virtual void loadCharacterTypes() {
-        foreach(GameCharacterType type in GameCharacterTypes.Instance.GetAll()) {
-            if(!gameCharacterTypes.Contains(type.code)) {
+        foreach (GameCharacterType type in GameCharacterTypes.Instance.GetAll()) {
+            if (!gameCharacterTypes.Contains(type.code)) {
                 gameCharacterTypes.Add(type.code);
             }
         }
@@ -1718,17 +1683,17 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void cycleCharacterTypes(int updatedIndex) {
     
-        if(updatedIndex > gameCharacterTypes.Count - 1) {
+        if (updatedIndex > gameCharacterTypes.Count - 1) {
             currentCharacterTypeIndex = 0;
         }
-        else if(updatedIndex < 0) {
+        else if (updatedIndex < 0) {
             currentCharacterTypeIndex = gameCharacterTypes.Count - 1;
         }
         else {
             currentCharacterTypeIndex = updatedIndex;
         }
     
-        if(currentGamePlayerController != null) {
+        if (currentGamePlayerController != null) {
             currentGamePlayerController.LoadCharacter(gameCharacterTypes[currentCharacterTypeIndex]);
         }
     }
@@ -1784,7 +1749,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void resultsGameDelayed() {
-        Invoke ("resultsGame", .5f);
+        Invoke("resultsGame", .5f);
     }
 
     public virtual void resultsGame() {
@@ -1792,7 +1757,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void togglePauseGame() {
-        if(gameState == GameStateGlobal.GamePause) {
+        if (gameState == GameStateGlobal.GamePause) {
             GameController.ResumeGame();
         }
         else {
@@ -1867,7 +1832,7 @@ public class BaseGameController : MonoBehaviour {
     // RUN
     
     public virtual void gameRunningStateRun() {
-       gameRunningStateRun(1f);
+        gameRunningStateRun(1f);
     }
     
     public virtual void gameRunningStateRun(float timeScale) {
@@ -1894,7 +1859,7 @@ public class BaseGameController : MonoBehaviour {
         // Show runtime content display data
         //GameRunningStatePause();
     
-        if(contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
+        if (contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
     
             GameController.GamePlayerOutOfBoundsDelayed(3f);
     
@@ -1903,13 +1868,13 @@ public class BaseGameController : MonoBehaviour {
             //UIPanelDialogDisplay.SetDescription("RUN, BUT STAY IN BOUNDS...");
             UIPanelDialogDisplay.ShowDefault();
         }
-        else if(contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
+        else if (contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
             handleContentDialogEnergy();
         }
-        else if(contentDisplayCode == GameContentDisplayTypes.gameHealth) {
+        else if (contentDisplayCode == GameContentDisplayTypes.gameHealth) {
             handleContentDialogHealth();
         }
-        else if(contentDisplayCode == GameContentDisplayTypes.gameXP) {
+        else if (contentDisplayCode == GameContentDisplayTypes.gameXP) {
             handleContentDialogXP();
         }
         else {
@@ -1923,21 +1888,21 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void handleContentTutorial() {
         
-        if(contentDisplayCode == GameContentDisplayTypes.gameTutorial) {            
+        if (contentDisplayCode == GameContentDisplayTypes.gameTutorial) {            
             //UIPanelDialogBackground.ShowDefault();
         }
     }
     
     public virtual void handleContentTips() {
         
-        if(contentDisplayCode == GameContentDisplayTypes.gameTips) {            
+        if (contentDisplayCode == GameContentDisplayTypes.gameTips) {            
             //UIPanelDialogBackground.ShowDefault();
         }
     }
     
     public virtual void handleContentOverview() {
         
-        if(contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
+        if (contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
             UIPanelOverviewMode.ShowDefault();
         }
     }
@@ -1981,11 +1946,11 @@ public class BaseGameController : MonoBehaviour {
         //GameUIController.HideUI(true);
         GameUIController.HideHUD();
 
-        if(allowedEditing) {
+        if (allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
 
-        if(startGame) {
+        if (startGame) {
             GameController.StartGame(GameLevels.Current.code);
         }
     }
@@ -1999,7 +1964,7 @@ public class BaseGameController : MonoBehaviour {
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
 
-        if(allowedEditing) {
+        if (allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
     
@@ -2008,7 +1973,7 @@ public class BaseGameController : MonoBehaviour {
         GameUIController.ShowGameCanvas();
     
         GameController.RunDirectorsDelayed(6f);
-    }   
+    }
 
     public virtual void onGameQuit() {
     
@@ -2074,35 +2039,35 @@ public class BaseGameController : MonoBehaviour {
     
         Messenger<GameStateGlobal>.Broadcast(GameMessages.state, gameState);
     
-        if(gameState == GameStateGlobal.GameStarted) {
+        if (gameState == GameStateGlobal.GameStarted) {
             GameController.OnGameStarted();
         }
-        else if(gameState == GameStateGlobal.GamePause) {
+        else if (gameState == GameStateGlobal.GamePause) {
             GameController.OnGamePause();
         }
-        else if(gameState == GameStateGlobal.GameResume) {
+        else if (gameState == GameStateGlobal.GameResume) {
             GameController.OnGameResume();
         }
-        else if(gameState == GameStateGlobal.GameQuit) {
+        else if (gameState == GameStateGlobal.GameQuit) {
             GameController.OnGameQuit();
         }
-        else if(gameState == GameStateGlobal.GameNotStarted) {
+        else if (gameState == GameStateGlobal.GameNotStarted) {
             GameController.OnGameNotStarted();
         }
-        else if(gameState == GameStateGlobal.GameResults) {
+        else if (gameState == GameStateGlobal.GameResults) {
             GameController.OnGameResults();
         }
-        else if(gameState == GameStateGlobal.GameContentDisplay) {
+        else if (gameState == GameStateGlobal.GameContentDisplay) {
             GameController.OnGameContentDisplay();
         }
-        else if(gameState == GameStateGlobal.GamePrepare) {
+        else if (gameState == GameStateGlobal.GamePrepare) {
             GameController.OnGamePrepare();
         }
     }
 
     public bool isGameRunning {
         get {
-            if(gameState == GameStateGlobal.GameStarted) {
+            if (gameState == GameStateGlobal.GameStarted) {
                 return true;
             }
             return false;
@@ -2115,37 +2080,37 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void initCameras() {
         
-        if(camerasAlwaysOn == null) {
+        if (camerasAlwaysOn == null) {
             camerasAlwaysOn = new List<Camera>();
             
-            if(cameraContainersAlwaysOn != null) {
-                foreach(Camera cam 
+            if (cameraContainersAlwaysOn != null) {
+                foreach (Camera cam 
                         in cameraContainersAlwaysOn.GetComponentsInChildren<Camera>()) {
-                    if(!camerasAlwaysOn.Contains(cam)) {
+                    if (!camerasAlwaysOn.Contains(cam)) {
                         camerasAlwaysOn.Add(cam);
                     }
                 }
             }
         }
         
-        if(camerasGame == null) {
+        if (camerasGame == null) {
             camerasGame = new List<Camera>();
-            if(camerasContainerGame != null) {
-                foreach(Camera cam 
+            if (camerasContainerGame != null) {
+                foreach (Camera cam 
                         in camerasContainerGame.GetComponentsInChildren<Camera>()) {
-                    if(!camerasGame.Contains(cam)) {
+                    if (!camerasGame.Contains(cam)) {
                         camerasGame.Add(cam);
                     }
                 }
             }
         }
         
-        if(camerasUI == null) {
+        if (camerasUI == null) {
             camerasUI = new List<Camera>();
-            if(cameraContainersUI != null) {
-                foreach(Camera cam 
+            if (cameraContainersUI != null) {
+                foreach (Camera cam 
                         in cameraContainersUI.GetComponentsInChildren<Camera>()) {
-                    if(!camerasUI.Contains(cam)) {
+                    if (!camerasUI.Contains(cam)) {
                         camerasUI.Add(cam);
                     }
                 }
@@ -2163,7 +2128,7 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual IEnumerator showCamerasCo(List<Camera> cams) {
 
-        foreach(Camera cam in cams) {            
+        foreach (Camera cam in cams) {            
             cam.gameObject.Show();
             cam.gameObject.FadeTo(1f, .5f, .5f);
         }
@@ -2171,12 +2136,12 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
-        foreach(Camera cam in cams) {
+        foreach (Camera cam in cams) {
             cam.gameObject.FadeTo(0f, 1f, .5f);
         }
         yield return new WaitForSeconds(2f);
         
-        foreach(Camera cam in cams) {  
+        foreach (Camera cam in cams) {  
             cam.gameObject.Hide();
         }
     }
@@ -2192,7 +2157,7 @@ public class BaseGameController : MonoBehaviour {
     }
     
     public virtual void changeGameCameraMode(GameCameraView cameraViewTo) {
-        if(cameraViewTo == cameraView) {
+        if (cameraViewTo == cameraView) {
             return;
         }
         else {
@@ -2201,10 +2166,10 @@ public class BaseGameController : MonoBehaviour {
     
         LogUtil.Log("ChangeGameCameraMode:cameraViewTo: " + cameraViewTo);
     
-        if(cameraGame != null
+        if (cameraGame != null
             && cameraGameGround != null) {
 
-            if(cameraView == GameCameraView.ViewSide) {
+            if (cameraView == GameCameraView.ViewSide) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(30);
@@ -2215,7 +2180,7 @@ public class BaseGameController : MonoBehaviour {
                 GameController.ChangeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if(cameraView == GameCameraView.ViewSideTop) {
+            else if (cameraView == GameCameraView.ViewSideTop) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80);
@@ -2226,7 +2191,7 @@ public class BaseGameController : MonoBehaviour {
                 GameController.ChangeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if(cameraView == GameCameraView.ViewBackTilt) {
+            else if (cameraView == GameCameraView.ViewBackTilt) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(45).WithY(90);
@@ -2237,7 +2202,7 @@ public class BaseGameController : MonoBehaviour {
                 GameController.ChangeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if(cameraView == GameCameraView.ViewBackTop) {
+            else if (cameraView == GameCameraView.ViewBackTop) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80).WithY(90);
@@ -2261,16 +2226,16 @@ public class BaseGameController : MonoBehaviour {
 
         LogUtil.Log("CycleGameCameraMode: " + cameraView);
 
-        if(cameraView == GameCameraView.ViewSide) {
+        if (cameraView == GameCameraView.ViewSide) {
             GameController.ChangeGameCameraMode(GameCameraView.ViewSideTop);
         }
-        else if(cameraView == GameCameraView.ViewSideTop) {
+        else if (cameraView == GameCameraView.ViewSideTop) {
             GameController.ChangeGameCameraMode(GameCameraView.ViewBackTilt);
         }
-        else if(cameraView == GameCameraView.ViewBackTilt) {
+        else if (cameraView == GameCameraView.ViewBackTilt) {
             GameController.ChangeGameCameraMode(GameCameraView.ViewBackTop);
         }
-        else if(cameraView == GameCameraView.ViewBackTop) {
+        else if (cameraView == GameCameraView.ViewBackTop) {
             GameController.ChangeGameCameraMode(GameCameraView.ViewSide);
         }
     }
@@ -2282,7 +2247,7 @@ public class BaseGameController : MonoBehaviour {
     
     public virtual void gamePlayerOutOfBounds() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -2317,10 +2282,10 @@ public class BaseGameController : MonoBehaviour {
     // GAME PLAYER GOAL ZONE
 
     public virtual void goalZoneChange() {
-        if(currentGameZone == GameZones.left) {
+        if (currentGameZone == GameZones.left) {
             GameController.GoalZoneChange(GameZones.right);
         }
-        else if(currentGameZone == GameZones.right) {
+        else if (currentGameZone == GameZones.right) {
             GameController.GoalZoneChange(GameZones.left);
         }
     }
@@ -2330,10 +2295,10 @@ public class BaseGameController : MonoBehaviour {
         //    return;
         //}
 
-        if(goalZone == GameZones.left) {
+        if (goalZone == GameZones.left) {
             currentGameZone = goalZone;
         }
-        else if(goalZone == GameZones.right) {
+        else if (goalZone == GameZones.right) {
             currentGameZone = goalZone;
         }
 
@@ -2345,10 +2310,10 @@ public class BaseGameController : MonoBehaviour {
     // HANDLE GOAL ZONE CHANGE
 
     public virtual void handleGoalZoneChange() {
-        if(currentGameZone == GameZones.left) {
+        if (currentGameZone == GameZones.left) {
             // move goal markers
         }
-        else if(currentGameZone == GameZones.right) {
+        else if (currentGameZone == GameZones.right) {
             // move goal markers
         }
     }
@@ -2384,7 +2349,7 @@ public class BaseGameController : MonoBehaviour {
     // GAME RUNTIME DATA
     
     public virtual void gameRuntimeTimeExtend(double extendAmount) {
-        if(runtimeData != null) {
+        if (runtimeData != null) {
             runtimeData.AppendTime(extendAmount);
         }
     }
@@ -2418,7 +2383,7 @@ public class BaseGameController : MonoBehaviour {
 
         // WINS / LOSSES
 
-        if(runtimeData.localPlayerWin) {
+        if (runtimeData.localPlayerWin) {
             GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.wins, 1f);
         }
         else {
@@ -2450,7 +2415,7 @@ public class BaseGameController : MonoBehaviour {
         
         yield return new WaitForEndOfFrame();
     
-        if(!isAdvancing) {
+        if (!isAdvancing) {
             GameController.AdvanceToResults();
         }
     
@@ -2501,7 +2466,7 @@ public class BaseGameController : MonoBehaviour {
         //Debug.Log("CheckForGameOver:isGameOver:" + isGameOver);
         //Debug.Log("CheckForGameOver:isGameRunning:" + isGameRunning);
 
-        if(isGameRunning) {
+        if (isGameRunning) {
         
             // Check player health/status
             // Go to results if health gone
@@ -2518,38 +2483,38 @@ public class BaseGameController : MonoBehaviour {
             
             // TODO HANDLE MODES
             
-            if(!isGameOver) {
+            if (!isGameOver) {
             
                 bool gameOverMode = false;
     
-                if(AppModes.Instance.isAppModeGameArcade) {
-                    if(currentGamePlayerController.runtimeData.health <= 0f
-                    || runtimeData.timeExpired) {
+                if (AppModes.Instance.isAppModeGameArcade) {
+                    if (currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
                 }
-                else if(AppModes.Instance.isAppModeGameChallenge) {
-                    if(currentGamePlayerController.runtimeData.health <= 0f
-                    || runtimeData.timeExpired) {
+                else if (AppModes.Instance.isAppModeGameChallenge) {
+                    if (currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
                 }
-                else if(AppModes.Instance.isAppModeGameTraining) {
+                else if (AppModes.Instance.isAppModeGameTraining) {
 
                     // TODO other modes
 
-                    if(runtimeData.timeExpired) {
+                    if (runtimeData.timeExpired) {
                         //gameOverMode = true;
                     }
                 }
     
-                if(runtimeData.outOfBounds) {
+                if (runtimeData.outOfBounds) {
                     //Debug.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
                     //Debug.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
     
-                if(gameOverMode) {
+                if (gameOverMode) {
                     isGameOver = true;
                     GameController.ResultsGameDelayed();
                 }
@@ -2571,18 +2536,18 @@ public class BaseGameController : MonoBehaviour {
     public virtual void handleTouchInputPoint(Vector3 point) {
         //&& currentGamePlayerController.thirdPersonController.aimingDirection != Vector3.zero) {
 
-        if(!isGameRunning) {
+        if (!isGameRunning) {
             return;
         }
 
-        if(!GameUIController.CheckIfAllowedTouch(point)) {
+        if (!GameUIController.CheckIfAllowedTouch(point)) {
             return;
         }
 
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
 
-        if(currentGamePlayerController != null) {
+        if (currentGamePlayerController != null) {
             var playerPos = currentGamePlayerController.transform.position;
             var touchPos = Camera.main.ScreenToWorldPoint(point);
     
@@ -2602,7 +2567,7 @@ public class BaseGameController : MonoBehaviour {
     
             updateFingerNavigate = true;
     
-            if(controlInputTouchOnScreen) {
+            if (controlInputTouchOnScreen) {
                 // If on screen controls are on don't do touch navigate just off the edge of the
                 /// backer on the virtual joystick to prevent random movements.
     
@@ -2617,12 +2582,12 @@ public class BaseGameController : MonoBehaviour {
                 //Debug.Log("pointNormalized:" + pointNormalized);
                 //Debug.Log("point:" + point);
     
-                if(pointNormalized.y < .2f) {
-                    if(pointNormalized.x < .2f) {
+                if (pointNormalized.y < .2f) {
+                    if (pointNormalized.x < .2f) {
                         updateFingerNavigate = false;
                     }
     
-                    if(pointNormalized.x > .8f) {
+                    if (pointNormalized.x > .8f) {
                         updateFingerNavigate = false;
                     }
                 }
@@ -2630,7 +2595,7 @@ public class BaseGameController : MonoBehaviour {
                 //Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
             }
         
-            if(updateFingerNavigate) {
+            if (updateFingerNavigate) {
 
                 //Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
                 //Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
@@ -2648,7 +2613,7 @@ public class BaseGameController : MonoBehaviour {
         Messenger<string, Vector3>.Broadcast(
             GameTouchInputMessages.inputAxis,
             GameTouchInputMessages.inputAxis + "-" + axisNameTo, axisInputTo
-            );
+        );
     }
 
     // -------------------------------------------------------
@@ -2657,9 +2622,9 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual string getGameLevelGridKey(Vector3 gridPos) {
         string key = "pos" +
-        "-" + ((int)gridPos.x).ToString() +
-        "-" + ((int)gridPos.y).ToString() +
-        "-" + ((int)gridPos.z).ToString();
+            "-" + ((int)gridPos.x).ToString() +
+            "-" + ((int)gridPos.y).ToString() +
+            "-" + ((int)gridPos.z).ToString();
         //LogUtil.Log("gameLevelKey:" + key);
         return key;
     }
@@ -2672,11 +2637,11 @@ public class BaseGameController : MonoBehaviour {
 
         string key = GameController.GetGameLevelGridKey(gridPos);
 
-        if(levelGrid.ContainsKey(key)) {
+        if (levelGrid.ContainsKey(key)) {
             filled = true;
         }
 
-        LogUtil.Log("gameLevelSpaceFilled: key:" + key + " filled:" +  filled);
+        LogUtil.Log("gameLevelSpaceFilled: key:" + key + " filled:" + filled);
 
         return filled;
     }
@@ -2687,7 +2652,7 @@ public class BaseGameController : MonoBehaviour {
 
         string key = GameController.GetGameLevelGridKey(gridPos);
 
-        if(levelGrid.ContainsKey(key)) {
+        if (levelGrid.ContainsKey(key)) {
             levelGrid[key] = asset;
             LogUtil.Log("SetLevelSpaceFilled: key:" + key);
         }
@@ -2698,13 +2663,13 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void checkGameLevelItems() {
-        if(levelItems == null) {
+        if (levelItems == null) {
             levelItems = new List<GameLevelItemAsset>();
         }
     }
 
     public virtual void checkGameLevelGrid() {
-        if(levelGrid == null) {
+        if (levelGrid == null) {
             levelGrid = new Dictionary<string, GameLevelItemAsset>();
         }
     }
@@ -2712,7 +2677,7 @@ public class BaseGameController : MonoBehaviour {
     public virtual void clearGameLevelItems() {
         GameController.CheckGameLevelItems();
 
-        if(levelItems != null) {
+        if (levelItems != null) {
             levelItems.Clear();
         }
     }
@@ -2720,7 +2685,7 @@ public class BaseGameController : MonoBehaviour {
     public virtual void clearGameLevelGrid() {
         GameController.CheckGameLevelGrid();
 
-        if(levelGrid != null) {
+        if (levelGrid != null) {
             levelGrid.Clear();
         }
     }
@@ -2737,7 +2702,7 @@ public class BaseGameController : MonoBehaviour {
             .WithX(UnityEngine.Random.Range(
                 gameBounds.boundaryTopLeft.transform.position.x,
                 gameBounds.boundaryTopRight.transform.position.x))
-            .WithY (UnityEngine.Random.Range(.1f, gameBounds.boundaryTopCeiling.transform.position.y/4));
+            .WithY(UnityEngine.Random.Range(.1f, gameBounds.boundaryTopCeiling.transform.position.y / 4));
     }
 
     public virtual List<GameLevelItemAsset> getLevelRandomizedGrid() {
@@ -2797,7 +2762,7 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void syncLevelItem(Vector3 gridPos, GameLevelItemAssetData data) {
-        if(!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
+        if (!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
             //&& GameController.CheckBounds(gridPos)) {
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
@@ -2828,7 +2793,7 @@ public class BaseGameController : MonoBehaviour {
         //step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
 
         GameLevelItemAsset asset = new GameLevelItemAsset();
-        if(data.countLimit == 0) {
+        if (data.countLimit == 0) {
             asset.asset_code = data.asset_code;
         }
         else {
@@ -2847,7 +2812,7 @@ public class BaseGameController : MonoBehaviour {
         
     public virtual List<GameLevelItemAsset> getLevelRandomized(List<GameLevelItemAsset> levelItems) {
         
-        for(int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
+        for (int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
             data.asset_code = "portal";
@@ -2865,7 +2830,7 @@ public class BaseGameController : MonoBehaviour {
         }
         
         
-        for(int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
+        for (int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
             data.asset_code = "box";
@@ -2993,9 +2958,9 @@ public class BaseGameController : MonoBehaviour {
     // UPDATE
     
     // Update is called once per frame
-    public virtual void Update () {
+    public virtual void Update() {
 
-        if(!isGameRunning) {
+        if (!isGameRunning) {
             return;
         }
     
@@ -3004,56 +2969,56 @@ public class BaseGameController : MonoBehaviour {
                 
         //if(controlInputTouchFinger) {
 
-        if(Input.touchCount > 0) {
-            foreach(Touch touch in Input.touches) {
+        if (Input.touchCount > 0) {
+            foreach (Touch touch in Input.touches) {
                 GameController.HandleTouchInputPoint(touch.position);
             }
         }
-        else if(Input.GetMouseButton(0)) {
+        else if (Input.GetMouseButton(0)) {
             GameController.HandleTouchInputPoint(Input.mousePosition);
         }
         else {
-            if(GameController.CurrentGamePlayerController != null) {
-				
-				if(GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
+            if (GameController.CurrentGamePlayerController != null) {
+                
+                if (GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
                     GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput = 0f;
                     GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
                     GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
                     GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
-				}
+                }
             }
         }
         //}
         
-        if(gameState == GameStateGlobal.GamePause
-        || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (gameState == GameStateGlobal.GamePause
+            || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }
         
-        if(isGameRunning) {
+        if (isGameRunning) {
             GameController.CheckForGameOver();
         }
         
         currentTimeBlockBase += Time.deltaTime;
         
-        if(currentTimeBlockBase > actionIntervalBase) {
+        if (currentTimeBlockBase > actionIntervalBase) {
             currentTimeBlockBase = 0.0f;
         }       
         
         // debug/dev
         
-        if(Application.isEditor) {
-            if(Input.GetKeyDown(KeyCode.L)) {
+        if (Application.isEditor) {
+            if (Input.GetKeyDown(KeyCode.L)) {
                 GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
                 UnityEngine.Random.Range(.3f, 1.3f),
                 UnityEngine.Random.Range(.3f, 1.3f));
             }
-            else if(Input.GetKeyDown(KeyCode.K)) {
+            else if (Input.GetKeyDown(KeyCode.K)) {
                 GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
                 UnityEngine.Random.Range(.3f, 1.3f),
                 UnityEngine.Random.Range(.3f, 1.3f));
             }
-            else if(Input.GetKeyDown(KeyCode.J)) {
+            else if (Input.GetKeyDown(KeyCode.J)) {
                 GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
                 UnityEngine.Random.Range(.3f, 1.3f),
                 UnityEngine.Random.Range(.3f, 1.3f));
@@ -3075,13 +3040,13 @@ public class BaseGameController : MonoBehaviour {
         Vector3 angles = Vector3.zero;
     
         // Rotation to get from World +Z to pos2, rotated around World X (degrees up from Z axis)
-        angles.x = Vector3.Angle( Vector3.forward, pos2 - Vector3.right * pos2.x );
+        angles.x = Vector3.Angle(Vector3.forward, pos2 - Vector3.right * pos2.x);
     
         // Rotation to get from World +Z to pos2, rotated around World Y (degrees right? from Z axis)
-        angles.y = Vector3.Angle( Vector3.forward, pos2 - Vector3.up * pos2.y );
+        angles.y = Vector3.Angle(Vector3.forward, pos2 - Vector3.up * pos2.y);
     
         // Rotation to get from World +X to pos2, rotated around World Z (degrees up from X axis)
-        angles.z = Vector3.Angle( Vector3.right, pos2 - Vector3.forward * pos2.z );
+        angles.z = Vector3.Angle(Vector3.right, pos2 - Vector3.forward * pos2.z);
     
         return angles;
     }

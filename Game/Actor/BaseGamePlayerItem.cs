@@ -39,7 +39,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     public double pointValue = 1.0;
     public GamePlayerItemType type = GamePlayerItemType.Generic;
     public Vector3 positionEnd = Vector3.zero;
-    public bool floaty = true;
+    public bool floaty = false;
     public float bottom;
     public Transform cameraTransform;
     public bool allowCollect = false;
@@ -61,9 +61,9 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         title = "";
         description = "";
         pointValue = 1.0;
-        type = GamePlayerItemType.Generic;
+        //type = GamePlayerItemType.Generic;
         positionEnd = Vector3.zero;
-        floaty = true;
+        //floaty = true;
         collectRange = 3f;
 
         if(cameraTransform == null) {
@@ -80,7 +80,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         bottom = transform.position.y;
         
         ResetContent();
-        RevealCollect(UnityEngine.Random.Range(0f, 2f));
+        RevealCollect(UnityEngine.Random.Range(0f, .01f));
     }
         
     public virtual void RevealCollect(float delay) {
@@ -354,7 +354,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             StopContent();
         }
                 
-        if(floaty) {
+        if(true == false) { // floaty) {
             // HANDLE floaty
                         
             transform.Rotate(new Vector3(0, PrimaryRot, 0) * Time.deltaTime, Space.World);
@@ -364,7 +364,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             float bobY = bottom + (((Mathf.Cos((Time.time + bobOffset) * bobSpeed) + 1) / 2) * bobHeight);
                         
             //if(type == GamePlayerCollectableType.Point) {
-            transform.Translate((positionEnd.WithY(0)) * Time.deltaTime, Space.Self);
+            //transform.Translate((positionEnd.WithY(0)) * Time.deltaTime, Space.Self);
             //LogUtil.Log("ARCollectable:positionEnd:", positionEnd);
             transform.position = transform.position.WithY(bobY);
             //}

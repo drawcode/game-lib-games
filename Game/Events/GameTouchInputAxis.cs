@@ -20,39 +20,75 @@ public class GameTouchInputAxis : MonoBehaviour {
     public static string inputAxisMoveVertical = "input-axis-move-vertical";
     public static string inputAxisAttack2DSide = "input-axis-attack-2d-side";
     public static string inputAxisAttack2DSide2 = "input-axis-attack-2d-side-2";
- 
     public Camera collisionCamera;
     public Transform pad;// = gameObject.transform.FindChild("Pad");
     public string axisName = "main";
     public Vector3 axisInput;
     public Vector3 padPos;
+    public bool controlsVisible = true;
+    public bool hideOnDesktopWeb = false;
  
     void FindPad() {
-        if(pad == null) {
+        if (pad == null) {
             pad = gameObject.transform.FindChild("Pad");
+        }
+
+        if (hideOnDesktopWeb) {         
+            HandleInputRenderWebDesktop();
+        }
+    }
+    
+    public virtual void ShowInputObject(float time, float delay) {
+        UITweenerUtil.MoveTo(
+            gameObject, 
+            UITweener.Method.EaseInOut, 
+            UITweener.Style.Once, time, delay, Vector3.zero.WithY(0)); 
+
+        controlsVisible = true;
+    }
+    
+    public virtual void HideInputObject(float time, float delay) {
+        UITweenerUtil.MoveTo(
+            gameObject, 
+            UITweener.Method.EaseInOut, 
+            UITweener.Style.Once, time, delay, Vector3.zero.WithY(3000));  
+
+        controlsVisible = false;          
+    }
+
+    public void HandleInputRenderWebDesktop() {   
+        if (Application.isWebPlayer || Application.isEditor) {
+            if(controlsVisible) {
+                HideInputObject(.5f, 0f);
+            }
+        }
+        else {
+            if(!controlsVisible) {
+                ShowInputObject(.5f, 0f);
+            }
         }
     }
  
     void PointHitTest(Vector3 point) {
-        if(collisionCamera != null) {
+        if (collisionCamera != null) {
 
             bool hitThis = false;
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
-            if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
+            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
              
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
 
                 GameObject hitObject = hit.transform.gameObject;
 
-                if(hitObject != null) {
+                if (hitObject != null) {
                     GameTouchInputAxis axisObject = hitObject.Get<GameTouchInputAxis>();
-                    if(axisObject != null) {
+                    if (axisObject != null) {
                         //if(hit.transform.gameObject == gameObject) {
-                        if(axisObject.axisName == axisName) {
+                        if (axisObject.axisName == axisName) {
                             hitThis = true;
-                       // }
+                            // }
                         }
                     }
                 }
@@ -60,13 +96,13 @@ public class GameTouchInputAxis : MonoBehaviour {
 
             }
 
-            if(hitThis) {
+            if (hitThis) {
                 axisInput.x = (hit.textureCoord.x - .5f) * 2;
                 axisInput.y = (hit.textureCoord.y - .5f) * 2;
 
                 GameController.SendInputAxisMessage(axisName, axisInput);
 
-                if(pad != null) {
+                if (pad != null) {
                     padPos = pad.localPosition;
                     padPos.x = -Mathf.Clamp(axisInput.x * 1.5f, -1.2f, 1.2f);
                     padPos.z = -Mathf.Clamp(axisInput.y * 1.5f, -1.2f, 1.2f);
@@ -83,26 +119,26 @@ public class GameTouchInputAxis : MonoBehaviour {
 
     void ResetPad() {
 
-        if(!axisName.Contains("move")) {
+        if (!axisName.Contains("move")) {
             axisInput.x = 0f;
-            axisInput.y =  0f;
+            axisInput.y = 0f;
 
             GameController.SendInputAxisMessage(axisName, axisInput);
         }
         
-        if(pad != null) {
-           Vector3 padPos = pad.localPosition;
-           padPos.x = 0;
-           padPos.y = 0;
-           padPos.z = 0;
-           pad.localPosition = padPos;
+        if (pad != null) {
+            Vector3 padPos = pad.localPosition;
+            padPos.x = 0;
+            padPos.y = 0;
+            padPos.z = 0;
+            pad.localPosition = padPos;
         }
     }
  
     void Update() {
 
-        if(!GameController.IsGameRunning) {
-           return;
+        if (!GameController.IsGameRunning) {
+            return;
         }
  
         bool mousePressed = Input.GetMouseButton(0);
@@ -113,40 +149,41 @@ public class GameTouchInputAxis : MonoBehaviour {
         bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
         bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
      
-        if(touchPressed) {
-            foreach(Touch touch in Input.touches) {
+        if (touchPressed && controlsVisible) {
+            foreach (Touch touch in Input.touches) {
                 PointHitTest(touch.position);            
             }            
         }
-        else if(mousePressed) {
+        else if (mousePressed && hideOnDesktopWeb) {
             PointHitTest(Input.mousePosition);
         }
-        else if((leftPressed
-             || rightPressed
-             || upPressed
-             || downPressed)
-         && (axisName == "main"
-         || axisName == "move")) {
+
+        if ((leftPressed
+            || rightPressed
+            || upPressed
+            || downPressed)
+            && (axisName == "main"
+            || axisName == "move")) {
              
             Vector3 axisInput = Vector3.zero;
          
-            if(upPressed) {
+            if (upPressed) {
                 axisInput.y = 1;
             }
          
-            if(leftPressed) {
+            if (leftPressed) {
                 axisInput.x = -1;
             }
          
-            if(downPressed) {
+            if (downPressed) {
                 axisInput.y = -1;
             }
          
-            if(rightPressed) {
+            if (rightPressed) {
                 axisInput.x = 1;
             }                
          
-            if(pad != null) {
+            if (pad != null) {
                 Vector3 padPos = pad.localPosition;
                 padPos.x = -axisInput.x;
                 padPos.y = -axisInput.y;

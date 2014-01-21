@@ -1,9 +1,10 @@
 #define AD_USE_ADMOB
-//#define AD_USE_IAD
-//#define AD_USE_AMAZON
+#define AD_USE_IAD
+#define AD_USE_AMAZON
 //#define PROMO_USE_VUNGLE
 //#define PROMO_USE_CHARTBOOST
 //#define PROMO_USE_TAPJOY
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +16,9 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
+#if PROMO_USE_CHARTBOOST
 using Chartboost;
+#endif
 
 public enum AdNetworkType {
     Drawlabs,
@@ -112,7 +115,9 @@ public class AdNetworks : MonoBehaviour {
     }
 
     void OnEnable() {
+
         
+#if PROMO_USE_CHARTBOOST
         // ------------
         // CHARTBOOST
 
@@ -121,14 +126,18 @@ public class AdNetworks : MonoBehaviour {
         CBManager.didCloseInterstitialEvent += chartboostDidCloseInterstitialEvent;
         CBManager.didCacheInterstitialEvent += chartboostDidCacheInterstitialEvent;
         CBManager.didShowInterstitialEvent += chartboostDidShowInterstitialEvent;
-        
+#endif
+
+#if PROMO_USE_VUNGLE
         // ------------
         // VUNGLE
 
         Vungle.onAdViewedEvent += vungleOnAdViewedEvent;
         Vungle.onAdStartedEvent += vungleOnAdStartedEvent;
         Vungle.onAdEndedEvent += vungleOnAdEndedEvent;
+#endif
 
+#if PROMO_USE_TAPJOY
         // ------------
         // TAPJOY
 
@@ -164,10 +173,14 @@ public class AdNetworks : MonoBehaviour {
         
         // Tapjoy Show Offers Events
         TapjoyPlugin.showOffersFailed += tapjoyHandleShowOffersFailed;
+#endif
+
     }
     
     void OnDisable() {
+       
 
+#if PROMO_USE_CHARTBOOST
         // ------------
         // CHARTBOOST
 
@@ -176,14 +189,18 @@ public class AdNetworks : MonoBehaviour {
         CBManager.didCloseInterstitialEvent -= chartboostDidCloseInterstitialEvent;
         CBManager.didCacheInterstitialEvent -= chartboostDidCacheInterstitialEvent;
         CBManager.didShowInterstitialEvent -= chartboostDidShowInterstitialEvent;
-        
+#endif
+
+#if PROMO_USE_VUNGLE
         // ------------
         // VUNGLE
 
         Vungle.onAdViewedEvent -= vungleOnAdViewedEvent;
         Vungle.onAdStartedEvent -= vungleOnAdStartedEvent;
         Vungle.onAdEndedEvent -= vungleOnAdEndedEvent;
-        
+#endif
+
+#if PROMO_USE_TAPJOY
         // ------------
         // TAPJOY
                 
@@ -219,15 +236,29 @@ public class AdNetworks : MonoBehaviour {
         
         // Tapjoy Show Offers Events
         TapjoyPlugin.showOffersFailed -= tapjoyHandleShowOffersFailed;
+#endif
     }
     
-    public void Init() {        
+    public void Init() {  
+
+#if AD_USE_ADMOB
         Invoke("admobInit", 1);
+#endif        
+
+#if PROMO_USE_CHARTBOOST
         Invoke("charboostInit", .5f);
+#endif
+
+#if PROMO_USE_VUNGLE
         Invoke("vungleInit", .6f);
-        Invoke("tapjoyIni", .8f);
+#endif  
+
+#if PROMO_USE_TAPJOY
+        Invoke("tapjoyInit", .8f);
+#endif
     }
     
+    #if PROMO_USE_TAPJOY
     // ----------------------------------------------------------------------
     // TAPJOY - http://prime31.com/docs#comboVungle
     
@@ -264,7 +295,7 @@ public class AdNetworks : MonoBehaviour {
     }
     
     // VIRTUAL CURRENCY
-    void tapjoyHandleGetTapPointsSucceeded(int points) {
+    public void tapjoyHandleGetTapPointsSucceeded(int points) {
         Debug.Log("tapjoyHandleGetTapPointsSucceeded: " + points);
         //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
     }
@@ -393,18 +424,19 @@ public class AdNetworks : MonoBehaviour {
     public void vungleOnAdViewedEvent(double timeWatched, double totalDuration) {
         // check for sucess if watched more than 90% of video.
     }
-        
+#endif
+
+#if PROMO_USE_CHARTBOOST
     // ----------------------------------------------------------------------
     // CHARTBOOST
 
     public void chartboostInit() {
-    
+
         #if UNITY_ANDROID
             CBBinding.init();
         #elif UNITY_IPHONE
             CBBinding.init(AppConfigs.publisherIdCharboostiOS, AppConfigs.publisherSecretCharboostiOS);
         #endif
-
     }
 
     public void chartboostShowInterstitial() {
@@ -522,6 +554,8 @@ public class AdNetworks : MonoBehaviour {
     public void chartboostDidShowMoreAppsEvent() {
         
     }
+#endif
+
 
     // ----------------------------------------------------------------------
     // GOOGLE ADMOB
@@ -539,8 +573,8 @@ public class AdNetworks : MonoBehaviour {
             LogUtil.Log("InitAdmob RuntimePlatform.Android..." + 
                 Application.platform);          
 #if UNITY_ANDROID
-            AdMob.init(AppConfigs.publisherIdAdmobAndroid, adNetworkTestingEnabled);            
-            LogUtil.Log("InitAdmob Admob init..." + ppConfigs.publisherIdAdmobAndroid);
+            //AdMob.init(AppConfigs.publisherIdAdmobAndroid, adNetworkTestingEnabled);            
+            LogUtil.Log("InitAdmob Admob init..." + AppConfigs.publisherIdAdmobAndroid);
 #endif
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer) {
@@ -674,8 +708,10 @@ public class AdNetworks : MonoBehaviour {
     }
 
     public void showInterstitial() {
+#if PROMO_USE_CHARTBOOST
         // TODO change up to A/B or random between networks.
         chartboostShowInterstitial();
+#endif
     }
 
     public static void ShowAd() {
@@ -695,6 +731,8 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showAd(AdBannerType bannerType, AdPosition position) {
+      
+#if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
             //AdMob.createBanner(
@@ -717,7 +755,7 @@ public class AdNetworks : MonoBehaviour {
             //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
 #endif
         }
-        
+#endif
     }
     
     public static void HideAd() {
@@ -727,6 +765,8 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void hideAd() {
+       
+#if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
             AdMob.destroyBanner();
@@ -743,7 +783,7 @@ public class AdNetworks : MonoBehaviour {
             //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
 #endif
         }
-        
+#endif
     }
 
     public static void SetVideoAdSoundEnabled(bool isEnabled) {
@@ -753,7 +793,9 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void setVideoAdSoundEnabled(bool isEnabled) {
+#if PROMO_USE_VUNGLE
         vungleSetSoundEnabled(isEnabled);
+#endif
     }
     
     public static void IsVideoAdAvailable() {
@@ -763,7 +805,12 @@ public class AdNetworks : MonoBehaviour {
     }
 
     public bool isVideoAdAvailable() {
+
+#if PROMO_USE_VUNGLE
         return vungleIsAdvertAvailable();
+#else
+        return false;
+#endif
     }
     
     public static void ShowVideoAd() {
@@ -773,9 +820,12 @@ public class AdNetworks : MonoBehaviour {
     }
 
     public void showVideoAd() {
+
+#if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
             vungleDisplayAdvert(true);
         }
+#endif
     }
 
     public static void ShowVideoAd(bool showCloseButtons) {
@@ -785,9 +835,12 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showVideoAd(bool showCloseButtons) {
+
+#if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
             vungleDisplayAdvert(showCloseButtons);
         }
+#endif
     }
     
     public static void ShowVideoAdIncentivized(bool showCloseButton, string user) {
@@ -797,19 +850,26 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showVideoAdIncentivized(bool showCloseButton, string user) {
+
+#if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
             vungleDisplayIncentivizedAdvert(showCloseButton, user);
         }
+#endif
     }
 
     public static void HandleAdUpdate() {        
         #if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
+                #if PROMO_USE_CHARTBOOST
                 if (CBBinding.onBackPressed())
                     return;
                 else
                     Application.Quit();
+                #else 
+                Application.Quit();
+                #endif
             }
         }
         #endif
