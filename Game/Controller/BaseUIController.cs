@@ -96,7 +96,12 @@ public class BaseUIPanel {
     public static string panelSettingsHelp = "PanelSettingsHelp";
     public static string panelSettingsCredits = "PanelSettingsCredits";
     public static string panelGameMode = "PanelGameMode";
+    public static string panelGameModeMultiplayer = "PanelGameModeMultiplayer";
+    public static string panelGameModeMultiplayerCoop = "PanelGameModeMultiplayerCoop";
+    public static string panelGameModeMultiplayerMatchup = "PanelGameModeMultiplayerMatchup";
+    public static string panelGameModeMission = "PanelGameModeMission";
     public static string panelGameModeArcade = "PanelGameModeArcade";
+    public static string panelGameModeCareer = "PanelGameModeCareer";
     public static string panelGameModeChallenge = "PanelGameModeChallenge";
     public static string panelGameModeTraining = "PanelGameModeTraining";
     public static string panelGameModeTrainingMode = "PanelGameModeTrainingMode";
@@ -117,6 +122,7 @@ public class BaseUIPanel {
     public static string panelAchievements = "PanelAchievements";
     public static string panelProducts = "PanelProducts";
     public static string panelProductCurrency = "PanelProductCurrency";
+    public static string panelProductCurrencyEarn = "PanelProductCurrencyEarn";
     public static string panelCustomize = "PanelCustomize";
     public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
     public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
@@ -1829,6 +1835,68 @@ public class BaseUIController : MonoBehaviour {
         hideUIPanel(
             typeof(GameUIPanelGameMode));
     }
+    
+    // ------------------------------------------------------------
+    // GAME MODE MULTIPLAYER
+
+    public virtual void showGameModeMultiplayer() {
+        
+        showUIPanel(
+            typeof(GameUIPanelGameModeMultiplayer),
+            BaseUIPanel.panelGameModeMultiplayer,
+            "PLAY MULTIPLAYER");
+    } 
+    
+    public virtual void hideGameModeMultiplayer() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeMultiplayer));
+    }
+
+    // COOP
+
+    public virtual void showGameModeMultiplayerCoop() {
+        
+        showUIPanel(
+            typeof(GameUIPanelGameModeMultiplayerCoop),
+            BaseUIPanel.panelGameModeMultiplayerCoop,
+            "PLAY MULTIPLAYER CO-OP");
+    } 
+    
+    public virtual void hideGameModeMultiplayerCoop() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeMultiplayerCoop));
+    }
+
+    // MATCHUP
+    
+    public virtual void showGameModeMultiplayerMatchup() {
+        
+        showUIPanel(
+            typeof(GameUIPanelGameModeMultiplayerMatchup),
+            BaseUIPanel.panelGameModeMultiplayerMatchup,
+            "PLAY MULTIPLAYER MATCHUP");
+    } 
+    
+    public virtual void hideGameModeMultiplayerMatchup() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeMultiplayerMatchup));
+    }
+    
+    // ------------------------------------------------------------
+    // GAME MODE - MISSION
+    
+    public virtual void showGameModeMission() {
+        
+        showUIPanel(
+            typeof(GameUIPanelGameModeMission),
+            BaseUIPanel.panelGameModeMission,
+            "PLAY MISSION");
+    } 
+    
+    public virtual void hideGameModeMission() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeMission));
+    }
 
     // ------------------------------------------------------------
     // GAME MODE - TRAINING
@@ -2414,6 +2482,21 @@ public class BaseUIController : MonoBehaviour {
     public virtual void hideProductCurrency() {
         hideUIPanel(
             typeof(GameUIPanelProductCurrency));
+    }
+        
+    // ------------------------------------------------------------
+    // PRODUCTS - CURRENCY EARN
+    
+    public virtual void showProductCurrencyEarn() {
+        showUIPanel(
+            typeof(GameUIPanelProductCurrencyEarn),
+            GameUIPanel.panelProductCurrencyEarn,
+            "COINS");
+    }
+    
+    public virtual void hideProductCurrencyEarn() {
+        hideUIPanel(
+            typeof(GameUIPanelProductCurrencyEarn));
     }
      
     // ------------------------------------------------------------
