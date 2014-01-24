@@ -1,9 +1,9 @@
 #define AD_USE_ADMOB
 #define AD_USE_IAD
 #define AD_USE_AMAZON
-//#define PROMO_USE_VUNGLE
-//#define PROMO_USE_CHARTBOOST
-//#define PROMO_USE_TAPJOY
+#define PROMO_USE_VUNGLE
+#define PROMO_USE_CHARTBOOST
+#define PROMO_USE_TAPJOY
 
 using System;
 using System.Collections;
@@ -112,6 +112,10 @@ public class AdNetworks : MonoBehaviour {
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_IPHONE
 #endif
+    }
+
+    void Start() {
+        Init();
     }
 
     void OnEnable() {
@@ -246,7 +250,7 @@ public class AdNetworks : MonoBehaviour {
 #endif        
 
 #if PROMO_USE_CHARTBOOST
-        Invoke("charboostInit", .5f);
+        Invoke("chartboostInit", .5f);
 #endif
 
 #if PROMO_USE_VUNGLE
@@ -282,7 +286,24 @@ public class AdNetworks : MonoBehaviour {
                 AppConfigs.publisherSecretTapjoyiOS,
                 dict);                              
         }
-        
+
+    }
+    
+    // OFFERS
+    
+    public void tapjoyShowOffers() {
+        Debug.Log("tapjoyShowOffers");        
+        TapjoyPlugin.ShowOffers();
+    }
+
+    public void tapjoyShowDisplayAd() {
+        Debug.Log("tapjoyShowDisplayAd");        
+        TapjoyPlugin.ShowDisplayAd();
+    }
+
+    public void tapjoyShowFullscreenAd() {
+        Debug.Log("tapjoyShowFullscreenAd");        
+        TapjoyPlugin.ShowFullScreenAd();
     }
 
     // CONNECT
@@ -386,6 +407,7 @@ public class AdNetworks : MonoBehaviour {
     // VUNGLE - http://prime31.com/docs#comboVungle
     
     public void vungleInit() {
+        Debug.Log("vungleInit");
 
         Vungle.init(AppConfigs.publisherIdVungleAndroid, AppConfigs.publisherIdVungleiOS);
         //Vungle.init(AppConfigs.publisherIdVungleAndroid, AppConfigs.publisherIdVungleiOS, int age, VungleGender gender );
@@ -393,35 +415,42 @@ public class AdNetworks : MonoBehaviour {
     }
         
     public void vungleSetSoundEnabled(bool isEnabled) {
+        Debug.Log("vungleSetSoundEnabled");
         Vungle.setSoundEnabled(isEnabled);
     }
 
     // Checks to see if a video is available
     public bool vungleIsAdvertAvailable() {
+        Debug.Log("vungleIsAdvertAvailable");
         return Vungle.isAdvertAvailable();
     }
     
     public void vungleDisplayAdvert(bool showCloseButtonOnIOS) {
+        Debug.Log("vungleDisplayAdvert");
         Vungle.displayAdvert(showCloseButtonOnIOS);
     }
 
     // Displays an incentivized advert with optional name
     public void vungleDisplayIncentivizedAdvert(bool showCloseButton, string user) {
+        Debug.Log("vungleDisplayIncentivizedAdvert");
         Vungle.displayIncentivizedAdvert(showCloseButton, user);   
     }
 
     // Fired when a Vungle ad starts
     public void vungleOnAdStartedEvent() {
+        Debug.Log("vungleOnAdStartedEvent");
         // Send started message to pause
     }
 
     // Fired when a Vungle ad finishes
     public void vungleOnAdEndedEvent() {
+        Debug.Log("vungleOnAdEndedEvent");
         // Send started message to unpause and credit if successful   
     }
     
     // Fired when a Vungle video is dismissed and provides the time watched and total duration in that order.
     public void vungleOnAdViewedEvent(double timeWatched, double totalDuration) {
+        Debug.Log("vungleOnAdViewedEvent");
         // check for sucess if watched more than 90% of video.
     }
 #endif
@@ -696,7 +725,13 @@ public class AdNetworks : MonoBehaviour {
 
     
     // ----------------------------------------------------------------------
+
     // GENERIC CALLS
+
+    
+    // ----------------------------------------------------------------------
+    
+    // ADS
 
     //!CBBinding.isImpressionVisible(); 
 
@@ -785,6 +820,10 @@ public class AdNetworks : MonoBehaviour {
         }
 #endif
     }
+    
+    // ----------------------------------------------------------------------
+    
+    // VIDEO ADS
 
     public static void SetVideoAdSoundEnabled(bool isEnabled) {
         if (Instance != null) {
@@ -857,6 +896,54 @@ public class AdNetworks : MonoBehaviour {
         }
 #endif
     }
+
+    
+    // ----------------------------------------------------------------------
+    
+    // OFFERS
+
+    
+    public static void ShowOfferWall() {
+        if (Instance != null) {
+            Instance.showOfferWall();
+        }
+    }
+    
+    public void showOfferWall() {
+        
+        #if PROMO_USE_TAPJOY
+        tapjoyShowOffers();
+        #endif
+    }
+    
+    public static void ShowDisplayAd() {
+        if (Instance != null) {
+            Instance.showDisplayAd();
+        }
+    }
+    
+    public void showDisplayAd() {
+        
+        #if PROMO_USE_TAPJOY
+        tapjoyShowDisplayAd();
+        #endif
+    }
+    
+    public static void ShowFullscreenAd() {
+        if (Instance != null) {
+            Instance.showFullscreenAd();
+        }
+    }
+    
+    public void showFullscreenAd() {
+        
+        #if PROMO_USE_TAPJOY
+        tapjoyShowFullscreenAd();
+        #endif
+    }
+    
+    
+    // ----------------------------------------------------------------------
 
     public static void HandleAdUpdate() {        
         #if UNITY_ANDROID

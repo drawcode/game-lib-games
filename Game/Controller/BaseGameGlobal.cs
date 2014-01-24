@@ -18,6 +18,7 @@ public class BaseGameGlobal : MonoBehaviour {
     //public GameSettings gameSettings;
     //public Recorders raceRecorders;
     
+    public AdNetworks adNetworks;
     public SocialNetworks socialNetworks;
     public ProductPurchase productPurchase;
     public GameScreenScaler gameScreenScaler;
@@ -171,6 +172,10 @@ public class BaseGameGlobal : MonoBehaviour {
         //raceRecorders = Recorders.Instance;
         audioRecorder = gameObject.AddComponent<AudioRecordObject>();   
         
+    }
+
+    public virtual void InitAds() {
+        adNetworks = gameObject.AddComponent<AdNetworks>();   
     }
     
     public virtual void InitMatchupSettings() { 
