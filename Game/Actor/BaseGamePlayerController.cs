@@ -1185,7 +1185,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void LoadWeapons() {
         
-        Debug.Log("LoadWeapons");
+        //Debug.Log("LoadWeapons");
 
         LoadInventory();
 

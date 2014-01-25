@@ -6,68 +6,40 @@ using Engine.Utility;
 
 using Engine.Game.Actor;
 
-public class BaseGameActor : MonoBehaviour {
+public class BaseGameActor : BaseGameObjectItem {
 	
+    /*
 	public GameObject actorModelObject;
 	
 	public bool isMoving = false;
 	public bool lastMoving = false;
 	public bool isJumping = false;
-	public bool lastJumping = false;
-	
-	public string uniqueId;	
-	
-	public float currentTimeBlockLocal = 0.0f;
-	public float actionIntervalLocal = 2.0f;	
+	public bool lastJumping = false;	
 	
 	public bool navigating = false;
+ */   
 	
-	public virtual void Start() {
+	public override void Start() {
 		Init();
 	}
 	
-	public virtual void Init() {
-		uniqueId = UniqueUtil.Instance.CreateUUID4();
-		LoadSequence();	
+    public override void Init() {
+		base.Init();	
 	}
 	
-	public virtual void OnEnable() {
+    public override void OnEnable() {
+        base.OnEnable();
 		////MessengerObject<InputTouchInfo>.AddListener(EventMessagesType.OnEventInputDown, OnInputDown);
 		////MessengerObject<InputTouchInfo>.AddListener(GameMessageType.OnEventInputUp, OnInputUp);
 	}
 	
-	public virtual void OnDisable() {
+    public override void OnDisable() {
+        base.OnEnable();
 		////MessengerObject<InputTouchInfo>.RemoveListener(GameMessageType.OnEventInputDown, OnInputDown);
 		////MessengerObject<InputTouchInfo>.RemoveListener(GameMessageType.OnEventInputUp, OnInputUp);
 	}
-	
-	public virtual void OnInputDown(InputTouchInfo touchInfo) {
-		LogUtil.Log("OnInputDown GameActor");
-		
-		
-	}
-	
-	public virtual void OnInputUp(InputTouchInfo touchInfo) {
-		//LogUtil.Log("OnInputDown GameActor");
-	}
-	
-	public virtual void LoadSequence() {
-		// TODO: ...
-	}
-	
-	public virtual bool HitObject(GameObject go, InputTouchInfo inputTouchInfo) {
-		Ray screenRay = Camera.main.ScreenPointToRay(inputTouchInfo.position3d);
-		RaycastHit hit;
-		
-		if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null)
-		{
-			if(hit.transform.gameObject == go)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+
+    /*
 	
 	public virtual void CheckAnimationState() {
 		if(isJumping != lastJumping) {
@@ -115,12 +87,12 @@ public class BaseGameActor : MonoBehaviour {
 		}
 		
 		//CheckAnimationState();
-		/*
-		if(InputSystem.Instance.IsAnyAxisPressed() || navigating) {
-			isMoving = true;
-			CheckAnimationState();
-		}
-		*/
+//
+		//if(InputSystem.Instance.IsAnyAxisPressed() || navigating) {
+		//	isMoving = true;
+		//	CheckAnimationState();
+		//}
+//
 		
 		LogUtil.Log("isMoving:" + isMoving);
 		
@@ -156,5 +128,6 @@ public class BaseGameActor : MonoBehaviour {
 	public virtual void PlayIdle() {
 		PlayAnimation("idle", PlayMode.StopSameLayer);
 	}
+ */   
 }
 
