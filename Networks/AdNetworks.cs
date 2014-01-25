@@ -735,20 +735,6 @@ public class AdNetworks : MonoBehaviour {
 
     //!CBBinding.isImpressionVisible(); 
 
-    public void ShowInterstitial() {
-        
-        if (Instance != null) {
-            Instance.showInterstitial();
-        }
-    }
-
-    public void showInterstitial() {
-#if PROMO_USE_CHARTBOOST
-        // TODO change up to A/B or random between networks.
-        chartboostShowInterstitial();
-#endif
-    }
-
     public static void ShowAd() {
         if (Instance != null) {
             Instance.showAd();
@@ -762,7 +748,7 @@ public class AdNetworks : MonoBehaviour {
     }
     
     public void showAd() {
-        showAd(AdBannerType.SmartBannerLandscape, AdPosition.TopCenter);
+        showAd(AdBannerType.SmartBannerLandscape, AdPosition.BottomCenter);
     }
     
     public void showAd(AdBannerType bannerType, AdPosition position) {
@@ -928,6 +914,8 @@ public class AdNetworks : MonoBehaviour {
         tapjoyShowDisplayAd();
         #endif
     }
+
+    // FULLSCREEN ADS
     
     public static void ShowFullscreenAd() {
         if (Instance != null) {
@@ -939,6 +927,35 @@ public class AdNetworks : MonoBehaviour {
         
         #if PROMO_USE_TAPJOY
         tapjoyShowFullscreenAd();
+        #endif
+    }
+
+    // MORE APPS
+    
+    public static void ShowMoreApps() {
+        if (Instance != null) {
+            Instance.showMoreApps();
+        }
+    }
+    
+    public void showMoreApps() {
+        
+        #if PROMO_USE_CHARTBOOST
+        chartboostShowMoreApps();
+        #endif
+    }
+
+    
+    public static void ShowInterstitial() {
+        if (Instance != null) {
+            Instance.showInterstitial();
+        }
+    }
+    
+    public void showInterstitial() {
+        
+        #if PROMO_USE_CHARTBOOST
+        chartboostShowInterstitial();
         #endif
     }
     
