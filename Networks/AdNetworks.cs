@@ -1,9 +1,9 @@
-#define AD_USE_ADMOB
-#define AD_USE_IAD
-#define AD_USE_AMAZON
-#define PROMO_USE_VUNGLE
-#define PROMO_USE_CHARTBOOST
-#define PROMO_USE_TAPJOY
+//#define AD_USE_ADMOB
+//#define AD_USE_IAD
+//#define AD_USE_AMAZON
+//#define PROMO_USE_VUNGLE
+//#define PROMO_USE_CHARTBOOST
+//#define PROMO_USE_TAPJOY
 
 using System;
 using System.Collections;
