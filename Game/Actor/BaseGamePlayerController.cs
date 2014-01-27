@@ -239,7 +239,7 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerHolder;
     public GameObject gamePlayerShadow;
     public GameObject gamePlayerEnemyTarget;
-    public GameObject gamePlayerModelHolder;
+    public GameObject gamePlayerModelHolder; 
     public GameObject gamePlayerModelHolderModel;
     public GameObject gamePlayerModelHolderWeapons;
     public GameObject gamePlayerModelHolderItems;
@@ -1248,12 +1248,14 @@ public class BaseGamePlayerController : GameActor {
             if (controllerData.thirdPersonController != null) {
              
                 //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
-
+                
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-
+                    //axisInput.x = 0f;
+                    //axisInput.y = 0f;
                     controllerData.thirdPersonController.horizontalInput = axisInput.x;
                     controllerData.thirdPersonController.verticalInput = axisInput.y;
                 }
+
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack) {
@@ -1264,11 +1266,13 @@ public class BaseGamePlayerController : GameActor {
              
                 //Debug.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
                 
-                if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-
-                    controllerData.thirdPersonController.horizontalInput2 = axisInput.x;
-                    controllerData.thirdPersonController.verticalInput2 = axisInput.y;
+                if (!axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
+                    axisInput.x = 0f;
+                    axisInput.y = 0f;
                 }
+
+                controllerData.thirdPersonController.horizontalInput2 = axisInput.x;
+                controllerData.thirdPersonController.verticalInput2 = axisInput.y;
             }
         }
         else if (name == GameTouchInputAxis.inputAxisMoveHorizontal) {

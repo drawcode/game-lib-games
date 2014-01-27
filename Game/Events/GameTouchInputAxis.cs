@@ -122,7 +122,7 @@ public class GameTouchInputAxis : MonoBehaviour {
 
     void ResetPad() {
 
-        if (!axisName.Contains("move")) {
+        if (1==1) {//!axisName.Contains("move")) {
             axisInput.x = 0f;
             axisInput.y = 0f;
 
@@ -198,8 +198,11 @@ public class GameTouchInputAxis : MonoBehaviour {
             }
 
             GameController.SendInputAxisMessage(axisName, axisInput);
+
+            handled = true;
         }
-        else {
+
+        if(!handled) {
             ResetPad();
         }
     }
