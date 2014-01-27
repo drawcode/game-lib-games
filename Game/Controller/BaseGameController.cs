@@ -1264,6 +1264,8 @@ public class BaseGameController : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         
         GameHUD.Instance.ResetIndicators();
+
+        // TODO load customizations
         GameController.LoadLevel(levelCode);
         
         // TODO load anim
@@ -1273,6 +1275,7 @@ public class BaseGameController : MonoBehaviour {
         if(currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeOut();
         }
+
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
     }
      

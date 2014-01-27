@@ -34,7 +34,7 @@ public class GameTouchInputAxis : MonoBehaviour {
         }
 
         if (hideOnDesktopWeb) {         
-            HandleInputRenderWebDesktop();
+            //HandleInputRenderWebDesktop();
         }
     }
     
@@ -69,10 +69,11 @@ public class GameTouchInputAxis : MonoBehaviour {
         }
     }
  
-    void PointHitTest(Vector3 point) {
-        if (collisionCamera != null) {
+    public bool PointHitTest(Vector3 point) {
+        
+        bool hitThis = false;
 
-            bool hitThis = false;
+        if (collisionCamera != null) {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
@@ -115,6 +116,8 @@ public class GameTouchInputAxis : MonoBehaviour {
             }
 
         }
+
+        return hitThis;
     }
 
     void ResetPad() {
@@ -148,22 +151,25 @@ public class GameTouchInputAxis : MonoBehaviour {
         bool rightPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
         bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
         bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+        
+        bool handled = false;
      
-        if (touchPressed && controlsVisible) {
+        if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
-                PointHitTest(touch.position);            
+                handled = PointHitTest(touch.position);            
             }            
         }
-        else if (mousePressed && hideOnDesktopWeb) {
-            PointHitTest(Input.mousePosition);
+        else if (mousePressed) {//  && hideOnDesktopWeb) {
+            handled = PointHitTest(Input.mousePosition);
         }
 
-        if ((leftPressed
+        if (!handled 
+            && ((leftPressed
             || rightPressed
             || upPressed
             || downPressed)
             && (axisName == "main"
-            || axisName == "move")) {
+            || axisName == "move"))) {
              
             Vector3 axisInput = Vector3.zero;
          

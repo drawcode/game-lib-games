@@ -320,6 +320,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         ListClear(listGridRoot);
 
         choices.Clear();
+
         appContentChoicesData = new AppContentChoicesData();
 
         List<AppContentChoice> choicesFilter = AppContentChoices.Instance.GetAll();
@@ -328,6 +329,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         choicesFilter.Shuffle();
 
         int countChoices = choicesFilter.Count;
+
         Debug.Log("LoadChoices:countChoices:" + countChoices);
 
         // select total choices to try
