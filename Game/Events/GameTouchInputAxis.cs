@@ -68,6 +68,9 @@ public class GameTouchInputAxis : MonoBehaviour {
             }
         }
     }
+
+    GameObject hitObject;
+    GameTouchInputAxis axisObject;
  
     public bool PointHitTest(Vector3 point) {
         
@@ -81,20 +84,20 @@ public class GameTouchInputAxis : MonoBehaviour {
              
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
 
-                GameObject hitObject = hit.transform.gameObject;
+                hitObject = hit.transform.gameObject;
 
                 if (hitObject != null) {
-                    GameTouchInputAxis axisObject = hitObject.Get<GameTouchInputAxis>();
+                    axisObject = hitObject.Get<GameTouchInputAxis>();
                     if (axisObject != null) {
                         //if(hit.transform.gameObject == gameObject) {
                         if (axisObject.axisName == axisName) {
                             hitThis = true;
+
+                           // Debug.Log("PointHitTest:" + " hitThis:" + hitThis.ToString() + " axisName:" + axisName);
                             // }
                         }
                     }
                 }
-             
-
             }
 
             if (hitThis) {
@@ -112,7 +115,7 @@ public class GameTouchInputAxis : MonoBehaviour {
                 }
             }
             else {
-                ResetPad();
+                //ResetPad();
             }
 
         }
@@ -152,11 +155,23 @@ public class GameTouchInputAxis : MonoBehaviour {
         bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
         bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
         
+        if(axisName == "move") {
+        //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
+         //         + " rightPressed:" + rightPressed.ToString()
+         //         + " upPressed:" + upPressed.ToString()
+         //         + " downPressed:" + downPressed.ToString());
+        }
+        
         bool handled = false;
      
         if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
-                handled = PointHitTest(touch.position);            
+                if(!handled) {
+                    handled = PointHitTest(touch.position);  
+                }
+                else {
+                    break;
+                }
             }            
         }
         else if (mousePressed) {//  && hideOnDesktopWeb) {
@@ -174,19 +189,19 @@ public class GameTouchInputAxis : MonoBehaviour {
             Vector3 axisInput = Vector3.zero;
          
             if (upPressed) {
-                axisInput.y = 1;
+                axisInput.y = 0.99f;
             }
          
             if (leftPressed) {
-                axisInput.x = -1;
+                axisInput.x = -0.99f;
             }
          
             if (downPressed) {
-                axisInput.y = -1;
+                axisInput.y = -0.99f;
             }
          
             if (rightPressed) {
-                axisInput.x = 1;
+                axisInput.x = 0.99f;
             }                
          
             if (pad != null) {
@@ -200,6 +215,10 @@ public class GameTouchInputAxis : MonoBehaviour {
             GameController.SendInputAxisMessage(axisName, axisInput);
 
             handled = true;
+        }
+
+        if(axisName == "move") {
+            //Debug.Log("handled:" + " handled:" + handled.ToString());
         }
 
         if(!handled) {

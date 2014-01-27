@@ -3073,12 +3073,13 @@ public class BaseGameController : MonoBehaviour {
         else {
             if(GameController.CurrentGamePlayerController != null) {
 				
-				if(GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
-                    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
-				}
+                // reset handled in input axis, might be keyboard input so don't reset.
+				//if(GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
+                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput = 0f;
+                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
+                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
+                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
+				//}
             }
         }
         //}

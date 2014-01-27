@@ -1249,12 +1249,16 @@ public class BaseGamePlayerController : GameActor {
              
                 //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
-                if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-                    //axisInput.x = 0f;
-                    //axisInput.y = 0f;
-                    controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                    controllerData.thirdPersonController.verticalInput = axisInput.y;
+                if (!axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
+                    axisInput.x = 0f;
+                    axisInput.y = 0f;
                 }
+
+                controllerData.thirdPersonController.horizontalInput = axisInput.x;
+                controllerData.thirdPersonController.verticalInput = axisInput.y;
+                
+                //Debug.Log("OnInputAxis:" + name + "horizontalInput:" + axisInput.x);
+                //Debug.Log("OnInputAxis:" + name + "verticalInput:" + axisInput.y);
 
             }
         }
@@ -1270,9 +1274,10 @@ public class BaseGamePlayerController : GameActor {
                     axisInput.x = 0f;
                     axisInput.y = 0f;
                 }
-
+                
                 controllerData.thirdPersonController.horizontalInput2 = axisInput.x;
                 controllerData.thirdPersonController.verticalInput2 = axisInput.y;
+
             }
         }
         else if (name == GameTouchInputAxis.inputAxisMoveHorizontal) {
@@ -3889,6 +3894,11 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LateUpdate() {
+
+        if(controllerData == null) {
+            return;
+        }
+
         if (!controllerData.initialized) {
             return;
         }

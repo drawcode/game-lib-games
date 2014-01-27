@@ -161,7 +161,7 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         else
             movingBack = false;
 
-        var wasMoving = isMoving;
+        bool wasMoving = isMoving;
         isMoving = Mathf.Abs(horizontalInput) > 0.1 || Mathf.Abs(verticalInput) > 0.1;
 
         // Target direction relative to the camera
@@ -175,6 +175,8 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
         else {
             aimingDirection = targetDirection;
         }
+        
+        //Debug.Log("targetDirection:" + targetDirection);
 
         // Grounded controls
         if(grounded) {
@@ -196,6 +198,8 @@ public class BaseGamePlayerThirdPersonController : MonoBehaviour {
                 moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 
                 moveDirection = moveDirection.normalized;
+
+                //Debug.Log("moveDirection:" + moveDirection);
                 //}
             }
 
