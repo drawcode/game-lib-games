@@ -515,6 +515,15 @@ public class BaseGameController : MonoBehaviour {
 
     // ----------------------------------------------------------------------
 
+    public static bool isFingerNavigating {
+        get {
+            if(GameController.Instance != null) {
+                return GameController.Instance.updateFingerNavigate;
+            }
+            return false;
+        }
+    }
+
     public virtual void Awake() {
 
     }
@@ -2626,15 +2635,17 @@ public class BaseGameController : MonoBehaviour {
 
     // HANDLE TOUCH MOVEMENT - TODO MOVE TO UI CONTROLLER
 
-    public virtual void handleTouchInputPoint(Vector3 point) {
+    public virtual bool handleTouchInputPoint(Vector3 point) {
         //&& currentGamePlayerController.thirdPersonController.aimingDirection != Vector3.zero) {
 
+        bool handled = false;
+
         if(!isGameRunning) {
-            return;
+            return handled;
         }
 
         if(!GameUIController.CheckIfAllowedTouch(point)) {
-            return;
+            return handled;
         }
 
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
@@ -2690,6 +2701,8 @@ public class BaseGameController : MonoBehaviour {
         
             if(updateFingerNavigate) {
 
+                handled = true;
+
                 //Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
                 //Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
 
@@ -2700,6 +2713,8 @@ public class BaseGameController : MonoBehaviour {
                 GameController.SendInputAxisMessage("move", axisInput);
             }
         }
+
+        return handled;
     }
 
     public virtual void sendInputAxisMessage(string axisNameTo, Vector3 axisInputTo) {
@@ -3049,6 +3064,8 @@ public class BaseGameController : MonoBehaviour {
     // -------------------------------------------------------
     
     // UPDATE
+
+    public static bool touchHandled = false;
     
     // Update is called once per frame
     public virtual void Update () {
@@ -3056,19 +3073,26 @@ public class BaseGameController : MonoBehaviour {
         if(!isGameRunning) {
             return;
         }
+        
+        bool mousePressed = Input.GetMouseButton(0);
+        bool touchPressed = Input.touchCount > 0 ? true : false;
+        bool handled = false;
     
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         //bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
                 
         //if(controlInputTouchFinger) {
 
-        if(Input.touchCount > 0) {
+        if(touchPressed) {
             foreach(Touch touch in Input.touches) {
-                GameController.HandleTouchInputPoint(touch.position);
+                handled = GameController.HandleTouchInputPoint(touch.position);
+                
+                if(handled)
+                    break;
             }
         }
-        else if(Input.GetMouseButton(0)) {
-            GameController.HandleTouchInputPoint(Input.mousePosition);
+        else if(mousePressed) {
+            handled = GameController.HandleTouchInputPoint(Input.mousePosition);
         }
         else {
             if(GameController.CurrentGamePlayerController != null) {
@@ -3083,6 +3107,8 @@ public class BaseGameController : MonoBehaviour {
             }
         }
         //}
+
+        touchHandled = handled;
         
         if(gameState == GameStateGlobal.GamePause
         || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {

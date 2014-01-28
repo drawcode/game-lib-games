@@ -27,6 +27,8 @@ public class GameTouchInputAxis : MonoBehaviour {
     public Vector3 padPos;
     public bool controlsVisible = true;
     public bool hideOnDesktopWeb = false;
+    
+    public static bool updateFingerNavigate = false;
  
     void FindPad() {
         if (pad == null) {
@@ -101,6 +103,13 @@ public class GameTouchInputAxis : MonoBehaviour {
             }
 
             if (hitThis) {
+                
+                if(axisName == "move" 
+                   && GameController.isFingerNavigating) {
+                    hitThis = false;
+                    return hitThis;
+                }
+
                 axisInput.x = (hit.textureCoord.x - .5f) * 2;
                 axisInput.y = (hit.textureCoord.y - .5f) * 2;
 
@@ -166,12 +175,9 @@ public class GameTouchInputAxis : MonoBehaviour {
      
         if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
-                if(!handled) {
-                    handled = PointHitTest(touch.position);  
-                }
-                else {
+                handled = PointHitTest(touch.position);  
+                if(handled)
                     break;
-                }
             }            
         }
         else if (mousePressed) {//  && hideOnDesktopWeb) {

@@ -1254,9 +1254,10 @@ public class BaseGamePlayerController : GameActor {
                     axisInput.y = 0f;
                 }
 
-                controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                controllerData.thirdPersonController.verticalInput = axisInput.y;
-                
+                //if(!GameController.isFingerNavigating) {
+                    controllerData.thirdPersonController.horizontalInput = axisInput.x;
+                    controllerData.thirdPersonController.verticalInput = axisInput.y;
+                //}
                 //Debug.Log("OnInputAxis:" + name + "horizontalInput:" + axisInput.x);
                 //Debug.Log("OnInputAxis:" + name + "verticalInput:" + axisInput.y);
 
