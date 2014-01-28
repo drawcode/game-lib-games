@@ -44,7 +44,58 @@ public class UITweenerUtil
 	}
 	*/
 	
-	
+    public static void ColorToHandler<T>(GameObject go, Color colorTo, float duration, float delay) where T : Component {
+        foreach(Transform t in go.transform) {
+
+            if(go.Has<T>()) {
+                string toLook = "-a-";
+                int alphaMarker = t.name.IndexOf(toLook);
+                
+                if(alphaMarker > -1) {
+                    string val = t.name.Substring(alphaMarker + toLook.Length);
+                    if(!string.IsNullOrEmpty(val)) {
+                        float valNumeric = 0f;                  
+                        float.TryParse(val, out valNumeric);
+                        
+                        if(valNumeric > 0f) {
+                            valNumeric = valNumeric/100f;                            
+                            colorTo.a = valNumeric;
+                        }
+                    }
+                }
+                
+                ColorTo(t.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, colorTo);
+            }
+            
+            ColorToHandler(t.gameObject, colorTo, duration, delay);
+        }
+    }
+    
+    public static void ColorToHandler(GameObject go, Color colorTo, float duration, float delay) {
+        foreach(Transform t in go.transform) {
+            string toLook = "-a-";
+            int alphaMarker = t.name.IndexOf(toLook);
+
+            if(alphaMarker > -1) {
+                string val = t.name.Substring(alphaMarker + toLook.Length);
+                if(!string.IsNullOrEmpty(val)) {
+                    float valNumeric = 0f;                  
+                    float.TryParse(val, out valNumeric);
+                    
+                    if(valNumeric > 0f) {
+                        valNumeric = valNumeric/100f;
+
+                        colorTo.a = valNumeric;
+                    }
+                }
+            }
+            
+            ColorTo(t.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, colorTo);
+
+            ColorToHandler(t.gameObject, colorTo, duration, delay);
+        }
+    }
+
 	public static TweenColor ColorTo(GameObject go, UITweener.Method method, UITweener.Style style, 
 		float duration, float delay, Color colorTo) {
 		if(go == null) {
