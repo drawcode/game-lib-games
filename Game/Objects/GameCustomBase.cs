@@ -166,7 +166,7 @@ public class GameCustomBase : MonoBehaviour {
                         
                         //Debug.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
                         
-                        GameTeamDataItem itemTexture = team.GetTexturePreset();
+                        GameDataItemTexturePreset itemTexture = team.data.GetTexturePreset();
                         
                         if(itemTexture != null) {  
                             customInfo.presetTextureCode = itemTexture.code;   
@@ -183,7 +183,7 @@ public class GameCustomBase : MonoBehaviour {
                             //}
                         }
 
-                        GameTeamDataItem itemColor = team.GetColorPreset();
+                        GameDataItemColorPreset itemColor = team.data.GetColorPreset();
 
                         if(itemColor != null) { 
                             customInfo.presetColorCode = itemColor.code;    

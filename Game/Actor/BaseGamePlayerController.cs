@@ -1030,7 +1030,7 @@ public class BaseGamePlayerController : GameActor {
             if (team != null) {
                 if (team.data != null) {
 
-                    GameTeamDataItem item = team.GetModel();
+                    GameDataModel item = team.data.GetModel();
 
                     if(item != null) {
                         prefabName = item.code;
@@ -1104,9 +1104,10 @@ public class BaseGamePlayerController : GameActor {
                         if (team.data != null) {
                                                                                     
                             GameCustomInfo customInfo = new GameCustomInfo();
+
                             customInfo.actorType = GameCustomActorTypes.enemyType;
-                            customInfo.presetColorCode = team.GetColorPresetCode();
-                            customInfo.presetTextureCode = team.GetTexturePresetCode();
+                            customInfo.presetColorCode = team.data.GetColorPreset().code;//GetColorPresetCode();
+                            customInfo.presetTextureCode = team.data.GetTexturePreset().code;
                             customInfo.type = GameCustomTypes.teamType;
                             customInfo.teamCode = team.code;
 

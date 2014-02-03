@@ -297,8 +297,8 @@ public class UIPanelOverviewMode : UIPanelBase {
 
                 GameCustomInfo customInfo = new GameCustomInfo();
                 customInfo.actorType = GameCustomActorTypes.enemyType;
-                customInfo.presetColorCode = team.GetColorPresetCode();
-                customInfo.presetTextureCode = team.GetTexturePresetCode();
+                customInfo.presetColorCode = team.data.GetColorPreset().code;
+                customInfo.presetTextureCode = team.data.GetTexturePreset().code;
                 customInfo.type = GameCustomTypes.teamType;
                 customInfo.teamCode = team.code;
                 gameCustomEnemy.Load(customInfo);
