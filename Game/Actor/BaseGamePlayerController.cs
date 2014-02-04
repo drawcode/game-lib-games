@@ -1193,8 +1193,6 @@ public class BaseGamePlayerController : GameActor {
         LoadWeapon(weaponInventory[weaponInventoryIndex]);
     }
 
-    GameWeapon currentWeapon;
-
     public virtual void LoadWeapon(string code) {
         
         UnloadWeapons();
@@ -1203,13 +1201,13 @@ public class BaseGamePlayerController : GameActor {
             return; // TODO enemy weapons
         }
 
-        currentWeapon = GameWeapons.Instance.GetByCode(code);
+        GameWeapon gameWeaponData = GameWeapons.Instance.GetByCode(code);
 
-        if(currentWeapon == null) {
+        if(gameWeaponData == null) {
             return;
         }
 
-        GameObject go = AppContentAssets.LoadAsset("weapon", currentWeapon.data.GetModel().code);
+        GameObject go = AppContentAssets.LoadAsset("weapon", gameWeaponData.data.GetModel().code);
 
         if(go == null) {
             return;
@@ -1223,6 +1221,8 @@ public class BaseGamePlayerController : GameActor {
             
             foreach(GamePlayerWeapon weapon in 
                     gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+
+                weapon.gameWeaponData = gameWeaponData;
                                 
                 Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
 

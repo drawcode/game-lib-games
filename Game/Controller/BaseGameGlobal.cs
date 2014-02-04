@@ -34,7 +34,6 @@ public class BaseGameGlobal : MonoBehaviour {
     public bool ENABLE_PRODUCT_UNLOCKS = true;
     public string currentLevel = "Level1";
     public string masterserverPrefix = "drawlabs_";
-    public static float volumeEditor = 0f;
     
     public virtual void Awake() {
         Init();
@@ -253,12 +252,12 @@ public class BaseGameGlobal : MonoBehaviour {
         #if DEV
         if (Application.isEditor) {
 
-            GameProfiles.Current.SetAudioMusicVolume(volumeEditor);
-            GameProfiles.Current.SetAudioEffectsVolume(volumeEditor);          
-            audioSystem.SetAmbienceVolume(volumeEditor);
-            audioSystem.SetEffectsVolume(volumeEditor);
-            GameAudio.SetEffectsVolume(volumeEditor);
-            GameAudio.SetAmbienceVolume(volumeEditor);
+            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
+            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
+            audioSystem.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
+            audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
+            GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
+            GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
         }
         #endif
         

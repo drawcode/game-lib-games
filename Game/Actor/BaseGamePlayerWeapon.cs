@@ -28,6 +28,8 @@ public class BaseGamePlayerWeapon : GameActor {
 	
 	public GamePlayerController gamePlayerController;
 
+    public GameWeapon gameWeaponData;
+
 	public virtual void Awake() {
 		
 	}
@@ -106,7 +108,7 @@ public class BaseGamePlayerWeapon : GameActor {
 
 	public virtual void PlayAttackSound() {
 
-		GameAudio.PlayEffect(transform, "shotgun_shot2");
+		GameAudio.PlayEffect(transform, gameWeaponData.data.GetSoundsByTypeShot().code);
 		Invoke("PlayAttackPostSound", .5f);
 	}
 
@@ -116,7 +118,7 @@ public class BaseGamePlayerWeapon : GameActor {
 
 
 	public virtual void PlayAttackPostSound() {
-		GameAudio.PlayEffect(transform, "shotgun_load2");
+        GameAudio.PlayEffect(transform, gameWeaponData.data.GetSoundsByTypeLoad().code);
 	}
 	
 	public virtual void AttackPrimary() {
