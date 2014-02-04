@@ -1159,7 +1159,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void LoadInventory() {
 
-        Debug.Log("LoadInventory");
+        ////Debug.Log("LoadInventory");
     
         if(weaponInventory == null) {
             weaponInventory = new List<string>();
@@ -1193,28 +1193,33 @@ public class BaseGamePlayerController : GameActor {
         LoadWeapon(weaponInventory[weaponInventoryIndex]);
     }
 
+    GameWeapon currentWeapon;
+
     public virtual void LoadWeapon(string code) {
         
         UnloadWeapons();
 
         if(!IsPlayerControlled) {
+            return; // TODO enemy weapons
+        }
+
+        currentWeapon = GameWeapons.Instance.GetByCode(code);
+
+        if(currentWeapon == null) {
             return;
         }
-        
+
         Debug.Log("LoadWeapon:code1:" + code);
 
-        GameObject go = AppContentAssets.LoadAsset("weapon", code);
-        
-        Debug.Log("LoadAsset:" + " go2:" + go != null);
+        GameObject go = AppContentAssets.LoadAsset("weapon", currentWeapon.data.GetModel().code);
 
         if(go == null) {
             return;
         }
 
-        Debug.Log("LoadWeapon:code2:" + code);
-
-
         go.transform.parent = gamePlayerModelHolderWeapons.transform;
+        go.ResetPosition();
+        go.ResetRotation();
                 
         if(go != null && weapons.Count == 0) {
             
@@ -3967,6 +3972,30 @@ public class BaseGamePlayerController : GameActor {
                     if (!IsPlayerControlled) {
                         Die();
                     }       
+                }
+                else if (Input.GetKey(KeyCode.V)) {                  
+                    LoadWeapon("weapon-machine-gun-1");
+
+                    UINotificationDisplayTip.Instance.QueueTip("Machine Gun Enabled","...");
+                }
+                else if (Input.GetKey(KeyCode.B)) {                  
+                    LoadWeapon("weapon-flame-thrower-1");
+
+                    UINotificationDisplayTip.Instance.QueueTip("Flame Thrower Enabled","...");
+                }
+                else if (Input.GetKey(KeyCode.N)) {                  
+                    LoadWeapon("weapon-shotgun-1");
+                    UINotificationDisplayTip.Instance.QueueTip("Shotgun Enabled","...");
+                }
+                else if (Input.GetKey(KeyCode.M)) {                  
+                    LoadWeapon("weapon-rocket-launcher-1");
+
+                    UINotificationDisplayTip.Instance.QueueTip("Rocket Launcher Enabled","...");
+                }
+                else if (Input.GetKey(KeyCode.C)) {                  
+                    LoadWeapon("weapon-rifle-1");
+
+                    UINotificationDisplayTip.Instance.QueueTip("Rifle Enabled","...");
                 }
             }
         }
