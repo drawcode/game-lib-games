@@ -1209,8 +1209,6 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        Debug.Log("LoadWeapon:code1:" + code);
-
         GameObject go = AppContentAssets.LoadAsset("weapon", currentWeapon.data.GetModel().code);
 
         if(go == null) {
@@ -1223,7 +1221,8 @@ public class BaseGamePlayerController : GameActor {
                 
         if(go != null && weapons.Count == 0) {
             
-            foreach(GamePlayerWeapon weapon in gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+            foreach(GamePlayerWeapon weapon in 
+                    gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
                                 
                 Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
 
@@ -3976,26 +3975,36 @@ public class BaseGamePlayerController : GameActor {
                 else if (Input.GetKey(KeyCode.V)) {                  
                     LoadWeapon("weapon-machine-gun-1");
 
-                    UINotificationDisplayTip.Instance.QueueTip("Machine Gun Enabled","...");
+                    UINotificationDisplay.Instance.QueueTip(
+                        "Machine Gun Enabled",
+                        "Machine gun simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.B)) {                  
                     LoadWeapon("weapon-flame-thrower-1");
 
-                    UINotificationDisplayTip.Instance.QueueTip("Flame Thrower Enabled","...");
+                    UINotificationDisplay.Instance.QueueTip(
+                        "Flame Thrower Enabled",
+                        "Flame thrower simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.N)) {                  
                     LoadWeapon("weapon-shotgun-1");
-                    UINotificationDisplayTip.Instance.QueueTip("Shotgun Enabled","...");
+                    UINotificationDisplay.Instance.QueueTip(
+                        "Shotgun Enabled",
+                        "Shotgun simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.M)) {                  
                     LoadWeapon("weapon-rocket-launcher-1");
 
-                    UINotificationDisplayTip.Instance.QueueTip("Rocket Launcher Enabled","...");
+                    UINotificationDisplay.Instance.QueueTip(
+                            "Rocket Launcher Enabled",
+                            "Rocket launcher trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.C)) {                  
                     LoadWeapon("weapon-rifle-1");
 
-                    UINotificationDisplayTip.Instance.QueueTip("Rifle Enabled","...");
+                    UINotificationDisplay.Instance.QueueTip(
+                            "Rifle Enabled",
+                            "Rifle simulation trigger and action installed and ready.");
                 }
             }
         }

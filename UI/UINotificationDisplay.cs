@@ -72,6 +72,8 @@ public class UINotificationDisplay
 	public UILabel tipDescription;
 	public UILabel tipScore;
 	public UIImageButton tipContinue;
+        
+    UINotificationItem notificationItem;
 	
 	float positionYOpenInGame = 0;
 	float positionYClosedInGame = 900;
@@ -180,6 +182,19 @@ public class UINotificationDisplay
 	}
 	
 	public void QueueNotification(UINotificationItem notificationItem) {
+
+        foreach(UINotificationItem item in notificationQueue) {
+            if(item.title == notificationItem.title) {
+                return;
+            }
+        }
+
+        if(currentItem != null) {
+            if(currentItem.code == notificationItem.code) {
+                return;
+            }
+        }
+
 		notificationQueue.Enqueue(notificationItem);
 					
 		LogUtil.Log("Notification Queue(" 
@@ -417,62 +432,64 @@ public class UINotificationDisplay
 	public void ProcessNextNotification() {
 		if(!Paused) {
 			if(notificationQueue.Count > 0) {
-				UINotificationItem notificationItem = notificationQueue.Dequeue();
-				bool found = false;
+				
+                currentItem = notificationQueue.Dequeue();
+				
+                bool found = false;
 				
 				
-				if(notificationItem.notificationType == UINotificationType.Achievement) {		
+                if(currentItem.notificationType == UINotificationType.Achievement) {		
 					
-					ShowNotificationContainerType(notificationItem.notificationType);					
-					UIUtil.SetLabelValue(achievementTitle, notificationItem.title);
-					UIUtil.SetLabelValue(achievementDescription, notificationItem.description);
+                    ShowNotificationContainerType(currentItem.notificationType);					
+                    UIUtil.SetLabelValue(achievementTitle, currentItem.title);
+                    UIUtil.SetLabelValue(achievementDescription, currentItem.description);
 
                     if(GameConfigs.useCoinRewardsForAchievements) {
-                        double score = Convert.ToDouble(notificationItem.score);
+                        double score = Convert.ToDouble(currentItem.score);
                         score *= 50; // 50 coins per   
                         lastScore = 0;
                         currentScore = score;
-                        notificationItem.score = currentScore.ToString("N0");
+                        currentItem.score = currentScore.ToString("N0");
                         GameProfileRPGs.Current.AddCurrency(currentScore);
                     }
 
-					UIUtil.SetLabelValue(achievementScore, "+" + notificationItem.score);
+                    UIUtil.SetLabelValue(achievementScore, "+" + currentItem.score);
 					
 					found = true;
 				}
-				else if(notificationItem.notificationType == UINotificationType.Point) {		
+                else if(currentItem.notificationType == UINotificationType.Point) {		
 					
-					ShowNotificationContainerType(notificationItem.notificationType);					
-					UIUtil.SetLabelValue(pointTitle, notificationItem.title);
-					UIUtil.SetLabelValue(pointDescription, notificationItem.description);
-					UIUtil.SetLabelValue(pointScore, "+" + notificationItem.score);
+                    ShowNotificationContainerType(currentItem.notificationType);					
+                    UIUtil.SetLabelValue(pointTitle, currentItem.title);
+                    UIUtil.SetLabelValue(pointDescription, currentItem.description);
+                    UIUtil.SetLabelValue(pointScore, "+" + currentItem.score);
 					
 					found = true;
 				}				
-				else if(notificationItem.notificationType == UINotificationType.Info) {		
+                else if(currentItem.notificationType == UINotificationType.Info) {		
 					
-					ShowNotificationContainerType(notificationItem.notificationType);					
-					UIUtil.SetLabelValue(infoTitle, notificationItem.title);
-					UIUtil.SetLabelValue(infoDescription, notificationItem.description);
+                    ShowNotificationContainerType(currentItem.notificationType);					
+                    UIUtil.SetLabelValue(infoTitle, currentItem.title);
+                    UIUtil.SetLabelValue(infoDescription, currentItem.description);
 					UIUtil.SetLabelValue(infoScore, "");
 
 					
 					found = true;
 				}				
-				else if(notificationItem.notificationType == UINotificationType.Tip) {		
+                else if(currentItem.notificationType == UINotificationType.Tip) {		
 					
-					ShowNotificationContainerType(notificationItem.notificationType);					
-					UIUtil.SetLabelValue(tipTitle, notificationItem.title);
-					UIUtil.SetLabelValue(tipDescription, notificationItem.description);
+                    ShowNotificationContainerType(currentItem.notificationType);					
+                    UIUtil.SetLabelValue(tipTitle, currentItem.title);
+                    UIUtil.SetLabelValue(tipDescription, currentItem.description);
 					UIUtil.SetLabelValue(tipScore, "");
 					
 					found = true;
 				}				
-				else if(notificationItem.notificationType == UINotificationType.Error) {		
+                else if(currentItem.notificationType == UINotificationType.Error) {		
 					
-					ShowNotificationContainerType(notificationItem.notificationType);					
-					UIUtil.SetLabelValue(errorTitle, notificationItem.title);
-					UIUtil.SetLabelValue(errorDescription, notificationItem.description);
+                    ShowNotificationContainerType(currentItem.notificationType);					
+                    UIUtil.SetLabelValue(errorTitle, currentItem.title);
+                    UIUtil.SetLabelValue(errorDescription, currentItem.description);
 					UIUtil.SetLabelValue(errorScore, "");
 					
 					found = true;
@@ -483,16 +500,14 @@ public class UINotificationDisplay
 					LogUtil.Log("Notification Queue(" 
 						+ notificationQueue.Count+ ") " 
 						+ "Notification Removed:title:" 
-						+ notificationItem.title
+                                + currentItem.title
 						+ " notificationType:" 
-						+ notificationItem.notificationType
+                                + currentItem.notificationType
 						
 					);	
 					
 					ShowDialog();
 				}
-					
-				currentItem = notificationItem;
 			}
 		}
 	}
