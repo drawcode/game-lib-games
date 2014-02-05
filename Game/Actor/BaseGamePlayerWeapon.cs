@@ -19,6 +19,8 @@ public class BaseGamePlayerWeapon : GameActor {
     public bool isAuto = false;
     public bool useGameObjectProjectile = false;
 
+    public GameObject containerProjectile;
+
     public ParticleSystem particleSystemAttackBlast1;
     public ParticleSystem particleSystemAttackBlast2;
     public ParticleSystem particleSystemAttackBlast3;
@@ -63,20 +65,13 @@ public class BaseGamePlayerWeapon : GameActor {
 	
 	public virtual void Load() {
 		currentItems = new List<GameObject>();
-		
-		LogUtil.Log("GamePlayerWeapon::Load:" + currentItems);
-		
 		GameObject bullet1 = Resources.Load("Prefabs/GameProjectile") as GameObject;
-		
-		LogUtil.Log("GamePlayerWeapon::Load:bullet1:" + bullet1);
-		
 		currentItems.Add(bullet1);		
-		
-		LogUtil.Log("GamePlayerWeapon::Load:currentItems:" + currentItems);
-		
-		// Projectile bullet = Instantiate( bulletPrefab, position, rotation ) as Projectile;
-		// Destroy( bullet.gameObject );
 	}
+
+    public virtual void LoadProjectiles() {
+
+    }
 	
 	public virtual void PlayParticleSystem(ParticleSystem particles) {
 		if(particles != null) {
@@ -88,7 +83,7 @@ public class BaseGamePlayerWeapon : GameActor {
 	}
 	
 	public virtual void AttackEffects() {
-		
+        		
 		PlayParticleSystem(particleSystemAttackBlast1);
 		PlayParticleSystem(particleSystemAttackBlast2);
 		PlayParticleSystem(particleSystemAttackBlast3);
