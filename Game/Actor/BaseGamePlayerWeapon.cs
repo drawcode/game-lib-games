@@ -93,26 +93,53 @@ public class BaseGamePlayerWeapon : GameActor {
 	}
 	
 	public virtual void Attack() {
+
+        PlayProjectiles();
+
 		AttackEffects();
-		PlayAttackSound();
+		
+        PlayAttackSounds();
 
 		// TODO play effect from weapon data
 
 
 	}
 
-	public virtual void PlayAttackSound() {
+    public virtual void PlayProjectiles() {
+        
+        if(gameWeaponData.data.HasProjectiles()) {
+
+            foreach(GameDataItemProjectile projectile in gameWeaponData.data.projectiles) {
+
+                GameObject projectilePrefab = AppContentAssets.LoadAsset(projectile.code);
+
+                if(projectilePrefab != null) {
+
+                    GameObject projectileObject = GameObjectHelper.CreateGameObject(
+                        projectilePrefab, 
+                        containerProjectile.transform.position, 
+                        containerProjectile.transform.rotation, 
+                        true);
+
+                    // add components
+
+                }
+            }
+        }
+    }
+
+	public virtual void PlayAttackSounds() {
 
 		GameAudio.PlayEffect(transform, gameWeaponData.data.GetSoundsByTypeShot().code);
-		Invoke("PlayAttackPostSound", .5f);
+		Invoke("PlayAttackPostSounds", .5f);
 	}
 
-	public virtual void PlayAttackPrepareSound() {
+	public virtual void PlayAttackPrepareSounds() {
 
 	}
 
 
-	public virtual void PlayAttackPostSound() {
+	public virtual void PlayAttackPostSounds() {
         GameAudio.PlayEffect(transform, gameWeaponData.data.GetSoundsByTypeLoad().code);
 	}
 	
