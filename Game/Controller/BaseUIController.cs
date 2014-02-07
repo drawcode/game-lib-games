@@ -75,6 +75,13 @@ public class BaseHUDButtonNames {
     public static string buttonInputMagic = "ButtonInputMagic";
     public static string buttonInputJump = "ButtonInputJump";
     public static string buttonInputUse = "ButtonInputUse";
+
+    public static string buttonInputInventoryWeapon = "ButtonInputInventoryWeapon";
+    public static string buttonInputInventoryWeaponNext = "ButtonInputInventoryWeaponNext";
+    public static string buttonInputInventoryWeaponPrev = "ButtonInputInventoryWeaponPrev";
+    public static string buttonInputInventoryItem = "ButtonInputInventoryItem";
+    public static string buttonInputInventoryItemNext = "ButtonInputInventoryItemNext";
+    public static string buttonInputInventoryItemPrev = "ButtonInputInventoryItemPrev";
 }
 
 public class BaseUIPanel {
@@ -3125,7 +3132,14 @@ public class BaseUIController : MonoBehaviour {
         }
         else if(buttonName == BaseHUDButtonNames.buttonInputJump) {
             GameController.GamePlayerJump();
-        }            
+        }
+        else if(buttonName == BaseHUDButtonNames.buttonInputInventoryWeapon) {
+            //GameController.GamePlayerJump();
+        }          
+        
+        else if(buttonName == BaseHUDButtonNames.buttonInputInventoryWeaponNext) {
+            GameController.CurrentGamePlayerController.LoadWeaponNext();
+        }          
     }
  
     public virtual void GameContinue() {     

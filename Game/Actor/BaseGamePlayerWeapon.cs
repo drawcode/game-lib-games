@@ -19,7 +19,9 @@ public class BaseGamePlayerWeapon : GameActor {
     public bool isAuto = false;
     public bool useGameObjectProjectile = false;
 
-    public GameObject containerProjectile;
+    public GameObject containerProjectiles;
+    public GameObject containerDiscard;
+    public GameObject containerEffects;
 
     public ParticleSystem particleSystemAttackBlast1;
     public ParticleSystem particleSystemAttackBlast2;
@@ -117,8 +119,8 @@ public class BaseGamePlayerWeapon : GameActor {
 
                     GameObject projectileObject = GameObjectHelper.CreateGameObject(
                         projectilePrefab, 
-                        containerProjectile.transform.position, 
-                        containerProjectile.transform.rotation, 
+                        containerProjectiles.transform.position, 
+                        containerProjectiles.transform.rotation, 
                         true);
 
                     // add components

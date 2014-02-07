@@ -1167,8 +1167,9 @@ public class BaseGamePlayerController : GameActor {
 
         weaponInventory.Clear();
 
-        weaponInventory.Add("weapon-flame-thrower-1");
-        weaponInventory.Add("weapon-machine-gun-1");
+        foreach(GameWeapon weapon in GameWeapons.Instance.GetAll()) {
+            weaponInventory.Add(weapon.code);
+        }
     }
 
     
@@ -1190,6 +1191,27 @@ public class BaseGamePlayerController : GameActor {
 
         LoadInventory();
 
+        LoadWeapon(weaponInventory[weaponInventoryIndex]);
+    }
+
+    
+    public virtual void LoadWeaponNext() {
+        LoadWeapon(weaponInventoryIndex + 1);
+    }
+    
+    public virtual void LoadWeaponPrevious() {
+        LoadWeapon(weaponInventoryIndex - 1);
+    }
+
+    public virtual void LoadWeapon(int index) {
+        if(index < 0) {
+            index = weaponInventory.Count - 1;
+        }
+        else if(index > weaponInventory.Count - 1) {
+            index = 0;
+        }
+
+        weaponInventoryIndex = index;            
         LoadWeapon(weaponInventory[weaponInventoryIndex]);
     }
 
@@ -1629,15 +1651,21 @@ public class BaseGamePlayerController : GameActor {
             //}
             //else {
             
+        if(other.name.Contains("projectile")) {
             Debug.Log("OnParticleCollision:" + other.name);
+
+            // todo lookup projectile and power to subtract.
+
+            float projectilePower = 1;
             
-            float power = .1f;
+            float power = projectilePower / 10f;
             
             runtimeData.health -= power;
             
             //contact.normal.magnitude
             
             Hit(power);
+        }
             
         /*
             int safeLength = particleSystem.safeCollisionEventSize;
