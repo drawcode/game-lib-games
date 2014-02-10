@@ -74,6 +74,19 @@ public enum AdPosition {
     Full
 }
 
+public class AdNetworksMessages {
+
+    // daily
+    public static string videoAd = "ad-networks-video-ad";
+    public static string moreGames = "ad-networks-more-games";
+
+    // one time
+    
+    public static string website = "ad-networks-website";
+    public static string twitterFollow = "ad-networks-twitter-follow";
+    public static string facebookLike = "ad-networks-facebook-like";
+}
+
 public class AdNetworks : MonoBehaviour {
 #if UNITY_EDITOR    
 #elif UNITY_STANDALONE_OSX
@@ -445,13 +458,17 @@ public class AdNetworks : MonoBehaviour {
     // Fired when a Vungle ad finishes
     public void vungleOnAdEndedEvent() {
         Debug.Log("vungleOnAdEndedEvent");
-        // Send started message to unpause and credit if successful   
+        // Send started message to unpause and credit if successful  
+        
+        Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
     }
     
     // Fired when a Vungle video is dismissed and provides the time watched and total duration in that order.
     public void vungleOnAdViewedEvent(double timeWatched, double totalDuration) {
         Debug.Log("vungleOnAdViewedEvent");
-        // check for sucess if watched more than 90% of video.
+        // check for success if watched more than 90% of video.
+
+        Messenger<double>.Broadcast(AdNetworksMessages.videoAd, timeWatched / totalDuration);
     }
 #endif
 

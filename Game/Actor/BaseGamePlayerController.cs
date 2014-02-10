@@ -27,8 +27,10 @@ public enum GamePlayerActorState {
 
 public enum GamePlayerContextState {
     ContextInput = 0,
+    ContextInputVehicle,
     ContextFollowAgent,
     ContextFollowAgentAttack,
+    ContextFollowAgentAttackVehicle,
     ContextFollowInput,
     ContextScript,
     ContextRandom,
@@ -239,7 +241,7 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerHolder;
     public GameObject gamePlayerShadow;
     public GameObject gamePlayerEnemyTarget;
-    public GameObject gamePlayerModelHolder; 
+    public GameObject gamePlayerModelHolder;
     public GameObject gamePlayerModelHolderModel;
     public GameObject gamePlayerModelHolderWeapons;
     public GameObject gamePlayerModelHolderItems;
@@ -864,6 +866,7 @@ public class BaseGamePlayerController : GameActor {
         get {
             if (controllerState == GamePlayerControllerState.ControllerPlayer
                 || contextState == GamePlayerContextState.ContextInput
+                || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput
                 || uuid == UniqueUtil.Instance.currentUniqueId) {
                 return true;
@@ -968,9 +971,9 @@ public class BaseGamePlayerController : GameActor {
     public virtual void HandleCharacterAttachedSounds() {
     
         if (!GameConfigs.isGameRunning) {
-            if(controllerData != null) {
-                if(controllerData.audioObjectFootstepsSource != null) {
-                controllerData.audioObjectFootstepsSource.StopIfPlaying();
+            if (controllerData != null) {
+                if (controllerData.audioObjectFootstepsSource != null) {
+                    controllerData.audioObjectFootstepsSource.StopIfPlaying();
                 }
             }
             return;
@@ -1032,7 +1035,7 @@ public class BaseGamePlayerController : GameActor {
 
                     GameDataModel item = team.data.GetModel();
 
-                    if(item != null) {
+                    if (item != null) {
                         prefabName = item.code;
                         prefabNameObject = item.code;
                         controllerData.lastPrefabName = item.code;                    
@@ -1154,31 +1157,30 @@ public class BaseGamePlayerController : GameActor {
     // --------------------------------------------------------------------
     // WEAPONS   
 
-    public List<string> weaponInventory;    
+    public List<string> weaponInventory;
     public int weaponInventoryIndex = 0;
 
     public virtual void LoadInventory() {
 
         ////Debug.Log("LoadInventory");
     
-        if(weaponInventory == null) {
+        if (weaponInventory == null) {
             weaponInventory = new List<string>();
         }
 
         weaponInventory.Clear();
 
-        foreach(GameWeapon weapon in GameWeapons.Instance.GetAll()) {
+        foreach (GameWeapon weapon in GameWeapons.Instance.GetAll()) {
             weaponInventory.Add(weapon.code);
         }
     }
-
     
     public virtual void UnloadWeapons() {
-        if(gamePlayerModelHolderWeapons != null) {
+        if (gamePlayerModelHolderWeapons != null) {
             gamePlayerModelHolderWeapons.DestroyChildren();
         }
         
-        if(weapons == null) {
+        if (weapons == null) {
             weapons = new Dictionary<string, GamePlayerWeapon>();
         }
 
@@ -1193,7 +1195,6 @@ public class BaseGamePlayerController : GameActor {
 
         LoadWeapon(weaponInventory[weaponInventoryIndex]);
     }
-
     
     public virtual void LoadWeaponNext() {
         LoadWeapon(weaponInventoryIndex + 1);
@@ -1204,10 +1205,10 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LoadWeapon(int index) {
-        if(index < 0) {
+        if (index < 0) {
             index = weaponInventory.Count - 1;
         }
-        else if(index > weaponInventory.Count - 1) {
+        else if (index > weaponInventory.Count - 1) {
             index = 0;
         }
 
@@ -1219,19 +1220,19 @@ public class BaseGamePlayerController : GameActor {
         
         UnloadWeapons();
 
-        if(!IsPlayerControlled) {
+        if (!IsPlayerControlled) {
             return; // TODO enemy weapons
         }
 
         GameWeapon gameWeaponData = GameWeapons.Instance.GetByCode(code);
 
-        if(gameWeaponData == null) {
+        if (gameWeaponData == null) {
             return;
         }
 
         GameObject go = AppContentAssets.LoadAsset("weapon", gameWeaponData.data.GetModel().code);
 
-        if(go == null) {
+        if (go == null) {
             return;
         }
 
@@ -1239,9 +1240,9 @@ public class BaseGamePlayerController : GameActor {
         go.ResetPosition();
         go.ResetRotation();
                 
-        if(go != null && weapons.Count == 0) {
+        if (go != null && weapons.Count == 0) {
             
-            foreach(GamePlayerWeapon weapon in 
+            foreach (GamePlayerWeapon weapon in 
                     gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
 
                 weapon.gameWeaponData = gameWeaponData;
@@ -1282,8 +1283,8 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 //if(!GameController.isFingerNavigating) {
-                    controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                    controllerData.thirdPersonController.verticalInput = axisInput.y;
+                controllerData.thirdPersonController.horizontalInput = axisInput.x;
+                controllerData.thirdPersonController.verticalInput = axisInput.y;
                 //}
                 //Debug.Log("OnInputAxis:" + name + "horizontalInput:" + axisInput.x);
                 //Debug.Log("OnInputAxis:" + name + "verticalInput:" + axisInput.y);
@@ -1611,16 +1612,15 @@ public class BaseGamePlayerController : GameActor {
 
     public float lastCollision = 0f;
     public float intervalCollision = .2f;
-    
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
     public virtual void OnParticleCollision(GameObject other) {
         
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        if(lastCollision + intervalCollision < Time.time) {
+        if (lastCollision + intervalCollision < Time.time) {
             //lastCollision = Time.time;
         }
         else {
@@ -1628,7 +1628,7 @@ public class BaseGamePlayerController : GameActor {
         }
 
             
-            /*
+        /*
             ParticleSystem particleSystem;
             particleSystem = other.GetComponent<ParticleSystem>();
             int safeLength = particleSystem.safeCollisionEventSize;
@@ -1647,11 +1647,11 @@ public class BaseGamePlayerController : GameActor {
             }
             */
             
-            //if(gamePlayerController.IsPlayerControlled) {
-            //}
-            //else {
+        //if(gamePlayerController.IsPlayerControlled) {
+        //}
+        //else {
             
-        if(other.name.Contains("projectile")) {
+        if (other.name.Contains("projectile")) {
             Debug.Log("OnParticleCollision:" + other.name);
 
             // todo lookup projectile and power to subtract.
@@ -1683,7 +1683,7 @@ public class BaseGamePlayerController : GameActor {
                 i++;
             }
             */
-            //}
+        //}
     }
      
     public virtual void OnTriggerEnter(Collider collider) {
@@ -1818,10 +1818,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetPositionAir(float y) {    
 
-        if(controllerData.lastAirCheck > 1f) {
+        if (controllerData.lastAirCheck > 1f) {
             controllerData.lastAirCheck = 0;
 
-        gameObject.transform.position = Vector3.Lerp(
+            gameObject.transform.position = Vector3.Lerp(
             gameObject.transform.position, 
             gameObject.transform.position.WithY(y), 
             1 * Time.deltaTime);            
@@ -1869,7 +1869,7 @@ public class BaseGamePlayerController : GameActor {
         
         Init(controllerState);
 
-        if(IsPlayerControlled) {
+        if (IsPlayerControlled) {
             controllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
         }
@@ -3180,6 +3180,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
             else if (contextState == GamePlayerContextState.ContextInput
+                     || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput) {
                 if (controllerData.navMeshAgent != null) {
                     controllerData.navMeshAgent.Stop();
@@ -3322,6 +3323,7 @@ public class BaseGamePlayerController : GameActor {
             // PLAYER CONTROLLERS
                      
             if ((contextState == GamePlayerContextState.ContextInput
+                 || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput
                 && !IsUIState())
                 || IsNetworkPlayerState()) {
@@ -3450,7 +3452,7 @@ public class BaseGamePlayerController : GameActor {
             
             controllerData.gamePlayerControllerAnimation.Init(); 
 
-            if(gamePlayerModelHolderModel != null) {
+            if (gamePlayerModelHolderModel != null) {
                 controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);            
             }
                       
@@ -3679,13 +3681,13 @@ public class BaseGamePlayerController : GameActor {
         HandleItemProperties();
 
         bool shouldBeGrounded = true;
-        if(controllerData.thirdPersonController != null) {
-            if(controllerData.thirdPersonController.IsJumping()) {
+        if (controllerData.thirdPersonController != null) {
+            if (controllerData.thirdPersonController.IsJumping()) {
                 shouldBeGrounded = false;
             }
         }
 
-        if(shouldBeGrounded) {
+        if (shouldBeGrounded) {
             ResetPositionAir(0f);
         }
 
@@ -3929,7 +3931,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void LateUpdate() {
 
-        if(controllerData == null) {
+        if (controllerData == null) {
             return;
         }
 
