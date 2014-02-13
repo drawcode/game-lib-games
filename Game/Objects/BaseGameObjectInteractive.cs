@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public enum GameObjectInteractiveType {
+    mount,
     boost,
     freeze,
     beamup,
@@ -10,7 +11,11 @@ public enum GameObjectInteractiveType {
     attractor // action from item...
 }
 
-public class GameObjectInteractiveBase : MonoBehaviour {
+public class GameObjectInteractiveMessages {
+    public static string attractForceTrigger = "attract-force-trigger";
+}
+
+public class BaseGameObjectInteractive : MonoBehaviour {
     
     public string uuid = "";
     public string code = "";

@@ -23,7 +23,7 @@ public class GameObjectChoiceData {
     public bool choiceItemIsCorrect = true;
 }
 
-public class GameObjectChoice : GameObjectLevelBase {
+public class GameObjectChoice : BaseGameObjectLevel {
 
     public AppContentChoice appContentChoice;
     public AppContentChoiceItem appContentChoiceItem;

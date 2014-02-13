@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectAttractor : GameObjectInteractiveBase {
+public class GameObjectAttractor : BaseGameObjectInteractive {
         
     public override void Awake() { 
         base.Awake();   

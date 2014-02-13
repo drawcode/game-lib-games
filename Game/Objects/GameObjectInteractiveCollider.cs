@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class GameObjectInteractiveCollider : MonoBehaviour {
 
-    public GameObjectInteractiveBase obj;
+    public BaseGameObjectInteractive obj;
 
     public virtual void Awake() { 
         
@@ -21,7 +21,7 @@ public class GameObjectInteractiveCollider : MonoBehaviour {
     public virtual void FindBase() {
     
         if(obj == null) {
-            obj = gameObject.FindTypeAboveRecursive<GameObjectInteractiveBase>();
+            obj = gameObject.FindTypeAboveRecursive<BaseGameObjectInteractive>();
         }
     }
         

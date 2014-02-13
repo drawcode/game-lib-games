@@ -2,7 +2,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectBoost : BaseGameObjectInteractive {
+public enum GameObjectMountType {
+    typeAuto,
+    typeTriggered
+}
+
+public class GameObjectMount : BaseGameObjectInteractive {
+
+    public List<GameObject> objectsMounted;
+    public int allowedMountCount = 1;
         
     public override void Awake() { 
         base.Awake();   
@@ -10,12 +18,15 @@ public class GameObjectBoost : BaseGameObjectInteractive {
     
     public override void Start() {        
         base.Start();  
+        
+        objectsMounted = new List<GameObject>();
     }
     
     public override void Init() {
         base.Init();
-        interactiveType = GameObjectInteractiveType.boost;
-        boostGamePlayers = true;
+        interactiveType = GameObjectInteractiveType.mount;
+        attractGamePlayers = true;
+        attractRange = 5f;
     }
     
     public override void FixedUpdate() {
@@ -25,11 +36,7 @@ public class GameObjectBoost : BaseGameObjectInteractive {
     public override void AttractForce<T>() {
         base.AttractForce<T>();
     }    
-    
-    public override void Boost(GameObject go) {
-        base.Boost(go);
-    }
-    
+
     public override void AddForce(GameObject target, float force) {
         base.AddForce(target, force);
     }
@@ -41,8 +48,19 @@ public class GameObjectBoost : BaseGameObjectInteractive {
     public override void OnTriggerEnter(Collider collider) {
         base.OnTriggerEnter(collider);
     }
+
+    public virtual void Mount(GameObject go) {
+    
+    }
+        
+    public virtual void Unmount(GameObject go) {
+        
+    }
     
     public override void Update() {
         base.Update();
+
+
+
     }
 }

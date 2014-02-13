@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectBoost : BaseGameObjectInteractive {
-        
+public class GameObjectMountVehicle : GameObjectMount {
+    
     public override void Awake() { 
         base.Awake();   
     }

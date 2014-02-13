@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Engine.Events;
 
-public class GameCustomEnemy : GameCustomBase {
+public class GameCustomEnemy : BaseGameCustom {
     
     public override void Start() {
         base.Start();
