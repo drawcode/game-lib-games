@@ -14,8 +14,7 @@ public class GameObjectMountVehicle : GameObjectMount {
     
     public override void Init() {
         base.Init();
-        interactiveType = GameObjectInteractiveType.boost;
-        boostGamePlayers = true;
+        interactiveType = GameObjectInteractiveType.mount;
     }
     
     public override void FixedUpdate() {

@@ -156,7 +156,7 @@ public class GameTouchInputAxis : MonoBehaviour {
             return;
         }
  
-        bool mousePressed = Input.GetMouseButton(0);
+        bool mousePressed = InputSystem.Instance.mousePressed;
         bool touchPressed = Input.touchCount > 0 ? true : false;
      
         bool leftPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);

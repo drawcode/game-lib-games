@@ -198,6 +198,12 @@ public class BaseGamePlayerControllerData {
     public float modifierItemSpeedMax = 3.0f;
     public float modifierItemSpeedLerpTime = 10f;
 
+    // items
+    public GamePlayerItemsData itemsData = new GamePlayerItemsData();
+
+    // mounts
+    public GamePlayerMountData mountData = new GamePlayerMountData();
+
 }
 
 public class BaseGamePlayerRuntimeRPGData {
@@ -209,6 +215,101 @@ public class BaseGamePlayerRuntimeRPGData {
     public double modifierPower = .5;
     public double modifierAttack = .5;
     public double modifierDefend = .5;
+}
+
+
+public class GamePlayerItemsData : BaseGamePlayerItemsData {
+    
+    public GamePlayerItemsData() {
+        
+    }
+}
+
+public class BaseGamePlayerItemsData {    
+    
+    public BaseGamePlayerItemsData() {
+        
+    }
+    
+    // ---------------------------------------------------
+    // ITEMS
+    
+    // powerups
+    
+    // boost
+}
+
+
+public class GamePlayerMountData : BaseGamePlayerMountData {
+
+    public GamePlayerMountData() {
+    
+    }
+}
+
+public class BaseGamePlayerMountData {    
+        
+    public BaseGamePlayerMountData() {
+        
+    }
+
+    // ---------------------------------------------------
+    // MOUNTS
+
+    // MOUNTS - vehicle
+
+    public GameObjectMountVehicle mountVehiclePrimary;
+    public GameObjectMountVehicle mountVehicleSecondary;
+
+    public bool isMountedVehicle {
+
+        get {
+            if(isMountedVehiclePrimary) {
+                return true;
+            }
+
+            if(isMountedVehicleSecondary) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public bool isMountedVehiclePrimary {
+        get {            
+            if(mountVehiclePrimary != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    public bool isMountedVehicleSecondary {
+        get {            
+            if(mountVehicleSecondary != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public void MountVehiclePrimary(GameObjectMountVehicle mount) {
+        mountVehiclePrimary = mount;
+    }
+    
+    public void MountVehicleSecondary(GameObjectMountVehicle mount) {
+        mountVehicleSecondary = mount;
+    }
+
+    public void UnmountVehiclePrimary() {
+        mountVehiclePrimary = null;
+    }
+    
+    public void UnmountountVehicleSecondary() {
+        mountVehicleSecondary = null;
+    }
+
 }
 
 public class BaseGamePlayerController : GameActor {
@@ -262,6 +363,7 @@ public class BaseGamePlayerController : GameActor {
  
     // runtime data
     public GamePlayerRuntimeData runtimeData;
+    public GamePlayerItemsData itemsData;
 
     // initialize
     public float initialMaxWalkSpeed = 5f;
@@ -353,6 +455,18 @@ public class BaseGamePlayerController : GameActor {
         // TODO sync if needed... to update 
         // runtime expensive states that can't be polled.
     }
+
+    
+    public virtual void SetItemsData(GamePlayerItemsData data) {
+        if (data == null) {
+            data = new GamePlayerItemsData();
+        }
+        
+        itemsData = data;
+        
+        // TODO sync if needed... to update 
+        // runtime expensive states that can't be polled.
+    }
      
     public virtual void Init(GamePlayerControllerState controlState) {
 
@@ -368,8 +482,8 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData = new GamePlayerControllerData();
         
-        runtimeData = new GamePlayerRuntimeData();
-             
+        SetRuntimeData(new GamePlayerRuntimeData());
+            
         InitControls();
      
         LoadCharacter(prefabName);  
@@ -1173,6 +1287,9 @@ public class BaseGamePlayerController : GameActor {
         foreach (GameWeapon weapon in GameWeapons.Instance.GetAll()) {
             weaponInventory.Add(weapon.code);
         }
+        
+        // TODO load from data
+        SetItemsData(new GamePlayerItemsData());
     }
     
     public virtual void UnloadWeapons() {
@@ -1283,12 +1400,7 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 //if(!GameController.isFingerNavigating) {
-                controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                controllerData.thirdPersonController.verticalInput = axisInput.y;
-                //}
-                //Debug.Log("OnInputAxis:" + name + "horizontalInput:" + axisInput.x);
-                //Debug.Log("OnInputAxis:" + name + "verticalInput:" + axisInput.y);
-
+                SetThirdPersonControllerAxis(axisInput);
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack) {
@@ -1388,6 +1500,20 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
         }
+    }
+
+    public virtual void SetThirdPersonControllerAxis(Vector3 axisInput) {
+        if(controllerData.mountData.isMountedVehicle) {
+            
+        }
+        else {
+            controllerData.thirdPersonController.horizontalInput = axisInput.x;
+            controllerData.thirdPersonController.verticalInput = axisInput.y;
+        }
+    }
+        
+    public virtual void SetThirdPersonControllerAxisAlt(Vector3 axisInput) {
+        
     }
  
     public virtual void OnNetworkActionEvent(Gameverses.GameNetworkingAction actionEvent, Vector3 pos, Vector3 direction) {

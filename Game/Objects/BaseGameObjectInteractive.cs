@@ -17,8 +17,8 @@ public class GameObjectInteractiveMessages {
 
 public class BaseGameObjectInteractive : MonoBehaviour {
     
-    public string uuid = "";
-    public string code = "";
+    public string uuid = UniqueUtil.Instance.CreateUUID4();
+    public string code = "default";
 
     public GameObjectInteractiveType interactiveType = GameObjectInteractiveType.boost;
 
