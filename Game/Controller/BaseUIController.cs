@@ -75,7 +75,6 @@ public class BaseHUDButtonNames {
     public static string buttonInputMagic = "ButtonInputMagic";
     public static string buttonInputJump = "ButtonInputJump";
     public static string buttonInputUse = "ButtonInputUse";
-
     public static string buttonInputInventoryWeapon = "ButtonInputInventoryWeapon";
     public static string buttonInputInventoryWeaponNext = "ButtonInputInventoryWeaponNext";
     public static string buttonInputInventoryWeaponPrev = "ButtonInputInventoryWeaponPrev";
@@ -106,7 +105,7 @@ public class BaseUIPanel {
     public static string panelGameModeMultiplayer = "PanelGameModeMultiplayer";
     public static string panelGameModeMultiplayerCoop = "PanelGameModeMultiplayerCoop";
     public static string panelGameModeMultiplayerMatchup = "PanelGameModeMultiplayerMatchup";
-    public static string panelGameModeMission = "PanelGameModeMission";
+    public static string panelGameModeMissions = "PanelGameModeMissions";
     public static string panelGameModeArcade = "PanelGameModeArcade";
     public static string panelGameModeCareer = "PanelGameModeCareer";
     public static string panelGameModeChallenge = "PanelGameModeChallenge";
@@ -141,7 +140,6 @@ public class BaseUIPanel {
 public class BaseUIController : MonoBehaviour { 
  
     public static BaseUIController BaseInstance;
-
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
     public bool inModalAction = true;
@@ -157,34 +155,39 @@ public class BaseUIController : MonoBehaviour {
     public bool gameLoopsStarted = false;
     public bool inUIAudioPlaying = false;
     public GameObject currentDraggableGameObject = null;
-
-
     public Vector3 positionStart;
     public Vector3 positionEnd;
     public Vector3 positionLastLaunch;
     public float powerDistance;
     public Vector3 positionLastLaunchedNormalized;
-
     public GameObject pointStartObject;
     public GameObject pointEndObject;
-
     public UnityEngine.Object prefabPointStart;
     public UnityEngine.Object prefabPointEnd;
-
     public bool isCreatingStart = false;
     public bool isCreatingEnd = false;
-
     public Camera camHud = null;
     float updateTouchStartTime = 0f;
     float updateTouchMaxTime = 2f;
     bool inputGestureDown = false;
     bool inputGestureUp = false;
     bool showPoints = false;
-
     public bool allowedTouch = true;
     public bool inputButtonDown = false;
     public bool inputAxisDown = false;
     public bool shouldTouch = false;
+    float lastPressAttack = 0;
+    float lastPressAttackAlt = 0;
+    float lastPressAttackRight = 0;
+    float lastPressAttackLeft = 0;
+    float lastPressDefend = 0;
+    float lastPressDefendAlt = 0;
+    float lastPressDefendRight = 0;
+    float lastPressDefendLeft = 0;
+    float lastPressSkill = 0;
+    float lastPressMagic = 0;
+    float lastPressUse = 0;
+    //float lastPressJump = 0;
                  
     public virtual void Awake() {
      
@@ -338,21 +341,21 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void HideAllPanels() {
-        foreach(GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
+        foreach (GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
             baseItem.AnimateOut();
         }
      
-        foreach(UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
+        foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOut();
         }
     }
  
     public virtual void HideAllPanelsNow() {
-        foreach(GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
+        foreach (GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
             baseItem.AnimateOutNow();
         }
      
-        foreach(UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
+        foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOutNow();
         }
     }
@@ -382,14 +385,14 @@ public class BaseUIController : MonoBehaviour {
     }
     
     public virtual void ShowMainMenuDelayed() {
-        if(!hasBeenClicked) {
+        if (!hasBeenClicked) {
             showMain();
         }
     }
     
     public virtual void Update() {
 
-        if(Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetKeyDown(KeyCode.Space)) {
             GameController.GamePlayerUse();
         }
 
@@ -401,21 +404,21 @@ public class BaseUIController : MonoBehaviour {
         //Vector2 fingerPos = gesture.Position;
         //Vector2 delta = gesture.TotalMove;
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
 
-        if(currentDraggableGameObject != null) {
+        if (currentDraggableGameObject != null) {
             //DragObject(currentDraggableGameObject, fingerPos, delta);
         }
     }
 
     public virtual void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {
-        if(go != null) {
+        if (go != null) {
          
             deferTap = true;
          
-            if(go.rigidbody == null) {
+            if (go.rigidbody == null) {
                 go.AddComponent<Rigidbody>();
                 go.rigidbody.constraints =
                     RigidbodyConstraints.FreezePosition
@@ -425,7 +428,7 @@ public class BaseUIController : MonoBehaviour {
                 go.rigidbody.angularDrag = 2f;
             }
          
-            if(Math.Abs(delta.x) > .8f) {
+            if (Math.Abs(delta.x) > .8f) {
                 go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 4, 0));                
             }
             else {
@@ -441,7 +444,7 @@ public class BaseUIController : MonoBehaviour {
         //Vector2 fingerPos2 = gesture.
         //float delta = gesture.Delta;
         
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
         //ScaleCurrentObjects(delta);
@@ -450,7 +453,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void FingerGestures_OnRotationMove(TwistGesture gesture) {
         //Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {
         //float rotationAngleDelta = gesture.DeltaRotation;
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
         // RotateCurrentObjects(Vector3.zero.WithY(rotationAngleDelta));
@@ -458,18 +461,18 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void FingerGestures_OnLongPress(LongPressGesture gesture) {
         Vector2 pos = gesture.Position;
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
        
-        if(currentDraggableGameObject != null) {
+        if (currentDraggableGameObject != null) {
             LongPressObject(currentDraggableGameObject, pos);                
         }
     }
 
     public virtual void LongPressObject(GameObject go, Vector2 pos) {
-        if(go != null) {
-            if(go.rigidbody != null) {
+        if (go != null) {
+            if (go.rigidbody != null) {
                 go.rigidbody.angularVelocity = Vector3.zero;
             }
             deferTap = true;
@@ -481,19 +484,19 @@ public class BaseUIController : MonoBehaviour {
     public virtual void FingerGestures_OnTap(TapGesture gesture) {//Vector2 fingerPos) {
         //Vector2 fingerPos = gesture.Position;
         //LogUtil.Log("FingerGestures_OnTap", fingerPos);
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
         //bool allowTap = true;
         
-        if(currentDraggableGameObject != null) {
+        if (currentDraggableGameObject != null) {
             //TapObject(currentDraggableGameObject, fingerPos, allowTap);
         }
     }
 
     public virtual void TapObject(GameObject go, Vector2 fingerPos, bool allowTap) {
-        if(go != null) {
+        if (go != null) {
             deferTap = !allowTap;
 
             //Debug.Log("Tap:" + fingerPos);
@@ -502,13 +505,13 @@ public class BaseUIController : MonoBehaviour {
             float heightToCheck = Screen.height - Screen.height * .85f;
             // Debug.Log("Tap:heightToCheck:" + heightToCheck);
 
-            if(fingerPos.y < heightToCheck) {
+            if (fingerPos.y < heightToCheck) {
                 deferTap = true;
             }
 
             // Debug.Log("Tap:deferTap:" + deferTap);
 
-            if(!deferTap) {
+            if (!deferTap) {
 
                 //var fwd = transform.TransformDirection(Vector3.forward);
                 //Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
@@ -541,7 +544,7 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void DoubleTapObject(GameObject go, Vector2 pos) {
-        if(go != null) {
+        if (go != null) {
             go.rigidbody.angularVelocity = Vector3.zero;
             deferTap = true;
 
@@ -550,13 +553,13 @@ public class BaseUIController : MonoBehaviour {
     }
 
     public virtual void FingerGestures_OnDoubleTap(TapGesture gesture) {
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }                
      
-        if(gesture.Taps == 2) {
+        if (gesture.Taps == 2) {
      
-            if(currentDraggableGameObject != null) {
+            if (currentDraggableGameObject != null) {
                 DoubleTapObject(currentDraggableGameObject, gesture.Position);
             }
         }
@@ -573,21 +576,21 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void FingerGestures_OnTwoFingerSwipe(Vector2 startPos, 
      FingerGestures.SwipeDirection direction, float velocity) {
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
 
-        if(direction == FingerGestures.SwipeDirection.All) {
+        if (direction == FingerGestures.SwipeDirection.All) {
 
             // if swiped any direction
         }
 
-        if(direction == FingerGestures.SwipeDirection.Right
+        if (direction == FingerGestures.SwipeDirection.Right
             || direction == FingerGestures.SwipeDirection.Down) {
 
             //AppViewerAppController.Instance.ChangeActionPrevious();
         }
-        else if(direction == FingerGestures.SwipeDirection.Left
+        else if (direction == FingerGestures.SwipeDirection.Left
             || direction == FingerGestures.SwipeDirection.Up) {
 
             //AppViewerAppController.Instance.ChangeActionNext();
@@ -600,25 +603,25 @@ public class BaseUIController : MonoBehaviour {
         FingerGestures.SwipeDirection direction = gesture.Direction;
         //float velocity = gesture.Velocity;
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
 
         bool allowSwipe = true;//AppViewerAppController.Instance.AllowCurrentActionAdvanceSwipe();
 
-        if(direction == FingerGestures.SwipeDirection.Right
+        if (direction == FingerGestures.SwipeDirection.Right
             || direction == FingerGestures.SwipeDirection.Down) {
             //if (!AppViewerUIController.Instance.uiVisible) {
-            if(allowSwipe) {
+            if (allowSwipe) {
                 //AppViewerAppController.Instance.ChangeActionPrevious();
             }
             GamePlayerProgress.Instance.ProcessProgressSwipes();
             //}
         }
-        else if(direction == FingerGestures.SwipeDirection.Left
+        else if (direction == FingerGestures.SwipeDirection.Left
             || direction == FingerGestures.SwipeDirection.Up) {
             //if (!AppViewerUIController.Instance.uiVisible) {
-            if(allowSwipe) {
+            if (allowSwipe) {
                 //AppViewerAppController.Instance.ChangeActionNext();
             }
             GamePlayerProgress.Instance.ProcessProgressSwipes();
@@ -799,7 +802,7 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void handleTouchLaunch(Vector2 move) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -823,7 +826,7 @@ public class BaseUIController : MonoBehaviour {
         //Debug.Log("SWIPE:anglePlayer:" + anglePlayer);
         //Debug.Log("SWIPE:angleDiff:" + angleDiff);
 
-        if(angleDiff < 0) {
+        if (angleDiff < 0) {
             angleDiff = angleDiff + 360;
             angleDiff = Mathf.Abs(angleDiff);
         }
@@ -838,20 +841,20 @@ public class BaseUIController : MonoBehaviour {
 
         //forceVector.y = 0f;
 
-        if(angleDiff > 320 || angleDiff <= 45) { // forwardish
+        if (angleDiff > 320 || angleDiff <= 45) { // forwardish
             Debug.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Boost(forceVector, force * 1.2f);
         }
-        else if(angleDiff < 225 && angleDiff >= 135) { // backish
+        else if (angleDiff < 225 && angleDiff >= 135) { // backish
             Debug.Log("swipe controller: BACK :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Spin(forceVector, force * 1.8f);
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.spins, 1f);
         }
-        else if(angleDiff > 45 && angleDiff < 135) { // rightish
+        else if (angleDiff > 45 && angleDiff < 135) { // rightish
             Debug.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeRight(forceVector, force * 2f);
         }
-        else if(angleDiff <= 320 && angleDiff >= 225) { // leftish
+        else if (angleDiff <= 320 && angleDiff >= 225) { // leftish
             Debug.Log("swipe controller: LEFT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
         }
@@ -859,7 +862,7 @@ public class BaseUIController : MonoBehaviour {
 
     public virtual void updateTouchLaunch() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -872,20 +875,20 @@ public class BaseUIController : MonoBehaviour {
 
         //bool inHitArea = false;
 
-        if((Input.mousePosition.x > Screen.width / 3
+        if ((Input.mousePosition.x > Screen.width / 3
             && Input.mousePosition.x < Screen.width - Screen.width / 3)
             && (Input.mousePosition.y > Screen.height / 4
             && Input.mousePosition.y < Screen.height - Screen.height / 3)) {
             //inHitArea = true;
         }
 
-        if(camHud == null) {
-            foreach(Camera camItem in Camera.allCameras) {
-                if(camItem.cullingMask == LayerMask.NameToLayer("UIHUDScaled")) {
+        if (camHud == null) {
+            foreach (Camera camItem in Camera.allCameras) {
+                if (camItem.cullingMask == LayerMask.NameToLayer("UIHUDScaled")) {
                     camHud = camItem;
                 }
             }
-            if(camHud == null) {
+            if (camHud == null) {
                 camHud = Camera.main;
             }
         }
@@ -896,7 +899,7 @@ public class BaseUIController : MonoBehaviour {
         bool hasTouchesDownAllowed = false;
         bool hasTouchesUpAllowed = false;
 
-        if(Input.touches.Length > 0) {
+        if (Input.touches.Length > 0) {
             hasTouches = true;
         }
 
@@ -909,44 +912,44 @@ public class BaseUIController : MonoBehaviour {
         hasTouchesUpAllowed = checkIfTouchesUpAllowed();
 ////
 
-        if(hasTouches) {
+        if (hasTouches) {
             //Debug.Log("hasTouches: " + hasTouches);
         }
-        if(hasTouchesDownAllowed) {
+        if (hasTouchesDownAllowed) {
             //Debug.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
         }
-        if(hasTouchesUpAllowed) {
+        if (hasTouchesUpAllowed) {
             //Debug.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
         }
 
-        if(!hasTouches) {
+        if (!hasTouches) {
             lastDownAllowedPosition = Input.mousePosition;
             checkIfAllowedTouch(lastDownAllowedPosition);
         }
 
-        if(!shouldTouch) {
+        if (!shouldTouch) {
             //return;
         }
                 
-        if(((Input.GetMouseButtonDown(0) && !hasTouchesDownAllowed) || hasTouchesDownAllowed)
-                        && !inputAxisDown
-                        && !inputButtonDown) {
+        if (((Input.GetMouseButtonDown(0) && !hasTouchesDownAllowed) || hasTouchesDownAllowed)
+            && !inputAxisDown
+            && !inputButtonDown) {
             inputGestureDown = true;
         }
 
-        if(((Input.GetMouseButtonUp(0) && !hasTouchesUpAllowed) || hasTouchesUpAllowed)
-                        && !inputAxisDown
-                        && !inputButtonDown) {
+        if (((Input.GetMouseButtonUp(0) && !hasTouchesUpAllowed) || hasTouchesUpAllowed)
+            && !inputAxisDown
+            && !inputButtonDown) {
             inputGestureUp = true;
         }
                 
-        if(inputGestureDown
+        if (inputGestureDown
                         //&& (Input.mousePosition.x > Screen.width / 4 
                         //|| Input.mousePosition.y > Screen.height / 4)
                         //&& (Input.mousePosition.x < Screen.width - (Screen.width / 5) 
                         //&& Input.mousePosition.y < Screen.height - (Screen.height / 5) )
                         ) {
-            if(positionStart == Vector3.zero) {
+            if (positionStart == Vector3.zero) {
                 positionEnd = Vector3.zero;
                 positionStart = lastDownAllowedPosition;
                 showPoints = true;
@@ -957,8 +960,8 @@ public class BaseUIController : MonoBehaviour {
             }
 
                 
-            if(GameController.CurrentGamePlayerController != null) {
-                if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
+            if (GameController.CurrentGamePlayerController != null) {
+                if (GameController.CurrentGamePlayerController.IsPlayerControlled) {
                     //Vector3 dir = positionStart - Input.mousePosition;
                     //Vector3 posNormalized = dir.normalized;
                     //gamePlayerController.UpdateAim(-posNormalized.x, -posNormalized.y);
@@ -966,11 +969,11 @@ public class BaseUIController : MonoBehaviour {
                 }
             }
         }
-        else if(inputGestureUp) {
-            if(positionEnd == Vector3.zero
-                                && positionStart != Vector3.zero) {
+        else if (inputGestureUp) {
+            if (positionEnd == Vector3.zero
+                && positionStart != Vector3.zero) {
 
-                if(hasTouches) {
+                if (hasTouches) {
                     positionEnd = lastUpAllowedPosition;
                 }
                 else {
@@ -990,19 +993,19 @@ public class BaseUIController : MonoBehaviour {
 
                 bool doAction = true;
 
-                if(Time.time > updateTouchStartTime + updateTouchMaxTime) {
+                if (Time.time > updateTouchStartTime + updateTouchMaxTime) {
                     updateTouchStartTime = Time.time;
                     doAction = false;
                     showPoints = false;
                 }
 
-                if(!doAction) {
+                if (!doAction) {
                     positionStart = Vector3.zero;
                     return;
                 }
 
-                if(GameController.CurrentGamePlayerController != null) {
-                    if(GameController.CurrentGamePlayerController.IsPlayerControlled) {
+                if (GameController.CurrentGamePlayerController != null) {
+                    if (GameController.CurrentGamePlayerController.IsPlayerControlled) {
                         //Attack();
                         //gamePlayerController.gamePlayerModelHolderModel.
                         //gamePlayerController.UpdateAim(-positionLastLaunchNormalized.x, -positionLastLaunchNormalized.y);
@@ -1032,12 +1035,12 @@ public class BaseUIController : MonoBehaviour {
                                 
         }
                 
-        if(showPoints) {                
-            if(positionStart != Vector3.zero) {
+        if (showPoints) {                
+            if (positionStart != Vector3.zero) {
                 //showStartPoint(positionStart);
             }
                                         
-            if(positionEnd != Vector3.zero) {
+            if (positionEnd != Vector3.zero) {
                 //showEndPoint(positionEnd);
             }
         }
@@ -1052,13 +1055,13 @@ public class BaseUIController : MonoBehaviour {
     }
         
     public virtual void hideStartPoint() {
-        if(pointStartObject != null) {
+        if (pointStartObject != null) {
             pointStartObject.transform.position = Vector3.zero.WithY(3000);
         }
     }
         
     public virtual void hideEndPoint() {
-        if(pointEndObject != null) {
+        if (pointEndObject != null) {
             pointEndObject.transform.position = Vector3.zero.WithY(3000);
         }
     }
@@ -1066,11 +1069,11 @@ public class BaseUIController : MonoBehaviour {
     public virtual void showStartPoint(Vector3 pos) {
         //
                 
-        if(pointStartObject == null) {
+        if (pointStartObject == null) {
                 
-            if(!isCreatingStart) {
+            if (!isCreatingStart) {
                 isCreatingStart = true;
-                if(prefabPointStart == null) {
+                if (prefabPointStart == null) {
                     prefabPointStart = Resources.Load(
                                                 ContentPaths.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
@@ -1078,17 +1081,17 @@ public class BaseUIController : MonoBehaviour {
             }
         }
                 
-        if(pointStartObject != null) {
+        if (pointStartObject != null) {
             pointStartObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
         }
     }
         
     public virtual void showEndPoint(Vector3 pos) {
                 
-        if(pointEndObject == null) {
-            if(!isCreatingEnd) {
+        if (pointEndObject == null) {
+            if (!isCreatingEnd) {
                 isCreatingEnd = true;
-                if(prefabPointEnd == null) {
+                if (prefabPointEnd == null) {
                     prefabPointEnd = Resources.Load(
                         ContentPaths.appCacheVersionSharedPrefabWeapons +
                         "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
@@ -1097,14 +1100,14 @@ public class BaseUIController : MonoBehaviour {
             }
         }
                 
-        if(pointEndObject != null) {
+        if (pointEndObject != null) {
             pointEndObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
         }
     }
 
     public virtual bool checkIfAllowedTouch(Vector3 pos) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return false;
         }
 
@@ -1117,41 +1120,41 @@ public class BaseUIController : MonoBehaviour {
         inputAxisDown = false;
         shouldTouch = false;
 
-        if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
+        if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
-            if(hit.transform.name.Contains("ButtonInput")
-                                || hit.transform.name.Contains("ButtonInput")
-                                || hit.transform.name.Contains("ButtonInput")
-                                || hit.transform.name.Contains("Axis")
-                                || hit.transform.name.Contains("Ignore")) {
+            if (hit.transform.name.Contains("ButtonInput")
+                || hit.transform.name.Contains("ButtonInput")
+                || hit.transform.name.Contains("ButtonInput")
+                || hit.transform.name.Contains("Axis")
+                || hit.transform.name.Contains("Ignore")) {
                 inputButtonDown = true;
                 shouldTouch = false;
                 allowedTouch = false;
             }
 
-            if(allowedTouch) {
-                if(hit.transform.gameObject.Has<GameTouchInputAxis>()) {
+            if (allowedTouch) {
+                if (hit.transform.gameObject.Has<GameTouchInputAxis>()) {
                     // not over axis controller
                     inputAxisDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.Has<GameTouchInputAxis>()) {
+                if (hit.transform.gameObject.Has<GameTouchInputAxis>()) {
                     // not over axis controller
                     inputAxisDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.Has<UIButton>()) {
+                if (hit.transform.gameObject.Has<UIButton>()) {
                     // not over button
                     inputButtonDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
     
-                if(hit.transform.gameObject.Has<UIImageButton>()) {
+                if (hit.transform.gameObject.Has<UIImageButton>()) {
                     // not over button
                     inputButtonDown = true;
                     shouldTouch = false;
@@ -1167,16 +1170,16 @@ public class BaseUIController : MonoBehaviour {
     }
 
     public virtual bool checkIfTouchesDownAllowed() {
-        foreach(Touch t in Input.touches) {
-            if(t.phase == TouchPhase.Began) {
-                if(checkIfAllowedTouch(t.position)) {
+        foreach (Touch t in Input.touches) {
+            if (t.phase == TouchPhase.Began) {
+                if (checkIfAllowedTouch(t.position)) {
                     lastDownAllowedPosition = t.position;
                     return true;
                 }
             }
         }
-        if(Input.GetMouseButtonDown(0)) {
-            if(checkIfAllowedTouch(Input.mousePosition)) {
+        if (Input.GetMouseButtonDown(0)) {
+            if (checkIfAllowedTouch(Input.mousePosition)) {
                 lastDownAllowedPosition = Input.mousePosition;
                 return true;
             }
@@ -1188,16 +1191,16 @@ public class BaseUIController : MonoBehaviour {
     Vector3 lastUpAllowedPosition = Vector3.zero;
 
     public virtual bool checkIfTouchesUpAllowed() {
-        foreach(Touch t in Input.touches) {
-            if(t.phase == TouchPhase.Ended) {
-                if(checkIfAllowedTouch(t.position)) {
+        foreach (Touch t in Input.touches) {
+            if (t.phase == TouchPhase.Ended) {
+                if (checkIfAllowedTouch(t.position)) {
                     lastUpAllowedPosition = t.position;
                     return true;
                 }
             }
         }
-        if(Input.GetMouseButtonUp(0)) {
-            if(checkIfAllowedTouch(Input.mousePosition)) {
+        if (Input.GetMouseButtonUp(0)) {
+            if (checkIfAllowedTouch(Input.mousePosition)) {
                 lastUpAllowedPosition = Input.mousePosition;
                 return true;
             }
@@ -1206,24 +1209,24 @@ public class BaseUIController : MonoBehaviour {
     }
 
     public virtual bool checkIfTouchesDown() {
-        foreach(Touch t in Input.touches) {
-            if(t.phase == TouchPhase.Began) {
+        foreach (Touch t in Input.touches) {
+            if (t.phase == TouchPhase.Began) {
                 return true;
             }
         }
-        if(Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             return true;
         }
         return false;
     }
         
     public virtual bool checkIfTouchesUp() {
-        foreach(Touch t in Input.touches) {
-            if(t.phase == TouchPhase.Ended) {
+        foreach (Touch t in Input.touches) {
+            if (t.phase == TouchPhase.Ended) {
                 return true;
             }
         }
-        if(Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp(0)) {
             return true;
         }
         return false;
@@ -1278,7 +1281,7 @@ public class BaseUIController : MonoBehaviour {
         //LogUtil.Log("HandleFingerGesturesOnLongPress: " 
         //   + " fingerPos:" + fingerPos);   
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1290,7 +1293,7 @@ public class BaseUIController : MonoBehaviour {
         //LogUtil.Log("HandleFingerGesturesOnTap: " 
         //   + " fingerPos:" + fingerPos);
              
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1303,7 +1306,7 @@ public class BaseUIController : MonoBehaviour {
         //LogUtil.Log("HandleFingerGesturesOnDoubleTap: " 
         //   + " fingerPos:" + fingerPos);
              
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1317,7 +1320,7 @@ public class BaseUIController : MonoBehaviour {
         //   + " fingerPos:" + fingerPos 
         //   + " delta:" + delta);
              
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1332,7 +1335,7 @@ public class BaseUIController : MonoBehaviour {
         //   + " fingerPos2:" + fingerPos2
         //   + " delta:" + delta);
              
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1347,7 +1350,7 @@ public class BaseUIController : MonoBehaviour {
         //   + " fingerPos2:" + fingerPos2
         //   + " rotationAngleDelta:" + rotationAngleDelta); 
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1362,7 +1365,7 @@ public class BaseUIController : MonoBehaviour {
         ///  + " direction:" + direction
         //   + " velocity:" + velocity); 
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1376,7 +1379,7 @@ public class BaseUIController : MonoBehaviour {
         //   + " direction:" + direction
         //   + " velocity:" + velocity); 
      
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1385,38 +1388,38 @@ public class BaseUIController : MonoBehaviour {
     }
      
     public virtual void LongPress(Vector2 fingerPos) {       
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
              
             ResetCurrentObject(fingerPos);   
         }
     }
  
     public virtual void RotationMove(Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {     
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             RotateCurrentObject(rotationAngleDelta);
         }
     }
  
     public virtual void DragMove(Vector2 fingerPos, Vector2 delta) {     
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {         
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {         
             //SpinCurrentObject(fingerPos, delta);
          
             bool doScale = false;
             bool doRotation = false;
          
-            if(Input.GetKey(KeyCode.S)) {
+            if (Input.GetKey(KeyCode.S)) {
                 doScale = true;
             }
          
-            if(Input.GetKey(KeyCode.R)) {
+            if (Input.GetKey(KeyCode.R)) {
                 doRotation = true;
             }            
          
-            if(doRotation) {
+            if (doRotation) {
                 RotateCurrentObject(delta.x);
             }
          
-            if(doScale) {                
+            if (doScale) {                
                 ScaleCurrentObject(delta.y);
             }
          
@@ -1424,33 +1427,33 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void PinchMove(Vector2 fingerPos1, Vector2 fingerPos2, float delta) {     
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             ScaleCurrentObject(delta);
         }
     }
  
     public virtual void Tap(Vector2 fingerPos) {     
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
          
         }
     }
  
     public virtual void DoubleTap(Vector2 fingerPos) {       
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
          
             GameDraggableEditor.EditModeCreateAsset(fingerPos);
          
             //var fwd = transform.TransformDirection(Vector3.forward);
             Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, Mathf.Infinity)) {
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity)) {
                 print("double tap hit an object:" + hit.transform.name);
             }
         }
      
         //AppController.Instance.ChangeActionNext();
      
-        if(Application.isEditor) {
+        if (Application.isEditor) {
             GameController.CycleCharacterTypesNext();
         }
 
@@ -1458,41 +1461,41 @@ public class BaseUIController : MonoBehaviour {
                 
     public virtual void TwoFingerSwipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity) {
 
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
      
-            if(direction == FingerGestures.SwipeDirection.All) {
+            if (direction == FingerGestures.SwipeDirection.All) {
                 // if swiped any direction
             }
          
-            if(direction == FingerGestures.SwipeDirection.Right
-         || direction == FingerGestures.SwipeDirection.Down) {
+            if (direction == FingerGestures.SwipeDirection.Right
+                || direction == FingerGestures.SwipeDirection.Down) {
                 //AppController.Instance.ChangeActionPrevious();
             }
-            else if(direction == FingerGestures.SwipeDirection.Left
-         || direction == FingerGestures.SwipeDirection.Up) {
+            else if (direction == FingerGestures.SwipeDirection.Left
+                || direction == FingerGestures.SwipeDirection.Up) {
                 //AppController.Instance.ChangeActionNext();
             }
         }
      
-        if(direction == FingerGestures.SwipeDirection.Right
-         || direction == FingerGestures.SwipeDirection.Down) {
+        if (direction == FingerGestures.SwipeDirection.Right
+            || direction == FingerGestures.SwipeDirection.Down) {
             GameController.CycleCharacterTypesPrevious();
         }
-        else if(direction == FingerGestures.SwipeDirection.Left
-         || direction == FingerGestures.SwipeDirection.Up) {
+        else if (direction == FingerGestures.SwipeDirection.Left
+            || direction == FingerGestures.SwipeDirection.Up) {
             GameController.CycleCharacterTypesNext();
         }
     }
  
     public virtual void Swipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocitys) {      
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
          
         }
      
         //bool allowSwipe = true;
          
-        if(direction == FingerGestures.SwipeDirection.Right
-     || direction == FingerGestures.SwipeDirection.Down) {
+        if (direction == FingerGestures.SwipeDirection.Right
+            || direction == FingerGestures.SwipeDirection.Down) {
             //if(!UIController.Instance.uiVisible && allowSwipe) {
             // AppController.Instance.ChangeActionPrevious();
             GamePlayerProgress.Instance.ProcessProgressSwipes();
@@ -1500,8 +1503,8 @@ public class BaseUIController : MonoBehaviour {
          
          
         }
-        else if(direction == FingerGestures.SwipeDirection.Left
-     || direction == FingerGestures.SwipeDirection.Up) {
+        else if (direction == FingerGestures.SwipeDirection.Left
+            || direction == FingerGestures.SwipeDirection.Up) {
             //if(!UIController.Instance.uiVisible && allowSwipe) {
             //AppController.Instance.ChangeActionNext();
             GamePlayerProgress.Instance.ProcessProgressSwipes();
@@ -1516,7 +1519,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void ScaleCurrentObject(float delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
      
-        if(go != null) {
+        if (go != null) {
             GameObjectHelper.ScaleObject(go, delta);
         }
     }
@@ -1524,7 +1527,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void RotateCurrentObject(float delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
      
-        if(go != null) {
+        if (go != null) {
             GameObjectHelper.RotateObjectZ(go, delta);
         }
     }
@@ -1532,7 +1535,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void SpinCurrentObject(Vector2 fingerPos, Vector2 delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
          
-        if(go != null) {
+        if (go != null) {
             GameObjectHelper.SpinObject(go, fingerPos, delta);           
             GameObjectHelper.deferTap = true;            
             GamePlayerProgress.Instance.ProcessProgressSpins();
@@ -1542,8 +1545,8 @@ public class BaseUIController : MonoBehaviour {
     public virtual void ResetCurrentObject(Vector2 pos) {        
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
      
-        if(go != null) {                  
-            if(go.rigidbody != null) {
+        if (go != null) {                  
+            if (go.rigidbody != null) {
                 go.rigidbody.angularVelocity = Vector3.zero;
             }
             GameObjectHelper.deferTap = true;
@@ -1553,7 +1556,7 @@ public class BaseUIController : MonoBehaviour {
     }
         
     public virtual void FingerGestures_OnTap(Vector2 fingerPos) {    
-        if(!IsInputAllowed()) {
+        if (!IsInputAllowed()) {
             return;
         }
      
@@ -1604,7 +1607,7 @@ public class BaseUIController : MonoBehaviour {
                     
         Debug.Log("ToggleUI uiVisible: " + uiVisible);
                         
-        if(uiVisible) {
+        if (uiVisible) {
             Debug.Log("call HideUI");
             hideUI(false);
         }
@@ -1664,13 +1667,13 @@ public class BaseUIController : MonoBehaviour {
  
     public virtual void HandleInGameAudio(bool playAudio) {
      
-        if(!gameLoopsStarted) {          
+        if (!gameLoopsStarted) {          
             GameAudio.StartGameLoops();
         }
      
         GameAudio.StopAmbience();
 
-        if(playAudio) {
+        if (playAudio) {
             int loopToPlay = UnityEngine.Random.Range(1, 4);
 
             LogUtil.Log("HandleInGameAudio:", " loopToPlay:" + loopToPlay.ToString());
@@ -1682,7 +1685,7 @@ public class BaseUIController : MonoBehaviour {
  
     public virtual void HandleInUIAudio() {
      
-        if(!inUIAudioPlaying) {
+        if (!inUIAudioPlaying) {
             GameAudio.StartGameLoop(-1);
             GameAudio.StartAmbience();
             inUIAudioPlaying = true;
@@ -1695,7 +1698,7 @@ public class BaseUIController : MonoBehaviour {
          
         LogUtil.Log("toggling:" + gameUIExpanded);
      
-        if(gameUIExpanded) {
+        if (gameUIExpanded) {
             //Vector3 temp = panelCover.transform.position;
             //temp.x = 55f;
             //Tweens.Instance.MoveToObject(panelCover, temp, 0f, 0f);
@@ -1748,7 +1751,7 @@ public class BaseUIController : MonoBehaviour {
 
         showGameCanvas();
 
-        if(now) {
+        if (now) {
             HideAllPanelsNow();
         }
         else {
@@ -1852,7 +1855,7 @@ public class BaseUIController : MonoBehaviour {
             typeof(GameUIPanelGameModeMultiplayer),
             BaseUIPanel.panelGameModeMultiplayer,
             "PLAY MULTIPLAYER");
-    } 
+    }
     
     public virtual void hideGameModeMultiplayer() {
         hideUIPanel(
@@ -1867,7 +1870,7 @@ public class BaseUIController : MonoBehaviour {
             typeof(GameUIPanelGameModeMultiplayerCoop),
             BaseUIPanel.panelGameModeMultiplayerCoop,
             "PLAY MULTIPLAYER CO-OP");
-    } 
+    }
     
     public virtual void hideGameModeMultiplayerCoop() {
         hideUIPanel(
@@ -1882,7 +1885,7 @@ public class BaseUIController : MonoBehaviour {
             typeof(GameUIPanelGameModeMultiplayerMatchup),
             BaseUIPanel.panelGameModeMultiplayerMatchup,
             "PLAY MULTIPLAYER MATCHUP");
-    } 
+    }
     
     public virtual void hideGameModeMultiplayerMatchup() {
         hideUIPanel(
@@ -1896,13 +1899,69 @@ public class BaseUIController : MonoBehaviour {
         
         showUIPanel(
             typeof(GameUIPanelGameModeMission),
-            BaseUIPanel.panelGameModeMission,
+            BaseUIPanel.panelGameModeMissions,
             "PLAY MISSION");
-    } 
+    }
     
     public virtual void hideGameModeMission() {
         hideUIPanel(
             typeof(GameUIPanelGameModeMission));
+    }
+
+    // ------------------------------------------------------------
+    // GAME WORLDS
+    
+    //public static virtual void ShowGameWorlds() {
+    //   if(isInst) {
+    //       Instance.showGameWorlds();
+    //   }
+    //}
+    
+    public virtual void showGameWorlds() {
+        
+        showUIPanel(
+            typeof(GameUIPanelWorlds),
+            BaseUIPanel.panelWorlds,
+            "WORLDS");
+    } 
+    
+    //public static virtual void HideGameWorlds() {
+    //   if(isInst) {
+    //       Instance.hideGameWorlds();
+    //   }
+    //}
+    
+    public virtual void hideGameWorlds() {
+        hideUIPanel(
+            typeof(GameUIPanelWorlds));
+    }    
+    
+    // ------------------------------------------------------------
+    // GAME LEVELS
+    
+    //public static virtual void ShowGameLevels() {
+    //   if(isInst) {
+    //       Instance.showGameLevels();
+    //   }
+    //}
+    
+    public virtual void showGameLevels() {
+        
+        showUIPanel(
+            typeof(GameUIPanelLevels),
+            BaseUIPanel.panelLevels,
+            "LEVELS");
+    } 
+    
+    //public static virtual void HideGameLevels() {
+    //   if(isInst) {
+    //       Instance.hideGameLevels();
+    //   }
+    //}
+    
+    public virtual void hideGameLevels() {
+        hideUIPanel(
+            typeof(GameUIPanelLevels));
     }
 
     // ------------------------------------------------------------
@@ -1934,7 +1993,7 @@ public class BaseUIController : MonoBehaviour {
 
     // ------------------------------------------------------------
     // GAME MODE - TRAINING MODE
-	
+    
     public virtual void showGameModeTrainingMode() {
         showUIPanel(
             typeof(GameUIPanelGameModeTrainingMode),
@@ -2756,7 +2815,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void showUIPauseButton() {
-        if(gamePauseButtonObject != null) {
+        if (gamePauseButtonObject != null) {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(0));
         }
     }    
@@ -2768,7 +2827,7 @@ public class BaseUIController : MonoBehaviour {
     //}
          
     public virtual void hideUIPauseButton() {
-        if(gamePauseButtonObject != null) {
+        if (gamePauseButtonObject != null) {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(650));
         }
     }
@@ -2808,7 +2867,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void showUIPanelAlertBackground() {
-        if(gamePauseDialogObject != null) {
+        if (gamePauseDialogObject != null) {
             gameBackgroundAlertObject.Show();    
         }
     }
@@ -2820,7 +2879,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void hideUIPanelAlertBackground() {
-        if(gamePauseDialogObject != null) {
+        if (gamePauseDialogObject != null) {
             gameBackgroundAlertObject.Hide();    
         }
     }
@@ -2888,7 +2947,7 @@ public class BaseUIController : MonoBehaviour {
     //}
  
     public virtual void showGameCanvas() {
-        if(gameContainerObject != null) {
+        if (gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
 
@@ -2904,7 +2963,7 @@ public class BaseUIController : MonoBehaviour {
  
     public virtual void hideGameCanvas() {
 
-        if(gameContainerObject != null) {
+        if (gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
 
@@ -2922,29 +2981,32 @@ public class BaseUIController : MonoBehaviour {
 
         // GAME
 
-        if(buttonName.IndexOf(BaseUIButtonNames.buttonGameQuit) > -1) {
+        if (buttonName.IndexOf(BaseUIButtonNames.buttonGameQuit) > -1) {
             GameQuit();
         }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGamePause) > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGamePause) > -1) {
             GamePause();
         }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameResume) > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameResume) > -1) {
             GameResume();
         }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameRestart) > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameRestart) > -1) {
             GameRestart();
         }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameWorlds) > -1) { 
-            GameWorlds();
-        }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameContinue) > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameContinue) > -1) {
             GameContinue();
         }
-        else if(buttonName.IndexOf(BaseUIButtonNames.buttonGameSettingsAudio) > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameSettingsAudio) > -1) {
             GameUIController.ShowSettingsAudio();
         }
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterAchievements) > -1) {
+            GameNetworks.ShowAchievementsOrLogin();
+        }
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterLeaderboards) > -1) {
+            GameNetworks.ShowLeaderboardsOrLogin();
+        }
         else {
-            if(buttonName == BaseUIButtonNames.buttonBack) {
+            if (buttonName == BaseUIButtonNames.buttonBack) {
                 NavigateBack(buttonName);
             }
         }
@@ -3062,22 +3124,9 @@ public class BaseUIController : MonoBehaviour {
      */
     }
 
-    float lastPressAttack = 0;
-    float lastPressAttackAlt = 0;
-    float lastPressAttackRight = 0;
-    float lastPressAttackLeft = 0;
-    float lastPressDefend = 0;
-    float lastPressDefendAlt = 0;
-    float lastPressDefendRight = 0;
-    float lastPressDefendLeft = 0;
-    float lastPressSkill = 0;
-    float lastPressMagic = 0;
-    float lastPressUse = 0;
-    //float lastPressJump = 0;
-
     public bool AllowPress(float lastTime) {
 
-        if(lastTime + .1f < Time.time) {
+        if (lastTime + .1f < Time.time) {
             lastTime = Time.time;
             return true;
         }
@@ -3086,58 +3135,57 @@ public class BaseUIController : MonoBehaviour {
     }
  
     public virtual void handleHUDButtons(string buttonName) {
-        if(AllowPress(lastPressAttack)
+        if (AllowPress(lastPressAttack)
             && buttonName == BaseHUDButtonNames.buttonInputAttack) {
             GameController.GamePlayerAttack();
         }
-        else if(AllowPress(lastPressAttackAlt)
+        else if (AllowPress(lastPressAttackAlt)
             && buttonName == BaseHUDButtonNames.buttonInputAttackAlt) {
             GameController.GamePlayerAttackAlt();
         }
-        else if(AllowPress(lastPressAttackRight)
+        else if (AllowPress(lastPressAttackRight)
             && buttonName == BaseHUDButtonNames.buttonInputAttackRight) {
             GameController.GamePlayerAttackRight();
         }
-        else if(AllowPress(lastPressAttackLeft)
+        else if (AllowPress(lastPressAttackLeft)
             && buttonName == BaseHUDButtonNames.buttonInputAttackLeft) {
             GameController.GamePlayerAttackLeft();
         }
-        else if(AllowPress(lastPressDefend)
+        else if (AllowPress(lastPressDefend)
             && buttonName == BaseHUDButtonNames.buttonInputDefend) {
             GameController.GamePlayerDefend();
         }
-        else if(AllowPress(lastPressDefendAlt)
+        else if (AllowPress(lastPressDefendAlt)
             && buttonName == BaseHUDButtonNames.buttonInputDefendAlt) {
             GameController.GamePlayerDefendAlt();
         }
-        else if(AllowPress(lastPressDefendRight)
+        else if (AllowPress(lastPressDefendRight)
             && buttonName == BaseHUDButtonNames.buttonInputDefendRight) {
             GameController.GamePlayerDefendRight();
         }
-        else if(AllowPress(lastPressDefendLeft)
+        else if (AllowPress(lastPressDefendLeft)
             && buttonName == BaseHUDButtonNames.buttonInputDefendLeft) {
             GameController.GamePlayerDefendLeft();
         }
-        else if(AllowPress(lastPressSkill)
+        else if (AllowPress(lastPressSkill)
             && buttonName == BaseHUDButtonNames.buttonInputSkill) {
             GameController.GamePlayerSkill();
         }
-        else if(AllowPress(lastPressMagic)
+        else if (AllowPress(lastPressMagic)
             && buttonName == BaseHUDButtonNames.buttonInputMagic) {
             GameController.GamePlayerMagic();
         }
-        else if(AllowPress(lastPressUse)
+        else if (AllowPress(lastPressUse)
             && buttonName == BaseHUDButtonNames.buttonInputUse) {
             GameController.GamePlayerUse();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputJump) {
+        else if (buttonName == BaseHUDButtonNames.buttonInputJump) {
             GameController.GamePlayerJump();
         }
-        else if(buttonName == BaseHUDButtonNames.buttonInputInventoryWeapon) {
+        else if (buttonName == BaseHUDButtonNames.buttonInputInventoryWeapon) {
             //GameController.GamePlayerJump();
-        }          
-        
-        else if(buttonName == BaseHUDButtonNames.buttonInputInventoryWeaponNext) {
+        }
+        else if (buttonName == BaseHUDButtonNames.buttonInputInventoryWeaponNext) {
             GameController.CurrentGamePlayerController.LoadWeaponNext();
         }          
     }
@@ -3145,11 +3193,7 @@ public class BaseUIController : MonoBehaviour {
     public virtual void GameContinue() {     
         GameController.QuitGame();
     }
- 
-    public virtual void GameWorlds() {       
-        GameController.QuitGame();
-    }
- 
+  
     public virtual void GameRestart() {
         GameController.RestartGame();
     }
