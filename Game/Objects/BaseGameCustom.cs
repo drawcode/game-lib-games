@@ -23,14 +23,14 @@ public class GameCustomInfo {
         
     public string actorType = GameCustomActorTypes.heroType;
     
-    public string teamCode = "game-nfl-cardinals";
+    public string teamCode = "game-default";
 
     public string presetType = "character";
 
-    public string presetColorCodeDefault = "game-nfl-cardinals";
+    public string presetColorCodeDefault = "game-default";
     public string presetColorCode = "default";
 
-    public string presetTextureCodeDefault = "fiestabowl";
+    public string presetTextureCodeDefault = "default";
     public string presetTextureCode = "default";
 
     public bool isCustomType {
@@ -62,7 +62,7 @@ public class BaseGameCustom : MonoBehaviour {
     
     public string teamCode = "default";
 
-    public string presetColorCodeDefault = "game-nfl-cardinals";        
+    public string presetColorCodeDefault = "game-default";        
 
     public string customColorCode = GameCustomTypes.defaultType;
     string lastCustomColorCode = "--";

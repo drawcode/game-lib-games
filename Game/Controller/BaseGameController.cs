@@ -3074,8 +3074,8 @@ public class BaseGameController : MonoBehaviour {
             return;
         }
         
-        bool mousePressed = Input.GetMouseButton(0);
-        bool touchPressed = Input.touchCount > 0 ? true : false;
+        bool mousePressed = InputSystem.isMousePressed;
+        bool touchPressed = InputSystem.isTouchPressed;
         bool handled = false;
     
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();

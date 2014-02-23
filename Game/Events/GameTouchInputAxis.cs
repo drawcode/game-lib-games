@@ -84,7 +84,7 @@ public class GameTouchInputAxis : MonoBehaviour {
             RaycastHit hit;
             if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
              
-                //Debug.Log("hit:" + hit.transform.gameObject.name);
+                Debug.Log("hit:" + hit.transform.gameObject.name);
 
                 hitObject = hit.transform.gameObject;
 
@@ -95,7 +95,7 @@ public class GameTouchInputAxis : MonoBehaviour {
                         if (axisObject.axisName == axisName) {
                             hitThis = true;
 
-                           // Debug.Log("PointHitTest:" + " hitThis:" + hitThis.ToString() + " axisName:" + axisName);
+                            Debug.Log("PointHitTest:" + " hitThis:" + hitThis.ToString() + " axisName:" + axisName);
                             // }
                         }
                     }
@@ -134,7 +134,8 @@ public class GameTouchInputAxis : MonoBehaviour {
 
     void ResetPad() {
 
-        if (1==1) {//!axisName.Contains("move")) {
+        if (!GameController.touchHandled && axisName.Contains("move")
+            || !axisName.Contains("move")) {
             axisInput.x = 0f;
             axisInput.y = 0f;
 
@@ -152,23 +153,25 @@ public class GameTouchInputAxis : MonoBehaviour {
  
     void Update() {
 
-        if (!GameController.IsGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
  
-        bool mousePressed = InputSystem.Instance.mousePressed;
-        bool touchPressed = Input.touchCount > 0 ? true : false;
+        bool mousePressed = InputSystem.isMousePressed;
+        bool touchPressed = InputSystem.isTouchPressed;
      
-        bool leftPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
-        bool rightPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
-        bool upPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
-        bool downPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+        bool leftPressed = InputSystem.isLeftPressed;
+        bool rightPressed = InputSystem.isRightPressed;
+        bool upPressed = InputSystem.isUpPressed;
+        bool downPressed = InputSystem.isDownPressed;
         
         if(axisName == "move") {
-        //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
-         //         + " rightPressed:" + rightPressed.ToString()
-         //         + " upPressed:" + upPressed.ToString()
-         //         + " downPressed:" + downPressed.ToString());
+            //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
+            // + " rightPressed:" + rightPressed.ToString()
+            // + " upPressed:" + upPressed.ToString()
+            //          + " downPressed:" + downPressed.ToString()
+            //          + " touchPressed:" + touchPressed.ToString()
+            //          + " mousePressed:" + mousePressed.ToString());
         }
         
         bool handled = false;

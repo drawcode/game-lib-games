@@ -876,17 +876,19 @@ public class BaseGamePlayerController : GameActor {
 
         bool update = false;
 
-        if (controllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
-            controllerData.lastIdleActions = Time.time;
-            if (controllerData.thirdPersonController != null) {
-                if (controllerData.thirdPersonController.moveSpeed == 0f) {
-                    update = true;
+        if(controllerData != null ) {
+            if (controllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
+                controllerData.lastIdleActions = Time.time;
+                if (controllerData.thirdPersonController != null) {
+                    if (controllerData.thirdPersonController.moveSpeed == 0f) {
+                        update = true;
+                    }
                 }
             }
-        }
 
-        if (!update) {
-            return;
+            if (!update) {
+                return;
+            }
         }
 
         // Look at camera
