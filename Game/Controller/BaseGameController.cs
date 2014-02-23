@@ -279,9 +279,9 @@ public class GameLevelGridData {
 
     public static GameLevelGridData GetLevelTemplate(string template) {
 
-        string wall1 = "wall-1";
+        //string wall1 = "wall-1";
 
-        GameLevelGridData gridData = new GameLevelGridData();
+        //GameLevelGridData gridData = new GameLevelGridData();
 
 
         return GameLevels.GetLevelGridBaseDefault();
@@ -1586,14 +1586,14 @@ public class BaseGameController : MonoBehaviour {
 
         if(isZoned) {
             // get left/right spawn location
-            string leftMiddle = "left-middle";
-            string rightMiddle = "right-middle";
-            string spawnCode = rightMiddle;
+            //string leftMiddle = "left-middle";
+            //string rightMiddle = "right-middle";
+            //string spawnCode = rightMiddle;
             if(currentGameZone == GameZones.right) {
-                spawnCode = rightMiddle;
+                //spawnCode = rightMiddle;
             }
             else if(currentGameZone == GameZones.left) {
-                spawnCode = leftMiddle;
+                //spawnCode = leftMiddle;
             }
 
            // Debug.Log("spawnCode:" + spawnCode);

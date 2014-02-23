@@ -354,6 +354,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             StopContent();
         }
                 
+        /*
         if(true == false) { // floaty) {
             // HANDLE floaty
                         
@@ -372,6 +373,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             //transform.position = transform.position.WithY(bobY);
             //}
         }
+        */
                 
         UpdateBounds();
         UpdateCollect();

@@ -370,8 +370,6 @@ public class UIPanelOverviewMode : UIPanelBase {
         StartCoroutine(loadDataCo());
     }
 
-    bool initialized = false;
-    
     IEnumerator loadDataCo() {
 
         Reset();   

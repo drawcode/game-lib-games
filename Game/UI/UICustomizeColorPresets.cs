@@ -102,10 +102,8 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                     color.a = 1;
                     colorTo = color;
                 }
-                                
-                if(colorTo != null) {
-                    colors.Add(prop.code, colorTo);
-                }
+
+                colors.Add(prop.code, colorTo);
             }        
             
             currentProfileCustomItem = GameCustomController.UpdateColorPresetObject(currentProfileCustomItem, currentObject, type, colors);

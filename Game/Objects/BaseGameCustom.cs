@@ -76,8 +76,6 @@ public class BaseGameCustom : MonoBehaviour {
     
     bool freezeRotation = false;
 
-    bool initialized = false;
-
     public virtual void Start() {
 
         Init();

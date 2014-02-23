@@ -89,7 +89,7 @@ public class BaseGamePlayerCollision : MonoBehaviour {
                 int i = 0;
                 while (i < numCollisionEvents) {
                     if (other.rigidbody) {
-                        Vector3 pos = collisionEvents[i].intersection;
+                        //Vector3 pos = collisionEvents[i].intersection;
                         Vector3 force = collisionEvents[i].velocity * 10;
                         gamePlayerController.rigidbody.AddForce(force);
                     }

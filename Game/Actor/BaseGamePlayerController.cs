@@ -1740,7 +1740,7 @@ public class BaseGamePlayerController : GameActor {
 
     public float lastCollision = 0f;
     public float intervalCollision = .2f;
-    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+    //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
     public virtual void OnParticleCollision(GameObject other) {
         
@@ -3362,11 +3362,11 @@ public class BaseGamePlayerController : GameActor {
     
 
         float tParam = 0f;
-        float valToBeLerped = 15f;
+        //float valToBeLerped = 15f;
         float speed = 0.3f;
         if (tParam < 1) {
             tParam += Time.deltaTime * speed; //This will increment tParam based on Time.deltaTime multiplied by a speed multiplier
-            valToBeLerped = Mathf.Lerp(0, 3, tParam);
+            //valToBeLerped = Mathf.Lerp(0, 3, tParam);
         }
 
         controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
@@ -3565,7 +3565,7 @@ public class BaseGamePlayerController : GameActor {
             // 
             // ANIMATION
 
-            bool addedAnimation = false;
+            //bool addedAnimation = false;
          
             if (gameObject.Has<GamePlayerControllerAnimation>()) {
                 controllerData.gamePlayerControllerAnimation = 
@@ -3575,7 +3575,7 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.gamePlayerControllerAnimation = 
                     gameObject.AddComponent<GamePlayerControllerAnimation>();  
 
-                addedAnimation = true;
+                //addedAnimation = true;
             }
             
             controllerData.gamePlayerControllerAnimation.Init(); 

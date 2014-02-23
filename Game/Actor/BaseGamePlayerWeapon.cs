@@ -117,7 +117,8 @@ public class BaseGamePlayerWeapon : GameActor {
 
                 if(projectilePrefab != null) {
 
-                    GameObject projectileObject = GameObjectHelper.CreateGameObject(
+                    //GameObject projectileObject = 
+                    GameObjectHelper.CreateGameObject(
                         projectilePrefab, 
                         containerProjectiles.transform.position, 
                         containerProjectiles.transform.rotation, 

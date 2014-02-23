@@ -157,10 +157,7 @@ public class BaseGameCustomController : MonoBehaviour {
             foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
                                                 
                 Color colorTo = profileCustomItem.GetCustomColor(prop.code);
-
-                if(colorTo != null) {
-                    colors.Add(prop.code, colorTo);
-                }
+                colors.Add(prop.code, colorTo);
             }
 
             break;
