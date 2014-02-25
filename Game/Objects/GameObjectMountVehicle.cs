@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameObjectMountVehicle : GameObjectMount {
+
+    public GamePlayerController gamePlayerController;
+    public GameVehicleDrive driver;
     
     public override void Awake() { 
         base.Awake();   
@@ -43,5 +46,37 @@ public class GameObjectMountVehicle : GameObjectMount {
     
     public override void Update() {
         base.Update();
+
+        if(isMounted) {
+            if(driver != null) {
+                objectMounted.TrackObject(driver.gameObject);
+            }
+        }
+    }
+
+    public override void Mount(GameObject go) {
+        base.Mount(go);
+
+        if(isMounted) {
+            gamePlayerController = objectMounted.Get<GamePlayerController>();
+        }
+
+        MountVehicle();
+    }    
+    
+    public void MountVehicle() {
+            
+        driver = gameObject.Get<GameVehicleDrive>();
+
+        if(driver == null) {
+            driver = gameObject.FindTypeAboveRecursive<GameVehicleDrive>();
+        }
+    }
+    
+    public void SetMountVehicleAxis(float h, float v) {
+        if(driver != null) {
+            driver.vehicleDriveData.inputAxisHorizontal = h;
+            driver.vehicleDriveData.inputAxisVertical = v;
+        }
     }
 }

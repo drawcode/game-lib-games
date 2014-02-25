@@ -258,17 +258,12 @@ public class BaseGamePlayerMountData {
 
     // MOUNTS - vehicle
 
-    public GameObjectMountVehicle mountVehiclePrimary;
-    public GameObjectMountVehicle mountVehicleSecondary;
+    public GameObjectMountVehicle mountVehicle;
 
     public bool isMountedVehicle {
 
         get {
-            if(isMountedVehiclePrimary) {
-                return true;
-            }
-
-            if(isMountedVehicleSecondary) {
+            if(isMountedVehicleObject) {
                 return true;
             }
 
@@ -276,40 +271,34 @@ public class BaseGamePlayerMountData {
         }
     }
 
-    public bool isMountedVehiclePrimary {
+    public bool isMountedVehicleObject {
         get {            
-            if(mountVehiclePrimary != null) {
-                return true;
-            }
-            return false;
-        }
-    }
-    
-    public bool isMountedVehicleSecondary {
-        get {            
-            if(mountVehicleSecondary != null) {
+            if(mountVehicle != null) {
                 return true;
             }
             return false;
         }
     }
 
-    public void MountVehiclePrimary(GameObjectMountVehicle mount) {
-        mountVehiclePrimary = mount;
-    }
-    
-    public void MountVehicleSecondary(GameObjectMountVehicle mount) {
-        mountVehicleSecondary = mount;
-    }
-
-    public void UnmountVehiclePrimary() {
-        mountVehiclePrimary = null;
-    }
-    
-    public void UnmountountVehicleSecondary() {
-        mountVehicleSecondary = null;
+    public void MountVehicle(GameObject go, GameObjectMountVehicle mount) {
+        if(!isMountedVehicleObject) {
+            mountVehicle = mount;
+            mountVehicle.Mount(go);
+        }
     }
 
+    public void UnmountVehicle() {
+        if(isMountedVehicleObject) {
+            mountVehicle.Unmount();
+            mountVehicle = null;
+        }
+    }
+    
+    public void SetMountVehicleAxis(float h, float v) {
+        if(mountVehicle != null) {
+            mountVehicle.SetMountVehicleAxis(h, v);
+        }
+    }
 }
 
 public class BaseGamePlayerController : GameActor {
@@ -1402,7 +1391,7 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 //if(!GameController.isFingerNavigating) {
-                SetThirdPersonControllerAxis(axisInput);
+                HandleThirdPersonControllerAxis(axisInput);
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack) {
@@ -1504,9 +1493,9 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
-    public virtual void SetThirdPersonControllerAxis(Vector3 axisInput) {
+    public virtual void HandleThirdPersonControllerAxis(Vector3 axisInput) {
         if(controllerData.mountData.isMountedVehicle) {
-            
+            controllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
         else {
             controllerData.thirdPersonController.horizontalInput = axisInput.x;
@@ -1591,6 +1580,26 @@ public class BaseGamePlayerController : GameActor {
     public override void OnInputDown(InputTouchInfo touchInfo) {
         LogUtil.Log("OnInputDown GameActor");        
      
+    }
+    
+    // --------------------------------------------------------------------
+    // MOUNT VEHICLE
+    
+    public virtual void Mount(GameObject go) {
+        if(go.Has<GameObjectMountVehicle>()) {            
+            if(!controllerData.mountData.isMountedVehicleObject) {
+                controllerData.mountData.MountVehicle(gameObject, 
+                    go.Get<GameObjectMountVehicle>());
+                StopNavAgent();
+            }
+        }
+    }
+
+    public virtual void Unmount() {
+        if(controllerData.mountData.isMountedVehicleObject) {
+            controllerData.mountData.UnmountVehicle();
+            StartNavAgent();
+        }
     }
  
     // --------------------------------------------------------------------

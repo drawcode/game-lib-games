@@ -9,7 +9,7 @@ public enum GameObjectMountType {
 
 public class GameObjectMount : BaseGameObjectInteractive {
 
-    public List<GameObject> objectsMounted;
+    public GameObject objectMounted;
     public int allowedMountCount = 1;
         
     public override void Awake() { 
@@ -18,8 +18,6 @@ public class GameObjectMount : BaseGameObjectInteractive {
     
     public override void Start() {        
         base.Start();  
-        
-        objectsMounted = new List<GameObject>();
     }
     
     public override void Init() {
@@ -48,19 +46,83 @@ public class GameObjectMount : BaseGameObjectInteractive {
     public override void OnTriggerEnter(Collider collider) {
         base.OnTriggerEnter(collider);
     }
-
-    public virtual void Mount(GameObject go) {
     
+    public virtual bool isMounted {
+        get {
+            if(objectMounted == null) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
     }
         
-    public virtual void Unmount(GameObject go) {
+    public virtual void ToggleMount(GameObject go) {
+        if(isMounted) {            
+            Unmount();
+        }
+        else {
+            Mount(go);        
+        }
+    }
+
+    public virtual void Mount(GameObject go) {
+        if(!isMounted) {
+            objectMounted = go;
+
+            Debug.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
+        }
+    }
         
+    public virtual void Unmount() {
+        if(isMounted) {
+            Debug.Log("Unmount:" + " current:" + transform.name + " mount:" + objectMounted.name);
+
+            objectMounted = null;
+        }
     }
     
     public override void Update() {
         base.Update();
+        
+        if(Input.GetKeyDown(KeyCode.E)) {
+            HandleMount();
+        }
+    }
+    
+    public virtual void HandleMount() {
 
+        // check mounting from mount itself for game player mounts as it is 
+        // more efficient
+        
+        // check if any game players are around
+        // if action pressed, mount vehicle
+        if (GameController
+            .CurrentGamePlayerController != null
+            && !GameController
+            .CurrentGamePlayerController.controllerData.dying) {
 
+            if(GameController
+               .CurrentGamePlayerController.IsPlayerControlled) {    
+            
+                if (GameController
+                    .CurrentGamePlayerController
+                    .controllerData
+                    .distanceToPlayerControlledGamePlayer <= attractRange) {
 
+                    GameController
+                        .CurrentGamePlayerController.Mount(gameObject);
+                }
+                else {
+                    GameController
+                        .CurrentGamePlayerController.Unmount();
+                }
+
+                //ToggleMount(gamePlayerControllerHit.gameObject);
+
+            }
+        }
+        
     }
 }

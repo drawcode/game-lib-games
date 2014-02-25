@@ -14,6 +14,9 @@ public class GameDraggableLevelItem : MonoBehaviour {
 	public GameLevelItemAsset gameLevelItemAsset;	
 
     public NavMeshAgent navAgent;
+
+    bool frozen = false;
+    bool visible = true;
 			
 	void Awake() {
         //navAgent = gameObject.AddComponent<NavMeshAgent>();
@@ -163,16 +166,19 @@ public class GameDraggableLevelItem : MonoBehaviour {
 		yield break;		
 	}
 
-    bool frozen = false;
 
     public void Freeze() {
-        frozen = true;
-        gameObject.FreezeRigidBodies();
+        if(!frozen) {
+            frozen = true;
+            gameObject.FreezeRigidBodies();
+        }
     }
 
     public void UnFreeze() {
-        frozen = false;
-        gameObject.UnFreezeRigidBodies();
+        if(frozen) {
+            frozen = false;
+            gameObject.UnFreezeRigidBodies();
+        }
     }
  
     void Update() {
@@ -192,11 +198,17 @@ public class GameDraggableLevelItem : MonoBehaviour {
 		if(dragHolder != null) {
 			if(GameDraggableEditor.isEditing) {
 				
-				dragHolder.Show();
+                if(!visible) {
+                    visible = true;
+                    dragHolder.Show();
+                }
 			}
 			else if(!GameDraggableEditor.isEditing) {
-								
-				dragHolder.Hide();
+                
+                if(visible) {
+                    visible = false;	
+				    dragHolder.Hide();
+                }
 			}
 			
 		}
