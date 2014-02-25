@@ -62,7 +62,13 @@ public class GameObjectMountVehicle : GameObjectMount {
         }
 
         MountVehicle();
-    }    
+    } 
+
+    public override void Unmount() {
+        base.Unmount();
+
+        SetMountVehicleAxis(0f, 0f);
+    } 
     
     public void MountVehicle() {
             

@@ -73,6 +73,8 @@ public class GameObjectMount : BaseGameObjectInteractive {
 
             Debug.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
         }
+
+
     }
         
     public virtual void Unmount() {
@@ -111,12 +113,14 @@ public class GameObjectMount : BaseGameObjectInteractive {
                     .controllerData
                     .distanceToPlayerControlledGamePlayer <= attractRange) {
 
-                    GameController
-                        .CurrentGamePlayerController.Mount(gameObject);
-                }
-                else {
-                    GameController
-                        .CurrentGamePlayerController.Unmount();
+                    if(isMounted) {
+                        GameController
+                            .CurrentGamePlayerController.Unmount();                        
+                    }
+                    else {
+                        GameController
+                            .CurrentGamePlayerController.Mount(gameObject);
+                    }
                 }
 
                 //ToggleMount(gamePlayerControllerHit.gameObject);

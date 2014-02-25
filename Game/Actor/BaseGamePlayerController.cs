@@ -73,6 +73,8 @@ public class BaseGamePlayerRuntimeData {
 
 public class BaseGamePlayerControllerData {  
     public bool loadingCharacter = false;
+    
+    public bool gameModelVisible = true;
 
     // player
     public bool visible = true;
@@ -1495,9 +1497,11 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandleThirdPersonControllerAxis(Vector3 axisInput) {
         if(controllerData.mountData.isMountedVehicle) {
+
             controllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
         else {
+
             controllerData.thirdPersonController.horizontalInput = axisInput.x;
             controllerData.thirdPersonController.verticalInput = axisInput.y;
         }
@@ -1584,12 +1588,30 @@ public class BaseGamePlayerController : GameActor {
     
     // --------------------------------------------------------------------
     // MOUNT VEHICLE
-    
+
+
+    public virtual void SetControllersState(bool running) {
+
+        if(controllerData.characterController == null) {
+            return;
+        }
+
+        controllerData.characterController.enabled = running;
+    }
+
     public virtual void Mount(GameObject go) {
         if(go.Has<GameObjectMountVehicle>()) {            
             if(!controllerData.mountData.isMountedVehicleObject) {
                 controllerData.mountData.MountVehicle(gameObject, 
                     go.Get<GameObjectMountVehicle>());
+
+                if(controllerData.gameModelVisible) {
+                    gamePlayerModelHolderModel.Hide();
+                    controllerData.gameModelVisible = false;
+                }
+
+                SetControllersState(false);
+
                 StopNavAgent();
             }
         }
@@ -1598,6 +1620,14 @@ public class BaseGamePlayerController : GameActor {
     public virtual void Unmount() {
         if(controllerData.mountData.isMountedVehicleObject) {
             controllerData.mountData.UnmountVehicle();
+                        
+            if(!controllerData.gameModelVisible) {
+                gamePlayerModelHolderModel.Show();
+                controllerData.gameModelVisible = true;
+            }
+            
+            SetControllersState(true);
+
             StartNavAgent();
         }
     }
@@ -2600,15 +2630,18 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void StartNavAgent() {
-        if (controllerData.navMeshAgent != null) {
-            controllerData.navMeshAgent.enabled = true;
-            controllerData.navMeshAgent.Resume();
-        }
-        if (controllerData.navMeshAgentController != null) {
-            controllerData.navMeshAgentController.StartAgent();
-        }
-        if (controllerData.navMeshAgentFollowController != null) {
-            controllerData.navMeshAgentFollowController.StartAgent();
+        
+        if(!IsPlayerControlled || gameObject.Has<CharacterController>()) {
+            if (controllerData.navMeshAgent != null) {
+                controllerData.navMeshAgent.enabled = true;
+                controllerData.navMeshAgent.Resume();
+            }
+            if (controllerData.navMeshAgentController != null) {
+                controllerData.navMeshAgentController.StartAgent();
+            }
+            if (controllerData.navMeshAgentFollowController != null) {
+                controllerData.navMeshAgentFollowController.StartAgent();
+            }
         }
     }
 
