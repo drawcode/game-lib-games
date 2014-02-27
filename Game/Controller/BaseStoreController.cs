@@ -127,9 +127,23 @@ public class BaseStoreController : MonoBehaviour {
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
         
-        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStoreThirdPartyPurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStoreThirdPartyPurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStoreThirdPartyPurchaseFailed);
+        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
+    
+        #if UNITY_EDITOR
+        #elif UNITY_IPHONE
+        StoreKitManager.purchaseSuccessfulEvent += purchaseSuccessfulEvent;
+        StoreKitManager.purchaseCancelledEvent += purchaseCancelledEvent;
+        StoreKitManager.purchaseFailedEvent += purchaseFailedEvent;
+        StoreKitManager.productPurchaseAwaitingConfirmationEvent += productPurchaseAwaitingConfirmationEvent;
+        StoreKitManager.paymentQueueUpdatedDownloadsEvent += paymentQueueUpdatedDownloadsEvent;
+        StoreKitManager.productListReceivedEvent += productListReceivedEvent;
+        StoreKitManager.productListRequestFailedEvent += productListRequestFailedEvent;
+        StoreKitManager.restoreTransactionsFailedEvent += restoreTransactionsFailedEvent;
+        StoreKitManager.restoreTransactionsFinishedEvent += restoreTransactionsFinishedEvent;
+        StoreKitManager.transactionUpdatedEvent += transactionUpdatedEvent;
+        #endif
     }
     
     public virtual void OnDisable() {
@@ -138,9 +152,23 @@ public class BaseStoreController : MonoBehaviour {
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
         
-        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStoreThirdPartyPurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStoreThirdPartyPurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStoreThirdPartyPurchaseFailed);
+        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
+
+        #if UNITY_EDITOR
+        #elif UNITY_IPHONE
+        StoreKitManager.purchaseSuccessfulEvent -= purchaseSuccessfulEvent;
+        StoreKitManager.purchaseCancelledEvent -= purchaseCancelledEvent;
+        StoreKitManager.purchaseFailedEvent -= purchaseFailedEvent;
+        StoreKitManager.productPurchaseAwaitingConfirmationEvent -= productPurchaseAwaitingConfirmationEvent;
+        StoreKitManager.paymentQueueUpdatedDownloadsEvent -= paymentQueueUpdatedDownloadsEvent;
+        StoreKitManager.productListReceivedEvent -= productListReceivedEvent;
+        StoreKitManager.productListRequestFailedEvent -= productListRequestFailedEvent;
+        StoreKitManager.restoreTransactionsFailedEvent -= restoreTransactionsFailedEvent;
+        StoreKitManager.restoreTransactionsFinishedEvent -= restoreTransactionsFinishedEvent;
+        StoreKitManager.transactionUpdatedEvent -= transactionUpdatedEvent;
+        #endif
     }
 
     public virtual void onStorePurchaseStarted(GameStorePurchaseData data) {
@@ -148,9 +176,7 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {        
-        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
-        
-        GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);  
+        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);  
     }
 
     public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {        
@@ -163,11 +189,32 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
         
-        //GameStoreController.HandleCurrencyPurchase(item.product, item.quantity);   
+        Debug.Log("onStoreThirdPartyPurchaseSuccess");
+
+        if(data != null) {
+            
+            Debug.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
+            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);      
+        }
+
+        if(itemPurchasing != null) {
+            Debug.Log("onStoreThirdPartyPurchaseSuccess: itemPurchasing.product:" + itemPurchasing.product.code);
+            GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity); 
+            itemPurchasing = null;
+        }
     }
 
     public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
-
+        
+        if(data != null) {
+            Debug.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
+            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);      
+        }
+        
+        if(itemPurchasing != null) {
+            Debug.Log("onStoreThirdPartyPurchaseFailed: itemPurchasing.product:" + itemPurchasing.product.code);
+            itemPurchasing = null;
+        }
     }
 
     public GameStorePurchaseDataItem itemPurchasing;
@@ -178,14 +225,12 @@ public class BaseStoreController : MonoBehaviour {
 
             if(item.product != null) {
     
-                if(item.product.type == GameProductInfoType.currencyReal) {
+                if(item.product.type == GameProductType.currency) {
                     // do third party process and event    
                     
                     itemPurchasing = item;
 
-                    purchaseThirdParty(item.product, item.quantity);
-
-                    //GameStoreController.HandleCurrencyPurchase(item.product, item.quantity);    
+                    GameStoreController.PurchaseThirdParty(item.product, item.quantity); 
                 }
                 else {
                     // do local or server process and event
@@ -201,9 +246,6 @@ public class BaseStoreController : MonoBehaviour {
                                 data, "",
                                 "Purchase Unsuccessful",
                                 "Not enough coins to purchase. Earn more coins by playing or training."));
-
-                        //UINotificationDisplay.Instance.QueueError("Purchase Unsuccessful",
-                         //   "Not enough coins to purchase. Earn more coins by playing or training.");
     
                     }
                 }
@@ -374,55 +416,81 @@ public class BaseStoreController : MonoBehaviour {
 
     public bool purchaseProcessCompleted = false;
 
-    public void HandleCancel() {
-
-    }
-
-    public void HandleSuccess() {
-
-
-    }
-
-    public void HandleError() {
-
-    }
-
     public void SetContentAccessPermissions(string code) {
 
     }
 
-#if UNITY_IPHONE
-    void purchaseFailed(string error) {
-        purchaseProcessCompleted = true;
-        HandleError();
-        LogUtil.LogProduct( "purchase failed with error: " + error );
-        itemPurchasing = null;
-    }
-
-    void purchaseCancelled(string error) {
-        purchaseProcessCompleted = true;
-        HandleCancel();
-        LogUtil.LogProduct( "purchase cancelled with error: " + error );
-        itemPurchasing = null;
-    }
-
-    void purchaseSuccessful(StoreKitTransaction transaction) {
+#if UNITY_IPHONE 
+    
+    void purchaseSuccessfulEvent(StoreKitTransaction transaction) {
         LogUtil.LogProduct( "SCREEN purchased product: " + transaction.productIdentifier + ", quantity: " + transaction.quantity );
         //transaction.base64EncodedTransactionReceipt
         SetContentAccessPermissions(transaction.productIdentifier);
         Contents.SetContentAccessTransaction(transaction.productIdentifier, transaction.productIdentifier,
-                transaction.base64EncodedTransactionReceipt, transaction.quantity, true);
+                                             transaction.base64EncodedTransactionReceipt, transaction.quantity, true);
         purchaseProcessCompleted = true;
-
-        GameStorePurchaseRecord record = 
+        
+        GameStorePurchaseRecord data = 
             GameStorePurchaseRecord.Create(
                 true, transaction.ToJson(), 
                 transaction.base64EncodedTransactionReceipt, 
                 "Purchase Complete:" + itemPurchasing.product.display_name, itemPurchasing.product.description);
-
+        
+        GameStoreController.BroadcastThirdPartyPurchaseSuccess(data);
+    }
+    
+    void purchaseCancelledEvent(string error) {
+        purchaseProcessCompleted = true;
+        LogUtil.LogProduct( "purchase cancelled with error: " + error );
+        
+        
         itemPurchasing = null;
+    }
 
-        broadcastThirdPartyPurchaseSuccess(record);
+    void purchaseFailedEvent(string error) {
+        purchaseProcessCompleted = true;
+        LogUtil.LogProduct( "purchase failed with error: " + error );
+
+        GameStorePurchaseRecord data = 
+            GameStorePurchaseRecord.Create(
+                false, null, 
+                error, 
+                "Purchase Failed For:" + itemPurchasing.product.display_name, itemPurchasing.product.description);
+        
+        GameStoreController.BroadcastThirdPartyPurchaseFailed(data);
+    }
+    
+    void productPurchaseAwaitingConfirmationEvent(StoreKitTransaction transaction) {
+        Debug.Log("productPurchaseAwaitingConfirmationEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
+    }
+    
+    void paymentQueueUpdatedDownloadsEvent(List<StoreKitDownload> downloads) {
+        Debug.Log("paymentQueueUpdatedDownloadsEvent");
+        
+    }
+
+    void productListReceivedEvent(List<StoreKitProduct> products) {
+        Debug.Log("paymentQueueUpdatedDownloadsEvent");
+        
+    }
+    
+    void productListRequestFailedEvent(string error) {
+        Debug.Log("productListRequestFailedEvent:" + " error:" + error);
+        
+    }
+    
+    void restoreTransactionsFailedEvent(string error) {
+        Debug.Log("restoreTransactionsFailedEvent:" + " error:" + error);
+        
+    }
+    
+    void restoreTransactionsFinishedEvent() {
+        Debug.Log("restoreTransactionsFinishedEvent");
+        
+    }
+    
+    void transactionUpdatedEvent(StoreKitTransaction transaction) {
+        Debug.Log("transactionUpdatedEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);        
     }
 
 #endif

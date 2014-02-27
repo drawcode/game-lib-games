@@ -156,8 +156,9 @@ public class ProductPurchase : MonoBehaviour
 			if(productIdentifiers.Length > 0) {
 				productIdentifiers += ",";
 			}
-			if(!string.IsNullOrEmpty(product.code)) {
-				productIdentifiers += product.code.Replace("-", "_");
+            string productId = product.GetCurrentProductInfoByLocale().productId;
+            if(!string.IsNullOrEmpty(productId)) {
+                productIdentifiers += productId;
 			}
 		}
 		RequestProductList(productIdentifiers);
