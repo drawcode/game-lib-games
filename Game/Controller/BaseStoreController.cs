@@ -192,7 +192,7 @@ public class BaseStoreController : MonoBehaviour {
     public virtual void purchase(GameStorePurchaseData data) {
 
         if(IsPurchasing()) {
-            return;
+            //return;
         }
 
         foreach (GameStorePurchaseDataItem item in data.items) {

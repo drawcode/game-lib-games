@@ -25,8 +25,6 @@ public class ProductPurchase : MonoBehaviour {
     public static string statusPurchaseSuccessful = "status_purchase_successful";
     public static string statusPurchaseFailed = "status_purchase_failed";
 
-    public static ProductPurchase Instance;
-
     public GameObject productSystem;
     public GameObject productManagerObject;
     public GameObject productEventListenerObject;
@@ -221,8 +219,8 @@ public class ProductPurchase : MonoBehaviour {
     }
 
     public static void PurchaseProduct(string code, int quantity) {
-        if (Instance != null) {
-            Instance.purchaseProduct(code, quantity);
+        if (instance != null) {
+            instance.purchaseProduct(code, quantity);
         }
     }
     
@@ -241,7 +239,8 @@ public class ProductPurchase : MonoBehaviour {
 #else   
         // Web/PC
         purchaseProcessCompleted = true;
-        GameStoreController.HandleCurrencyPurchase(code, quantity);
+        GameStoreController.HandleCurrencyPurchase(
+            GameStoreController.itemPurchasing.product.code, quantity);
 #endif  
     }        
     
