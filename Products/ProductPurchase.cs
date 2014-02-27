@@ -103,7 +103,7 @@ public class ProductPurchase : MonoBehaviour
 		if(!paymentSystemAdded) {
 			LogUtil.LogProduct("ProductPurchase::InitPaymentSystem ");
 			
-			productSystem = new GameObject("ProductSystem");
+			productSystem = new GameObject("_ProductSystem");
 			DontDestroyOnLoad(productSystem);
 			
 #if UNITY_IPHONE							
@@ -189,11 +189,6 @@ public class ProductPurchase : MonoBehaviour
 #endif
 		
 	}
-	
-	public void PurchaseGame() { 
-		PurchaseProduct(PRODUCT_GAME_PURCHASE, 1);
-		LogUtil.LogProduct("ProductPurchase::PurchaseGame ...");
-	}
 
     public static void PurchaseProduct(string code, int quantity) {
         if(Instance != null) {
@@ -202,10 +197,11 @@ public class ProductPurchase : MonoBehaviour
     }
 	
 	public void purchaseProduct(string code, int quantity) {
-		code = code.Replace("-", "_");
-#if UNITY_IPHONE
+
+#if UNITY_IPHONE && !UNITY_EDITOR
 		StoreKitBinding.purchaseProduct(code, quantity);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && !UNITY_EDITOR
+
 #if ANDROID_AMAZON
 		//AmazonIAP.initiatePurchaseRequest(GamePacks.currentGameBundle + "." + code);
 		AmazonIAP.initiatePurchaseRequest(code);
@@ -214,6 +210,7 @@ public class ProductPurchase : MonoBehaviour
 #endif
 #else	
 		// Web/PC
+        GameStoreController.HandleCurrencyPurchase(code, quantity);
 #endif	
 	}
 	

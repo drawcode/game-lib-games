@@ -123,22 +123,36 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void OnEnable() {
 
+        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
+        
+        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStoreThirdPartyPurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStoreThirdPartyPurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStoreThirdPartyPurchaseFailed);
     }
-
+    
     public virtual void OnDisable() {
-
+        
+        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
+        
+        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStoreThirdPartyPurchaseStarted);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStoreThirdPartyPurchaseSuccess);
+        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStoreThirdPartyPurchaseFailed);
     }
 
     public virtual void onStorePurchaseStarted(GameStorePurchaseData data) {
 
     }
 
-    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {
-
+    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {        
+        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
     }
 
-    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {
-
+    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {        
+        UINotificationDisplay.Instance.QueueError(data.messageTitle, data.messageDescription);
     }
 
     public virtual void onStoreThirdPartyPurchaseStarted(GameStorePurchaseData data) {
@@ -146,23 +160,30 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
-
+        
+        //GameStoreController.HandleCurrencyPurchase(item.product, item.quantity);   
     }
 
     public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
 
     }
 
-    public virtual void purchase(GameStorePurchaseData data) {
-        foreach(GameStorePurchaseDataItem item in data.items) {
+    public GameStorePurchaseDataItem itemPurchasing;
 
+    public virtual void purchase(GameStorePurchaseData data) {
+
+        foreach(GameStorePurchaseDataItem item in data.items) {
 
             if(item.product != null) {
     
                 if(item.product.type == GameProductInfoType.currencyReal) {
-                    // do third party process and event
-    
-    
+                    // do third party process and event    
+                    
+                    itemPurchasing = item;
+
+                    purchaseThirdParty(item.product, item.quantity);
+
+                    //GameStoreController.HandleCurrencyPurchase(item.product, item.quantity);    
                 }
                 else {
                     // do local or server process and event
@@ -185,6 +206,9 @@ public class BaseStoreController : MonoBehaviour {
                     }
                 }
             }
+
+            // TODO handle multiple events, for now only purchase one at a time...
+            break;
         }
     }
 
@@ -240,7 +264,7 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void purchaseThirdParty(GameProduct gameProduct, double quantity) {
-        ProductPurchase.PurchaseProduct(gameProduct.GetDefaultProductInfoByLocale().productId, (int)quantity);
+        ProductPurchase.PurchaseProduct(gameProduct.GetCurrentProductInfoByLocale().productId, (int)quantity);
     }
 
     public virtual void handlePurchase(GameProduct gameProduct, double quantity) {
@@ -321,22 +345,25 @@ public class BaseStoreController : MonoBehaviour {
                 
         Debug.Log("GameStoreController:handleCurrencyPurchase:productId:" + gameProduct.code);
 
-        if(gameProduct.code == "currency_tier1") {
-            GameProfileRPGs.Current.AddCurrency(10000);
+        if(gameProduct.code == "currency-tier-1") {
+            GameProfileRPGs.Current.AddCurrency(1000);
         }
-        else if(gameProduct.code == "currency_tier2") {
-            GameProfileRPGs.Current.AddCurrency(25000);
+        else if(gameProduct.code == "currency-tier-2") {
+            GameProfileRPGs.Current.AddCurrency(3500);
         }
-        else if(gameProduct.code == "currency_tier3") {
+        else if(gameProduct.code == "currency-tier-3") {
+            GameProfileRPGs.Current.AddCurrency(15000);
+        }
+        else if(gameProduct.code == "currency-tier-5") {
             GameProfileRPGs.Current.AddCurrency(50000);
         }
-        else if(gameProduct.code == "currency_tier4") {
+        else if(gameProduct.code == "currency-tier-10") {
             GameProfileRPGs.Current.AddCurrency(100000);
         }
-        else if(gameProduct.code == "currency_tier5") {
-            GameProfileRPGs.Current.AddCurrency(500000);
+        else if(gameProduct.code == "currency-tier-20") {
+            GameProfileRPGs.Current.AddCurrency(250000);
         }
-        else if(gameProduct.code == "currency_tier6") {
+        else if(gameProduct.code == "currency-tier-50") {
             GameProfileRPGs.Current.AddCurrency(1000000);
         }
     }
@@ -350,6 +377,7 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public void HandleSuccess() {
+        GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);  
 
     }
 
@@ -366,12 +394,14 @@ public class BaseStoreController : MonoBehaviour {
         purchaseProcessCompleted = true;
         HandleError();
         LogUtil.LogProduct( "purchase failed with error: " + error );
+        itemPurchasing = null;
     }
 
     void purchaseCancelled(string error) {
         purchaseProcessCompleted = true;
         HandleCancel();
         LogUtil.LogProduct( "purchase cancelled with error: " + error );
+        itemPurchasing = null;
     }
 
     void purchaseSuccessful(StoreKitTransaction transaction) {
@@ -382,110 +412,119 @@ public class BaseStoreController : MonoBehaviour {
                 transaction.base64EncodedTransactionReceipt, transaction.quantity, true);
         purchaseProcessCompleted = true;
 
-        HandleSuccess();
+        GameStorePurchaseRecord record = 
+            GameStorePurchaseRecord.Create(
+                true, transaction.ToJson(), 
+                transaction.base64EncodedTransactionReceipt, 
+                "Purchase Complete:" + itemPurchasing.product.display_name, itemPurchasing.product.description);
+
+        itemPurchasing = null;
+
+        broadcastThirdPartyPurchaseSuccess(record);
     }
+
 #endif
         
                 
 #if UNITY_ANDROID
 #if ANDROID_AMAZON
 
-        void itemDataRequestFailedEvent() {
-                LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFailedEvent:");
+    void itemDataRequestFailedEvent() {
+        LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFailedEvent:");
+    }
+    
+    void itemDataRequestFinishedEvent(List<string> unavailableSkus, List<AmazonItem> products) {
+        LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFinishedEvent:");
+        
+        foreach(string sku in unavailableSkus) {                        
+            LogUtil.LogProduct( "ANDROID_AMAZON AmazonItem: unavailableSkus:" + sku);
         }
         
-        void itemDataRequestFinishedEvent(List<string> unavailableSkus, List<AmazonItem> products) {
-                LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFinishedEvent:");
-                
-                foreach(string sku in unavailableSkus) {                        
-                        LogUtil.LogProduct( "ANDROID_AMAZON AmazonItem: unavailableSkus:" + sku);
-                }
-                
-                LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFinishedEvent: products.Count:" + products.Count);
-                foreach(AmazonItem item in products) {                  
-                        LogUtil.LogProduct( "ANDROID_AMAZON AmazonItem: sku:" + item.sku + "\r\n title:" + item.title + "\r\n description:" + item.description + "\r\n price:" + item.price);
-                }
+        LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFinishedEvent: products.Count:" + products.Count);
+        foreach(AmazonItem item in products) {                  
+            LogUtil.LogProduct( "ANDROID_AMAZON AmazonItem: sku:" + item.sku + "\r\n title:" + item.title + "\r\n description:" + item.description + "\r\n price:" + item.price);
         }
-        
-        void onGetUserIdResponseEvent(string userId) {
-                LogUtil.LogProduct( "ANDROID_AMAZON onGetUserIdResponseEvent: userId:" + userId);
-        }
-        
-        void onSdkAvailableEvent(bool debug) {
-                LogUtil.LogProduct( "ANDROID_AMAZON onSdkAvailableEvent: debug:" + debug);
-        }
-        
-        void purchaseFailedEvent() {
-                LogUtil.LogProduct( "ANDROID_AMAZON purchaseFailedEvent");
-                HandleError();
-        }
-        
-        void purchaseSuccessfulEvent(AmazonReceipt transaction) {
-                LogUtil.LogProduct( "ANDROID_AMAZON purchaseSuccessfulEvent: transaction.sku:" + transaction.sku + "\r\n token:" + transaction.token + "\r\n type:" + transaction.type);
-                SetContentAccessPermissions(transaction.sku);
-                Contents.Instance.SetContentAccessTransaction(transaction.sku, transaction.sku, 
-                        transaction.token, 1, true);
-                purchaseProcessCompleted = true;
-                HandleSuccess();
-        }
-        
-        void purchaseUpdatesRequestFailedEvent() {
-                LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestFailedEvent:");
-        }
-        
-        void purchaseUpdatesRequestSuccessfulEvent(List<string> unavailableSkus, List<AmazonReceipt> transactions) {
-                LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestSuccessfulEvent:");
-                foreach(string sku in unavailableSkus) {                        
-                        LogUtil.LogProduct( "ANDROID_AMAZON AmazonReceipt: unavailableSkus:" + sku);
-                }
-                
-                LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestSuccessfulEvent: transactions.Count:" + transactions.Count);
-                foreach(AmazonReceipt transaction in transactions) {                    
-                        LogUtil.LogProduct( "ANDROID_AMAZON AmazonReceipt: sku:" + transaction.sku  + "\r\n token:" + transaction.token + "\r\n type:" + transaction.type);
-                        
-                        string productId = transaction.sku.Replace(GamePacks.currentGameBundle + ".", "");
-                        Contents.Instance.SetGlobalContentAccess(productId);
-                        Contents.Instance.SetContentAccessTransaction(productId, transaction.sku,
-                                transaction.token, 1, true);
-                }
-        }
+    }
+    
+    void onGetUserIdResponseEvent(string userId) {
+        LogUtil.LogProduct( "ANDROID_AMAZON onGetUserIdResponseEvent: userId:" + userId);
+    }
+    
+    void onSdkAvailableEvent(bool debug) {
+        LogUtil.LogProduct( "ANDROID_AMAZON onSdkAvailableEvent: debug:" + debug);
+    }
+    
+    void purchaseFailedEvent() {
+        LogUtil.LogProduct( "ANDROID_AMAZON purchaseFailedEvent");
+        HandleError();
+    }
+    
+    void purchaseSuccessfulEvent(AmazonReceipt transaction) {
+        LogUtil.LogProduct( "ANDROID_AMAZON purchaseSuccessfulEvent: transaction.sku:" + transaction.sku + "\r\n token:" + transaction.token + "\r\n type:" + transaction.type);
+        SetContentAccessPermissions(transaction.sku);
+        Contents.Instance.SetContentAccessTransaction(transaction.sku, transaction.sku, 
+                transaction.token, 1, true);
+        purchaseProcessCompleted = true;
+        HandleSuccess();
+    }
+    
+    void purchaseUpdatesRequestFailedEvent() {
+            LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestFailedEvent:");
+    }
+    
+    void purchaseUpdatesRequestSuccessfulEvent(List<string> unavailableSkus, List<AmazonReceipt> transactions) {
+            LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestSuccessfulEvent:");
+            foreach(string sku in unavailableSkus) {                        
+                    LogUtil.LogProduct( "ANDROID_AMAZON AmazonReceipt: unavailableSkus:" + sku);
+            }
+            
+            LogUtil.LogProduct( "ANDROID_AMAZON purchaseUpdatesRequestSuccessfulEvent: transactions.Count:" + transactions.Count);
+            foreach(AmazonReceipt transaction in transactions) {                    
+                    LogUtil.LogProduct( "ANDROID_AMAZON AmazonReceipt: sku:" + transaction.sku  + "\r\n token:" + transaction.token + "\r\n type:" + transaction.type);
+                    
+                    string productId = transaction.sku.Replace(GamePacks.currentGameBundle + ".", "");
+                    Contents.Instance.SetGlobalContentAccess(productId);
+                    Contents.Instance.SetContentAccessTransaction(productId, transaction.sku,
+                            transaction.token, 1, true);
+            }
+    }
 #else
-        void billingSupportedEvent(bool success) {
-            LogUtil.LogProduct( "billingSupportedEvent: " + success );
-            //IABAndroid.restoreTransactions();
-        }
-        
-        void purchaseSucceededEvent(string productId) {
-            LogUtil.LogProduct( "purchaseSucceededEvent product: " + productId );
-            SetContentAccessPermissions(productId);
-            purchaseProcessCompleted = true;
-            HandleSuccess();
-        }       
-        
-        void purchaseCancelledEvent(string productId) {
-            LogUtil.LogProduct( "purchaseCancelledEvent product: " + productId );
-        }
-                
-        void purchaseRefundedEvent(string productId) {
-            LogUtil.LogProduct( "purchaseRefundedEvent product: " + productId );
-        }
-                
-        void purchaseSignatureVerifiedEvent(string signedData, string signature) {
-            LogUtil.LogProduct( "purchaseSignatureVerifiedEvent signedData: " + signedData + " signature:" + signature);
-        }
-        
-        void purchaseFailedEvent(string productId) {
-            LogUtil.LogProduct( "purchaseFailedEvent product: " + productId );
-            HandleError();
-        }
-        
-        void transactionsRestoredEvent() {
-            LogUtil.LogProduct( "transactionsRestored");
-        }
-        
-        void transactionRestoreFailedEvent(string error) {
-            LogUtil.LogProduct( "transactionRestoreFailedEvent product: " + error );
-        }
+    void billingSupportedEvent(bool success) {
+        LogUtil.LogProduct( "billingSupportedEvent: " + success );
+        //IABAndroid.restoreTransactions();
+    }
+    
+    void purchaseSucceededEvent(string productId) {
+        LogUtil.LogProduct( "purchaseSucceededEvent product: " + productId );
+        SetContentAccessPermissions(productId);
+        purchaseProcessCompleted = true;
+        HandleSuccess();
+    }       
+    
+    void purchaseCancelledEvent(string productId) {
+        LogUtil.LogProduct( "purchaseCancelledEvent product: " + productId );
+    }
+            
+    void purchaseRefundedEvent(string productId) {
+        LogUtil.LogProduct( "purchaseRefundedEvent product: " + productId );
+    }
+            
+    void purchaseSignatureVerifiedEvent(string signedData, string signature) {
+        LogUtil.LogProduct( "purchaseSignatureVerifiedEvent signedData: " + signedData + " signature:" + signature);
+    }
+    
+    void purchaseFailedEvent(string productId) {
+        LogUtil.LogProduct( "purchaseFailedEvent product: " + productId );
+        HandleError();
+    }
+    
+    void transactionsRestoredEvent() {
+        LogUtil.LogProduct( "transactionsRestored");
+    }
+    
+    void transactionRestoreFailedEvent(string error) {
+        LogUtil.LogProduct( "transactionRestoreFailedEvent product: " + error );
+    }
 #endif
 #endif
         
