@@ -190,7 +190,7 @@ public class UINotificationDisplay
         }
 
         if(currentItem != null) {
-            if(currentItem.code == notificationItem.code) {
+            if(currentItem.title == notificationItem.title) {
                 return;
             }
         }
@@ -323,6 +323,8 @@ public class UINotificationDisplay
 			//GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_2);
 			//GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_3);
 		}
+
+        currentItem = null;
 	}
 	
 	public void HideDialog() {
@@ -504,7 +506,7 @@ public class UINotificationDisplay
 						+ " notificationType:" 
                                 + currentItem.notificationType
 						
-					);	
+					);
 					
 					ShowDialog();
 				}

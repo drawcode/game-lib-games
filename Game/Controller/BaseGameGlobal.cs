@@ -186,8 +186,10 @@ public class BaseGameGlobal : MonoBehaviour {
         //networking = gameObject.AddComponent<Gameverses.GameNetworking>();
     }
     
-    public virtual void InitPurchase() {    
-        productPurchase = gameObject.AddComponent<ProductPurchase>();   
+    public virtual void InitPurchase() {  
+        ProductPurchase.Init();
+
+        productPurchase = ProductPurchase.instance;//gameObject.AddComponent<ProductPurchase>();   
         productPurchase.EnableProductUnlocks = ENABLE_PRODUCT_UNLOCKS;
     }
     
