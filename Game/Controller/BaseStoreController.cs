@@ -16,6 +16,7 @@ public class GameStoreMessages {
     public static string purchaseThirdPartyStarted = "store-third-party-purchase-started";
     public static string purchaseThirdPartySuccess = "store-third-party-purchase-success";
     public static string purchaseThirdPartyFailed = "store-third-party-purchase-failed";
+    public static string purchaseThirdPartyCancelled = "store-third-party-purchase-cancelled";
 
 }
 
@@ -62,7 +63,7 @@ public class GameStorePurchaseRecord : DataObjectItem {
 
 public class GameStorePurchaseDataItem {
 
-    public ProductPurchaseType gameStorePurchaseType = ProductPurchaseType.LOCAL;
+    public string gameStorePurchaseType = ProductPurchaseType.typeLocal;
     public GameProduct product;
     public double quantity;
 }
@@ -88,7 +89,7 @@ public class GameStorePurchaseData {
     public static GameStorePurchaseData PurchaseData(string productCode, double quantity) {
         GameStorePurchaseData data = new GameStorePurchaseData();
         GameStorePurchaseDataItem dataItem = new GameStorePurchaseDataItem();
-        dataItem.gameStorePurchaseType = ProductPurchaseType.LOCAL;
+        dataItem.gameStorePurchaseType = ProductPurchaseType.typeLocal;
         dataItem.product = GameProducts.Instance.GetById(productCode);
         dataItem.quantity = quantity;
         data.Add(dataItem);
@@ -115,6 +116,15 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void OnEnable() {
 
+        Messenger<ProductPurchaseRecord>.AddListener(
+            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        
+        Messenger<ProductPurchaseRecord>.AddListener(
+            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        
+        Messenger<ProductPurchaseRecord>.AddListener(
+            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
+
         Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
@@ -125,6 +135,15 @@ public class BaseStoreController : MonoBehaviour {
     }
     
     public virtual void OnDisable() {
+
+        Messenger<ProductPurchaseRecord>.RemoveListener(
+            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        
+        Messenger<ProductPurchaseRecord>.RemoveListener(
+            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        
+        Messenger<ProductPurchaseRecord>.RemoveListener(
+            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
         
         Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
@@ -134,16 +153,55 @@ public class BaseStoreController : MonoBehaviour {
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
+    
+    
+    public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
+        
+        GameStorePurchaseRecord data =
+            GameStorePurchaseRecord.Create(
+                true, record.data,
+                record.receipt,
+                "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        
+        GameStoreController.BroadcastThirdPartyPurchaseSuccess(data);
+    }
+    
+    public void onProductPurchaseFailed(ProductPurchaseRecord record) {
+
+        GameStorePurchaseRecord data =
+            GameStorePurchaseRecord.Create(
+                false, record.data,
+                record.receipt,
+                "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        
+        GameStoreController.BroadcastThirdPartyPurchaseFailed(data);
+    }
+    
+    public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
+        
+        GameStorePurchaseRecord data =
+            GameStorePurchaseRecord.Create(
+                false, record.data,
+                record.receipt,
+                "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        
+        GameStoreController.BroadcastThirdPartyPurchaseCancelled(data);
+    }
 
     public virtual void onStorePurchaseStarted(GameStorePurchaseData data) {
 
     }
 
-    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {        
+    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {   
+        ResetPurchase();     
         UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);  
     }
 
-    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {        
+    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {    
+        ResetPurchase();    
         UINotificationDisplay.Instance.QueueError(data.messageTitle, data.messageDescription);
     }
 
@@ -258,6 +316,11 @@ public class BaseStoreController : MonoBehaviour {
     public virtual void broadcastThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
         Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartyFailed, data);
     }
+    
+    public virtual void broadcastThirdPartyPurchaseCancelled(GameStorePurchaseRecord data) {
+        Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartyCancelled, data);
+    }
+
 
     public virtual bool checkIfCanPurchase(GameProduct product) {
         double currentCurrency = GameProfileRPGs.Current.GetCurrency();
