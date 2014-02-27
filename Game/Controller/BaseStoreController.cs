@@ -149,6 +149,8 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {        
         UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+        
+        GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);  
     }
 
     public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {        
@@ -377,7 +379,7 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public void HandleSuccess() {
-        GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);  
+
 
     }
 
