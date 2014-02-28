@@ -27,6 +27,8 @@ public class GameStorePurchaseRecord : DataObjectItem {
     public DateTime datePurchased;
     public string messageTitle = "";
     public string messageDescription = "";
+    public string productId = "";
+    public double quantity = 1;
 
     public GameStorePurchaseRecord() {
         Reset();
@@ -40,6 +42,8 @@ public class GameStorePurchaseRecord : DataObjectItem {
         datePurchased = DateTime.Now;
         messageTitle = "";
         messageDescription = "";
+        productId = "";
+        quantity = 1;
     }
 
     public static GameStorePurchaseRecord Create(
@@ -47,7 +51,9 @@ public class GameStorePurchaseRecord : DataObjectItem {
         object data,
         string receipt,
         string title,
-        string message) {
+        string message,
+        string productId,
+        double quantity) {
 
         GameStorePurchaseRecord record = new GameStorePurchaseRecord();
         record.successful = success;
@@ -56,6 +62,8 @@ public class GameStorePurchaseRecord : DataObjectItem {
         record.datePurchased = DateTime.Now;
         record.messageTitle = title;
         record.messageDescription = message;
+        record.productId = productId;
+        record.quantity = quantity;
 
         return record;
     }
@@ -99,8 +107,8 @@ public class GameStorePurchaseData {
 }
 
 public class BaseStoreController : MonoBehaviour {
-    
-    public static GameStorePurchaseDataItem itemPurchasing;
+
+    public Dictionary<string, GameStorePurchaseDataItem> itemsPurchasing = new Dictionary<string, GameStorePurchaseDataItem>();
 
     public virtual void Awake() {
 
@@ -118,157 +126,314 @@ public class BaseStoreController : MonoBehaviour {
 
         Messenger<ProductPurchaseRecord>.AddListener(
             ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
-        
+
         Messenger<ProductPurchaseRecord>.AddListener(
             ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
-        
+
         Messenger<ProductPurchaseRecord>.AddListener(
             ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
         Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
-        
+
         Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
-    
+
     public virtual void OnDisable() {
 
         Messenger<ProductPurchaseRecord>.RemoveListener(
             ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
-        
+
         Messenger<ProductPurchaseRecord>.RemoveListener(
             ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
-        
+
         Messenger<ProductPurchaseRecord>.RemoveListener(
             ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
-        
+
         Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
-        
+
         Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
-    
-    
+
+    // QUEUE/PROCESSING
+
+    public void SetItemPurchasing(string key, GameStorePurchaseDataItem item) {       
+        
+        Debug.Log("SET SetItemPurchasing:" + " key:" + key + " item.product.code:" + item.product.code);
+        
+        Debug.Log("BEFORE SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+
+        itemsPurchasing.Set<string,GameStorePurchaseDataItem>(key, item);
+        
+        Debug.Log("AFTER SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+    }
+
+    public GameStorePurchaseDataItem GetItemPurchasing(string key) {
+        
+        Debug.Log("GET GetItemPurchasing:" + " key:" + key);        
+        
+        Debug.Log("BEFORE GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+
+        GameStorePurchaseDataItem itemPurchasing = itemsPurchasing.Get<GameStorePurchaseDataItem>(key);
+        
+        Debug.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson()  + " itemPurchasing:" + itemPurchasing.ToJson());        
+
+        return itemPurchasing;
+    }
+
+    public void RemoveItemPurchasing(string key) {
+
+        Debug.Log("REMOVING RemoveItemPurchasing:" + " key:" + key);
+        
+        Debug.Log("BEFORE RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+
+        itemsPurchasing.Remove(key);
+        
+        Debug.Log("AFTER RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+    }
+
+    // PRODUCT PURCHASE EVENTS
+
     public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
         
-        GameStorePurchaseRecord data =
-            GameStorePurchaseRecord.Create(
-                true, record.data,
-                record.receipt,
-                "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
-                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+
+        if (record == null) {
+            Debug.Log("record not found");
+            return;
+        }
+
+        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+
+        if (product == null) {
+            Debug.Log("Product not found:" + record.productId);
+            return;
+        }
+
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
-        GameStoreController.BroadcastThirdPartyPurchaseSuccess(data);
+        if (itemPurchasing == null) {
+            Debug.Log("itemPurchasing not found:" + product.code);
+            
+            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+        }
+
+        if (itemPurchasing != null) {
+
+            GameStorePurchaseRecord data =
+                GameStorePurchaseRecord.Create(
+                    true, record.data,
+                    record.receipt,
+                    "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    itemPurchasing.product.GetCurrentProductInfoByLocale().description,
+                    record.productId,
+                    record.quantity);
+
+            GameStoreController.BroadcastThirdPartyPurchaseSuccess(data);
+        }
     }
-    
+
     public void onProductPurchaseFailed(ProductPurchaseRecord record) {
 
-        GameStorePurchaseRecord data =
-            GameStorePurchaseRecord.Create(
-                false, record.data,
-                record.receipt,
-                "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
-                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+
+        if (record == null) {
+            Debug.Log("record not found");
+            return;
+        }
+
+        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+
+        if (product == null) {
+            Debug.Log("Product not found:" + record.productId);
+            return;
+        }
+
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
-        GameStoreController.BroadcastThirdPartyPurchaseFailed(data);
+        if (itemPurchasing == null) {
+            Debug.Log("itemPurchasing not found:" + product.code);
+            
+            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+        }
+
+        if (itemPurchasing != null) {
+
+            GameStorePurchaseRecord data =
+                GameStorePurchaseRecord.Create(
+                    false, record.data,
+                    record.receipt,
+                    "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    itemPurchasing.product.GetCurrentProductInfoByLocale().description,
+                    record.productId,
+                    record.quantity);
+
+            GameStoreController.BroadcastThirdPartyPurchaseFailed(data);
+        }
     }
-    
+
     public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
         
-        GameStorePurchaseRecord data =
-            GameStorePurchaseRecord.Create(
-                false, record.data,
-                record.receipt,
-                "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
-                itemPurchasing.product.GetCurrentProductInfoByLocale().description);
+        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+
+        if (record == null) {
+            Debug.Log("record not found");
+            return;
+        }
+
+        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+
+        if (product == null) {
+            Debug.Log("Product not found:" + record.productId);
+            return;
+        }
+
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
-        GameStoreController.BroadcastThirdPartyPurchaseCancelled(data);
+        if (itemPurchasing == null) {
+            Debug.Log("itemPurchasing not found:" + product.code);
+
+            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+        }
+
+        if (itemPurchasing != null) {
+
+            GameStorePurchaseRecord data =
+                GameStorePurchaseRecord.Create(
+                    false, record.data,
+                    record.receipt,
+                    "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    itemPurchasing.product.GetCurrentProductInfoByLocale().description,
+                    product.code,
+                    record.quantity);
+
+            GameStoreController.BroadcastThirdPartyPurchaseCancelled(data);
+        }
     }
+
+    // STORE EVENTS
 
     public virtual void onStorePurchaseStarted(GameStorePurchaseData data) {
 
     }
 
-    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {   
-        ResetPurchase();     
-        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);  
+    public virtual void onStorePurchaseSuccess(GameStorePurchaseRecord data) {
+
+        if (data == null)
+            return;
+
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(data.productId);
+
+        if (itemPurchasing != null) {
+            ResetPurchase(itemPurchasing.product.code);
+        }
+
+        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
     }
 
-    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {    
-        ResetPurchase();    
+    public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {
+
+        if (data == null)
+            return;
+        
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(data.productId);
+
+        if (itemPurchasing != null) {
+            ResetPurchase(itemPurchasing.product.code);
+        }
+
         UINotificationDisplay.Instance.QueueError(data.messageTitle, data.messageDescription);
     }
+
+    // THIRD PARTY
 
     public virtual void onStoreThirdPartyPurchaseStarted(GameStorePurchaseData data) {
 
     }
 
     public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
-        
+
         Debug.Log("onStoreThirdPartyPurchaseSuccess");
 
         if (data != null) {
-            
-            Debug.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);      
-        }
 
+            Debug.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
+            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+        }
+                
+        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(data.productId);
+        
+        if (product == null) {
+            return;
+        }
+        
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
+        
         if (itemPurchasing != null) {
             Debug.Log("onStoreThirdPartyPurchaseSuccess: itemPurchasing.product:" + itemPurchasing.product.code);
-            GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity); 
-            itemPurchasing = null;
+            GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);
+            ResetPurchase(itemPurchasing.product.code);
         }
     }
 
     public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
-        
+
         if (data != null) {
             Debug.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);      
+            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+        }
+
+        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(data.productId);
+        
+        if (product == null) {
+            return;
         }
         
+        GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
+
         if (itemPurchasing != null) {
             Debug.Log("onStoreThirdPartyPurchaseFailed: itemPurchasing.product:" + itemPurchasing.product.code);
-            itemPurchasing = null;
+            ResetPurchase(itemPurchasing.product.code);
         }
     }
 
-    public bool IsPurchasing() {
-        return itemPurchasing != null;
+    public bool IsPurchasing(string key) {
+        return GetItemPurchasing(key) != null;
     }
 
-    public void ResetPurchase() {
-        itemPurchasing = null;
+    public void ResetPurchase(string key) {
+        RemoveItemPurchasing(key);
     }
 
     public virtual void purchase(GameStorePurchaseData data) {
 
-        if(IsPurchasing()) {
-            //return;
-        }
-
         foreach (GameStorePurchaseDataItem item in data.items) {
 
             if (item.product != null) {
-    
-                if (item.product.type == GameProductType.currency) {
-                    // do third party process and event    
-                    
-                    itemPurchasing = item;
+                
+                if (IsPurchasing(item.product.code)) {
+                    return;
+                }
+                
+                SetItemPurchasing(item.product.code, item);
 
-                    GameStoreController.PurchaseThirdParty(item.product, item.quantity); 
+                if (item.product.type == GameProductType.currency) {
+                    // do third party process and event
+
+                    GameStoreController.PurchaseThirdParty(item.product, item.quantity);
                 }
                 else {
                     // do local or server process and event
 
                     if (checkIfCanPurchase(item.product)) { // has the money
-    
+
                         GameStoreController.HandlePurchase(item.product, item.quantity);
                     }
                     else {
@@ -277,8 +442,9 @@ public class BaseStoreController : MonoBehaviour {
                             GameStorePurchaseRecord.Create(false,
                                 data, "",
                                 "Purchase Unsuccessful",
-                                "Not enough coins to purchase. Earn more coins by playing or training."));
-    
+                                "Not enough coins to purchase. Earn more coins by playing or training.",
+                                                       item.product.code, item.quantity));
+
                     }
                 }
             }
@@ -316,11 +482,10 @@ public class BaseStoreController : MonoBehaviour {
     public virtual void broadcastThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
         Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartyFailed, data);
     }
-    
+
     public virtual void broadcastThirdPartyPurchaseCancelled(GameStorePurchaseRecord data) {
         Messenger<GameStorePurchaseRecord>.Broadcast(GameStoreMessages.purchaseThirdPartyCancelled, data);
     }
-
 
     public virtual bool checkIfCanPurchase(GameProduct product) {
         double currentCurrency = GameProfileRPGs.Current.GetCurrency();
@@ -369,7 +534,7 @@ public class BaseStoreController : MonoBehaviour {
 
     public virtual void handleInventory(GameProduct gameProduct, double quantity) {
 
-        string message = "Enjoy your new purchase.";
+        //string message = "Enjoy your new purchase.";
 
         if (gameProduct.type == GameProductType.rpgUpgrade) {
             // Add upgrades
@@ -377,7 +542,7 @@ public class BaseStoreController : MonoBehaviour {
             double val = gameProduct.GetDefaultProductInfoByLocale().quantity;
             GameProfileRPGs.Current.AddUpgrades(val);
 
-            message = "Advance your character with your upgrades and get to top of the game";
+            //message = "Advance your character with your upgrades and get to top of the game";
 
         }
         else if (gameProduct.type == GameProductType.powerup) {
@@ -385,15 +550,15 @@ public class BaseStoreController : MonoBehaviour {
 
             if (gameProduct.code.Contains("rpg-recharge-full")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(1f, 1f);
-                message = "Recharging your health + energy...";
+                //message = "Recharging your health + energy...";
             }
             else if (gameProduct.code.Contains("rpg-recharge-health")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
-                message = "Recharging your health...";
+                //message = "Recharging your health...";
             }
             else if (gameProduct.code.Contains("rpg-recharge-energy")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
-                message = "Recharging your health...";
+                //message = "Recharging your health...";
             }
 
         }
@@ -417,13 +582,15 @@ public class BaseStoreController : MonoBehaviour {
         GameStoreController.BroadcastPurchaseSuccess(
             GameStorePurchaseRecord.Create(true,
                 gameProduct, "",
-                "Purchase Successful",
-                message));
+                "Purchase Successful:" + 
+                 gameProduct.GetCurrentProductInfoByLocale().title,
+                 gameProduct.GetCurrentProductInfoByLocale().description, 
+                                       gameProduct.code, quantity));
 
     }
 
     public virtual void handleCurrencyPurchase(GameProduct gameProduct, double quantity) {
-                
+
         Debug.Log("GameStoreController:handleCurrencyPurchase:productId:" + gameProduct.code);
 
         if (gameProduct.code == "currency-tier-1") {
@@ -448,6 +615,6 @@ public class BaseStoreController : MonoBehaviour {
             GameProfileRPGs.Current.AddCurrency(1000000);
         }
 
-        itemPurchasing = null;
-    }       
+        ResetPurchase(gameProduct.code);
+    }
 }

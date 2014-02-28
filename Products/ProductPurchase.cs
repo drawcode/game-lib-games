@@ -209,15 +209,15 @@ public class ProductPurchase : MonoBehaviour {
     }
 
     public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
-        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+        //Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
     }
 
     public void onProductPurchaseFailed(ProductPurchaseRecord record) {
-        Debug.Log("onProductPurchaseFailed:" + " record:" + record.ToJson());
+        //Debug.Log("onProductPurchaseFailed:" + " record:" + record.ToJson());
     }
 
     public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
-        Debug.Log("onProductPurchaseCancelled:" + " record:" + record.ToJson());
+        //Debug.Log("onProductPurchaseCancelled:" + " record:" + record.ToJson());
     }
 
     // MESSAGES
