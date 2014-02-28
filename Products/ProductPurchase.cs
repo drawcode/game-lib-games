@@ -326,9 +326,9 @@ public class ProductPurchase : MonoBehaviour {
             if (productIdentifiers.Length > 0) {
                 productIdentifiers += ",";
             }
-            string productId = product.GetCurrentProductInfoByLocale().productId;
-            if (!string.IsNullOrEmpty(productId)) {
-                productIdentifiers += productId;
+            string code = product.GetPlatformProductCode();
+            if (!string.IsNullOrEmpty(code)) {
+                productIdentifiers += code;
             }
         }
         RequestProductList(productIdentifiers);

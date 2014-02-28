@@ -210,7 +210,7 @@ public class BaseStoreController : MonoBehaviour {
             return;
         }
 
-        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+        GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
             Debug.Log("Product not found:" + record.productId);
@@ -231,7 +231,7 @@ public class BaseStoreController : MonoBehaviour {
                 GameStorePurchaseRecord.Create(
                     true, record.data,
                     record.receipt,
-                    "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     record.productId,
                     record.quantity);
@@ -249,7 +249,7 @@ public class BaseStoreController : MonoBehaviour {
             return;
         }
 
-        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+        GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
             Debug.Log("Product not found:" + record.productId);
@@ -270,7 +270,7 @@ public class BaseStoreController : MonoBehaviour {
                 GameStorePurchaseRecord.Create(
                     false, record.data,
                     record.receipt,
-                    "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     record.productId,
                     record.quantity);
@@ -288,7 +288,7 @@ public class BaseStoreController : MonoBehaviour {
             return;
         }
 
-        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(record.productId);
+        GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
             Debug.Log("Product not found:" + record.productId);
@@ -309,7 +309,7 @@ public class BaseStoreController : MonoBehaviour {
                 GameStorePurchaseRecord.Create(
                     false, record.data,
                     record.receipt,
-                    "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().title,
+                    "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     product.code,
                     record.quantity);
@@ -368,7 +368,7 @@ public class BaseStoreController : MonoBehaviour {
             UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
         }
                 
-        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(data.productId);
+        GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
         
         if (product == null) {
             return;
@@ -390,7 +390,7 @@ public class BaseStoreController : MonoBehaviour {
             UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
         }
 
-        GameProduct product = GameProducts.Instance.GetProductByInfoProductId(data.productId);
+        GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
         
         if (product == null) {
             return;
@@ -490,7 +490,7 @@ public class BaseStoreController : MonoBehaviour {
     public virtual bool checkIfCanPurchase(GameProduct product) {
         double currentCurrency = GameProfileRPGs.Current.GetCurrency();
 
-        double productCost = double.Parse(product.GetDefaultProductInfoByLocale().price);
+        double productCost = double.Parse(product.GetDefaultProductInfoByLocale().cost);
 
         if (currentCurrency > productCost) {
             return true;
@@ -510,7 +510,7 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void purchaseThirdParty(GameProduct gameProduct, double quantity) {
-        ProductPurchase.PurchaseProduct(gameProduct.GetCurrentProductInfoByLocale().productId, (int)quantity);
+        ProductPurchase.PurchaseProduct(gameProduct.GetCurrentProductInfoByLocale().code, (int)quantity);
     }
 
     public virtual void handlePurchase(GameProduct gameProduct, double quantity) {
@@ -518,7 +518,7 @@ public class BaseStoreController : MonoBehaviour {
         // HANDLE ACCOUNTING
 
         double currentCurrency = GameProfileRPGs.Current.GetCurrency();
-        double productCost = double.Parse(gameProduct.GetDefaultProductInfoByLocale().price);
+        double productCost = double.Parse(gameProduct.GetDefaultProductInfoByLocale().cost);
 
         // TODO quantity...
 
@@ -583,7 +583,7 @@ public class BaseStoreController : MonoBehaviour {
             GameStorePurchaseRecord.Create(true,
                 gameProduct, "",
                 "Purchase Successful:" + 
-                 gameProduct.GetCurrentProductInfoByLocale().title,
+                 gameProduct.GetCurrentProductInfoByLocale().display_name,
                  gameProduct.GetCurrentProductInfoByLocale().description, 
                                        gameProduct.code, quantity));
 
