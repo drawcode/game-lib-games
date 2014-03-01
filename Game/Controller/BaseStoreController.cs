@@ -510,7 +510,8 @@ public class BaseStoreController : MonoBehaviour {
     }
 
     public virtual void purchaseThirdParty(GameProduct gameProduct, double quantity) {
-        ProductPurchase.PurchaseProduct(gameProduct.GetCurrentProductInfoByLocale().code, (int)quantity);
+        ProductPurchase.PurchaseProduct(
+            gameProduct.GetPlatformProductCode(), (int)quantity);
     }
 
     public virtual void handlePurchase(GameProduct gameProduct, double quantity) {
