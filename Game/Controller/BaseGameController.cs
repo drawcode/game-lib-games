@@ -391,23 +391,30 @@ public class GameLevelGridData {
             int x = 0;
             int y = 0;
             int z = 0;
+            
+            if(asset.code.Contains("terrain")) {
+                Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+                SetAssetsInAssetMap(pos, asset.code);
+            }
+            else {
 
-            //Debug.Log("RandomizeAssetsInAssetMap:row" + row);
+                //Debug.Log("RandomizeAssetsInAssetMap:row" + row);
 
-            while(string.IsNullOrEmpty(row)) {
+                while(string.IsNullOrEmpty(row)) {
 
-                x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
-                y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
-                z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
+                    x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
+                    y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
+                    z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
-                if(string.IsNullOrEmpty(row)) {
-                    Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
-                    SetAssetsInAssetMap(pos, asset.code);
+                    if(string.IsNullOrEmpty(row)) {
+                        Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+                        SetAssetsInAssetMap(pos, asset.code);
+                    }
+
+                    row = assetMap[x,y,z];
+
+                //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
                 }
-
-                row = assetMap[x,y,z];
-
-            //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
             }
         }
     }
@@ -457,6 +464,7 @@ public class BaseGameController : MonoBehaviour {
     public GameObject levelSpawnsContainerObject;
     public GameObject levelMarkersContainerObject;
     public GameObject itemContainerObject;
+    public GameObject worldTerrainContainerObject;
     
     public GameObject gameContainerObject;
     
