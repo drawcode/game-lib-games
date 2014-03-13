@@ -26,8 +26,8 @@ public class GameTouchInputAxis : MonoBehaviour {
     public Vector3 axisInput;
     public Vector3 padPos;
     public bool controlsVisible = true;
+    public bool controlsMoveable = true;
     public bool hideOnDesktopWeb = false;
-    
     public static bool updateFingerNavigate = false;
  
     void FindPad() {
@@ -60,12 +60,12 @@ public class GameTouchInputAxis : MonoBehaviour {
 
     public void HandleInputRenderWebDesktop() {   
         if (Application.isWebPlayer || Application.isEditor) {
-            if(controlsVisible) {
+            if (controlsVisible) {
                 HideInputObject(.5f, 0f);
             }
         }
         else {
-            if(!controlsVisible) {
+            if (!controlsVisible) {
                 ShowInputObject(.5f, 0f);
             }
         }
@@ -104,8 +104,8 @@ public class GameTouchInputAxis : MonoBehaviour {
 
             if (hitThis) {
                 
-                if(axisName == "move" 
-                   && GameController.isFingerNavigating) {
+                if (axisName == "move" 
+                    && GameController.isFingerNavigating) {
                     hitThis = false;
                     return hitThis;
                 }
@@ -125,6 +125,28 @@ public class GameTouchInputAxis : MonoBehaviour {
             }
             else {
                 //ResetPad();
+
+                if(controlsMoveable) {
+
+                    if(axisName == "move") {
+                        if((point.x > 10 && point.x < Screen.width / 2)) {
+
+                            Debug.Log("hitThis:" + " transform.position:" + transform.position);
+
+                            Debug.Log("hitThis:" + " point:" + point);
+
+                            Vector3 screenPos = camera.WorldToScreenPoint(point);
+                            Debug.Log("hitThis:" + " screenPos:" + screenPos);
+
+                            Vector3 viewPos = camera.WorldToViewportPoint(point);
+                            Debug.Log("hitThis:" + " viewPos:" + viewPos);
+
+                            //transform.position = point;
+                        }
+                    }
+                
+                }
+
             }
 
         }
@@ -165,7 +187,7 @@ public class GameTouchInputAxis : MonoBehaviour {
         bool upPressed = InputSystem.isUpPressed;
         bool downPressed = InputSystem.isDownPressed;
         
-        if(axisName == "move") {
+        if (axisName == "move") {
             //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
@@ -179,7 +201,7 @@ public class GameTouchInputAxis : MonoBehaviour {
         if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
                 handled = PointHitTest(touch.position);  
-                if(handled)
+                if (handled)
                     break;
             }            
         }
@@ -226,11 +248,11 @@ public class GameTouchInputAxis : MonoBehaviour {
             handled = true;
         }
 
-        if(axisName == "move") {
+        if (axisName == "move") {
             //Debug.Log("handled:" + " handled:" + handled.ToString());
         }
 
-        if(!handled) {
+        if (!handled) {
             ResetPad();
         }
     }
