@@ -580,7 +580,7 @@ public class ProductPurchase : MonoBehaviour {
         LogUtil.LogProduct( "purchaseSucceededEvent product: " + productId );
         SetContentAccessPermissions(productId);
         purchaseProcessCompleted = true;
-        HandleSuccess();
+        //HandleSuccess();
     }
 
     void purchaseCancelledEvent(string productId) {
@@ -597,7 +597,7 @@ public class ProductPurchase : MonoBehaviour {
 
     void purchaseFailedEvent(string productId) {
         LogUtil.LogProduct( "purchaseFailedEvent product: " + productId );
-        HandleError();
+        //HandleError();
     }
 
     void transactionsRestoredEvent() {

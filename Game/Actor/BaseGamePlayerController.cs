@@ -73,7 +73,6 @@ public class BaseGamePlayerRuntimeData {
 
 public class BaseGamePlayerControllerData {  
     public bool loadingCharacter = false;
-    
     public bool gameModelVisible = true;
 
     // player
@@ -219,7 +218,6 @@ public class BaseGamePlayerRuntimeRPGData {
     public double modifierDefend = .5;
 }
 
-
 public class GamePlayerItemsData : BaseGamePlayerItemsData {
     
     public GamePlayerItemsData() {
@@ -240,7 +238,6 @@ public class BaseGamePlayerItemsData {
     
     // boost
 }
-
 
 public class GamePlayerMountData : BaseGamePlayerMountData {
 
@@ -265,7 +262,7 @@ public class BaseGamePlayerMountData {
     public bool isMountedVehicle {
 
         get {
-            if(isMountedVehicleObject) {
+            if (isMountedVehicleObject) {
                 return true;
             }
 
@@ -275,7 +272,7 @@ public class BaseGamePlayerMountData {
 
     public bool isMountedVehicleObject {
         get {            
-            if(mountVehicle != null) {
+            if (mountVehicle != null) {
                 return true;
             }
             return false;
@@ -283,21 +280,21 @@ public class BaseGamePlayerMountData {
     }
 
     public void MountVehicle(GameObject go, GameObjectMountVehicle mount) {
-        if(!isMountedVehicleObject) {
+        if (!isMountedVehicleObject) {
             mountVehicle = mount;
             mountVehicle.Mount(go);
         }
     }
 
     public void UnmountVehicle() {
-        if(isMountedVehicleObject) {
+        if (isMountedVehicleObject) {
             mountVehicle.Unmount();
             mountVehicle = null;
         }
     }
     
     public void SetMountVehicleAxis(float h, float v) {
-        if(mountVehicle != null) {
+        if (mountVehicle != null) {
             mountVehicle.SetMountVehicleAxis(h, v);
         }
     }
@@ -446,7 +443,6 @@ public class BaseGamePlayerController : GameActor {
         // TODO sync if needed... to update 
         // runtime expensive states that can't be polled.
     }
-
     
     public virtual void SetItemsData(GamePlayerItemsData data) {
         if (data == null) {
@@ -867,7 +863,7 @@ public class BaseGamePlayerController : GameActor {
 
         bool update = false;
 
-        if(controllerData != null ) {
+        if (controllerData != null) {
             if (controllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
                 controllerData.lastIdleActions = Time.time;
                 if (controllerData.thirdPersonController != null) {
@@ -1337,10 +1333,23 @@ public class BaseGamePlayerController : GameActor {
         GameWeapon gameWeaponData = GameWeapons.Instance.GetByCode(code);
 
         if (gameWeaponData == null) {
+            Debug.LogWarning("LoadWeapon: NULL gameWeaponData");
             return;
         }
 
-        GameObject go = AppContentAssets.LoadAsset("weapon", gameWeaponData.data.GetModel().code);
+        if (gameWeaponData.data == null) {
+            Debug.LogWarning("LoadWeapon: NULL gameWeaponData.data");
+            return;
+        }
+
+        GameDataModel dataModel = gameWeaponData.data.GetModel();
+        
+        if (dataModel == null) {
+            Debug.LogWarning("LoadWeapon: NULL dataModel");
+            return;
+        }
+
+        GameObject go = AppContentAssets.LoadAsset("weapon", dataModel.code);
 
         if (go == null) {
             return;
@@ -1496,7 +1505,7 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandleThirdPersonControllerAxis(Vector3 axisInput) {
-        if(controllerData.mountData.isMountedVehicle) {
+        if (controllerData.mountData.isMountedVehicle) {
 
             controllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
@@ -1592,7 +1601,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void SetControllersState(bool running) {
 
-        if(controllerData.characterController == null) {
+        if (controllerData.characterController == null) {
             return;
         }
 
@@ -1600,12 +1609,12 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void Mount(GameObject go) {
-        if(go.Has<GameObjectMountVehicle>()) {            
-            if(!controllerData.mountData.isMountedVehicleObject) {
+        if (go.Has<GameObjectMountVehicle>()) {            
+            if (!controllerData.mountData.isMountedVehicleObject) {
                 controllerData.mountData.MountVehicle(gameObject, 
                     go.Get<GameObjectMountVehicle>());
 
-                if(controllerData.gameModelVisible) {
+                if (controllerData.gameModelVisible) {
                     gamePlayerModelHolderModel.Hide();
                     controllerData.gameModelVisible = false;
                 }
@@ -1618,10 +1627,10 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void Unmount() {
-        if(controllerData.mountData.isMountedVehicleObject) {
+        if (controllerData.mountData.isMountedVehicleObject) {
             controllerData.mountData.UnmountVehicle();
                         
-            if(!controllerData.gameModelVisible) {
+            if (!controllerData.gameModelVisible) {
                 gamePlayerModelHolderModel.Show();
                 controllerData.gameModelVisible = true;
             }
@@ -2631,7 +2640,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StartNavAgent() {
         
-        if(!IsPlayerControlled || gameObject.Has<CharacterController>()) {
+        if (!IsPlayerControlled || gameObject.Has<CharacterController>()) {
             if (controllerData.navMeshAgent != null) {
                 controllerData.navMeshAgent.enabled = true;
                 controllerData.navMeshAgent.Resume();
@@ -3350,7 +3359,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
             else if (contextState == GamePlayerContextState.ContextInput
-                     || contextState == GamePlayerContextState.ContextInputVehicle
+                || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput) {
                 if (controllerData.navMeshAgent != null) {
                     controllerData.navMeshAgent.Stop();
@@ -3493,7 +3502,7 @@ public class BaseGamePlayerController : GameActor {
             // PLAYER CONTROLLERS
                      
             if ((contextState == GamePlayerContextState.ContextInput
-                 || contextState == GamePlayerContextState.ContextInputVehicle
+                || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput
                 && !IsUIState())
                 || IsNetworkPlayerState()) {
