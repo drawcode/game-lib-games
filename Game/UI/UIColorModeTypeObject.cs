@@ -48,5 +48,9 @@ public class UIColorModeTypeObject : UIColorObject  {
             // green
             UIColors.ColorToOrange(gameObject);
         }
+        else {
+            // green
+            UIColors.ColorToGreen(gameObject);
+        }
     }
 }
