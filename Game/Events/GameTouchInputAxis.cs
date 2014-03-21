@@ -120,10 +120,10 @@ public class GameTouchInputAxis : MonoBehaviour {
 
             if (hitThis) {
                 
-                if (axisName == "move" 
-                    && GameController.isFingerNavigating) {
-                    hitThis = false;
-                    return hitThis;
+                if (axisName == "move") { 
+                    //&& GameController.isFingerNavigating) {
+                    //hitThis = false;
+                    //return hitThis;
                 }
 
                 axisInput.x = (hit.textureCoord.x - .5f) * 2;

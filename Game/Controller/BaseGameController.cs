@@ -512,7 +512,7 @@ public class BaseGameController : MonoBehaviour {
     
     public GameZones currentGameZone = GameZones.right;    
     
-    // CAMERAs
+    // CAMERAS
     
     public List<Camera> camerasAlwaysOn;
     public List<Camera> camerasGame;
@@ -520,6 +520,8 @@ public class BaseGameController : MonoBehaviour {
     public GameObject camerasContainerGame;
     public GameObject cameraContainersUI;
     public GameObject cameraContainersAlwaysOn;
+
+    public float runDirectorsDelay = 10f;
 
     // ----------------------------------------------------------------------
 
@@ -2083,7 +2085,7 @@ public class BaseGameController : MonoBehaviour {
 
         GameUIController.ShowGameCanvas();
     
-        GameController.RunDirectorsDelayed(6f);
+        GameController.RunDirectorsDelayed(runDirectorsDelay);
     }   
 
     public virtual void onGameQuit() {
