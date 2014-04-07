@@ -13,8 +13,18 @@ using Engine.Events;
 using Engine.Utility;
 
 public enum AnalyticsNetworkType {
-    Everplay,
-    Twitch
+    GameAnalytics,
+    Google
+}
+
+public class AnalyticMessages {
+    public static string analyticsStartApp = "analytics-start-app";
+    public static string analyticsEvent = "analytics-event";
+    public static string analyticsEventSceneChange = "analytics-event-scene-change";
+    public static string analyticsEventLevelStarted = "analytics-event-level-started";
+    public static string analyticsEventLevelResults = "analytics-event-level-results";
+    public static string analyticsEventLevelQuit = "analytics-event-level-quit";
+    public static string analyticsQuitApp = "analytics-quit-app";
 }
 
 public class AnalyticsNetworksMessages {
@@ -186,7 +196,7 @@ public class AnalyticsNetworks : MonoBehaviour {
         #endif
     }
     
-    // change user 
+    // CHANGE USER
     
     public static void ChangeUser(string userId) {
         if (Instance != null) {
@@ -200,16 +210,112 @@ public class AnalyticsNetworks : MonoBehaviour {
         GA.SettingsGA.SetCustomUserID(userId);
         #endif
     }
-    
-    // STOP RECORDING
-    
-    public static void Flush() {
+
+    // LOG EVENTS
+
+    public static void LogEvent(string eventName, params object[] args) {
         if (Instance != null) {
-            Instance.flush();
+            Instance.logEvent(eventName, args);
         }
     }
     
-    public void flush() {
+    public void logEvent(string eventName, params object[] args) {
+      
+        #if ANALYTICS_GAMEANALYTICS
+
+        StringBuilder sb = new StringBuilder();
+        sb.Append("GAME:");
+        sb.Append(eventName);
+        sb.Append(" :: ");
+
+        foreach(object o in args) {
+            sb.Append(o);
+            sb.Append(" :: ");
+        }
+
+        GA.API.Design.NewEvent(sb.ToString(), 1);
+        #endif
+    }
+
+    // LOG EVENTS
+
+    // SCENE CHANGE
+    
+    public static void LogEventSceneChange(string val, string title) {
+        if (Instance != null) {
+            Instance.logEventSceneChange(val, title);
+        }
+    }
+    
+    public void logEventSceneChange(string val, string title) {
+
+        AnalyticsNetworks.ChangeArea(val);
+
+        logEvent(AnalyticMessages.analyticsEventSceneChange, val, title);
+    }
+
+    // LEVEL START
+    
+    public static void LogEventLevelStart(string val, string title) {
+        if (Instance != null) {
+            Instance.logEventLevelStart(val, title);
+        }
+    }
+    
+    public void logEventLevelStart(string val, string title) {
+        
+        logEvent(AnalyticMessages.analyticsEventLevelStarted, val, title);
+    }
+    
+    // LEVEL RESULTS
+    
+    public static void LogEventLevelResults(string val, string title) {
+        if (Instance != null) {
+            Instance.logEventLevelResults(val, title);
+        }
+    }
+    
+    public void logEventLevelResults(string val, string title) {
+        
+        logEvent(AnalyticMessages.analyticsEventLevelResults, val, title);
+    }
+    
+    // LEVEL QUIT
+    
+    public static void LogEventLevelQuit(string val, string title) {
+        if (Instance != null) {
+            Instance.logEventLevelQuit(val, title);
+        }
+    }
+    
+    public void logEventLevelQuit(string val, string title) {
+        
+        logEvent(AnalyticMessages.analyticsEventLevelQuit, val, title);
+    }
+
+    // LEVEL EVENT GENERIC DATA
+    
+    public static void LogEvent(string key, object  val) {
+        if (Instance != null) {
+            Instance.logEvent(key, val);
+        }
+    }
+    
+    public void logEvent(string key, object  val) {
+        
+        logEvent(AnalyticMessages.analyticsEvent, key, val);
+    }
+
+    
+    // FLUSH/SEND
+    
+    public static void Send() {
+        if (Instance != null) {
+            Instance.send();
+        }
+    }
+    
+    public void send() {
         
         #if ANALYTICS_GAMEANALYTICS
         ////GA.GA_Queue.ForceSubmit();

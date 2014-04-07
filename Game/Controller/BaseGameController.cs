@@ -1103,7 +1103,6 @@ public class BaseGameController : MonoBehaviour {
 
     public virtual void loadLevel(string code) {
 
-
         //Debug.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
 
         // Load the game levelitems for the game level code
@@ -2084,6 +2083,8 @@ public class BaseGameController : MonoBehaviour {
         GameController.GameRunningStateRun();
 
         GameUIController.ShowGameCanvas();
+        
+        AnalyticsNetworks.LogEventLevelStart(GameLevels.Current.code, GameLevels.Current.display_name);
     
         GameController.RunDirectorsDelayed(runDirectorsDelay);
     }   
@@ -2094,6 +2095,8 @@ public class BaseGameController : MonoBehaviour {
         GameUIController.HideHUD();
         GameDraggableEditor.HideAllEditDialogs();
         GameDraggableEditor.HideAllUIEditPanels();
+        
+        AnalyticsNetworks.LogEventLevelQuit(GameLevels.Current.code, GameLevels.Current.display_name);
     
         // Back
         GameUIController.ShowUI();
@@ -2145,6 +2148,8 @@ public class BaseGameController : MonoBehaviour {
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
     
         GameController.StopGame();
+        
+        AnalyticsNetworks.LogEventLevelResults(GameLevels.Current.code, GameLevels.Current.display_name);
     }
     
     public virtual void changeGameState(GameStateGlobal gameStateTo) {

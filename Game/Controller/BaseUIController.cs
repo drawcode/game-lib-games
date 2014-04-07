@@ -299,8 +299,7 @@ public class BaseUIController : MonoBehaviour {
 
         currentPanel = panelCode;
 
-        AnalyticsNetworks.ChangeArea(currentPanel);
-        AnalyticsNetworks.Log(title);
+        AnalyticsNetworks.LogEventSceneChange(panelCode, title);
 
         HideAllPanelsNow();
 
