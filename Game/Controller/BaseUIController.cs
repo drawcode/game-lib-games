@@ -299,6 +299,9 @@ public class BaseUIController : MonoBehaviour {
 
         currentPanel = panelCode;
 
+        AnalyticsNetworks.ChangeArea(currentPanel);
+        AnalyticsNetworks.Log(title);
+
         HideAllPanelsNow();
 
         broadcastUIMessageAnimateType(
