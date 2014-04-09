@@ -461,7 +461,7 @@ public class BaseGamePlayerController : GameActor {
      
         // TODO wire in network/local unique ids.
         if (IsPlayerControlled) {
-            uuid = Gameverses.UniqueUtil.Instance.currentUniqueId;
+            uuid = UniqueUtil.Instance.currentUniqueId;
         }
         else {
             uuid = UniqueUtil.Instance.CreateUUID4();
@@ -915,7 +915,7 @@ public class BaseGamePlayerController : GameActor {
      
     public virtual bool isMe {
         get {
-            if (uuid == Gameverses.UniqueUtil.Instance.currentUniqueId) {
+            if (uuid == UniqueUtil.Instance.currentUniqueId) {
                 return true;
             }
             return false;
@@ -2069,98 +2069,98 @@ public class BaseGamePlayerController : GameActor {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.use,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
     
     public virtual void SendJump() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.jump,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendStrafeLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.strafeLeft,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendStrafeRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.strafeRight,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendBoost() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.boost,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendSkill() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.skill,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
     
     public virtual void SendAttack() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.attack,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackAlt() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.attackAlt,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.attackRight,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.attackLeft,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefend() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.defend,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendAlt() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.defendAlt,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.defendRight,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
             GamePlayerAnimationType.defendLeft,
-            Gameverses.UniqueUtil.Instance.currentUniqueId);
+            UniqueUtil.Instance.currentUniqueId);
     }
  
     // ANIMATIONS/TYPES
