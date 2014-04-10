@@ -1,3 +1,6 @@
+//#define AUDIO_RECORDER_USE_PLUGIN
+#define AUDIO_RECORDER_USE_UNITY
+
 using System;
 using UnityEngine;
 
@@ -13,6 +16,11 @@ public class AudioRecordObject : MonoBehaviour
 	public bool audioSystemAdded = false;
 	
 	public bool enableAudioRecording = false;
+
+#if AUDIO_RECORDER_USE_UNITY
+
+
+#elif
 	
 #if UNITY_IPHONE
 
@@ -25,6 +33,7 @@ public class AudioRecordObject : MonoBehaviour
 	// Web/PC
 	public GameObject audioManager;
 	public GameObject audioEventListener;
+#endif
 #endif
 	
 	public bool EnableAudioRecording {
@@ -61,7 +70,11 @@ public class AudioRecordObject : MonoBehaviour
 			
 			audioSystem = new GameObject("AudioObjectSystem");
 			DontDestroyOnLoad(audioSystem);
-			
+            
+#if AUDIO_RECORDER_USE_UNITY
+
+
+#elif
 #if UNITY_IPHONE							
 			audioManager = audioSystem.AddComponent<AudioRecorderManager>();				
 			audioEventListener = audioSystem.AddComponent<AudioRecorderEventListener>();		
@@ -82,6 +95,7 @@ public class AudioRecordObject : MonoBehaviour
 			
 			LogUtil.Log("AudioObject::InitAudioSystem default added...");
 #endif		
+#endif      
 			if(audioManagerObject != null)
 				DontDestroyOnLoad(audioManagerObject);	
 			

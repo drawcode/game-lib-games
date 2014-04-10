@@ -1,3 +1,6 @@
+//#define AUDIO_RECORDER_USE_PLUGIN
+#define AUDIO_RECORDER_USE_UNITY
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,30 +20,7 @@ public class BaseGameAudioRecordItems {
 	public static string audio_effect_ui_button_4 = "audio_effect_ui_button_4";
 	
 	// new
-	
-	// Game sounds
-	public static string audio_effect_bike_1 = "audio_effect_bike_1";
-	
-	public static string audio_effect_bike_1_boost = "audio_effect_bike_1_boost";
-	
-	public static string audio_effect_bike_2 = "audio_effect_bike_2";
-	public static string audio_effect_bike_2_boost = "audio_effect_bike_2_boost";	
-	public static string audio_effect_bike_rpm3000 = "audio_effect_bike_rpm3000";
-	public static string audio_effect_bike_rpm4000 = "audio_effect_bike_rpm4000";
-	public static string audio_effect_bike_rpm5000 = "audio_effect_bike_rpm5000";
-
-	public static string audio_effect_bike_jump2 = "audio_effect_bike_jump2";
-
-	public static string audio_effect_bike_revs_idle = "audio_effect_bike_revs_idle";
-	public static string audio_effect_bike_high_gear = "audio_effect_bike_high_gear";
-	public static string audio_effect_bike_low_gear = "audio_effect_bike_low_gear";
-	public static string audio_effect_bike_medium_gear = "audio_effect_bike_medium_gear";	
-	
-	public static string audio_effect_boo_funny = "audio_effect_boo_funny";
-	public static string audio_effect_ohhh_1 = "audio_effect_ohhh_1";
-	public static string audio_effect_crowd_cheer_1 = "audio_effect_crowd_cheer_1";
-	public static string audio_effect_crowd_cheer_boost_1 = "audio_effect_crowd_cheer_boost_1";
-	
+		
 }
 
 public class BaseGameAudioRecorder {
@@ -69,9 +49,24 @@ public class BaseGameAudioRecorder {
 	
 	public BaseGameAudioRecorder() {
 		loadedClips = new Dictionary<string, AudioClip>();
+
+        #if UNITY_WEBPLAYER  
+        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone);
+        if (Application.HasUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone)) {
+        
+        }
+        else {
+        
+        }
+        #endif
 	}
 	
 	public virtual void OnEnable() {
+
+#if AUDIO_RECORDER_USE_UNITY
+
+
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -82,9 +77,14 @@ public class BaseGameAudioRecorder {
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
+#endif
 	}
 		
 	public virtual void OnDisable() {
+#if AUDIO_RECORDER_USE_UNITY
+
+
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -95,8 +95,13 @@ public class BaseGameAudioRecorder {
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
+#endif
 	}
-	
+
+#if AUDIO_RECORDER_USE_UNITY
+
+
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -121,6 +126,7 @@ public class BaseGameAudioRecorder {
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
+#endif
 	
 	public virtual Dictionary<string, AudioClip> GetLoadedClips() {
 		return loadedClips;
@@ -139,6 +145,11 @@ public class BaseGameAudioRecorder {
 	public virtual void PrepareAudioFilename(string filename) {
 		string error = "No recorder";
 		currentFileName = filename;
+        
+#if AUDIO_RECORDER_USE_UNITY
+        currentFileName = GetPersistentPath(filename);
+        error = "";
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -149,7 +160,8 @@ public class BaseGameAudioRecorder {
 #elif UNITY_IPHONE
 		error = AudioRecorderBinding.prepareToRecordFile( filename );
 #elif UNITY_EDITOR
-#endif			
+#endif
+#endif
 		if( error.Length > 0 ) {
 			LogUtil.Log( "failed to prepare audio recorder: " + error );
 		}
@@ -190,7 +202,6 @@ public class BaseGameAudioRecorder {
 	
 	public virtual bool CheckIfSoundExists(string file) {
 		bool exists = false;
-		
 #if UNITY_STANDALONE_OSX
 		exists = System.IO.File.Exists(file);
 #elif UNITY_STANDALONE_WIN
@@ -388,10 +399,18 @@ public class BaseGameAudioRecorder {
 		LogUtil.Log( "Load checked: " + filePath );
 		return file;
 	}
+
+    public string currentDeviceName;
+    public AudioClip currentRecordedClip;
 	
 	public virtual bool Record() {
 		currentlyRecording = true;
 		bool didRecord = false;
+
+#if AUDIO_RECORDER_USE_UNITY
+        currentRecordedClip = Microphone.Start(currentDeviceName, false, 6, 44100);
+        didRecord = true;
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID			
@@ -406,13 +425,18 @@ public class BaseGameAudioRecorder {
 		lastRecordingSucceeded = didRecord;
 #elif UNITY_EDITOR
 #endif		
-		LogUtil.Log( "Record: " + didRecord );
+#endif
+        LogUtil.Log( "Record: " + didRecord );
 		return didRecord;
 	}
 	
 	public virtual bool Record(float duration) {
 		currentlyRecording = true;
 		bool didRecord = false;
+#if AUDIO_RECORDER_USE_UNITY
+        currentRecordedClip = Microphone.Start(currentDeviceName, false, (int)duration, 44100);
+        didRecord = true;
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -427,11 +451,15 @@ public class BaseGameAudioRecorder {
 		lastRecordingSucceeded = didRecord;
 #elif UNITY_EDITOR
 #endif		
-		LogUtil.Log( "Record: " + didRecord );
+#endif
+        LogUtil.Log( "Record: " + didRecord );
 		return didRecord;
 	}
 	
 	public virtual void Pause() {
+#if AUDIO_RECORDER_USE_UNITY
+        Microphone.End(currentDeviceName);
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -441,9 +469,15 @@ public class BaseGameAudioRecorder {
 		AudioRecorderBinding.pause();
 #elif UNITY_EDITOR
 #endif		
-	}
+#endif
+    }
 	
 	public virtual void Stop(bool finish) {
+        
+#if AUDIO_RECORDER_USE_UNITY
+        Microphone.End(currentDeviceName);
+        AudioSystem.Save(currentFileName, currentRecordedClip);
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -453,11 +487,15 @@ public class BaseGameAudioRecorder {
 		AudioRecorderBinding.stop( finish );
 #elif UNITY_EDITOR
 #endif			
+#endif
 		LogUtil.Log( "Stop finish: " + finish );
 	}
 	
 	public virtual bool IsRecording() {
 		bool isRecording = false;
+#if AUDIO_RECORDER_USE_UNITY
+        isRecording = Microphone.IsRecording(currentDeviceName);
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -467,12 +505,16 @@ public class BaseGameAudioRecorder {
 		isRecording = AudioRecorderBinding.isRecording();
 #elif UNITY_EDITOR
 #endif				
+#endif
 		LogUtil.Log( "AudioRecorder IsRecording: " + isRecording );
 		return isRecording;
 	}
 	
 	public virtual float GetRecordedTime() {
 		float duration = 0f;
+#if AUDIO_RECORDER_USE_UNITY
+        duration = 5.5f;
+#elif
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
@@ -481,7 +523,8 @@ public class BaseGameAudioRecorder {
 #elif UNITY_IPHONE
 		duration = AudioRecorderBinding.getCurrentTime();
 #elif UNITY_EDITOR
-#endif				
+#endif	
+#endif
 		LogUtil.Log( "AudioRecorder GetRecordedTime duration: " + duration );
 		return duration;
 	}
@@ -542,7 +585,7 @@ public class BaseGameAudioRecorder {
 			AudioSystem.Instance.StopAmbience();
 	}
 	
-	public static void SetVolumeForRace(bool inRace) {
+	public static void SetVolume(bool inRace) {
 		LogUtil.Log("AudioListener SetVolumeForRace:" + inRace);
 		if(GameGlobal.Instance != null) {
 			if(inRace) {

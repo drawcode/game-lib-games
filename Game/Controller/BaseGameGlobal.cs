@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Gameverses;
 using Engine.Data.Json;
 using Engine.Events;
 using Engine.Networking;
@@ -25,8 +26,8 @@ public class BaseGameGlobal : MonoBehaviour {
     //public GameMatchup matchup;
     public GameSocialGame socialGame;
     public AudioSystem audioSystem;
-    public Gameverses.GameNetworking networking;
-    public Gameverses.GameversesGameObject gameversesGameObject;
+    public GameNetworking networking;
+    public GameversesGameObject gameversesGameObject;
     public AudioRecordObject audioRecorder; 
     
     //public Gameverses.GameversesAPI gameversesAPI;
@@ -175,6 +176,11 @@ public class BaseGameGlobal : MonoBehaviour {
 
     public virtual void InitAds() {
         adNetworks = gameObject.AddComponent<AdNetworks>();   
+    }
+    
+    public virtual void InitGameverses() {
+        gameversesGameObject = gameObject.AddComponent<GameversesGameObject>();   
+        networking = gameversesGameObject.gameNetworking;
     }
     
     public virtual void InitMatchupSettings() { 
