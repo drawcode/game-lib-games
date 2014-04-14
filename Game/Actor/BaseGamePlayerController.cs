@@ -1084,9 +1084,11 @@ public class BaseGamePlayerController : GameActor {
 
         LoadCharacterAttachedSounds();
 
+        controllerData.audioObjectFootstepsSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+
         if (gamePlayerMoveSpeed > .1f) {
             ////controllerData.audioObjectFootstepsSource.volume = 1f;
-            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + 1;
+            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + .8f;
             //LogUtil.Log("playSpeed", playSpeed);
             controllerData.audioObjectFootstepsSource.pitch = playSpeed;
         }
