@@ -140,8 +140,8 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
                 Messenger<int>.Broadcast(GameMessages.coin, (int)totalValue);
 
                 GameController.CurrentGamePlayerController.runtimeData.coins += totalValue;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 20f;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedLerpTime = 15f;
+                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 5f;
+                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedLerpTime = 25f;
 
                 GamePlayerProgress.SetStatCoins(1f);
                 GamePlayerProgress.SetStatCoinsPickup(1f);
@@ -156,7 +156,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
                                 
                 GameController.CurrentGamePlayerController.runtimeData.hitCount -= 1;
                 GameController.CurrentGamePlayerController.runtimeData.health += totalValue;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 20f;
+                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 2f;
                 GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedLerpTime = 15f;
 
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(totalValue); // refill

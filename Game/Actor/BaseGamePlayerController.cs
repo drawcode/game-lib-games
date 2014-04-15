@@ -3411,21 +3411,20 @@ public class BaseGamePlayerController : GameActor {
         controllerData.currentPlayerProgressItem = GameProfileCharacters.Current.GetCurrentCharacterProgress();
     }
 
-    public virtual void HandleItemProperties() {
-    
+    public virtual void HandleItemProperties() {    
 
-        float tParam = 0f;
+        //float tParam = 0f;
         //float valToBeLerped = 15f;
-        float speed = 0.3f;
-        if (tParam < 1) {
-            tParam += Time.deltaTime * speed; //This will increment tParam based on Time.deltaTime multiplied by a speed multiplier
-            //valToBeLerped = Mathf.Lerp(0, 3, tParam);
-        }
-
+        //float speed = 0.3f;
+        //if (tParam < 1) {
+        //    tParam += Time.deltaTime * speed; //This will increment tParam based on Time.deltaTime multiplied by a speed multiplier
+        //    //valToBeLerped = Mathf.Lerp(0, 3, tParam);
+        //}
+            
         controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
             controllerData.modifierItemSpeedCurrent, 
             controllerData.modifierItemSpeedMin, 
-            controllerData.modifierItemSpeedLerpTime * Time.deltaTime);        
+            controllerData.modifierItemSpeedLerpTime * Time.deltaTime * .05f);        
     }
 
     public virtual void HandleRPGProperties() {
@@ -3498,7 +3497,6 @@ public class BaseGamePlayerController : GameActor {
             controllerData.characterController.radius = 1.67f;
             controllerData.characterController.height = 2.42f;
             controllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
-
             
             // 
             // PLAYER CONTROLLERS
