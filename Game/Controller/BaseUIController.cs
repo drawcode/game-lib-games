@@ -1128,7 +1128,8 @@ public class BaseUIController : MonoBehaviour {
                 || hit.transform.name.Contains("ButtonInput")
                 || hit.transform.name.Contains("ButtonInput")
                 || hit.transform.name.Contains("Axis")
-                || hit.transform.name.Contains("Ignore")) {
+                || hit.transform.name.Contains("Ignore")
+                || hit.transform.name.Contains("Pad")) {
                 inputButtonDown = true;
                 shouldTouch = false;
                 allowedTouch = false;

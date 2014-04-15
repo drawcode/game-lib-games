@@ -142,80 +142,63 @@ public class GameTouchInputAxis : MonoBehaviour {
 
             }
 
-
-            /*
-            if (hitThis) {
-                
-                if (axisName == "move") { 
-                    //&& GameController.isFingerNavigating) {
-                    //hitThis = false;
-                    //return hitThis;
-                }
-
-                axisInput.x = (hit.textureCoord.x - .5f) * 2;
-                axisInput.y = (hit.textureCoord.y - .5f) * 2;
-
-                GameController.SendInputAxisMessage(axisName, axisInput);
-
-                if (pad != null) {
-                    padPos = pad.localPosition;
-                    padPos.x = -Mathf.Clamp(axisInput.x * 1.5f, -1.2f, 1.2f);
-                    padPos.z = -Mathf.Clamp(axisInput.y * 1.5f, -1.2f, 1.2f);
-                    padPos.y = 0f;
-                    pad.localPosition = padPos;
-                }
-            }
-            else {
-                //ResetPad();
-                */
-
             if(controlsMoveable) {
 
                 if(objectPlacement != null) {
 
-                    if(axisName == "move") {
-
-                        if (hitObject != null) {
-                            //Debug.Log("hitObject:" + " hitObject:" + hitObject.name);
-                            if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
-                                hitPlacement = true;
-                            }
+                    if (hitObject != null) {
+                        //Debug.Log("hitObject:" + " hitObject:" + hitObject.name);
+                        if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                            hitPlacement = true;
                         }
+                    }
+                    
+                    Vector3 viewportPoint = collisionCamera.ScreenToViewportPoint(point);
+                    
+                    //Debug.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
+                    
+                    Vector3 worldPoint = collisionCamera.ViewportToWorldPoint(viewportPoint);
+                    
+                    //Debug.Log("worldPoint:" + " worldPoint:" + worldPoint);
+
+                    viewportPoint.z = -10;
+                    worldPoint.z = -10;
+                    
+                    //Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
+
+                    if(hitPad) {
+
+                        // MOVE PAD with movement
+
+                        if(pad) {
+                            pad.transform.position = worldPoint;
+                        }                 
+
+                        Vector3 deltaPos = pad.transform.position - objectPlacement.transform.position;
+
+                        deltaPos *= 10;
+
+                        axisInput.x = deltaPos.x;
+                        axisInput.y = deltaPos.y;
+                                                
+                        Debug.Log("axisInput:" + " axisInput:" + axisInput);
+
+                        GameController.SendInputAxisMessage(axisName, axisInput);
+
+                    }
+                    else if (hitPlacement && !hitPad) {
+
+                        // MOVE IT
                         
-                        Vector3 viewportPoint = collisionCamera.ScreenToViewportPoint(point);
+                        ResetPad();
+
+                        ////Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);  
                         
-                        Debug.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
-                        
-                        Vector3 worldPoint = collisionCamera.ViewportToWorldPoint(viewportPoint);
-                        
-                        Debug.Log("worldPoint:" + " worldPoint:" + worldPoint);
+                        objectPlacement.transform.position = worldPoint;
 
-                        
-                        //Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
-
-                        if(hitPad) {
-
-                            // MOVE PAD with movement
-
-                            if(pad) {
-                                pad.transform.position = worldPoint;
-                            }                 
-                        }
-                        else if (hitPlacement && !hitPad) {
-
-                            // MOVE IT
-                            
-                            ResetPad();
-
-                            Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);  
-                            
-                            objectPlacement.transform.position = worldPoint;
-
-                            anchorPoint = objectPlacement.transform.localPosition;
-                        }
-                    }                    
-                }                
-                ////}
+                        anchorPoint = objectPlacement.transform.position;
+                    }
+                }
             }
         }
 
