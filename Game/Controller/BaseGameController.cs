@@ -80,20 +80,6 @@ public class GameActorDataItem {
     public string prefabCode = "GameEnemyGobln";
 }
 
-public class GameItemDataItem {
-    public float health = 0f;
-    public float difficulty = .3f;
-    public float scale = 0f;
-    public float speed = 0f;
-    public float attack = 0f;
-    public float defense = 0f;
-
-    public GamePlayerItemType type = GamePlayerItemType.Coin;
-
-    public string itemCode = "coin";
-    public string prefabCode = "GamePlayerItemCoin";
-}
-
 public class BaseGameMessages {
     public static string scores = "game-shooter-scores";	
 	public static string score = "game-shooter-score";
@@ -1376,27 +1362,11 @@ public class BaseGameController : MonoBehaviour {
     }
 
     public virtual void loadItemData(GameItemDirectorData data) {
-        GameItemDataItem item = new GameItemDataItem();
-        if(data.itemType == GamePlayerItemType.Coin) {
-            item.itemCode = "coin";
-            item.prefabCode = "GamePlayerItemCoin";
-            item.type = GamePlayerItemType.Coin;
-        }
-        else if(data.itemType == GamePlayerItemType.Health) {
-            item.itemCode = "health";
-            item.prefabCode = "GamePlayerItemHealth";
-            item.type = GamePlayerItemType.Health;
-        }
-        item.scale = data.scale;
-        item.attack = data.attack;
-        item.speed = data.speed;
-        
-        //LogUtil.Log("loadItemData:", data.itemType);
-        
+        GameItem item = GameItems.Instance.GetById(data.itemCode);        
         GameController.LoadItem(item);
     }
 
-    public virtual void loadItem(GameItemDataItem item) {
+    public virtual void loadItem(GameItem item) {
         StartCoroutine(loadItemCo(item));
     }
 
@@ -1572,19 +1542,13 @@ public class BaseGameController : MonoBehaviour {
 
     }
 
-    public virtual string getItemPath(GameItemDataItem item) {
+    public virtual string getItemPath(GameItem item) {
         string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelItems;
-        modelPath = PathUtil.Combine(modelPath, item.prefabCode);
+        modelPath = PathUtil.Combine(modelPath, item.GetModelCode());
         return modelPath;
     }
 
-    public virtual string getItemType(GameItemDataItem item) {
-        string type = "coin";
-        type = item.itemCode;
-        return type;
-    }
-
-    public virtual IEnumerator loadItemCo(GameItemDataItem item) {
+    public virtual IEnumerator loadItemCo(GameItem item) {
 
         string path = GameController.GetItemPath(item);
 
@@ -1649,18 +1613,9 @@ public class BaseGameController : MonoBehaviour {
         GameObject spawnObj = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledItems) as GameObject;
 
-        string itemTypeString = GamePlayerIndicatorType.pickup.ToString();
-
-        if(item.type == GamePlayerItemType.Coin) {
-            itemTypeString = GamePlayerIndicatorType.coin.ToString();
-        }
-        else if(item.type == GamePlayerItemType.Health) {
-            itemTypeString = "health";
-        }
-    
         if(spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
-            GamePlayerIndicator.AddIndicator(spawnObj, itemTypeString);
+            GamePlayerIndicator.AddIndicator(spawnObj, item.code);
         }
 
         /*

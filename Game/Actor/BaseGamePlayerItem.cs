@@ -16,8 +16,9 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 3.0f;
-    public bool initialized = false;
     public float downCount = 5f;
+    public bool initialized = false;
+
     public GameObject pointStaticObject;
     public GameObject pointAnimatedObject;
     public GameObject containerPre;
@@ -26,6 +27,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     public GameObject particleSystemPreObject;
     public GameObject particleSystemPostObject;
     public GameObject particleSystemRunObject;
+
     public float bobSpeed = 10.0f;  //Bob speed
     public float bobHeight = 30.0f; //Bob height
     public float bobOffset = 5f;
@@ -36,8 +38,10 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
     public string uuid = "";
     public string title = "";
     public string description = "";
+    public string gamePlayerItemCode = "item-coin";
+
     public double pointValue = 1.0;
-    public GamePlayerItemType type = GamePlayerItemType.Generic;
+
     public Vector3 positionEnd = Vector3.zero;
     public bool floaty = false;
     public float bottom;
@@ -121,10 +125,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             
             GamePlayerProgress.SetStatXP(xpValue);            
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(xpValue);
-            
-            if(type == GamePlayerItemType.Coin) {
-            }
-                        
+                                    
             if(string.IsNullOrEmpty(title)) {
                 //title = "Points Earned";
             }
@@ -135,7 +136,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
                 
             GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
 
-            if(type == GamePlayerItemType.Coin) {
+            if(gamePlayerItemCode == GamePlayerItemType.itemCoin) {
                 
                 Messenger<int>.Broadcast(GameMessages.coin, (int)totalValue);
 
@@ -148,7 +149,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
 
                 GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
             }            
-            else if(type == GamePlayerItemType.Health) {   
+            else if(gamePlayerItemCode == GamePlayerItemType.itemHealth) {   
 
                 totalValue = .1;
                 

@@ -21,27 +21,18 @@ public class GameItemDirectorMessages {
 }
 
 public class GameItemDirectorData {
-    public float speed = .3f;
-    public float attack = .3f;
-    public float scale = .3f;
+    public string itemCode = "item-coin";
     public int randomValue = 1;
-    public float currentSpawnAmount = .3f;
-    public GamePlayerItemType itemType = GamePlayerItemType.Coin;
-
-    public GameProfileRPGItem rpg;
+    public double currentSpawnAmount = 1;
 
     public GameItemDirectorData() {
         Reset();
     }
 
     public void Reset() {
-        itemType = GamePlayerItemType.Coin;
+        itemCode = "item-coin";
         randomValue = SetRandomValue(1, 2);
-        rpg = new GameProfileRPGItem();
-        speed = .3f;
-        attack = .3f;
-        scale = .3f;
-        currentSpawnAmount = .3f;
+        currentSpawnAmount = 1;
     }
 
     public int SetRandomValue(int min, int max) {
@@ -173,24 +164,14 @@ public class BaseItemController : MonoBehaviour {
          
             int randomValue = UnityEngine.Random.Range(1, 80);
 
-            float speed = .3f;
-            float attack = .3f;
-            float scale = 1f;
-    
-            scale = UnityEngine.Random.Range(.7f, 1.5f);
-            speed = UnityEngine.Random.Range(.7f, 1.2f);
-
             GameItemDirectorData item = new GameItemDirectorData();
             item.randomValue = randomValue;
-            item.speed = speed;
-            item.attack = attack;
-            item.scale = scale;
 
             if(randomValue > 0 && randomValue < 25) {
-                item.itemType = GamePlayerItemType.Coin;
+                item.itemCode = GamePlayerItemType.itemCoin;
             }
             else if(randomValue > 30 && randomValue < 35) {
-                item.itemType = GamePlayerItemType.Health;
+                item.itemCode = GamePlayerItemType.itemHealth;
             }
 
             GameItemController.LoadItem(item);
@@ -278,14 +259,7 @@ public class BaseItemController : MonoBehaviour {
     */
  
     public virtual void spawnItem(GamePlayerItemType type) {
-        GameObject go = null;
-     
-        if(type == GamePlayerItemType.Coin) {
-            if(go != null) {
-                //go = 
-            }
-        }
-     
+          
         // Position
      
         // Get boundaries
