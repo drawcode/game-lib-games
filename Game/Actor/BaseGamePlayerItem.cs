@@ -5,12 +5,6 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class BaseGamePlayerItemMessages {
-    public static string gamePlayerItemCollected = "GamePlayerItemCollected";
-    public static string gamePlayerItemCoin = "GamePlayerItemCoin";
-    public static string gamePlayerItemHeart = "GamePlayerItemHeart";
-    public static string gamePlayerItemCharacter = "GamePlayerItemCharacter";
-}
 
 public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
         
@@ -119,60 +113,19 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
             LogUtil.Log("CollectContent:Collect", true);
                         
             isCollecting = true;            
-            
-            double totalValue = 1f;
-            double xpValue = 1f;
-            
-            GamePlayerProgress.SetStatXP(xpValue);            
-            GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(xpValue);
-                                    
-            if(string.IsNullOrEmpty(title)) {
-                //title = "Points Earned";
+
+            GameItem gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
+
+            if(gameItem == null) {
+                return;
             }
-            
-            if(string.IsNullOrEmpty(description)) {
-                description = "...";
-            }
-                
-            GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
 
-            if(gamePlayerItemCode == GamePlayerItemType.itemCoin) {
-                
-                Messenger<int>.Broadcast(GameMessages.coin, (int)totalValue);
-
-                GameController.CurrentGamePlayerController.runtimeData.coins += totalValue;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 5f;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedLerpTime = 25f;
-
-                GamePlayerProgress.SetStatCoins(1f);
-                GamePlayerProgress.SetStatCoinsPickup(1f);
-
-                GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
-            }            
-            else if(gamePlayerItemCode == GamePlayerItemType.itemHealth) {   
-
-                totalValue = .1;
-                
-                Messenger<double>.Broadcast(GameMessages.health, totalValue);
-                                
-                GameController.CurrentGamePlayerController.runtimeData.hitCount -= 1;
-                GameController.CurrentGamePlayerController.runtimeData.health += totalValue;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedCurrent *= 2f;
-                GameController.CurrentGamePlayerController.controllerData.modifierItemSpeedLerpTime = 15f;
-
-                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(totalValue); // refill
-                GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(totalValue); // refill
-
-                GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_2);
-                
-            }
-            else {
-                GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_2);
-            }
+            GameController.CurrentGamePlayerController.HandleItemUse(gameItem);                  
                                 
             //UINotificationDisplay.Instance.QueuePoint(title, description, pointValue);
             //}
         }
+
         RemoveContent();
     }
                 
@@ -408,7 +361,7 @@ public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
                     //Debug.Log("HIT!item:" + hitTransform.name);                                                                   
                                         
                     if(hitTransform.name.ToLower().Contains(
-                        GamePlayerItemMessages.gamePlayerItemCoin)) {
+                        GamePlayerItemType.itemCoin)) {
                                                 
                         downCount = 5;
 

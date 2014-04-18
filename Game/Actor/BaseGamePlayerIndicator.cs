@@ -9,20 +9,20 @@ public enum GamePlayerIndicatorPlacementType {
     SCREEN
 }
 
-public enum GamePlayerIndicatorType {
-    player = 0,
-    enemy,
-    item,
-    pickup,
-    coin,
-    health,
-    powerup,
-    color,
-    goal,
-    choice,
-    zombie,
-    bot1,
-    bot2
+public class GamePlayerIndicatorType {
+    public static string player = "player";
+    public static string enemy = "enemy";
+    public static string item = "item";
+    public static string pickup = "pickup";
+    public static string coin = "coin";
+    public static string health = "health";
+    public static string powerup = "powerup";
+    public static string color = "color";
+    public static string goal = "goal";
+    public static string choice = "choice";
+    public static string zombie = "zombie";
+    public static string bot1 = "bot1";
+    public static string bot2 = "bot2";
 }
 
 public class BaseGamePlayerIndicator : MonoBehaviour {
@@ -39,7 +39,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
     public GamePlayerIndicatorItem gamePlayerIndicatorItem;
     public GamePlayerItem gamePlayerItem;
     public GameObject goTarget;
-    public GamePlayerIndicatorType type = GamePlayerIndicatorType.color;
+    public string type = "color";
     public Camera cam;
     public Transform camTransform;
     public float lastUpdate = 0f;
@@ -146,7 +146,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                     indicatorObj.SetTarget(target.transform);
                     indicatorObj.transform.localScale = Vector3.one;
 
-                    indicatorObj.type = (GamePlayerIndicatorType)Enum.Parse(typeof(GamePlayerIndicatorType), gameIndicatorType);
+                    indicatorObj.type = gameIndicatorType;//(GamePlayerIndicatorType)Enum.Parse(typeof(GamePlayerIndicatorType), gameIndicatorType);
 
                     indicatorObj.SetGameIndicatorType(gameIndicatorType);
                     indicatorObj.Run();
@@ -194,7 +194,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
                     indicatorObj.SetTarget(target.transform);
                     indicatorObj.transform.localScale = Vector3.one;
 
-                    indicatorObj.type = (GamePlayerIndicatorType)Enum.Parse(typeof(GamePlayerIndicatorType), gameIndicatorType);
+                    indicatorObj.type = gameIndicatorType;//(GamePlayerIndicatorType)Enum.Parse(typeof(GamePlayerIndicatorType), gameIndicatorType);
 
                     indicatorObj.SetGameIndicatorType(gameIndicatorType);
                     indicatorObj.Run();
@@ -284,7 +284,7 @@ public class BaseGamePlayerIndicator : MonoBehaviour {
      
         if(target != null) {
 
-            if(type == GamePlayerIndicatorType.player) {
+            if(type == "player") {
                 gamePlayerController = target.gameObject.Get<GamePlayerController>();
                 if(gamePlayerController != null) {
                     //..

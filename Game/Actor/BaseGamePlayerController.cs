@@ -194,10 +194,11 @@ public class BaseGamePlayerControllerData {
     //float controllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
-    public float modifierItemSpeedCurrent = 3.0f;
+    public float modifierItemSpeedCurrent = 1.0f;
     public float modifierItemSpeedMin = 1.0f;
     public float modifierItemSpeedMax = 3.0f;
     public float modifierItemSpeedLerpTime = 10f;
+    public float modifierItemSpeedLerp = 0f;
 
     // items
     public GamePlayerItemsData itemsData = new GamePlayerItemsData();
@@ -534,6 +535,123 @@ public class BaseGamePlayerController : GameActor {
         }
 
         return currentSpeed;
+    }
+
+    // REWARDS / ITEMS
+    
+    public virtual void HandleItemStateCurrency(double val) {    
+
+        runtimeData.coins += val;
+    }
+    
+    public virtual void HandleItemStateHitCount(double val) {         
+        runtimeData.hitCount += val;
+    }
+    
+    public virtual void HandleItemStateHealth(double val) {         
+        HandleItemStateHitCount(-1);
+        runtimeData.health += (float)val;
+    }
+
+    public virtual void HandleItemStateSpeedModifier(double val, double duration) {         
+        controllerData.modifierItemSpeedCurrent *= (float)val;
+        controllerData.modifierItemSpeedLerpTime = (float)duration;;
+        controllerData.modifierItemSpeedLerp = 0f;
+    }
+
+    public virtual void HandleItemUse(GameItem gameItem) {
+        
+        GameDataObjectItem data = gameItem.data;
+        
+        if(data == null) {
+            return;
+        }
+        
+        float modifier = 1f;
+
+        GameDataItemRPG rpg = new GameDataItemRPG();
+
+        if(data.HasRPGs()) {
+            rpg = data.GetRPG();
+        }
+        
+        // rewards
+        
+        if(data.HasRewards()) {
+            
+            List<GameDataItemReward> items = data.rewards;
+            
+            bool broadcastEvent = false;
+            object broadcastVal = null;
+            
+            foreach(GameDataItemReward item in items) {
+                
+                broadcastEvent = false;
+                broadcastVal = null;
+                
+                if(item.val == null) {
+                    continue;
+                }
+                
+                if(item.code == GameDataItemReward.xp) {
+
+                    double val = item.valDouble * modifier;   
+                    
+                    GamePlayerProgress.SetStatXP(val);
+                    
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(val);
+                    
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+                
+                else if(item.code == GameDataItemReward.currency) {
+                    
+                    double val = item.valDouble * modifier;   
+                    
+                    GamePlayerProgress.SetStatCoins(val);
+                    GamePlayerProgress.SetStatCoinsPickup(val);     
+                    
+                    HandleItemStateCurrency(val);
+                    HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
+                    
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+                
+                else if(item.code == GameDataItemReward.health) {
+                    
+                    double val = item.valDouble * modifier;  
+                    
+                    HandleItemStateHealth(val);
+                    HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
+                    
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(val); // refill
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(val); // refill                        
+                    
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+                
+                if(broadcastEvent) {                        
+                    Messenger<string, object>.Broadcast(GameMessages.item, item.code, broadcastVal);
+                }
+                
+            }
+        }
+        
+        // sounds
+        
+        GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
+        
+        if(data.HasSounds()) {
+            
+            List<GameDataItemSound> items = data.sounds;
+            
+            foreach(GameDataItemSound item in items) {
+                item.PlaySoundType(GameDataItemSound.reward);
+            }
+        }           
     }
 
  
@@ -3420,11 +3538,18 @@ public class BaseGamePlayerController : GameActor {
         //    tParam += Time.deltaTime * speed; //This will increment tParam based on Time.deltaTime multiplied by a speed multiplier
         //    //valToBeLerped = Mathf.Lerp(0, 3, tParam);
         //}
-            
-        controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
-            controllerData.modifierItemSpeedCurrent, 
-            controllerData.modifierItemSpeedMin, 
-            controllerData.modifierItemSpeedLerpTime * Time.deltaTime * .05f);        
+
+        // speed
+
+        if(controllerData.modifierItemSpeedLerp < 1f) {
+
+            controllerData.modifierItemSpeedLerp += Time.deltaTime / (controllerData.modifierItemSpeedLerpTime * 1000);
+                    
+                controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
+                    controllerData.modifierItemSpeedCurrent, 
+                    controllerData.modifierItemSpeedMin, 
+                    controllerData.modifierItemSpeedLerp);       
+        }
     }
 
     public virtual void HandleRPGProperties() {

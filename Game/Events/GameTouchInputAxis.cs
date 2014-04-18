@@ -181,7 +181,7 @@ public class GameTouchInputAxis : MonoBehaviour {
                         axisInput.x = deltaPos.x;
                         axisInput.y = deltaPos.y;
                                                 
-                        Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        //Debug.Log("axisInput:" + " axisInput:" + axisInput);
 
                         GameController.SendInputAxisMessage(axisName, axisInput);
 

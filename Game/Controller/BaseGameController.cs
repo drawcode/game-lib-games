@@ -81,15 +81,14 @@ public class GameActorDataItem {
 }
 
 public class BaseGameMessages {
-    public static string scores = "game-shooter-scores";	
-	public static string score = "game-shooter-score";
-	public static string ammo = "game-shooter-ammo";
-	public static string save = "game-shooter-save";
-	public static string shot = "game-shooter-shot";
-    public static string coin = "game-shooter-coin";
-    public static string health = "game-shooter-health";
-	public static string launch = "game-shooter-launch";
-	public static string state = "game-shooter-state";
+    public static string item = "game-action-item";
+    public static string scores = "game-action-scores";	
+    public static string score = "game-action-score";
+    public static string ammo = "game-action-ammo";
+    public static string save = "game-action-save";
+    public static string shot = "game-action-shot";
+    public static string launch = "game-action-launch";
+    public static string state = "game-action-state";
 }
 
 public class BaseGameStatCodes {

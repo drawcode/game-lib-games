@@ -81,31 +81,31 @@ public class UICustomizeCharacterRPGItem : MonoBehaviour {
 
         GameProfileRPGItem profileItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
 
-        if(rpgCode.ToLower() == GameItemRPGAttributes.attack) {
+        if(rpgCode.ToLower() == GameDataItemRPGAttributes.attack) {
             displayName = RPGConfigs.displayNameAttack;
             currentValue = profileItemRPG.GetAttack();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.defense) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
             currentValue = profileItemRPG.GetDefense();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.defense) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
             currentValue = profileItemRPG.GetDefense();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.energy) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.energy) {
             displayName = RPGConfigs.displayNameEnergy;
             currentValue = profileItemRPG.GetEnergy();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.health) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.health) {
             displayName = RPGConfigs.displayNameHealth;
             currentValue = profileItemRPG.GetHealth();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.jump) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.jump) {
             displayName = RPGConfigs.displayNameJump;
             currentValue = profileItemRPG.GetJump();
         }
-        else if(rpgCode.ToLower() == GameItemRPGAttributes.speed) {
+        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.speed) {
             displayName = RPGConfigs.displayNameSpeed;
             currentValue = profileItemRPG.GetSpeed();
         }
