@@ -331,6 +331,7 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerHolder;
     public GameObject gamePlayerShadow;
     public GameObject gamePlayerEnemyTarget;
+    public GameObject gamePlayerModelTarget;
     public GameObject gamePlayerModelHolder;
     public GameObject gamePlayerModelHolderModel;
     public GameObject gamePlayerModelHolderWeapons;
@@ -4173,12 +4174,16 @@ public class BaseGamePlayerController : GameActor {
             && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
             float currentSpeed = controllerData.thirdPersonController.moveSpeed;
             //LogUtil.Log("currentSpeed:", currentSpeed);
+            
+            Vector3 pos = Vector3.zero;
+            pos.z = Mathf.Clamp(currentSpeed / 3, .3f, 3.5f);
          
             if (gamePlayerEnemyTarget != null) {
-                Vector3 pos = Vector3.zero;
-                pos.z = Mathf.Clamp(currentSpeed / 3, .3f, 4.5f);
-                //LogUtil.Log("currentSpeedzz:", position.z);
                 gamePlayerEnemyTarget.transform.localPosition = pos;
+            }
+
+            if (gamePlayerModelTarget != null) {
+                gamePlayerModelTarget.transform.localPosition = pos;
             }
 
             if (controllerData.playerSpin) {
