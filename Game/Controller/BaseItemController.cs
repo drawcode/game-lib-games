@@ -22,7 +22,6 @@ public class GameItemDirectorMessages {
 
 public class GameItemDirectorData {
     public string itemCode = "item-coin";
-    public int randomValue = 1;
     public double currentSpawnAmount = 1;
 
     public GameItemDirectorData() {
@@ -31,12 +30,7 @@ public class GameItemDirectorData {
 
     public void Reset() {
         itemCode = "item-coin";
-        randomValue = SetRandomValue(1, 2);
         currentSpawnAmount = 1;
-    }
-
-    public int SetRandomValue(int min, int max) {
-        return UnityEngine.Random.Range(min, max);
     }
 }
 
@@ -154,7 +148,7 @@ public class BaseItemController : MonoBehaviour {
         currentFPS = FPSDisplay.GetCurrentFPS();    
      
         if((currentItemCount < currentItemLimit
-         && currentFPS > 20f) || currentItemCount < currentItemMin) {
+            && currentFPS > 20f) || currentItemCount < currentItemMin) {
      
             // do some spawning
          
@@ -162,19 +156,32 @@ public class BaseItemController : MonoBehaviour {
                 currentSpawnAmount = 1;
             }
          
-            int randomValue = UnityEngine.Random.Range(1, 80);
+            float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
 
-            GameItemDirectorData item = new GameItemDirectorData();
-            item.randomValue = randomValue;
-
-            if(randomValue > 0 && randomValue < 25) {
-                item.itemCode = GamePlayerItemType.itemCoin;
-            }
-            else if(randomValue > 30 && randomValue < 35) {
-                item.itemCode = GamePlayerItemType.itemHealth;
+            GameItemPreset preset = GameItemPresets.Instance.GetByCode("default");
+            
+            if(preset == null) {
+                return;
             }
 
-            GameItemController.LoadItem(item);
+            List<GameItemPresetItem> presetItems = preset.data.items;
+
+            List<float> probs = new List<float>();
+            foreach(GameItemPresetItem item in presetItems) {
+                probs.Add((float)item.probability);
+            }
+
+            GameItemPresetItem selectByProbabilityItem = 
+                MathUtil.ChooseProbability<GameItemPresetItem>(presetItems, probs); 
+            
+            if(selectByProbabilityItem == null) {
+                return;
+            }
+
+            GameItemDirectorData itemData = new GameItemDirectorData();
+            itemData.itemCode = selectByProbabilityItem.code;
+
+            GameItemController.LoadItem(itemData);
         }
      
     }
