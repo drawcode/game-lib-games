@@ -11,7 +11,7 @@ public class UIColorsMessages {
     public static string uiColorsUpdate = "ui-colors-update";
 }
 
-public static class UIColors  {
+public class UIColors  {
 
     public static Color colorRed {
         get {
@@ -100,7 +100,7 @@ public static class UIColors  {
         AnimateColor(inst, colorGreen);
     }
 
-    public static void ColorToRed(this GameObject inst) {
+    public static void ColorToRed(GameObject inst) {
         AnimateColor(inst, colorRed);
     }
 
