@@ -647,10 +647,10 @@ public class BaseGamePlayerController : GameActor {
         
         if(data.HasSounds()) {
             
-            List<GameDataItemSound> items = data.sounds;
+            List<GameDataSound> items = data.sounds;
             
-            foreach(GameDataItemSound item in items) {
-                item.PlaySoundType(GameDataItemSound.reward);
+            foreach(GameDataSound item in items) {
+                item.PlaySoundType(GameDataSound.reward);
             }
         }           
     }
