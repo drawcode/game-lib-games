@@ -164,15 +164,15 @@ public class BaseItemController : MonoBehaviour {
                 return;
             }
 
-            List<GameItemPresetItem> presetItems = preset.data.items;
+            List<GamePresetItem> presetItems = preset.data.items;
 
             List<float> probs = new List<float>();
-            foreach(GameItemPresetItem item in presetItems) {
+            foreach(GamePresetItem item in presetItems) {
                 probs.Add((float)item.probability);
             }
 
-            GameItemPresetItem selectByProbabilityItem = 
-                MathUtil.ChooseProbability<GameItemPresetItem>(presetItems, probs); 
+            GamePresetItem selectByProbabilityItem = 
+                MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
             
             if(selectByProbabilityItem == null) {
                 return;
