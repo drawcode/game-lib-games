@@ -3549,7 +3549,10 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
                     controllerData.modifierItemSpeedCurrent, 
                     controllerData.modifierItemSpeedMin, 
-                    controllerData.modifierItemSpeedLerp);       
+                    controllerData.modifierItemSpeedLerp);     
+
+            controllerData.modifierItemSpeedCurrent = Mathf.Clamp(
+                controllerData.modifierItemSpeedCurrent, 0, 5);
         }
     }
 
