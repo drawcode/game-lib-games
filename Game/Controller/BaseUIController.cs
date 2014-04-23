@@ -72,6 +72,8 @@ public class BaseUIButtonNames {
     public static string buttonGameModeTraining = "ButtonGameModeTraining";
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
     public static string buttonGamePlay = "ButtonGamePlay";
+    public static string buttonGameModePlay = "ButtonGameModePlay";
+    //ButtonGameModePlay
      
 
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
@@ -3055,7 +3057,8 @@ public class BaseUIController : MonoBehaviour {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
         }        
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
+        else if(UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
+                || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
             
             AdNetworks.ShowFullscreenAd();
             
