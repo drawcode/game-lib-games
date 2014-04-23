@@ -411,6 +411,17 @@ public class UIUtil {
         return false;
     }
 
+    public static bool IsButtonClicked(string button, string buttonClickedName) {
+        if(button == null)
+            return false;
+        
+        if(buttonClickedName == button) {
+            //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
+            return true;
+        }
+        return false;
+    }
+
     public static bool IsCheckboxChecked(UICheckbox chk, string chkClickedName) {
         if(chk == null)
             return false;

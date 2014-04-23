@@ -56,10 +56,31 @@ public class BaseUIButtonNames {
     public static string buttonGamePause = "ButtonGamePause";
     public static string buttonGameResume = "ButtonGameResume";
     public static string buttonGameRestart = "ButtonGameRestart";
+    public static string buttonGameEquipmentRoom = "ButtonGameEquipmentRoom";
     public static string buttonGameQuit = "ButtonGameQuit";
     public static string buttonGameWorlds = "ButtonGameWorlds";
     public static string buttonGameContinue = "ButtonGameContinue";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
+
+    // 
+
+    
+    public static string buttonGameModeArcade = "ButtonGameModeArcade";
+    public static string buttonGameModeChallenges = "ButtonGameModeChallenges";
+    public static string buttonGameModeCoop = "ButtonGameModeCoop";
+    public static string buttonGameModeMissions = "ButtonGameModeMissions";
+    public static string buttonGameModeTraining = "ButtonGameModeTraining";
+    public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
+    public static string buttonGamePlay = "ButtonGamePlay";
+     
+
+    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+
+
 }
 
 public class BaseHUDButtonNames {
@@ -2984,30 +3005,67 @@ public class BaseUIController : MonoBehaviour {
 
         // GAME
 
-        if (buttonName.IndexOf(BaseUIButtonNames.buttonGameQuit) > -1) {
+        if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameQuit, buttonName)) {
             GameQuit();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGamePause) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePause, buttonName)) {
             GamePause();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameResume) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameResume, buttonName)) {
             GameResume();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameRestart) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameRestart, buttonName)) {
             GameRestart();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameContinue) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameContinue, buttonName)) {
             GameContinue();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameSettingsAudio) > -1) {
+
+        // UI / MODES
+
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipmentRoom, buttonName)) {
+            GameUIController.ShowEquipment();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettingsAudio, buttonName)) {
             GameUIController.ShowSettingsAudio();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterAchievements) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterAchievements, buttonName)) {
             GameNetworks.ShowAchievementsOrLogin();
         }
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameCenterLeaderboards) > -1) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterLeaderboards, buttonName)) {
             GameNetworks.ShowLeaderboardsOrLogin();
         }
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+            GameUIController.ShowGameModeArcade();
+        }   
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
+            GameUIController.ShowGameModeChallenge();
+        }   
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
+            GameUIController.ShowGameModeChallenge();
+        }         
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
+            GameUIController.ShowGameWorlds();
+        } 
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
+            GameUIController.ShowGameModeTrainingMode();
+        }        
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
+            
+            AdNetworks.ShowFullscreenAd();
+            
+            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
+            GameController.LoadStartLevel("1-1");
+            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
+        }  
+
+        // BACK BUTTON
+
         else {
             if (buttonName == BaseUIButtonNames.buttonBack) {
                 NavigateBack(buttonName);
