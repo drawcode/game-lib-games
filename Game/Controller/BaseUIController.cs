@@ -63,11 +63,13 @@ public class BaseUIButtonNames {
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
 
     // 
-
-    
+        
     public static string buttonGameModeArcade = "ButtonGameModeArcade";
     public static string buttonGameModeChallenges = "ButtonGameModeChallenges";
     public static string buttonGameModeCoop = "ButtonGameModeCoop";
+    public static string buttonGameModeMultiplayerCoop = "ButtonGameModeMultiplayerCoop";
+    public static string buttonGameModeMultiplayerMatchup = "ButtonGameModeMultiplayerMatchup";
+    public static string buttonGameModeMultiplayer = "ButtonGameModeMultiplayer";
     public static string buttonGameModeMissions = "ButtonGameModeMissions";
     public static string buttonGameModeTraining = "ButtonGameModeTraining";
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
@@ -125,6 +127,7 @@ public class BaseUIPanel {
     public static string panelSettingsHelp = "PanelSettingsHelp";
     public static string panelSettingsCredits = "PanelSettingsCredits";
     public static string panelGameMode = "PanelGameMode";
+    public static string panelGameModeCoop = "PanelGameModeCoop";
     public static string panelGameModeMultiplayer = "PanelGameModeMultiplayer";
     public static string panelGameModeMultiplayerCoop = "PanelGameModeMultiplayerCoop";
     public static string panelGameModeMultiplayerMatchup = "PanelGameModeMultiplayerMatchup";
@@ -1871,6 +1874,34 @@ public class BaseUIController : MonoBehaviour {
         hideUIPanel(
             typeof(GameUIPanelGameMode));
     }
+
+    
+    // ------------------------------------------------------------
+    // GAME MODE - COOP
+    
+    //public static virtual void ShowGameModeCoop() {
+    //   if(isInst) {
+    //        Instance.showGameModeCoop();
+    //   }
+    //}
+    
+    public virtual void showGameModeCoop() {
+        showUIPanel(
+            typeof(GameUIPanelGameModeCoop),
+            GameUIPanel.panelGameModeCoop,
+            "PLAY COOP");
+    } 
+    
+    //public static virtual void HideGameModeCoop() {
+    //   if(isInst) {
+    //        Instance.hideGameModeCoop();
+    //   }
+    //}
+    
+    public virtual void hideGameModeCoop() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeCoop));
+    }
     
     // ------------------------------------------------------------
     // GAME MODE MULTIPLAYER
@@ -3045,10 +3076,22 @@ public class BaseUIController : MonoBehaviour {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
         }   
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
-            GameUIController.ShowGameModeChallenge();
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerCoop);
+            GameUIController.ShowGameModeMultiplayerCoop();
+        }   
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerMatchup, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerMatchup);
+            GameUIController.ShowGameModeMultiplayerMatchup();
         }         
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayer, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayer);
+            GameUIController.ShowGameModeMultiplayer();
+        } 
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameCoop);
+            GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
+        }        
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
