@@ -125,7 +125,7 @@ public class UIPanelOverviewMode : UIPanelBase {
         }
         else if (UIUtil.IsButtonClicked(buttonOverviewTips, buttonName)) {
             ChangeTipsState(AppOverviewFlowState.GameplayTips);
-        }
+        }  
     }
         
     public void ContentPause() {

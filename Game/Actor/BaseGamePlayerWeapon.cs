@@ -67,7 +67,12 @@ public class BaseGamePlayerWeapon : GameActor {
 	
 	public virtual void Load() {
 		currentItems = new List<GameObject>();
-		GameObject bullet1 = Resources.Load("Prefabs/GameProjectile") as GameObject;
+                
+        string pathPrefab = System.IO.Path.Combine(
+            ContentPaths.appCacheVersionSharedPrefabWeapons,
+            "GameProjectile");
+
+        GameObject bullet1 = Resources.Load(pathPrefab) as GameObject;
 		currentItems.Add(bullet1);		
 	}
 

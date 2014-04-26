@@ -532,8 +532,8 @@ public class BaseGameController : MonoBehaviour {
         GameController.Reset();
 
         foreach(GamePlayerController gamePlayerController in ObjectUtil.FindObjects<GamePlayerController>()) {
-            if(gamePlayerController.uuid == UniqueUtil.Instance.currentUniqueId) {
-                gamePlayerController.UpdateNetworkContainer(gamePlayerController.uuid);
+            if(gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
+                gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
                 break;
             }
         }
@@ -633,7 +633,7 @@ public class BaseGameController : MonoBehaviour {
     
     // Listen to object creation events and create them such as network players...
     
-    public virtual void OnNetworkPlayerContainerAdded(string uuid) {
+    public virtual void OnNetworkPlayerContainerAdded(string uid) {
     
         // Look for object by that uuid, if not create it
 
@@ -644,12 +644,12 @@ public class BaseGameController : MonoBehaviour {
             bool found = false;
 
             foreach(GamePlayerController gamePlayerController in playerControllers) {
-                if(gamePlayerController.uuid == uuid) {
+                if(gamePlayerController.uniqueId == uid) {
                     // already added
-                    gamePlayerController.uuid = uuid;
-                    gamePlayerController.UpdateNetworkContainer(uuid);
+                    gamePlayerController.uniqueId = uid;
+                    gamePlayerController.UpdateNetworkContainer(uid);
                     //gamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    LogUtil.Log("Updating character:" + uuid);
+                    LogUtil.Log("Updating character:" + uid);
                     found = true;
                     break;
                 }
@@ -658,17 +658,21 @@ public class BaseGameController : MonoBehaviour {
             if(!found) {
                 // create
                 // Prefabs/Characters/GamePlayerObject
+
+                string pathPlayer = Path.Combine(
+                    ContentPaths.appCacheVersionSharedPrefabCharacters,
+                    "GamePlayerObject");
     
-                UnityEngine.Object prefabGameplayer = Resources.Load("Prefabs/Characters/GamePlayerObject");
+                UnityEngine.Object prefabGameplayer = Resources.Load(pathPlayer);
                 if(prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
                     GamePlayerController playerControllerOther = (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    playerControllerOther.uuid = uuid;
-                    playerControllerOther.UpdateNetworkContainer(uuid);
-                    LogUtil.Log("Creating character:" + uuid);
-                    LogUtil.Log("playerControllerOther.uuid:" + playerControllerOther.uuid);
+                    playerControllerOther.uniqueId = uid;
+                    playerControllerOther.UpdateNetworkContainer(uid);
+                    LogUtil.Log("Creating character:" + uid);
+                    LogUtil.Log("playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
                 }
             }
         }

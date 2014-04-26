@@ -75,8 +75,10 @@ public class BaseUIButtonNames {
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
     public static string buttonGamePlay = "ButtonGamePlay";
     public static string buttonGameModePlay = "ButtonGameModePlay";
-    //ButtonGameModePlay
-     
+    
+    public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
+    public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
+    public static string buttonGameNetworkJoinGame = "ButtonGameNetworkJoinGame";
 
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
@@ -3118,6 +3120,8 @@ public class BaseUIController : MonoBehaviour {
             }
         }
 
+        GameUIController.HandleNetworkedButtons(buttonName);
+
         GameUIController.HandleHUDButtons(buttonName);
      
         /*
@@ -3239,6 +3243,20 @@ public class BaseUIController : MonoBehaviour {
         }
 
         return true;
+    }
+    
+    public virtual void handleNetworkedButtons(string buttonName) {
+        // handle network state by buttons and areas
+        if(AppConfigs.featureEnableNetworking) {
+            if(UIUtil.IsButtonClickedLike("GameMode", buttonName)) { 
+                if(UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) { 
+                    //Gameverses.GameNetworking.Connect();
+                }
+                else {
+                    //Gameverses.GameNetworking.Disconnect();
+                }
+            }  
+        }
     }
  
     public virtual void handleHUDButtons(string buttonName) {

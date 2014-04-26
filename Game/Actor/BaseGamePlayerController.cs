@@ -303,7 +303,7 @@ public class BaseGamePlayerMountData {
 
 public class BaseGamePlayerController : GameActor {
  
-    public string uuid = "";
+    //public string uuid = "";
     public string prefabName = "bot1";
     public Transform currentTarget;
  
@@ -463,10 +463,10 @@ public class BaseGamePlayerController : GameActor {
      
         // TODO wire in network/local unique ids.
         if (IsPlayerControlled) {
-            uuid = UniqueUtil.Instance.currentUniqueId;
+            uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
         else {
-            uuid = UniqueUtil.Instance.CreateUUID4();
+            uniqueId = UniqueUtil.Instance.CreateUUID4();
         }
 
         controllerData = new GamePlayerControllerData();
@@ -1034,7 +1034,7 @@ public class BaseGamePlayerController : GameActor {
      
     public virtual bool isMe {
         get {
-            if (uuid == UniqueUtil.Instance.currentUniqueId) {
+            if (uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 return true;
             }
             return false;
@@ -1090,7 +1090,7 @@ public class BaseGamePlayerController : GameActor {
                 || contextState == GamePlayerContextState.ContextInput
                 || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput
-                || uuid == UniqueUtil.Instance.currentUniqueId) {
+                || uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 return true;
             }
             return false;
@@ -1647,18 +1647,18 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
     
-        if (actionEvent.uuidOwner == uuid) {
+        if (actionEvent.uuidOwner == uniqueId) {
             AnimatePlayer(actionEvent.code);
         }
     }
      
-    public virtual void OnNetworkPlayerAnimation(string uniqueId, Gameverses.GameNetworkAniStates aniState) {
+    public virtual void OnNetworkPlayerAnimation(string uid, Gameverses.GameNetworkAniStates aniState) {
              
         if (!GameConfigs.isGameRunning) {
             return;
         }
      
-        if (uniqueId == uuid && !isMe) {
+        if (uniqueId == uid && !isMe) {
             if (controllerData.lastNetworkAniState != controllerData.currentNetworkAniState) {
                 controllerData.lastNetworkAniState = controllerData.currentNetworkAniState;
              
@@ -1687,24 +1687,24 @@ public class BaseGamePlayerController : GameActor {
         }
     }
  
-    public virtual void OnNetworkPlayerInputAxisHorizontal(string uniqueId, float horizontalInput) {
-        if (uniqueId == uuid && !isMe) {
+    public virtual void OnNetworkPlayerInputAxisHorizontal(string uid, float horizontalInput) {
+        if (uniqueId == uid && !isMe) {
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.horizontalInput = horizontalInput;
             }
         }
     }
  
-    public virtual void OnNetworkPlayerInputAxisVertical(string uniqueId, float verticalInput) {
-        if (uniqueId == uuid && !isMe) {
+    public virtual void OnNetworkPlayerInputAxisVertical(string uid, float verticalInput) {
+        if (uniqueId == uid && !isMe) {
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.verticalInput = verticalInput;
             }
         }
     }
  
-    public virtual void OnNetworkPlayerSpeed(string uniqueId, float speed) {
-        if (uniqueId == uuid && !isMe) {
+    public virtual void OnNetworkPlayerSpeed(string uid, float speed) {
+        if (uniqueId == uid && !isMe) {
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.moveSpeed = speed;
             }            
@@ -3385,11 +3385,11 @@ public class BaseGamePlayerController : GameActor {
     // NETWORK
  
  
-    public virtual void UpdateNetworkContainer(string uniqueId) {
+    public virtual void UpdateNetworkContainer(string uid) {
      
-        uuid = uniqueId;
+        uniqueId = uid;
         
-        if (!GameConfigs.networkEnabled) {
+        if (!AppConfigs.featureEnableNetworking) {
             return;
         }
      
@@ -3407,14 +3407,14 @@ public class BaseGamePlayerController : GameActor {
         }    
     }
  
-    public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uniqueId) {
+    public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uid) {
      
-        if (!GameConfigs.networkEnabled) {
+        if (!AppConfigs.featureEnableNetworking) {
             return null;
         }
      
         if (currentNetworkPlayerContainer != null) {
-            if (currentNetworkPlayerContainer.uuid == uniqueId) {
+            if (currentNetworkPlayerContainer.uniqueId == uid) {
                 return currentNetworkPlayerContainer;
             }
         }
@@ -3422,8 +3422,9 @@ public class BaseGamePlayerController : GameActor {
         if (Time.time > controllerData.lastNetworkContainerFind + 5f) {
             controllerData.lastNetworkContainerFind = Time.time;
             if (GameController.Instance.gameState == GameStateGlobal.GameStarted) {
-                foreach (Gameverses.GameNetworkPlayerContainer playerContainer in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
-                    if (playerContainer.uuid == uniqueId) {
+                foreach (Gameverses.GameNetworkPlayerContainer playerContainer 
+                         in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
+                    if (playerContainer.uniqueId == uid) {
                         currentNetworkPlayerContainer = playerContainer;
                         return currentNetworkPlayerContainer;
                     }
@@ -3434,10 +3435,11 @@ public class BaseGamePlayerController : GameActor {
         return null;
     }
  
-    public virtual bool HasNetworkContainer(string uniqueId) {
+    public virtual bool HasNetworkContainer(string uid) {
 
-        foreach (Gameverses.GameNetworkPlayerContainer playerContainer in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
-            if (playerContainer.uuid == uniqueId) {
+        foreach (Gameverses.GameNetworkPlayerContainer playerContainer 
+                 in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
+            if (playerContainer.uniqueId == uid) {
                 currentNetworkPlayerContainer = playerContainer;
                 return true;
             }
@@ -3446,9 +3448,9 @@ public class BaseGamePlayerController : GameActor {
         return false;
     }
  
-    public virtual void UpdateNetworkContainerFromSource(string uniqueId) {
+    public virtual void UpdateNetworkContainerFromSource(string uid) {
      
-        uuid = uniqueId;
+        uniqueId = uid;
      
         FindNetworkContainer(uniqueId);
      
@@ -3807,7 +3809,7 @@ public class BaseGamePlayerController : GameActor {
         if (IsNetworkPlayerState()) {
             // if network container is gone remove the player...
          
-            if (HasNetworkContainer(uuid)) {
+            if (HasNetworkContainer(uniqueId)) {
                 // no prob
             }
             else {
@@ -3948,7 +3950,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }            
          
-            UpdateNetworkContainerFromSource(uuid);
+            UpdateNetworkContainerFromSource(uniqueId);
         }
         else if (IsPlayerState()) {           
             if (controllerData.thirdPersonController.aimingDirection != Vector3.zero) {
@@ -3977,7 +3979,7 @@ public class BaseGamePlayerController : GameActor {
                 Die();
             }
          
-            UpdateNetworkContainerFromSource(uuid);          
+            UpdateNetworkContainerFromSource(uniqueId);          
         }
         else if (IsUIState()) {       
          
