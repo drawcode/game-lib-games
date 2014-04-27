@@ -299,6 +299,18 @@ public class BaseGamePlayerMountData {
             mountVehicle.SetMountVehicleAxis(h, v);
         }
     }
+
+    public void SetMountWeaponRotator(Vector3 rt) {
+        if (mountVehicle != null) {
+            mountVehicle.SetMountWeaponRotator(rt);
+        }
+    }
+    
+    public void SetMountWeaponRotator(Quaternion qt) {
+        if (mountVehicle != null) {
+            mountVehicle.SetMountWeaponRotator(qt);
+        }
+    }
 }
 
 public class BaseGamePlayerController : GameActor {
@@ -337,6 +349,11 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerModelHolderWeapons;
     public GameObject gamePlayerModelHolderItems;
     public GameObject gamePlayerModelHolderSkills;
+
+    public Vector3 initialGamePlayerWeaponContainer = Vector3.zero;
+    public Vector3 currentGamePlayerWeaponContainer = Vector3.zero;
+
+    //gamePlayerModelHolderWeapons.transform.position
  
     // attack
     public GameObject weaponObject;
@@ -1417,6 +1434,8 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadWeapons() {
         
         //Debug.Log("LoadWeapons");
+        initialGamePlayerWeaponContainer = gamePlayerModelHolderWeapons.transform.position;
+        currentGamePlayerWeaponContainer = gamePlayerModelHolderWeapons.transform.position;
 
         LoadInventory();
 
@@ -1740,6 +1759,13 @@ public class BaseGamePlayerController : GameActor {
                     controllerData.gameModelVisible = false;
                 }
 
+                GameObjectMountWeaponHolder weaponHolder = controllerData.mountData.mountVehicle.GetWeaponHolder();
+
+                if(weaponHolder != null) {
+                    currentGamePlayerWeaponContainer = weaponHolder.transform.position;
+                    gamePlayerModelHolderWeapons.transform.position = currentGamePlayerWeaponContainer;
+                }
+
                 SetControllersState(false);
 
                 StopNavAgent();
@@ -1755,6 +1781,8 @@ public class BaseGamePlayerController : GameActor {
                 gamePlayerModelHolderModel.Show();
                 controllerData.gameModelVisible = true;
             }
+                        
+            gamePlayerModelHolderWeapons.transform.position = initialGamePlayerWeaponContainer;
             
             SetControllersState(true);
 
@@ -3238,8 +3266,11 @@ public class BaseGamePlayerController : GameActor {
 
         // apply the controllerData.impact force:
         //if (controllerData.impact.magnitude > 0.3f) {
-        controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
-        //}
+
+        if(controllerData.characterController.enabled) {
+            controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
+        }
+            //}
 
         UpdatePlayerEffectsState();
 
@@ -3616,6 +3647,14 @@ public class BaseGamePlayerController : GameActor {
             
             // 
             // CHARACTER
+
+            if(gameObject == null) {
+                return;
+            }
+
+            if(controllerData == null) {
+                return;
+            }
          
             controllerData.characterController = gameObject.GetComponent<CharacterController>();
 
@@ -3956,7 +3995,13 @@ public class BaseGamePlayerController : GameActor {
             if (controllerData.thirdPersonController.aimingDirection != Vector3.zero) {
 
                 //gamePlayerHolder.transform.rotation = Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
-                gamePlayerModelHolder.transform.rotation = Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
+                gamePlayerModelHolder.transform.rotation = 
+                    Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
+
+                if(controllerData.mountData.isMountedVehicle) {
+                    controllerData.mountData.mountVehicle.SetMountWeaponRotator( 
+                        Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection));
+                }
 
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
                     t.localRotation = Quaternion.identity;
@@ -3970,6 +4015,11 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
             else {
+                                
+                if(controllerData.mountData.isMountedVehicle) {
+                    controllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
+                }
+
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
                     t.localRotation = Quaternion.identity;
                 }

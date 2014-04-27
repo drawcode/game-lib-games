@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum GameObjectMountType {
+public enum GameObjectMountEnableType {
     typeAuto,
     typeTriggered
 }
@@ -10,8 +10,8 @@ public enum GameObjectMountType {
 public class GameObjectMount : BaseGameObjectInteractive {
 
     public GameObject objectMounted;
-    public int allowedMountCount = 1;
-        
+    public int allowedMountCount = 1;    
+
     public override void Awake() { 
         base.Awake();   
     }
@@ -73,8 +73,6 @@ public class GameObjectMount : BaseGameObjectInteractive {
 
             Debug.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
         }
-
-
     }
         
     public virtual void Unmount() {

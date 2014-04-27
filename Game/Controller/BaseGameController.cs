@@ -637,6 +637,13 @@ public class BaseGameController : MonoBehaviour {
     
         // Look for object by that uuid, if not create it
 
+        LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
+
+        if(uid == UniqueUtil.Instance.currentUniqueId
+           || string.IsNullOrEmpty(uid)) {
+            return;
+        }
+
         GamePlayerController[] playerControllers = ObjectUtil.FindObjects<GamePlayerController>();
     
         if(playerControllers.Length > 0) {
@@ -649,7 +656,7 @@ public class BaseGameController : MonoBehaviour {
                     gamePlayerController.uniqueId = uid;
                     gamePlayerController.UpdateNetworkContainer(uid);
                     //gamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    LogUtil.Log("Updating character:" + uid);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:Updating character:" + uid);
                     found = true;
                     break;
                 }
@@ -667,12 +674,13 @@ public class BaseGameController : MonoBehaviour {
                 if(prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
-                    GamePlayerController playerControllerOther = (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) as GameObject).GetComponent<GamePlayerController>();
+                    GamePlayerController playerControllerOther = 
+                        (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) 
+                         as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    playerControllerOther.uniqueId = uid;
                     playerControllerOther.UpdateNetworkContainer(uid);
-                    LogUtil.Log("Creating character:" + uid);
-                    LogUtil.Log("playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:Creating character:" + uid);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
                 }
             }
         }
@@ -703,6 +711,15 @@ public class BaseGameController : MonoBehaviour {
         return null;
     }
 
+    public virtual GamePlayerController getGamePlayerController(string uid) {
+        foreach(GamePlayerController gamePlayerController 
+                in ObjectUtil.FindObjects<GamePlayerController>()) {
+            if(gamePlayerController.uniqueId == uid) {
+                return gamePlayerController;
+            }
+        }
+        return null;
+    }
 
     public virtual GamePlayerController getGamePlayerController(GameObject go) {
         if(go != null) {
