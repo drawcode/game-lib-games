@@ -347,6 +347,7 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerModelHolder;
     public GameObject gamePlayerModelHolderModel;
     public GameObject gamePlayerModelHolderWeapons;
+    public GameObject gamePlayerModelHolderWeaponsHolder;
     public GameObject gamePlayerModelHolderItems;
     public GameObject gamePlayerModelHolderSkills;
 
@@ -1420,8 +1421,8 @@ public class BaseGamePlayerController : GameActor {
     }
     
     public virtual void UnloadWeapons() {
-        if (gamePlayerModelHolderWeapons != null) {
-            gamePlayerModelHolderWeapons.DestroyChildren();
+        if (gamePlayerModelHolderWeaponsHolder != null) {
+            gamePlayerModelHolderWeaponsHolder.DestroyChildren();
         }
         
         if (weapons == null) {
@@ -1434,8 +1435,8 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadWeapons() {
         
         //Debug.Log("LoadWeapons");
-        initialGamePlayerWeaponContainer = gamePlayerModelHolderWeapons.transform.position;
-        currentGamePlayerWeaponContainer = gamePlayerModelHolderWeapons.transform.position;
+        initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
+        currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
 
         LoadInventory();
 
@@ -1495,14 +1496,14 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        go.transform.parent = gamePlayerModelHolderWeapons.transform;
+        go.transform.parent = gamePlayerModelHolderWeaponsHolder.transform;
         go.ResetPosition();
         go.ResetRotation();
                 
         if (go != null && weapons.Count == 0) {
             
             foreach (GamePlayerWeapon weapon in 
-                    gamePlayerModelHolderWeapons.GetComponentsInChildren<GamePlayerWeapon>()) {
+                    gamePlayerModelHolderWeaponsHolder.GetComponentsInChildren<GamePlayerWeapon>()) {
 
                 weapon.gameWeaponData = gameWeaponData;
                                 
@@ -1763,7 +1764,11 @@ public class BaseGamePlayerController : GameActor {
 
                 if(weaponHolder != null) {
                     currentGamePlayerWeaponContainer = weaponHolder.transform.position;
-                    gamePlayerModelHolderWeapons.transform.position = currentGamePlayerWeaponContainer;
+                    //gamePlayerModelHolderWeaponsHolder.transform.position = currentGamePlayerWeaponContainer;
+                    
+                    gamePlayerModelHolderWeaponsHolder.transform.parent = weaponHolder.transform;
+                    gamePlayerModelHolderWeaponsHolder.transform.position = weaponHolder.transform.position;
+                    gamePlayerModelHolderWeaponsHolder.transform.rotation = weaponHolder.transform.rotation;
                 }
 
                 SetControllersState(false);
@@ -1782,7 +1787,11 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.gameModelVisible = true;
             }
                         
-            gamePlayerModelHolderWeapons.transform.position = initialGamePlayerWeaponContainer;
+            //gamePlayerModelHolderWeaponsHolder.transform.position = initialGamePlayerWeaponContainer;
+            
+            gamePlayerModelHolderWeaponsHolder.transform.parent = gamePlayerModelHolderWeapons.transform;
+            gamePlayerModelHolderWeaponsHolder.transform.localPosition = Vector3.zero;
+            gamePlayerModelHolderWeaponsHolder.transform.rotation = gamePlayerModelHolderWeapons.transform.rotation;
             
             SetControllersState(true);
 
@@ -4017,7 +4026,7 @@ public class BaseGamePlayerController : GameActor {
             else {
                                 
                 if(controllerData.mountData.isMountedVehicle) {
-                    controllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
+                    //controllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
                 }
 
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
@@ -4227,7 +4236,14 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (controllerState == GamePlayerControllerState.ControllerPlayer
             && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
-            float currentSpeed = controllerData.thirdPersonController.moveSpeed;
+            float currentSpeed = 0;
+
+            if(controllerData.mountData.isMountedVehicle) {
+                currentSpeed = controllerData.mountData.mountVehicle.driver.currentSpeed;
+            }
+            else {
+                currentSpeed = controllerData.thirdPersonController.moveSpeed;
+            }
             //LogUtil.Log("currentSpeed:", currentSpeed);
             
             Vector3 pos = Vector3.zero;

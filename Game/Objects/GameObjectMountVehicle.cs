@@ -82,8 +82,11 @@ public class GameObjectMountVehicle : GameObjectMount {
         if(driver == null) {
             driver = gameObject.FindTypeAboveRecursive<GameVehicleDrive>();
         }
+
+        objectMounted.transform.position = gameObject.transform.position;
+        objectMounted.transform.rotation = gameObject.transform.rotation;
                 
-        Debug.Log("MountVehicle:" + " driver:" + driver.name);
+        LogUtil.Log("MountVehicle:" + " driver:" + driver.name);
 
         FindWeaponHolders();
 
@@ -92,19 +95,19 @@ public class GameObjectMountVehicle : GameObjectMount {
 
     public void FindWeaponHolders() {    
                 
-        Debug.Log("FindWeaponHolders:" + " gameObjectMountWeaponHolders:" + gameObjectMountWeaponHolders);
+        LogUtil.Log("FindWeaponHolders:" + " gameObjectMountWeaponHolders:" + gameObjectMountWeaponHolders);
 
         if(gameObjectMountWeaponHolders == null) {
             gameObjectMountWeaponHolders = new List<GameObjectMountWeaponHolder>();
         }
          
         if(gameObjectMountWeaponHolders.Count == 0) {
-            Debug.Log("FindWeaponHolders:" + " gameObjectMountWeaponHolders:" + gameObjectMountWeaponHolders);
+            LogUtil.Log("FindWeaponHolders:" + " gameObjectMountWeaponHolders:" + gameObjectMountWeaponHolders);
 
             foreach(GameObjectMountWeaponHolder item in 
                     driver.gameObject.GetComponentsInChildren<GameObjectMountWeaponHolder>(true)) {
                 
-                Debug.Log("FindWeaponHolders:" + " item:" + item.name);
+                LogUtil.Log("FindWeaponHolders:" + " item:" + item.name);
 
                 gameObjectMountWeaponHolders.Add(item);
             }
@@ -113,7 +116,7 @@ public class GameObjectMountVehicle : GameObjectMount {
     
     public void FindWeaponRotators() {        
         
-        Debug.Log("FindWeaponRotators:" + " gameObjectMountWeaponRotators:" + gameObjectMountWeaponRotators);
+        LogUtil.Log("FindWeaponRotators:" + " gameObjectMountWeaponRotators:" + gameObjectMountWeaponRotators);
         
         if(gameObjectMountWeaponRotators == null) {
             gameObjectMountWeaponRotators = new List<GameObjectMountWeaponRotator>();
@@ -121,12 +124,12 @@ public class GameObjectMountVehicle : GameObjectMount {
         
         if(gameObjectMountWeaponRotators.Count == 0) {
             
-            Debug.Log("FindWeaponRotators:" + " gameObjectMountWeaponRotators:" + gameObjectMountWeaponRotators);
+            LogUtil.Log("FindWeaponRotators:" + " gameObjectMountWeaponRotators:" + gameObjectMountWeaponRotators);
 
             foreach(GameObjectMountWeaponRotator item in 
                     driver.gameObject.GetComponentsInChildren<GameObjectMountWeaponRotator>(true)) {
                 
-                Debug.Log("FindWeaponRotators:" + " item:" + item.name);
+                LogUtil.Log("FindWeaponRotators:" + " item:" + item.name);
 
                 gameObjectMountWeaponRotators.Add(item);
             }
@@ -169,11 +172,11 @@ public class GameObjectMountVehicle : GameObjectMount {
     public void SetMountWeaponRotator(Quaternion qt) {
         GameObjectMountWeaponRotator rotator = GetWeaponRotator();
         
-        Debug.Log("SetMountWeaponRotator:" + " qt:" + qt);
-        Debug.Log("SetMountWeaponRotator:" + " rotator:" + rotator);
+        LogUtil.Log("SetMountWeaponRotator:" + " qt:" + qt);
+        LogUtil.Log("SetMountWeaponRotator:" + " rotator:" + rotator);
 
         if(rotator != null) {
-            Debug.Log("SetMountWeaponRotator:" + " rotatorSET:" + rotator);
+            LogUtil.Log("SetMountWeaponRotator:" + " rotatorSET:" + rotator);
 
             Vector3 rt = qt.eulerAngles;
             Vector3 to = rotator.transform.rotation.eulerAngles;
@@ -185,7 +188,7 @@ public class GameObjectMountVehicle : GameObjectMount {
     }
 
     public void SetMountWeaponRotator(Vector3 rt) {
-        Debug.Log("SetMountWeaponRotator:" + " rt:" + rt);
+        LogUtil.Log("SetMountWeaponRotator:" + " rt:" + rt);
         SetMountWeaponRotator(Quaternion.Euler(rt));
     }
 
@@ -193,11 +196,11 @@ public class GameObjectMountVehicle : GameObjectMount {
     public void SetMountWeaponRotatorLocal(Quaternion qt) {
         GameObjectMountWeaponRotator rotator = GetWeaponRotator();
         
-        Debug.Log("SetMountWeaponRotator:" + " qt:" + qt);
-        Debug.Log("SetMountWeaponRotator:" + " rotator:" + rotator);
+        LogUtil.Log("SetMountWeaponRotator:" + " qt:" + qt);
+        LogUtil.Log("SetMountWeaponRotator:" + " rotator:" + rotator);
         
         if(rotator != null) {
-            Debug.Log("SetMountWeaponRotator:" + " rotatorSET:" + rotator);
+            LogUtil.Log("SetMountWeaponRotator:" + " rotatorSET:" + rotator);
             
             Vector3 rt = qt.eulerAngles;
             Vector3 to = rotator.transform.localRotation.eulerAngles;
@@ -209,7 +212,7 @@ public class GameObjectMountVehicle : GameObjectMount {
     }
     
     public void SetMountWeaponRotatorLocal(Vector3 rt) {
-        Debug.Log("SetMountWeaponRotator:" + " rt:" + rt);
+        LogUtil.Log("SetMountWeaponRotator:" + " rt:" + rt);
         SetMountWeaponRotator(Quaternion.Euler(rt));
     }
 
