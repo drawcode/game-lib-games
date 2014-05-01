@@ -94,7 +94,7 @@ public class ProductPurchaseRecord : DataObjectItem {
     }
 }
 
-public class ProductPurchase : MonoBehaviour {
+public class ProductPurchase : GameObjectBehavior {
 
     public static string PRODUCT_GAME_PURCHASE = "all";
     public static string statusPurchaseSuccessful = "status_purchase_successful";

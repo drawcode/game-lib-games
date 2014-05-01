@@ -418,7 +418,7 @@ public enum GameRunningState {
     STOPPED
 }
 
-public class BaseGameController : MonoBehaviour {
+public class BaseGameController : GameObjectBehavior {
 
     public GamePlayerController currentGamePlayerController;
 

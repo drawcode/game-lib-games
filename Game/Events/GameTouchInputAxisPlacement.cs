@@ -9,7 +9,7 @@ using Engine.Events;
 using Engine.Utility;
 
 
-public class GameTouchInputAxisPlacement : MonoBehaviour {
+public class GameTouchInputAxisPlacement : GameObjectBehavior {
 
     public GameTouchInputAxis axisObject;
 

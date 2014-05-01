@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameObjectBouncy : MonoBehaviour {
+public class GameObjectBouncy : GameObjectBehavior {
 	
 	public Vector3 distance;
 		

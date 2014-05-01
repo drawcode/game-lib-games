@@ -7,7 +7,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class UICustomizeObject : MonoBehaviour {
+public class UICustomizeObject : GameObjectBehavior {
     
     public string currentCode = "default";
     public GameObject currentObject;

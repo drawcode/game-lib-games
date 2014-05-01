@@ -12,7 +12,7 @@ public class BaseGamePlayerThirdPersonControllerData {
     public bool removing = false;
 }
 
-public class BaseGamePlayerThirdPersonController : MonoBehaviour {
+public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
 
     public GamePlayerThirdPersonControllerData controllerData;
 

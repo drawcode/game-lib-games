@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameProjectile : MonoBehaviour {
+public class GameProjectile : GameObjectBehavior {
 
     public int allowedCollisions = 7;
     public int lifeSeconds = 10;

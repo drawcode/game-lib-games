@@ -7,7 +7,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class UIGameRPGObject : MonoBehaviour {
+public class UIGameRPGObject : GameObjectBehavior {
 
     public double profileValue = 0;
     public double lastValue = 0;

@@ -6,7 +6,7 @@ using System.IO;
  * [CH] Controls the display of the twitter button. The twitter button is enabled
  * if the user does not have twitter set up.
 **/
-public class TwitterButton : MonoBehaviour
+public class TwitterButton : GameObjectBehavior
 {
 
 	/**

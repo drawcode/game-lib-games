@@ -18,7 +18,7 @@ public class BaseGamePlayerObjectType {
     
 }
 
-public class BaseGamePlayerObjectItem : MonoBehaviour {
+public class BaseGamePlayerObjectItem : GameObjectBehavior {
     
     public string uuid = "";
     public string prefabName = "game-player-object-ball";

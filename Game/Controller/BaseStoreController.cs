@@ -106,7 +106,7 @@ public class GameStorePurchaseData {
 
 }
 
-public class BaseStoreController : MonoBehaviour {
+public class BaseStoreController : GameObjectBehavior {
 
     public Dictionary<string, GameStorePurchaseDataItem> itemsPurchasing = new Dictionary<string, GameStorePurchaseDataItem>();
 

@@ -24,7 +24,7 @@ public class BroadcastNetworksMessages {
     public static string broadcastRecordingPlayback = "broadcast-recording-playback";
 }
 
-public class BroadcastNetworks : MonoBehaviour {
+public class BroadcastNetworks : GameObjectBehavior {
     #if UNITY_EDITOR    
     #elif UNITY_STANDALONE_OSX
     #elif UNITY_STANDALONE_WIN

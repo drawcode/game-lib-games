@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FacebookButton : MonoBehaviour
+public class FacebookButton : GameObjectBehavior
 {
 
 	void OnClick ()

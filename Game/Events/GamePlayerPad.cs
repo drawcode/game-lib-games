@@ -9,7 +9,7 @@ using Engine.Events;
 using Engine.Utility;
 
 [ExecuteInEditMode]
-public class GamePlayerPad : MonoBehaviour {
+public class GamePlayerPad : GameObjectBehavior {
 
     public GameObject containerHighlighted;
 

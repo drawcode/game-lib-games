@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UICustomizeCharacterRPGItem : MonoBehaviour {
+public class UICustomizeCharacterRPGItem : GameObjectBehavior {
  
     public string rpgCode = "energy"; // attack, defense, energy, health, skill, power
     public string characterCode = "default";

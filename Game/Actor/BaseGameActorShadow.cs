@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class BaseGameActorShadow : MonoBehaviour {
+public class BaseGameActorShadow : GameObjectBehavior {
 	
 	public GameObject objectShadow;
 	public GameObject objectParent;

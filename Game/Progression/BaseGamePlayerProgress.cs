@@ -1944,7 +1944,7 @@ public class BaseGamePlayerProgress
     
     public IEnumerator ReportAchievementCo(string key, bool completed) {
         yield return null;
-        GameNetworks.ReportAchievement(key, true);
+        GameNetworks.SendAchievement(key, true);
         yield return null;
     }
     
@@ -1966,50 +1966,41 @@ public class BaseGamePlayerProgress
             GameProfileStatistics.Current.SetStatisticValue(key, keyValue);
             
             //LogUtil.Log("SetStatisticValue gameCenterEnabled:" + GameNetworks.gameCenterEnabled);
+
+            bool sendScore = false;
+            GameLeaderboard board = GameLeaderboards.Instance.GetByCode(key);
             
-            #if UNITY_IPHONE            
-            if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
-                long keyValueLong = 0;
-                
-                double keyValueDouble = Convert.ToDouble(keyValue);
-                
-                //LogUtil.Log("GameCenter key before:" + key);
-                key = key.Replace("-","_");
-                //LogUtil.Log("GameCenter key filtere:" + key);
-                
-                try {
-                    if(key.IndexOf("time_played") > -1
-                       || key.IndexOf("fastest_") > -1) {
-                        keyValueLong = Convert.ToInt64(keyValueDouble * 100);
-                    }
-                    else {
-                        keyValueLong = Convert.ToInt64(keyValueDouble);
-                    }
-                }
-                catch {
-                    //LogUtil.Log("SetStatisticValue Error converting:" + keyValue);
-                }
-                
-                //LogUtil.Log("SetStatisticValue keyValueLong:" + keyValueLong);
-                
-                if(keyValueLong > 0) {
-                    
-                    //LogUtil.Log("GameCenter key after filter:" + key);
-                    key = FilterThirdpartyNetworkLeaderboard(key);
-                    
-                    //LogUtil.Log("GameCenter key after filter gc:" + key);
-                    
-                    bool isGCStat = false;
-                    //isGCStat = IsGameCenterLeaderboard(key);    
-                    
-                    //LogUtil.Log("GameCenter key isGCStat:" + isGCStat);
-                    if(isGCStat) {              
-                        //LogUtil.Log("GameCenter reportScore:" + key + " :" + keyValueLong);
-                        GameNetworks.ReportScore(key, keyValueLong);
-                    }
-                }
+            if(board == null) {
+                return;
             }
-            #endif
+
+            foreach(GameNetworkData networkData in board.data.networks) {
+
+                string networkType = GameNetworkType.gameNetworkAppleGameCenter;
+
+                if(networkData.type == GameNetworkType.gameNetworkAppleGameCenter) {
+                    sendScore = true;
+                }
+                else if(networkData.type == GameNetworkType.gameNetworkGooglePlayServices) {
+                    sendScore = true;
+                    if(Context.Current.isMobileiOS) {
+                        networkType = GameNetworkType.gameNetworkAppleGameCenter;
+                    }
+                    else if(Context.Current.isMobileAndroid) {
+                        networkType = GameNetworkType.gameNetworkGooglePlayServices;
+                    }
+                }
+
+                if(sendScore) {
+                    
+                    long keyValueLong = 0;                
+                    double keyValueDouble = Convert.ToDouble(keyValue);
+                    
+                    if(keyValueLong > 0) {
+                        GameNetworks.SendScore(networkType, networkData.code, keyValueLong);
+                    }
+                }            
+            }
         }
     }
     

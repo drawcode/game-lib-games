@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Engine.Events;
 
-public class ButtonEvents : MonoBehaviour {
+public class ButtonEvents : GameObjectBehavior {
 	
 	public static string EVENT_BUTTON_CLICK = "event-button-click";
 	public static string EVENT_BUTTON_CLICK_OBJECT = "event-button-click-object";

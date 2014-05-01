@@ -8,7 +8,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class GameObjectChoiceAsset : MonoBehaviour {
+public class GameObjectChoiceAsset : GameObjectBehavior {
 
     GameObjectChoice gameObjectChoice;
     GameObject gameObjectChoiceObject;

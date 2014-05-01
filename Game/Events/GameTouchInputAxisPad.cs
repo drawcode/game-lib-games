@@ -8,7 +8,7 @@ using Engine;
 using Engine.Events;
 using Engine.Utility;
 
-public class GameTouchInputAxisPad : MonoBehaviour {
+public class GameTouchInputAxisPad : GameObjectBehavior {
 
     public GameTouchInputAxis gameTouchInputAxis;
 

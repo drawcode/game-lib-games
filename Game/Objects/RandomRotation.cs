@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RandomRotation : MonoBehaviour {
+public class RandomRotation : GameObjectBehavior {
     
     public float rotationMaxX = 0f;
     public float rotationMaxY = 360f;

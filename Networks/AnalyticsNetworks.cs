@@ -32,7 +32,7 @@ public class AnalyticsNetworksMessages {
     public static string analyticsTrackScene = "analytics-track-scene";
 }
 
-public class AnalyticsNetworks : MonoBehaviour {
+public class AnalyticsNetworks : GameObjectBehavior {
     #if UNITY_EDITOR    
     #elif UNITY_STANDALONE_OSX
     #elif UNITY_STANDALONE_WIN

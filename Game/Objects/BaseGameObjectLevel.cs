@@ -8,7 +8,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class BaseGameObjectLevel : MonoBehaviour {
+public class BaseGameObjectLevel : GameObjectBehavior {
 
     public string code = "question-1";
 

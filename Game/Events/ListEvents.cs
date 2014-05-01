@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Engine.Events;
 
-public class ListEvents : MonoBehaviour {
+public class ListEvents : GameObjectBehavior {
 	
 	public static string EVENT_ITEM_CLICK = "event-list-item-click";
 	public static string EVENT_ITEM_SELECT = "event-list-item-select";

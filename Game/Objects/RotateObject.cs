@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class RotateObject : MonoBehaviour {
+public class RotateObject : GameObjectBehavior {
 	
 	public float RotateSpeedAlongX = 0.0f;
 	public float RotateSpeedAlongY = 0.0f;

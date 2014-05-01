@@ -4,7 +4,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class GameUISceneRoot : MonoBehaviour {
+public class GameUISceneRoot : GameObjectBehavior {
 	
 	public LoadSceneAsync loadAsync;
 	

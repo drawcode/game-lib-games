@@ -25,7 +25,7 @@ public class AlertDialogResultMessages {
 	public static string DIALOG_RESULT_NO = "dg-result-no";
 }
 
-public class AlertDialog : MonoBehaviour
+public class AlertDialog : GameObjectBehavior
 {	
 	public static AlertDialog Instance;
 	

@@ -15,7 +15,7 @@ public class UIAppPanelMessages {
 	public static string panelHide = "ui-app-panel-hide";
 }
 
-public class UIAppPanel : MonoBehaviour {
+public class UIAppPanel : GameObjectBehavior {
 	
 	public UIAppPanelMode panelMode = UIAppPanelMode.ModeMain;
 	

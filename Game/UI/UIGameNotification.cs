@@ -38,7 +38,7 @@ public class GameNotificationItem {
 }
 
 public class UIGameNotification
-	: MonoBehaviour
+	: GameObjectBehavior
 {
 	public GameObject notificationPanel;
 	

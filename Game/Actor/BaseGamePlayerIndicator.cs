@@ -25,7 +25,7 @@ public class GamePlayerIndicatorType {
     public static string bot2 = "bot2";
 }
 
-public class BaseGamePlayerIndicator : MonoBehaviour {
+public class BaseGamePlayerIndicator : GameObjectBehavior {
  
     public Transform target;  // Object that this label should follow    
     public Vector3 offset = Vector3.up;    // Units in world space to offset; 1 unit above object by default 

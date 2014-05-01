@@ -39,7 +39,7 @@ public static class SocialNetworksFacebookPermissions {
 
 }
 
-public class SocialNetworks : MonoBehaviour {
+public class SocialNetworks : GameObjectBehavior {
 	public GameObject socialNetworkFacebookAndroid;
 	public GameObject socialNetworkTwitterAndroid;
 	public GameObject socialNetworkiOS;

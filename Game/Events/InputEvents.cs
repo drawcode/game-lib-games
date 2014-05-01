@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Engine.Events;
 
-public class InputEvents : MonoBehaviour {
+public class InputEvents : GameObjectBehavior {
         
         UIInput currentObj;
         

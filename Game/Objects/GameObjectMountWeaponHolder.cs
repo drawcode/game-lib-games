@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class GameObjectMountWeaponHolder : MonoBehaviour {
+public class GameObjectMountWeaponHolder : GameObjectBehavior {
 
     void Start() {
         

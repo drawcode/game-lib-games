@@ -11,7 +11,7 @@ using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
 
-public class BaseGameGlobal : MonoBehaviour {    
+public class BaseGameGlobal : GameObjectBehavior {    
     public GameNetworks gameNetworks;
     public GameState state;
     public Contents contents;
@@ -214,11 +214,12 @@ public class BaseGameGlobal : MonoBehaviour {
     }
     
     public virtual void InitPlayerProgress() {
-        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
-            #if UNITY_IPHONE            
-            gameNetworks = gameObject.AddComponent<GameNetworks>();         
-            gameNetworks.loadNetwork(GameNetworkType.IOS_GAME_CENTER);
-            #endif
+        gameNetworks = gameObject.AddComponent<GameNetworks>();  
+        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
+            gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
+        }
+        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {       
+            gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
         }
     }
     

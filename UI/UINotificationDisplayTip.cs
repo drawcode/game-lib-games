@@ -33,7 +33,7 @@ public class UINotificationTipItem {
 }
 
 public class UINotificationDisplayTip
-    : MonoBehaviour {
+    : GameObjectBehavior {
     
     public static UINotificationDisplayTip Instance;
 

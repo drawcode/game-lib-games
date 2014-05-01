@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseGamePlayerIndicatorItem : MonoBehaviour {
+public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
 
 	public string gameIndicatorTypeCode = "color";
 

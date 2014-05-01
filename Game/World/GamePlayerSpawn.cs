@@ -15,7 +15,7 @@ public class GamePlayerSpawnArea {
     public static string middleLower = "middle-lower";
 }
 
-public class GamePlayerSpawn : MonoBehaviour {
+public class GamePlayerSpawn : GameObjectBehavior {
 	
 	public Vector3 distance;
 	public GameObject spawnBouncyBaseObject;

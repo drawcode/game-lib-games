@@ -10,7 +10,7 @@ using Engine.Game.Actor;
 using Engine.Game.Controllers;
 using Engine.Utility;
 
-public class BaseGamePlayerContainer : MonoBehaviour {
+public class BaseGamePlayerContainer : GameObjectBehavior {
 
 	//public GamePlayerController gamePlayerController;
 	

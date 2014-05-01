@@ -5,7 +5,7 @@ using System.Collections;
 // just with refraction stuff removed.
 
 [ExecuteInEditMode] // Make mirror live-update even when not in play mode
-public class MirrorReflection : MonoBehaviour
+public class MirrorReflection : GameObjectBehavior
 {
     public bool m_DisablePixelLights = true;
     public int m_TextureSize = 256;

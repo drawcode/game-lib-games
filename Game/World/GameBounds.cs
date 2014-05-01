@@ -9,7 +9,7 @@ using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
 
-public class GameBounds : MonoBehaviour {
+public class GameBounds : GameObjectBehavior {
 	
 	public GameObject boundaryTopLeft;
 	public GameObject boundaryTopRight;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class GameObjectMountWeaponRotator : MonoBehaviour {
+public class GameObjectMountWeaponRotator : GameObjectBehavior {
     
     void Start() {
         

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
  
 [RequireComponent(typeof(Rigidbody))]
-public class DragObject : MonoBehaviour
+public class DragObject : GameObjectBehavior
 {
  
 	public int normalCollisionCount = 1;

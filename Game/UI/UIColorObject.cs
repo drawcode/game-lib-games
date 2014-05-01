@@ -7,7 +7,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIColorObject : MonoBehaviour  {
+public class UIColorObject : GameObjectBehavior  {
 
     public virtual void Awake() {
     

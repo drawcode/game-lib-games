@@ -12,7 +12,7 @@ public class GameTouchInputTexturedMessages {
     public static string inputAxis = "input-axis";
 }
 
-public class GameTouchInputAxisTextured : MonoBehaviour {
+public class GameTouchInputAxisTextured : GameObjectBehavior {
     
     public static string inputAxisMove = "input-axis-move";
     public static string inputAxisAttack = "input-axis-attack";

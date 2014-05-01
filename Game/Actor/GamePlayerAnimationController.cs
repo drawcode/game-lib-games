@@ -15,7 +15,7 @@ public enum GamePlayerAnimationControllerType  {
 	legacy
 }
 
-public class BaseGamePlayerAnimationController : MonoBehaviour {
+public class BaseGamePlayerAnimationController : GameObjectBehavior {
 
 	public float runSpeedScale = 1.2f;
 	public float walkSpeedScale = 1.0f;

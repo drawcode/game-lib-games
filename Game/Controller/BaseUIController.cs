@@ -32,21 +32,40 @@ public class UIControllerAnimateTypes {
 }
  
 public class BaseUIButtonNames { 
+
     public static string buttonBack = "ButtonBack";
+
     public static string buttonBlank = "ButtonBlank";
+
     public static string buttonMenu = "ButtonMenu";
+
     public static string buttonInGame = "ButtonInGame";
+
     public static string buttonMain = "ButtonMain";
     public static string buttonPlayGame = "ButtonPlayGame";
     public static string buttonPlayWorld = "ButtonPlayWorld";
     public static string buttonPlayLevel = "ButtonPlayLevel";
     public static string buttonPlayLevels = "ButtonPlayLevels";
     public static string buttonSettings = "ButtonSettings";
+    
+    public static string buttonGameSettings = "ButtonGameSettings";
+    public static string buttonGameEquipment = "ButtonGameEquipment";
+    public static string buttonAppRate = "ButtonAppRate";
+
     public static string buttonTrophy = "ButtonTrophy";
     public static string buttonTrophyStatistics = "ButtonTrophyStatistics";
     public static string buttonTrophyAchievements = "ButtonTrophyAchievements";
+
+    public static string buttonGameStatistics = "ButtonGameStatistics";
+    public static string buttonGameAchievements = "ButtonGameAchievements";
+    public static string buttonGameLeaderboards = "ButtonGameLeaderboards";
+
     public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     public static string buttonGameCenterAchievements = "ButtonGameCenterAchievements";
+
+    public static string buttonGamePlayServicesLeaderboards = "ButtonGamePlayServicesLeaderboards";
+    public static string buttonGamePlayServicesAchievements = "ButtonGamePlayServicesAchievements";
+
     public static string buttonSocial = "ButtonSocial";
     public static string buttonCredits = "ButtonCredits";
     public static string buttonWorlds = "ButtonWorlds";
@@ -165,7 +184,7 @@ public class BaseUIPanel {
     public static string panelCustomSmarts = "panelCustomSmarts";
 }
 
-public class BaseUIController : MonoBehaviour { 
+public class BaseUIController : GameObjectBehavior { 
  
     public static BaseUIController BaseInstance;
     public bool uiVisible = true;
@@ -1828,12 +1847,12 @@ public class BaseUIController : MonoBehaviour {
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
 
-        GameUIPanelBackgrounds.Instance.AnimateInScary();
-     
+        GameUIPanelBackgrounds.Instance.AnimateInScary();        
+        
         GameUIPanelHeader.Instance.AnimateInMain();
-     
+        
         GameUIPanelFooter.Instance.AnimateInMain();
-     
+          
         GameUIPanelMain.Instance.AnimateIn();
 
     }
@@ -2522,7 +2541,7 @@ public class BaseUIController : MonoBehaviour {
             GameUIPanel.panelResults,
             "RESULTS");
 
-        GameUIPanelFooter.Instance.ShowStoreButtonObject();
+        GameUIPanelFooter.ShowButtonCustomize();
      
         StartCoroutine(HideOverlay());
     }
@@ -3060,16 +3079,59 @@ public class BaseUIController : MonoBehaviour {
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipmentRoom, buttonName)) {
             GameUIController.ShowEquipment();
+        }        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipment, buttonName)) {
+            GameUIController.ShowEquipment();
         }
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettingsAudio, buttonName)) {
             GameUIController.ShowSettingsAudio();
         }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettings, buttonName)) {
+            GameUIController.ShowSettings();
+        }
+
+        //
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAppRate, buttonName)) {
+            //GameUIController.ShowSettings();
+            //Platforms.AskForReview("","",0, "", "", "");
+        }
+
+        // Game networks
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterAchievements, buttonName)) {
             GameNetworks.ShowAchievementsOrLogin();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterLeaderboards, buttonName)) {
             GameNetworks.ShowLeaderboardsOrLogin();
         }
+
+        /*
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.button) {
+            GameUIController.ShowEquipment();
+        }
+        else if(buttonName == buttonOptions.name) {
+            
+            GameUIController.ShowSettings();
+        }
+        else if(buttonName == buttonOptionsAudio.name) {
+            GameUIController.ShowSettings();
+        }   
+        else if(buttonName == buttonOptionsCredits.name) {
+            GameUIController.ShowSettings();
+        }   
+        else if(buttonName == buttonOptionsRate.name) {
+            GameUIController.ShowSettings();
+        }   
+        else if(buttonName == buttonOptionsSocial.name) {
+            GameUIController.ShowSettings();
+        }   
+        */
+
+
+        // Game Modes
+
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             GameUIController.ShowGameModeArcade();

@@ -4,7 +4,7 @@ using System.Collections;
 
 using Engine.Events;
 
-public class Draggable : MonoBehaviour {
+public class Draggable : GameObjectBehavior {
 	
 	public static Draggable Instance;
 	

@@ -45,7 +45,7 @@ public class GameAIDirectorData {
     }
 }
 
-public class BaseAIController : MonoBehaviour {
+public class BaseAIController : GameObjectBehavior {
 
     public static BaseAIController BaseInstance;
 

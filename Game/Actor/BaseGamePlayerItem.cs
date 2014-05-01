@@ -6,7 +6,7 @@ using UnityEngine;
 using Engine.Events;
 
 
-public class BaseGamePlayerItem : MonoBehaviour, IGamePlayerItem {
+public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 3.0f;

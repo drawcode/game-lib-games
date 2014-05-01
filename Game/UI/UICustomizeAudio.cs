@@ -13,7 +13,7 @@ public enum UICustomAudioState {
 	RECORDING
 }
 
-public class UICustomizeAudio : MonoBehaviour {
+public class UICustomizeAudio : GameObjectBehavior {
 	/*
 	public string playerName = "default";
 	

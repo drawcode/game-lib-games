@@ -17,7 +17,7 @@ public enum LoadSceneState {
     LevelLoadStarted
 }
 
-public class LoadSceneAsync : MonoBehaviour {
+public class LoadSceneAsync : GameObjectBehavior {
         
     public AsyncOperation asyncLevelLoad;
     public LoadSceneState levelLoadState = LoadSceneState.LevelNotStarted;

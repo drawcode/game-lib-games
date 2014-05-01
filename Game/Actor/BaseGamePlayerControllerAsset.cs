@@ -10,7 +10,7 @@ using Engine.UI;
 using Engine.Utility;
 
 
-public class BaseGamePlayerControllerAsset : MonoBehaviour {
+public class BaseGamePlayerControllerAsset : GameObjectBehavior {
 
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 5.0f;

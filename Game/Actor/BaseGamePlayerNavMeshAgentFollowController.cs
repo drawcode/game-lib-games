@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class BaseGamePlayerNavMeshAgentFollowController : MonoBehaviour {
+public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
 	
 	public NavMeshAgent agent;
 	public Transform targetFollow;

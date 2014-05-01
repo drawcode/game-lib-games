@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GamePlayerObstacle : MonoBehaviour {
+public class GamePlayerObstacle : GameObjectBehavior {
 	
 	public Vector3 distance;
 	public GameObject obstacleBouncyBaseObject;

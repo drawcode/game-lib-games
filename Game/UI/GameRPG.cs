@@ -420,7 +420,7 @@ public class GameRPGMonitor {
 
 }
 
-public class GameRPG : MonoBehaviour {
+public class GameRPG : GameObjectBehavior {
 	
 	public static GameRPG Instance;
 	

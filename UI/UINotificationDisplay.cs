@@ -33,7 +33,7 @@ public class UINotificationItem {
 }
 
 public class UINotificationDisplay
-	: MonoBehaviour
+	: GameObjectBehavior
 {
 	public GameObject notificationPanel;
 	

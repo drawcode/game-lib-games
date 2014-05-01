@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BaseGamePlayerCollision : MonoBehaviour {
+public class BaseGamePlayerCollision : GameObjectBehavior {
     
     public GamePlayerController gamePlayerController;
     private GameObject gamePlayerControllerObject;

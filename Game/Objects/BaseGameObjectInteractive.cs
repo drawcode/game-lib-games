@@ -15,7 +15,7 @@ public class GameObjectInteractiveMessages {
     public static string attractForceTrigger = "attract-force-trigger";
 }
 
-public class BaseGameObjectInteractive : MonoBehaviour {
+public class BaseGameObjectInteractive : GameObjectBehavior {
     
     public string uuid = UniqueUtil.Instance.CreateUUID4();
     public string code = "default";

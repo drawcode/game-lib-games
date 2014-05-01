@@ -87,7 +87,7 @@ public class AdNetworksMessages {
     public static string facebookLike = "ad-networks-facebook-like";
 }
 
-public class AdNetworks : MonoBehaviour {
+public class AdNetworks : GameObjectBehavior {
 #if UNITY_EDITOR    
 #elif UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN

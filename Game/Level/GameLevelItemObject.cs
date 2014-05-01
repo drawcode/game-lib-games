@@ -8,7 +8,7 @@ using Engine.Utility;
 
 using Engine.Game.Actor;
 
-public class GameLevelItemObject : MonoBehaviour {  
+public class GameLevelItemObject : GameObjectBehavior {  
 	
 	public Vector3 latestPosition;
 	

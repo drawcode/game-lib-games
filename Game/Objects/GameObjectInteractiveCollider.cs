@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectInteractiveCollider : MonoBehaviour {
+public class GameObjectInteractiveCollider : GameObjectBehavior {
 
     public BaseGameObjectInteractive obj;
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameObjectInactive : MonoBehaviour {
+public class GameObjectInactive : GameObjectBehavior {
 	
 	// Apply this class to objects needed to be hidden but later found
 	// by using GetComponentsInChildren with the inactive flag set without

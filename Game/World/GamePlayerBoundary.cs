@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GamePlayerBoundary : MonoBehaviour {
+public class GamePlayerBoundary : GameObjectBehavior {
 	
 	public Vector3 distance;
 	public GameObject boundaryBouncyBaseObject;

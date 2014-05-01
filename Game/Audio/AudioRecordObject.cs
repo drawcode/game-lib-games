@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Utility;
 
-public class AudioRecordObject : MonoBehaviour
+public class AudioRecordObject : GameObjectBehavior
 {	
 	public static AudioRecordObject Instance;
 	

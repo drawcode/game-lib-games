@@ -34,7 +34,7 @@ public class GameItemDirectorData {
     }
 }
 
-public class BaseItemController : MonoBehaviour {
+public class BaseItemController : GameObjectBehavior {
  
     public static BaseItemController BaseInstance;
     public bool runDirector = false;

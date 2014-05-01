@@ -58,7 +58,7 @@ public class GameCustomInfo {
     }
 }
 
-public class BaseGameCustom : MonoBehaviour {
+public class BaseGameCustom : GameObjectBehavior {
     
     public string teamCode = "default";
 

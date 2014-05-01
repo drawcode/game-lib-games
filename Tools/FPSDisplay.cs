@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FPSDisplay: MonoBehaviour {
+public class FPSDisplay: GameObjectBehavior {
 	
 	public  float updateInterval = 0.5F;
 	 

@@ -232,7 +232,7 @@ public class BaseGamePlayerControllerAnimationData {
     public GameObject actor;
 }
 
-public class BaseGamePlayerControllerAnimation : MonoBehaviour {
+public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
 
     public GamePlayerControllerAnimationType animationType = GamePlayerControllerAnimationType.legacy;

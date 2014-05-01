@@ -5,7 +5,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class SliderEvents : MonoBehaviour {
+public class SliderEvents : GameObjectBehavior {
 	
 	UISlider currentObj;
 	

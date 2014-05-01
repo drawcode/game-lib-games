@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LibraryButton : MonoBehaviour
+public class LibraryButton : GameObjectBehavior
 {
 
 	void OnClick ()

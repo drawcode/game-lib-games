@@ -3,7 +3,7 @@ using System.Collections;
 
 using Engine.Events;
 
-public class BaseGameCameraSmoothFollow : MonoBehaviour {
+public class BaseGameCameraSmoothFollow : GameObjectBehavior {
 	
 	public Transform target;
 	public float smoothTime= 0.3f;

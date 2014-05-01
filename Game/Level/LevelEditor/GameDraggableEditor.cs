@@ -68,7 +68,7 @@ public class GameDraggableEditorButtons {
 	public static string inputSpriteEffect = "InputSpriteEffect";
 }
 
-public class GameDraggableEditor : MonoBehaviour {
+public class GameDraggableEditor : GameObjectBehavior {
 	
 	public static GameDraggableEditor Instance;
 	

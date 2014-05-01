@@ -9,7 +9,7 @@ public enum GamePlayerNavMeshAgentState {
 	STOP
 }
 
-public class BaseGamePlayerNavMeshAgentController : MonoBehaviour {
+public class BaseGamePlayerNavMeshAgentController : GameObjectBehavior {
 	
 	public NavMeshAgent agent;
 	public Vector3 nextDestination = Vector3.one;	

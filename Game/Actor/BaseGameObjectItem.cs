@@ -4,7 +4,7 @@ using Engine.Animation;
 using Engine.Events;
 using Engine.Utility;
 
-public class BaseGameObjectItem : MonoBehaviour {
+public class BaseGameObjectItem : GameObjectBehavior {
 	
 	public string uniqueId;	
 	

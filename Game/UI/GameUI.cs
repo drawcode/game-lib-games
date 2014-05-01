@@ -8,7 +8,7 @@ using Engine.Events;
 using Engine.UI;
 using Engine.Utility;
 
-public class GameUI : MonoBehaviour {
+public class GameUI : GameObjectBehavior {
 	
 	public static GameUI Instance;
 	

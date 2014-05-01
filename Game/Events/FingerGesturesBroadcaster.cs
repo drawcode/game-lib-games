@@ -17,7 +17,7 @@ public class FingerGesturesMessages {
 }
 
 
-public class FingerGesturesBroadcaster : MonoBehaviour {
+public class FingerGesturesBroadcaster : GameObjectBehavior {
 	
 	void Start() {
 	

@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Engine.Events;
 
-public class CheckboxEvents : MonoBehaviour {
+public class CheckboxEvents : GameObjectBehavior {
 	
 	UICheckbox currentObj;
 	

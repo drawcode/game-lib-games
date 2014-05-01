@@ -8,7 +8,7 @@ using Engine.UI;
 using Engine.Utility;
 
 
-public class GameUIScene : MonoBehaviour {
+public class GameUIScene : GameObjectBehavior {
 	
 	public UIButtonMeta buttonMeta = new UIButtonMeta();
 	
