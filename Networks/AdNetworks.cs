@@ -418,7 +418,7 @@ public class AdNetworks : GameObjectBehavior {
     
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
-    
+    #if PROMO_USE_VUNGLE   
     public void vungleInit() {
         Debug.Log("vungleInit");
 
@@ -470,6 +470,7 @@ public class AdNetworks : GameObjectBehavior {
 
         Messenger<double>.Broadcast(AdNetworksMessages.videoAd, timeWatched / totalDuration);
     }
+#endif
 #endif
 
 #if PROMO_USE_CHARTBOOST
