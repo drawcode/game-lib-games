@@ -612,7 +612,8 @@ public class AdNetworks : GameObjectBehavior {
             AppConfigs.publisherIdAdmobiOS);
         LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobAndroid..." + 
             AppConfigs.publisherIdAdmobAndroid);
-        
+
+
         // Enable networks
 
         // Social Network Prime31
@@ -626,6 +627,9 @@ public class AdNetworks : GameObjectBehavior {
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer) {
 #if UNITY_IPHONE
+            
+            AdMob.setTestDevices(AppConfigs.adTestDeviceIdsiOS);
+
             AdMobBinding.init(
                 AppConfigs.publisherIdAdmobiOS, adNetworkTestingEnabled);
             LogUtil.Log("InitAdmob RuntimePlatform.IPhonePlayer..." + 

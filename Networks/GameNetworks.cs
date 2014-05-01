@@ -197,9 +197,9 @@ public class GameNetworks : GameObjectBehavior {
 #endif
         
     #if GAMENETWORK_IOS_APPLE_GAMECENTER
-    if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
-        InitNetwork();
-    }
+        if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
+            InitNetwork();
+        }
     #endif
 	}
 	
@@ -245,6 +245,8 @@ public class GameNetworks : GameObjectBehavior {
 	// NETWORK AVAILABILITY		
 	
     public static bool IsThirdPartyNetworkAvailable(string networkTypeTo) {
+
+        //Debug.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
 		
 		bool isAvailable = false;
 		
@@ -252,9 +254,11 @@ public class GameNetworks : GameObjectBehavior {
 			isAvailable = isAvailableiOSAppleGameCenter;
 		}
 		
-        if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
 			isAvailable = isAvailableAndroidGooglePlay;
 		}
+                
+        //Debug.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
 	
 		return isAvailable;
 	}
@@ -272,7 +276,7 @@ public class GameNetworks : GameObjectBehavior {
 	public static bool isAvailableAndroidGooglePlay {
 		get {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER	
-			return GameCenterBinding.isGameCenterAvailable();
+            return false;//GameCenterBinding.isGameCenterAvailable();
 #else
 			return false;
 #endif	
@@ -284,14 +288,19 @@ public class GameNetworks : GameObjectBehavior {
 	
     public static bool IsThirdPartyNetworkUserAuthenticated(string networkType) {
 		bool isAuthenticated = false;
+        
+        //Debug.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
 		
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
 			isAuthenticated = isAuthenticatediOSAppleGameCenter;
 		}
 		
-        if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
+        else if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
 			isAuthenticated = isAuthenticatedAndroidGooglePlay;
 		}
+                
+        //Debug.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
+
 		return isAuthenticated;
 	}
 	
@@ -328,25 +337,34 @@ public class GameNetworks : GameObjectBehavior {
 	// ACHIEVEMENTS UI		
 	
 	public static void ShowAchievementsOrLogin() {	
+        
+        Debug.Log("ShowAchievementsOrLogin");
+
 		if(Instance != null) {
 			Instance.showAchievementsOrLogin(currentNetwork);
 		}
 	}	
 
     public static void ShowAchievementsOrLogin(string networkTypeTo) {  
+        
+        Debug.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+
         if(Instance != null) {
             Instance.showAchievementsOrLogin(networkTypeTo);
         }
     }   
 	
     public void showAchievementsOrLogin(string networkTypeTo) {
+        
+        Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 				showAchievementsOrLoginiOSAppleGameCenter();
 			}
 			
-            if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
 				showAchievementsOrLoginAndroidGooglePlay();
 			}
 		}	
@@ -354,15 +372,24 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static void showAchievementsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
+        
+        Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+                  GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
 			
-			if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
-				if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter)) {
-					GameCenterBinding.showAchievements();
-				}
-				else {
-					GameCenterBinding.authenticateLocalPlayer();
-				}
+		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+
+            bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
+                               
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+                  authenticated);
+
+            if(authenticated) {
+				GameCenterBinding.showAchievements();
 			}
+			else {
+				GameCenterBinding.authenticateLocalPlayer();
+			}
+		}
 #endif		
 	}
 	
@@ -384,6 +411,9 @@ public class GameNetworks : GameObjectBehavior {
 	// LEADERBOARDS UI
 		
 	public static void ShowLeaderboardsOrLogin() {	
+        
+        Debug.Log("ShowLeaderboardsOrLogin");
+
 		if(Instance != null) {
 			Instance.showLeaderboardsOrLogin(currentNetwork);
 		}
@@ -396,13 +426,15 @@ public class GameNetworks : GameObjectBehavior {
     }
 	
     public void showLeaderboardsOrLogin(string networkTypeTo) {
+        
+        Debug.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
+
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 				showLeaderboardsOrLoginiOSAppleGameCenter();
-			}
-			
-            if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+			}			
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
 				showLeaderboardsOrLoginAndroidGooglePlay();
 			}
 		}	
@@ -410,9 +442,18 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static void showLeaderboardsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
-		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+        
+        Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
+        
+        Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+                  GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
+                
+        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
                 if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter)) {
+                    
+                    Debug.Log("showLeaderboardWithTimeScope::");
+
 					GameCenterBinding.showLeaderboardWithTimeScope(GameCenterLeaderboardTimeScope.AllTime);
 				}
 				else {
