@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
+using Engine;
+using Engine.Data;
 using Engine.Events;
 using Engine.Utility;   
 
@@ -1944,7 +1946,22 @@ public class BaseGamePlayerProgress
     
     public IEnumerator ReportAchievementCo(string key, bool completed) {
         yield return null;
-        GameNetworks.SendAchievement(key, true);
+
+        GameAchievement achievement = GameAchievements.Instance.GetById(key);
+
+        if(achievement == null) {
+            yield return null;
+        }
+        
+        if(achievement.data == null) {
+            yield return null;
+        }
+        
+        foreach(GameNetworkData networkData in achievement.data.networks) {
+            
+            GameNetworks.SendAchievement(networkData.code, true);
+        }
+
         yield return null;
     }
     
@@ -1983,12 +2000,6 @@ public class BaseGamePlayerProgress
                 }
                 else if(networkData.type == GameNetworkType.gameNetworkGooglePlayServices) {
                     sendScore = true;
-                    if(Context.Current.isMobileiOS) {
-                        networkType = GameNetworkType.gameNetworkAppleGameCenter;
-                    }
-                    else if(Context.Current.isMobileAndroid) {
-                        networkType = GameNetworkType.gameNetworkGooglePlayServices;
-                    }
                 }
 
                 if(sendScore) {
@@ -1997,7 +2008,7 @@ public class BaseGamePlayerProgress
                     double keyValueDouble = Convert.ToDouble(keyValue);
                     
                     if(keyValueLong > 0) {
-                        GameNetworks.SendScore(networkType, networkData.code, keyValueLong);
+                        GameNetworks.SendScore(networkData.type, networkData.code, keyValueLong);
                     }
                 }            
             }
