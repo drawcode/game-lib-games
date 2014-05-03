@@ -106,7 +106,7 @@ public class UIGameNotification
 			GameNotificationItem item = new GameNotificationItem();
 			item.title = achievementMeta.display_name;
 			item.description = FormatUtil.GetStringTrimmedWithBreaks(achievementMeta.description, 40);
-			item.score = "+" + achievementMeta.points.ToString();
+			item.score = "+" + achievementMeta.data.points.ToString();
 			item.notificationType = GameNotificationType.Achievement;
 			QueueNotification(item);
 			

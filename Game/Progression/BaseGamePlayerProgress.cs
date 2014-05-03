@@ -1419,11 +1419,11 @@ public class BaseGamePlayerProgress
         Debug.Log("ProcessPackRuntimeAchievements:" + packCode);
         
         foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
-            if(achievement.filters != null) {
-                foreach(GameAchievementFilter filterItem in achievement.filters) {
-                    if(filterItem.type == GameAchievementFilterType.statisticSingle) {
-                        List<GameAchievementFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameAchievementFilterStatisticSingle filter in filterTypeItems) {
+            if(achievement.data.filters != null) {
+                foreach(GameFilter filterItem in achievement.data.filters) {
+                    if(filterItem.type == GameFilterType.statisticSingle) {
+                        List<GameFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
+                        foreach(GameFilterStatisticSingle filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-single                                                     
@@ -1434,12 +1434,12 @@ public class BaseGamePlayerProgress
                                 
                                 List<string> codes = new List<string>();
                                 
-                                if(filter.includeKeys.defaultKey != GameAchievementFilterIncludeType.none) {
+                                if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                     // add explicit code
                                     codes.Add(filterCode);
                                 }
                                 
-                                if(filter.includeKeys.appContentState != GameAchievementFilterIncludeType.none) {
+                                if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
@@ -1460,9 +1460,9 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.statisticSet) {
-                        List<GameAchievementFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameAchievementFilterStatisticSet filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticSet) {
+                        List<GameFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
+                        foreach(GameFilterStatisticSet filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-set
@@ -1477,12 +1477,12 @@ public class BaseGamePlayerProgress
                                 foreach(string filterCode in filter.codes) {
                                     
                                     
-                                    if(filter.includeKeys.defaultKey != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                         // add explicit code
                                         codes.Add(filterCode);
                                     }
                                     
-                                    if(filter.includeKeys.appContentState != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                         string key = GameStatisticCodes.genericCodeContentState(
                                             filterCode, 
                                             AppContentStates.Current.code);
@@ -1511,9 +1511,9 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.statisticAll) {
-                        List<GameAchievementFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameAchievementFilterStatisticAll filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticAll) {
+                        List<GameFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
+                        foreach(GameFilterStatisticAll filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-all
@@ -1526,14 +1526,14 @@ public class BaseGamePlayerProgress
                                 
                                 foreach(string filterCode in filter.codes) {                                
                                     
-                                    if(filter.includeKeys.defaultKey != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                         // add explicit code
                                         codes.Add(filterCode);
                                     }
                                     
-                                    if(filter.includeKeys.action != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.action != GameFilterIncludeType.none) {
                                         
-                                        if(filter.includeKeys.action == GameAchievementFilterIncludeType.all) {
+                                        if(filter.includeKeys.action == GameFilterIncludeType.all) {
                                             
                                             foreach(AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
                                                 GamePacks.Current.code,
@@ -1548,7 +1548,7 @@ public class BaseGamePlayerProgress
                                             }                                           
                                             
                                         }
-                                        else if(filter.includeKeys.action == GameAchievementFilterIncludeType.current) {
+                                        else if(filter.includeKeys.action == GameFilterIncludeType.current) {
                                             /*
                                             string key = GameStatisticCodes.genericCodeContentState(
                                                     filterCode,
@@ -1561,7 +1561,7 @@ public class BaseGamePlayerProgress
                                     }
                                     
                                     /*
-                                    if(filter.includeKeys.appContentState != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                         string key = GameStatisticCodes.genericCodeContentState(
                                             filterCode, 
                                             AppContentStates.Current.code);
@@ -1592,9 +1592,9 @@ public class BaseGamePlayerProgress
                         }
                     }
                     
-                    else if(filterItem.type == GameAchievementFilterType.statisticLike) {
-                        List<GameAchievementFilterStatisticLike> filterTypeItems = achievement.GetFilterStatisticLike();
-                        foreach(GameAchievementFilterStatisticLike filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticLike) {
+                        List<GameFilterStatisticLike> filterTypeItems = achievement.GetFilterStatisticLike();
+                        foreach(GameFilterStatisticLike filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-all
@@ -1609,9 +1609,9 @@ public class BaseGamePlayerProgress
                                 
                                 foreach(string filterCode in filter.codes) {                                
                                     
-                                    if(filter.includeKeys.action != GameAchievementFilterIncludeType.none) {
+                                    if(filter.includeKeys.action != GameFilterIncludeType.none) {
                                         
-                                        if(filter.includeKeys.action == GameAchievementFilterIncludeType.all) {
+                                        if(filter.includeKeys.action == GameFilterIncludeType.all) {
                                             
                                             foreach(AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
                                                 GamePacks.Current.code,
@@ -1652,9 +1652,9 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.statisticCompare) {
-                        List<GameAchievementFilterStatisticCompare> filterTypeItems = achievement.GetFilterStatisticCompare();
-                        foreach(GameAchievementFilterStatisticCompare filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticCompare) {
+                        List<GameFilterStatisticCompare> filterTypeItems = achievement.GetFilterStatisticCompare();
+                        foreach(GameFilterStatisticCompare filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-compare
@@ -1663,9 +1663,9 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.achievementSet) {
-                        List<GameAchievementFilterAchievementSet> filterTypeItems = achievement.GetFilterAchievementSet();
-                        foreach(GameAchievementFilterAchievementSet filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.achievementSet) {
+                        List<GameFilterAchievementSet> filterTypeItems = achievement.GetFilterAchievementSet();
+                        foreach(GameFilterAchievementSet filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // achievement-set
@@ -1705,11 +1705,11 @@ public class BaseGamePlayerProgress
         Debug.Log("ProcessPackAchievements:" + packCode);
         
         foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
-            if(achievement.filters != null) {
-                foreach(GameAchievementFilter filterItem in achievement.filters) {
-                    if(filterItem.type == GameAchievementFilterType.statisticSingle) {
-                        List<GameAchievementFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameAchievementFilterStatisticSingle filter in filterTypeItems) {
+            if(achievement.data.filters != null) {
+                foreach(GameFilter filterItem in achievement.data.filters) {
+                    if(filterItem.type == GameFilterType.statisticSingle) {
+                        List<GameFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
+                        foreach(GameFilterStatisticSingle filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 
@@ -1723,7 +1723,7 @@ public class BaseGamePlayerProgress
                                 // add explicit code
                                 codes.Add(filterCode);
                                 
-                                if(filter.includeKeys.appContentState != GameAchievementFilterIncludeType.none) {
+                                if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
@@ -1744,18 +1744,18 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.statisticSet) {
-                        List<GameAchievementFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameAchievementFilterStatisticSet filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticSet) {
+                        List<GameFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
+                        foreach(GameFilterStatisticSet filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 //Debug.Log("filter2:" + filter.code2);
                             }
                         }
                     }
-                    else if(filterItem.type == GameAchievementFilterType.statisticAll) {
-                        List<GameAchievementFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameAchievementFilterStatisticAll filter in filterTypeItems) {
+                    else if(filterItem.type == GameFilterType.statisticAll) {
+                        List<GameFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
+                        foreach(GameFilterStatisticAll filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 //Debug.Log("filter2:" + filter.code2);
@@ -2139,7 +2139,7 @@ public class BaseGamePlayerProgress
             bool achievementValue =
                 GamePlayerProgress.Instance.GetAchievement(achievementMeta.code);
             if(achievementValue) {
-                totalScore += achievementMeta.points;
+                totalScore += achievementMeta.data.points;
             }
         }   
         return totalScore;

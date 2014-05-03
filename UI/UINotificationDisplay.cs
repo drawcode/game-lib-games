@@ -250,7 +250,7 @@ public class UINotificationDisplay
 			item.description = achievement.description;
 			item.icon = "";
 			item.notificationType = UINotificationType.Achievement;
-			item.score = achievement.points.ToString();
+			item.score = achievement.data.points.ToString();
 			item.title = achievement.display_name;
 			QueueNotification(item);
 		}

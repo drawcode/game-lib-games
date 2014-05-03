@@ -84,7 +84,7 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 				string points = "";
 				
 				if(completed) {
-					int currentPoints = achievement.points;
+					int currentPoints = achievement.data.points;
 					totalPoints += currentPoints;
 					points = "+" + currentPoints.ToString();
 					
