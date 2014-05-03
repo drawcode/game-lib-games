@@ -2,8 +2,8 @@
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used. 
 
-#define GAMENETWORK_IOS_APPLE_GAMECENTER
-//#define GAMENETWORK_ANDROID_GOOGLE_PLAY
+//#define GAMENETWORK_IOS_APPLE_GAMECENTER
+#define GAMENETWORK_ANDROID_GOOGLE_PLAY
 //#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
 //#define GAMENETWORK_ANDROID_SAMSUNG
 
@@ -81,8 +81,15 @@ public class GameNetworks : GameObjectBehavior {
 	public List<GPGAchievementMetadata> gamePlayServicesAchievementsMetaNetwork;
 #endif
 		
-	public static string currentLoggedInUserNetwork = "";	
-	public static string currentNetwork = GameNetworkType.gameNetworkAppleGameCenter;
+	public static string currentLoggedInUserNetwork = "";
+    
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+    public static string currentNetwork = GameNetworkType.gameNetworkGooglePlayServices;
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
+    public static string currentNetwork = GameNetworkType.gameNetworkAppleGameCenter;
+#endif
 	
 	public static GameNetworks Instance;
 	
@@ -100,8 +107,10 @@ public class GameNetworks : GameObjectBehavior {
 #elif UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_IPHONE
-		//GameNetworks.gameCenterEnabled = true;
+#elif UNITY_ANDROID
+
 #endif
+
 	}
 		
 	void Start() {
@@ -190,17 +199,17 @@ public class GameNetworks : GameObjectBehavior {
 		
 	public void loadNetwork(string networkType) {		
 		currentNetwork = networkType;
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
-		if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
-			InitNetwork();
-		}
-#endif
-        
     #if GAMENETWORK_IOS_APPLE_GAMECENTER
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
             InitNetwork();
         }
     #endif
+
+        #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+        if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
+            InitNetwork();
+        }
+        #endif
 	}
 	
 	public static void InitNetwork() {	
@@ -246,7 +255,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public static bool IsThirdPartyNetworkAvailable(string networkTypeTo) {
 
-        //Debug.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
+        Debug.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
 		
 		bool isAvailable = false;
 		
@@ -258,7 +267,7 @@ public class GameNetworks : GameObjectBehavior {
 			isAvailable = isAvailableAndroidGooglePlay;
 		}
                 
-        //Debug.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
+        Debug.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
 	
 		return isAvailable;
 	}
@@ -347,7 +356,7 @@ public class GameNetworks : GameObjectBehavior {
 
     public static void ShowAchievementsOrLogin(string networkTypeTo) {  
         
-        //Debug.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if(Instance != null) {
             Instance.showAchievementsOrLogin(networkTypeTo);
@@ -356,7 +365,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void showAchievementsOrLogin(string networkTypeTo) {
         
-        //Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
@@ -395,15 +404,24 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static void showAchievementsOrLoginAndroidGooglePlay() {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
-			
-			if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
-                if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter)) {
-					PlayGameServices.showAchievements();
-				}
-				else {
-					PlayGameServices.authenticate();
-				}
+        
+        Debug.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+            GameNetworks.gameNetworkAndroidGooglePlayEnabled);
+		
+		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
+        
+            bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices);
+        
+            Debug.Log("showAchievementsOrLoginAndroidGooglePlay:authenticated:" + 
+                  authenticated);
+
+            if(authenticated) {
+				PlayGameServices.showAchievements();
 			}
+			else {
+				PlayGameServices.authenticate();
+			}
+		}
 #endif		
 	}
 	
@@ -412,7 +430,7 @@ public class GameNetworks : GameObjectBehavior {
 		
 	public static void ShowLeaderboardsOrLogin() {	
         
-        //Debug.Log("ShowLeaderboardsOrLogin");
+        Debug.Log("ShowLeaderboardsOrLogin");
 
 		if(Instance != null) {
 			Instance.showLeaderboardsOrLogin(currentNetwork);
@@ -427,7 +445,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void showLeaderboardsOrLogin(string networkTypeTo) {
         
-       // Debug.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
@@ -465,11 +483,20 @@ public class GameNetworks : GameObjectBehavior {
 	}
 	
 	public static void showLeaderboardsOrLoginAndroidGooglePlay() {
+
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay");
+        
+        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+                  GameNetworks.gameNetworkAndroidGooglePlayEnabled);
 			
 			if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
                 if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                    if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices)) {					
+                    if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices)) {	
+                    
+                    Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
+
 						PlayGameServices.showLeaderboards();
 					}
 					else {
@@ -679,21 +706,21 @@ public class GameNetworks : GameObjectBehavior {
 			
 		// Check existing achievements and update them if missing
 			
-		//Debug.Log("GameCenter LoginNetwork...");
+		Debug.Log("GameCenter LoginNetwork...");
 #endif		
         }
 
         
-        if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-            #if GAMENETWORK_ANDROID_GOOGLE_PLAY            
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY            
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                GameCenterBinding.authenticateLocalPlayer();
+                PlayGameServices.authenticate();
             }
             
             // Check existing achievements and update them if missing
             
-            //Debug.Log("GameCenter LoginNetwork...");
-            #endif      
+            Debug.Log("PlayGameServices LoginNetwork...");
+#endif      
         }
 
 
@@ -715,7 +742,14 @@ public class GameNetworks : GameObjectBehavior {
 		GameCenterBinding.getAchievements();
 			
 		//Debug.Log("GameCenter GetAchievements...");
-#endif		
+#endif	
+
+        #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+        PlayGameServices.reloadAchievementAndLeaderboardData();
+        
+        //Debug.Log("GameCenter GetAchievements...");
+        #endif  
+
 	}
 	
 	public static void GetAchievementsMetadata() {
@@ -730,7 +764,13 @@ public class GameNetworks : GameObjectBehavior {
 		GameCenterBinding.retrieveAchievementMetadata();
 			
 		//Debug.Log("GameCenter GetAchievements...");
-#endif		
+#endif	
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+        PlayGameServices.getAllAchievementMetadata();
+        
+        //Debug.Log("PlayGameServices GetAchievements...");
+#endif  
 	}
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 	
@@ -804,7 +844,7 @@ public class GameNetworks : GameObjectBehavior {
 				
 				// If different on local and remote and remote is false, set it...
 				if(localAchievementValue != remoteAchievementValue && !remoteAchievementValue) {
-					GameCenterBinding.reportAchievement(meta.code, 100);
+                    GameNetworks.SendAchievement(meta.code, true);
 				}
 			}
 		}

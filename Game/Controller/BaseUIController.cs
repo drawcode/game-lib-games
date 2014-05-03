@@ -3101,10 +3101,16 @@ public class BaseUIController : GameObjectBehavior {
         // Game networks
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterAchievements, buttonName)) {
-            GameNetworks.ShowAchievementsOrLogin();
+            GameNetworks.ShowAchievementsOrLogin(GameNetworkType.gameNetworkAppleGameCenter);
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterLeaderboards, buttonName)) {
-            GameNetworks.ShowLeaderboardsOrLogin();
+            GameNetworks.ShowLeaderboardsOrLogin(GameNetworkType.gameNetworkAppleGameCenter);
+        }        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayServicesAchievements, buttonName)) {
+            GameNetworks.ShowAchievementsOrLogin(GameNetworkType.gameNetworkGooglePlayServices);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayServicesLeaderboards, buttonName)) {
+            GameNetworks.ShowLeaderboardsOrLogin(GameNetworkType.gameNetworkGooglePlayServices);
         }
 
         /*

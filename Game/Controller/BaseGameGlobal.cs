@@ -216,7 +216,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     public virtual void InitPlayerProgress() {
         gameNetworks = gameObject.AddComponent<GameNetworks>();  
         if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
-            gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
+            //gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
         }
         if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {       
             //gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
@@ -243,32 +243,50 @@ public class BaseGameGlobal : GameObjectBehavior {
         GameAudioEffects.audio_loop_game_3 = "music-level-3";
         GameAudioEffects.audio_loop_game_4 = "music-quiz";
         */
-        audioSystem = gameObject.AddComponent<AudioSystem>();   
-        
-        audioSystem.PrepareIntroFileFromResources(GameAudioEffects.audio_loop_intro_1, false, (float)GameProfiles.Current.GetAudioMusicVolume());
-        audioSystem.PrepareLoopFileFromResources(GameAudioEffects.audio_loop_main_1, true, (float)GameProfiles.Current.GetAudioMusicVolume());
-        
-        audioSystem.PrepareGameLapLoopFileFromResources(0, GameAudioEffects.audio_loop_game_1, true, (float)GameProfiles.Current.GetAudioMusicVolume());
-        audioSystem.PrepareGameLapLoopFileFromResources(1, GameAudioEffects.audio_loop_game_2, true, (float)GameProfiles.Current.GetAudioMusicVolume());
-        audioSystem.PrepareGameLapLoopFileFromResources(2, GameAudioEffects.audio_loop_game_3, true, (float)GameProfiles.Current.GetAudioMusicVolume());
-        audioSystem.PrepareGameLapLoopFileFromResources(3, GameAudioEffects.audio_loop_game_4, true, (float)GameProfiles.Current.GetAudioMusicVolume());
-        
-        audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
-        audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
-        
-        
-        //audioSystem.StartAmbience();
-        #if DEV
-        if (Application.isEditor) {
+        if(audioSystem == null) {
+            audioSystem = gameObject.AddComponent<AudioSystem>();   
+            
+            audioSystem.PrepareIntroFileFromResources(
+                GameAudioEffects.audio_loop_intro_1, false, 
+                (float)GameProfiles.Current.GetAudioMusicVolume());
 
-            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
-            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
-            audioSystem.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-            audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
-            GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
-            GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
+            audioSystem.PrepareLoopFileFromResources(
+                GameAudioEffects.audio_loop_main_1, true, 
+                (float)GameProfiles.Current.GetAudioMusicVolume());
+            
+            audioSystem.PrepareGameLapLoopFileFromResources(
+                0, GameAudioEffects.audio_loop_game_1, true,
+                (float)GameProfiles.Current.GetAudioMusicVolume());
+
+            audioSystem.PrepareGameLapLoopFileFromResources(
+                1, GameAudioEffects.audio_loop_game_2, true,
+                (float)GameProfiles.Current.GetAudioMusicVolume());
+
+            audioSystem.PrepareGameLapLoopFileFromResources(
+                2, GameAudioEffects.audio_loop_game_3, true,
+                (float)GameProfiles.Current.GetAudioMusicVolume());
+
+            audioSystem.PrepareGameLapLoopFileFromResources(
+                3, GameAudioEffects.audio_loop_game_4, true,
+                (float)GameProfiles.Current.GetAudioMusicVolume());
+            
+            audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
+            audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
+            
+            
+            //audioSystem.StartAmbience();
+            #if DEV
+            if (Application.isEditor) {
+
+                GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
+                GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
+                audioSystem.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
+                audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
+                GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
+                GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
+            }
+            #endif
         }
-        #endif
         
         LogUtil.Log("GameGlobal InitAudio init...");
     }
