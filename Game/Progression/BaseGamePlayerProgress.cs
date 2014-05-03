@@ -1422,8 +1422,8 @@ public class BaseGamePlayerProgress
             if(achievement.data.filters != null) {
                 foreach(GameFilter filterItem in achievement.data.filters) {
                     if(filterItem.type == GameFilterType.statisticSingle) {
-                        List<GameFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameFilterStatisticSingle filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSingle();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-single                                                     
@@ -1461,8 +1461,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.statisticSet) {
-                        List<GameFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameFilterStatisticSet filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSet();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-set
@@ -1512,8 +1512,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.statisticAll) {
-                        List<GameFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameFilterStatisticAll filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticAll();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-all
@@ -1593,8 +1593,8 @@ public class BaseGamePlayerProgress
                     }
                     
                     else if(filterItem.type == GameFilterType.statisticLike) {
-                        List<GameFilterStatisticLike> filterTypeItems = achievement.GetFilterStatisticLike();
-                        foreach(GameFilterStatisticLike filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticLike();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-all
@@ -1653,8 +1653,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.statisticCompare) {
-                        List<GameFilterStatisticCompare> filterTypeItems = achievement.GetFilterStatisticCompare();
-                        foreach(GameFilterStatisticCompare filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticCompare();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // statistic-compare
@@ -1664,8 +1664,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.achievementSet) {
-                        List<GameFilterAchievementSet> filterTypeItems = achievement.GetFilterAchievementSet();
-                        foreach(GameFilterAchievementSet filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterAchievementSet();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 
                                 // achievement-set
@@ -1708,8 +1708,8 @@ public class BaseGamePlayerProgress
             if(achievement.data.filters != null) {
                 foreach(GameFilter filterItem in achievement.data.filters) {
                     if(filterItem.type == GameFilterType.statisticSingle) {
-                        List<GameFilterStatisticSingle> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameFilterStatisticSingle filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSingle();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 
@@ -1745,8 +1745,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.statisticSet) {
-                        List<GameFilterStatisticSet> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameFilterStatisticSet filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSet();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 //Debug.Log("filter2:" + filter.code2);
@@ -1754,8 +1754,8 @@ public class BaseGamePlayerProgress
                         }
                     }
                     else if(filterItem.type == GameFilterType.statisticAll) {
-                        List<GameFilterStatisticAll> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameFilterStatisticAll filter in filterTypeItems) {
+                        List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticAll();
+                        foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
                                 //Debug.Log("filter:" + filter.code);
                                 //Debug.Log("filter2:" + filter.code2);
@@ -1978,7 +1978,7 @@ public class BaseGamePlayerProgress
     public virtual void SetStatisticValue(bool sendToGameverses, string key, object keyValue) {
         if(keyValue != null) {
             
-            //LogUtil.Log("SetStatisticValue:" + key + " :" + keyValue);
+            LogUtil.Log("SetStatisticValue:" + key + " :" + keyValue);
             
             GameProfileStatistics.Current.SetStatisticValue(key, keyValue);
             
@@ -1986,31 +1986,29 @@ public class BaseGamePlayerProgress
 
             bool sendScore = false;
             GameLeaderboard board = GameLeaderboards.Instance.GetByCode(key);
-            
+                        
             if(board == null) {
                 return;
             }
+            
+            LogUtil.Log("SetStatisticValue:board:" + board.code);
 
             foreach(GameNetworkData networkData in board.data.networks) {
+                
+                long keyValueLong = 0;                
+                double keyValueDouble = Convert.ToDouble(keyValue);
 
-                string networkType = GameNetworkType.gameNetworkAppleGameCenter;
-
-                if(networkData.type == GameNetworkType.gameNetworkAppleGameCenter) {
-                    sendScore = true;
-                }
-                else if(networkData.type == GameNetworkType.gameNetworkGooglePlayServices) {
-                    sendScore = true;
-                }
-
-                if(sendScore) {
+                keyValueLong = (long)keyValueDouble;
+                
+                LogUtil.Log("SetStatisticValue:networkData.code:" + networkData.code);
+                LogUtil.Log("SetStatisticValue:networkData.type:" + networkData.type);
+                LogUtil.Log("SetStatisticValue:keyValueLong...:" + keyValueLong);
+                
+                if(keyValueLong > 0) {
                     
-                    long keyValueLong = 0;                
-                    double keyValueDouble = Convert.ToDouble(keyValue);
-                    
-                    if(keyValueLong > 0) {
-                        GameNetworks.SendScore(networkData.type, networkData.code, keyValueLong);
-                    }
-                }            
+                    LogUtil.Log("SetStatisticValue:keyValueLong:" + keyValueLong);
+                    GameNetworks.SendScore(networkData.type, networkData.code, keyValueLong);
+                }
             }
         }
     }

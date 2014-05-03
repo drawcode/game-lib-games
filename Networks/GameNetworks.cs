@@ -485,13 +485,24 @@ public class GameNetworks : GameObjectBehavior {
 
     public static void SendScore(string key, long keyValue) {
         if(Instance != null) {
-            Instance.sendScore(currentNetwork, key, keyValue);
+            Instance.sendScore(key, keyValue);
         }
     }
     
     public static void SendScore(string networkTypeTo, string key, long keyValue) {
         if(Instance != null) {
             Instance.sendScore(networkTypeTo, key, keyValue);
+        }
+    }       
+    
+    public void sendScore(string key, long keyValue) {        
+        
+        if(isAuthenticatediOSAppleGameCenter) {
+            reportScoreAppleGameCenter(key, keyValue);
+        }
+        
+        if(isAuthenticatedAndroidGooglePlay) {
+            reportScoreGooglePlay(key, keyValue);
         }
     }
         
@@ -512,7 +523,19 @@ public class GameNetworks : GameObjectBehavior {
     }
 	
     public void reportScore(string networkTypeTo, string key, long keyValue) {
-		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {			
+        
+        LogUtil.Log("reportScore:" + 
+                    " networkTypeTo:" + networkTypeTo+ 
+                    " key:" + key+ 
+                    " keyValue:" + keyValue);
+
+		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {	
+            
+            LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
+                        " networkTypeTo:" + networkTypeTo+ 
+                        " key:" + key+ 
+                        " keyValue:" + keyValue);
+
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 reportScoreAppleGameCenter(key, keyValue);
 			}			
@@ -877,7 +900,7 @@ public class GameNetworks : GameObjectBehavior {
 			}
 		}	
                 
-        LogUtil.Log("getNetworkUsername:" + username);
+        //LogUtil.Log("getNetworkUsername:" + username);
 
 		return username;
 	}
