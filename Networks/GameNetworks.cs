@@ -1301,7 +1301,7 @@ public class GameNetworks : GameObjectBehavior {
         else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
             #if GAMENETWORK_ANDROID_GOOGLE_PLAY        
             PlayGameServices.init(AppConfigs.gameNetworkGooglePlayGameServicesClientId,
-                                  true, true, true);
+                                  false, true, true);
             #endif
         }
 	}
