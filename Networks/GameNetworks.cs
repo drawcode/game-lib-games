@@ -54,7 +54,7 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public GameObject gameNetworkContainer;
 	
-	public static bool gameNetworkiOSAppleGameCenterEnabled = true;
+    public static bool gameNetworkiOSAppleGameCenterEnabled = false;
 	public static bool gameNetworkAndroidGooglePlayEnabled = true;
 	public static bool gameNetworkAndroidAmazonCircleEnabled = false;
 	public static bool gameNetworkAndroidSamsunEnabled = false;
