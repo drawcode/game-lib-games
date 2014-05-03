@@ -284,8 +284,9 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static bool isAvailableAndroidGooglePlay {
 		get {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER	
-            return false;//GameCenterBinding.isGameCenterAvailable();
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
+
+            return true;//PlayGameServices. false;//GameCenterBinding.isGameCenterAvailable();
 #else
 			return false;
 #endif	
@@ -1295,6 +1296,12 @@ public class GameNetworks : GameObjectBehavior {
 			GameCenterManager.playerAuthenticated += playerAuthenticated;
 			GameCenterManager.achievementsLoaded += achievementsLoaded;
 			GameCenterManager.achievementMetadataLoaded += achievementMetadataLoaded;
+            #endif
+        }
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            #if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+            PlayGameServices.init(AppConfigs.gameNetworkGooglePlayGameServicesClientId,
+                                  true, true, true);
             #endif
         }
 	}

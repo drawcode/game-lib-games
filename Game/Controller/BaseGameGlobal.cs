@@ -218,7 +218,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
             //gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
         }
-        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {       
+        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {        
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
         }
     }
