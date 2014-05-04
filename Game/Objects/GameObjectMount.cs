@@ -9,6 +9,8 @@ public enum GameObjectMountEnableType {
 
 public class GameObjectMount : BaseGameObjectInteractive {
 
+    public GameObject mountParent;
+
     public GameObject objectMounted;
     public int allowedMountCount = 1;    
 
@@ -18,6 +20,10 @@ public class GameObjectMount : BaseGameObjectInteractive {
     
     public override void Start() {        
         base.Start();  
+
+        if(mountParent == null) {
+            mountParent = gameObject.transform.parent.gameObject;
+        }
     }
     
     public override void Init() {

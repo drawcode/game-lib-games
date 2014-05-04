@@ -2,8 +2,14 @@
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used. 
 
-//#define GAMENETWORK_IOS_APPLE_GAMECENTER
-#define GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if UNITY_IPHONE
+#define GAMENETWORK_IOS_APPLE_GAMECENTER
+#endif
+
+#if UNITY_ANDROID
+//#define GAMENETWORK_ANDROID_GOOGLE_PLAY
+#endif
+
 //#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
 //#define GAMENETWORK_ANDROID_SAMSUNG
 
@@ -53,9 +59,19 @@ public class GameNetworkLeaderboardsFacebook {
 public class GameNetworks : GameObjectBehavior {
 	
 	public GameObject gameNetworkContainer;
-	
+    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
+    public static bool gameNetworkiOSAppleGameCenterEnabled = true;
+#else
     public static bool gameNetworkiOSAppleGameCenterEnabled = false;
-	public static bool gameNetworkAndroidGooglePlayEnabled = true;
+#endif
+    
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+    public static bool gameNetworkAndroidGooglePlayEnabled = true;
+#else
+    public static bool gameNetworkAndroidGooglePlayEnabled = false;
+#endif
+
 	public static bool gameNetworkAndroidAmazonCircleEnabled = false;
 	public static bool gameNetworkAndroidSamsunEnabled = false;
 	
@@ -85,10 +101,10 @@ public class GameNetworks : GameObjectBehavior {
     
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
     public static string currentNetwork = GameNetworkType.gameNetworkGooglePlayServices;
-#endif
-
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#elif GAMENETWORK_IOS_APPLE_GAMECENTER
     public static string currentNetwork = GameNetworkType.gameNetworkAppleGameCenter;
+#else    
+    public static string currentNetwork = "";
 #endif
 	
 	public static GameNetworks Instance;
@@ -129,13 +145,13 @@ public class GameNetworks : GameObjectBehavior {
 	}
 	
     void OnDisable() {
-        #if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
         RemoveEvents(GameNetworkType.gameNetworkAppleGameCenter);
-        #endif
+#endif
         
-        #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
         RemoveEvents(GameNetworkType.gameNetworkGooglePlayServices);
-        #endif
+#endif
 	}	
 	
 	// -------------------------------------------------------------------------
@@ -199,17 +215,17 @@ public class GameNetworks : GameObjectBehavior {
 		
 	public void loadNetwork(string networkType) {		
 		currentNetwork = networkType;
-    #if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
             InitNetwork();
         }
-    #endif
+#endif
 
-        #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
         if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
             InitNetwork();
         }
-        #endif
+#endif
 	}
 	
 	public static void InitNetwork() {	

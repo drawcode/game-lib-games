@@ -1,9 +1,11 @@
+#define SOCIAL_USE_FACEBOOK
+#define SOCIAL_USE_TWITTER
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
-using Prime31;
 
 using Engine.Events;
 
@@ -16,7 +18,7 @@ public class SocialNetworksMessages {
 public class SocialNetworkTypes {
 	public static string facebook = "facebook";
 	public static string twitter = "twitter";
-	public static string vidari = "vidari";
+    public static string gameverses = "gameverses";
 }
 
 public class SocialNetworkDataTypes {
@@ -353,7 +355,7 @@ public class SocialNetworks : GameObjectBehavior {
 		
 	public void getProfileDataFacebook() {  
 	
-		Facebook.instance.graphRequest( "me", HTTPVerb.GET, ( error, obj ) =>
+		Facebook.instance.graphRequest( "me", Prime31.HTTPVerb.GET, ( error, obj ) =>
 		{
 			// if we have an error we dont proceed any further
 			if( error != null )

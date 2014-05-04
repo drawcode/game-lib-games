@@ -121,6 +121,7 @@ public class BaseHUDButtonNames {
     public static string buttonInputMagic = "ButtonInputMagic";
     public static string buttonInputJump = "ButtonInputJump";
     public static string buttonInputUse = "ButtonInputUse";
+    public static string buttonInputMount = "ButtonInputMount";
     public static string buttonInputInventoryWeapon = "ButtonInputInventoryWeapon";
     public static string buttonInputInventoryWeaponNext = "ButtonInputInventoryWeaponNext";
     public static string buttonInputInventoryWeaponPrev = "ButtonInputInventoryWeaponPrev";
@@ -234,6 +235,7 @@ public class BaseUIController : GameObjectBehavior {
     float lastPressSkill = 0;
     float lastPressMagic = 0;
     float lastPressUse = 0;
+    float lastPressMount = 0;
     //float lastPressJump = 0;
                  
     public virtual void Awake() {
@@ -3371,6 +3373,10 @@ public class BaseUIController : GameObjectBehavior {
         else if (AllowPress(lastPressUse)
             && buttonName == BaseHUDButtonNames.buttonInputUse) {
             GameController.GamePlayerUse();
+        }
+        else if (AllowPress(lastPressMount)
+                 && buttonName == BaseHUDButtonNames.buttonInputMount) {
+            GameController.GamePlayerMount();
         }
         else if (buttonName == BaseHUDButtonNames.buttonInputJump) {
             GameController.GamePlayerJump();

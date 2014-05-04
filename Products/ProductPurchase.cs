@@ -1,4 +1,14 @@
-#define ANDROID_AMAZONN
+#if UNITY_IPHONE
+//#define PURCHASE_USE_APPLE_ITUNES
+#endif
+
+#if UNITY_ANDROID
+//#define PURCHASE_USE_GOOGLE_PLAY
+//#define PURCHASE_USE_AMAZON
+//#define PURCHASE_USE_SAMSUNG
+#endif
+
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -106,24 +116,22 @@ public class ProductPurchase : GameObjectBehavior {
     public bool enableProductUnlocks = false;
     public bool purchaseProcessCompleted = false;
 
-#if UNITY_IPHONE
+#if PURCHASE_USE_APPLE_ITUNES
     public StoreKitManager productManager;
     public StoreKitEventListener productEventListener;
-#elif UNITY_ANDROID
-#if ANDROID_AMAZON
+#elif PURCHASE_USE_AMAZON
     public AmazonIAPManager productManager;
     public AmazonIAPEventListener productEventListener;
 
-#else
+#elif PURCHASE_USE_GOOGLE_PLAY
     public GoogleIABManager productManager;
     public GoogleIABEventListener productEventListener;
 
-#endif
 #elif UNITY_WEBPLAYER
-#else
     // Web/PC
-    public StoreKitManager productManager;
-    public StoreKitEventListener productEventListener;
+    //public StoreKitManager productManager;
+    //public StoreKitEventListener productEventListener;
+#else
 #endif
 
     // Only one ProductPurchase can exist. We use a singleton pattern to enforce this.
@@ -167,8 +175,7 @@ public class ProductPurchase : GameObjectBehavior {
             ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
 
-        #if UNITY_EDITOR
-        #elif UNITY_IPHONE
+#if PURCHASE_USE_APPLE_ITUNES
         StoreKitManager.purchaseSuccessfulEvent += purchaseSuccessfulEvent;
         StoreKitManager.purchaseCancelledEvent += purchaseCancelledEvent;
         StoreKitManager.purchaseFailedEvent += purchaseFailedEvent;
@@ -179,7 +186,7 @@ public class ProductPurchase : GameObjectBehavior {
         StoreKitManager.restoreTransactionsFailedEvent += restoreTransactionsFailedEvent;
         StoreKitManager.restoreTransactionsFinishedEvent += restoreTransactionsFinishedEvent;
         StoreKitManager.transactionUpdatedEvent += transactionUpdatedEvent;
-        #endif
+#endif
     }
 
     public virtual void OnDisable() {
@@ -193,8 +200,7 @@ public class ProductPurchase : GameObjectBehavior {
         Messenger<ProductPurchaseRecord>.RemoveListener(
             ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
-        #if UNITY_EDITOR
-        #elif UNITY_IPHONE
+#if PURCHASE_USE_APPLE_ITUNES
         StoreKitManager.purchaseSuccessfulEvent -= purchaseSuccessfulEvent;
         StoreKitManager.purchaseCancelledEvent -= purchaseCancelledEvent;
         StoreKitManager.purchaseFailedEvent -= purchaseFailedEvent;
@@ -205,7 +211,7 @@ public class ProductPurchase : GameObjectBehavior {
         StoreKitManager.restoreTransactionsFailedEvent -= restoreTransactionsFailedEvent;
         StoreKitManager.restoreTransactionsFinishedEvent -= restoreTransactionsFinishedEvent;
         StoreKitManager.transactionUpdatedEvent -= transactionUpdatedEvent;
-        #endif
+#endif
     }
 
     public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
@@ -265,37 +271,29 @@ public class ProductPurchase : GameObjectBehavior {
 
         if (!paymentSystemAdded) {
 
-#if UNITY_IPHONE
+#if PURCHASE_USE_APPLE_ITUNES
             productManager = gameObject.AddComponent<StoreKitManager>();
             productEventListener = gameObject.AddComponent<StoreKitEventListener>();
 
             LogUtil.Log("ProductPurchase::InitPaymentSystem StoreKit/iOS added...");
-#elif UNITY_ANDROID
-            // TODO isAmazonDevice()
-#if ANDROID_AMAZON
+#elif PURCHASE_USE_AMAZON
             productManager = gameObject.AddComponent<AmazonIAPManager>();
             productEventListener = gameObject.AddComponent<AmazonIAPEventListener>();
 
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Amazon IAP/Android added...");
-#else
+#elif PURCHASE_USE_GOOGLE_PLAY
             productManager = gameObject.AddComponent<GoogleIABManager>();
             productEventListener = gameObject.AddComponent<GoogleIABEventListener>();
 
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Google Play IAB/Android added...");
 
             GoogleIAB.init("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllfTLDqNeLzmIczqRP4Mramyc0Rd/RUlg+fBRO7VGRPMorv2UKWaxUqbKEYy10ldNu43anV3MHGliSX7wyED1v5GCt8syAeDT59wZZzY7aqMB3CBPmqfFm52ONY7BKaew/uWqjjn1w5Kq4BySLXyBTfrwlnqVsnMnW12lUGPpzgdBODe00JOk+DDjcZcunGB6xXxNA2wPO1pB8VSawVwfiztFd0l0ow0YPBu0JmhNvGwXfG2p0NcrTn0jNvoFXlHPqVb+t0DBETtUd/IckMbk4YZoT+7D0yy3LwwDZiPWmzTD8ODVE9U6zaB4NpXnaohYNPlbLyq0uDShX2dGGBVpwIDAQAB");
-#endif
-
 #elif UNITY_WEBPLAYER
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
-
 #else
-            // Web/PC - storekit stub for now...
-            productManager = productSystem.AddComponent<StoreKitManager>();
-            productEventListener = productSystem.AddComponent<StoreKitEventListener>();
-
-            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem default added...");
+            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
 #endif
+
             if (productManagerObject != null)
                 DontDestroyOnLoad(productManagerObject);
 
@@ -336,10 +334,9 @@ public class ProductPurchase : GameObjectBehavior {
     }
 
     public void RequestProductList(string productIdentifiers) {
-#if UNITY_IPHONE
+#if PURCHASE_USE_APPLE_ITUNES
         StoreKitBinding.requestProductData( productIdentifiers.Split(',') );
-#elif UNITY_ANDROID
-#if ANDROID_AMAZON
+#elif PURCHASE_USE_AMAZON
 
         /*
         productIdentifiers = "";
@@ -352,9 +349,9 @@ public class ProductPurchase : GameObjectBehavior {
         */
 
         AmazonIAP.initiateItemDataRequest( productIdentifiers.Split(',') );
-#else
+#elif PURCHASE_USE_GOOGLE_PLAY
+
         //IABAndroid.purchaseProduct( "kk", 1 );
-#endif
 #else
         // Web/PC
 #endif
@@ -369,16 +366,13 @@ public class ProductPurchase : GameObjectBehavior {
 
     public void purchaseProduct(string code, int quantity) {
 
-#if UNITY_IPHONE && !UNITY_EDITOR
+#if PURCHASE_USE_APPLE_ITUNES
         StoreKitBinding.purchaseProduct(code, quantity);
-#elif UNITY_ANDROID && !UNITY_EDITOR
-
-#if ANDROID_AMAZON
+#elif PURCHASE_USE_AMAZON
         //AmazonIAP.initiatePurchaseRequest(GamePacks.currentGameBundle + "." + code);
         AmazonIAP.initiatePurchaseRequest(code);
-#else
+#elif PURCHASE_USE_GOOGLE_PLAY
         GoogleIAB.purchaseProduct(code);
-#endif
 #else
         // Web/PC
         purchaseProcessCompleted = true;
@@ -406,7 +400,7 @@ public class ProductPurchase : GameObjectBehavior {
 
     // THIRD PARTY EVENTS
 
-    #if UNITY_IPHONE
+    #if PURCHASE_USE_APPLE_ITUNES
 
     public void purchaseSuccessfulEvent(StoreKitTransaction transaction) {
         LogUtil.LogProduct( "SCREEN purchased product: " + transaction.productIdentifier + ", quantity: " + transaction.quantity );
@@ -505,11 +499,7 @@ public class ProductPurchase : GameObjectBehavior {
         Debug.Log("transactionUpdatedEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
     }
 
-    #endif
-
-
-    #if UNITY_ANDROID
-    #if ANDROID_AMAZON
+    #elif PURCHASE_USE_AMAZON
 
     void itemDataRequestFailedEvent() {
         LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFailedEvent:");
@@ -570,7 +560,7 @@ public class ProductPurchase : GameObjectBehavior {
                                                           transaction.token, 1, true);
         }
     }
-    #else
+    #elif PURCHASE_USE_GOOGLE_PLAY
     void billingSupportedEvent(bool success) {
         LogUtil.LogProduct( "billingSupportedEvent: " + success );
         //IABAndroid.restoreTransactions();
@@ -607,7 +597,6 @@ public class ProductPurchase : GameObjectBehavior {
     void transactionRestoreFailedEvent(string error) {
         LogUtil.LogProduct( "transactionRestoreFailedEvent product: " + error );
     }
-    #endif
     #endif
 
 }

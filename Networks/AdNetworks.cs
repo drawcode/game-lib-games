@@ -88,6 +88,7 @@ public class AdNetworksMessages {
 }
 
 public class AdNetworks : GameObjectBehavior {
+    #if AD_USE_ADMOB
 #if UNITY_EDITOR    
 #elif UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
@@ -102,7 +103,7 @@ public class AdNetworks : GameObjectBehavior {
     [NonSerialized]
     public AdMobEventListener admobEventListener;
 #endif
-
+#endif
     
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
@@ -646,6 +647,7 @@ public class AdNetworks : GameObjectBehavior {
     }
 
 #if !UNITY_WEBPLAYER        
+    #if AD_USE_ADMOB
     public AdMobBanner admobGetBanner(AdBanner banner) {
         if (banner == AdBanner.Phone_320x50) {
             return AdMobBanner.Phone_320x50;
@@ -663,6 +665,7 @@ public class AdNetworks : GameObjectBehavior {
             return AdMobBanner.SmartBanner;
         }
     }
+#endif
 #endif
 #if !UNITY_ANDROID && !UNITY_WEBPLAYER
     public AdMobBannerType admobGetBannerType(AdBannerType bannerType) {
@@ -687,7 +690,8 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
     
-#if !UNITY_WEBPLAYER        
+#if !UNITY_WEBPLAYER   
+    #if AD_USE_ADMOB
     public AdMobLocation admobGetPlacementType(AdPlacementType bannerType) {
         if (bannerType == AdPlacementType.BottomLeft) {
             return AdMobLocation.BottomLeft;
@@ -714,6 +718,7 @@ public class AdNetworks : GameObjectBehavior {
             return AdMobLocation.TopCenter;
         }
     }
+#endif
 #endif
     
 #if !UNITY_ANDROID && !UNITY_WEBPLAYER

@@ -34,6 +34,7 @@ public class BaseGamePlayerAnimationType {
     public static string skill = "skill";
     public static string magic = "magic";
     public static string use = "use";
+    public static string mount = "mount";
     public static string idle = "idle";
     public static string emo = "emo";
     public static string strafe = "strafe";

@@ -1,4 +1,4 @@
-#define BROADCAST_USE_EVERYPLAY
+//#define BROADCAST_USE_EVERYPLAY
 //#define BROADCAST_USE_TWITCH
 
 using System;
@@ -175,6 +175,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsSupported();
         #endif
+
+        return false;
     }
 
     // IS RECORDING SUPPORTED    
@@ -191,6 +193,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsRecordingSupported();
         #endif
+
+        return false;
     }
         
     // IS RECORDING    
@@ -207,6 +211,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsRecording();
         #endif
+
+        return false;
     }
     
     // IS RECORDING    
@@ -223,6 +229,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsPaused();
         #endif
+
+        return false;
     }
 
     // START RECORDING

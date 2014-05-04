@@ -409,6 +409,10 @@ public class BaseGamePlayerController : GameActor {
     
     public float attackRange = 12f;  // within 6 yards
 
+    // quality settings
+        
+    public float currentFPS = 60f;
+
     // --------------------------------------------------------------------
     // INIT
  
@@ -1749,8 +1753,62 @@ public class BaseGamePlayerController : GameActor {
         controllerData.characterController.enabled = running;
     }
 
+    public virtual void MountNearest() {
+        
+        if (controllerData.mountData == null) {
+            return;
+        }
+
+        if(controllerData.mountData.isMountedVehicle) {
+            Unmount();
+        }
+        else {
+            MountNearest<GameObjectMountVehicle>();
+        }
+    }
+
+    public virtual void MountNearest<T>() where T : Component {
+
+        List<T> mounts = new List<T>();
+        T nearest = default(T);
+        bool found = false;
+        float mountRange = 10f;
+        float shortestDistance = mountRange * 2;
+
+        foreach(Collider collide in Physics.OverlapSphere(transform.position, mountRange)) {
+
+            Transform t = collide.transform;
+
+            if(t != null) {
+
+                if(t.name.ToLower().Contains("mount")) {
+
+                    T mountObject = t.gameObject.Get<T>();
+
+                    if(mountObject != null) {
+                       
+                        float currentDistance = Vector3.Distance(
+                            transform.position,
+                            mountObject.transform.position);
+
+                        if(currentDistance < shortestDistance) {
+                            found = true;
+                            shortestDistance = currentDistance; 
+                            nearest = mountObject;
+                        }
+                    }
+                    
+                }
+            }
+        }
+
+        if(found && nearest != null) {
+            Mount(nearest.gameObject);
+        }
+    }
+
     public virtual void Mount(GameObject go) {
-        if (go.Has<GameObjectMountVehicle>()) {            
+        if (go.Has<GameObjectMountVehicle>()) {        // MOUNT VEHICLES     
             if (!controllerData.mountData.isMountedVehicleObject) {
                 controllerData.mountData.MountVehicle(gameObject, 
                     go.Get<GameObjectMountVehicle>());
@@ -2111,6 +2169,9 @@ public class BaseGamePlayerController : GameActor {
         else if (animationName == GamePlayerAnimationType.use) {
             InputUse();
         }
+        else if (animationName == GamePlayerAnimationType.mount) {
+            InputMount();
+        }
     }
  
     public virtual void OnPlayerAnimation(string animationName, string uniqueId) {
@@ -2222,6 +2283,15 @@ public class BaseGamePlayerController : GameActor {
  
     // --------------------------------------------------------------------
     // COMBAT/HIT/ATTACK
+
+    //MountNearest
+        
+    public virtual void SendMount() {
+        Messenger<string, string>.Broadcast(
+            GamePlayerMessages.PlayerAnimation,
+            GamePlayerAnimationType.mount,
+            UniqueUtil.Instance.currentUniqueId);
+    }
  
     public virtual void SendUse() {
         Messenger<string, string>.Broadcast(
@@ -2366,6 +2436,12 @@ public class BaseGamePlayerController : GameActor {
     public virtual void InputUse() {
         // USE
 
+    }
+
+    
+    public virtual void InputMount() {
+        // MOUNT
+        MountNearest();        
     }
 
     public virtual void InputSkill() {
@@ -3956,7 +4032,9 @@ public class BaseGamePlayerController : GameActor {
     // UPDATE/GAME TICK
  
     public virtual void UpdateCommonState() {
-     
+        
+        currentFPS = FPSDisplay.GetCurrentFPS();
+             
         if (Application.isEditor) {
             if (Input.GetKeyDown(KeyCode.M)) {
                 PlayerEffectWarpFadeIn();

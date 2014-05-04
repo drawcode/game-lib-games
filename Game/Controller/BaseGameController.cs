@@ -973,6 +973,20 @@ public class BaseGameController : GameObjectBehavior {
             GameController.CurrentGamePlayerController.InputUse();
         }
     }
+    
+    // MOUNT
+    
+    //public static void GamePlayerUse() {
+    //    if(isInst) {
+    //        Instance.gamePlayerUse();
+    //    }
+    //}
+    
+    public virtual void gamePlayerMount() {
+        if(GameController.CurrentGamePlayerController != null) {
+            GameController.CurrentGamePlayerController.InputMount();
+        }
+    }
 
     // SKILL
 
@@ -2885,7 +2899,7 @@ public class BaseGameController : GameObjectBehavior {
 
         step.rotation.FromVector3(
             Vector3.zero
-                .WithZ(
+                .WithY(
                     UnityEngine.Random.Range(data.rangeRotation.x, data.rangeRotation.y)));
 
         //step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
