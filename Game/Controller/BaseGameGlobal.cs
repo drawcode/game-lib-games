@@ -54,6 +54,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     
     public virtual void Init() {        
         gameObject.AddComponent<InputSystem>();
+
+        GameConfigs.globalReady = true;
     }
     
     public virtual void InitContentSystemPost() {

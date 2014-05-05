@@ -8,10 +8,9 @@
 
 #if UNITY_ANDROID
 #define GAMENETWORK_ANDROID_GOOGLE_PLAY
-#endif
-
 //#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
 //#define GAMENETWORK_ANDROID_SAMSUNG
+#endif
 
 using System;
 using System.Collections.Generic;
@@ -72,9 +71,18 @@ public class GameNetworks : GameObjectBehavior {
     public static bool gameNetworkAndroidGooglePlayEnabled = false;
 #endif
 
-	public static bool gameNetworkAndroidAmazonCircleEnabled = false;
-	public static bool gameNetworkAndroidSamsunEnabled = false;
-	
+#if GAMENETWORK_ANDROID_AMAZON
+    public static bool gameNetworkAndroidAmazonCircleEnabled = true;
+#else
+    public static bool gameNetworkAndroidAmazonCircleEnabled = false;
+#endif
+    
+#if GAMENETWORK_ANDROID_SAMSUNG
+    public static bool gameNetworkAndroidSamsungEnabled = true;
+#else
+    public static bool gameNetworkAndroidSamsungEnabled = false;
+#endif
+
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 	[NonSerialized]
 	public GameCenterManager gameCenterManager;
@@ -342,7 +350,7 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static bool isAuthenticatedAndroidGooglePlay {
 		get {
-            #if GAMENETWORK_ANDROID_GOOGLE_PLAY 
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
 			return PlayGameServices.isSignedIn();
 #else
 			return false;
@@ -761,11 +769,11 @@ public class GameNetworks : GameObjectBehavior {
 		//LogUtil.Log("GameCenter GetAchievements...");
 #endif	
 
-        #if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
         PlayGameServices.reloadAchievementAndLeaderboardData();
         
         //LogUtil.Log("GameCenter GetAchievements...");
-        #endif  
+#endif  
 
 	}
 	
@@ -789,6 +797,7 @@ public class GameNetworks : GameObjectBehavior {
         //LogUtil.Log("PlayGameServices GetAchievements...");
 #endif  
 	}
+
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 	
 	public static GameCenterAchievement GetGameCenterAchievement(string identifier) {
@@ -805,8 +814,7 @@ public class GameNetworks : GameObjectBehavior {
 		}
 		return null;	
 	}
-#endif	
-	
+#endif		
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 	public static GameCenterAchievementMetadata GetGameCenterAchievementMetadata(string identifier) {
@@ -825,7 +833,16 @@ public class GameNetworks : GameObjectBehavior {
 		return null;	
 	}
 #endif	
-	
+
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#endif
+
 	public static void CheckAchievementsState() {
 		if(Instance != null) {
 			Instance.checkAchievementsState();
@@ -868,7 +885,12 @@ public class GameNetworks : GameObjectBehavior {
 		
 		//LogUtil.Log("GameCenter CheckAchievementsState...");
 #endif		
-	}
+                
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#endif
+
+    }
 	
 	// -------------------------------------------------------------------------
 	// USERNAME
@@ -1312,13 +1334,101 @@ public class GameNetworks : GameObjectBehavior {
 			GameCenterManager.playerAuthenticated += playerAuthenticated;
 			GameCenterManager.achievementsLoaded += achievementsLoaded;
 			GameCenterManager.achievementMetadataLoaded += achievementMetadataLoaded;
-            #endif
+#endif
         }
         else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-            #if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+
+            // Fired when authentication succeeds. Includes the user_id
+            GPGManager.authenticationSucceededEvent += authenticationSucceededEvent;
+            
+            // Fired when authentication fails
+            GPGManager.authenticationFailedEvent += authenticationFailedEvent;
+            
+            // iOS only. Fired when the user signs out. This could happen if in a leaderboard they touch the settings button and logout from there.
+            GPGManager.userSignedOutEvent += userSignedOutEvent;
+            
+            // Fired when data fails to reload for a key. This particular model data is usually the player info or leaderboard/achievment metadata that is auto loaded.
+            GPGManager.reloadDataForKeyFailedEvent += reloadDataForKeyFailedEvent;
+            
+            // Fired when data is reloaded for a key
+            GPGManager.reloadDataForKeySucceededEvent += reloadDataForKeySucceededEvent;
+            
+            // Android only. Fired when a license check fails
+            GPGManager.licenseCheckFailedEvent += licenseCheckFailedEvent;
+            
+            
+            // ##### ##### ##### ##### ##### ##### #####
+            // ## Cloud Data
+            // ##### ##### ##### ##### ##### ##### #####
+            
+            // Fired when loading cloud data fails
+            GPGManager.loadCloudDataForKeyFailedEvent += loadCloudDataForKeyFailedEvent;
+            
+            // Fired when loading cloud data succeeds and includes the key and data
+            GPGManager.loadCloudDataForKeySucceededEvent += loadCloudDataForKeySucceededEvent;
+            
+            // Fired when updating cloud data fails
+            GPGManager.updateCloudDataForKeyFailedEvent += updateCloudDataForKeyFailedEvent;
+            
+            // Fired when updating cloud data succeeds and includes the key and data
+            GPGManager.updateCloudDataForKeySucceededEvent += updateCloudDataForKeySucceededEvent;
+            
+            // Fired when clearing cloud data fails
+            GPGManager.clearCloudDataForKeyFailedEvent += clearCloudDataForKeyFailedEvent;
+            
+            // Fired when clearing cloud data succeeds and includes the key
+            GPGManager.clearCloudDataForKeySucceededEvent += clearCloudDataForKeySucceededEvent;
+            
+            // Fired when deleting cloud data fails
+            GPGManager.deleteCloudDataForKeyFailedEvent += deleteCloudDataForKeyFailedEvent;
+            
+            // Fired when deleting cloud data succeeds and includes the key
+            GPGManager.deleteCloudDataForKeySucceededEvent += deleteCloudDataForKeySucceededEvent;
+            
+            
+            // ##### ##### ##### ##### ##### ##### #####
+            // ## Achievements
+            // ##### ##### ##### ##### ##### ##### #####
+            
+            // Fired when unlocking an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.unlockAchievementFailedEvent += unlockAchievementFailedEvent;
+            
+            // Fired when unlocking an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+            GPGManager.unlockAchievementSucceededEvent += unlockAchievementSucceededEvent;
+            
+            // Fired when incrementing an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.incrementAchievementFailedEvent += incrementAchievementFailedEvent;
+            
+            // Fired when incrementing an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+            GPGManager.incrementAchievementSucceededEvent += incrementAchievementSucceededEvent;
+            
+            // Fired when revealing an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.revealAchievementFailedEvent += revealAchievementFailedEvent;
+            
+            // Fired when revealing an achievement succeeds. The string lets you know the achievementId.
+            GPGManager.revealAchievementSucceededEvent += revealAchievementSucceededEvent;
+            
+            // ##### ##### ##### ##### ##### ##### #####
+            // ## Leaderboards
+            // ##### ##### ##### ##### ##### ##### #####
+            
+            // Fired when submitting a score fails. Provides the leaderboardId and the error in that order.
+            GPGManager.submitScoreFailedEvent += submitScoreFailedEvent;
+            
+            // Fired when submitting a scores succeeds. Returns the leaderboardId and a dictionary with some extra data with the fields from
+            // the GPGScoreReport class: https://developers.google.com/games/services/ios/api/interface_g_p_g_score_report
+            GPGManager.submitScoreSucceededEvent += submitScoreSucceededEvent;
+            
+            // Fired when loading scores fails. Provides the leaderboardId and the error in that order.
+            GPGManager.loadScoresFailedEvent += loadScoresFailedEvent;
+            
+            // Fires when loading scores succeeds
+            GPGManager.loadScoresSucceededEvent += loadScoresSucceededEvent;
+
             PlayGameServices.init(AppConfigs.gameNetworkGooglePlayGameServicesClientId,
                                   false, true, true);
-            #endif
+#endif
         }
 	}
 	
@@ -1330,16 +1440,108 @@ public class GameNetworks : GameObjectBehavior {
 			GameCenterManager.achievementsLoaded -= achievementsLoaded;
 			GameCenterManager.achievementMetadataLoaded -= achievementMetadataLoaded;
 #endif
+        }        
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+        
+        // Fired when authentication succeeds. Includes the user_id
+            GPGManager.authenticationSucceededEvent -= authenticationSucceededEvent;
+        
+        // Fired when authentication fails
+            GPGManager.authenticationFailedEvent -= authenticationFailedEvent;
+        
+        // iOS only. Fired when the user signs out. This could happen if in a leaderboard they touch the settings button and logout from there.
+            GPGManager.userSignedOutEvent -= userSignedOutEvent;
+        
+        // Fired when data fails to reload for a key. This particular model data is usually the player info or leaderboard/achievment metadata that is auto loaded.
+            GPGManager.reloadDataForKeyFailedEvent -= reloadDataForKeyFailedEvent;
+        
+        // Fired when data is reloaded for a key
+            GPGManager.reloadDataForKeySucceededEvent -= reloadDataForKeySucceededEvent;
+        
+        // Android only. Fired when a license check fails
+            GPGManager.licenseCheckFailedEvent -= licenseCheckFailedEvent;
+        
+        
+        // ##### ##### ##### ##### ##### ##### #####
+        // ## Cloud Data
+        // ##### ##### ##### ##### ##### ##### #####
+        
+        // Fired when loading cloud data fails
+            GPGManager.loadCloudDataForKeyFailedEvent -= loadCloudDataForKeyFailedEvent;
+        
+        // Fired when loading cloud data succeeds and includes the key and data
+            GPGManager.loadCloudDataForKeySucceededEvent -= loadCloudDataForKeySucceededEvent;
+        
+        // Fired when updating cloud data fails
+            GPGManager.updateCloudDataForKeyFailedEvent -= updateCloudDataForKeyFailedEvent;
+        
+        // Fired when updating cloud data succeeds and includes the key and data
+            GPGManager.updateCloudDataForKeySucceededEvent -= updateCloudDataForKeySucceededEvent;
+        
+        // Fired when clearing cloud data fails
+            GPGManager.clearCloudDataForKeyFailedEvent -= clearCloudDataForKeyFailedEvent;
+        
+        // Fired when clearing cloud data succeeds and includes the key
+            GPGManager.clearCloudDataForKeySucceededEvent -= clearCloudDataForKeySucceededEvent;
+        
+        // Fired when deleting cloud data fails
+            GPGManager.deleteCloudDataForKeyFailedEvent -= deleteCloudDataForKeyFailedEvent;
+        
+        // Fired when deleting cloud data succeeds and includes the key
+            GPGManager.deleteCloudDataForKeySucceededEvent -= deleteCloudDataForKeySucceededEvent;
+        
+        
+        // ##### ##### ##### ##### ##### ##### #####
+        // ## Achievements
+        // ##### ##### ##### ##### ##### ##### #####
+        
+        // Fired when unlocking an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.unlockAchievementFailedEvent -= unlockAchievementFailedEvent;
+        
+        // Fired when unlocking an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+            GPGManager.unlockAchievementSucceededEvent -= unlockAchievementSucceededEvent;
+        
+        // Fired when incrementing an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.incrementAchievementFailedEvent -= incrementAchievementFailedEvent;
+        
+        // Fired when incrementing an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+            GPGManager.incrementAchievementSucceededEvent -= incrementAchievementSucceededEvent;
+        
+        // Fired when revealing an achievement fails. Provides the achievmentId and the error in that order.
+            GPGManager.revealAchievementFailedEvent -= revealAchievementFailedEvent;
+        
+        // Fired when revealing an achievement succeeds. The string lets you know the achievementId.
+            GPGManager.revealAchievementSucceededEvent -= revealAchievementSucceededEvent;
+        
+        // ##### ##### ##### ##### ##### ##### #####
+        // ## Leaderboards
+        // ##### ##### ##### ##### ##### ##### #####
+        
+        // Fired when submitting a score fails. Provides the leaderboardId and the error in that order.
+            GPGManager.submitScoreFailedEvent -= submitScoreFailedEvent;
+        
+        // Fired when submitting a scores succeeds. Returns the leaderboardId and a dictionary with some extra data with the fields from
+        // the GPGScoreReport class: https://developers.google.com/games/services/ios/api/interface_g_p_g_score_report
+            GPGManager.submitScoreSucceededEvent -= submitScoreSucceededEvent;
+        
+        // Fired when loading scores fails. Provides the leaderboardId and the error in that order.
+            GPGManager.loadScoresFailedEvent -= loadScoresFailedEvent;
+        
+        // Fires when loading scores succeeds
+            GPGManager.loadScoresSucceededEvent -= loadScoresSucceededEvent;
+                
+#endif        
         }
-	}
-	
-	// -------------------------------------------------------------------------
-	// EVENTS IOS GAME CENTER
-	
-#if GAMENETWORK_IOS_APPLE_GAMECENTER	
-	void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
-		gameCenterAchievementsNetwork = achievementsNetworkResult;
-		CheckAchievementsState();
+    }
+    
+    // -------------------------------------------------------------------------
+    // EVENTS IOS GAME CENTER
+    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+    void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
+        gameCenterAchievementsNetwork = achievementsNetworkResult;
+        CheckAchievementsState();
 	}
 	
 	void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
@@ -1353,10 +1555,150 @@ public class GameNetworks : GameObjectBehavior {
  	}
 #endif	
 	
-	/*
+
 	// -------------------------------------------------------------------------
 	// EVENTS ANDROID GOOGLE PLAY
-	
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+    // Fired when authentication succeeds. Includes the user_id
+
+    public void authenticationSucceededEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:authenticationSucceededEvent:" + " val:" + val);
+            SetLocalProfileToNetworkUsername();
+            GetAchievements();
+    }
+    
+    // Fired when authentication fails
+    public void authenticationFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:authenticationFailedEvent:" + " val:" + val);
+    }
+    
+    // iOS only. Fired when the user signs out. This could happen if in a leaderboard they touch the settings button and logout from there.
+    public void userSignedOutEvent() {
+            Debug.Log("GameNetworks:PlayServices:userSignedOutEvent"); 
+    }
+    
+    // Fired when data fails to reload for a key. This particular model data is usually the player info or leaderboard/achievment metadata that is auto loaded.
+    public void reloadDataForKeyFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:reloadDataForKeyFailedEvent:" + " val:" + val);
+    }
+
+    // Fired when data is reloaded for a key
+    public void reloadDataForKeySucceededEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:reloadDataForKeySucceededEvent:" + " val:" + val);
+    }
+    
+    // Android only. Fired when a license check fails
+    public void licenseCheckFailedEvent() {
+            Debug.Log("GameNetworks:PlayServices:licenseCheckFailedEvent");
+    }
+    
+    // ##### ##### ##### ##### ##### ##### #####
+    // ## Cloud Data
+    // ##### ##### ##### ##### ##### ##### #####
+    
+    // Fired when loading cloud data fails
+    public void loadCloudDataForKeyFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+    }
+
+    // Fired when loading cloud data succeeds and includes the key and data
+    public void loadCloudDataForKeySucceededEvent(int key, string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " key:" + key + " val:" + val);
+    }
+    
+    // Fired when updating cloud data fails
+    public void updateCloudDataForKeyFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+    }
+    
+    // Fired when updating cloud data succeeds and includes the key and data
+    public void updateCloudDataForKeySucceededEvent(int key, string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " key:" + key + " val:" + val);      
+    }
+    
+    // Fired when clearing cloud data fails
+    public void clearCloudDataForKeyFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);        
+    }
+    
+    // Fired when clearing cloud data succeeds and includes the key
+    public void clearCloudDataForKeySucceededEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);      
+    }
+    
+    // Fired when deleting cloud data fails
+    public void deleteCloudDataForKeyFailedEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);  
+    }
+    
+    // Fired when deleting cloud data succeeds and includes the key
+    public void deleteCloudDataForKeySucceededEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+    }
+    
+    // ##### ##### ##### ##### ##### ##### #####
+    // ## Achievements
+    // ##### ##### ##### ##### ##### ##### #####
+    
+    // Fired when unlocking an achievement fails. Provides the achievmentId and the error in that order.
+    public void unlockAchievementFailedEvent(string val, string error) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+    }
+
+    // Fired when unlocking an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+    public void unlockAchievementSucceededEvent(string val, bool completed) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " completed:" + completed);
+    }
+    
+    // Fired when incrementing an achievement fails. Provides the achievmentId and the error in that order.
+    public void incrementAchievementFailedEvent(string val, string error) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+    }
+    
+    // Fired when incrementing an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
+    public void incrementAchievementSucceededEvent(string val, bool completed) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " completed:" + completed); 
+    }
+    
+    // Fired when revealing an achievement fails. Provides the achievmentId and the error in that order.
+    public void revealAchievementFailedEvent(string val, string error) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+    }
+    
+    // Fired when revealing an achievement succeeds. The string lets you know the achievementId.
+    public void revealAchievementSucceededEvent(string val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+    }
+    
+    // ##### ##### ##### ##### ##### ##### #####
+    // ## Leaderboards
+    // ##### ##### ##### ##### ##### ##### #####
+    
+    // Fired when submitting a score fails. Provides the leaderboardId and the error in that order.
+    public void submitScoreFailedEvent(string val, string error) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);     
+    }
+    
+    // Fired when submitting a scores succeeds. Returns the leaderboardId and a dictionary with some extra data with the fields from
+    // the GPGScoreReport class: https://developers.google.com/games/services/ios/api/interface_g_p_g_score_report
+    public void submitScoreSucceededEvent(string val, Dictionary<string,object> data) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " data:" + data.ToJson());
+    }
+    
+    // Fired when loading scores fails. Provides the leaderboardId and the error in that order.
+    public void loadScoresFailedEvent(string val, string error) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+    }
+    
+    // Fires when loading scores succeeds
+    public void loadScoresSucceededEvent(List<GPGScore> val) {
+            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + val.ToJson());
+    }
+#endif
+
+
+	/*
 	// Fired when authentication succeeds. Includes the user_id
 	public static event Action<string> authenticationSucceededEvent;
 	

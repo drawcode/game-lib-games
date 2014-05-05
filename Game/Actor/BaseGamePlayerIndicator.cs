@@ -62,7 +62,11 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         else {
             cam = cameraToUse;
         }
-        camTransform = cam.transform;
+        if(cam == null) 
+            return;
+
+        if(cam.transform != null) 
+            camTransform = cam.transform;
     }
 
     // STATIC
@@ -384,8 +388,12 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
     public virtual void LateUpdate() {
 
+        if(camTransform == null) {
+            return;
+        }
+
         if(!GameConfigs.isGameRunning) {
-            //return;
+            return;
         }
 
         if(!initialized) {

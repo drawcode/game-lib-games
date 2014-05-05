@@ -1984,6 +1984,10 @@ public class BaseGamePlayerProgress
             
             //LogUtil.Log("SetStatisticValue gameCenterEnabled:" + GameNetworks.gameCenterEnabled);
 
+            if(GameConfigs.isGameRunning) {
+                return;
+            }
+
             bool sendScore = false;
             GameLeaderboard board = GameLeaderboards.Instance.GetByCode(key);
                         
@@ -1996,7 +2000,7 @@ public class BaseGamePlayerProgress
             foreach(GameNetworkData networkData in board.data.networks) {
                 
                 long keyValueLong = 0;                
-                double keyValueDouble = Convert.ToDouble(keyValue);
+                double keyValueDouble = GameProfileStatistics.Current.GetStatisticValue(key);//Convert.ToDouble(keyValue);
 
                 keyValueLong = (long)keyValueDouble;
                 
@@ -2007,6 +2011,7 @@ public class BaseGamePlayerProgress
                 if(keyValueLong > 0) {
                     
                     LogUtil.Log("SetStatisticValue:keyValueLong:" + keyValueLong);
+
                     GameNetworks.SendScore(networkData.type, networkData.code, keyValueLong);
                 }
             }

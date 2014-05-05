@@ -117,7 +117,15 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
  
     public virtual void UpdateSmoothedMovementDirection() {
      
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         if(controllerData.removing) {
+            return;
+        }
+
+        if(Camera.main == null || Camera.main.transform == null) {
             return;
         }
      
