@@ -113,7 +113,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
             RaycastHit hit;
             if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
              
-                //Debug.Log("hit:" + hit.transform.gameObject.name);
+                //LogUtil.Log("hit:" + hit.transform.gameObject.name);
 
                 hitObject = hit.transform.gameObject;
 
@@ -124,7 +124,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         if (axisPadObject.gameTouchInputAxis.axisName == axisName) {
                             hitPad = true;
                             
-                            //Debug.Log("PointHitTest:" + " hitPad:" + hitPad.ToString() + " axisPadName:" + axisName);
+                            //LogUtil.Log("PointHitTest:" + " hitPad:" + hitPad.ToString() + " axisPadName:" + axisName);
                             // }
                         }
                     }
@@ -147,7 +147,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                 if(objectPlacement != null) {
 
                     if (hitObject != null) {
-                        //Debug.Log("hitObject:" + " hitObject:" + hitObject.name);
+                        //LogUtil.Log("hitObject:" + " hitObject:" + hitObject.name);
                         if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                             hitPlacement = true;
                         }
@@ -155,16 +155,16 @@ public class GameTouchInputAxis : GameObjectBehavior {
                     
                     Vector3 viewportPoint = collisionCamera.ScreenToViewportPoint(point);
                     
-                    //Debug.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
+                    //LogUtil.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
                     
                     Vector3 worldPoint = collisionCamera.ViewportToWorldPoint(viewportPoint);
                     
-                    //Debug.Log("worldPoint:" + " worldPoint:" + worldPoint);
+                    //LogUtil.Log("worldPoint:" + " worldPoint:" + worldPoint);
 
                     viewportPoint.z = -10;
                     worldPoint.z = -10;
                     
-                    //Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
+                    //LogUtil.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
 
                     if(hitPad) {
 
@@ -181,7 +181,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         axisInput.x = deltaPos.x;
                         axisInput.y = deltaPos.y;
                                                 
-                        //Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        //LogUtil.Log("axisInput:" + " axisInput:" + axisInput);
 
                         GameController.SendInputAxisMessage(axisName, axisInput);
 
@@ -239,7 +239,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool downPressed = InputSystem.isDownPressed;
         
         if (axisName == "move") {
-            //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
+            //LogUtil.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
             //          + " downPressed:" + downPressed.ToString()
@@ -305,7 +305,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
         }
 
         if (axisName == "move") {
-            //Debug.Log("handled:" + " handled:" + handled.ToString());
+            //LogUtil.Log("handled:" + " handled:" + handled.ToString());
         }
 
         if (!handled) {

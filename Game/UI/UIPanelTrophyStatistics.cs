@@ -30,7 +30,7 @@ public class UIPanelTrophyStatistics : UIAppPanelBaseList {
 		base.Init();	
 		
 		loadData();
-		Debug.Log("Load GameStatistics: Init");
+		LogUtil.Log("Load GameStatistics: Init");
 	}
 	
 	public static void LoadData() {
@@ -47,18 +47,18 @@ public class UIPanelTrophyStatistics : UIAppPanelBaseList {
 		
 		yield return new WaitForSeconds(1f);
 		
-		Debug.Log("Load GameStatistics: LoadDataCo");
+		LogUtil.Log("Load GameStatistics: LoadDataCo");
 		
 		if (listGridRoot != null) {
             foreach (Transform item in listGridRoot.transform) {
                 Destroy(item.gameObject);
             }
 		
-			Debug.Log("Load GameStatistics: LoadDataCo 3");
+			LogUtil.Log("Load GameStatistics: LoadDataCo 3");
 			
 			List<GameStatistic> statistics = GameStatistics.Instance.GetAll();
 		
-	        Debug.Log("Load statistics: statistics.Count: " + statistics.Count);
+	        LogUtil.Log("Load statistics: statistics.Count: " + statistics.Count);
 			
 			int i = 0;
 			

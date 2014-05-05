@@ -65,7 +65,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
             //}
             //else {
 
-            Debug.Log("OnParticleCollision:" + other.name);
+            LogUtil.Log("OnParticleCollision:" + other.name);
             
             ParticleSystem particleSystem;
             particleSystem = other.GetComponent<ParticleSystem>();
@@ -116,7 +116,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         if (gamePlayerController != null) {
             //foreach (ContactPoint contact in collision.contacts) {
             gamePlayerController.HandleCollision(collision);
-            //  Debug.Log("contact:" + contact);
+            //  LogUtil.Log("contact:" + contact);
             //}
         }
     }

@@ -128,24 +128,24 @@ public class BroadcastNetworks : GameObjectBehavior {
     // RECORDING
     
     public void everyplayIsRecordingSupported() {
-        Debug.Log("everyplayIsRecordingSupported");        
+        LogUtil.Log("everyplayIsRecordingSupported");        
         Everyplay.SharedInstance.IsRecordingSupported();
     }        
     
     public void everyplayRecordingStartedDelegate() {
-        Debug.Log("Recording was started");
+        LogUtil.Log("Recording was started");
         /* The recording is now started, show the red "REC" in the upper hand corner */
         //MyGameEngine.ShowRecordingIndicator();
     }
     
     public void everyplayRecordingStoppedDelegate() {
-        Debug.Log("Recording ended");
+        LogUtil.Log("Recording ended");
         /* Remove visual indicator from the user */
         //MyGameEngine.RemoveRecordingIndicator();
     }
     
     public void everyplayThumbnailReadyAtFilePathDelegate(string path) {
-        Debug.Log("Thumbnail ready: "  + path);
+        LogUtil.Log("Thumbnail ready: "  + path);
         //this.thumbnailPath = path;
     }
 

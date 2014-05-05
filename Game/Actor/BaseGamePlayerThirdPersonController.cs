@@ -147,10 +147,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
                 //horizontalInput = InputSystem.Instance.lastNormalizedTouch.x;
              
                 if(verticalInput > 0) {
-                    //Debug.Log("verticalInput:" + verticalInput);
+                    //LogUtil.Log("verticalInput:" + verticalInput);
                 }
                 if(horizontalInput > 0) {
-                    //Debug.Log("horizontalInput:" + horizontalInput);
+                    //LogUtil.Log("horizontalInput:" + horizontalInput);
                 }
             }
         }
@@ -176,7 +176,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
             aimingDirection = targetDirection;
         }
         
-        //Debug.Log("targetDirection:" + targetDirection);
+        //LogUtil.Log("targetDirection:" + targetDirection);
 
         // Grounded controls
         if(grounded) {
@@ -199,7 +199,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
 
                 moveDirection = moveDirection.normalized;
 
-                //Debug.Log("moveDirection:" + moveDirection);
+                //LogUtil.Log("moveDirection:" + moveDirection);
                 //}
             }
 

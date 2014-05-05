@@ -233,7 +233,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void Advance() {
 
-        Debug.Log("Advance:flowState:" + flowState);
+        LogUtil.Log("Advance:flowState:" + flowState);
 
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
 
@@ -328,7 +328,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         choicesFilter.Shuffle();
 
         int countChoices = choicesFilter.Count;
-        Debug.Log("LoadChoices:countChoices:" + countChoices);
+        LogUtil.Log("LoadChoices:countChoices:" + countChoices);
 
         // select total choices to try
 
@@ -337,12 +337,12 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
             if(choice != null) {
                 if(!choices.ContainsKey(choice.code)) {
                     choices.Add(choice.code, choice);
-                    Debug.Log("LoadChoices:choice.code:" + choice.code);
+                    LogUtil.Log("LoadChoices:choice.code:" + choice.code);
                 }
             }
         }
 
-        Debug.Log("LoadChoices:choices.Count:" + choices.Count);
+        LogUtil.Log("LoadChoices:choices.Count:" + choices.Count);
     }
 
     // STATES
@@ -379,7 +379,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         yield return new WaitForEndOfFrame();
 
-        //Debug.Log("UIPanelModeTypeChoice:ShowCurrentState:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowCurrentState:flowState:" + flowState);
 
         if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceOverview) {
             DisplayStateOverview();
@@ -399,7 +399,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     public void ChangeState(AppModeTypeChoiceFlowState state) {
         if(flowState != state) {
             flowState = state;
-            //Debug.Log("UIPanelModeTypeChoice:ChangeState:flowState:" + flowState);
+            //LogUtil.Log("UIPanelModeTypeChoice:ChangeState:flowState:" + flowState);
             ShowCurrentState();
         }
     }
@@ -465,20 +465,20 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void OnGameLevelItemsLoadedHandler() {
 
-        //Debug.Log("OnGameLevelItemsLoadedHandler");
+        //LogUtil.Log("OnGameLevelItemsLoadedHandler");
 
         if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
             //Messenger.Broadcast(GameDraggableEditorMessages.GameLevelItemsLoaded);
 
             // Match choices to level assets.
 
-            //Debug.Log("OnGameLevelItemsLoadedHandler2");
+            //LogUtil.Log("OnGameLevelItemsLoadedHandler2");
 
             //int i = 0;
 
             //AppContentChoice choice = GetCurrentChoice();
 
-           // Debug.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
+           // LogUtil.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
 
             /*
             foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
@@ -508,10 +508,10 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
                     }
 
     
-                    Debug.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
-                    //Debug.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
-                    Debug.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
-                    Debug.Log("OnGameLevelItemsLoadedHandler:i:" + i);
+                    LogUtil.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
+                    //LogUtil.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
+                    LogUtil.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
+                    LogUtil.Log("OnGameLevelItemsLoadedHandler:i:" + i);
     
                     i++;
 
@@ -542,10 +542,10 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
                 }
 
 
-                Debug.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
-                //Debug.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
-                Debug.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
-                Debug.Log("OnGameLevelItemsLoadedHandler:i:" + i);
+                LogUtil.Log("OnGameLevelItemsLoadedHandler:choice:" + choice.code);
+                //LogUtil.Log("OnGameLevelItemsLoadedHandler:choice.choices[i]:" + choice.choices[i].display);
+                LogUtil.Log("OnGameLevelItemsLoadedHandler:colorTo:" + colorTo);
+                LogUtil.Log("OnGameLevelItemsLoadedHandler:i:" + i);
 
                 i++;
             }
@@ -563,7 +563,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void DisplayStateOverview() {
 
-        //Debug.Log("UIPanelModeTypeChoice:DisplayStateOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:DisplayStateOverview:flowState:" + flowState);
 
         UIUtil.SetLabelValue(labelOverviewStatus, GetStatusOverview());
 
@@ -575,9 +575,9 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         CheckChoices();
         CheckChoicesData();
 
-        //Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:flowState:" + flowState);
 
-        Debug.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:choices.Count:" + choices.Count);
+        LogUtil.Log("UIPanelModeTypeChoice:DisplayStateDisplayItem:choices.Count:" + choices.Count);
 
         if(chosen) {
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
@@ -590,7 +590,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     public void UpdateDisplayItemData() {
-        Debug.Log("UIPanelModeTypeChoice:UpdateDisplayItemData");
+        LogUtil.Log("UIPanelModeTypeChoice:UpdateDisplayItemData");
 
         UIColors.UpdateColors();
 
@@ -614,7 +614,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     public void DisplayStateResultItem() {
-        //Debug.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:DisplayStateResultItem:flowState:" + flowState);
 
         UpdateResultItemData();
 
@@ -622,7 +622,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     public void UpdateResultItemData() {
-        Debug.Log("UIPanelModeTypeChoice:UpdateResultItemData");
+        LogUtil.Log("UIPanelModeTypeChoice:UpdateResultItemData");
 
         UIUtil.SetLabelValue(labelResultItemStatus, GetStatusItemProgress());
 
@@ -675,7 +675,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void DisplayStateResults() {
 
-        //Debug.Log("UIPanelModeTypeChoice:DisplayStateResults:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:DisplayStateResults:flowState:" + flowState);
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
 
@@ -686,7 +686,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
 
     public void UpdateDisplayStateResultsData() {
-        Debug.Log("UIPanelModeTypeChoice:UpdateDisplayStateResultsData");
+        LogUtil.Log("UIPanelModeTypeChoice:UpdateDisplayStateResultsData");
 
         UIColors.UpdateColors();
 
@@ -781,7 +781,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceOverview);
 
@@ -792,7 +792,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void HideOverview() {
 
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
 
         AnimateOutBottom(containerChoiceOverview, 0f, 0f);
 
@@ -803,7 +803,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void ShowDisplayItem() {
 
-        Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem");
+        LogUtil.Log("UIPanelModeTypeChoice:ShowDisplayItem");
 
         HideStates();
 
@@ -818,7 +818,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        //Debug.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowDisplayItem:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceDisplayItem);
 
@@ -832,7 +832,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void HideDisplayItem() {
 
-        //Debug.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:HideDisplayItem:flowState:" + flowState);
 
         listGridRoot.DestroyChildren();
 
@@ -849,7 +849,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         UIPanelDialogBackground.ShowDefault();
 
-        //Debug.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowResultItem:flowState:" + flowState);
 
         AnimateInBottom(containerChoiceResultItem);
 
@@ -858,7 +858,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void HideResultItem() {
 
-        //Debug.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:HideResultItem:flowState:" + flowState);
 
         AnimateOutBottom(containerChoiceResultItem, 0f, 0f);
 
@@ -869,13 +869,13 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void ShowResults() {
         HideStates();
-        //Debug.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
         AnimateInBottom(containerChoiceResults);
         ContentPause();
     }
 
     public void HideResults() {
-        //Debug.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
         AnimateOutBottom(containerChoiceResults, 0f, 0f);
         ContentRun();
     }
@@ -908,7 +908,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 	}
 
     public void loadDataChoice() {
-        Debug.Log("UIPanelModeTypeChoice:loadDataChoice");
+        LogUtil.Log("UIPanelModeTypeChoice:loadDataChoice");
         StartCoroutine(loadDataChoiceCo());
     }
 
@@ -935,7 +935,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     }
 
     public void loadData() {
-        Debug.Log("UIPanelModeTypeChoice:loadData");
+        LogUtil.Log("UIPanelModeTypeChoice:loadData");
     }
     
     IEnumerator loadDataCo() {

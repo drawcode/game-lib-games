@@ -559,9 +559,9 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
          
             if(!animationData.gamePlayerController.IsPlayerControlled) {
-                //Debug.Log("currentSpeed:" + currentSpeed);
+                //LogUtil.Log("currentSpeed:" + currentSpeed);
             }
-            //Debug.Log("navAgent:" + navAgent);
+            //LogUtil.Log("navAgent:" + navAgent);
          
             if(animationData.gamePlayerController != null) {
                 if(animationData.gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgent
@@ -570,7 +570,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
                     
                     if(!animationData.gamePlayerController.IsPlayerControlled) {
-                        //Debug.Log("currentSpeed11:" + currentSpeed);
+                        //LogUtil.Log("currentSpeed11:" + currentSpeed);
                     }
 
                     if(animationData.navAgent != null) {
@@ -598,15 +598,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
                         
             if(!animationData.gamePlayerController.IsPlayerControlled) {
-                //Debug.Log("currentSpeed22:" + currentSpeed);
+                //LogUtil.Log("currentSpeed22:" + currentSpeed);
             }
          
             float walkSpeed = 5f;
          
-            //Debug.Log("currentSpeed:" + currentSpeed);
+            //LogUtil.Log("currentSpeed:" + currentSpeed);
             if(animationData.thirdPersonController != null) {
                 walkSpeed = animationData.thirdPersonController.walkSpeed;
-                //Debug.Log("currentSpeed:" + thirdPersonController.walkSpeed);
+                //LogUtil.Log("currentSpeed:" + thirdPersonController.walkSpeed);
             }
          
             if(animationData.actor == null || (animationData.actor.animation == null && animationData.animator == null)) {
@@ -679,7 +679,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 else if(isMecanim) {
                                         
                     if(!animationData.gamePlayerController.IsPlayerControlled) {
-                        //Debug.Log("currentSpeed:isMecanim:" + currentSpeed);
+                        //LogUtil.Log("currentSpeed:isMecanim:" + currentSpeed);
                     }
 
                     animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
@@ -733,12 +733,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 else if(isMecanim) {
                     
                     if(!animationData.gamePlayerController.IsPlayerControlled) {
-                        //Debug.Log("currentSpeed:isMecanim22:" + currentSpeed);
+                        //LogUtil.Log("currentSpeed:isMecanim22:" + currentSpeed);
                     }
 
                     if(animationData.animator != null) {
                         animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
-                        //Debug.Log("currentSpeed:isMecanim33:" + currentSpeed);
+                        //LogUtil.Log("currentSpeed:isMecanim33:" + currentSpeed);
                     }
                 }
             }
@@ -751,7 +751,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     if(animationData.animator != null) {
                         
                         if(!animationData.gamePlayerController.IsPlayerControlled) {
-                            //Debug.Log("currentSpeed:isMecanimstop:" + currentSpeed);
+                            //LogUtil.Log("currentSpeed:isMecanimstop:" + currentSpeed);
                         }
 
                         animationData.animator.SetFloat(GamePlayerAnimationType.speed, currentSpeed);
@@ -1361,7 +1361,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
      
         animationData.isRunningClampAnimation = true;
         PauseAnimationUpdate(1f);    
-        //Debug.Log("DidSkill:");
+        //LogUtil.Log("DidSkill:");
         float currentSpeed = 0f;
         float walkSpeed = 0f;
      

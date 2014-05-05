@@ -48,7 +48,7 @@ public class SliderEvents : GameObjectBehavior {
 	}
 	
 	void OnSliderChange(float changeValue) {
-		//Debug.Log("SliderEvents:OnSliderChange: name: " + transform.name + " changeValue:" + changeValue);
+		//LogUtil.Log("SliderEvents:OnSliderChange: name: " + transform.name + " changeValue:" + changeValue);
 		Messenger<string, float>.Broadcast(SliderEvents.EVENT_ITEM_CHANGE, transform.name, changeValue);
 	}
 }

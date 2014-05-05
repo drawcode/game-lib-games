@@ -100,7 +100,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
             RaycastHit hit;
             if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {   
                 
-                Debug.Log("hit:" + hit.transform.gameObject.name);
+                LogUtil.Log("hit:" + hit.transform.gameObject.name);
                 
                 hitObject = hit.transform.gameObject;
                 
@@ -111,7 +111,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
                         if (axisObject.axisName == axisName) {
                             hitThis = true;
                             
-                            Debug.Log("PointHitTest:" + " hitThis:" + hitThis.ToString() + " axisName:" + axisName);
+                            LogUtil.Log("PointHitTest:" + " hitThis:" + hitThis.ToString() + " axisName:" + axisName);
                             // }
                         }
                     }
@@ -153,21 +153,21 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
                             bool hitPlacement = false;
                             
                             if (hitObject != null) {
-                                Debug.Log("hitObject:" + " hitObject:" + hitObject.name);
+                                LogUtil.Log("hitObject:" + " hitObject:" + hitObject.name);
                                 if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                                     hitPlacement = true;
                                 }
                             }
                             
-                            Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
+                            LogUtil.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
                             
                             if(hitPlacement) {
                                 
                                 //}
                                 //if((point.x > 10 && point.x < Screen.width / 2)) {
                                 
-                                Debug.Log("hitThis:" + " objectPlacement.transform.position:" + objectPlacement.transform.position);
-                                Debug.Log("hitThis:" + " point:" + point);
+                                LogUtil.Log("hitThis:" + " objectPlacement.transform.position:" + objectPlacement.transform.position);
+                                LogUtil.Log("hitThis:" + " point:" + point);
                                 
                                 Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);
                                 
@@ -175,7 +175,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
                                     Vector3 offset = anchor.transform.position;
                                     //offset.y += 1000;
                                     
-                                    Debug.Log("hitThis:" + " offset:" + offset);
+                                    LogUtil.Log("hitThis:" + " offset:" + offset);
                                     
                                     Vector3 movedPos = viewPos;
                                     movedPos.x += offset.x - (originalPlacement.x) - 20;
@@ -183,12 +183,12 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
                                     movedPos.x *= 2; // hald pixel offset
                                     movedPos.y *= 2; // hald pixel offset
                                     //movedPos.y += 1000;
-                                    Debug.Log("hitThis:" + " movedPos:" + movedPos);
+                                    LogUtil.Log("hitThis:" + " movedPos:" + movedPos);
                                     
                                     objectPlacement.transform.localPosition = movedPos;
                                 }
                                 else {                          
-                                    Debug.Log("hitThis:" + " viewPos:" + viewPos);          
+                                    LogUtil.Log("hitThis:" + " viewPos:" + viewPos);          
                                     objectPlacement.transform.localPosition = viewPos;                             
                                 }
                             }
@@ -235,7 +235,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
         bool downPressed = InputSystem.isDownPressed;
         
         if (axisName == "move") {
-            //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
+            //LogUtil.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
             //          + " downPressed:" + downPressed.ToString()
@@ -301,7 +301,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
         }
         
         if (axisName == "move") {
-            //Debug.Log("handled:" + " handled:" + handled.ToString());
+            //LogUtil.Log("handled:" + " handled:" + handled.ToString());
         }
         
         if (!handled) {

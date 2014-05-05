@@ -31,7 +31,7 @@ public class DragObject : GameObjectBehavior
 	    }
 	    if (!cam) 
 		{
-	        Debug.LogError("Can't find camera tagged MainCamera");
+	        LogUtil.LogError("Can't find camera tagged MainCamera");
 	        return;
 	    }
 	    camTransform = cam.transform;

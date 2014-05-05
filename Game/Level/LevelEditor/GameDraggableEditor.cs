@@ -140,7 +140,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 	    //RaycastHit hit;
 	    //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 	    //if (Physics.Raycast(ray, out hit)) {  
-		//	Debug.Log("hit.point:" + hit.point);
+		//	LogUtil.Log("hit.point:" + hit.point);
 			currentEditorPosition = Input.mousePosition;
 		//}
 	}
@@ -319,7 +319,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 			if(arrLevelId.Length > 0) {
 				string assetCodeCreating =  arrLevelId[1];
 				GameDraggableEditor.Instance.assetCodeCreating = assetCodeCreating;
-				Debug.Log("GameDraggableEditor.Instance.assetCodeCreating:" + GameDraggableEditor.Instance.assetCodeCreating);
+				LogUtil.Log("GameDraggableEditor.Instance.assetCodeCreating:" + GameDraggableEditor.Instance.assetCodeCreating);
 				
 				if(UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
 					
@@ -473,10 +473,10 @@ public class GameDraggableEditor : GameObjectBehavior {
 		
 		HandleFingerGesturesOnTap(fingerPos);
 		
-		Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);	
-		Debug.Log("FingerGestures_OnDoubleTap:gesture.ElapsedTime:" + gesture.ElapsedTime);		
+		LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);	
+		LogUtil.Log("FingerGestures_OnDoubleTap:gesture.ElapsedTime:" + gesture.ElapsedTime);		
 		
-		//Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + );
+		//LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + );
 		
 		if(gesture.ElapsedTime < .08) {
 		
@@ -492,17 +492,17 @@ public class GameDraggableEditor : GameObjectBehavior {
         if (go != null) {
             deferTap = !allowTap;
 
-            //Debug.Log("Tap:" + fingerPos);
-            //Debug.Log("Tap:Screen.Height:" + Screen.height);
+            //LogUtil.Log("Tap:" + fingerPos);
+            //LogUtil.Log("Tap:Screen.Height:" + Screen.height);
 
             float heightToCheck = Screen.height - Screen.height * .85f;
-           // Debug.Log("Tap:heightToCheck:" + heightToCheck);
+           // LogUtil.Log("Tap:heightToCheck:" + heightToCheck);
 
             if (fingerPos.y < heightToCheck) {
                 deferTap = true;
             }
 
-           // Debug.Log("Tap:deferTap:" + deferTap);
+           // LogUtil.Log("Tap:deferTap:" + deferTap);
 
             if (!deferTap) {
 
@@ -547,13 +547,13 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     private void FingerGestures_OnDoubleTap(TapGesture gesture) {
 		
-		Debug.Log("FingerGestures_OnDoubleTap:gesture.Position:" + gesture.Position);
+		LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Position:" + gesture.Position);
 		
         if (!IsInputAllowed()) {
             return;
         }		       
 		
-		Debug.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);
+		LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);
 		
 		if(gesture.Taps > 1) {
 		
@@ -837,14 +837,14 @@ public class GameDraggableEditor : GameObjectBehavior {
 	
 	public void DoubleTap(Vector2 fingerPos) {	
 		
-		Debug.Log("DoubleTap:fingerPos:" + fingerPos);
-		Debug.Log("DoubleTap:GameDraggableEditor.isEditing:" + GameDraggableEditor.isEditing);
+		LogUtil.Log("DoubleTap:fingerPos:" + fingerPos);
+		LogUtil.Log("DoubleTap:GameDraggableEditor.isEditing:" + GameDraggableEditor.isEditing);
 		
 		if(GameDraggableEditor.isEditing) {
 			
 			GameDraggableEditor.EditModeCreateAsset(fingerPos);
 			
-			Debug.Log("DoubleTap:EditModeCreateAsset:" + fingerPos);
+			LogUtil.Log("DoubleTap:EditModeCreateAsset:" + fingerPos);
 			
 			//var fwd = transform.TransformDirection(Vector3.forward);
 			Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
@@ -1130,7 +1130,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 	        		grabbed.position = hit.point + grabOffset;
 					grabbed.position = grabbed.position.WithY(grabbedInitialY);
 				}
-				///Debug.Log("pos:" + grabbed.position);
+				///LogUtil.Log("pos:" + grabbed.position);
 			}
 	    }	
 	}
@@ -1250,11 +1250,11 @@ public class GameDraggableEditor : GameObjectBehavior {
 	}
 	
 	public void editModeCreateAsset(Vector2 fingerPos) {
-		//Debug.Log("EditModeCreateAsset");
+		//LogUtil.Log("EditModeCreateAsset");
 		if(GameDraggableEditor.isEditing) {
 			// add game draggable edit selected asset code if on
 			
-			//Debug.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
+			//LogUtil.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
 			
 			if(!string.IsNullOrEmpty(assetCodeCreating)) {
 				GameLevelItemAsset itemAsset = new GameLevelItemAsset();
@@ -1302,19 +1302,19 @@ public class GameDraggableEditor : GameObjectBehavior {
 		// load in sprite from resources for now
 		string resourcePath = GetResourcePath(spriteCode);
 		
-		//Debug.Log("LoadSprite:resourcePath:" + resourcePath);
+		//LogUtil.Log("LoadSprite:resourcePath:" + resourcePath);
 		
 		UnityEngine.Object prefabSprite = Resources.Load(resourcePath);
 
 		if(prefabSprite != null) {
 
-            //Debug.Log("LoadSprite:check:prefabSprite:" + prefabSprite.name);
+            //LogUtil.Log("LoadSprite:check:prefabSprite:" + prefabSprite.name);
 
 			go = Instantiate(prefabSprite) as GameObject;
 
 			if(go != null) {
 
-                //Debug.Log("LoadSprite:go.name:" + go.name);
+                //LogUtil.Log("LoadSprite:go.name:" + go.name);
 
                 go.transform.parent = parent.transform;
 
@@ -1334,7 +1334,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 			}
 		}
         else {
-            Debug.Log("NOT FOUND: LoadSprite:resourcePath:" + resourcePath);
+            LogUtil.Log("NOT FOUND: LoadSprite:resourcePath:" + resourcePath);
         }
 		return go;
 	}
@@ -1412,7 +1412,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 				
 				go.AddComponent<GameLevelSpriteEffect>();
 
-                //Debug.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
+                //LogUtil.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
 			}
 		}
 		return go;
@@ -1472,17 +1472,17 @@ public class GameDraggableEditor : GameObjectBehavior {
 
 		GameLevelItem gameLevelItem = GameLevelItems.Current;
 
-        //Debug.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
+        //LogUtil.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
 
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 
-        //Debug.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
+        //LogUtil.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
 		
 		if(gameLevelItemAssets != null) {
 
 			foreach(GameLevelItemAsset item in gameLevelItemAssets) {
 
-                //Debug.Log("loadLevelItemsCo:" + item.asset_code);
+                //LogUtil.Log("loadLevelItemsCo:" + item.asset_code);
 
 				LoadLevelItem(item);
 			}
@@ -1521,7 +1521,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 	
 	public void loadLevelItem(GameObject prefabGameLevelItemContainer, GameLevelItemAsset gameLevelItemAsset) {
 
-        //Debug.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
+        //LogUtil.Log("loadLevelItem:" + prefabGameLevelItemContainer.name + " asset:" + gameLevelItemAsset.asset_code);
 
         if(gameLevelItemAsset != null) {
 

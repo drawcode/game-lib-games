@@ -54,7 +54,7 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 		
 			List<GameAchievement> achievements = GameAchievements.Instance.GetAll();
 		
-	        Debug.Log("Load Achievements: achievements.Count: " + achievements.Count);
+	        LogUtil.Log("Load Achievements: achievements.Count: " + achievements.Count);
 			
 			int i = 0;
 			

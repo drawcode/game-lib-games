@@ -1252,7 +1252,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData = new GamePlayerControllerData();
         }
 
-        //Debug.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
+        //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
         if (controllerData.lastPrefabName != prefabName || controllerData.lastPrefabName == null || !isCharacterLoaded) {
             controllerData.lastPrefabName = prefabName;
             if (gameObject.activeInHierarchy) {
@@ -1303,11 +1303,11 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData.loadingCharacter = true;
         
-        //Debug.Log("LoadCharacter:path:" + path);
+        //LogUtil.Log("LoadCharacter:path:" + path);
         
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
                 
-        //Debug.Log("LoadCharacter:prefabObject:" + prefabObject != null);
+        //LogUtil.Log("LoadCharacter:prefabObject:" + prefabObject != null);
 
         if (prefabObject != null) {
             if (gamePlayerModelHolderModel.transform.childCount > 0) {
@@ -1317,7 +1317,7 @@ public class BaseGamePlayerController : GameActor {
                     GameObjectHelper.DestroyGameObject(
                         t.gameObject, GameConfigs.usePooledGamePlayers);
 
-                    //Debug.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
+                    //LogUtil.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
                 }
             }
 
@@ -1373,7 +1373,7 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
                 gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                 
-                //Debug.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
+                //LogUtil.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
                 foreach (Transform t in gameObjectLoad.transform) {
                     //t.localRotation = gamePlayerModelHolderModel.transform.rotation;
@@ -1408,7 +1408,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void LoadInventory() {
 
-        ////Debug.Log("LoadInventory");
+        ////LogUtil.Log("LoadInventory");
     
         if (weaponInventory == null) {
             weaponInventory = new List<string>();
@@ -1438,7 +1438,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void LoadWeapons() {
         
-        //Debug.Log("LoadWeapons");
+        //LogUtil.Log("LoadWeapons");
         initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
         currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
 
@@ -1478,19 +1478,19 @@ public class BaseGamePlayerController : GameActor {
         GameWeapon gameWeaponData = GameWeapons.Instance.GetByCode(code);
 
         if (gameWeaponData == null) {
-            Debug.LogWarning("LoadWeapon: NULL gameWeaponData");
+            LogUtil.LogWarning("LoadWeapon: NULL gameWeaponData");
             return;
         }
 
         if (gameWeaponData.data == null) {
-            Debug.LogWarning("LoadWeapon: NULL gameWeaponData.data");
+            LogUtil.LogWarning("LoadWeapon: NULL gameWeaponData.data");
             return;
         }
 
         GameDataModel dataModel = gameWeaponData.data.GetModel();
         
         if (dataModel == null) {
-            Debug.LogWarning("LoadWeapon: NULL dataModel");
+            LogUtil.LogWarning("LoadWeapon: NULL dataModel");
             return;
         }
 
@@ -1511,7 +1511,7 @@ public class BaseGamePlayerController : GameActor {
 
                 weapon.gameWeaponData = gameWeaponData;
                                 
-                Debug.Log("LoadWeapon:weapon.name:" + weapon.name);
+                LogUtil.Log("LoadWeapon:weapon.name:" + weapon.name);
 
                 weapons.Add(GamePlayerSlots.slotPrimary, weapon);
                 weaponPrimary = weapon;                
@@ -1531,15 +1531,15 @@ public class BaseGamePlayerController : GameActor {
      
         // main
      
-        //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+        //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
      
         if (name == GameTouchInputAxis.inputAxisMove) {
          
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
          
             if (controllerData.thirdPersonController != null) {
              
-                //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+                //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
                 if (!axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
                     axisInput.x = 0f;
@@ -1552,11 +1552,11 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (name == GameTouchInputAxis.inputAxisAttack) {
          
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
          
             if (controllerData.thirdPersonController != null) {
              
-                //Debug.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
+                //LogUtil.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
                 
                 if (!axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
                     axisInput.x = 0f;
@@ -1570,11 +1570,11 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (name == GameTouchInputAxis.inputAxisMoveHorizontal) {
                 
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
             if (controllerData.thirdPersonController != null) {
                     
-                //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+                //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
 
@@ -1583,7 +1583,7 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 if (axisInput.y > .7f) {
-                    //Debug.Log("axisInput.y:" + axisInput.y);
+                    //LogUtil.Log("axisInput.y:" + axisInput.y);
                     Jump();
                 }
                 else {
@@ -1594,12 +1594,12 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (name == GameTouchInputAxis.inputAxisMoveVertical) {
                 
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
             if (controllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-                    //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+                    //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                     controllerData.thirdPersonController.horizontalInput = 0f;//axisInput.x;
                     controllerData.thirdPersonController.verticalInput = axisInput.y;
                 }
@@ -1607,11 +1607,11 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (name == GameTouchInputAxis.inputAxisAttack2DSide2) {
                 
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
             if (controllerData.thirdPersonController != null) {
                     
-                //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+                //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
                 //controllerData.thirdPersonController.horizontalInput = axisInput.x;
                 //controllerData.thirdPersonController.verticalInput = 0f;
@@ -1633,12 +1633,12 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (name == GameTouchInputAxis.inputAxisAttack2DSide) {
             
-            //Debug.Log("OnInputAxis:" + name + "input:" + axisInput);
+            //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
             if (controllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
-                    //Debug.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
+                    //LogUtil.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
                     
                     controllerData.thirdPersonController.horizontalInput2 = -axisInput.x;
                     controllerData.thirdPersonController.verticalInput2 = 0f;//axisInput.y;
@@ -1969,7 +1969,7 @@ public class BaseGamePlayerController : GameActor {
                         Vector3 normal = contact.normal;
                         float magnitude = contact.point.sqrMagnitude;
                         float hitPower = (magnitude * (float)runtimeData.mass) / 110;
-                        //Debug.Log("hitPower:" + hitPower);
+                        //LogUtil.Log("hitPower:" + hitPower);
                         AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
                     }
                 }
@@ -2044,7 +2044,7 @@ public class BaseGamePlayerController : GameActor {
         //else {
             
         if (other.name.Contains("projectile")) {
-            Debug.Log("OnParticleCollision:" + other.name);
+            LogUtil.Log("OnParticleCollision:" + other.name);
 
             // todo lookup projectile and power to subtract.
 
@@ -4424,14 +4424,14 @@ public class BaseGamePlayerController : GameActor {
         if (IsPlayerControlled) {
             if (Input.GetKey(KeyCode.LeftControl)) {
 
-                //Debug.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
-                //Debug.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
-                //Debug.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
+                //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
+                //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
+                //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
                 //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
                 //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
 
-                //Debug.Log("GamePlayer:point1:" + point1);
-                //Debug.Log("GamePlayer:point2:" + point2);
+                //LogUtil.Log("GamePlayer:point1:" + point1);
+                //LogUtil.Log("GamePlayer:point2:" + point2);
 
                 float power = 100f;
                 if (Input.GetKey(KeyCode.V)) {

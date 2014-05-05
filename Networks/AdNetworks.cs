@@ -306,59 +306,59 @@ public class AdNetworks : GameObjectBehavior {
     // OFFERS
     
     public void tapjoyShowOffers() {
-        Debug.Log("tapjoyShowOffers");        
+        LogUtil.Log("tapjoyShowOffers");        
         TapjoyPlugin.ShowOffers();
     }
 
     public void tapjoyShowDisplayAd() {
-        Debug.Log("tapjoyShowDisplayAd");        
+        LogUtil.Log("tapjoyShowDisplayAd");        
         TapjoyPlugin.ShowDisplayAd();
     }
 
     public void tapjoyShowFullscreenAd() {
-        Debug.Log("tapjoyShowFullscreenAd");        
+        LogUtil.Log("tapjoyShowFullscreenAd");        
         TapjoyPlugin.ShowFullScreenAd();
     }
 
     // CONNECT
     public void tapjoyHandleTapjoyConnectSuccess() {
-        Debug.Log("tapjoyHandleTapjoyConnectSuccess");
+        LogUtil.Log("tapjoyHandleTapjoyConnectSuccess");
     }
     
     public void tapjoyHandleTapjoyConnectFailed() {
-        Debug.Log("tapjoyHandleTapjoyConnectFailed");
+        LogUtil.Log("tapjoyHandleTapjoyConnectFailed");
     }
     
     // VIRTUAL CURRENCY
     public void tapjoyHandleGetTapPointsSucceeded(int points) {
-        Debug.Log("tapjoyHandleGetTapPointsSucceeded: " + points);
+        LogUtil.Log("tapjoyHandleGetTapPointsSucceeded: " + points);
         //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
     }
     
     public void tapjoyHandleGetTapPointsFailed() {
-        Debug.Log("tapjoyHandleGetTapPointsFailed");
+        LogUtil.Log("tapjoyHandleGetTapPointsFailed");
     }
     
     public void tapjoyHandleSpendTapPointsSucceeded(int points) {
-        Debug.Log("HandleSpendTapPointsSucceeded: " + points);
+        LogUtil.Log("HandleSpendTapPointsSucceeded: " + points);
         //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
     }
     
     public void tapjoyHandleSpendTapPointsFailed() {
-        Debug.Log("HandleSpendTapPointsFailed");
+        LogUtil.Log("HandleSpendTapPointsFailed");
     }
     
     public void tapjoyHandleAwardTapPointsSucceeded() {
-        Debug.Log("HandleAwardTapPointsSucceeded");
+        LogUtil.Log("HandleAwardTapPointsSucceeded");
         //tapPointsLabel = "Total TapPoints: " + TapjoyPlugin.QueryTapPoints();
     }
     
     public void tapjoyHandleAwardTapPointsFailed() {
-        Debug.Log("HandleAwardTapPointsFailed");
+        LogUtil.Log("HandleAwardTapPointsFailed");
     }
     
     public void tapjoyHandleTapPointsEarned(int points) {
-        Debug.Log("CurrencyEarned: " + points);
+        LogUtil.Log("CurrencyEarned: " + points);
         //tapPointsLabel = "Currency Earned: " + points;
         
         TapjoyPlugin.ShowDefaultEarnedCurrencyAlert();
@@ -366,62 +366,62 @@ public class AdNetworks : GameObjectBehavior {
     
     // FULL SCREEN ADS
     public void tapjoyHandleGetFullScreenAdSucceeded() {
-        Debug.Log("HandleGetFullScreenAdSucceeded");
+        LogUtil.Log("HandleGetFullScreenAdSucceeded");
         
         TapjoyPlugin.ShowFullScreenAd();
     }
     
     public void tapjoyHandleGetFullScreenAdFailed() {
-        Debug.Log("HandleGetFullScreenAdFailed");
+        LogUtil.Log("HandleGetFullScreenAdFailed");
     }
     
     // DISPLAY ADS
     public void tapjoyHandleGetDisplayAdSucceeded() {
-        Debug.Log("HandleGetDisplayAdSucceeded");
+        LogUtil.Log("HandleGetDisplayAdSucceeded");
         
         if (!tapjoyOpeningFullScreenAd)
             TapjoyPlugin.ShowDisplayAd();
     }
     
     public void tapjoyHandleGetDisplayAdFailed() {
-        Debug.Log("HandleGetDisplayAdFailed");
+        LogUtil.Log("HandleGetDisplayAdFailed");
     }
     
     // VIDEO
     public void tapjoyHandleVideoAdStarted() {
-        Debug.Log("HandleVideoAdStarted");
+        LogUtil.Log("HandleVideoAdStarted");
     }
     
     public void tapjoyHandleVideoAdFailed() {
-        Debug.Log("HandleVideoAdFailed");
+        LogUtil.Log("HandleVideoAdFailed");
     }
     
     public void tapjoyHandleVideoAdCompleted() {
-        Debug.Log("HandleVideoAdCompleted");
+        LogUtil.Log("HandleVideoAdCompleted");
     }
     
     // VIEW OPENED  
     public void tapjoyHandleViewOpened(TapjoyViewType viewType) {
-        Debug.Log("HandleViewOpened of view type " + viewType.ToString());
+        LogUtil.Log("HandleViewOpened of view type " + viewType.ToString());
         tapjoyOpeningFullScreenAd = true;
     }
     
     // VIEW CLOSED  
     public void tapjoyHandleViewClosed(TapjoyViewType viewType) {
-        Debug.Log("HandleViewClosed of view type " + viewType.ToString());
+        LogUtil.Log("HandleViewClosed of view type " + viewType.ToString());
         tapjoyOpeningFullScreenAd = false;
     }
     
     // OFFERS
     public void tapjoyHandleShowOffersFailed() {
-        Debug.Log("HandleShowOffersFailed");
+        LogUtil.Log("HandleShowOffersFailed");
     }
     
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
     #if PROMO_USE_VUNGLE   
     public void vungleInit() {
-        Debug.Log("vungleInit");
+        LogUtil.Log("vungleInit");
 
         Vungle.init(AppConfigs.publisherIdVungleAndroid, AppConfigs.publisherIdVungleiOS);
         //Vungle.init(AppConfigs.publisherIdVungleAndroid, AppConfigs.publisherIdVungleiOS, int age, VungleGender gender );
@@ -429,36 +429,36 @@ public class AdNetworks : GameObjectBehavior {
     }
         
     public void vungleSetSoundEnabled(bool isEnabled) {
-        Debug.Log("vungleSetSoundEnabled");
+        LogUtil.Log("vungleSetSoundEnabled");
         Vungle.setSoundEnabled(isEnabled);
     }
 
     // Checks to see if a video is available
     public bool vungleIsAdvertAvailable() {
-        Debug.Log("vungleIsAdvertAvailable");
+        LogUtil.Log("vungleIsAdvertAvailable");
         return Vungle.isAdvertAvailable();
     }
     
     public void vungleDisplayAdvert(bool showCloseButtonOnIOS) {
-        Debug.Log("vungleDisplayAdvert");
+        LogUtil.Log("vungleDisplayAdvert");
         Vungle.displayAdvert(showCloseButtonOnIOS);
     }
 
     // Displays an incentivized advert with optional name
     public void vungleDisplayIncentivizedAdvert(bool showCloseButton, string user) {
-        Debug.Log("vungleDisplayIncentivizedAdvert");
+        LogUtil.Log("vungleDisplayIncentivizedAdvert");
         Vungle.displayIncentivizedAdvert(showCloseButton, user);   
     }
 
     // Fired when a Vungle ad starts
     public void vungleOnAdStartedEvent() {
-        Debug.Log("vungleOnAdStartedEvent");
+        LogUtil.Log("vungleOnAdStartedEvent");
         // Send started message to pause
     }
 
     // Fired when a Vungle ad finishes
     public void vungleOnAdEndedEvent() {
-        Debug.Log("vungleOnAdEndedEvent");
+        LogUtil.Log("vungleOnAdEndedEvent");
         // Send started message to unpause and credit if successful  
         
         Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
@@ -466,7 +466,7 @@ public class AdNetworks : GameObjectBehavior {
     
     // Fired when a Vungle video is dismissed and provides the time watched and total duration in that order.
     public void vungleOnAdViewedEvent(double timeWatched, double totalDuration) {
-        Debug.Log("vungleOnAdViewedEvent");
+        LogUtil.Log("vungleOnAdViewedEvent");
         // check for success if watched more than 90% of video.
 
         Messenger<double>.Broadcast(AdNetworksMessages.videoAd, timeWatched / totalDuration);

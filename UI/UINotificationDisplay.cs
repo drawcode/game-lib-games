@@ -211,7 +211,7 @@ public class UINotificationDisplay
 	
 	public void QueueAchievement(string achievementCode) {
 		
-		Debug.Log("Queueing Achievement:achievementCode:" + achievementCode);
+		LogUtil.Log("Queueing Achievement:achievementCode:" + achievementCode);
 		string packCode = GamePacks.Current.code;
 		string appState = AppStates.Current.code;
 		string appContentState = AppContentStates.Current.code;
@@ -237,11 +237,11 @@ public class UINotificationDisplay
 			//	appState,
 			//	appContentState, 
 			//	achievement.description);
-			//Debug.Log("Queueing Achievement display:" + achievement.display_name);
+			//LogUtil.Log("Queueing Achievement display:" + achievement.display_name);
 			
 		}
 		else {
-			Debug.Log("Achievement not found:" + achievementCode);
+			LogUtil.Log("Achievement not found:" + achievementCode);
 		}
 		
 		if(achievement != null) {

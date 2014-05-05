@@ -416,19 +416,19 @@ public class BaseUIController : GameObjectBehavior {
     }
     
     public virtual void OnListItemClickEventHandler(string listName, string listIndex, bool selected) {
-        Debug.Log("OnListItemClickEventHandler: listName:" + listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
+        LogUtil.Log("OnListItemClickEventHandler: listName:" + listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
     }
     
     public virtual void OnListItemSelectEventHandler(string listName, string selectName) {
-        Debug.Log("OnListItemSelectEventHandler: listName:" + listName + " selectName:" + selectName);
+        LogUtil.Log("OnListItemSelectEventHandler: listName:" + listName + " selectName:" + selectName);
     }
     
     public virtual void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
-        Debug.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue);
+        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue);
     }
     
     public virtual void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
-        Debug.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected);
+        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected);
     }
     
     public virtual void OnApplicationQuit() {
@@ -550,17 +550,17 @@ public class BaseUIController : GameObjectBehavior {
         if (go != null) {
             deferTap = !allowTap;
 
-            //Debug.Log("Tap:" + fingerPos);
-            //Debug.Log("Tap:Screen.Height:" + Screen.height);
+            //LogUtil.Log("Tap:" + fingerPos);
+            //LogUtil.Log("Tap:Screen.Height:" + Screen.height);
 
             float heightToCheck = Screen.height - Screen.height * .85f;
-            // Debug.Log("Tap:heightToCheck:" + heightToCheck);
+            // LogUtil.Log("Tap:heightToCheck:" + heightToCheck);
 
             if (fingerPos.y < heightToCheck) {
                 deferTap = true;
             }
 
-            // Debug.Log("Tap:deferTap:" + deferTap);
+            // LogUtil.Log("Tap:deferTap:" + deferTap);
 
             if (!deferTap) {
 
@@ -695,19 +695,19 @@ public class BaseUIController : GameObjectBehavior {
         float force = 100f;
 
         if(angle > 320 && angle < 45) { // forwardish
-            Debug.Log("swipe controller: FORWARD :angle:" + angle);
+            LogUtil.Log("swipe controller: FORWARD :angle:" + angle);
             GameController.CurrentGamePlayerController.Boost(force);
         }
         else if(angle < 225 && angle > 135) { // backish
-            Debug.Log("swipe controller: BACK :angle:" + angle);
+            LogUtil.Log("swipe controller: BACK :angle:" + angle);
             GameController.CurrentGamePlayerController.Spin(force);
         }
         else if(angle > 45 && angle < 135) { // leftish
-            Debug.Log("swipe controller: LEFT :angle:" + angle);
+            LogUtil.Log("swipe controller: LEFT :angle:" + angle);
             GameController.CurrentGamePlayerController.StrafeLeft(force);
         }
         else if(angle > 320 && angle < 225) { // rightish
-            Debug.Log("swipe controller: RIGHT :angle:" + angle);
+            LogUtil.Log("swipe controller: RIGHT :angle:" + angle);
             GameController.CurrentGamePlayerController.StrafeRight(force);
         }
         */
@@ -765,7 +765,7 @@ public class BaseUIController : GameObjectBehavior {
 
             Vector3 angles = CardinalAngles(swipeCurrentStartPoint, swipeCurrentEndPoint);//Vector3.zero.WithZ (
             //Vector3.Angle(swipeCurrentEndPoint, swipeCurrentStartPoint));//CardinalAngles(swipeCurrentStartPoint, swipeCurrentEndPoint);
-            //Debug.Log("cardinalAngles:" + cardinalAngles);                        
+            //LogUtil.Log("cardinalAngles:" + cardinalAngles);                        
                     
             var dist = Vector3.Distance(swipeCurrentStartPoint, swipeCurrentEndPoint);
                     
@@ -776,7 +776,7 @@ public class BaseUIController : GameObjectBehavior {
                 swipePositionLastTouch = Input.mousePosition;
                 if(swipePositionStart == Vector3.zero) {
                     swipePositionStart = swipePositionLastTouch;
-                    Debug.Log("swipePositionStart:" + swipePositionStart);
+                    LogUtil.Log("swipePositionStart:" + swipePositionStart);
                     swipePositionRelease = Vector3.zero;
                 }                               
             }
@@ -784,7 +784,7 @@ public class BaseUIController : GameObjectBehavior {
                 if(swipePositionStart != Vector3.zero) {
                     if(swipePositionRelease == Vector3.zero) {
                         swipePositionRelease = Input.mousePosition;
-                        Debug.Log("swipePositionRelease:" + swipePositionRelease);
+                        LogUtil.Log("swipePositionRelease:" + swipePositionRelease);
                         // Shoot
                                             
                         Quaternion rotationProjectile = Quaternion.Euler(90, 0, 0);
@@ -796,12 +796,12 @@ public class BaseUIController : GameObjectBehavior {
                                             ) as GameObject;
                                             
                                             
-                        Debug.Log("rotationProjectile:" + rotationProjectile);
+                        LogUtil.Log("rotationProjectile:" + rotationProjectile);
                                             
                         projectileObject.transform.rotation = rotationProjectile;
                                             
-                        //Debug.Log("launcherObject.transform.position:" + launcherObject.transform.position);
-                        //Debug.Log("launchAimerObject.transform.position:" + launchAimerObject.transform.position);
+                        //LogUtil.Log("launcherObject.transform.position:" + launcherObject.transform.position);
+                        //LogUtil.Log("launchAimerObject.transform.position:" + launchAimerObject.transform.position);
                                             
                         swipeCurrentStartPoint = swipePositionRelease;
                         swipeCurrentEndPoint = swipePositionStart;
@@ -811,7 +811,7 @@ public class BaseUIController : GameObjectBehavior {
                         Vector3 crossProduct = Vector3.Cross(swipeCurrentStartPoint, swipeCurrentEndPoint);         
                                             
                         var angle = Vector3.Angle(swipeCurrentStartPoint, swipeCurrentEndPoint);
-                        Debug.Log("Angle to other: " + angle);  
+                        LogUtil.Log("Angle to other: " + angle);  
                                             
                         //var forward = transform.forward;
                         if(crossProduct.y < 0) {
@@ -824,19 +824,19 @@ public class BaseUIController : GameObjectBehavior {
                         }
                                             
                         //gameProjectile.direction = crossProduct;
-                        Debug.Log("crossProduct to other: " + crossProduct);    
+                        LogUtil.Log("crossProduct to other: " + crossProduct);    
                                             
                         var distLaunch = Vector3.Distance(swipeCurrentStartPoint, swipeCurrentEndPoint);
                         print("Distance to other: " + distLaunch);
                         //distLaunch = 1;
                                             
-                        Debug.Log("Rotation:" + projectileObject.transform.rotation);
-                        Debug.Log("angle:" + angle);
+                        LogUtil.Log("Rotation:" + projectileObject.transform.rotation);
+                        LogUtil.Log("angle:" + angle);
                                             
                         var shootVector = swipeCurrentStartPoint - swipeCurrentEndPoint;                  
                         var multiplier = .001f;//.05f;
                         float forceAdd = distLaunch * multiplier;
-                        Debug.Log("forceAdd:" + forceAdd);
+                        LogUtil.Log("forceAdd:" + forceAdd);
                         forceAdd = Mathf.Clamp(forceAdd, .01f, .9f);
                         projectileObject.rigidbody.AddForce(-shootVector * forceAdd);//, ForceMode.Impulse);
                                             
@@ -858,7 +858,7 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         float force = 20f;
-        //Debug.Log("SWIPE:move:" + move);
+        //LogUtil.Log("SWIPE:move:" + move);
         float angleGesture = move.CrossAngle();
         float anglePlayer = GameController.CurrentGamePlayerController.transform.rotation.eulerAngles.y;
         float distance = Vector2.Distance(Vector2.zero, move);
@@ -872,10 +872,10 @@ public class BaseUIController : GameObjectBehavior {
 
         float angleDiff = angleGesture - anglePlayer;
 
-        //Debug.Log("SWIPE:angleGesture:" + angleGesture);
+        //LogUtil.Log("SWIPE:angleGesture:" + angleGesture);
 
-        //Debug.Log("SWIPE:anglePlayer:" + anglePlayer);
-        //Debug.Log("SWIPE:angleDiff:" + angleDiff);
+        //LogUtil.Log("SWIPE:anglePlayer:" + anglePlayer);
+        //LogUtil.Log("SWIPE:angleDiff:" + angleDiff);
 
         if (angleDiff < 0) {
             angleDiff = angleDiff + 360;
@@ -885,7 +885,7 @@ public class BaseUIController : GameObjectBehavior {
         //    angleDiff = 360 - angleDiff;
         //}
 
-        //Debug.Log("SWIPE:angleDiff2:" + angleDiff);
+        //LogUtil.Log("SWIPE:angleDiff2:" + angleDiff);
 
         var forceVector = Quaternion.AngleAxis(angleDiff, transform.up) *
             GameController.CurrentGamePlayerController.transform.forward;
@@ -893,20 +893,20 @@ public class BaseUIController : GameObjectBehavior {
         //forceVector.y = 0f;
 
         if (angleDiff > 320 || angleDiff <= 45) { // forwardish
-            Debug.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
+            LogUtil.Log("swipe controller: FORWARD :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Boost(forceVector, force * 1.2f);
         }
         else if (angleDiff < 225 && angleDiff >= 135) { // backish
-            Debug.Log("swipe controller: BACK :angleDiff:" + angleDiff);
+            LogUtil.Log("swipe controller: BACK :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.Spin(forceVector, force * 1.8f);
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.spins, 1f);
         }
         else if (angleDiff > 45 && angleDiff < 135) { // rightish
-            Debug.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
+            LogUtil.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeRight(forceVector, force * 2f);
         }
         else if (angleDiff <= 320 && angleDiff >= 225) { // leftish
-            Debug.Log("swipe controller: LEFT :angleDiff:" + angleDiff);
+            LogUtil.Log("swipe controller: LEFT :angleDiff:" + angleDiff);
             GameController.CurrentGamePlayerController.StrafeLeft(forceVector, force * 2f);
         }
     }
@@ -964,13 +964,13 @@ public class BaseUIController : GameObjectBehavior {
 ////
 
         if (hasTouches) {
-            //Debug.Log("hasTouches: " + hasTouches);
+            //LogUtil.Log("hasTouches: " + hasTouches);
         }
         if (hasTouchesDownAllowed) {
-            //Debug.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
+            //LogUtil.Log("hasTouchesDownAllowed: " + hasTouchesDownAllowed);
         }
         if (hasTouchesUpAllowed) {
-            //Debug.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
+            //LogUtil.Log("hasTouchesUpAllowed: " + hasTouchesUpAllowed);
         }
 
         if (!hasTouches) {
@@ -1066,9 +1066,9 @@ public class BaseUIController : GameObjectBehavior {
 
 
                         Messenger<Vector3>.Broadcast(UIControllerMessages.uiUpdateTouchLaunch, positionLastLaunchedNormalized);
-                        //Debug.Log("positionLastLaunchedNormalized:" + positionLastLaunchedNormalized);
-                        //Debug.Log("positionLastLaunch:" + positionLastLaunch);
-                        //Debug.Log("powerDistance:" + powerDistance);
+                        //LogUtil.Log("positionLastLaunchedNormalized:" + positionLastLaunchedNormalized);
+                        //LogUtil.Log("positionLastLaunch:" + positionLastLaunch);
+                        //LogUtil.Log("powerDistance:" + powerDistance);
 
                         Vector2 touchLaunch = Vector2.zero.WithX(-positionLastLaunchedNormalized.x).WithY(-positionLastLaunchedNormalized.y);
 
@@ -1214,8 +1214,8 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
 
-            //Debug.Log("hit:" + hit);
-            //Debug.Log("hit.transform.name:" + hit.transform.name);
+            //LogUtil.Log("hit:" + hit);
+            //LogUtil.Log("hit.transform.name:" + hit.transform.name);
         }
 
         return allowedTouch;
@@ -1319,9 +1319,9 @@ public class BaseUIController : GameObjectBehavior {
                     var swipeDirection = Mathf.Sign(touch.position.y - startPos.y);
                     // Do something here in reaction to the swipe.
 
-                    Debug.Log("swipeDirection:" + swipeDirection);
-                    Debug.Log("swipeTime:" + swipeTime);
-                    Debug.Log("swipeDist:" + swipeDist);
+                    LogUtil.Log("swipeDirection:" + swipeDirection);
+                    LogUtil.Log("swipeTime:" + swipeTime);
+                    LogUtil.Log("swipeDist:" + swipeDist);
                 }
                 break;
             }
@@ -1657,14 +1657,14 @@ public class BaseUIController : GameObjectBehavior {
             
     public virtual void ToggleUI() {
                     
-        Debug.Log("ToggleUI uiVisible: " + uiVisible);
+        LogUtil.Log("ToggleUI uiVisible: " + uiVisible);
                         
         if (uiVisible) {
-            Debug.Log("call HideUI");
+            LogUtil.Log("call HideUI");
             hideUI(false);
         }
         else {
-            Debug.Log("call ShowUI");
+            LogUtil.Log("call ShowUI");
             showUI();
         }            
     }
@@ -1797,7 +1797,7 @@ public class BaseUIController : GameObjectBehavior {
  
     public virtual void hideUI(bool now) {   
      
-        //Debug.Log("HideUI");  
+        //LogUtil.Log("HideUI");  
      
         uiVisible = false;
 
@@ -1823,7 +1823,7 @@ public class BaseUIController : GameObjectBehavior {
     //}
  
     public virtual void showUI() {
-        //Debug.Log("ShowUI");
+        //LogUtil.Log("ShowUI");
         uiVisible = true;        
         hideGameCanvas();        
         HandleInUIAudio();
@@ -2865,7 +2865,7 @@ public class BaseUIController : GameObjectBehavior {
     //}
  
     public virtual void hideHUD() {
-        //Debug.Log("HideHUD");
+        //LogUtil.Log("HideHUD");
      
         hudVisible = false;    
      
@@ -2880,7 +2880,7 @@ public class BaseUIController : GameObjectBehavior {
     //}
  
     public virtual void showHUD() {
-        //Debug.Log("ShowHUD");
+        //LogUtil.Log("ShowHUD");
      
         hudVisible = true;    
              
@@ -3055,7 +3055,7 @@ public class BaseUIController : GameObjectBehavior {
     }
             
     public virtual void OnButtonClickEventHandler(string buttonName) {
-        //Debug.Log("OnButtonClickEventHandler: " + buttonName);
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
      
         hasBeenClicked = true;
 
@@ -3210,7 +3210,7 @@ public class BaseUIController : GameObjectBehavior {
         if(arrLevelId.Length > 0) {
         string levelId = arrLevelId[1];
         
-        Debug.Log("ButtonPlayLevel: levelId:" + levelId);
+        LogUtil.Log("ButtonPlayLevel: levelId:" + levelId);
         
         GameAppController.Instance.LoadLevel(levelId);
         }
@@ -3223,7 +3223,7 @@ public class BaseUIController : GameObjectBehavior {
         if(arrLevelId.Length > 0) {
         string assetCodeCreating =  arrLevelId[1];
         GameDraggableEditor.assetCodeCreating = assetCodeCreating;
-        Debug.Log("GameDraggableEditor.assetCodeCreating:" + GameDraggableEditor.assetCodeCreating);
+        LogUtil.Log("GameDraggableEditor.assetCodeCreating:" + GameDraggableEditor.assetCodeCreating);
         
         if(UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
          

@@ -1416,7 +1416,7 @@ public class BaseGamePlayerProgress
     
     public virtual void ProcessPackRuntimeAchievements(string packCode) {
         
-        Debug.Log("ProcessPackRuntimeAchievements:" + packCode);
+        LogUtil.Log("ProcessPackRuntimeAchievements:" + packCode);
         
         foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
             if(achievement.data.filters != null) {
@@ -1702,7 +1702,7 @@ public class BaseGamePlayerProgress
     
     public virtual void ProcessPackAchievements(string packCode) {
         
-        Debug.Log("ProcessPackAchievements:" + packCode);
+        LogUtil.Log("ProcessPackAchievements:" + packCode);
         
         foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
             if(achievement.data.filters != null) {
@@ -1711,7 +1711,7 @@ public class BaseGamePlayerProgress
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSingle();
                         foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
-                                //Debug.Log("filter:" + filter.code);
+                                //LogUtil.Log("filter:" + filter.code);
                                 
                                 //double statisticValue = GameProfileStatistics.Current.GetStatisticValue(filter.code);
                                 
@@ -1748,8 +1748,8 @@ public class BaseGamePlayerProgress
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSet();
                         foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
-                                //Debug.Log("filter:" + filter.code);
-                                //Debug.Log("filter2:" + filter.code2);
+                                //LogUtil.Log("filter:" + filter.code);
+                                //LogUtil.Log("filter2:" + filter.code2);
                             }
                         }
                     }
@@ -1757,8 +1757,8 @@ public class BaseGamePlayerProgress
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticAll();
                         foreach(GameFilterBase filter in filterTypeItems) {
                             if(filter != null) {
-                                //Debug.Log("filter:" + filter.code);
-                                //Debug.Log("filter2:" + filter.code2);
+                                //LogUtil.Log("filter:" + filter.code);
+                                //LogUtil.Log("filter2:" + filter.code2);
                             }
                         }
                     }
@@ -1795,19 +1795,19 @@ public class BaseGamePlayerProgress
                 statKey,
                 appContentState);
             
-            Debug.Log("Check:key:" + key);
+            LogUtil.Log("Check:key:" + key);
             statValue = GameProfileStatistics.Current.GetStatisticValue(key);           
             CheckStatSetAchievement(achievementKey, statValue, equalType, checkValue);
             
-            Debug.Log("Check:keyPack:" + keyPack);
+            LogUtil.Log("Check:keyPack:" + keyPack);
             //statValue = GameProfileStatistics.Current.GetStatisticValue(keyPack);         
             //CheckStatSetAchievement(achievementKey, statValue, equalType, checkValue);
             
-            Debug.Log("Check:keyPackContentState:" + keyPackContentState);
+            LogUtil.Log("Check:keyPackContentState:" + keyPackContentState);
             //statValue = GameProfileStatistics.Current.GetStatisticValue(keyPackContentState);         
             //CheckStatSetAchievement(achievementKey, statValue, equalType, checkValue);
             
-            Debug.Log("Check:keyContentState:" + keyContentState);
+            LogUtil.Log("Check:keyContentState:" + keyContentState);
             //statValue = GameProfileStatistics.Current.GetStatisticValue(keyContentState);         
             //CheckStatSetAchievement(achievementKey, statValue, equalType, checkValue);
         }

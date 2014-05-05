@@ -110,12 +110,12 @@ public class BaseGameCustomController : GameObjectBehavior {
             
             string path = ContentPaths.appCacheVersionSharedMaterials;
             
-            //Debug.Log("UpdateObject:" + " path:" + path);
+            //LogUtil.Log("UpdateObject:" + " path:" + path);
             
             foreach (AppContentAssetCustomItem customItem in 
                     AppContentAssetCustomItems.Instance.GetListByType(preset.type)) {
                                                 
-                //Debug.Log("UpdateObject:" + " customItem:" + customItem.code);
+                //LogUtil.Log("UpdateObject:" + " customItem:" + customItem.code);
                 
                 foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
                     
@@ -130,8 +130,8 @@ public class BaseGameCustomController : GameObjectBehavior {
                         //if (saveProfile)
                         profileCustomItem.SetCustomTexture(prop.code, codeNew);
 
-                        //Debug.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
-                        //Debug.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
+                        //LogUtil.Log("UpdateObject:preset:" + " prop.code:" + prop.code);
+                        //LogUtil.Log("UpdateObject:preset:" + " pathMaterial:" + pathMaterial);
                     }
                 }
             }
@@ -163,7 +163,7 @@ public class BaseGameCustomController : GameObjectBehavior {
             break;
         }
 
-        //Debug.Log("updateColorPresetObject:colors.Count:" + colors.Count);
+        //LogUtil.Log("updateColorPresetObject:colors.Count:" + colors.Count);
 
         return updateColorPresetObject(profileCustomItem, go, type, colors);
     }
@@ -213,7 +213,7 @@ public class BaseGameCustomController : GameObjectBehavior {
             foreach (AppContentAssetCustomItem customItem in 
                      AppContentAssetCustomItems.Instance.GetListByType(type)) {
                 
-                //Debug.Log("updateColorPresetObject:" + " customItem:" + customItem.code);
+                //LogUtil.Log("updateColorPresetObject:" + " customItem:" + customItem.code);
                 
                 foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
                     
@@ -225,7 +225,7 @@ public class BaseGameCustomController : GameObjectBehavior {
                         
                         go.SetMaterialColor(prop.code, colorTo);
                         
-                        //Debug.Log("updateColorPresetObject:preset:" + 
+                        //LogUtil.Log("updateColorPresetObject:preset:" + 
                         //          " prop.code:" + prop.code + 
                          //         " colorTo:" + colorTo.ToString());
                     }
@@ -307,7 +307,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         GameCustomController.BroadcastCustomColorsChanged();
         GameCustomController.BroadcastCustomColorsPlayerChanged();
 
-        //Debug.Log("broadcastCustomColorsSync");
+        //LogUtil.Log("broadcastCustomColorsSync");
     }
     
     public virtual void broadcastCustomColorsChanged() {
@@ -482,9 +482,9 @@ public class BaseGameCustomController : GameObjectBehavior {
 
         GameState.SaveProfile();
         
-        //Debug.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
-        //Debug.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
-        //Debug.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
+        //LogUtil.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
+        //LogUtil.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
+        //LogUtil.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
         
         GameCustomController.BroadcastCustomColorsSync();
     }

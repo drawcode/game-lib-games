@@ -166,63 +166,63 @@ public class BaseStoreController : GameObjectBehavior {
 
     public void SetItemPurchasing(string key, GameStorePurchaseDataItem item) {       
         
-        Debug.Log("SET SetItemPurchasing:" + " key:" + key + " item.product.code:" + item.product.code);
+        LogUtil.Log("SET SetItemPurchasing:" + " key:" + key + " item.product.code:" + item.product.code);
         
-        Debug.Log("BEFORE SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+        LogUtil.Log("BEFORE SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
         itemsPurchasing.Set<string,GameStorePurchaseDataItem>(key, item);
         
-        Debug.Log("AFTER SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+        LogUtil.Log("AFTER SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
     }
 
     public GameStorePurchaseDataItem GetItemPurchasing(string key) {
         
-        Debug.Log("GET GetItemPurchasing:" + " key:" + key);        
+        LogUtil.Log("GET GetItemPurchasing:" + " key:" + key);        
         
-        Debug.Log("BEFORE GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+        LogUtil.Log("BEFORE GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
         GameStorePurchaseDataItem itemPurchasing = itemsPurchasing.Get<GameStorePurchaseDataItem>(key);
         
-        Debug.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson()  + " itemPurchasing:" + itemPurchasing.ToJson());        
+        LogUtil.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson()  + " itemPurchasing:" + itemPurchasing.ToJson());        
 
         return itemPurchasing;
     }
 
     public void RemoveItemPurchasing(string key) {
 
-        Debug.Log("REMOVING RemoveItemPurchasing:" + " key:" + key);
+        LogUtil.Log("REMOVING RemoveItemPurchasing:" + " key:" + key);
         
-        Debug.Log("BEFORE RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+        LogUtil.Log("BEFORE RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
         itemsPurchasing.Remove(key);
         
-        Debug.Log("AFTER RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
+        LogUtil.Log("AFTER RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
     }
 
     // PRODUCT PURCHASE EVENTS
 
     public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
         
-        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+        LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
         if (record == null) {
-            Debug.Log("record not found");
+            LogUtil.Log("record not found");
             return;
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
-            Debug.Log("Product not found:" + record.productId);
+            LogUtil.Log("Product not found:" + record.productId);
             return;
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
         if (itemPurchasing == null) {
-            Debug.Log("itemPurchasing not found:" + product.code);
+            LogUtil.Log("itemPurchasing not found:" + product.code);
             
-            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+            LogUtil.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
         }
 
         if (itemPurchasing != null) {
@@ -242,26 +242,26 @@ public class BaseStoreController : GameObjectBehavior {
 
     public void onProductPurchaseFailed(ProductPurchaseRecord record) {
 
-        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+        LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
         if (record == null) {
-            Debug.Log("record not found");
+            LogUtil.Log("record not found");
             return;
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
-            Debug.Log("Product not found:" + record.productId);
+            LogUtil.Log("Product not found:" + record.productId);
             return;
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
         if (itemPurchasing == null) {
-            Debug.Log("itemPurchasing not found:" + product.code);
+            LogUtil.Log("itemPurchasing not found:" + product.code);
             
-            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+            LogUtil.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
         }
 
         if (itemPurchasing != null) {
@@ -281,26 +281,26 @@ public class BaseStoreController : GameObjectBehavior {
 
     public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
         
-        Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+        LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
         if (record == null) {
-            Debug.Log("record not found");
+            LogUtil.Log("record not found");
             return;
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(record.productId);
 
         if (product == null) {
-            Debug.Log("Product not found:" + record.productId);
+            LogUtil.Log("Product not found:" + record.productId);
             return;
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
         if (itemPurchasing == null) {
-            Debug.Log("itemPurchasing not found:" + product.code);
+            LogUtil.Log("itemPurchasing not found:" + product.code);
 
-            Debug.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
+            LogUtil.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
         }
 
         if (itemPurchasing != null) {
@@ -360,11 +360,11 @@ public class BaseStoreController : GameObjectBehavior {
 
     public virtual void onStoreThirdPartyPurchaseSuccess(GameStorePurchaseRecord data) {
 
-        Debug.Log("onStoreThirdPartyPurchaseSuccess");
+        LogUtil.Log("onStoreThirdPartyPurchaseSuccess");
 
         if (data != null) {
 
-            Debug.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
+            LogUtil.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
             UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
         }
                 
@@ -377,7 +377,7 @@ public class BaseStoreController : GameObjectBehavior {
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
         
         if (itemPurchasing != null) {
-            Debug.Log("onStoreThirdPartyPurchaseSuccess: itemPurchasing.product:" + itemPurchasing.product.code);
+            LogUtil.Log("onStoreThirdPartyPurchaseSuccess: itemPurchasing.product:" + itemPurchasing.product.code);
             GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);
             ResetPurchase(itemPurchasing.product.code);
         }
@@ -386,7 +386,7 @@ public class BaseStoreController : GameObjectBehavior {
     public virtual void onStoreThirdPartyPurchaseFailed(GameStorePurchaseRecord data) {
 
         if (data != null) {
-            Debug.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
+            LogUtil.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
             UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
         }
 
@@ -399,7 +399,7 @@ public class BaseStoreController : GameObjectBehavior {
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
 
         if (itemPurchasing != null) {
-            Debug.Log("onStoreThirdPartyPurchaseFailed: itemPurchasing.product:" + itemPurchasing.product.code);
+            LogUtil.Log("onStoreThirdPartyPurchaseFailed: itemPurchasing.product:" + itemPurchasing.product.code);
             ResetPurchase(itemPurchasing.product.code);
         }
     }
@@ -592,7 +592,7 @@ public class BaseStoreController : GameObjectBehavior {
 
     public virtual void handleCurrencyPurchase(GameProduct gameProduct, double quantity) {
 
-        Debug.Log("GameStoreController:handleCurrencyPurchase:productId:" + gameProduct.code);
+        LogUtil.Log("GameStoreController:handleCurrencyPurchase:productId:" + gameProduct.code);
 
         if (gameProduct.code == "currency-tier-1") {
             GameProfileRPGs.Current.AddCurrency(1000);

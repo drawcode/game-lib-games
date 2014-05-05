@@ -116,7 +116,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
             }
         }
 
-        Debug.Log("profileGameDataItemRPG:attack:" + profileGameDataItemRPG.GetAttack());
+        LogUtil.Log("profileGameDataItemRPG:attack:" + profileGameDataItemRPG.GetAttack());
 
         GameProfileCharacters.Current.SetCharacterRPG(currentCharacterCode, profileGameDataItemRPG);
         GameProfileRPGs.Current.SetUpgrades(upgradesAvailable);
@@ -157,7 +157,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
  
     IEnumerator loadDataCo() {       
      
-        Debug.Log("LoadDataCo");
+        LogUtil.Log("LoadDataCo");
      
         if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
@@ -174,7 +174,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
      
     public void loadDataRPG() {
      
-        Debug.Log("Load RPGs:");
+        LogUtil.Log("Load RPGs:");
 
         int i = 0;
      
@@ -182,7 +182,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
      
         profileGameDataItemRPG = GameProfileCharacters.Current.GetCharacterRPG(currentCharacterCode);
 
-        Debug.Log("profileGameDataItemRPG:attack2:" + profileGameDataItemRPG.GetAttack());
+        LogUtil.Log("profileGameDataItemRPG:attack2:" + profileGameDataItemRPG.GetAttack());
 
         List<string> rpgItems = new List<string>();
      
@@ -218,7 +218,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
         }
 
         if(Input.GetKeyDown("u")) {
-            Debug.Log("Adding upgrades:" );
+            LogUtil.Log("Adding upgrades:" );
             GameProfileRPGs.Current.AddUpgrades(5);
             loadData();
         }

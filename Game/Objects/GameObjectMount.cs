@@ -77,13 +77,13 @@ public class GameObjectMount : BaseGameObjectInteractive {
         if(!isMounted) {
             objectMounted = go;
 
-            Debug.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
+            LogUtil.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
         }
     }
         
     public virtual void Unmount() {
         if(isMounted) {
-            Debug.Log("Unmount:" + " current:" + transform.name + " mount:" + objectMounted.name);
+            LogUtil.Log("Unmount:" + " current:" + transform.name + " mount:" + objectMounted.name);
 
             objectMounted = null;
         }

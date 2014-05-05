@@ -127,7 +127,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         //world.
         */
         
-        //Debug.Log(JsonMapper.ToJson(world));
+        //LogUtil.Log(JsonMapper.ToJson(world));
     }
     
     public virtual void InitNetwork() { 
@@ -141,7 +141,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     
     public virtual IEnumerator InitContentCo() {
         /*
-        Debug.Log("Starting Contents");
+        LogUtil.Log("Starting Contents");
         contents = gameObject.AddComponent<Contents>();
         
         ContentsConfig.contentRootFolder = "drawlabs";

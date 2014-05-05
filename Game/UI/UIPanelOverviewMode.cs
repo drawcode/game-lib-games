@@ -206,7 +206,7 @@ public class UIPanelOverviewMode : UIPanelBase {
         
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
         
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
         
         AnimateInBottom(containerTutorial);
         
@@ -233,7 +233,7 @@ public class UIPanelOverviewMode : UIPanelBase {
         
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
         
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
         
         AnimateInBottom(containerOverviewGameplayTips);
         
@@ -252,11 +252,11 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void OnGameLevelItemsLoadedHandler() {
 
-        //Debug.Log("OnGameLevelItemsLoadedHandler");
+        //LogUtil.Log("OnGameLevelItemsLoadedHandler");
 
         if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
-            //Debug.Log("OnGameLevelItemsLoadedHandler2");
+            //LogUtil.Log("OnGameLevelItemsLoadedHandler2");
         }
     }
 
@@ -266,26 +266,26 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         // Update team display
 
-        //Debug.Log("ShowOverview:");
+        //LogUtil.Log("ShowOverview:");
 
         GameCustomController.BroadcastCustomColorsChanged();
 
         if(gameCustomPlayer == null) {
             gameCustomPlayer = gameObject.Get<GameCustomPlayer>();
             
-            //Debug.Log("ShowOverview:gameCustomPlayer:");
+            //LogUtil.Log("ShowOverview:gameCustomPlayer:");
         }
 
         if(gameCustomEnemy == null) {
             gameCustomEnemy = gameObject.Get<GameCustomEnemy>();
             
-            //Debug.Log("ShowOverview:gameCustomEnemy:");
+            //LogUtil.Log("ShowOverview:gameCustomEnemy:");
         }
 
         GameTeam team = GameTeams.Current;
         if(team != null) {
             
-            //Debug.Log("ShowOverview:team:");
+            //LogUtil.Log("ShowOverview:team:");
 
             UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
 
@@ -366,7 +366,7 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public void loadData() {
-        //Debug.Log("UIPanelModeTypeChoice:loadData");
+        //LogUtil.Log("UIPanelModeTypeChoice:loadData");
         StartCoroutine(loadDataCo());
     }
 

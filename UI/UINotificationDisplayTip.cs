@@ -219,10 +219,10 @@ public class UINotificationDisplayTip
             //  appState,
             //  appContentState, 
             //  achievement.description);
-            //Debug.Log("Queueing Achievement display:" + achievement.display_name);
+            //LogUtil.Log("Queueing Achievement display:" + achievement.display_name);
         }
         else {
-            Debug.Log("Achievement not found:" + achievementCode);
+            LogUtil.Log("Achievement not found:" + achievementCode);
         }
         
         if (achievement != null) {

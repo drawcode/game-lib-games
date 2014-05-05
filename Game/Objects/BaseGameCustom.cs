@@ -139,19 +139,19 @@ public class BaseGameCustom : GameObjectBehavior {
 
         customInfo = customInfoTo;      
 
-        //Debug.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
+        //LogUtil.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
 
         if(customInfo != null) {
             customColorCode = customInfo.presetColorCode;
             customTextureCode = customInfo.presetTextureCode;
             
-            //Debug.Log("GameCustomBase:Change:customColorCode:" + customColorCode);
-            //Debug.Log("GameCustomBase:Change:customTextureCode:" + customTextureCode);
+            //LogUtil.Log("GameCustomBase:Change:customColorCode:" + customColorCode);
+            //LogUtil.Log("GameCustomBase:Change:customTextureCode:" + customTextureCode);
 
             if(!string.IsNullOrEmpty(customInfo.teamCode)
                && customInfo.teamCode != "default") {
                 
-                //Debug.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
+                //LogUtil.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
 
                 GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
 
@@ -162,7 +162,7 @@ public class BaseGameCustom : GameObjectBehavior {
                         teamCode = team.code;
                         customInfo.type = GameCustomTypes.teamType;
                         
-                        //Debug.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
+                        //LogUtil.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
                         
                         GameDataTexturePreset itemTexture = team.data.GetTexturePreset();
                         
@@ -177,7 +177,7 @@ public class BaseGameCustom : GameObjectBehavior {
                                 GameCustomController.UpdateTexturePresetObject(
                                     gameObject, preset);
                                 */
-                                //Debug.Log("Loading TEAM EXISTS TEXTURE:preset:" + preset.code);
+                                //LogUtil.Log("Loading TEAM EXISTS TEXTURE:preset:" + preset.code);
                             //}
                         }
 
@@ -194,7 +194,7 @@ public class BaseGameCustom : GameObjectBehavior {
                                 GameCustomController.UpdateColorPresetObject(
                                     gameObject, preset);
                                 */
-                                //Debug.Log("Loading TEAM EXISTS COLOR:preset:" + preset.code);
+                                //LogUtil.Log("Loading TEAM EXISTS COLOR:preset:" + preset.code);
                             //}
                         }
 
@@ -218,7 +218,7 @@ public class BaseGameCustom : GameObjectBehavior {
             Init();
         }
         /*
-        Debug.Log("UpdatePlayer"  
+        LogUtil.Log("UpdatePlayer"  
                   + " type:" + customInfo.type
                   + " presetType:" + customInfo.presetType
                   + " presetColorCode:" + customInfo.presetColorCode
@@ -239,7 +239,7 @@ public class BaseGameCustom : GameObjectBehavior {
 	void BaseOnCustomizationColorsChangedHandler() {
         UpdatePlayer();
 
-        //Debug.Log("BaseOnCustomizationColorsChangedHandler");
+        //LogUtil.Log("BaseOnCustomizationColorsChangedHandler");
 	}
 
     public void SetCustom() {
@@ -259,7 +259,7 @@ public class BaseGameCustom : GameObjectBehavior {
             return;
         }
 
-        //Debug.Log("SetCustomColors"  
+        //LogUtil.Log("SetCustomColors"  
         //          + " type:" + customInfo.type
         //          + " presetType:" + customInfo.presetType
         //          + " presetColorCode:" + customInfo.presetColorCode
@@ -275,7 +275,7 @@ public class BaseGameCustom : GameObjectBehavior {
 
                 GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
                 
-                //Debug.Log("SetCustomColors"  
+                //LogUtil.Log("SetCustomColors"  
                  //         + " customItem:" + customItem.ToJson());
 
                 if(customItem != null) {
@@ -316,7 +316,7 @@ public class BaseGameCustom : GameObjectBehavior {
         }
         
         /*
-        Debug.Log("SetCustomTextures"  
+        LogUtil.Log("SetCustomTextures"  
                   + " presetType:" + customInfo.presetType
                   + " presetColorCode:" + customInfo.presetColorCode
                   + " presetTextureCode:" + customInfo.presetTextureCode);
@@ -371,7 +371,7 @@ public class BaseGameCustom : GameObjectBehavior {
             
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
             
-            //Debug.Log("HandleCustomPlayerColor:changing:" + 
+            //LogUtil.Log("HandleCustomPlayerColor:changing:" + 
             //          " lastCustomColorCode:" + lastCustomTextureCode + 
             //          " customInfo.presetColorCode:" + customInfo.presetTextureCode);
                 
@@ -401,7 +401,7 @@ public class BaseGameCustom : GameObjectBehavior {
             
             //if(AppColorPresets.Instance.CheckByCode(customColorCode)) {
 
-            //Debug.Log("HandleCustomPlayerColor:changing:" + 
+            //LogUtil.Log("HandleCustomPlayerColor:changing:" + 
             //          " lastCustomColorCode:" + lastCustomColorCode + 
              //         " customInfo.presetColorCode:" + customInfo.presetColorCode);
 

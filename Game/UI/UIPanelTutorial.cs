@@ -207,7 +207,7 @@ public class UIPanelTutorial : UIPanelBase {
         
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
         
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
         
         AnimateInBottom(containerTutorial);
         
@@ -234,7 +234,7 @@ public class UIPanelTutorial : UIPanelBase {
         
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
         
-        //Debug.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
+        //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
         
         AnimateInBottom(containerOverviewGameplayTips);
         
@@ -253,11 +253,11 @@ public class UIPanelTutorial : UIPanelBase {
 
     public void OnGameLevelItemsLoadedHandler() {
 
-        Debug.Log("OnGameLevelItemsLoadedHandler");
+        LogUtil.Log("OnGameLevelItemsLoadedHandler");
 
         if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
-            Debug.Log("OnGameLevelItemsLoadedHandler2");
+            LogUtil.Log("OnGameLevelItemsLoadedHandler2");
         }
     }
 
@@ -326,7 +326,7 @@ public class UIPanelTutorial : UIPanelBase {
     }
 
     public void loadData() {
-        //Debug.Log("UIPanelModeTypeChoice:loadData");
+        //LogUtil.Log("UIPanelModeTypeChoice:loadData");
         StartCoroutine(loadDataCo());
     }
 

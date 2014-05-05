@@ -88,7 +88,7 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
     
     void OnButtonClickEventHandler(string buttonName) {
-        //Debug.Log("OnButtonClickEventHandler: " + buttonName);
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
         
         if(UIUtil.IsButtonClicked(buttonNext, buttonName)) {
             //

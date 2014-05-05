@@ -24,7 +24,7 @@ public class CheckboxEvents : GameObjectBehavior {
 	}
 	
 	void OnActivate(bool selected) {
-		//Debug.Log("CheckboxEvents:OnActivate: name: " + transform.name + " selected:" + selected);
+		//LogUtil.Log("CheckboxEvents:OnActivate: name: " + transform.name + " selected:" + selected);
 		Messenger<string, bool>.Broadcast(CheckboxEvents.EVENT_ITEM_CHANGE, transform.name, selected);
 	}
 }

@@ -57,7 +57,7 @@ public class GameProjectile : GameObjectBehavior {
                 
         if(target != null) {
             foreach(GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {
-                Debug.Log(gameLevelSprite);//.DestroyMe();
+                LogUtil.Log(gameLevelSprite);//.DestroyMe();
                 if(gameLevelSprite.gameDraggableLevelItem.gameLevelItemAsset.destructable) {
                     DestroyMe();
                 }

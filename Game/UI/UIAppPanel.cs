@@ -68,7 +68,7 @@ public class UIAppPanel : GameObjectBehavior {
 	
 	public string GetClassName(object item) {
 		className = item.GetType().Name;
-		//Debug.Log("CLASS NAME:" + className);
+		//LogUtil.Log("CLASS NAME:" + className);
 		return className;
 	}	
 }

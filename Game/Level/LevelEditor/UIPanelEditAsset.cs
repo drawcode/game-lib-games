@@ -249,7 +249,7 @@ public class UIPanelEditAsset : UIAppPanel {
 		
 			List<AppContentAsset> assets = AppContentAssets.Instance.GetAll();
 		
-	        Debug.Log("Load AppContentAsset: assets.Count: " + assets.Count);
+	        LogUtil.Log("Load AppContentAsset: assets.Count: " + assets.Count);
 			
 			int i = 0;
 			
@@ -347,7 +347,7 @@ public class UIPanelEditAsset : UIAppPanel {
 	}
 	
     void OnSliderChangeEventHandler(string sliderName, float val) {
-    	//Debug.Log("SliderEvents:OnSliderChange: sliderName: " + sliderName + " changeValue:" + val);
+    	//LogUtil.Log("SliderEvents:OnSliderChange: sliderName: " + sliderName + " changeValue:" + val);
 		
 		if(itemAsset != null) {
 			if(sliderName == sliderRotationSpeed.name) {
@@ -357,7 +357,7 @@ public class UIPanelEditAsset : UIAppPanel {
     }
 		
 	void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
-        Debug.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected );
+        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected );
 		
 		if(itemAsset != null) {
 			if(checkboxName == checkboxEditAssetDestructable.name) {

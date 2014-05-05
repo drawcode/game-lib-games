@@ -64,12 +64,12 @@ public class UIPanelSettingsAudio : UIPanelBase {
     }
 	
     void OnButtonClickEventHandler(string buttonName) {
-		//Debug.Log("OnButtonClickEventHandler: " + buttonName);					
+		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);					
 	}
 	
     void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
 
-        //Debug.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
+        //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
 		
 		bool changeAudio = true;
 		

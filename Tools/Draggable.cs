@@ -131,7 +131,7 @@ public class Draggable : GameObjectBehavior {
 				float grabbedInitialY = grabbed.position.y;
 	        	grabbed.position = hit.point + grabOffset;
 				grabbed.position = grabbed.position.WithY(grabbedInitialY);
-				///Debug.Log("pos:" + grabbed.position);
+				///LogUtil.Log("pos:" + grabbed.position);
 			}
 	    }
 	

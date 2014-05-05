@@ -305,8 +305,8 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 				currentSpeed = thirdPersonController.GetSpeed();
 			}
 			
-			//Debug.Log("currentSpeed:" + currentSpeed);
-			//Debug.Log("navAgent:" + navAgent);
+			//LogUtil.Log("currentSpeed:" + currentSpeed);
+			//LogUtil.Log("navAgent:" + navAgent);
 			
 			if(gamePlayerController != null) {
 				if(gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgent
@@ -337,10 +337,10 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 			
 			float walkSpeed = 5f;
 			
-			//Debug.Log("currentSpeed:" + currentSpeed);
+			//LogUtil.Log("currentSpeed:" + currentSpeed);
 			if(thirdPersonController != null) {
 				walkSpeed = thirdPersonController.walkSpeed;
-				//Debug.Log("currentSpeed:" + thirdPersonController.walkSpeed);
+				//LogUtil.Log("currentSpeed:" + thirdPersonController.walkSpeed);
 			}
 			
 			FindAnimatedActor();
@@ -546,7 +546,7 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 			*/
 			//}
 			//catch (System.Exception ee) {
-			//	Debug.Log("e" + ee);
+			//	LogUtil.Log("e" + ee);
 			//}
 		}
 	}
@@ -713,7 +713,7 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 		
 		isRunningClampAnimation = true;
 		PauseAnimationUpdate(1f);	
-		//Debug.Log("DidSkill:");
+		//LogUtil.Log("DidSkill:");
 		float currentSpeed = 0f;
 		float walkSpeed = 0f;
 		

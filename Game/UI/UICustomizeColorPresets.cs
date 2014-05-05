@@ -86,7 +86,7 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
 
                 foreach(KeyValuePair<string,UICheckbox> pair in checkboxes) {
                     if(pair.Value == null) {
-                        Debug.Log("Checkbox not found:" + pair.Key);
+                        LogUtil.Log("Checkbox not found:" + pair.Key);
                         continue;
                     }
 

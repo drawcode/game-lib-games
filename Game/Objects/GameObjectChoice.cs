@@ -150,7 +150,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
                 go.PlayParticleSystem(true);
             }
 
-            //Debug.Log("SetChoiceParticleSystemColors:go:" + go.name + " colorTo:" + colorTo);
+            //LogUtil.Log("SetChoiceParticleSystemColors:go:" + go.name + " colorTo:" + colorTo);
         }
     }
 
@@ -197,7 +197,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void LoadChoiceItem(AppContentChoice choice, AppContentChoiceItem choiceItem, Color colorTo) {
 
-        Debug.Log("LoadChoiceItem:" + choice.code);
+        LogUtil.Log("LoadChoiceItem:" + choice.code);
 
         SetChoiceParticleSystemColors(colorTo);
         LoadChoiceItem(choice, choiceItem);
@@ -240,19 +240,19 @@ public class GameObjectChoice : BaseGameObjectLevel {
             }
         }
 
-        //Debug.Log("LoadChoice:choiceCode:" + choiceCode);
-        //Debug.Log("LoadChoice:choiceType:" + choiceType);
-        //Debug.Log("LoadChoice:choiceItemIsCorrect:" + choiceItemIsCorrect);
-        //Debug.Log("LoadChoice:choiceItemDisplay:" + choiceItemDisplay);
-        Debug.Log("LoadChoice:choiceItemCode:" + choiceItemCode);
-        //Debug.Log("LoadChoice:choiceItemAssetCode:" + choiceItemAssetCode);
+        //LogUtil.Log("LoadChoice:choiceCode:" + choiceCode);
+        //LogUtil.Log("LoadChoice:choiceType:" + choiceType);
+        //LogUtil.Log("LoadChoice:choiceItemIsCorrect:" + choiceItemIsCorrect);
+        //LogUtil.Log("LoadChoice:choiceItemDisplay:" + choiceItemDisplay);
+        LogUtil.Log("LoadChoice:choiceItemCode:" + choiceItemCode);
+        //LogUtil.Log("LoadChoice:choiceItemAssetCode:" + choiceItemAssetCode);
 
         LoadAsset(choiceItemAssetCode);
 
-        Debug.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
+        LogUtil.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
 
         UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
-        //Debug.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
+        //LogUtil.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
 
         hasLoadedChoice = true;
     }
@@ -263,7 +263,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
             hasBroadcasted = true;
 
-            Debug.Log("GameObjectChoice:BroadcastChoice:" + appContentChoiceItem.code);
+            LogUtil.Log("GameObjectChoice:BroadcastChoice:" + appContentChoiceItem.code);
 
             Messenger<GameObjectChoiceData>.Broadcast(
                 GameObjectChoiceMessages.gameChoiceDataResponse, choiceData);
@@ -288,7 +288,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void HandleChoiceData() {
 
-        Debug.Log("GameObjectChoice:HandleChoiceData:" + name);
+        LogUtil.Log("GameObjectChoice:HandleChoiceData:" + name);
 
         if(choiceData != null) {
 
@@ -311,11 +311,11 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
         // If the human player hit us, check the score/choice and correct or incorrect message broadcast
 
-        //Debug.Log("GameObjectChoice:OnCollisionEnter:" + collision.transform.name);
+        //LogUtil.Log("GameObjectChoice:OnCollisionEnter:" + collision.transform.name);
 
         GameObject go = collision.collider.transform.gameObject;
 
-        //Debug.Log("GameObjectChoice:go:" + go.name);
+        //LogUtil.Log("GameObjectChoice:go:" + go.name);
 
         if(go.name.Contains("GamePlayerObject")) {
 
@@ -334,13 +334,13 @@ public class GameObjectChoice : BaseGameObjectLevel {
             && (go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
-            Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
             if(gamePlayerController != null) {
 
-                Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+                LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
                 if(gamePlayerController.IsPlayerControlled) {
 

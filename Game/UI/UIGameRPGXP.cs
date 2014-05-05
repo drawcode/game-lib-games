@@ -47,11 +47,11 @@ public class UIGameRPGXP : UIGameRPGObject {
         HandleUpdate(true);
 
         if(UIGameKeyCodes.isActionXPAdd) {
-            Debug.Log("isActionXPAdd:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
+            LogUtil.Log("isActionXPAdd:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(incrementValue * 100);
         }
         else if(UIGameKeyCodes.isActionXPSubtract) {
-            Debug.Log("isActionXPSubtract:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
+            LogUtil.Log("isActionXPSubtract:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(-incrementValue * 100);
         }
     }

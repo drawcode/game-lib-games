@@ -80,7 +80,7 @@ public class UIPanelDialogRPGPower : UIPanelBase {
         if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
 
             // buy recharge
-            Debug.Log("Recharge:");
+            LogUtil.Log("Recharge:");
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameUIController.ShowGameModeTrainingModeChoiceQuiz();

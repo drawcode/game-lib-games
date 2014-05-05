@@ -221,7 +221,7 @@ public class BaseItemController : GameObjectBehavior {
      
         spawnLocation = GameController.FilterBounds(spawnLocation);
      
-        Debug.Log("characterType:" + characterType);
+        LogUtil.Log("characterType:" + characterType);
      
         if(prefabObject == null) {
             yield break;

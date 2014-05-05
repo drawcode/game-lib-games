@@ -30,25 +30,25 @@ public class UIPanelLevels : UIAppPanelBaseList {
  
     IEnumerator LoadDataCo() {
      
-        Debug.Log("Load GameLevels: LoadDataCo");
+        LogUtil.Log("Load GameLevels: LoadDataCo");
      
      
-        Debug.Log("Load GameLevels: LoadDataCo 2");
+        LogUtil.Log("Load GameLevels: LoadDataCo 2");
      
         if(listGridRoot != null) { 
             foreach(Transform item in listGridRoot.transform) {
                 Destroy(item.gameObject);
             }
          
-            Debug.Log("Load GameLevels: LoadDataCo 3");
+            LogUtil.Log("Load GameLevels: LoadDataCo 3");
      
             List<GameLevel> levels = GameLevels.Instance.GetAll();//GetByWorldId("world-original");
      
-            Debug.Log("Load GameLevels: levels.Count: " + levels.Count);
+            LogUtil.Log("Load GameLevels: levels.Count: " + levels.Count);
                      
             double panelCount = Math.Floor((double)(levels.Count / 20));
          
-            Debug.Log("Load GameLevels: panelCount: " + panelCount);
+            LogUtil.Log("Load GameLevels: panelCount: " + panelCount);
          
             for(int k = 0; k < (int)panelCount; k++) {              
              

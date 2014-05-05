@@ -75,7 +75,7 @@ public class UIPanelPause : UIPanelBase {
 	
     void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
 
-        //Debug.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
+        //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
 		
 		bool changeAudio = true;
 		

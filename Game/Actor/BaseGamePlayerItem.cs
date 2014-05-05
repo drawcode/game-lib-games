@@ -200,7 +200,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
             if(!go.activeInHierarchy || !go.activeSelf) {
                 ShowObject(go);
             }
-            Debug.Log("FadeInObject:" + go.name);
+            LogUtil.Log("FadeInObject:" + go.name);
             iTween.FadeTo(go, 1f, 2f);
         }
     }
@@ -208,7 +208,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public virtual void FadeOutObject(GameObject go) {
                 
         if(go != null) {                        
-            Debug.Log("FadeOutObject:" + go.name);
+            LogUtil.Log("FadeOutObject:" + go.name);
                         
             iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
             HideObjectDelayed(go, 1f);
@@ -217,7 +217,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     public virtual void FadeOutObjectNow(GameObject go) {
         if(go != null) {                        
-            Debug.Log("FadeOutObjectNow:" + go.name);
+            LogUtil.Log("FadeOutObjectNow:" + go.name);
             iTween.FadeTo(go, 0f, 0f);
             HideObject(go);
         }
@@ -358,7 +358,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                     //string linkName = hitTransform.name.Replace(
                     //      GamePlayerItemMessages.gamePlayerItemCoin + "_","");
                     //
-                    //Debug.Log("HIT!item:" + hitTransform.name);                                                                   
+                    //LogUtil.Log("HIT!item:" + hitTransform.name);                                                                   
                                         
                     if(hitTransform.name.ToLower().Contains(
                         GamePlayerItemType.itemCoin)) {
@@ -368,7 +368,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                         //&& state == ARCustomSceneObjectVidariLaunchState.Started
                         //&& playState == ARCustomSceneObjectVidariPlayState.Completed) {                       
                                                 
-                        //Debug.Log("linkName:" + linkName);                                            
+                        //LogUtil.Log("linkName:" + linkName);                                            
                                                 
                         CollectContent();       
                     }
@@ -458,7 +458,7 @@ public class GamePlayerCollectable {
         if(gamePlayerController != null) {
                /// foreach (ContactPoint contact in collision.contacts) {
                                 gamePlayerController.HandleCollision(collision);
-                                Debug.Log("contact:" + contact);
+                                LogUtil.Log("contact:" + contact);
                         ////}
         }
     }

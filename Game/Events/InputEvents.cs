@@ -24,7 +24,7 @@ public class InputEvents : GameObjectBehavior {
         }
         
         void OnActivate(string data) {
-                Debug.Log("InputEvents:OnActivate: name: " + transform.name + " data:" + data);
+                LogUtil.Log("InputEvents:OnActivate: name: " + transform.name + " data:" + data);
                 Messenger<string, string>.Broadcast(InputEvents.EVENT_ITEM_CHANGE, transform.name, data);
         }
 }

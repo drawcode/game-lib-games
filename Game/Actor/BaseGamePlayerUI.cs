@@ -71,8 +71,8 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 			//Avatar avatar = anim.avatar;
 			//RuntimeAnimatorController controller = anim.runtimeAnimatorController;
 
-            //Debug.Log("avatar:" + avatar.name);
-            //Debug.Log("controller:" + controller.name);
+            //LogUtil.Log("avatar:" + avatar.name);
+            //LogUtil.Log("controller:" + controller.name);
 		}
 	}
 	

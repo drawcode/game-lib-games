@@ -65,17 +65,17 @@ public class LoadSceneAsync : GameObjectBehavior {
     }
     
     public void OnLevelLoadProgress(float progress) {
-        Debug.Log("Loading Progress:" + progress);
+        LogUtil.Log("Loading Progress:" + progress);
         ChangeState(LoadSceneState.LevelLoadProgress);
     }
     
     public void OnLevelLoadStarted() {
-        Debug.Log("Loading Level Started:" + levelLoadingName);
+        LogUtil.Log("Loading Level Started:" + levelLoadingName);
         ChangeState(LoadSceneState.LevelLoadStarted);
     }
     
     public void OnLevelLoaded() {
-        Debug.Log("Loading Level:" + levelLoadingName);
+        LogUtil.Log("Loading Level:" + levelLoadingName);
         ChangeState(LoadSceneState.LevelLoaded);
     }
             

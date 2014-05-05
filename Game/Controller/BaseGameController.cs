@@ -383,7 +383,7 @@ public class GameLevelGridData {
             }
             else {
 
-                //Debug.Log("RandomizeAssetsInAssetMap:row" + row);
+                //LogUtil.Log("RandomizeAssetsInAssetMap:row" + row);
 
                 while(string.IsNullOrEmpty(row)) {
 
@@ -398,7 +398,7 @@ public class GameLevelGridData {
 
                     row = assetMap[x,y,z];
 
-                //Debug.Log("RandomizeAssetsInAssetMap:row:" + row);
+                //LogUtil.Log("RandomizeAssetsInAssetMap:row:" + row);
                 }
             }
         }
@@ -778,13 +778,13 @@ public class BaseGameController : GameObjectBehavior {
             //&& (go.name.Contains("Helmet")
             //|| go.name.Contains("Facemask"))) {
 
-            //Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
             if(gamePlayerController != null) {
 
-                //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+                //LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
                 if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
@@ -821,13 +821,13 @@ public class BaseGameController : GameObjectBehavior {
             || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
-            //Debug.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
             if(gamePlayerController != null) {
 
-                //Debug.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
+                //LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
                 if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return true;
@@ -1100,7 +1100,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void loadLevelAssets(string code) {
 
-       // Debug.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
+       // LogUtil.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
 
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
@@ -1123,7 +1123,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void loadLevel(string code) {
 
-        //Debug.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
+        //LogUtil.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
 
         // Load the game levelitems for the game level code
         ////GameController.StartGame(code);
@@ -1147,17 +1147,17 @@ public class BaseGameController : GameObjectBehavior {
 
         if(AppModes.Instance.isAppModeGameChallenge) {
 
-            Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameChallenge:"
+            LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameChallenge:"
                 + AppModes.Instance.isAppModeGameChallenge);
 
             if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
                 if(AppContentStates.Instance.isAppContentStateGameChallenge) {
 
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameChallenge:"
+                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameChallenge:"
                         + AppContentStates.Instance.isAppContentStateGameChallenge);
 
                     GameLevelItems.Current.level_items
@@ -1167,25 +1167,25 @@ public class BaseGameController : GameObjectBehavior {
             }
         }
         else if(AppModes.Instance.isAppModeGameTraining) {
-            Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameTraining:"
+            LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameTraining:"
                 + AppModes.Instance.isAppModeGameTraining);
 
             if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
             }
             else if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameChoice:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameChoice:"
                     + AppModeTypes.Instance.isAppModeTypeGameChoice);
 
                 // LOAD CHOICE GAME LEVEL ITEMS
 
                 if(AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
 
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
+                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz);
 
                     //
@@ -1200,7 +1200,7 @@ public class BaseGameController : GameObjectBehavior {
             }
             else if(AppModeTypes.Instance.isAppModeTypeGameCollection) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameCollection:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameCollection:"
                     + AppModeTypes.Instance.isAppModeTypeGameCollection);
 
                 // LOAD COLLECTION GAME LEVEL ITEMS
@@ -1208,7 +1208,7 @@ public class BaseGameController : GameObjectBehavior {
                 /*
                 if(AppContentStates.Instance.isAppContentStateGameTrainingCollectionSmarts) {
 
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSmarts:"
+                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSmarts:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingCollectionSmarts);
 
                     GameLevelItems.Current.level_items
@@ -1216,7 +1216,7 @@ public class BaseGameController : GameObjectBehavior {
                 }
                 else if(AppContentStates.Instance.isAppContentStateGameTrainingCollectionSafety) {
 
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSafety:"
+                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSafety:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingCollectionSafety);
 
                     GameLevelItems.Current.level_items
@@ -1226,30 +1226,30 @@ public class BaseGameController : GameObjectBehavior {
             }
             else if(AppModeTypes.Instance.isAppModeTypeGameContent) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameContent:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameContent:"
                     + AppModeTypes.Instance.isAppModeTypeGameContent);
 
             }
             else if(AppModeTypes.Instance.isAppModeTypeGameTips) {
 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameTips:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameTips:"
                     + AppModeTypes.Instance.isAppModeTypeGameTips);
 
             }
         }
         else {
            // if(AppModes.Instance.isAppModeGameArcade) {
-            Debug.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
+            LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
                       + AppModes.Instance.isAppModeGameArcade);
             
             if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
                 
-                Debug.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
+                LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                           + AppModeTypes.Instance.isAppModeTypeGameDefault);
                 
                 if(AppContentStates.Instance.isAppContentStateGameArcade) {
                     
-                    Debug.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
+                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
                               + AppContentStates.Instance.isAppContentStateGameArcade);
                     
                     GameLevelItems.Current.level_items
@@ -1273,7 +1273,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void loadStartLevel(string levelCode) {
 
-        //Debug.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
+        //LogUtil.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
 
         string characterCode = GameProfileCharacters.Current.GetCurrentCharacterCode();
         GameController.LoadCharacterStartLevel(characterCode, levelCode);
@@ -1289,7 +1289,7 @@ public class BaseGameController : GameObjectBehavior {
        
     public virtual IEnumerator startLevelCo(string levelCode) {
 
-        //Debug.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
+        //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
         GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
@@ -1356,7 +1356,7 @@ public class BaseGameController : GameObjectBehavior {
     
     public virtual void loadProfileCharacter(string characterCode) {
 
-        //Debug.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
+        //LogUtil.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
 
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
@@ -1369,7 +1369,7 @@ public class BaseGameController : GameObjectBehavior {
     
     public virtual void loadCharacterStartLevel(string characterCode, string levelCode) {
 
-        //Debug.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
+        //LogUtil.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
         //    " levelCode:" + levelCode);
 
         loadProfileCharacter(characterCode);
@@ -1499,7 +1499,7 @@ public class BaseGameController : GameObjectBehavior {
                 spawnCode = leftMiddle;
             }
 
-            //Debug.Log("spawnCode:" + spawnCode);
+            //LogUtil.Log("spawnCode:" + spawnCode);
 
             GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             if(spawn != null) {
@@ -1603,7 +1603,7 @@ public class BaseGameController : GameObjectBehavior {
                 //spawnCode = leftMiddle;
             }
 
-           // Debug.Log("spawnCode:" + spawnCode);
+           // LogUtil.Log("spawnCode:" + spawnCode);
 
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {
@@ -2040,7 +2040,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void onGamePrepare(bool startGame) {
 
-        //Debug.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
+        //LogUtil.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
 
         GameController.ResetRuntimeData();
 
@@ -2058,7 +2058,7 @@ public class BaseGameController : GameObjectBehavior {
     
     public virtual void onGameStarted() {
 
-        //Debug.Log("GAME START FLOW: STEP #8: onGameStarted");
+        //LogUtil.Log("GAME START FLOW: STEP #8: onGameStarted");
 
         GameController.StartLevelStats();
 
@@ -2370,15 +2370,15 @@ public class BaseGameController : GameObjectBehavior {
 
         yield return new WaitForSeconds(delay);
 
-        //Debug.Log("GamePlayerOutOfBoundsDelayed:");
+        //LogUtil.Log("GamePlayerOutOfBoundsDelayed:");
 
         runtimeData.outOfBounds = true;
 
-        //Debug.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
+        //LogUtil.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
 
         gameState = GameStateGlobal.GameStarted;
 
-        //Debug.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);
+        //LogUtil.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);
 
         GameController.CheckForGameOver();
     }
@@ -2447,7 +2447,7 @@ public class BaseGameController : GameObjectBehavior {
 
         yield return new WaitForSeconds(delay);
 
-        //Debug.Log("gamePlayerGoalZoneDelayedCo:");
+        //LogUtil.Log("gamePlayerGoalZoneDelayedCo:");
 
         GameController.GoalZoneChange();
     }
@@ -2569,8 +2569,8 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void checkForGameOver() {
     
-        //Debug.Log("CheckForGameOver:isGameOver:" + isGameOver);
-        //Debug.Log("CheckForGameOver:isGameRunning:" + isGameRunning);
+        //LogUtil.Log("CheckForGameOver:isGameOver:" + isGameOver);
+        //LogUtil.Log("CheckForGameOver:isGameRunning:" + isGameRunning);
 
         if(isGameRunning) {
         
@@ -2615,9 +2615,9 @@ public class BaseGameController : GameObjectBehavior {
                 }
     
                 if(runtimeData.outOfBounds) {
-                    //Debug.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
+                    //LogUtil.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
-                    //Debug.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
+                    //LogUtil.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
     
                 if(gameOverMode) {
@@ -2670,8 +2670,8 @@ public class BaseGameController : GameObjectBehavior {
             pointNormalized.Normalize();
             pointNormalized = pointNormalized.normalized;
 
-            //Debug.Log("directionNormal:" + directionNormal);
-            //Debug.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
+            //LogUtil.Log("directionNormal:" + directionNormal);
+            //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
     
             updateFingerNavigate = true;
     
@@ -2685,10 +2685,10 @@ public class BaseGameController : GameObjectBehavior {
                 directionAllow.Normalize();
                 //var directionAllowNormal = directionAllow.normalized;
     
-                //Debug.Log("directionAllowNormal:" + directionAllowNormal);
-                //Debug.Log("touchPos:" + touchPos);
-                //Debug.Log("pointNormalized:" + pointNormalized);
-                //Debug.Log("point:" + point);
+                //LogUtil.Log("directionAllowNormal:" + directionAllowNormal);
+                //LogUtil.Log("touchPos:" + touchPos);
+                //LogUtil.Log("pointNormalized:" + pointNormalized);
+                //LogUtil.Log("point:" + point);
     
                 if(pointNormalized.y < .2f) {
                     if(pointNormalized.x < .2f) {
@@ -2700,15 +2700,15 @@ public class BaseGameController : GameObjectBehavior {
                     }
                 }
 
-                //Debug.Log("updateFingerNavigate:" + updateFingerNavigate);
+                //LogUtil.Log("updateFingerNavigate:" + updateFingerNavigate);
             }
         
             if(updateFingerNavigate) {
 
                 handled = true;
 
-                //Debug.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
-                //Debug.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+                //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
+                //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
 
                 Vector3 axisInput = Vector3.zero;
                 axisInput.x = directionNormal.x;

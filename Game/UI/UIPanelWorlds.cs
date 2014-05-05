@@ -29,21 +29,21 @@ public class UIPanelWorlds : UIAppPanelBaseList {
 	
 	IEnumerator LoadDataCo() {
 		
-		Debug.Log("Load GameWorlds: LoadDataCo");
+		LogUtil.Log("Load GameWorlds: LoadDataCo");
 		
 		
-		Debug.Log("Load GameWorlds: LoadDataCo 2");
+		LogUtil.Log("Load GameWorlds: LoadDataCo 2");
 		
 		if (listGridRoot != null) { 
             foreach (Transform item in listGridRoot.transform) {
                 Destroy(item.gameObject);
             }
 			
-			Debug.Log("Load GameWorlds: LoadDataCo 3");
+			LogUtil.Log("Load GameWorlds: LoadDataCo 3");
 		
 			List<GameWorld> worlds = GameWorlds.Instance.GetAll();
 		
-	        Debug.Log("Load GameWorlds: worlds.Count: " + worlds.Count);
+	        LogUtil.Log("Load GameWorlds: worlds.Count: " + worlds.Count);
 			
 			int i = 0;
 			

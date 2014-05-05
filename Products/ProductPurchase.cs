@@ -215,15 +215,15 @@ public class ProductPurchase : GameObjectBehavior {
     }
 
     public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
-        //Debug.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+        //LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
     }
 
     public void onProductPurchaseFailed(ProductPurchaseRecord record) {
-        //Debug.Log("onProductPurchaseFailed:" + " record:" + record.ToJson());
+        //LogUtil.Log("onProductPurchaseFailed:" + " record:" + record.ToJson());
     }
 
     public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
-        //Debug.Log("onProductPurchaseCancelled:" + " record:" + record.ToJson());
+        //LogUtil.Log("onProductPurchaseCancelled:" + " record:" + record.ToJson());
     }
 
     // MESSAGES
@@ -467,36 +467,36 @@ public class ProductPurchase : GameObjectBehavior {
     }
 
     public void productPurchaseAwaitingConfirmationEvent(StoreKitTransaction transaction) {
-        Debug.Log("productPurchaseAwaitingConfirmationEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
+        LogUtil.Log("productPurchaseAwaitingConfirmationEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
     }
 
     public void paymentQueueUpdatedDownloadsEvent(List<StoreKitDownload> downloads) {
-        Debug.Log("paymentQueueUpdatedDownloadsEvent");
+        LogUtil.Log("paymentQueueUpdatedDownloadsEvent");
 
     }
 
     public void productListReceivedEvent(List<StoreKitProduct> products) {
-        Debug.Log("paymentQueueUpdatedDownloadsEvent");
+        LogUtil.Log("paymentQueueUpdatedDownloadsEvent");
 
     }
 
     public void productListRequestFailedEvent(string error) {
-        Debug.Log("productListRequestFailedEvent:" + " error:" + error);
+        LogUtil.Log("productListRequestFailedEvent:" + " error:" + error);
 
     }
 
     public void restoreTransactionsFailedEvent(string error) {
-        Debug.Log("restoreTransactionsFailedEvent:" + " error:" + error);
+        LogUtil.Log("restoreTransactionsFailedEvent:" + " error:" + error);
 
     }
 
     public void restoreTransactionsFinishedEvent() {
-        Debug.Log("restoreTransactionsFinishedEvent");
+        LogUtil.Log("restoreTransactionsFinishedEvent");
 
     }
 
     public void transactionUpdatedEvent(StoreKitTransaction transaction) {
-        Debug.Log("transactionUpdatedEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
+        LogUtil.Log("transactionUpdatedEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
     }
 
     #elif PURCHASE_USE_AMAZON

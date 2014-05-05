@@ -84,18 +84,18 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 			GameObject go = GameDraggableEditor.LoadSprite(
 				gameLevelItemObject, spriteCode, Vector3.one);
 
-            //Debug.Log("LoadSprite:exists:" + go != null);
+            //LogUtil.Log("LoadSprite:exists:" + go != null);
 
 			if(go != null) {
 
-                //Debug.Log("LoadSprite:" + go.name);
+                //LogUtil.Log("LoadSprite:" + go.name);
 
 				GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
 
                 if(gameLevelSprite != null) {
 					gameLevelSprite.gameDraggableLevelItem = this;
 
-                    //Debug.Log("LoadSprite:gameLevelSprite:" + gameLevelSprite.name);
+                    //LogUtil.Log("LoadSprite:gameLevelSprite:" + gameLevelSprite.name);
 				}
 				//go.transform.parent.transform.parent.transform.parent.transform.parent.position = Vector3.zero;
 				//go.transform.parent.transform.parent.transform.parent.transform.parent.localPosition = Vector3.zero;
@@ -147,7 +147,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 	public void DestroyMe() {
 		GameLevelItems.Current.level_items.RemoveAll(item => item.uuid == gameLevelItemAsset.uuid);		
 
-        Debug.Log("GameDraggableLevelItem:destroying..." + name);
+        LogUtil.Log("GameDraggableLevelItem:destroying..." + name);
 
 		//GameController.Instance.ProcessStatDestroy();
 		

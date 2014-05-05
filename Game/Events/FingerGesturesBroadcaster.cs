@@ -26,9 +26,9 @@ public class FingerGesturesBroadcaster : GameObjectBehavior {
 	
 	void OnTap( TapGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Tapped object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Tapped object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was tapped at " + gesture.Position );
+	    //    LogUtil.Log( "No object was tapped at " + gesture.Position );
 		
 		Messenger<TapGesture>.Broadcast(FingerGesturesMessages.OnTap, gesture);
 	
@@ -36,9 +36,9 @@ public class FingerGesturesBroadcaster : GameObjectBehavior {
 	
 	void OnDoubleTap( TapGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Tapped object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Tapped object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was tapped at " + gesture.Position );
+	    //    LogUtil.Log( "No object was tapped at " + gesture.Position );
 		
 		Messenger<TapGesture>.Broadcast(FingerGesturesMessages.OnDoubleTap, gesture);
 	
@@ -46,45 +46,45 @@ public class FingerGesturesBroadcaster : GameObjectBehavior {
 	
 	void OnSwipe( SwipeGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Swipe object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Swipe object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was swiped at " + gesture.Position );
+	    //    LogUtil.Log( "No object was swiped at " + gesture.Position );
 		
 		Messenger<SwipeGesture>.Broadcast(FingerGesturesMessages.OnSwipe, gesture);
 	}
 	
 	void OnPinch( PinchGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Pinch object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Pinch object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was pinched at " + gesture.Position );
+	    //    LogUtil.Log( "No object was pinched at " + gesture.Position );
 		
 		Messenger<PinchGesture>.Broadcast(FingerGesturesMessages.OnPinch, gesture);
 	}	
 	
 	void OnLongPress( LongPressGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "LongPress object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "LongPress object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was long pressed at " + gesture.Position );
+	    //    LogUtil.Log( "No object was long pressed at " + gesture.Position );
 		
 		Messenger<LongPressGesture>.Broadcast(FingerGesturesMessages.OnLongPress, gesture);
 	}
 		
 	void OnTwist( TwistGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Twist object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Twist object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was twisted at " + gesture.Position );
+	    //    LogUtil.Log( "No object was twisted at " + gesture.Position );
 		
 		Messenger<TwistGesture>.Broadcast(FingerGesturesMessages.OnTwist, gesture);
 	}
 	
 	void OnDrag( DragGesture gesture ) {
 	    //if( gesture.Selection )
-	    //    Debug.Log( "Drag object: " + gesture.Selection.name );
+	    //    LogUtil.Log( "Drag object: " + gesture.Selection.name );
 	    //else
-	    //    Debug.Log( "No object was dragged at " + gesture.Position );
+	    //    LogUtil.Log( "No object was dragged at " + gesture.Position );
 		
 		Messenger<DragGesture>.Broadcast(FingerGesturesMessages.OnDrag, gesture);
 	}
