@@ -14,7 +14,7 @@ using UnityEngine;
 
 using Engine.Data.Json;
 using Engine.Events;
-using Engine.Utility;
+using Engine.Utility; 
 
 #if PROMO_USE_CHARTBOOST
 using Chartboost;
@@ -93,39 +93,40 @@ public class AdNetworks : GameObjectBehavior {
 #elif UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID
-    [NonSerialized]
-    public AdMobManager admobManager;
-    [NonSerialized]
-    public AdMobEventListener admobEventListener;
+    //[NonSerialized]
+    //public AdMobManager admobManager;
+    //[NonSerialized]
+    //public AdMobEventListener admobEventListener;
 #elif UNITY_IPHONE
-    [NonSerialized]
-    public AdMobManager admobManager;
-    [NonSerialized]
-    public AdMobEventListener admobEventListener;
+    //[NonSerialized]
+    //public AdMobManager admobManager;
+    //[NonSerialized]
+    //public AdMobEventListener admobEventListener;
 #endif
 #endif
     
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
-    public static AdNetworks Instance;
 
     public bool tapjoyOpeningFullScreenAd = false;
     
-    public void Awake() {
-        
-        if (Instance != null && this != Instance) {
-            //There is already a copy of this script running
-            Destroy(this);
-            return;
-        }
-        
-        Instance = this;
+    private static AdNetworks _instance = null;    
+    public static AdNetworks Instance {
+        get {
+            if (!_instance) {
                 
-#if UNITY_EDITOR    
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
-#endif
+                // check if an ObjectPoolManager is already available in the scene graph
+                _instance = FindObjectOfType(typeof(AdNetworks)) as AdNetworks;
+                
+                // nope, create a new one
+                if (!_instance) {
+                    var obj = new GameObject("_AdNetworks");
+                    _instance = obj.AddComponent<AdNetworks>();
+                }
+            }
+            
+            return _instance;
+        }
     }
 
     void Start() {
@@ -260,7 +261,7 @@ public class AdNetworks : GameObjectBehavior {
     public void Init() {  
 
 #if AD_USE_ADMOB
-        Invoke("admobInit", 1);
+        //Invoke("admobInit", 1);
 #endif        
 
 #if PROMO_USE_CHARTBOOST
@@ -416,10 +417,13 @@ public class AdNetworks : GameObjectBehavior {
     public void tapjoyHandleShowOffersFailed() {
         LogUtil.Log("HandleShowOffersFailed");
     }
+#endif
+
+    #if PROMO_USE_VUNGLE   
     
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
-    #if PROMO_USE_VUNGLE   
+
     public void vungleInit() {
         LogUtil.Log("vungleInit");
 
@@ -472,7 +476,6 @@ public class AdNetworks : GameObjectBehavior {
         Messenger<double>.Broadcast(AdNetworksMessages.videoAd, timeWatched / totalDuration);
     }
 #endif
-#endif
 
 #if PROMO_USE_CHARTBOOST
     // ----------------------------------------------------------------------
@@ -481,7 +484,7 @@ public class AdNetworks : GameObjectBehavior {
     public void chartboostInit() {
 
         #if UNITY_ANDROID
-            CBBinding.init();
+            CBBinding.init(AppConfigs.publisherIdCharboostAndroid, AppConfigs.publisherSecretCharboostAndroid);
         #elif UNITY_IPHONE
             CBBinding.init(AppConfigs.publisherIdCharboostiOS, AppConfigs.publisherSecretCharboostiOS);
         #endif
@@ -537,7 +540,7 @@ public class AdNetworks : GameObjectBehavior {
 
     /// Fired when an interstitial fails to load
     /// First parameter is the location.
-    public void chartboostDidFailToLoadInterstitialEvent(string data) {
+    public void chartboostDidFailToLoadInterstitialEvent(string data, CBManager.CBImpressionError error) {
 
     }
     
@@ -619,20 +622,20 @@ public class AdNetworks : GameObjectBehavior {
 
         // Social Network Prime31
         if (Application.platform == RuntimePlatform.Android) {
-            LogUtil.Log("InitAdmob RuntimePlatform.Android..." + 
-                Application.platform);          
+            //LogUtil.Log("InitAdmob RuntimePlatform.Android..." + 
+                //Application.platform);          
 #if UNITY_ANDROID
             //AdMob.init(AppConfigs.publisherIdAdmobAndroid, adNetworkTestingEnabled);            
-            LogUtil.Log("InitAdmob Admob init..." + AppConfigs.publisherIdAdmobAndroid);
+            //LogUtil.Log("InitAdmob Admob init..." + AppConfigs.publisherIdAdmobAndroid);
 #endif
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer) {
 #if UNITY_IPHONE
             
-            AdMob.setTestDevices(AppConfigs.adTestDeviceIdsiOS);
+            //AdMob.setTestDevices(AppConfigs.adTestDeviceIdsiOS);
 
-            AdMobBinding.init(
-                AppConfigs.publisherIdAdmobiOS, adNetworkTestingEnabled);
+            //AdMobBinding.init(
+            //    AppConfigs.publisherIdAdmobiOS, adNetworkTestingEnabled);
             LogUtil.Log("InitAdmob RuntimePlatform.IPhonePlayer..." + 
                         AppConfigs.publisherIdAdmobiOS);
 #endif
@@ -779,7 +782,7 @@ public class AdNetworks : GameObjectBehavior {
     }
     
     public void showAd(AdBannerType bannerType, AdPosition position) {
-      
+
 #if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID

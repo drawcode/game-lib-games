@@ -1439,12 +1439,14 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadWeapons() {
         
         //LogUtil.Log("LoadWeapons");
-        initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
-        currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
+        if(gamePlayerModelHolderWeaponsHolder != null) {
+            initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
+            currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
 
-        LoadInventory();
+            LoadInventory();
 
-        LoadWeapon(weaponInventory[weaponInventoryIndex]);
+            LoadWeapon(weaponInventory[weaponInventoryIndex]);
+        }
     }
     
     public virtual void LoadWeaponNext() {
@@ -1503,7 +1505,14 @@ public class BaseGamePlayerController : GameActor {
         go.transform.parent = gamePlayerModelHolderWeaponsHolder.transform;
         go.ResetPosition();
         go.ResetRotation();
+
+        if(GameConfigs.isGameRunning && IsPlayerControlled) {
+            UINotificationDisplayTip.Instance.QueueTip(
+                "Weapon Loaded:" + gameWeaponData.display_name,
+                gameWeaponData.description);
                 
+        }
+
         if (go != null && weapons.Count == 0) {
             
             foreach (GamePlayerWeapon weapon in 
@@ -1519,6 +1528,8 @@ public class BaseGamePlayerController : GameActor {
             }
         }
     }
+
+
  
     // --------------------------------------------------------------------
     // EVENTS

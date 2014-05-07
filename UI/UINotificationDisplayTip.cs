@@ -75,7 +75,7 @@ public class UINotificationDisplayTip
     public UIImageButton tipContinue;
 
     float positionYOpenInGame = 0;
-    float positionYClosedInGame = 900;
+    float positionYClosedInGame = -900;
     UINotificationTipItem currentItem;
 
     UINotificationTipState notificationState = UINotificationTipState.Hidden;
@@ -343,14 +343,14 @@ public class UINotificationDisplayTip
         
         if (Input.GetKeyDown(KeyCode.Alpha6)) {
             //achievementNumber++;
-            QueueAchievement("achieve_test1");
+            //QueueAchievement("achieve_test1");
             //QueueAchievement("achieve_find_first");
-            QueueAchievement("Achievement here", "This is an achievement", 10);
+            //QueueAchievement("Achievement here", "This is an achievement", 10);
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha7)) {
             //achievementNumber++;
-            QueueError("Error Here", "This is an error, oh snap!");
+            //QueueError("Error Here", "This is an error, oh snap!");
         }       
         
         if (Input.GetKeyDown(KeyCode.Alpha8)) {
@@ -366,7 +366,7 @@ public class UINotificationDisplayTip
         
         if (Input.GetKeyDown(KeyCode.Alpha0)) {
             //achievementNumber++;
-            QueuePoint("Point Here", "This is an point, do better!", 1);
+            //QueuePoint("Point Here", "This is an point, do better!", 1);
         }
     }
     

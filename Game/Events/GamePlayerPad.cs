@@ -13,9 +13,9 @@ public class GamePlayerPad : GameObjectBehavior {
 
     public GameObject containerHighlighted;
 
-    public Color colorHighlight = UIColors.colorOrange;
+    public Color colorHighlight = UIColors.colorOrange();
     
-    Color lastColorHighlight = UIColors.colorDark;
+    Color lastColorHighlight = UIColors.colorDark();
 
     public void Start() {
         UpdateColor();

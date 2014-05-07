@@ -12,7 +12,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public enum BroadcastNetworkType {
+public enum BroadcastNetworkType { 
     Everplay,
     Twitch
 }
@@ -24,7 +24,7 @@ public class BroadcastNetworksMessages {
     public static string broadcastRecordingPlayback = "broadcast-recording-playback";
 }
 
-public class BroadcastNetworks : GameObjectBehavior {
+public class BroadcastNetworks : GameObjectBehavior { 
     #if UNITY_EDITOR    
     #elif UNITY_STANDALONE_OSX
     #elif UNITY_STANDALONE_WIN

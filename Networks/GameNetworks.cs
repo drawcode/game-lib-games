@@ -547,14 +547,21 @@ public class GameNetworks : GameObjectBehavior {
         }
     }       
     
-    public void sendScore(string key, long keyValue) {        
+    public void sendScore(string key, long keyValue) {       
         
-        if(isAuthenticatediOSAppleGameCenter) {
-            reportScoreAppleGameCenter(key, keyValue);
+        GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
+        
+        if(item == null) {
+            return;
         }
         
-        if(isAuthenticatedAndroidGooglePlay) {
-            reportScoreGooglePlay(key, keyValue);
+        if(item.data == null) {
+            return;
+        }
+        
+        foreach(GameNetworkData networkData in item.data.networks) {
+            
+            reportScore(networkData.type, networkData.code, keyValue);
         }
     }
         
@@ -589,10 +596,14 @@ public class GameNetworks : GameObjectBehavior {
                         " keyValue:" + keyValue);
 
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-                reportScoreAppleGameCenter(key, keyValue);
+                if(isAuthenticatediOSAppleGameCenter) {
+                    reportScoreAppleGameCenter(key, keyValue);
+                }
 			}			
             else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-                reportScoreGooglePlay(key, keyValue);
+                if(isAuthenticatedAndroidGooglePlay) {
+                    reportScoreGooglePlay(key, keyValue);
+                }
 			}
 		}		
 	}
@@ -639,14 +650,21 @@ public class GameNetworks : GameObjectBehavior {
         }
     }
     
-    public void sendAchievement(string key, float progress) {        
+    public void sendAchievement(string key, float progress) {  
         
-        if(isAuthenticatediOSAppleGameCenter) {
-            reportAchievementAppleGameCenter(key, progress);
+        GameAchievement item = GameAchievements.Instance.GetById(key);
+        
+        if(item == null) {
+            return;
         }
-
-        if(isAuthenticatedAndroidGooglePlay) {
-            reportAchievementGooglePlay(key, progress);
+        
+        if(item.data == null) {
+            return;
+        }
+        
+        foreach(GameNetworkData networkData in item.data.networks) {
+            
+            reportAchievement(networkData.type, networkData.code, progress);
         }
     }
 
@@ -680,11 +698,15 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void reportAchievement(string networkTypeTo, string key, float progress) {
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {			
-            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-				reportAchievementAppleGameCenter(key, progress);
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {                
+                if(isAuthenticatediOSAppleGameCenter) {
+				    reportAchievementAppleGameCenter(key, progress);
+                }
 			}			
             else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-				reportAchievementGooglePlay(key, progress);
+                if(isAuthenticatedAndroidGooglePlay) {
+				    reportAchievementGooglePlay(key, progress);
+                }
 			}
 		}	
 	}	
@@ -1599,42 +1621,42 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when loading cloud data fails
     public void loadCloudDataForKeyFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+        Debug.Log("GameNetworks:PlayServices:loadCloudDataForKeyFailedEvent:" + " val:" + val);
     }
 
     // Fired when loading cloud data succeeds and includes the key and data
     public void loadCloudDataForKeySucceededEvent(int key, string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " key:" + key + " val:" + val);
+        Debug.Log("GameNetworks:PlayServices:loadCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);
     }
     
     // Fired when updating cloud data fails
     public void updateCloudDataForKeyFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+        Debug.Log("GameNetworks:PlayServices:updateCloudDataForKeyFailedEvent:" + " val:" + val);
     }
     
     // Fired when updating cloud data succeeds and includes the key and data
     public void updateCloudDataForKeySucceededEvent(int key, string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " key:" + key + " val:" + val);      
+        Debug.Log("GameNetworks:PlayServices:updateCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);      
     }
     
     // Fired when clearing cloud data fails
     public void clearCloudDataForKeyFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);        
+        Debug.Log("GameNetworks:PlayServices:clearCloudDataForKeyFailedEvent:" + " val:" + val);        
     }
     
     // Fired when clearing cloud data succeeds and includes the key
     public void clearCloudDataForKeySucceededEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);      
+        Debug.Log("GameNetworks:PlayServices:clearCloudDataForKeySucceededEvent:" + " val:" + val);      
     }
     
     // Fired when deleting cloud data fails
     public void deleteCloudDataForKeyFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);  
+        Debug.Log("GameNetworks:PlayServices:deleteCloudDataForKeyFailedEvent:" + " val:" + val);  
     }
     
     // Fired when deleting cloud data succeeds and includes the key
     public void deleteCloudDataForKeySucceededEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+        Debug.Log("GameNetworks:PlayServices:deleteCloudDataForKeySucceededEvent:" + " val:" + val);
     }
     
     // ##### ##### ##### ##### ##### ##### #####
@@ -1643,32 +1665,32 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when unlocking an achievement fails. Provides the achievmentId and the error in that order.
     public void unlockAchievementFailedEvent(string val, string error) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+        Debug.Log("GameNetworks:PlayServices:unlockAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
 
     // Fired when unlocking an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
     public void unlockAchievementSucceededEvent(string val, bool completed) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " completed:" + completed);
+        Debug.Log("GameNetworks:PlayServices:unlockAchievementSucceededEvent:" + " val:" + val + " completed:" + completed);
     }
     
     // Fired when incrementing an achievement fails. Provides the achievmentId and the error in that order.
     public void incrementAchievementFailedEvent(string val, string error) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+        Debug.Log("GameNetworks:PlayServices:incrementAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fired when incrementing an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
     public void incrementAchievementSucceededEvent(string val, bool completed) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " completed:" + completed); 
+        Debug.Log("GameNetworks:PlayServices:incrementAchievementSucceededEvent:" + " val:" + val + " completed:" + completed); 
     }
     
     // Fired when revealing an achievement fails. Provides the achievmentId and the error in that order.
     public void revealAchievementFailedEvent(string val, string error) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+        Debug.Log("GameNetworks:PlayServices:revealAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fired when revealing an achievement succeeds. The string lets you know the achievementId.
     public void revealAchievementSucceededEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val);
+        Debug.Log("GameNetworks:PlayServices:revealAchievementSucceededEvent:" + " val:" + val);
     }
     
     // ##### ##### ##### ##### ##### ##### #####
@@ -1677,18 +1699,18 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when submitting a score fails. Provides the leaderboardId and the error in that order.
     public void submitScoreFailedEvent(string val, string error) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);     
+        Debug.Log("GameNetworks:PlayServices:submitScoreFailedEvent:" + " val:" + val + " error:" + error);     
     }
     
     // Fired when submitting a scores succeeds. Returns the leaderboardId and a dictionary with some extra data with the fields from
     // the GPGScoreReport class: https://developers.google.com/games/services/ios/api/interface_g_p_g_score_report
     public void submitScoreSucceededEvent(string val, Dictionary<string,object> data) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " data:" + data.ToJson());
+        Debug.Log("GameNetworks:PlayServices:submitScoreSucceededEvent:" + " val:" + val + " data:" + data.ToJson());
     }
     
     // Fired when loading scores fails. Provides the leaderboardId and the error in that order.
     public void loadScoresFailedEvent(string val, string error) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + " val:" + val + " error:" + error);
+        Debug.Log("GameNetworks:PlayServices:loadScoresFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fires when loading scores succeeds

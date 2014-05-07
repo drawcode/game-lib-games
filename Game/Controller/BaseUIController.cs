@@ -434,6 +434,13 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void OnApplicationQuit() {
         GameState.SaveProfile();
     }
+
+    // NOTIFICATIONS
+
+
+    public virtual void showUITip(string title, string description) {
+        UINotificationDisplayTip.Instance.QueueTip(title,description);            
+    }
     
     public virtual void ShowMainMenuDelayed() {
         if (!hasBeenClicked) {

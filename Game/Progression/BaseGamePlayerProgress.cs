@@ -1946,22 +1946,7 @@ public class BaseGamePlayerProgress
     
     public IEnumerator ReportAchievementCo(string key, bool completed) {
         yield return null;
-
-        GameAchievement achievement = GameAchievements.Instance.GetById(key);
-
-        if(achievement == null) {
-            yield return null;
-        }
-        
-        if(achievement.data == null) {
-            yield return null;
-        }
-        
-        foreach(GameNetworkData networkData in achievement.data.networks) {
-            
-            GameNetworks.SendAchievement(networkData.code, true);
-        }
-
+        GameNetworks.SendAchievement(key, completed);
         yield return null;
     }
     
@@ -1988,32 +1973,19 @@ public class BaseGamePlayerProgress
                 return;
             }
 
-            bool sendScore = false;
-            GameLeaderboard board = GameLeaderboards.Instance.GetByCode(key);
-                        
-            if(board == null) {
-                return;
-            }
+            long keyValueLong = 0;                
+            double keyValueDouble = GameProfileStatistics.Current.GetStatisticValue(key);//Convert.ToDouble(keyValue);
             
-            LogUtil.Log("SetStatisticValue:board:" + board.code);
-
-            foreach(GameNetworkData networkData in board.data.networks) {
+            keyValueLong = (long)keyValueDouble;
+            
+            LogUtil.Log("SetStatisticValue:key:" + key);
+            LogUtil.Log("SetStatisticValue:keyValueLong...:" + keyValueLong);
+            
+            if(keyValueLong > 0) {
                 
-                long keyValueLong = 0;                
-                double keyValueDouble = GameProfileStatistics.Current.GetStatisticValue(key);//Convert.ToDouble(keyValue);
-
-                keyValueLong = (long)keyValueDouble;
+                LogUtil.Log("SetStatisticValue:keyValueLong:" + keyValueLong);
                 
-                LogUtil.Log("SetStatisticValue:networkData.code:" + networkData.code);
-                LogUtil.Log("SetStatisticValue:networkData.type:" + networkData.type);
-                LogUtil.Log("SetStatisticValue:keyValueLong...:" + keyValueLong);
-                
-                if(keyValueLong > 0) {
-                    
-                    LogUtil.Log("SetStatisticValue:keyValueLong:" + keyValueLong);
-
-                    GameNetworks.SendScore(networkData.type, networkData.code, keyValueLong);
-                }
+                GameNetworks.SendScore(key, keyValueLong);
             }
         }
     }
