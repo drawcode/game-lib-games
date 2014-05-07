@@ -344,39 +344,39 @@ public class BaseGameCustomController : GameObjectBehavior {
     }
     
     public virtual Color getRandomizedColorFromContextUI() {
-        Color colorTo = UIColors.colorWhite();
+        Color colorTo = UIColors.colorWhite;
         
         int randomColor = UnityEngine.Random.Range(0, 9);
         
         if (randomColor == 0) {
-            colorTo = UIColors.colorWhite();
+            colorTo = UIColors.colorWhite;
         }
         else if (randomColor == 1) {
-            colorTo = UIColors.colorBlue();
+            colorTo = UIColors.colorBlue;
         }
         else if (randomColor == 2) {
-            colorTo = UIColors.colorGreen();
+            colorTo = UIColors.colorGreen;
         }
         else if (randomColor == 3) {
-            colorTo = UIColors.colorLightBlue();
+            colorTo = UIColors.colorLightBlue;
         }
         else if (randomColor == 4) {
-            colorTo = UIColors.colorOrange();
+            colorTo = UIColors.colorOrange;
         }
         else if (randomColor == 5) {
-            colorTo = UIColors.colorLight();
+            colorTo = UIColors.colorLight;
         }
         else if (randomColor == 6) {
-            colorTo = UIColors.colorPurple();
+            colorTo = UIColors.colorPurple;
         }
         else if (randomColor == 7) {
-            colorTo = UIColors.colorRed();
+            colorTo = UIColors.colorRed;
         }
         else if (randomColor == 8) {
-            colorTo = UIColors.colorYellow();
+            colorTo = UIColors.colorYellow;
         }
         else {
-            colorTo = UIColors.colorLight();
+            colorTo = UIColors.colorLight;
         }
 
         return colorTo;
@@ -384,7 +384,7 @@ public class BaseGameCustomController : GameObjectBehavior {
 
     public virtual Color getRandomizedColorFromContextCustomized() {
 
-        Color colorTo = UIColors.colorWhite();
+        Color colorTo = UIColors.colorWhite;
 
         GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
         
@@ -419,7 +419,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         
         // Randomize or get customized colors
 
-        Color colorTo = UIColors.colorWhite();
+        Color colorTo = UIColors.colorWhite;
         
         int randomColor = UnityEngine.Random.Range(0, 4);
         
@@ -437,7 +437,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         
         // Randomize or get customized colors
 
-        Color colorTo = UIColors.colorWhite();
+        Color colorTo = UIColors.colorWhite;
         
         int randomColor = UnityEngine.Random.Range(0, 4);
 

@@ -636,14 +636,14 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         string codeValue = "FALSE";
 
         if(isCorrect) {//currentChoiceData.CheckChoices(true)) {
-            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen());
+            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
             typeValue = "CORRECT!";
             GameAudioController.Instance.PlayCheer1();
             GameAudioController.Instance.PlayWhistle();
             choicesCorrect += 1;
         }
         else {
-            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed());
+            UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
             typeValue = "INCORRECT...";
             GameAudioController.Instance.PlayWhistle();
             GameAudioController.Instance.PlayOh();
@@ -951,27 +951,27 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public Color GetColor(int index) {
         if(index == 0) {
-            return UIColors.colorGreen(); 
+            return UIColors.colorGreen; 
             //Color.red;
         }
         else if(index == 1) {
-            return UIColors.colorBlue();  
+            return UIColors.colorBlue;  
             //Color.blue;
         }
         else if(index == 2) {
-            return UIColors.colorOrange();    
+            return UIColors.colorOrange;    
             //Color.yellow;
         }
         else if(index == 3) {
-            return UIColors.colorPurple();    
+            return UIColors.colorPurple;    
             //Color.red;
         }   
         else if(index == 4) {
-            return UIColors.colorRed();   
+            return UIColors.colorRed;   
             //Color.red;
         }
 
-        return UIColors.colorGreen();
+        return UIColors.colorGreen;
     }
 
     public void loadDataChoiceItems() {
