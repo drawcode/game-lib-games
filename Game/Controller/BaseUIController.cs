@@ -80,6 +80,7 @@ public class BaseUIButtonNames {
     public static string buttonGameWorlds = "ButtonGameWorlds";
     public static string buttonGameContinue = "ButtonGameContinue";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
+    public static string buttonGameProductCurrency = "ButtonGameProductCurrency";
 
     // 
         
@@ -3143,7 +3144,9 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowSettings();
         }   
         */
-
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductCurrency, buttonName)) {    
+            GameUIController.ShowProductCurrency();
+        }   
 
         // Game Modes
 
