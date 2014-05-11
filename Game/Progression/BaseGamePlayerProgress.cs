@@ -1360,6 +1360,24 @@ public class BaseGamePlayerProgress
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
     }
+
+    public virtual void ProcessProgressLeaderboards() {
+
+        // Submit all leaderboards
+        foreach(GameLeaderboard board in GameLeaderboards.Instance.GetAll()) {
+
+            string key = board.code;
+            long keyValueLong = 0;                
+            double keyValueDouble = 
+                GameProfileStatistics.Current.GetStatisticValue(key);        
+
+            keyValueLong = (long)keyValueDouble;
+            
+            if(keyValueLong > 0) {              
+                GameNetworks.SendScore(key, keyValueLong);
+            }
+        }    
+    }
     
     // action code / actions found stats
     

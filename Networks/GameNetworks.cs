@@ -727,8 +727,12 @@ public class GameNetworks : GameObjectBehavior {
 		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                 LogUtil.Log("reportAchievementGooglePlay:" + " key:" + key + " progress:" + progress);
-				PlayGameServices.incrementAchievement(key, (int)progress);
-				//.unlockAchievement(key, keyValue / 100 > .95f ? true : false);
+                if(progress / 100 > .95f) {
+                    PlayGameServices.unlockAchievement(key, true);
+                }
+                else {
+                    PlayGameServices.incrementAchievement(key, (int)progress);                
+                }
 			}
 		}
 #endif		

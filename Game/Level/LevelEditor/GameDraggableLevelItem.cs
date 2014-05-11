@@ -183,6 +183,10 @@ public class GameDraggableLevelItem : GameObjectBehavior {
  
     void Update() {
 
+        if(GameConfigs.isUIRunning) {
+            return;
+        }
+
         if(!GameConfigs.isGameRunning) {
             if(!GameDraggableEditor.isEditing) {
                 if(!frozen) {

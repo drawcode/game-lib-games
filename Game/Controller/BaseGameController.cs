@@ -2520,6 +2520,10 @@ public class BaseGameController : GameObjectBehavior {
         GamePlayerProgress.Instance.ProcessProgressRuntimeAchievements();
         
         yield return new WaitForEndOfFrame();
+        
+        GamePlayerProgress.Instance.ProcessProgressLeaderboards();
+        
+        yield return new WaitForEndOfFrame();
     
         if(!isAdvancing) {
             GameController.AdvanceToResults();
