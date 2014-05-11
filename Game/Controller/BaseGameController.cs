@@ -2881,6 +2881,12 @@ public class BaseGameController : GameObjectBehavior {
         if(!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
             //&& GameController.CheckBounds(gridPos)) {
 
+            if(data.asset_code.Contains("terrain")) {
+                // TODO terrain rotation
+                data.rangeRotation = Vector2.zero;//.WithX(-0).WithY(0); 
+                data.rangeScale = Vector2.one;//.WithX(-0).WithY(0); 
+            }
+
             GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
 
             levelItems.Add(asset);
