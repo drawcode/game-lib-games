@@ -13,11 +13,15 @@ public class GamePlayerPad : GameObjectBehavior {
 
     public GameObject containerHighlighted;
 
-    public Color colorHighlight = UIColors.colorOrange;
+    public Color colorHighlight = Color.white;
     
-    Color lastColorHighlight = UIColors.colorDark;
+    Color lastColorHighlight = Color.gray;
 
     public void Start() {
+
+        colorHighlight = UIColors.colorOrange;
+        lastColorHighlight = UIColors.colorDark;
+
         UpdateColor();
     }
 

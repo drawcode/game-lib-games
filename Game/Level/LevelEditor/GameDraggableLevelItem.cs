@@ -189,9 +189,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
         if(!GameConfigs.isGameRunning) {
             if(!GameDraggableEditor.isEditing) {
-                if(!frozen) {
-                    Freeze();
-                }
+                Freeze();
             }
             return;
         }

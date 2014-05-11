@@ -4420,17 +4420,21 @@ public class BaseGamePlayerController : GameActor {
         HandlePlayerInactionState();
     }
  
-    public override void Update() {
+    public override void Update() {        
+        
+        if(GameConfigs.isUIRunning) {
+            return;
+        }
+        
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
      
         if (controllerData != null && !controllerData.initialized) {
             return;
         }
 
         UpdateAlways();
-
-        if (!GameController.IsGameRunning) {
-            return;
-        }
 
         if (IsPlayerControlled) {
             if (Input.GetKey(KeyCode.LeftControl)) {

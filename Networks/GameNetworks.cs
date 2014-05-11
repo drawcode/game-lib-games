@@ -547,7 +547,9 @@ public class GameNetworks : GameObjectBehavior {
         }
     }       
     
-    public void sendScore(string key, long keyValue) {       
+    public void sendScore(string key, long keyValue) {  
+        
+        Debug.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
         
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
         
@@ -583,17 +585,17 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void reportScore(string networkTypeTo, string key, long keyValue) {
         
-        LogUtil.Log("reportScore:" + 
-                    " networkTypeTo:" + networkTypeTo+ 
-                    " key:" + key+ 
-                    " keyValue:" + keyValue);
+        //Debug.Log("reportScore:" + 
+        //            " networkTypeTo:" + networkTypeTo+ 
+        //            " key:" + key+ 
+        //            " keyValue:" + keyValue);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {	
             
-            LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
-                        " networkTypeTo:" + networkTypeTo+ 
-                        " key:" + key+ 
-                        " keyValue:" + keyValue);
+            //Debug.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
+            //            " networkTypeTo:" + networkTypeTo+ 
+            //            " key:" + key+ 
+            //            " keyValue:" + keyValue);
 
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 if(isAuthenticatediOSAppleGameCenter) {
@@ -612,7 +614,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
-                LogUtil.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue); 
+                Debug.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue); 
 				GameCenterBinding.reportScore(keyValue, key);
 			}
 		}
@@ -621,9 +623,9 @@ public class GameNetworks : GameObjectBehavior {
 	
 	public static void reportScoreGooglePlay(string key, long keyValue) {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
-		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                LogUtil.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
+                Debug.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
 				PlayGameServices.submitScore(key, keyValue);
 			}
 		}

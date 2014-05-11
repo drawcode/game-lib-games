@@ -297,8 +297,12 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     bool handleClick = false;
         
-    public virtual void Update() {
-
+    public virtual void Update() {        
+        
+        if(GameConfigs.isUIRunning) {
+            return;
+        }
+        
         if(!GameConfigs.isGameRunning) {
             return;
         }
