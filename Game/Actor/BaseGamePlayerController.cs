@@ -775,13 +775,34 @@ public class BaseGamePlayerController : GameActor {
 
     
     // EFFECTS FOLLOW - GROUND/BACK/HEAD ETC
-    
+
+    public bool playerEffectsGroundShow {
+        get {
+            
+            if(FPSDisplay.isUnder25FPS) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
     public virtual void PlayerEffectsGroundFadeIn() {
+
+        if(!playerEffectsGroundShow) {
+            return;
+        }
+
         UITweenerUtil.FadeTo(gamePlayerEffectsGround,
                              UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 1f);
     }
     
     public virtual void PlayerEffectsGroundFadeOut() {
+        
+        if(!playerEffectsGroundShow) {
+            return;
+        }
+
         UITweenerUtil.FadeTo(gamePlayerEffectsGround,
                              UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, 0f);
     }
@@ -803,6 +824,11 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void PlayerEffectsGroundTime(float time) {
+        
+        if(!playerEffectsGroundShow) {
+            return;
+        }
+
         if (gamePlayerEffectsGround != null) {
             gamePlayerEffectsGround.SetParticleSystemEmissionRate(time, true);
         }
@@ -810,7 +836,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandlePlayerEffectsObjectTick(
         ref GameObject effectsObject, ref Color colorCurrent, ref Color colorLast, ref float lastTime, float speed) {
-
+                
         // UPDATE color randomly
         // TODO add other conditions to get colors, health, power etc
         // Currently randomize player colors for effect
@@ -855,6 +881,11 @@ public class BaseGamePlayerController : GameActor {
     }
     
     public virtual void HandlePlayerEffectsGroundTick() {
+        
+        if(!playerEffectsGroundShow) {
+            return;
+        }
+
         if (gamePlayerEffectsGround != null) {
 
             HandlePlayerEffectsObjectTick(ref gamePlayerEffectsGround, 
@@ -1029,7 +1060,7 @@ public class BaseGamePlayerController : GameActor {
 
         if (randomize == 0) {
             for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
-                Jump();
+                Idle();
             }
         }
         else if (randomize == 1) {
@@ -1040,11 +1071,13 @@ public class BaseGamePlayerController : GameActor {
         else if (randomize == 2) {
             for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
                 //StrafeLeft();
+                Idle();
             }
         }
         else if (randomize == 3) {
             for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
                 //StrafeRight();
+                Idle();
             }
         }
 
@@ -2062,6 +2095,11 @@ public class BaseGamePlayerController : GameActor {
             float projectilePower = 1;
             
             float power = projectilePower / 10f;
+
+            if(IsPlayerControlled) {
+                // 1/20th power for friendly fire
+                power = power / 20f;
+            }
             
             runtimeData.health -= power;
             
@@ -3356,23 +3394,33 @@ public class BaseGamePlayerController : GameActor {
         //LogUtil.Log("AddImpact:name:", transform.name + "controllerData.impact:" + controllerData.impact.x);
     }
  
-    public virtual void  UpdatePhysicsState() {
+    public virtual void UpdatePhysicsState() {
 
+
+    }
+
+    public virtual IEnumerator UpdatePhysicStateCo() {
+        
         //Vectrosity.VectorLine.SetLine (Color.red, transform.position, controllerData.impact);
-
+        
         // apply the controllerData.impact force:
         //if (controllerData.impact.magnitude > 0.3f) {
-
+        
         if(controllerData.characterController.enabled) {
             controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
         }
-            //}
+        //}
+
+        yield return new WaitForFixedUpdate();
 
         UpdatePlayerEffectsState();
-
+        
+        yield return new WaitForFixedUpdate();
+        
         // consumes the controllerData.impact energy each cycle:
         controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
-
+        
+        yield return new WaitForFixedUpdate();
     }
 
     public virtual void HandlePlayerEffectsStateChange() {
@@ -3512,11 +3560,12 @@ public class BaseGamePlayerController : GameActor {
     // NETWORK
  
  
+
     public virtual void UpdateNetworkContainer(string uid) {
      
         uniqueId = uid;
         
-        if (!AppConfigs.featureEnableNetworking) {
+        if (!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
             return;
         }
      
@@ -3536,7 +3585,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uid) {
      
-        if (!AppConfigs.featureEnableNetworking) {
+        if (!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
             return null;
         }
      
@@ -3953,8 +4002,11 @@ public class BaseGamePlayerController : GameActor {
                 if (controllerData.thirdPersonController) {
                     controllerData.thirdPersonController.ApplyDie(true);
                 }
-             
-                Tweens.Instance.FadeToObject(gameObject, 0f, .3f, 5f);
+
+                UITweenerUtil.FadeTo(
+                    gameObject, 
+                    UITweener.Method.EaseIn, UITweener.Style.Once, .3f, .5f, 0);
+
                 Invoke("RemoveMe", 6);
             }
         }
@@ -4435,6 +4487,10 @@ public class BaseGamePlayerController : GameActor {
         }
 
         UpdateAlways();
+        
+        UpdateVisibleState();
+        
+        UpdateCommonState();
 
         if (IsPlayerControlled) {
             if (Input.GetKey(KeyCode.LeftControl)) {
@@ -4511,10 +4567,6 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
         }
-
-        UpdateVisibleState();
-        
-        UpdateCommonState();
 
         //if(!controllerData.visible) {
         //UpdateOffscreenState();

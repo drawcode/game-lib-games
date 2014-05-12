@@ -151,9 +151,8 @@ public class UIGameNotification
 		
 		Vector3 temp = notificationPanel.transform.position;
 		temp.y = openPos;
-		
-		Tweens.Instance.MoveToObject(notificationPanel, temp, 1f, 0f);
-		//iTween.MoveTo(notificationPanel, iTween.Hash("y", openPos, "time", 1f, "delay", 0f));
+
+        UITweenerUtil.MoveTo(notificationPanel, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, 0f, temp);
 		
 		Invoke("HideDialog", 4f);
 
@@ -171,10 +170,9 @@ public class UIGameNotification
 		
 		Vector3 temp = notificationPanel.transform.position;
 		temp.y = closedPos;
+        
+        UITweenerUtil.MoveTo(notificationPanel, UITweener.Method.EaseIn, UITweener.Style.Once, .6f, .9f, temp);
 		
-		//iTween.MoveTo(notificationPanel, iTween.Hash("y", closedPos, "time", .6f, "delay", .9f));
-		
-		Tweens.Instance.MoveToObject(notificationPanel, temp, .6f, .9f);
 		Invoke("DisplayNextNotification", 1);
 	}
 	

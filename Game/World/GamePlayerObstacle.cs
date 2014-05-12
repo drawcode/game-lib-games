@@ -49,6 +49,7 @@ public class GamePlayerObstacle : GameObjectBehavior {
 	
 		yield return new WaitForSeconds(delay);
 		
+        /*
 		if(gameObject != null) {					
 			iTween.MoveTo(obstacleBouncyBaseObject, 
 				iTween.Hash( 
@@ -63,5 +64,6 @@ public class GamePlayerObstacle : GameObjectBehavior {
 				)			
 			);
 		}
+  */      
 	}
 }

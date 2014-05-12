@@ -41,6 +41,7 @@ public class GamePlayerBoundary : GameObjectBehavior {
 	
 		yield return new WaitForSeconds(delay);
 		
+        /*
 		if(gameObject != null) {					
 			iTween.MoveTo(boundaryBouncyBaseObject, 
 				iTween.Hash( 
@@ -55,5 +56,6 @@ public class GamePlayerBoundary : GameObjectBehavior {
 				)			
 			);
 		}
+  */      
 	}
 }

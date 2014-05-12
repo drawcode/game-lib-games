@@ -2237,14 +2237,14 @@ public class BaseGameController : GameObjectBehavior {
         
         foreach (Camera cam in cams) {            
             cam.gameObject.Show();
-            cam.gameObject.FadeTo(1f, .5f, .5f);
+            UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
         }
         yield return new WaitForSeconds(2f);       
     }
     
     public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
         foreach (Camera cam in cams) {
-            cam.gameObject.FadeTo(0f, 1f, .5f);
+            UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
         }
         yield return new WaitForSeconds(2f);
         
@@ -2326,7 +2326,8 @@ public class BaseGameController : GameObjectBehavior {
     public virtual void changeGameCameraProperties(
         GameObject cameraObject, Vector3 positionTo, Vector3 rotationTo, float timeDelay) {
         //cameraObject.transform.rotation = Quaternion.Euler(rotationTo);
-        iTween.RotateTo(cameraObject, rotationTo, timeDelay);
+        //iTween.RotateTo(cameraObject, rotationTo, timeDelay);
+        UITweenerUtil.RotateTo(cameraObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, timeDelay, rotationTo);
     }
     
     public virtual void cycleGameCameraMode() {

@@ -91,11 +91,11 @@ public class AlertDialog : GameObjectBehavior
 	public void ShowAlert(string dialogCode, AlertDialogType dialogType, string message) {
 		SetupAlert(dialogCode, dialogType, message);
 		
-		iTween.Stop(dialogObject);
-		iTween.Stop(dialogBackgroundObject);
+		//iTween.Stop(dialogObject);
+		//iTween.Stop(dialogBackgroundObject);
 		
-		Tweens.Instance.FadeToObject(dialogObject, 1f, .5f, 0f);
-		Tweens.Instance.FadeToObject(dialogBackgroundObject, .8f, .5f, 0f);
+		//Tweens.Instance.FadeToObject(dialogObject, 1f, .5f, 0f);
+		//Tweens.Instance.FadeToObject(dialogBackgroundObject, .8f, .5f, 0f);
 		
 		Invoke("StopTime", .6f);
 		
@@ -104,11 +104,11 @@ public class AlertDialog : GameObjectBehavior
 	
 	public void HideAlert() {
 		
-		iTween.Stop(dialogObject);
-		iTween.Stop(dialogBackgroundObject);
+		//iTween.Stop(dialogObject);
+		//iTween.Stop(dialogBackgroundObject);
 		
-		Tweens.Instance.FadeToObject(dialogObject, 0f, .5f, 0f);
-		Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, .5f, 0f);
+		//Tweens.Instance.FadeToObject(dialogObject, 0f, .5f, 0f);
+		//Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, .5f, 0f);
 		
 		Invoke("StartTime", .6f);
 		
@@ -127,8 +127,8 @@ public class AlertDialog : GameObjectBehavior
 	
 	void LoadControls() {		
 		
-		Tweens.Instance.FadeToObject(dialogObject, 0f, 0f, 0f);
-		Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, 0f, 0f);
+		//Tweens.Instance.FadeToObject(dialogObject, 0f, 0f, 0f);
+		//Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, 0f, 0f);
 		
 		/*
 		if(buttonYes != null) {

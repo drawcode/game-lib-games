@@ -7,18 +7,18 @@ public class UITweenerUtil
 {
 	
 	public static void CameraFade(float amount, float time) {
-		iTween.CameraFadeTo(amount, time);
+		//iTween.CameraFadeTo(amount, time);
 	}
 	
 	public static void CameraColor(Color color) {
 			
-		iTween.CameraTexture(color);//(amount, time);
+		//iTween.CameraTexture(color);//(amount, time);
 
 	}
 	
 	public static void CameraColor(Texture2D texture2d) {
 					
-		iTween.CameraFadeAdd(texture2d);
+		//iTween.CameraFadeAdd(texture2d);
 	}
 	
 	/*
@@ -236,6 +236,32 @@ public class UITweenerUtil
 		comp.Play(true);
 		return comp;
 	}
+    
+    public static TweenAlpha FadeIn(
+        GameObject go, 
+        float duration = 1f, float delay = 1f) {
+
+        return FadeTo(go,
+                      UITweener.Method.EaseIn, 
+                      UITweener.Style.Once, duration, delay, 1);
+    }
+
+    public static TweenAlpha FadeOut(
+        GameObject go, 
+        float duration = 1f, float delay = 0f) {
+        
+        return FadeTo(go,
+                      UITweener.Method.EaseIn, 
+                      UITweener.Style.Once, duration, delay, 0f);
+    }
+    
+    public static TweenAlpha FadeOutNow(
+        GameObject go) {
+        
+        return FadeTo(go,
+                      UITweener.Method.EaseIn, 
+                      UITweener.Style.Once, 0f, 0f, 0f);
+    }
 	
 	public static TweenAlpha FadeTo(GameObject go, UITweener.Method method, UITweener.Style style, 
 		float duration, float delay, float alpha) {

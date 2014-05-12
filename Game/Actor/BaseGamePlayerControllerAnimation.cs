@@ -538,7 +538,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
     public virtual void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning || GameConfigs.isUIRunning) {
             return;
         }
      

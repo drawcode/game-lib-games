@@ -201,7 +201,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 ShowObject(go);
             }
             LogUtil.Log("FadeInObject:" + go.name);
-            iTween.FadeTo(go, 1f, 2f);
+            UITweenerUtil.FadeIn(go);  
+            //iTween.FadeTo(go, 1f, 2f);
         }
     }
         
@@ -209,8 +210,9 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
         if(go != null) {                        
             LogUtil.Log("FadeOutObject:" + go.name);
-                        
-            iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
+            
+            UITweenerUtil.FadeOut(go);        
+           // iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
             HideObjectDelayed(go, 1f);
         }
     }
@@ -218,7 +220,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public virtual void FadeOutObjectNow(GameObject go) {
         if(go != null) {                        
             LogUtil.Log("FadeOutObjectNow:" + go.name);
-            iTween.FadeTo(go, 0f, 0f);
+            UITweenerUtil.FadeOutNow(go);        
             HideObject(go);
         }
     }

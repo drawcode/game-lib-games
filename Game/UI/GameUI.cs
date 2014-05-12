@@ -114,8 +114,8 @@ public class GameUI : GameObjectBehavior {
 	public void ShowUI() {
 		Vector3 temp = containerUI.transform.position;
 		temp.x = 0f;
-		Tweens.Instance.MoveToObject(containerUI, temp, 0f, 0f);
-		Tweens.Instance.MoveToObject(containerUIScaled, temp, 0f, 0f);
+		//Tweens.Instance.MoveToObject(containerUI, temp, 0f, 0f);
+		//Tweens.Instance.MoveToObject(containerUIScaled, temp, 0f, 0f);
 		
 		LogUtil.Log("containerUI2:" + containerUI);
 		//PlayUIAudio();
@@ -125,8 +125,8 @@ public class GameUI : GameObjectBehavior {
 	public void HideUI() {
 		Vector3 temp = containerUI.transform.position;
 		temp.x = 150f;
-		Tweens.Instance.MoveToObject(containerUI, temp, 0f, 0f);
-		Tweens.Instance.MoveToObject(containerUIScaled, temp, 0f, 0f);
+		//Tweens.Instance.MoveToObject(containerUI, temp, 0f, 0f);
+		//Tweens.Instance.MoveToObject(containerUIScaled, temp, 0f, 0f);
 		
 		//HandleInGameAudio();
 		LogUtil.Log("containerUI:" + containerUI);

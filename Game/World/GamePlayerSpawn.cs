@@ -61,6 +61,7 @@ public class GamePlayerSpawn : GameObjectBehavior {
 		if(gameObject != null) {
 			Vector3 initialPosition = spawnBouncyBaseObject.transform.position;
 					
+            /*
 			iTween.MoveTo(spawnBouncyBaseObject, 
 				iTween.Hash( 
 					"looptype", iTween.LoopType.pingPong,
@@ -73,6 +74,7 @@ public class GamePlayerSpawn : GameObjectBehavior {
 					"z", initialPosition.z + distance.z
 				)			
 			);
+   */         
 		}
 	}
 }
