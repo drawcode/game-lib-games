@@ -279,23 +279,10 @@ public class UINotificationDisplay
 		}
 	}
 	
-	public UITweener FindTweener() {		
-		UITweener twn = ObjectUtil.FindObject<UITweener>();
-		if(twn != null) {
-			twn.method = UITweener.Method.EaseInOut;
-			twn.style = UITweener.Style.Once;
-		}
-		return twn;
-	}
-	
 	public void ShowDialog() {
-				
-		FindTweener();
-		TweenPosition.Begin(
-			notificationPanel, 
-			.6f, 
-			Vector3.zero.WithY(positionYOpenInGame));
-				
+		
+        UITweenerUtil.MoveTo(notificationPanel, .6f, 0f, Vector3.zero.WithY(positionYOpenInGame));
+
 		Invoke("HideDialog", 4.5f);
 
 		SetStateShowing();
@@ -328,12 +315,8 @@ public class UINotificationDisplay
 	}
 	
 	public void HideDialog() {
-		
-		FindTweener();
-		TweenPosition.Begin(
-			notificationPanel, 
-			.2f, 
-			Vector3.zero.WithY(positionYClosedInGame));
+        
+        UITweenerUtil.MoveTo(notificationPanel, .2f, 0f, Vector3.zero.WithY(positionYClosedInGame));
 		
 		Invoke("DisplayNextNotification", 1);
 	}

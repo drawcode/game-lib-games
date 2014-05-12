@@ -462,7 +462,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateIn() {
      
         //AnimateOut(0f, 0f);
-        
+                
         HandleUniquePanelTypes();
      
         ShowPanel();
@@ -487,7 +487,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateOut() {
-     
+             
         float time = durationHide;
         float delay = durationDelayHide;
      
@@ -674,7 +674,7 @@ public class UIPanelBase : UIAppPanel {
             
             if(fade) {
                 UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
+                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
             }
             
             UITweenerUtil.MoveTo(panel, 

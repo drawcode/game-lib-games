@@ -195,7 +195,12 @@ public class UITweenerUtil
 		comp.Reset();
 		comp.Play(true);
 		return comp;
-	}
+    }
+
+    public static TweenPosition MoveTo(GameObject go, 
+                                       float duration, float delay, Vector3 pos) {
+        return MoveTo(go, UITweener.Method.EaseIn, UITweener.Style.Once, duration, delay, pos);
+    }
 	
 	public static TweenPosition MoveTo(GameObject go, UITweener.Method method, UITweener.Style style, 
 		float duration, float delay, Vector3 pos) {
