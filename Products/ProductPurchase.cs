@@ -7,8 +7,6 @@
 //#define PURCHASE_USE_AMAZON
 //#define PURCHASE_USE_SAMSUNG
 #endif
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -174,7 +172,6 @@ public class ProductPurchase : GameObjectBehavior {
         Messenger<ProductPurchaseRecord>.AddListener(
             ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
-
 #if PURCHASE_USE_APPLE_ITUNES
         StoreKitManager.purchaseSuccessfulEvent += purchaseSuccessfulEvent;
         StoreKitManager.purchaseCancelledEvent += purchaseCancelledEvent;
@@ -186,6 +183,18 @@ public class ProductPurchase : GameObjectBehavior {
         StoreKitManager.restoreTransactionsFailedEvent += restoreTransactionsFailedEvent;
         StoreKitManager.restoreTransactionsFinishedEvent += restoreTransactionsFinishedEvent;
         StoreKitManager.transactionUpdatedEvent += transactionUpdatedEvent;
+#endif
+       
+#if PURCHASE_USE_GOOGLE_PLAY
+        GoogleIABManager.billingSupportedEvent += billingSupportedEvent;
+        GoogleIABManager.billingNotSupportedEvent += billingNotSupportedEvent;
+        GoogleIABManager.queryInventorySucceededEvent += queryInventorySucceededEvent;
+        GoogleIABManager.queryInventoryFailedEvent += queryInventoryFailedEvent;
+        GoogleIABManager.purchaseCompleteAwaitingVerificationEvent += purchaseCompleteAwaitingVerificationEvent;
+        GoogleIABManager.purchaseSucceededEvent += purchaseSucceededEvent;
+        GoogleIABManager.purchaseFailedEvent += purchaseFailedEvent;
+        GoogleIABManager.consumePurchaseSucceededEvent += consumePurchaseSucceededEvent;
+        GoogleIABManager.consumePurchaseFailedEvent += consumePurchaseFailedEvent;
 #endif
     }
 
@@ -211,6 +220,18 @@ public class ProductPurchase : GameObjectBehavior {
         StoreKitManager.restoreTransactionsFailedEvent -= restoreTransactionsFailedEvent;
         StoreKitManager.restoreTransactionsFinishedEvent -= restoreTransactionsFinishedEvent;
         StoreKitManager.transactionUpdatedEvent -= transactionUpdatedEvent;
+#endif
+        
+#if PURCHASE_USE_GOOGLE_PLAY
+        GoogleIABManager.billingSupportedEvent -= billingSupportedEvent;
+        GoogleIABManager.billingNotSupportedEvent -= billingNotSupportedEvent;
+        GoogleIABManager.queryInventorySucceededEvent -= queryInventorySucceededEvent;
+        GoogleIABManager.queryInventoryFailedEvent -= queryInventoryFailedEvent;
+        GoogleIABManager.purchaseCompleteAwaitingVerificationEvent += purchaseCompleteAwaitingVerificationEvent;
+        GoogleIABManager.purchaseSucceededEvent -= purchaseSucceededEvent;
+        GoogleIABManager.purchaseFailedEvent -= purchaseFailedEvent;
+        GoogleIABManager.consumePurchaseSucceededEvent -= consumePurchaseSucceededEvent;
+        GoogleIABManager.consumePurchaseFailedEvent -= consumePurchaseFailedEvent;
 #endif
     }
 
@@ -276,6 +297,8 @@ public class ProductPurchase : GameObjectBehavior {
             productEventListener = gameObject.AddComponent<StoreKitEventListener>();
 
             LogUtil.Log("ProductPurchase::InitPaymentSystem StoreKit/iOS added...");
+            
+            GetProducts();
 #elif PURCHASE_USE_AMAZON
             productManager = gameObject.AddComponent<AmazonIAPManager>();
             productEventListener = gameObject.AddComponent<AmazonIAPEventListener>();
@@ -287,7 +310,7 @@ public class ProductPurchase : GameObjectBehavior {
 
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Google Play IAB/Android added...");
 
-            GoogleIAB.init("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAllfTLDqNeLzmIczqRP4Mramyc0Rd/RUlg+fBRO7VGRPMorv2UKWaxUqbKEYy10ldNu43anV3MHGliSX7wyED1v5GCt8syAeDT59wZZzY7aqMB3CBPmqfFm52ONY7BKaew/uWqjjn1w5Kq4BySLXyBTfrwlnqVsnMnW12lUGPpzgdBODe00JOk+DDjcZcunGB6xXxNA2wPO1pB8VSawVwfiztFd0l0ow0YPBu0JmhNvGwXfG2p0NcrTn0jNvoFXlHPqVb+t0DBETtUd/IckMbk4YZoT+7D0yy3LwwDZiPWmzTD8ODVE9U6zaB4NpXnaohYNPlbLyq0uDShX2dGGBVpwIDAQAB");
+            GoogleIAB.init("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiG/tGK3EWFkqZr8AqQykgCPnUkO+SLFAtffa2xaHCiZZIm/aFXbo3/y+ZQNRKCW59y8izSHyB8rbevboh1tJDbxkCCRIomaMrChdyN84YSp9pyg4xl1C23on0Aq4OrRUvhmBoN9ASuURolo8ikWbSpYsRA4qowSbxx1uwuk2hbuCFBJpmyFq4Y7FBOYg/2tJ+76TcZCPeGYKvgs+mO7rbzdqZlCPM1OCS+ngjiWTetfzEMPzY79zYrXHNjt6G4fTZzboYQEyufVXVJamc6lgYyifyL+srDlSVF9CulzWgthZde48TuPRNkHGRsDAnYuPFyrd6PvdKBisPuPZFYOSmwIDAQAB");
 #elif UNITY_WEBPLAYER
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
 #else
@@ -301,8 +324,6 @@ public class ProductPurchase : GameObjectBehavior {
                 DontDestroyOnLoad(productEventListenerObject);
 
             paymentSystemAdded = true;
-
-            GetProducts();
         }
 
     }
@@ -334,28 +355,57 @@ public class ProductPurchase : GameObjectBehavior {
     }
 
     public void RequestProductList(string productIdentifiers) {
+
+        string[] skus = productIdentifiers.Split(',');
+
 #if PURCHASE_USE_APPLE_ITUNES
-        StoreKitBinding.requestProductData( productIdentifiers.Split(',') );
+        StoreKitBinding.requestProductData(skus);
 #elif PURCHASE_USE_AMAZON
-
-        /*
-        productIdentifiers = "";
-        foreach(GameProduct product in GameProducts.Instance.GetAll()) {
-            if(productIdentifiers.Length > 0) {
-                productIdentifiers += ",";
-            }
-            productIdentifiers += GamePacks.currentGameBundle + "." + product.code.Replace("-", "_");
-        }
-        */
-
-        AmazonIAP.initiateItemDataRequest( productIdentifiers.Split(',') );
+        AmazonIAP.initiateItemDataRequest(skus);
 #elif PURCHASE_USE_GOOGLE_PLAY
-
-        //IABAndroid.purchaseProduct( "kk", 1 );
+        GoogleIAB.queryInventory(skus);
 #else
         // Web/PC
 #endif
 
+    }
+
+    public static void RestoreTransactions() {
+        if(instance != null) {
+            instance.restoreTransactions();
+        }
+    }
+    
+    public void restoreTransactions() {
+        #if PURCHASE_USE_APPLE_ITUNES
+        //return false;
+        #elif PURCHASE_USE_AMAZON
+        //return false;
+        #elif PURCHASE_USE_GOOGLE_PLAY
+        //return GoogleIABManager.
+        #else
+        //return false;
+        #endif        
+    }
+
+    public static bool IsSubscriptionSupported() {
+        if(instance != null) {
+            return instance.isSubscriptionSupported();
+        }
+        return false;
+    }
+
+    public bool isSubscriptionSupported() {
+        #if PURCHASE_USE_APPLE_ITUNES
+        return false;
+        #elif PURCHASE_USE_AMAZON
+        return false;
+        #elif PURCHASE_USE_GOOGLE_PLAY
+        return GoogleIAB.areSubscriptionsSupported();
+        #else
+        //return false;
+        #endif
+        
     }
 
     public static void PurchaseProduct(string code, int quantity) {
@@ -400,7 +450,7 @@ public class ProductPurchase : GameObjectBehavior {
 
     // THIRD PARTY EVENTS
 
-    #if PURCHASE_USE_APPLE_ITUNES
+#if PURCHASE_USE_APPLE_ITUNES
 
     public void purchaseSuccessfulEvent(StoreKitTransaction transaction) {
         LogUtil.LogProduct( "SCREEN purchased product: " + transaction.productIdentifier + ", quantity: " + transaction.quantity );
@@ -499,7 +549,9 @@ public class ProductPurchase : GameObjectBehavior {
         LogUtil.Log("transactionUpdatedEvent:" + " transaction.productIdentifier:" + transaction.productIdentifier);
     }
 
-    #elif PURCHASE_USE_AMAZON
+#endif
+
+#if PURCHASE_USE_AMAZON
 
     void itemDataRequestFailedEvent() {
         LogUtil.LogProduct( "ANDROID_AMAZON itemDataRequestFailedEvent:");
@@ -560,44 +612,88 @@ public class ProductPurchase : GameObjectBehavior {
                                                           transaction.token, 1, true);
         }
     }
-    #elif PURCHASE_USE_GOOGLE_PLAY
-    void billingSupportedEvent(bool success) {
-        LogUtil.LogProduct( "billingSupportedEvent: " + success );
+#endif
+
+#if PURCHASE_USE_GOOGLE_PLAY
+
+    // Fired after init is called when billing is supported on the device
+    public void billingSupportedEvent() {        
+        Debug.Log("GoogleIABManager:billingNotSupportedEvent");
+        GetProducts();
         //IABAndroid.restoreTransactions();
     }
+    
+    // Fired after init is called when billing is not supported on the device
+    public void billingNotSupportedEvent(string error) {        
+        Debug.Log("GoogleIABManager:billingNotSupportedEvent: " + error);
+        //IABAndroid.restoreTransactions();
+    }
+    
+    // Fired when the inventory and purchase history query has returned
+    public void queryInventorySucceededEvent(List<GooglePurchase> purchases, List<GoogleSkuInfo> skus) {
+        //LogUtil.Log( string.Format( "queryInventorySucceededEvent. total purchases: {0}, total skus: {1}", purchases.Count, skus.Count ) );        
+        Debug.Log("GoogleIABManager:queryInventorySucceededEvent");
 
-    void purchaseSucceededEvent(string productId) {
-        LogUtil.LogProduct( "purchaseSucceededEvent product: " + productId );
-        SetContentAccessPermissions(productId);
+        Prime31.Utils.logObject( purchases );
+        Prime31.Utils.logObject( skus );
+
+        foreach(GoogleSkuInfo sku in skus) {       
+            Debug.Log(
+                "GoogleIABManager:queryInventorySucceededEvent: " +
+                " sku.productId:" + sku.productId +
+                " sku.title:" + sku.title
+            );
+        }
+        
+        foreach(GooglePurchase purchase in purchases) {       
+            Debug.Log(
+                "GoogleIABManager:queryInventorySucceededEvent: " +
+                " purchase.productId:" + purchase.productId +
+                " purchase.orderId:" + purchase.orderId
+                );
+        }
+
+        //IABAndroid.restoreTransactions();
+    }
+    
+    // Fired when the inventory and purchase history query fails
+    public void queryInventoryFailedEvent(string error) {
+        Debug.Log("GoogleIABManager:queryInventoryFailedEvent: " + error);
+    }
+    
+    // Fired when a purchase completes allowing you to verify the signature on an external server if you would like
+    public void purchaseCompleteAwaitingVerificationEvent(string purchaseData, string signature) {
+        Debug.Log("GoogleIABManager:purchaseCompleteAwaitingVerificationEvent: " + " purchaseData: " + purchaseData + ", signature: " + signature );
+        
+    }
+    
+    // Fired when a purchase succeeds
+    public void purchaseSucceededEvent(GooglePurchase purchase) {        
+        Debug.Log( "GoogleIABManager:purchaseSucceededEvent product: " + purchase.productId );
+        SetContentAccessPermissions(purchase.productId);
+        GoogleIAB.consumeProduct(purchase.productId);
         purchaseProcessCompleted = true;
         //HandleSuccess();
     }
-
-    void purchaseCancelledEvent(string productId) {
-        LogUtil.LogProduct( "purchaseCancelledEvent product: " + productId );
+    
+    // Fired when a purchase fails
+    public void purchaseFailedEvent(string error) {
+        Debug.Log("GoogleIABManager:purchaseFailedEvent: " + error);
+    }
+    
+    // Fired when a call to consume a product succeeds
+    public void consumePurchaseSucceededEvent(GooglePurchase purchase) {       
+        Debug.Log( "GoogleIABManager:purchaseSucceededEvent product: " + purchase.productId );
+        SetContentAccessPermissions(purchase.productId);
+        purchaseProcessCompleted = true;
+    }
+    
+    // Fired when a call to consume a product fails
+    public void consumePurchaseFailedEvent(string error) {
+        Debug.Log("GoogleIABManager:consumePurchaseFailedEvent: " + error);
     }
 
-    void purchaseRefundedEvent(string productId) {
-        LogUtil.LogProduct( "purchaseRefundedEvent product: " + productId );
-    }
-
-    void purchaseSignatureVerifiedEvent(string signedData, string signature) {
-        LogUtil.LogProduct( "purchaseSignatureVerifiedEvent signedData: " + signedData + " signature:" + signature);
-    }
-
-    void purchaseFailedEvent(string productId) {
-        LogUtil.LogProduct( "purchaseFailedEvent product: " + productId );
-        //HandleError();
-    }
-
-    void transactionsRestoredEvent() {
-        LogUtil.LogProduct( "transactionsRestored");
-    }
-
-    void transactionRestoreFailedEvent(string error) {
-        LogUtil.LogProduct( "transactionRestoreFailedEvent product: " + error );
-    }
-    #endif
+#endif
 
 }
 
