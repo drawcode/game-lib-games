@@ -548,10 +548,10 @@ public class GameNetworks : GameObjectBehavior {
     }       
     
     public void sendScore(string key, long keyValue) {  
-        
-        Debug.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
-        
+                
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
+        
+        LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
         
         if(item == null) {
             return;
