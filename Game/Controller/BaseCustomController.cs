@@ -77,7 +77,7 @@ public class BaseGameCustomController : GameObjectBehavior {
 
         AppContentAssetTexturePreset preset = AppContentAssetTexturePresets.Instance.GetByCode(profilePreset);
 
-        if(preset != null) {
+        if (preset != null) {
             
             return updateTexturePresetObject(profileCustomItem, go, preset);
         }
@@ -147,14 +147,14 @@ public class BaseGameCustomController : GameObjectBehavior {
                
         Dictionary<string, Color> colors = new Dictionary<string, Color>();
 
-        foreach(AppContentAssetCustomItem customItem in 
+        foreach (AppContentAssetCustomItem customItem in 
                 AppContentAssetCustomItems.Instance.GetListByType(type)) {
 
             //if(customItem.customCode != customCode) {
             //    continue;
             //}
             
-            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+            foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
                                                 
                 Color colorTo = profileCustomItem.GetCustomColor(prop.code);
                 colors.Add(prop.code, colorTo);
@@ -227,7 +227,7 @@ public class BaseGameCustomController : GameObjectBehavior {
                         
                         //LogUtil.Log("updateColorPresetObject:preset:" + 
                         //          " prop.code:" + prop.code + 
-                         //         " colorTo:" + colorTo.ToString());
+                        //         " colorTo:" + colorTo.ToString());
                     }
                 }
             }
@@ -240,7 +240,7 @@ public class BaseGameCustomController : GameObjectBehavior {
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
 
-        if(customItemTo.HasData()) {
+        if (customItemTo.HasData()) {
             return customItemTo;
         }
 

@@ -10,9 +10,8 @@ public enum GameObjectMountEnableType {
 public class GameObjectMount : BaseGameObjectInteractive {
 
     public GameObject mountParent;
-
     public GameObject objectMounted;
-    public int allowedMountCount = 1;    
+    public int allowedMountCount = 1;
 
     public override void Awake() { 
         base.Awake();   
@@ -21,7 +20,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     public override void Start() {        
         base.Start();  
 
-        if(mountParent == null) {
+        if (mountParent == null) {
             mountParent = gameObject.transform.parent.gameObject;
         }
     }
@@ -39,7 +38,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     
     public override void AttractForce<T>() {
         base.AttractForce<T>();
-    }    
+    }
 
     public override void AddForce(GameObject target, float force) {
         base.AddForce(target, force);
@@ -55,7 +54,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     
     public virtual bool isMounted {
         get {
-            if(objectMounted == null) {
+            if (objectMounted == null) {
                 return false;
             }
             else {
@@ -65,7 +64,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     }
         
     public virtual void ToggleMount(GameObject go) {
-        if(isMounted) {            
+        if (isMounted) {            
             Unmount();
         }
         else {
@@ -74,7 +73,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     }
 
     public virtual void Mount(GameObject go) {
-        if(!isMounted) {
+        if (!isMounted) {
             objectMounted = go;
 
             LogUtil.Log("Mount:" + " current:" + transform.name + " mount:" + go.name);
@@ -82,7 +81,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     }
         
     public virtual void Unmount() {
-        if(isMounted) {
+        if (isMounted) {
             LogUtil.Log("Unmount:" + " current:" + transform.name + " mount:" + objectMounted.name);
 
             objectMounted = null;
@@ -92,7 +91,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
     public override void Update() {
         base.Update();
         
-        if(Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.E)) {
             HandleMount();
         }
     }
@@ -109,7 +108,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
             && !GameController
             .CurrentGamePlayerController.controllerData.dying) {
 
-            if(GameController
+            if (GameController
                .CurrentGamePlayerController.IsPlayerControlled) {    
             
                 if (GameController
@@ -117,7 +116,7 @@ public class GameObjectMount : BaseGameObjectInteractive {
                     .controllerData
                     .distanceToPlayerControlledGamePlayer <= attractRange) {
 
-                    if(isMounted) {
+                    if (isMounted) {
                         GameController
                             .CurrentGamePlayerController.Unmount();                        
                     }

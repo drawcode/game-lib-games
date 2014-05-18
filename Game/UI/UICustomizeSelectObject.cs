@@ -10,18 +10,15 @@ using Engine.Utility;
 public class UICustomizeSelectObject : UICustomizeObject {
     
     public int currentIndex = -1;
-    
     public UIImageButton buttonCycleLeft;
     public UIImageButton buttonCycleRight;
-
     public UILabel labelCurrentDisplayName;
-
-    public GameProfileCustomItem currentProfileCustomItem;    
+    public GameProfileCustomItem currentProfileCustomItem;
     public GameProfileCustomItem initialProfileCustomItem;
 
     public override void Start() {
 
-    }    
+    }
 
     public override void Load() {
 

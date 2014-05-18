@@ -24,7 +24,7 @@ public class GameObjectAttractor : BaseGameObjectInteractive {
     
     public override void AttractForce<T>() {
         base.AttractForce<T>();
-    }    
+    }
     
     public override void Boost(GameObject go) {
         base.Boost(go);

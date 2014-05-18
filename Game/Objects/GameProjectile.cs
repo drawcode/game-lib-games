@@ -19,21 +19,21 @@ public class GameProjectile : GameObjectBehavior {
         
     void OnCollisionEnter(Collision collision) {
         
-        if(!GameController.shouldRunGame) {
+        if (!GameController.shouldRunGame) {
             return;
         }
                 
         GameObject target = collision.collider.gameObject;
                 
-        if(target != null) {
+        if (target != null) {
             //foreach(GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {               
-            if(currentCollisions > 0)
+            if (currentCollisions > 0)
                 currentCollisions--;
                         
             LogUtil.Log("target:" + target);
                 
-            foreach(GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {
-                if(gameLevelSprite.gameDraggableLevelItem.gameLevelItemAsset.destructable) {
+            foreach (GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {
+                if (gameLevelSprite.gameDraggableLevelItem.gameLevelItemAsset.destructable) {
                     gameLevelSprite.HandlePhysicsInit();
                     gameLevelSprite.gameDraggableLevelItem.DestroyMeAnimated();
                 }
@@ -49,16 +49,16 @@ public class GameProjectile : GameObjectBehavior {
         
     void OnTriggerEnter(Collider collider) {
         // Check if we hit an actual destroyable sprite
-        if(!GameController.shouldRunGame) {
+        if (!GameController.shouldRunGame) {
             return;
         }
                 
         GameObject target = collider.gameObject;
                 
-        if(target != null) {
-            foreach(GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {
+        if (target != null) {
+            foreach (GameLevelSprite gameLevelSprite in target.GetComponentsInChildren<GameLevelSprite>()) {
                 LogUtil.Log(gameLevelSprite);//.DestroyMe();
-                if(gameLevelSprite.gameDraggableLevelItem.gameLevelItemAsset.destructable) {
+                if (gameLevelSprite.gameDraggableLevelItem.gameLevelItemAsset.destructable) {
                     DestroyMe();
                 }
             }
@@ -68,17 +68,17 @@ public class GameProjectile : GameObjectBehavior {
         
     void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             DestroyMe();
             return;
         }
 
         
-        if(GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing
-                        || GameController.Instance.gameState == GameStateGlobal.GameResults
-                        || GameController.Instance.gameState == GameStateGlobal.GameInit
-                        || GameController.Instance.gameState == GameStateGlobal.GameQuit
-                        || currentCollisions == 0) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing
+            || GameController.Instance.gameState == GameStateGlobal.GameResults
+            || GameController.Instance.gameState == GameStateGlobal.GameInit
+            || GameController.Instance.gameState == GameStateGlobal.GameQuit
+            || currentCollisions == 0) {
             DestroyMe();
         }
     }

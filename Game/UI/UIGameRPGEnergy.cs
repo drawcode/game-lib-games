@@ -21,7 +21,7 @@ public class UIGameRPGEnergy : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if(lastTime > 1f) {
+        if (lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -31,7 +31,7 @@ public class UIGameRPGEnergy : UIGameRPGObject {
 
         lastTime += Time.deltaTime;
 
-        if(updateTimeInterval) {
+        if (updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -42,11 +42,11 @@ public class UIGameRPGEnergy : UIGameRPGObject {
 
         HandleUpdate(true);
 
-        if(UIGameKeyCodes.isActionEnergyAdd) {
+        if (UIGameKeyCodes.isActionEnergyAdd) {
             LogUtil.Log("EnergyAdd:" + incrementValue);
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(incrementValue);
         }
-        else if(UIGameKeyCodes.isActionEnergySubtract) {
+        else if (UIGameKeyCodes.isActionEnergySubtract) {
             LogUtil.Log("EnergySubtract:" + incrementValue);
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(-incrementValue);
         }

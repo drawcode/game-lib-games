@@ -20,7 +20,7 @@ public class UIPanelBaseTypes {
 
 public class UIPanelBase : UIAppPanel {
 
-    public GameObject listGridRoot; 
+    public GameObject listGridRoot;
     public UIGrid listGrid;
     public UIPanel panelClipped;
     public GameObject panelLeftObject;
@@ -34,32 +34,42 @@ public class UIPanelBase : UIAppPanel {
     public GameObject panelCenterObject;
     public GameObject panelContainer;
     [NonSerialized]
-    public float durationShow = .45f;
+    public float
+        durationShow = .45f;
     [NonSerialized]
-    public float durationHide = .45f;
+    public float
+        durationHide = .45f;
     [NonSerialized]
-    public float durationDelayShow = .5f;
+    public float
+        durationDelayShow = .5f;
     [NonSerialized]
-    public float durationDelayHide = 0f;
+    public float
+        durationDelayHide = 0f;
     [NonSerialized]
-    public float leftOpenX = 0f;
+    public float
+        leftOpenX = 0f;
     [NonSerialized]
-    public float leftClosedX = -2500f;
+    public float
+        leftClosedX = -2500f;
     [NonSerialized]
-    public float rightOpenX = 0f;
+    public float
+        rightOpenX = 0f;
     [NonSerialized]
-    public float rightClosedX = 2500f;
+    public float
+        rightClosedX = 2500f;
     [NonSerialized]
-    public float bottomOpenY = 0f;
+    public float
+        bottomOpenY = 0f;
     [NonSerialized]
-    public float bottomClosedY = -2500f;
+    public float
+        bottomClosedY = -2500f;
     [NonSerialized]
-    public float topOpenY = 0f;
+    public float
+        topOpenY = 0f;
     [NonSerialized]
-    public float topClosedY = 2500f;
-
+    public float
+        topClosedY = 2500f;
     public int increment = 0;
-
     public List<string> panelTypes = new List<string>();//UIPanelBaseTypes.typeDefault;
 
     public virtual void OnEnable() {
@@ -93,7 +103,7 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void OnUIControllerPanelAnimateIn(string classNameTo) {
 
-        if(className == classNameTo) {
+        if (className == classNameTo) {
 
             HandleUniquePanelTypes();
 
@@ -102,48 +112,48 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateOut();
         }
     }
 
     public virtual void OnUIControllerPanelAnimateInType(string panelTypeTo) {
-        if(panelTypes.Contains(panelTypeTo)) {
+        if (panelTypes.Contains(panelTypeTo)) {
             AnimateIn();
         }
     }
     
     public virtual void OnUIControllerPanelAnimateOutType(string panelTypeTo) {
-        if(panelTypes.Contains(panelTypeTo)) {
+        if (panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
         }
-    }    
+    }
     
     public virtual void OnUIControllerPanelAnimateInClassType(string classNameTo, string panelTypeTo) {
-        if(className != classNameTo && panelTypes.Contains(panelTypeTo)) {
+        if (className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateIn();
         }
     }
     
     public virtual void OnUIControllerPanelAnimateOutClassType(string classNameTo, string panelTypeTo) {
-        if(className != classNameTo && panelTypes.Contains(panelTypeTo)) {
+        if (className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
         }
     }
 
     public virtual void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             //
         }
     }
 
     public virtual void HandleUniquePanelTypes() {
         
-        if(panelTypes.Count > 1) {
+        if (panelTypes.Count > 1) {
             // if this is a special panel, hide the others like it such as dialogs...modals
-            foreach(string panelType in panelTypes) {
+            foreach (string panelType in panelTypes) {
 
-                if(panelType == UIPanelBaseTypes.typeDefault) {
+                if (panelType == UIPanelBaseTypes.typeDefault) {
                     continue;
                 }
 
@@ -155,16 +165,16 @@ public class UIPanelBase : UIAppPanel {
 
     public override void Start() {
         base.Start();        
-    }    
+    }
     
     public void HideAllPanels() {
-        foreach(UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
+        foreach (UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
             baseItem.AnimateOut();
         }
     }
     
     public void HideAllPanelsNow() {
-        foreach(UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
+        foreach (UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
             baseItem.AnimateOutNow();
         }
     }
@@ -180,7 +190,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInCenter(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
         }
@@ -191,7 +201,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutCenter(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
         }
@@ -212,7 +222,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInLeft(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -223,7 +233,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutLeft(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
@@ -244,7 +254,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInLeftBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -255,7 +265,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutLeftBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
@@ -276,7 +286,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInLeftTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -287,7 +297,7 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void AnimateOutLeftTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
@@ -308,7 +318,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInRight(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -319,7 +329,7 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void AnimateOutRight(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
@@ -340,7 +350,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInRightBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -351,7 +361,7 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void AnimateOutRightBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
@@ -372,7 +382,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInRightTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
         }
@@ -383,7 +393,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutRightTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
@@ -404,7 +414,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateInTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
                 UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
         }
@@ -415,7 +425,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutTop(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
         }
@@ -436,7 +446,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateInBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
         }
@@ -447,7 +457,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void AnimateOutBottom(GameObject go, float time, float delay) {
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.MoveTo(go,
             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
         }
@@ -520,8 +530,8 @@ public class UIPanelBase : UIAppPanel {
 
         ListClear();
 
-        if(panelContainer != null) {
-            if(!panelContainer.activeSelf || !panelContainer.activeInHierarchy) {
+        if (panelContainer != null) {
+            if (!panelContainer.activeSelf || !panelContainer.activeInHierarchy) {
                 panelContainer.Hide();
             }
             else {
@@ -533,16 +543,16 @@ public class UIPanelBase : UIAppPanel {
     public IEnumerator HidePanelCo(float delay) {
         yield return new WaitForSeconds(delay);
 
-        if(!isVisible) {
+        if (!isVisible) {
             HidePanel();
         }
     }
  
     public virtual void HidePanel() {
 
-        if(!isVisible) {
+        if (!isVisible) {
 
-            if(panelContainer != null) {
+            if (panelContainer != null) {
                 panelContainer.Hide();
             }
 
@@ -553,7 +563,7 @@ public class UIPanelBase : UIAppPanel {
 
         isVisible = true;
 
-        if(panelContainer != null) {
+        if (panelContainer != null) {
             panelContainer.Show();       
         }        
     }
@@ -568,7 +578,7 @@ public class UIPanelBase : UIAppPanel {
 
 
     public void ListContainerScale(GameObject listObject, float scaleTo) {
-        if(listObject != null) {
+        if (listObject != null) {
             Vector3 currentScale = listObject.transform.localScale;
          
             float screenWidth = 640;
@@ -583,7 +593,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public void ListScale(GameObject listObject, float scaleTo) {
-        if(listObject != null) {
+        if (listObject != null) {
             Vector3 currentScale = listObject.transform.localScale;
          
             float screenWidth = 640;
@@ -598,7 +608,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public void PanelScale(UIPanel panel) {     
-        if(panelClipped != null) {
+        if (panelClipped != null) {
             Vector4 range = panelClipped.clipRange;
             range.x = 0f;
             //range.y = 0f;
@@ -610,7 +620,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public void ListScale(float scaleTo) {
-        if(listGridRoot != null) {
+        if (listGridRoot != null) {
             ListScale(listGridRoot, scaleTo);
         }
      
@@ -624,32 +634,32 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public void ListClear(GameObject listObject) {
-        if(listObject != null) {
+        if (listObject != null) {
             listObject.DestroyChildren();
         }
     }
 
     public void ListReposition() {  
         increment = 0;
-        if(listGrid != null) {
+        if (listGrid != null) {
             RepositionList(listGrid, listGridRoot);         
         }
     }
  
     public void ListReposition(UIGrid grid, GameObject gridObject) {    
         increment = 0;
-        if(grid != null) {
+        if (grid != null) {
             RepositionList(grid, gridObject);           
         }
     }
  
     public void RepositionList(UIGrid grid, GameObject gridObject) {
-        if(grid != null) {
+        if (grid != null) {
             grid.Reposition();          
-            if(gridObject.transform.parent != null) {
+            if (gridObject.transform.parent != null) {
                 UIDraggablePanel[] dragPanels = gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
-                if(dragPanels != null) {                    
-                    foreach(UIDraggablePanel panel 
+                if (dragPanels != null) {                    
+                    foreach (UIDraggablePanel panel 
                      in dragPanels) {
                         panel.ResetPosition();
                         break;
@@ -666,13 +676,13 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void ShowPanelTop(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
             //UITweenerUtil.MoveTo(panel, 
             //// UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftOpenX).WithY(topClosedY));   
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
             }
@@ -689,9 +699,9 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void HidePanelTop(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
             }
@@ -713,13 +723,13 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void ShowPanelBottom(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
             UITweenerUtil.MoveTo(panel, 
                                  UITweener.Method.EaseInOut, UITweener.Style.Once, 0f, 0f, 
                                  Vector3.zero.WithY(bottomOpenY));   
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
             }
@@ -737,9 +747,9 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void HidePanelBottom(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
             }
@@ -765,13 +775,13 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void ShowPanelLeft(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftClosedX));   
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
             }
@@ -788,9 +798,9 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void HidePanelLeft(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
             }
@@ -812,13 +822,13 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void ShowPanelRight(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(rightClosedX));  
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
             }
@@ -835,9 +845,9 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual void HidePanelRight(GameObject panel, bool fade) {
-        if(panel != null) {
+        if (panel != null) {
             
-            if(fade) {
+            if (fade) {
                 UITweenerUtil.FadeTo(panel, 
                                      UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
             }
@@ -862,10 +872,10 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public virtual GameObject LoadObject(GameObject listObject, GameObject prefabObject, string itemName) {
-        if(listObject == null) {
+        if (listObject == null) {
             return null;
         }
-        if(prefabObject == null) {
+        if (prefabObject == null) {
             return null;
         }
         GameObject item = NGUITools.AddChild(listObject, prefabObject);
@@ -876,11 +886,11 @@ public class UIPanelBase : UIAppPanel {
     public virtual GameObject LoadObject(GameObject listObject, GameObject prefabObject, string itemName, 
                                          string title, string description, string note, string type) {
         
-        if(listObject == null) {
+        if (listObject == null) {
             return null;
         }
         
-        if(prefabObject == null) {
+        if (prefabObject == null) {
             return null;
         }
         
@@ -893,13 +903,13 @@ public class UIPanelBase : UIAppPanel {
         
         Transform typeObjects = item.transform.FindChild("types");
         
-        if(typeObjects != null) {
-            foreach(Transform t in typeObjects.gameObject.transform) {
+        if (typeObjects != null) {
+            foreach (Transform t in typeObjects.gameObject.transform) {
                 t.gameObject.Hide(); // hide all 
             }
             
             Transform typeObject = typeObjects.FindChild(type);
-            if(typeObject != null) {
+            if (typeObject != null) {
                 // show current
                 typeObject.gameObject.Show();
             }
@@ -909,25 +919,25 @@ public class UIPanelBase : UIAppPanel {
     }
     
     public void SetItemLabel(GameObject item, string labelName, string val) {
-        if(item == null) {
+        if (item == null) {
             return;
         }
         
         UILabel label = GetItemLabel(item, labelName);
-        if(label != null) {
+        if (label != null) {
             label.text = val;
         }
     }
     
     public UILabel GetItemLabel(GameObject item, string labelName) {
-        if(item == null) {
+        if (item == null) {
             return null;
         }
         
         Transform t = item.transform.FindChild(labelName);
-        if(t != null) {
+        if (t != null) {
             UILabel label = t.GetComponent<UILabel>();
-            if(label != null) {
+            if (label != null) {
                 return label;
             }
         }

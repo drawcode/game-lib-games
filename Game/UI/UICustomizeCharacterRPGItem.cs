@@ -18,7 +18,6 @@ public class UICustomizeCharacterRPGItem : GameObjectBehavior {
     public UIImageButton buttonRPGItemDown;
     public UILabel labelName;
     public UILabel labelValue;
-
     public string displayName = "";
     public string displayValue = "";
 
@@ -38,23 +37,23 @@ public class UICustomizeCharacterRPGItem : GameObjectBehavior {
 
     void OnButtonClickObjectHandler(GameObject go) {
 
-        if(go == buttonRPGItemUp.gameObject) {
+        if (go == buttonRPGItemUp.gameObject) {
             Up();
         }
-        else if(go == buttonRPGItemDown.gameObject) {
+        else if (go == buttonRPGItemDown.gameObject) {
             Down();      
         }
     }
 
     void OnRPGItemHandler(string rpgCodeFrom, string characterCodeFrom, double valFrom) {
 
-        if(rpgCode == rpgCodeFrom && characterCode == characterCodeFrom
+        if (rpgCode == rpgCodeFrom && characterCode == characterCodeFrom
             && ((valFrom > 0 && UICustomizeCharacterRPG.Instance.upgradesAvailable > 0)
-                || valFrom < 0)) {
+            || valFrom < 0)) {
 
             double val = currentValue + valFrom;
 
-            if(val < profileValue
+            if (val < profileValue
                 || val > 1.0) {
                 return;
             }
@@ -81,31 +80,31 @@ public class UICustomizeCharacterRPGItem : GameObjectBehavior {
 
         GameProfileRPGItem profileItemRPG = GameProfileCharacters.Current.GetCurrentCharacterRPG();
 
-        if(rpgCode.ToLower() == GameDataItemRPGAttributes.attack) {
+        if (rpgCode.ToLower() == GameDataItemRPGAttributes.attack) {
             displayName = RPGConfigs.displayNameAttack;
             currentValue = profileItemRPG.GetAttack();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
             currentValue = profileItemRPG.GetDefense();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.defense) {
             displayName = RPGConfigs.displayNameDefense;
             currentValue = profileItemRPG.GetDefense();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.energy) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.energy) {
             displayName = RPGConfigs.displayNameEnergy;
             currentValue = profileItemRPG.GetEnergy();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.health) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.health) {
             displayName = RPGConfigs.displayNameHealth;
             currentValue = profileItemRPG.GetHealth();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.jump) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.jump) {
             displayName = RPGConfigs.displayNameJump;
             currentValue = profileItemRPG.GetJump();
         }
-        else if(rpgCode.ToLower() == GameDataItemRPGAttributes.speed) {
+        else if (rpgCode.ToLower() == GameDataItemRPGAttributes.speed) {
             displayName = RPGConfigs.displayNameSpeed;
             currentValue = profileItemRPG.GetSpeed();
         }
@@ -121,7 +120,7 @@ public class UICustomizeCharacterRPGItem : GameObjectBehavior {
     }
 
     public void SetValues() {
-      SetValues(currentValue);
+        SetValues(currentValue);
     }
  
     public void SetValues(double val) {

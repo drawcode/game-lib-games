@@ -11,7 +11,7 @@ public class UIColorsMessages {
     public static string uiColorsUpdate = "ui-colors-update";
 }
 
-public class UIColors  {
+public class UIColors {
 
     public static Color colorRed {
         get {
@@ -40,6 +40,7 @@ public class UIColors  {
             //ColorHelper.FromRGB(255, 121, 0);
         }
     }
+
     public static Color colorYellow {    
         get {        
             return AppColors.GetColor("ui-yellow");            
@@ -129,7 +130,7 @@ public class UIColors  {
     }
 
     public static void UpdateColor(GameObject go, Color colorTo) {
-        foreach(UIColorModeTypeObject uiColorModeTypeObject in go.GetList<UIColorModeTypeObject>()) {
+        foreach (UIColorModeTypeObject uiColorModeTypeObject in go.GetList<UIColorModeTypeObject>()) {
             uiColorModeTypeObject.ColorTo(uiColorModeTypeObject.gameObject, colorTo);
         }
     }

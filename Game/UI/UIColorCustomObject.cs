@@ -7,7 +7,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIColorCustomObject : UIColorObject  {
+public class UIColorCustomObject : UIColorObject {
 
     public string colorKey = "";
     public float colorAlpha = 1f;
@@ -44,7 +44,7 @@ public class UIColorCustomObject : UIColorObject  {
     
     public override void SyncColors() {
 
-        if(!string.IsNullOrEmpty(colorKey)) {
+        if (!string.IsNullOrEmpty(colorKey)) {
 
             Color colorTo = GameProfileCharacters.currentCustom.GetCustomColor(colorKey);
             colorTo.a = colorAlpha;

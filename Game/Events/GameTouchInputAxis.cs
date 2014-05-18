@@ -20,9 +20,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
     public static string inputAxisMoveVertical = "input-axis-move-vertical";
     public static string inputAxisAttack2DSide = "input-axis-attack-2d-side";
     public static string inputAxisAttack2DSide2 = "input-axis-attack-2d-side-2";
-    
-    public static bool updateFingerNavigate = false;    
-    
+    public static bool updateFingerNavigate = false;
     public GameObject objectPlacement;
     public Camera collisionCamera;
     public Transform pad;// = gameObject.transform.FindChild("Pad");
@@ -33,15 +31,12 @@ public class GameTouchInputAxis : GameObjectBehavior {
     public bool controlsMoveable = false;
     public bool hideOnDesktopWeb = false;
     public UIAnchor anchor;
-
     Vector3 originalPlacement = Vector3.zero;
     GameObject hitObject;
     GameTouchInputAxis axisObject;
     GameTouchInputAxisPad axisPadObject;
-
     public float scaleModifier = 0.003125f;
     public Vector2 inputSize = Vector2.zero;
-
     bool inUse = false;
     Vector3 anchorPoint = Vector3.zero;
     Vector3 stretchPoint = Vector3.zero;
@@ -52,7 +47,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void Start() {
     
-        if(objectPlacement != null) {
+        if (objectPlacement != null) {
             originalPlacement = objectPlacement.transform.localPosition;
         }
     }
@@ -128,13 +123,13 @@ public class GameTouchInputAxis : GameObjectBehavior {
                             // }
                         }
                     }
-                    else if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                    else if (hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                         hitPlacement = true;
                     }
                 }
             }
 
-            if(!hitPad) {
+            if (!hitPad) {
                 inUse = false;
                 anchorPoint = Vector3.zero;
             }
@@ -142,13 +137,13 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
             }
 
-            if(controlsMoveable) {
+            if (controlsMoveable) {
 
-                if(objectPlacement != null) {
+                if (objectPlacement != null) {
 
                     if (hitObject != null) {
                         //LogUtil.Log("hitObject:" + " hitObject:" + hitObject.name);
-                        if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                        if (hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                             hitPlacement = true;
                         }
                     }
@@ -166,11 +161,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
                     
                     //LogUtil.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
 
-                    if(hitPad) {
+                    if (hitPad) {
 
                         // MOVE PAD with movement
 
-                        if(pad) {
+                        if (pad) {
                             pad.transform.position = worldPoint;
                         }                 
 
@@ -260,7 +255,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
             handled = PointHitTest(Input.mousePosition);
         }
         else {            
-            if(objectPlacement != null) {
+            if (objectPlacement != null) {
                 objectPlacement.transform.localPosition = originalPlacement;
             }
         }

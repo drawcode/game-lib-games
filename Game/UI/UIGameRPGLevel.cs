@@ -16,7 +16,7 @@ public class UIGameRPGLevel : UIGameRPGObject {
     }
 
     public override void UpdateValue() {
-        if(useGlobal) {
+        if (useGlobal) {
             profileValue = (int)Math.Round(GameProfileRPGs.Current.GetGamePlayerProgressLevel(1));
         }
         else {
@@ -25,7 +25,7 @@ public class UIGameRPGLevel : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if(lastTime > 1f) {
+        if (lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -35,7 +35,7 @@ public class UIGameRPGLevel : UIGameRPGObject {
 
         lastTime += Time.deltaTime;
 
-        if(updateTimeInterval) {
+        if (updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -46,10 +46,10 @@ public class UIGameRPGLevel : UIGameRPGObject {
 
         HandleUpdate(true);
 
-        if(UIGameKeyCodes.isActionLevelAdd) {
+        if (UIGameKeyCodes.isActionLevelAdd) {
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressLevel(incrementValue);
         }
-        else if(UIGameKeyCodes.isActionLevelSubtract) {
+        else if (UIGameKeyCodes.isActionLevelSubtract) {
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressLevel(-incrementValue);
         }
     }

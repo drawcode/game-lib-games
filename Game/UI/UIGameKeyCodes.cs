@@ -7,7 +7,6 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-
 public class UIGameKeyCodes {
 
     public static KeyCode keyRPGCurrencyAdd = KeyCode.Alpha0;

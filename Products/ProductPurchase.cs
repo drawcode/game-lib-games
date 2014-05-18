@@ -403,7 +403,7 @@ public class ProductPurchase : GameObjectBehavior {
         #elif PURCHASE_USE_GOOGLE_PLAY
         return GoogleIAB.areSubscriptionsSupported();
         #else
-        //return false;
+        return false;
         #endif
         
     }

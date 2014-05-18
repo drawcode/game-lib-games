@@ -28,7 +28,7 @@ public class UICustomizeObject : GameObjectBehavior {
 
     public virtual void Start() {
 
-    }       
+    }
     
     public virtual void OnButtonClickEventHandler(string buttonName) {
 

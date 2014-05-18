@@ -183,7 +183,7 @@ public class BaseStoreController : GameObjectBehavior {
 
         GameStorePurchaseDataItem itemPurchasing = itemsPurchasing.Get<GameStorePurchaseDataItem>(key);
         
-        LogUtil.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson()  + " itemPurchasing:" + itemPurchasing.ToJson());        
+        LogUtil.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson() + " itemPurchasing:" + itemPurchasing.ToJson());        
 
         return itemPurchasing;
     }
@@ -584,7 +584,7 @@ public class BaseStoreController : GameObjectBehavior {
             GameStorePurchaseRecord.Create(true,
                 gameProduct, "",
                 "Purchase Successful:" + 
-                 gameProduct.GetCurrentProductInfoByLocale().display_name,
+            gameProduct.GetCurrentProductInfoByLocale().display_name,
                  gameProduct.GetCurrentProductInfoByLocale().description, 
                                        gameProduct.code, quantity));
 

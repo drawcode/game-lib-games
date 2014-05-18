@@ -20,7 +20,6 @@ public enum GameAIDifficulty {
     EPIC
 }
 
-
 public class GameAIDirectorData {
     public float speed = .3f;
     public float attack = .3f;
@@ -28,7 +27,6 @@ public class GameAIDirectorData {
     public int randomCharacter = 1;
     public float currentSpawnAmount = .3f;
     public string characterCode = "";
-
     public GameProfileRPGItem actorRPG;
 
     public GameAIDirectorData() {
@@ -48,37 +46,29 @@ public class GameAIDirectorData {
 public class BaseAIController : GameObjectBehavior {
 
     public static BaseAIController BaseInstance;
-
     public bool runDirector = false;
-    
     public float currentDifficultyLevel = .1f;
-
     public float difficultyLevelEasy = .1f;
     public float difficultyLevelNormal = .5f;
     public float difficultyLevelHard = .9f;
     public float difficultyLevelEpic = .99f;
-     
     public float currentSpawnAmount = 1;
     public float currentCharacterMin = 5;
     public float currentCharacterTypeCount = 2; // TODO change to characters data
     public float currentCharacterLimit = 11;
     public float currentFPS = 0;
-    
     public int roundsCompleted = 0;
     public float lastPeriodicSeconds = 0f;
     public float currentActorCount = 0;
-
     public bool stopDirector = false;
-    
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
-    
     public Dictionary<string, GamePlayerSpawn> spawns;
 
     // ----------------------------------------------------------------------
 
     public static bool isBaseInst {
         get {
-            if(BaseInstance != null) {
+            if (BaseInstance != null) {
                 return true;
             }
             return false;
@@ -105,15 +95,15 @@ public class BaseAIController : GameObjectBehavior {
     }
 
     public virtual void checkSpawns() {
-        if(spawns == null) {
+        if (spawns == null) {
             spawns = new Dictionary<string, GamePlayerSpawn>();
 
             GameObject containerSpawns = GameController.Instance.levelSpawnsContainerObject;
 
-            if(containerSpawns != null) {
-                foreach(GamePlayerSpawn spawn
+            if (containerSpawns != null) {
+                foreach (GamePlayerSpawn spawn
                     in containerSpawns.GetComponentsInChildren<GamePlayerSpawn>(true)) {
-                    if(!spawns.ContainsKey(spawn.code)) {
+                    if (!spawns.ContainsKey(spawn.code)) {
                         spawns.Add(spawn.code, spawn);
                     }
                 }
@@ -125,8 +115,8 @@ public class BaseAIController : GameObjectBehavior {
 
         GameAIController.CheckSpawns();
 
-        foreach(KeyValuePair<string, GamePlayerSpawn> pair in spawns) {
-            if(pair.Key == code) {
+        foreach (KeyValuePair<string, GamePlayerSpawn> pair in spawns) {
+            if (pair.Key == code) {
                 return pair.Value;
             }
         }
@@ -159,13 +149,13 @@ public class BaseAIController : GameObjectBehavior {
     
         GameAIDifficulty difficultyType = GameAIDifficulty.EASY;
 
-        if(difficultyCheck >= difficultyLevelEpic) {
+        if (difficultyCheck >= difficultyLevelEpic) {
             difficultyType = GameAIDifficulty.EPIC;
         }
-        else if(difficultyCheck >= difficultyLevelHard) {
+        else if (difficultyCheck >= difficultyLevelHard) {
             difficultyType = GameAIDifficulty.HARD;
         }
-        else if(difficultyCheck >= difficultyLevelNormal) {
+        else if (difficultyCheck >= difficultyLevelNormal) {
             difficultyType = GameAIDifficulty.NORMAL;
         }
     
@@ -174,34 +164,33 @@ public class BaseAIController : GameObjectBehavior {
 
     public float getDifficultyLevelValueFromEnum(float difficultyCheck) {
 
-        if(difficultyLevelEnum == GameAIDifficulty.EPIC) {
+        if (difficultyLevelEnum == GameAIDifficulty.EPIC) {
             return difficultyLevelEpic;
         }
-        else if(difficultyLevelEnum == GameAIDifficulty.HARD) {
+        else if (difficultyLevelEnum == GameAIDifficulty.HARD) {
             return difficultyLevelHard;
         }
-        else if(difficultyLevelEnum == GameAIDifficulty.NORMAL) {
+        else if (difficultyLevelEnum == GameAIDifficulty.NORMAL) {
             return difficultyLevelNormal;
         }
-        else if(difficultyLevelEnum == GameAIDifficulty.EASY) {
+        else if (difficultyLevelEnum == GameAIDifficulty.EASY) {
             return difficultyLevelEasy;
         }
     
         return .3f;
     }
 
-
     public virtual void directAI() {
 
         currentFPS = FPSDisplay.GetCurrentFPS();
     
-        if((currentActorCount < currentCharacterLimit
-         && currentFPS > 20f)
+        if ((currentActorCount < currentCharacterLimit
+            && currentFPS > 20f)
             || currentActorCount < currentCharacterMin) {
         
             // do some spawning
     
-            if(currentActorCount < currentCharacterMin * 2) {
+            if (currentActorCount < currentCharacterMin * 2) {
                 currentSpawnAmount = 1;
             }
 
@@ -244,7 +233,7 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void handlePeriodic() {
 
-        if(lastPeriodicSeconds > UnityEngine.Random.Range(3, 10)) {
+        if (lastPeriodicSeconds > UnityEngine.Random.Range(3, 10)) {
             lastPeriodicSeconds = 0f;
             GameAIController.DirectAI();
         }
@@ -260,34 +249,34 @@ public class BaseAIController : GameObjectBehavior {
     
     public virtual void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(Input.GetKey(KeyCode.RightControl)) {
-            if(Input.GetKey(KeyCode.G)) {
+        if (Input.GetKey(KeyCode.RightControl)) {
+            if (Input.GetKey(KeyCode.G)) {
                 runDirector = false;
             }
-            else if(Input.GetKey(KeyCode.H)) {
+            else if (Input.GetKey(KeyCode.H)) {
                 runDirector = true;
             }
-            else if(Input.GetKey(KeyCode.J)) {
+            else if (Input.GetKey(KeyCode.J)) {
                 // kill all enemies
 
                 GameController.Instance.levelActorsContainerObject.DestroyChildren();
             }
         }
 
-        if(stopDirector) {
+        if (stopDirector) {
             return;
         }
     
-        if(!runDirector || stopDirector
-        || GameDraggableEditor.isEditing) {
+        if (!runDirector || stopDirector
+            || GameDraggableEditor.isEditing) {
             return;
         }
     
-        if(GameController.IsGameRunning) {
+        if (GameController.IsGameRunning) {
             // if game running spawn and direct characters and events
     
             GameAIController.HandlePeriodic();

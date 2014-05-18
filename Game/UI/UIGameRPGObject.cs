@@ -12,11 +12,8 @@ public class UIGameRPGObject : GameObjectBehavior {
     public double profileValue = 0;
     public double lastValue = 0;
     public double incrementValue = .01;
-
     public bool useGlobal = false;
-
     public float lastTime = 0f;
-
     public UISlider sliderProgress;
     public UILabel labelProgress;
     public UILabel labelValue;
@@ -47,7 +44,7 @@ public class UIGameRPGObject : GameObjectBehavior {
     }
 
     public virtual void UpdateInterval() {
-        if(lastTime > 1f) {
+        if (lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -55,49 +52,48 @@ public class UIGameRPGObject : GameObjectBehavior {
 
     public virtual void HandleUpdate(bool updateIntervalBase) {
 
-        if(updateIntervalBase) {
+        if (updateIntervalBase) {
             lastTime += Time.deltaTime;
             UpdateInterval();
         }
 
-        if(lastValue > profileValue) {
+        if (lastValue > profileValue) {
 
             double differenceValue = lastValue - profileValue;
 
-            if(Math.Abs(differenceValue) > 50) {
-                lastValue -= (Math.Round(Math.Abs(differenceValue) /  4)) * incrementValue;
+            if (Math.Abs(differenceValue) > 50) {
+                lastValue -= (Math.Round(Math.Abs(differenceValue) / 4)) * incrementValue;
             }
             else {
                 lastValue -= incrementValue;
             }
         }
-        else if(profileValue > lastValue) {
+        else if (profileValue > lastValue) {
 
             double differenceValue = lastValue - profileValue;
 
-            if(Math.Abs(differenceValue) > 50) {
-                lastValue += (Math.Round(Math.Abs(differenceValue) /  4)) * incrementValue;
+            if (Math.Abs(differenceValue) > 50) {
+                lastValue += (Math.Round(Math.Abs(differenceValue) / 4)) * incrementValue;
             }
             else {
                 lastValue += incrementValue;
             }
         }
 
-        if(incrementValue < .1) {
+        if (incrementValue < .1) {
             lastValue = Math.Round(lastValue, 2);
         }
         else {
             lastValue = Math.Round(lastValue, 1);
         }
 
-        if(lastValue < 0) {
+        if (lastValue < 0) {
             lastValue = 0;
         }
 
         SetProgress(lastValue);
         SetLabelValue(lastValue);
     }
-
 
     public virtual void Update() {
         HandleUpdate(true);

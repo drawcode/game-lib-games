@@ -7,7 +7,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIColorObject : GameObjectBehavior  {
+public class UIColorObject : GameObjectBehavior {
 
     public virtual void Awake() {
     
@@ -20,7 +20,6 @@ public class UIColorObject : GameObjectBehavior  {
     public virtual void Init() {
 
     }
-
 
     void OnEnable() {
         Messenger.AddListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
@@ -41,15 +40,15 @@ public class UIColorObject : GameObjectBehavior  {
     public virtual void SyncColors() {
         // Set initial color by mode
 
-        if(AppModes.Instance.isAppModeGameTraining) {
+        if (AppModes.Instance.isAppModeGameTraining) {
             // purple
             UIColors.ColorToPurple(gameObject);
         }
-        else if(AppModes.Instance.isAppModeGameChallenge) {
+        else if (AppModes.Instance.isAppModeGameChallenge) {
             // blue
             UIColors.ColorToBlue(gameObject);
         }
-        else if(AppModes.Instance.isAppModeGameArcade) {
+        else if (AppModes.Instance.isAppModeGameArcade) {
             // green
             UIColors.ColorToOrange(gameObject);
         }

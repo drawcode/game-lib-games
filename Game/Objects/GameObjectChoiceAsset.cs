@@ -18,11 +18,11 @@ public class GameObjectChoiceAsset : GameObjectBehavior {
     }
 
     void FindChoiceCollisionParent() {
-        if(gameObjectChoiceObject == null) {
+        if (gameObjectChoiceObject == null) {
             gameObjectChoiceObject = gameObject.FindTypeAboveObject<GameObjectChoice>();
         }
     
-        if(gameObjectChoice == null
+        if (gameObjectChoice == null
             && gameObjectChoiceObject != null) {
             gameObjectChoice = gameObjectChoiceObject.GetComponent<GameObjectChoice>();
             CancelInvoke("FindChoiceCollisionParent");
@@ -31,11 +31,11 @@ public class GameObjectChoiceAsset : GameObjectBehavior {
 
     void OnCollisionEnter(Collision collision) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(gameObjectChoice != null) {
+        if (gameObjectChoice != null) {
             gameObjectChoice.HandleCollision(collision);
         }
 

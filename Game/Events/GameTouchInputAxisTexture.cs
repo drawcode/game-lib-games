@@ -20,9 +20,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
     public static string inputAxisMoveVertical = "input-axis-move-vertical";
     public static string inputAxisAttack2DSide = "input-axis-attack-2d-side";
     public static string inputAxisAttack2DSide2 = "input-axis-attack-2d-side-2";
-    
-    public static bool updateFingerNavigate = false;    
-    
+    public static bool updateFingerNavigate = false;
     public GameObject objectPlacement;
     public Camera collisionCamera;
     public Transform pad;// = gameObject.transform.FindChild("Pad");
@@ -33,7 +31,6 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
     public bool controlsMoveable = false;
     public bool hideOnDesktopWeb = false;
     public UIAnchor anchor;
-    
     Vector3 originalPlacement = Vector3.zero;
     GameObject hitObject;
     GameTouchInputAxisTextured axisObject;
@@ -44,7 +41,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
     
     void Start() {
         
-        if(objectPlacement != null) {
+        if (objectPlacement != null) {
             originalPlacement = objectPlacement.transform.localPosition;
         }
     }
@@ -144,24 +141,24 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
             else {
                 //ResetPad();
                 
-                if(controlsMoveable) {
+                if (controlsMoveable) {
                     
-                    if(objectPlacement != null) {
+                    if (objectPlacement != null) {
                         
-                        if(axisName == "move") {
+                        if (axisName == "move") {
                             
                             bool hitPlacement = false;
                             
                             if (hitObject != null) {
                                 LogUtil.Log("hitObject:" + " hitObject:" + hitObject.name);
-                                if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                                if (hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                                     hitPlacement = true;
                                 }
                             }
                             
                             LogUtil.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
                             
-                            if(hitPlacement) {
+                            if (hitPlacement) {
                                 
                                 //}
                                 //if((point.x > 10 && point.x < Screen.width / 2)) {
@@ -171,7 +168,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
                                 
                                 Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);
                                 
-                                if(anchor != null) {
+                                if (anchor != null) {
                                     Vector3 offset = anchor.transform.position;
                                     //offset.y += 1000;
                                     
@@ -256,16 +253,16 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
             handled = PointHitTest(Input.mousePosition);
         }
         else {            
-            if(objectPlacement != null) {
+            if (objectPlacement != null) {
                 objectPlacement.transform.localPosition = originalPlacement;
             }
         }
         
         if (!handled 
             && ((leftPressed
-             || rightPressed
-             || upPressed
-             || downPressed)
+            || rightPressed
+            || upPressed
+            || downPressed)
             && (axisName == "main"
             || axisName == "move"))) {
             

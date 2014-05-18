@@ -19,7 +19,6 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
     
     public string uuid = UniqueUtil.Instance.CreateUUID4();
     public string code = "default";
-
     public GameObjectInteractiveType interactiveType = GameObjectInteractiveType.boost;
 
     // attraction 
@@ -48,14 +47,14 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
     }
 
     public virtual void FixedUpdate() {
-        if(GameDraggableEditor.isEditing 
-           && GameConfigs.isGameRunning) {
+        if (GameDraggableEditor.isEditing 
+            && GameConfigs.isGameRunning) {
 
-            if(attractProjectiles) {
+            if (attractProjectiles) {
                 AttractForce<GameProjectile>();
             }
             
-            if(attractGamePlayers) {
+            if (attractGamePlayers) {
                 AttractForce<GamePlayerController>();
             }
         }
@@ -63,7 +62,7 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
         
     public virtual void AttractForce<T>() {
 
-        if(!attractProjectiles && !attractGamePlayers) {
+        if (!attractProjectiles && !attractGamePlayers) {
             return;
         }
 
@@ -71,12 +70,12 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
         
         rbs.Clear();
         
-        foreach(Collider c in cols) {   
+        foreach (Collider c in cols) {   
             Component[] comps = c.gameObject.GetComponents(typeof(T));
-            if(comps != null) {
-                if(comps.Length > 0) {
+            if (comps != null) {
+                if (comps.Length > 0) {
                     Rigidbody rb = c.attachedRigidbody;
-                    if(rb != null && rb != rigidbody && !rbs.Contains(rb)) {
+                    if (rb != null && rb != rigidbody && !rbs.Contains(rb)) {
                         rbs.Add(rb);
                         Vector3 offset = transform.position - c.transform.position;
                         rb.AddForce(offset / offset.sqrMagnitude * rb.mass);
@@ -86,7 +85,6 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
         }
     }
 
-
     public virtual void Boost(GameObject go) {
 
         LogUtil.Log("Boost:go", go.name);
@@ -95,26 +93,26 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
 
         //
 
-        if(!boostGamePlayers && !boostProjectiles) {
+        if (!boostGamePlayers && !boostProjectiles) {
             return;
         }
                 
         LogUtil.Log("Boost:boostGamePlayers", boostGamePlayers);
         LogUtil.Log("Boost:boostProjectiles", boostProjectiles);
 
-        if(lastBoost + 3f < Time.time) {
+        if (lastBoost + 3f < Time.time) {
             lastBoost = Time.time;
         }
         else {
             return;
         }
 
-        if(boostGamePlayers) {
+        if (boostGamePlayers) {
 
             GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
 
-            if(gamePlayerController != null) {
-                if(gamePlayerController.IsPlayerControlled) {
+            if (gamePlayerController != null) {
+                if (gamePlayerController.IsPlayerControlled) {
                     
                     LogUtil.Log("Boost:gamePlayerController.IsPlayerControlled", gamePlayerController.IsPlayerControlled);
                     gamePlayerController.Boost(boostForce);
@@ -122,7 +120,7 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
             }
         }
 
-        if(boostProjectiles) {
+        if (boostProjectiles) {
             
             //GameProjectile projectile = GameController.GetGamePlayerControllerObject(go);
             
@@ -145,33 +143,33 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
     }
     
     public virtual void OnCollisionEnter(Collision collision) {
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
         
         GameObject target = collision.collider.gameObject;
         
-        if(target != null) {
+        if (target != null) {
             Boost(target);            
         }
     }
     
     public virtual void OnTriggerEnter(Collider collider) {
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
         
         GameObject target = collider.gameObject;
         
-        if(target != null) {
+        if (target != null) {
             Boost(target);
         }
     }
     
     public virtual void Update() {
         
-        if(!GameConfigs.isGameRunning 
-           && !GameDraggableEditor.isEditing) {
+        if (!GameConfigs.isGameRunning 
+            && !GameDraggableEditor.isEditing) {
             //DestroyMe();
         }
     }

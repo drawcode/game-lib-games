@@ -30,10 +30,10 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
-        if(UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
+        if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
             ChangePresetNext();
         }
-        else if(UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetPrevious();
         }
     }
@@ -64,13 +64,13 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         
         if (index > -2 && index < countPresets) {
             
-            if(initialProfileCustomItem == null) {
+            if (initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
             }
             
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
             
-            if(index == -1) {
+            if (index == -1) {
                 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Uniform");
 

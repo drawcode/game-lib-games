@@ -55,7 +55,7 @@ public class BaseItemController : GameObjectBehavior {
 
     public static bool isBaseInst {
         get {
-            if(BaseInstance != null) {
+            if (BaseInstance != null) {
                 return true;
             }
             return false;
@@ -64,7 +64,7 @@ public class BaseItemController : GameObjectBehavior {
  
     void Awake() {
 
-        if(BaseInstance != null && this != BaseInstance) {
+        if (BaseInstance != null && this != BaseInstance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
@@ -111,13 +111,13 @@ public class BaseItemController : GameObjectBehavior {
      
         GameItemDifficulty difficultyType = GameItemDifficulty.EASY;
      
-        if(difficultyCheck >= difficultyLevelEpic) {
+        if (difficultyCheck >= difficultyLevelEpic) {
             difficultyType = GameItemDifficulty.EPIC;
         }
-        else if(difficultyCheck >= difficultyLevelHard) {
+        else if (difficultyCheck >= difficultyLevelHard) {
             difficultyType = GameItemDifficulty.HARD;
         }
-        else if(difficultyCheck >= difficultyLevelNormal) {
+        else if (difficultyCheck >= difficultyLevelNormal) {
             difficultyType = GameItemDifficulty.NORMAL;
         }
      
@@ -128,13 +128,13 @@ public class BaseItemController : GameObjectBehavior {
  
     public virtual float getDifficultyLevelValueFromEnum(float difficultyCheck) {
      
-        if(difficultyLevelEnum == GameItemDifficulty.EPIC) {
+        if (difficultyLevelEnum == GameItemDifficulty.EPIC) {
             return difficultyLevelEpic;
         }
-        else if(difficultyLevelEnum == GameItemDifficulty.HARD) {
+        else if (difficultyLevelEnum == GameItemDifficulty.HARD) {
             return difficultyLevelHard;
         }
-        else if(difficultyLevelEnum == GameItemDifficulty.NORMAL) {
+        else if (difficultyLevelEnum == GameItemDifficulty.NORMAL) {
             return difficultyLevelNormal;
         }
      
@@ -147,12 +147,12 @@ public class BaseItemController : GameObjectBehavior {
      
         currentFPS = FPSDisplay.GetCurrentFPS();    
      
-        if((currentItemCount < currentItemLimit
+        if ((currentItemCount < currentItemLimit
             && currentFPS > 20f) || currentItemCount < currentItemMin) {
      
             // do some spawning
          
-            if(currentItemCount < currentItemMin * 2) {
+            if (currentItemCount < currentItemMin * 2) {
                 currentSpawnAmount = 1;
             }
          
@@ -160,21 +160,21 @@ public class BaseItemController : GameObjectBehavior {
 
             GameItemPreset preset = GameItemPresets.Instance.GetByCode("default");
             
-            if(preset == null) {
+            if (preset == null) {
                 return;
             }
 
             List<GamePresetItem> presetItems = preset.data.items;
 
             List<float> probs = new List<float>();
-            foreach(GamePresetItem item in presetItems) {
+            foreach (GamePresetItem item in presetItems) {
                 probs.Add((float)item.probability);
             }
 
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
             
-            if(selectByProbabilityItem == null) {
+            if (selectByProbabilityItem == null) {
                 return;
             }
 
@@ -296,7 +296,7 @@ public class BaseItemController : GameObjectBehavior {
 
     public virtual void handlePeriodic() {
 
-        if(Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
+        if (Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
             lastPeriodicSeconds = Time.time;
             // every second
             GameItemController.Direct();
@@ -311,34 +311,34 @@ public class BaseItemController : GameObjectBehavior {
 
     public virtual void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(Input.GetKey(KeyCode.RightControl)) {
-            if(Input.GetKey(KeyCode.G)) {
+        if (Input.GetKey(KeyCode.RightControl)) {
+            if (Input.GetKey(KeyCode.G)) {
                 runDirector = false;
             }
-            else if(Input.GetKey(KeyCode.H)) {
+            else if (Input.GetKey(KeyCode.H)) {
                 runDirector = true;
             }
-            else if(Input.GetKey(KeyCode.J)) {
+            else if (Input.GetKey(KeyCode.J)) {
                 // kill all enemies
 
                 GameController.Instance.levelItemsContainerObject.DestroyChildren();
             }
         }
 
-        if(stopDirector) {
+        if (stopDirector) {
             return;
         }
     
-        if(!runDirector || stopDirector
-        || GameDraggableEditor.isEditing) {
+        if (!runDirector || stopDirector
+            || GameDraggableEditor.isEditing) {
             return;
         }
     
-        if(GameController.IsGameRunning) {
+        if (GameController.IsGameRunning) {
             // if game running spawn and direct characters and events
     
             GameItemController.HandlePeriodic();

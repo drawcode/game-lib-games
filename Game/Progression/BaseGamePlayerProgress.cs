@@ -8,7 +8,7 @@ using UnityEngine;
 using Engine;
 using Engine.Data;
 using Engine.Events;
-using Engine.Utility;   
+using Engine.Utility;
 
 public class BaseGamePlayerProgressRuntimeData {
     
@@ -21,10 +21,8 @@ public class BaseGamePlayerProgressRuntimeData {
     public string currentAppState = "";
     public string currentAppContentState = "";
     public float startTime = 0f;
-    
     public Dictionary<string,float> timesViewed = new Dictionary<string, float>();
     Dictionary<string, float> timesViewedCopy = new Dictionary<string, float>();
-    
     public bool isRunning = false;
     
     public static BaseGamePlayerProgressRuntimeData BaseInstance {
@@ -75,16 +73,16 @@ public class BaseGamePlayerProgressRuntimeData {
     }
     
     public virtual void StartTimeViewedCollection(string code) {
-        if(!timesViewed.ContainsKey(code)) {
+        if (!timesViewed.ContainsKey(code)) {
             timesViewed.Add(code, Time.time);
         }
     }
     
     public float EndTimeViewedCollection(string code) {
         float totalTime = 0f;
-        if(timesViewed.ContainsKey(code)) {
+        if (timesViewed.ContainsKey(code)) {
             float startTime = timesViewed[code];
-            if(startTime > 0.0f) {
+            if (startTime > 0.0f) {
                 float endTime = Time.time + .05f;
                 totalTime = endTime - startTime;                
                 GamePlayerProgress.Instance.SetStatAccumulate(code, totalTime);
@@ -97,9 +95,9 @@ public class BaseGamePlayerProgressRuntimeData {
     public float PurgeTimeViewedCollection(string code) {
         float totalTime = 0f;
         
-        if(timesViewed.ContainsKey(code)) {
+        if (timesViewed.ContainsKey(code)) {
             float startTime = timesViewed[code];
-            if(startTime > 0.0f) {
+            if (startTime > 0.0f) {
                 float endTime = Time.time + .05f;
                 totalTime = endTime - startTime;                
                 GamePlayerProgress.Instance.SetStatAccumulate(code, totalTime);
@@ -111,7 +109,7 @@ public class BaseGamePlayerProgressRuntimeData {
     }
     
     public virtual void EndAllTimeViewedCollections() {
-        foreach(KeyValuePair<string,float> pair in timesViewed) {
+        foreach (KeyValuePair<string,float> pair in timesViewed) {
             EndTimeViewedCollection(pair.Key);
         }
         timesViewed.Clear();
@@ -121,11 +119,11 @@ public class BaseGamePlayerProgressRuntimeData {
         
         timesViewedCopy.Clear();
         
-        foreach(KeyValuePair<string,float> pair in timesViewed) {
+        foreach (KeyValuePair<string,float> pair in timesViewed) {
             timesViewedCopy.Add(pair.Key, pair.Value);
         }
         
-        foreach(KeyValuePair<string,float> pair in timesViewedCopy) {
+        foreach (KeyValuePair<string,float> pair in timesViewedCopy) {
             PurgeTimeViewedCollection(pair.Key);
         }
         
@@ -136,33 +134,24 @@ public class BaseGamePlayerProgressRuntimeData {
 public class BaseGameStatisticCodes {
     public static string timePlayed = "time-played";
     public static string timesPlayed = "times-played";
-    
     public static string timePlayedTracker = "time-played-tracker";
     public static string timesPlayedTracker = "times-played-tracker";
-    
     public static string timePlayedAction = "time-played-action";
     public static string timesPlayedAction = "times-played-action";
-    
     public static string timePlayedType = "time-played-type";
     public static string timesPlayedType = "times-played-type";
-    
     public static string timePlayedPack = "time-played-pack";
     public static string timesPlayedPack = "times-played-pack";
-    
     public static string timePlayedTotal = "time-played-total";
     public static string timesPlayedTotal = "times-played-total";
-    
     public static string timePlayedHigh = "time-played-high";
     public static string timesPlayedHigh = "times-played-high";
-    
     public static string timePlayedLow = "time-played-low";
     public static string timesPlayedLow = "times-played-low";
-    
     public static string action = "action";
     public static string total = "total";
     public static string high = "high";
     public static string low = "low";
-    
     public static string swipes = "swipes";
     public static string taps = "taps";
     public static string zooms = "zooms";
@@ -241,11 +230,11 @@ public class BaseGameStatisticCodes {
     }
     
     public static string highCodeLevel(string code, string levelCode) {
-        return high + "-" + code  + "-" + levelCode;
+        return high + "-" + code + "-" + levelCode;
     }
     
     public static string highCodeLevelCurrent(string code) {
-        return high + "-" + code  + "-" + GameLevels.Current.code;
+        return high + "-" + code + "-" + GameLevels.Current.code;
     }
     
     // low
@@ -267,11 +256,11 @@ public class BaseGameStatisticCodes {
     }
     
     public static string lowCodeLevel(string code, string levelCode) {
-        return low + "-" + code  + "-" + levelCode;
+        return low + "-" + code + "-" + levelCode;
     }
     
     public static string lowCodeLevelCurrent(string code) {
-        return low + "-" + code  + "-" + GameLevels.Current.code;
+        return low + "-" + code + "-" + GameLevels.Current.code;
     }
     
     // total
@@ -293,11 +282,11 @@ public class BaseGameStatisticCodes {
     }
     
     public static string totalCodeLevel(string code, string levelCode) {
-        return total + "-" + code  + "-" + levelCode;
+        return total + "-" + code + "-" + levelCode;
     }
     
     public static string totalCodeLevelCurrent(string code) {
-        return total + "-" + code  + "-" + GameLevels.Current.code;
+        return total + "-" + code + "-" + GameLevels.Current.code;
     }
     
     // swipes
@@ -376,7 +365,7 @@ public class BaseGameStatisticCodes {
     
     public static string timePlayedPackContentState(string packCode, string appContentState) {
         return timePlayedCode() + "-" + packCode + "-" + appContentState;
-    }   
+    }
     
     public static string timePlayedContentState(string appContentState) {
         return timePlayedCode() + "-" + appContentState;
@@ -481,11 +470,11 @@ public class BaseGameStatisticCodes {
     }
     
     public static string timesPlayedActionCodeLevel(string code, string levelCode) {
-        return timesPlayedActionCode() + "-" + code  + "-" + levelCode;
+        return timesPlayedActionCode() + "-" + code + "-" + levelCode;
     }
     
     public static string timesPlayedActionCodeLevelCurrent(string code) {
-        return timesPlayedActionCode() + "-" + code  + "-" + GameLevels.Current.code;
+        return timesPlayedActionCode() + "-" + code + "-" + GameLevels.Current.code;
     }
     
     // type
@@ -617,41 +606,29 @@ public class BaseGameAchievementCodes {
     }
 }
 
-public class BaseGamePlayerProgress
-{
+public class BaseGamePlayerProgress {
     private static volatile BaseGamePlayerProgress instance;
     private static System.Object syncRoot = new System.Object();
-    
     public List<AchievementMeta> achievementMetaList = new List<AchievementMeta>();
-    
     public List<string> gameCenterLeaderboards = new List<string>();
-    
     public float lastTimesPlayed = 0f;
     public float lastTimePlayed = 0f;
-    
     public float lastTimesPlayedPack = 0f;
     public float lastTimePlayedPack = 0f;
-    
     public float lastTimesPlayedTracker = 0f;
     public float lastTimePlayedTracker = 0f;
-    
     public float lastTimesPlayedAction = 0f;
     public float lastTimePlayedAction = 0f;
-    
     public float lastTimesPlayedType = 0f;
     public float lastTimePlayedType = 0f;
-    
     public float lastTimesPlayedTotal = 0f;
     public float lastTimePlayedTotal = 0f;
-    
     public float lastTimesPlayedHigh = 0f;
     public float lastTimePlayedHigh = 0f;
-    
     public float lastSwipes = 0f;
     public float lastTaps = 0f;
     public float lastZooms = 0f;
     public float lastSpins = 0f;
-    
     public float lastOutOfBounds = 0f;
     public float lastScores = 0f;
     public float lastHits = 0f;
@@ -659,7 +636,6 @@ public class BaseGamePlayerProgress
     public float lastDefends = 0f;
     public float lastKills = 0f;
     public float lastSpawns = 0f;
-    
     Thread syncThread;
     
     public static BaseGamePlayerProgress BaseInstance {
@@ -691,11 +667,11 @@ public class BaseGamePlayerProgress
     }
     
     public virtual void Reset() {
-    }   
+    }
     
     public int GetPointsByPlace(int place) {
         int points = 0;
-        switch(place) {
+        switch (place) {
         case 1:
             points += 10;
             break;
@@ -723,7 +699,7 @@ public class BaseGamePlayerProgress
     public int GetPlaceByPoints(int points) {
         int place = 5;
         
-        switch(points) {
+        switch (points) {
         case 10:
             place = 1;
             break;
@@ -750,7 +726,7 @@ public class BaseGamePlayerProgress
     
     public string GetPrettyPlace(int place) {
         string prettyPlace = "--";
-        switch(place) {
+        switch (place) {
         case 1:
             prettyPlace = place.ToString() + "st";
             break;
@@ -774,14 +750,14 @@ public class BaseGamePlayerProgress
     public virtual void ProcessProgressTrackerByName(string trackerName) {
         string trackerCode = "";
         
-        if(!string.IsNullOrEmpty(trackerCode)) {
+        if (!string.IsNullOrEmpty(trackerCode)) {
             ARDataSetTracker tracker = ARDataSetTrackers.Instance.GetByNameAndPack(
                 trackerName,
                 GamePacks.Current.code);
-            if(tracker != null) {
+            if (tracker != null) {
                 trackerCode = tracker.code;
-                if(trackerCode != null
-                   && trackerCode != "") {
+                if (trackerCode != null
+                    && trackerCode != "") {
                     ProcessProgressTracker(trackerCode);
                 }
             }
@@ -789,7 +765,7 @@ public class BaseGamePlayerProgress
     }
     
     public virtual void ProcessProgressTracker(string trackerCode) {
-        if(Time.time > lastTimesPlayedTracker + 1f) {
+        if (Time.time > lastTimesPlayedTracker + 1f) {
             lastTimesPlayedTracker = Time.time;
             
             ProcessProgressTimesPlayedTracker(trackerCode);
@@ -800,14 +776,14 @@ public class BaseGamePlayerProgress
     public virtual void EndProcessProgressTrackerByName(string trackerName) {
         string trackerCode = "";
         
-        if(!string.IsNullOrEmpty(trackerCode)) {
+        if (!string.IsNullOrEmpty(trackerCode)) {
             ARDataSetTracker tracker = ARDataSetTrackers.Instance.GetByNameAndPack(
                 trackerName,
                 GamePacks.Current.code);
-            if(tracker != null) {
+            if (tracker != null) {
                 trackerCode = tracker.code;
-                if(trackerCode != null
-                   && trackerCode != "") {
+                if (trackerCode != null
+                    && trackerCode != "") {
                     EndProcessProgressTracker(trackerCode);
                 }
             }
@@ -903,7 +879,7 @@ public class BaseGamePlayerProgress
     // action 
     
     public virtual void ProcessProgressAction(string actionCode) {
-        if(Time.time > lastTimesPlayedAction + 1f) {
+        if (Time.time > lastTimesPlayedAction + 1f) {
             lastTimesPlayedAction = Time.time;
             
             ProcessProgressTimesPlayedAction(actionCode);
@@ -913,7 +889,7 @@ public class BaseGamePlayerProgress
     
     public virtual void EndProcessProgressAction(string actionCode) {
         CoroutineUtil.Start(EndProcessProgressActionCo(actionCode));
-    }   
+    }
     
     IEnumerator EndProcessProgressActionCo(string actionCode) {
         yield return new WaitForSeconds(1f);
@@ -927,9 +903,10 @@ public class BaseGamePlayerProgress
     public virtual void ProcessProgressTotal(string code, double val) {
         ProcessProgressTotal(code, (float)val);
     }
+
     public virtual void ProcessProgressTotal(string code, float val) {
-        if(Time.time > lastTimesPlayedTotal + .2f
-           || codeProcessProgressTotal != code) {
+        if (Time.time > lastTimesPlayedTotal + .2f
+            || codeProcessProgressTotal != code) {
             lastTimesPlayedTotal = Time.time;
             codeProcessProgressTotal = code;
             ProcessProgressTimesPlayedTotal(code, val);
@@ -938,7 +915,7 @@ public class BaseGamePlayerProgress
     
     public virtual void EndProcessProgressTotal(string code) {
         CoroutineUtil.Start(EndProcessProgressTotalCo(code));
-    }   
+    }
     
     IEnumerator EndProcessProgressTotalCo(string code) {
         yield return new WaitForSeconds(1f);
@@ -948,7 +925,7 @@ public class BaseGamePlayerProgress
     // high 
     
     public virtual void ProcessProgressHigh(string code, float val) {
-        if(Time.time > lastTimesPlayedHigh + 1f) {
+        if (Time.time > lastTimesPlayedHigh + 1f) {
             lastTimesPlayedHigh = Time.time;
             
             ProcessProgressTimesPlayedHigh(code, val);
@@ -957,7 +934,7 @@ public class BaseGamePlayerProgress
     
     public virtual void EndProcessProgressHigh(string code) {
         CoroutineUtil.Start(EndProcessProgressHighCo(code));
-    }   
+    }
     
     IEnumerator EndProcessProgressHighCo(string code) {
         yield return new WaitForSeconds(1f);
@@ -978,7 +955,7 @@ public class BaseGamePlayerProgress
         GamePlayerProgress.Instance.SetStatisticValue(
             GameStatisticCodes.actionCode(action), 
             val);
-    }   
+    }
     
     public virtual void SetStatTotal(string code, double val) { 
         SetStatTotal(code, (float)val);
@@ -1057,7 +1034,7 @@ public class BaseGamePlayerProgress
     public virtual void EndProcessProgressActionDiscrete(string actionCode) {
         EndProcessProgressTimesPlayedAction(actionCode);
         EndProcessProgressTimePlayedAction(actionCode); 
-    }   
+    }
     
     public virtual void ProcessProgressTimesPlayedAction(string actionCode) {
         string appContentState = AppContentStates.Current.code;
@@ -1095,7 +1072,7 @@ public class BaseGamePlayerProgress
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyContentState);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyAction);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyActionContentState);
-    }   
+    }
     
     public virtual void EndProcessAction(string actionCode) {
         
@@ -1123,7 +1100,7 @@ public class BaseGamePlayerProgress
     // pack 
     
     public virtual void ProcessProgressPack(string packCode) {
-        if(Time.time > lastTimesPlayedPack + 1f) {
+        if (Time.time > lastTimesPlayedPack + 1f) {
             lastTimesPlayedPack = Time.time;
             
             ProcessProgressTimesPlayedPack(packCode);
@@ -1192,7 +1169,7 @@ public class BaseGamePlayerProgress
     // type 
     
     public virtual void ProcessProgressType(string typeCode) {
-        if(Time.time > lastTimesPlayedType + 1f) {
+        if (Time.time > lastTimesPlayedType + 1f) {
             lastTimesPlayedType = Time.time;
             
             ProcessProgressTimesPlayedType(typeCode);
@@ -1274,7 +1251,7 @@ public class BaseGamePlayerProgress
     // actions - swipes 
     
     public virtual void ProcessProgressSwipes() {
-        if(Time.time > lastSwipes + .5f) {
+        if (Time.time > lastSwipes + .5f) {
             lastSwipes = Time.time;
             
             ProcessProgressSwipesFull();
@@ -1297,7 +1274,7 @@ public class BaseGamePlayerProgress
     // actions - taps 
     
     public virtual void ProcessProgressTaps() {
-        if(Time.time > lastTaps + .5f) {
+        if (Time.time > lastTaps + .5f) {
             lastTaps = Time.time;
             
             ProcessProgressTapsFull();
@@ -1320,7 +1297,7 @@ public class BaseGamePlayerProgress
     // actions - zooms 
     
     public virtual void ProcessProgressZooms() {
-        if(Time.time > lastZooms + .5f) {
+        if (Time.time > lastZooms + .5f) {
             lastZooms = Time.time;
             
             ProcessProgressZoomsFull();
@@ -1342,7 +1319,7 @@ public class BaseGamePlayerProgress
     // actions - spins 
     
     public virtual void ProcessProgressSpins() {
-        if(Time.time > lastSpins + .5f) {
+        if (Time.time > lastSpins + .5f) {
             lastSpins = Time.time;
             
             ProcessProgressSpinsFull();
@@ -1366,7 +1343,7 @@ public class BaseGamePlayerProgress
         Debug.Log("ProcessProgressLeaderboards");
 
         // Submit all leaderboards
-        foreach(GameLeaderboard board in GameLeaderboards.Instance.GetAll()) {
+        foreach (GameLeaderboard board in GameLeaderboards.Instance.GetAll()) {
 
             string key = board.code;
                         
@@ -1381,7 +1358,7 @@ public class BaseGamePlayerProgress
 
             Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
-            if(keyValueLong > 0) {
+            if (keyValueLong > 0) {
                 
                 Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
@@ -1431,7 +1408,6 @@ public class BaseGamePlayerProgress
         GameState.SaveProfile();
     }
     
-    
     public virtual void ProcessProgressRuntimeAchievements() {
         
         GamePlayerProgressRuntimeData.Instance.PurgeAllTimeViewedCollections();
@@ -1447,13 +1423,13 @@ public class BaseGamePlayerProgress
         
         LogUtil.Log("ProcessPackRuntimeAchievements:" + packCode);
         
-        foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
-            if(achievement.data.filters != null) {
-                foreach(GameFilter filterItem in achievement.data.filters) {
-                    if(filterItem.type == GameFilterType.statisticSingle) {
+        foreach (GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
+            if (achievement.data.filters != null) {
+                foreach (GameFilter filterItem in achievement.data.filters) {
+                    if (filterItem.type == GameFilterType.statisticSingle) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // statistic-single                                                     
                                 //
@@ -1463,19 +1439,19 @@ public class BaseGamePlayerProgress
                                 
                                 List<string> codes = new List<string>();
                                 
-                                if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
+                                if (filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                     // add explicit code
                                     codes.Add(filterCode);
                                 }
                                 
-                                if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
                                     codes.Add(key);
                                 }
                                 
-                                foreach(string filterCodeItem in codes) {
+                                foreach (string filterCodeItem in codes) {
                                     
                                     CheckStatSetAchievement(
                                         false,
@@ -1483,16 +1459,16 @@ public class BaseGamePlayerProgress
                                         filterCodeItem, 
                                         StatEqualityTypeString.GetEnum(filter.compareType),
                                         (float)filter.compareValue
-                                        );
+                                    );
                                 }
                                 
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.statisticSet) {
+                    else if (filterItem.type == GameFilterType.statisticSet) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // statistic-set
                                 //
@@ -1503,15 +1479,15 @@ public class BaseGamePlayerProgress
                                 
                                 List<string> codes = new List<string>();
                                 
-                                foreach(string filterCode in filter.codes) {
+                                foreach (string filterCode in filter.codes) {
                                     
                                     
-                                    if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                         // add explicit code
                                         codes.Add(filterCode);
                                     }
                                     
-                                    if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                         string key = GameStatisticCodes.genericCodeContentState(
                                             filterCode, 
                                             AppContentStates.Current.code);
@@ -1519,13 +1495,13 @@ public class BaseGamePlayerProgress
                                     }
                                 }
                                 
-                                foreach(string filterCodeItem in codes) {
+                                foreach (string filterCodeItem in codes) {
                                     
-                                    if(CheckStatCondition(
+                                    if (CheckStatCondition(
                                         filterCodeItem, 
                                         StatEqualityTypeString.GetEnum(filter.compareType),
                                         (float)filter.compareValue
-                                        )) {
+                                    )) {
                                         setAchievement = true;
                                     }
                                     else {
@@ -1534,16 +1510,16 @@ public class BaseGamePlayerProgress
                                     }
                                 }
                                 
-                                if(setAchievement) {
+                                if (setAchievement) {
                                     GamePlayerProgress.Instance.SetAchievementAll(achievement.code);
                                 }
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.statisticAll) {
+                    else if (filterItem.type == GameFilterType.statisticAll) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // statistic-all
                                 // 
@@ -1553,18 +1529,18 @@ public class BaseGamePlayerProgress
                                 
                                 List<string> codes = new List<string>();
                                 
-                                foreach(string filterCode in filter.codes) {                                
+                                foreach (string filterCode in filter.codes) {                                
                                     
-                                    if(filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.defaultKey != GameFilterIncludeType.none) {
                                         // add explicit code
                                         codes.Add(filterCode);
                                     }
                                     
-                                    if(filter.includeKeys.action != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.action != GameFilterIncludeType.none) {
                                         
-                                        if(filter.includeKeys.action == GameFilterIncludeType.all) {
+                                        if (filter.includeKeys.action == GameFilterIncludeType.all) {
                                             
-                                            foreach(AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
+                                            foreach (AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
                                                 GamePacks.Current.code,
                                                 AppStates.Current.code)) {
                                                 
@@ -1577,7 +1553,7 @@ public class BaseGamePlayerProgress
                                             }                                           
                                             
                                         }
-                                        else if(filter.includeKeys.action == GameFilterIncludeType.current) {
+                                        else if (filter.includeKeys.action == GameFilterIncludeType.current) {
                                             /*
                                             string key = GameStatisticCodes.genericCodeContentState(
                                                     filterCode,
@@ -1599,13 +1575,13 @@ public class BaseGamePlayerProgress
                                     */
                                 }
                                 
-                                foreach(string filterCodeItem in codes) {
+                                foreach (string filterCodeItem in codes) {
                                     
-                                    if(CheckStatCondition(
+                                    if (CheckStatCondition(
                                         filterCodeItem, 
                                         StatEqualityTypeString.GetEnum(filter.compareType),
                                         (float)filter.compareValue
-                                        )) {
+                                    )) {
                                         setAchievement = true;
                                     }
                                     else {
@@ -1614,17 +1590,16 @@ public class BaseGamePlayerProgress
                                     }
                                 }
                                 
-                                if(setAchievement) {
+                                if (setAchievement) {
                                     GamePlayerProgress.Instance.SetAchievementAll(achievement.code);
                                 }
                             }
                         }
                     }
-                    
-                    else if(filterItem.type == GameFilterType.statisticLike) {
+                    else if (filterItem.type == GameFilterType.statisticLike) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticLike();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // statistic-all
                                 // 
@@ -1636,23 +1611,23 @@ public class BaseGamePlayerProgress
                                 
                                 string likeCode = filter.codeLike;
                                 
-                                foreach(string filterCode in filter.codes) {                                
+                                foreach (string filterCode in filter.codes) {                                
                                     
-                                    if(filter.includeKeys.action != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.action != GameFilterIncludeType.none) {
                                         
-                                        if(filter.includeKeys.action == GameFilterIncludeType.all) {
+                                        if (filter.includeKeys.action == GameFilterIncludeType.all) {
                                             
-                                            foreach(AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
+                                            foreach (AppContentAction action in AppContentActions.Instance.GetListByPackAndState(
                                                 GamePacks.Current.code,
                                                 AppStates.Current.code)) {
                                                 
-                                                if(action.code.IndexOf(likeCode) > -1) {
+                                                if (action.code.IndexOf(likeCode) > -1) {
                                                     
                                                     string key = GameStatisticCodes.genericCodeContentState(
                                                         filterCode,
                                                         action.code + "-" + AppContentStates.Current.code);
                                                     
-                                                    if(!codes.Contains(key)) {
+                                                    if (!codes.Contains(key)) {
                                                         // Add all
                                                         codes.Add(key);
                                                     }
@@ -1663,28 +1638,28 @@ public class BaseGamePlayerProgress
                                     }
                                 }
                                 
-                                foreach(string filterCodeItem in codes) {
+                                foreach (string filterCodeItem in codes) {
                                     
-                                    if(CheckStatCondition(
+                                    if (CheckStatCondition(
                                         filterCodeItem, 
                                         StatEqualityTypeString.GetEnum(filter.compareType),
                                         (float)filter.compareValue
-                                        )) {
+                                    )) {
                                         setAchievement = true;
                                         break;
                                     }
                                 }
                                 
-                                if(setAchievement) {
+                                if (setAchievement) {
                                     GamePlayerProgress.Instance.SetAchievementAll(achievement.code);
                                 }
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.statisticCompare) {
+                    else if (filterItem.type == GameFilterType.statisticCompare) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticCompare();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // statistic-compare
                                 // 
@@ -1692,10 +1667,10 @@ public class BaseGamePlayerProgress
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.achievementSet) {
+                    else if (filterItem.type == GameFilterType.achievementSet) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterAchievementSet();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 
                                 // achievement-set
                                 // 
@@ -1707,7 +1682,7 @@ public class BaseGamePlayerProgress
                                 
                                 
                                 
-                                if(allSet) {
+                                if (allSet) {
                                     //GamePlayerProgress.Instance.SetAchievement(filter.
                                 }
                                 
@@ -1724,7 +1699,6 @@ public class BaseGamePlayerProgress
         GameState.SaveProfile();
     }
     
-    
     public virtual void ProcessPackAchievementsCurrentPack() {
         ProcessPackAchievements(GamePacks.Current.code);
     }
@@ -1733,13 +1707,13 @@ public class BaseGamePlayerProgress
         
         LogUtil.Log("ProcessPackAchievements:" + packCode);
         
-        foreach(GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
-            if(achievement.data.filters != null) {
-                foreach(GameFilter filterItem in achievement.data.filters) {
-                    if(filterItem.type == GameFilterType.statisticSingle) {
+        foreach (GameAchievement achievement in GameAchievements.Instance.GetListByPack(packCode)) {
+            if (achievement.data.filters != null) {
+                foreach (GameFilter filterItem in achievement.data.filters) {
+                    if (filterItem.type == GameFilterType.statisticSingle) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSingle();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 //LogUtil.Log("filter:" + filter.code);
                                 
                                 //double statisticValue = GameProfileStatistics.Current.GetStatisticValue(filter.code);
@@ -1752,14 +1726,14 @@ public class BaseGamePlayerProgress
                                 // add explicit code
                                 codes.Add(filterCode);
                                 
-                                if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
                                     codes.Add(key);
                                 }
                                 
-                                foreach(string filterCodeItem in codes) {
+                                foreach (string filterCodeItem in codes) {
                                     
                                     CheckStatSetAchievement(
                                         false,
@@ -1767,25 +1741,25 @@ public class BaseGamePlayerProgress
                                         filterCodeItem, 
                                         StatEqualityTypeString.GetEnum(filter.compareType),
                                         (float)filter.compareValue
-                                        );
+                                    );
                                 }
                                 
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.statisticSet) {
+                    else if (filterItem.type == GameFilterType.statisticSet) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticSet();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 //LogUtil.Log("filter:" + filter.code);
                                 //LogUtil.Log("filter2:" + filter.code2);
                             }
                         }
                     }
-                    else if(filterItem.type == GameFilterType.statisticAll) {
+                    else if (filterItem.type == GameFilterType.statisticAll) {
                         List<GameFilterBase> filterTypeItems = achievement.GetFilterStatisticAll();
-                        foreach(GameFilterBase filter in filterTypeItems) {
-                            if(filter != null) {
+                        foreach (GameFilterBase filter in filterTypeItems) {
+                            if (filter != null) {
                                 //LogUtil.Log("filter:" + filter.code);
                                 //LogUtil.Log("filter2:" + filter.code2);
                             }
@@ -1804,7 +1778,7 @@ public class BaseGamePlayerProgress
         
         double statValue = GameProfileStatistics.Current.GetStatisticValue(statKey);
         
-        if(full) {
+        if (full) {
             
             string packCode = GamePacks.Current.code;
             string appContentState = AppContentStates.Current.code;
@@ -1855,7 +1829,7 @@ public class BaseGamePlayerProgress
         double statValue = GameProfileStatistics.Current.GetStatisticValue(statKey);
         double statValue2 = GameProfileStatistics.Current.GetStatisticValue(statKey2);
         
-        if(full) {
+        if (full) {
             CheckStatSetAchievementFull(achievementKey, statValue + statValue2, equalType, checkValue);
         }
         else {
@@ -1878,7 +1852,6 @@ public class BaseGamePlayerProgress
         
     }
     
-    
     public virtual bool CheckStatCondition(string statKey, 
                                    StatEqualityTypeEnum equalType, 
                                    float checkValue) {
@@ -1890,28 +1863,28 @@ public class BaseGamePlayerProgress
                                    StatEqualityTypeEnum equalType, 
                                    float checkValue) {
         
-        if(equalType == StatEqualityTypeEnum.STAT_GREATER_THAN_OR_EQUAL_TO) {
-            if(statValue >= checkValue) {
+        if (equalType == StatEqualityTypeEnum.STAT_GREATER_THAN_OR_EQUAL_TO) {
+            if (statValue >= checkValue) {
                 return true;
             }
         }
-        else if(equalType == StatEqualityTypeEnum.STAT_GREATER_THAN) {
-            if(statValue > checkValue) {
+        else if (equalType == StatEqualityTypeEnum.STAT_GREATER_THAN) {
+            if (statValue > checkValue) {
                 return true;
             }           
         }
-        else if(equalType == StatEqualityTypeEnum.STAT_LESS_THAN_OR_EQUAL_TO) {
-            if(statValue <= checkValue) {
+        else if (equalType == StatEqualityTypeEnum.STAT_LESS_THAN_OR_EQUAL_TO) {
+            if (statValue <= checkValue) {
                 return true;
             }           
         }
-        else if(equalType == StatEqualityTypeEnum.STAT_LESS_THAN) {
-            if(statValue < checkValue) {
+        else if (equalType == StatEqualityTypeEnum.STAT_LESS_THAN) {
+            if (statValue < checkValue) {
                 return true;
             }           
         }
-        else if(equalType == StatEqualityTypeEnum.EQUAL_TO) {
-            if(statValue == checkValue) {
+        else if (equalType == StatEqualityTypeEnum.EQUAL_TO) {
+            if (statValue == checkValue) {
                 return true;
             }           
         }   
@@ -1924,7 +1897,7 @@ public class BaseGamePlayerProgress
                                         StatEqualityTypeEnum equalType, 
                                         float checkValue) {
         //SetAchievementAll
-        if(CheckStatCondition(statValue, equalType, checkValue)) {
+        if (CheckStatCondition(statValue, equalType, checkValue)) {
             SetAchievementAll(achievementKey);
         }
     }
@@ -1961,12 +1934,12 @@ public class BaseGamePlayerProgress
     public virtual void SetAchievement(string key, bool completed, bool syncXP) {
         
         bool alreadyCompleted = GameProfileAchievements.Current.GetAchievementValue(key);
-        if(!alreadyCompleted && completed){
+        if (!alreadyCompleted && completed) {
             GameProfileAchievements.Current.SetAchievementValue(key, completed);
             
             CoroutineUtil.Start(ReportAchievementCo(key, completed));
             CoroutineUtil.Start(QueueAchievementCo(key));
-            if(syncXP) {
+            if (syncXP) {
                 //GameRPGMonitor.Instance.UpdateAchievementPointsScore();
                 //GameRPGMonitor.Instance.SyncCurrentXP();
             }
@@ -1982,7 +1955,7 @@ public class BaseGamePlayerProgress
     public IEnumerator QueueAchievementCo(string key) {
         yield return null;
         // TODO SEND NOTIFICATION
-        if(UINotificationDisplay.Instance != null) {
+        if (UINotificationDisplay.Instance != null) {
             UINotificationDisplay.Instance.QueueAchievement(key);
         }
         Messenger<string>.Broadcast("queue-achievement", key);
@@ -1990,7 +1963,7 @@ public class BaseGamePlayerProgress
     }
     
     public virtual void SetStatisticValue(bool sendToGameverses, string key, object keyValue) {
-        if(keyValue != null) {
+        if (keyValue != null) {
             
             LogUtil.Log("SetStatisticValue:" + key + " :" + keyValue);
             
@@ -1998,7 +1971,7 @@ public class BaseGamePlayerProgress
             
             //LogUtil.Log("SetStatisticValue gameCenterEnabled:" + GameNetworks.gameCenterEnabled);
 
-            if(GameConfigs.isGameRunning) {
+            if (GameConfigs.isGameRunning) {
                 return;
             }
 
@@ -2010,7 +1983,7 @@ public class BaseGamePlayerProgress
             LogUtil.Log("SetStatisticValue:key:" + key);
             LogUtil.Log("SetStatisticValue:keyValueLong...:" + keyValueLong);
             
-            if(keyValueLong > 0) {
+            if (keyValueLong > 0) {
                 
                 LogUtil.Log("SetStatisticValue:keyValueLong:" + keyValueLong);
                 
@@ -2021,18 +1994,18 @@ public class BaseGamePlayerProgress
     
     public string FilterThirdpartyNetworkLeaderboard(string key) {              
         //LogUtil.Log("GameCenter FilterGameCenterLeaderboard1:" + key);
-        key = key.Replace("-","_"); 
+        key = key.Replace("-", "_"); 
         //LogUtil.Log("GameCenter FilterGameCenterLeaderboard2:" + key);
-        if(key == "fastest_lap" || key == "fastest_race") {
+        if (key == "fastest_lap" || key == "fastest_race") {
             string trackId = GameLevels.Current.code;
-            if(!string.IsNullOrEmpty(trackId)) {
-                trackId = trackId.Replace("-","_");
+            if (!string.IsNullOrEmpty(trackId)) {
+                trackId = trackId.Replace("-", "_");
                 key = key + "_" + trackId;
-                key = key.Replace("-","_");
+                key = key.Replace("-", "_");
                 key = key.ToLower();
             }
         }
-        if(key.IndexOf("career_events") > -1) {
+        if (key.IndexOf("career_events") > -1) {
             // Fix for incorrect leaderboard to state value
             // 'career-events' to 'series'
             key = key.Replace("career_events", "series");
@@ -2043,8 +2016,8 @@ public class BaseGamePlayerProgress
     }
     
     public virtual bool IsGameCenterLeaderboard(string key) {
-        foreach(GameLeaderboard leaderboard in GameLeaderboards.Instance.GetAll()) {
-            if(leaderboard.code.ToLower() == key.ToLower()){
+        foreach (GameLeaderboard leaderboard in GameLeaderboards.Instance.GetAll()) {
+            if (leaderboard.code.ToLower() == key.ToLower()) {
                 return true;
             }
         }
@@ -2054,12 +2027,12 @@ public class BaseGamePlayerProgress
     
     public virtual void SetStatisticValue(string key, float keyValue) {
         GameStatistic statistic = GameStatistics.Instance.GetById(key);
-        if(statistic != null) {
+        if (statistic != null) {
             string order = statistic.order;
-            if(order == "ascending") {
+            if (order == "ascending") {
                 SetStatHighPoint(key, keyValue);
             }
-            else if(order == "descending") {
+            else if (order == "descending") {
                 SetStatLowPoint(key, keyValue);         
             }
             else {
@@ -2069,7 +2042,7 @@ public class BaseGamePlayerProgress
         else {
             SetStatAccumulate(key, keyValue);               
         }
-    }   
+    }
     
     public virtual void SetStatAbsolute(string key, float keyValue) {       
         SetStatAbsoluteData(false, key, keyValue);
@@ -2095,7 +2068,7 @@ public class BaseGamePlayerProgress
     public virtual void SetStatAccumulateData(
         bool sendToGameverses, string key, float keyValue) {
         
-        if(keyValue > 0.1f) {
+        if (keyValue > 0.1f) {
             string statCode = key;
             float lastValue = keyValue;
             double currentValue =
@@ -2108,13 +2081,13 @@ public class BaseGamePlayerProgress
     public virtual void SetStatHighPointData(
         bool sendToGameverses, string key, float keyValue) {
         
-        if(keyValue > 0.1f) {
+        if (keyValue > 0.1f) {
             string statCode = key;
             float currentValue = keyValue;
             double lastValue =
                 GameProfileStatistics.Current.GetStatisticValue(statCode);
             
-            if(currentValue >= lastValue) {
+            if (currentValue >= lastValue) {
                 SetStatisticValue(sendToGameverses, statCode, currentValue);
             }   
         }
@@ -2123,14 +2096,14 @@ public class BaseGamePlayerProgress
     public virtual void SetStatLowPointData(
         bool sendToGameverses, string key, float keyValue) {
         
-        if(keyValue > 0.1f) {           
+        if (keyValue > 0.1f) {           
             string statCode = key;
             float currentValue = keyValue;
             double lastValue =
                 GameProfileStatistics.Current.GetStatisticValue(statCode);
             
-            if(currentValue <= lastValue
-               || lastValue == 0) {
+            if (currentValue <= lastValue
+                || lastValue == 0) {
                 SetStatisticValue(sendToGameverses, statCode, currentValue);
             }   
         }
@@ -2138,11 +2111,11 @@ public class BaseGamePlayerProgress
     
     public double GetTotalAchievementPoints() {
         double totalScore = 0.0;
-        foreach(GameAchievement achievementMeta
+        foreach (GameAchievement achievementMeta
                 in GameAchievements.Instance.GetAll()) {
             bool achievementValue =
                 GamePlayerProgress.Instance.GetAchievement(achievementMeta.code);
-            if(achievementValue) {
+            if (achievementValue) {
                 totalScore += achievementMeta.data.points;
             }
         }   
@@ -2159,7 +2132,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatEvaded(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatEvaded(val);
         }
     }
@@ -2167,7 +2140,7 @@ public class BaseGamePlayerProgress
     float lastEvadeTime = 0;
     
     public virtual void setStatEvaded(float val) {
-        if(lastEvadeTime + .2f < Time.time) {
+        if (lastEvadeTime + .2f < Time.time) {
             lastEvadeTime = Time.time;
             SetStatTotal(GameStatCodes.evaded, val);
         }
@@ -2180,7 +2153,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatDeaths(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatDeaths(val);
         }
     }
@@ -2188,7 +2161,7 @@ public class BaseGamePlayerProgress
     float lastDeathsTime = 0;
     
     public virtual void setStatDeaths(float val) {
-        if(lastDeathsTime + 2f < Time.time) {
+        if (lastDeathsTime + 2f < Time.time) {
             lastDeathsTime = Time.time;
             SetStatTotal(GameStatCodes.deaths, val);
         }
@@ -2201,7 +2174,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHits(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHits(val);
         }
     }
@@ -2209,7 +2182,7 @@ public class BaseGamePlayerProgress
     float lastHitsTime = 0;
     
     public virtual void setStatHits(float val) {
-        if(lastHitsTime + .2f < Time.time) {
+        if (lastHitsTime + .2f < Time.time) {
             lastHitsTime = Time.time;
             SetStatTotal(GameStatCodes.hits, val);
         }
@@ -2222,7 +2195,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHitsReceived(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHitsReceived(val);
         }
     }
@@ -2230,7 +2203,7 @@ public class BaseGamePlayerProgress
     float lastHitsReceivedTime = 0;
     
     public virtual void setStatHitsReceived(float val) {
-        if(lastHitsReceivedTime + .2f < Time.time) {
+        if (lastHitsReceivedTime + .2f < Time.time) {
             lastHitsReceivedTime = Time.time;
             SetStatTotal(GameStatCodes.hitsReceived, val);
         }
@@ -2243,7 +2216,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHitsObstacles(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHitsObstacles(val);
         }
     }
@@ -2251,7 +2224,7 @@ public class BaseGamePlayerProgress
     float lastHitsObstaclesTime = 0;
     
     public virtual void setStatHitsObstacles(float val) {
-        if(lastHitsObstaclesTime + .2f < Time.time) {
+        if (lastHitsObstaclesTime + .2f < Time.time) {
             lastHitsObstaclesTime = Time.time;
             SetStatTotal(GameStatCodes.hitsObstacles, val);
         }
@@ -2264,7 +2237,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatKills(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatKills(val);
         }
     }
@@ -2272,7 +2245,7 @@ public class BaseGamePlayerProgress
     float lastKillsTime = 0;
     
     public virtual void setStatKills(float val) {
-        if(lastKillsTime + .2f < Time.time) {
+        if (lastKillsTime + .2f < Time.time) {
             lastKillsTime = Time.time;
             SetStatTotal(GameStatCodes.kills, val);
         }
@@ -2286,7 +2259,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatAmmo(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatAmmo(val);
         }
     }
@@ -2294,7 +2267,7 @@ public class BaseGamePlayerProgress
     float lastAmmoTime = 0;
     
     public virtual void setStatAmmo(float val) {
-        if(lastAmmoTime + .05f < Time.time) {
+        if (lastAmmoTime + .05f < Time.time) {
             lastAmmoTime = Time.time;
             SetStatTotal(GameStatCodes.ammo, val);
         }
@@ -2307,7 +2280,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatScore(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatScore(val);
         }
     }
@@ -2315,7 +2288,7 @@ public class BaseGamePlayerProgress
     float lastScoreTime = 0;
     
     public virtual void setStatScore(float val) {
-        if(lastScoreTime + .05f < Time.time) {
+        if (lastScoreTime + .05f < Time.time) {
             lastScoreTime = Time.time;
             SetStatTotal(GameStatCodes.score, val);
         }
@@ -2328,7 +2301,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatScores(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatScores(val);
         }
     }
@@ -2336,7 +2309,7 @@ public class BaseGamePlayerProgress
     float lastScoresTime = 0;
     
     public virtual void setStatScores(float val) {
-        if(lastScoresTime + .05f < Time.time) {
+        if (lastScoresTime + .05f < Time.time) {
             lastScoresTime = Time.time;
             SetStatTotal(GameStatCodes.scores, val);
         }
@@ -2349,7 +2322,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatXP(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatXP(val);
         }
     }
@@ -2357,7 +2330,7 @@ public class BaseGamePlayerProgress
     float lastXPTime = 0;
     
     public virtual void setStatXP(float val) {
-        if(lastXPTime + .05f < Time.time) {
+        if (lastXPTime + .05f < Time.time) {
             lastXPTime = Time.time;
             SetStatTotal(GameStatCodes.xp, val);
         }
@@ -2370,7 +2343,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCoins(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCoins(val);
         }
     }
@@ -2378,7 +2351,7 @@ public class BaseGamePlayerProgress
     float lastCoinsTime = 0;
     
     public virtual void setStatCoins(float val) {
-        if(lastCoinsTime + .05f < Time.time) {
+        if (lastCoinsTime + .05f < Time.time) {
             lastCoinsTime = Time.time;
             SetStatTotal(GameStatCodes.coins, val);
         }
@@ -2391,7 +2364,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCoinsPickup(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCoinsPickup(val);
         }
     }
@@ -2399,7 +2372,7 @@ public class BaseGamePlayerProgress
     float lastCoinsPickupTime = 0;
     
     public virtual void setStatCoinsPickup(float val) {
-        if(lastCoinsPickupTime + .05f < Time.time) {
+        if (lastCoinsPickupTime + .05f < Time.time) {
             lastCoinsPickupTime = Time.time;
             SetStatTotal(GameStatCodes.coinsPickup, val);
         }
@@ -2412,7 +2385,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCoinsEarned(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCoinsEarned(val);
         }
     }
@@ -2420,7 +2393,7 @@ public class BaseGamePlayerProgress
     float lastCoinsEarnedTime = 0;
     
     public virtual void setStatCoinsEarned(float val) {
-        if(lastCoinsEarnedTime + .05f < Time.time) {
+        if (lastCoinsEarnedTime + .05f < Time.time) {
             lastCoinsEarnedTime = Time.time;
             SetStatTotal(GameStatCodes.coinsEarned, val);
         }
@@ -2433,7 +2406,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatBoosts(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatBoosts(val);
         }
     }
@@ -2441,7 +2414,7 @@ public class BaseGamePlayerProgress
     float lastBoostsTime = 0;
     
     public virtual void setStatBoosts(float val) {
-        if(lastBoostsTime + .05f < Time.time) {
+        if (lastBoostsTime + .05f < Time.time) {
             lastBoostsTime = Time.time;
             SetStatTotal(GameStatCodes.boosts, val);
         }
@@ -2454,7 +2427,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatSpins(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatSpins(val);
         }
     }
@@ -2462,7 +2435,7 @@ public class BaseGamePlayerProgress
     float lastSpinsTime = 0;
     
     public virtual void setStatSpins(float val) {
-        if(lastSpinsTime + .05f < Time.time) {
+        if (lastSpinsTime + .05f < Time.time) {
             lastSpinsTime = Time.time;
             SetStatTotal(GameStatCodes.spins, val);
         }
@@ -2475,7 +2448,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCuts(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCuts(val);
         }
     }
@@ -2483,7 +2456,7 @@ public class BaseGamePlayerProgress
     float lastCutsTime = 0;
     
     public virtual void setStatCuts(float val) {
-        if(lastCutsTime + .05f < Time.time) {
+        if (lastCutsTime + .05f < Time.time) {
             lastCutsTime = Time.time;
             SetStatTotal(GameStatCodes.cuts, val);
         }
@@ -2496,7 +2469,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCutsRight(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCutsRight(val);
         }
     }
@@ -2504,7 +2477,7 @@ public class BaseGamePlayerProgress
     float lastCutsRightTime = 0;
     
     public virtual void setStatCutsRight(float val) {
-        if(lastCutsRightTime + .05f < Time.time) {
+        if (lastCutsRightTime + .05f < Time.time) {
             lastCutsRightTime = Time.time;
             SetStatTotal(GameStatCodes.cutsRight, val);
         }
@@ -2517,7 +2490,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatCutsLeft(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatCutsLeft(val);
         }
     }
@@ -2525,7 +2498,7 @@ public class BaseGamePlayerProgress
     float lastCutsLeftTime = 0;
     
     public virtual void setStatCutsLeft(float val) {
-        if(lastCutsLeftTime + .05f < Time.time) {
+        if (lastCutsLeftTime + .05f < Time.time) {
             lastCutsLeftTime = Time.time;
             SetStatTotal(GameStatCodes.cutsLeft, val);
         }
@@ -2539,7 +2512,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatAttack(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatAttack(val);
         }
     }
@@ -2547,7 +2520,7 @@ public class BaseGamePlayerProgress
     float lastAttackTime = 0;
     
     public virtual void setStatAttack(float val) {
-        if(lastAttackTime + .05f < Time.time) {
+        if (lastAttackTime + .05f < Time.time) {
             lastAttackTime = Time.time;
             SetStatTotal(GameStatCodes.attacks, val);
         }
@@ -2560,7 +2533,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatDefend(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatDefend(val);
         }
     }
@@ -2568,7 +2541,7 @@ public class BaseGamePlayerProgress
     float lastDefendTime = 0;
     
     public virtual void setStatDefend(float val) {
-        if(lastDefendTime + 1f < Time.time) {
+        if (lastDefendTime + 1f < Time.time) {
             lastDefendTime = Time.time;
             SetStatTotal(GameStatCodes.defends, val);
         }
@@ -2584,7 +2557,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHighXP(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHighXP(val);
         }
     }
@@ -2592,7 +2565,7 @@ public class BaseGamePlayerProgress
     float lastHighXPTime = 0;
     
     public virtual void setStatHighXP(float val) {
-        if(lastHighXPTime + .05f < Time.time) {
+        if (lastHighXPTime + .05f < Time.time) {
             lastHighXPTime = Time.time;
             SetStatHigh(GameStatCodes.xp, val);
         }
@@ -2605,7 +2578,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHighScore(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHighScore(val);
         }
     }
@@ -2613,7 +2586,7 @@ public class BaseGamePlayerProgress
     float lastHighScoreTime = 0;
     
     public virtual void setStatHighScore(float val) {
-        if(lastHighScoreTime + .05f < Time.time) {
+        if (lastHighScoreTime + .05f < Time.time) {
             lastHighScoreTime = Time.time;
             SetStatHigh(GameStatCodes.score, val);
         }
@@ -2626,7 +2599,7 @@ public class BaseGamePlayerProgress
     }
     
     public static void SetStatHighScores(float val) {
-        if(GamePlayerProgress.Instance != null) {
+        if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatHighScores(val);
         }
     }
@@ -2634,7 +2607,7 @@ public class BaseGamePlayerProgress
     float lastHighScoresTime = 0;
     
     public virtual void setStatHighScores(float val) {
-        if(lastHighScoresTime + .05f < Time.time) {
+        if (lastHighScoresTime + .05f < Time.time) {
             lastHighScoresTime = Time.time;
             SetStatHigh(GameStatCodes.scores, val);
         }

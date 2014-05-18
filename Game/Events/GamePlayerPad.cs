@@ -12,9 +12,7 @@ using Engine.Utility;
 public class GamePlayerPad : GameObjectBehavior {
 
     public GameObject containerHighlighted;
-
     public Color colorHighlight = Color.white;
-    
     Color lastColorHighlight = Color.gray;
 
     public void Start() {
@@ -27,11 +25,11 @@ public class GamePlayerPad : GameObjectBehavior {
 
     public void UpdateColor() {
 
-        if(lastColorHighlight != colorHighlight) {
+        if (lastColorHighlight != colorHighlight) {
 
             lastColorHighlight = colorHighlight;
 
-            if(containerHighlighted != null) {
+            if (containerHighlighted != null) {
                 UITweenerUtil.ColorToHandler<UISprite>(
                     containerHighlighted, 
                     colorHighlight,

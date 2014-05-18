@@ -20,7 +20,7 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
 
     public virtual void FindBase() {
     
-        if(obj == null) {
+        if (obj == null) {
             obj = gameObject.FindTypeAboveRecursive<BaseGameObjectInteractive>();
         }
     }
@@ -29,7 +29,7 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
 
         FindBase();
 
-        if(obj == null) {
+        if (obj == null) {
             return;
         }
 
@@ -40,7 +40,7 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
 
         FindBase();
         
-        if(obj == null) {
+        if (obj == null) {
             return;
         }
         

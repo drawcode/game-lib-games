@@ -34,38 +34,28 @@ public class UIControllerAnimateTypes {
 public class BaseUIButtonNames { 
 
     public static string buttonBack = "ButtonBack";
-
     public static string buttonBlank = "ButtonBlank";
-
     public static string buttonMenu = "ButtonMenu";
-
     public static string buttonInGame = "ButtonInGame";
-
     public static string buttonMain = "ButtonMain";
     public static string buttonPlayGame = "ButtonPlayGame";
     public static string buttonPlayWorld = "ButtonPlayWorld";
     public static string buttonPlayLevel = "ButtonPlayLevel";
     public static string buttonPlayLevels = "ButtonPlayLevels";
     public static string buttonSettings = "ButtonSettings";
-    
     public static string buttonGameSettings = "ButtonGameSettings";
     public static string buttonGameEquipment = "ButtonGameEquipment";
     public static string buttonAppRate = "ButtonAppRate";
-
     public static string buttonTrophy = "ButtonTrophy";
     public static string buttonTrophyStatistics = "ButtonTrophyStatistics";
     public static string buttonTrophyAchievements = "ButtonTrophyAchievements";
-
     public static string buttonGameStatistics = "ButtonGameStatistics";
     public static string buttonGameAchievements = "ButtonGameAchievements";
     public static string buttonGameLeaderboards = "ButtonGameLeaderboards";
-
     public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     public static string buttonGameCenterAchievements = "ButtonGameCenterAchievements";
-
     public static string buttonGamePlayServicesLeaderboards = "ButtonGamePlayServicesLeaderboards";
     public static string buttonGamePlayServicesAchievements = "ButtonGamePlayServicesAchievements";
-
     public static string buttonSocial = "ButtonSocial";
     public static string buttonCredits = "ButtonCredits";
     public static string buttonWorlds = "ButtonWorlds";
@@ -95,7 +85,6 @@ public class BaseUIButtonNames {
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
     public static string buttonGamePlay = "ButtonGamePlay";
     public static string buttonGameModePlay = "ButtonGameModePlay";
-    
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
     public static string buttonGameNetworkJoinGame = "ButtonGameNetworkJoinGame";
@@ -440,7 +429,7 @@ public class BaseUIController : GameObjectBehavior {
 
 
     public virtual void showUITip(string title, string description) {
-        UINotificationDisplayTip.Instance.QueueTip(title,description);            
+        UINotificationDisplayTip.Instance.QueueTip(title, description);            
     }
     
     public virtual void ShowMainMenuDelayed() {
@@ -3089,11 +3078,10 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipmentRoom, buttonName)) {
             GameUIController.ShowEquipment();
-        }        
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipment, buttonName)) {
             GameUIController.ShowEquipment();
         }
-
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettingsAudio, buttonName)) {
             GameUIController.ShowSettingsAudio();
         }
@@ -3115,7 +3103,7 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCenterLeaderboards, buttonName)) {
             GameNetworks.ShowLeaderboardsOrLogin(GameNetworkType.gameNetworkAppleGameCenter);
-        }        
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayServicesAchievements, buttonName)) {
             GameNetworks.ShowAchievementsOrLogin(GameNetworkType.gameNetworkGooglePlayServices);
         }
@@ -3144,46 +3132,46 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowSettings();
         }   
         */
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductCurrency, buttonName)) {    
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductCurrency, buttonName)) {    
             GameUIController.ShowProductCurrency();
         }   
 
         // Game Modes
 
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             GameUIController.ShowGameModeArcade();
-        }   
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
-        }   
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerCoop);
             GameUIController.ShowGameModeMultiplayerCoop();
-        }   
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerMatchup, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerMatchup, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerMatchup);
             GameUIController.ShowGameModeMultiplayerMatchup();
-        }         
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayer, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayer, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayer);
             GameUIController.ShowGameModeMultiplayer();
-        } 
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameCoop);
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
-        }        
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
-        } 
-        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
-        }        
-        else if(UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
-                || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
+        }
+        else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
+            || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
             
             AdNetworks.ShowFullscreenAd();
             
@@ -3327,9 +3315,9 @@ public class BaseUIController : GameObjectBehavior {
     
     public virtual void handleNetworkedButtons(string buttonName) {
         // handle network state by buttons and areas
-        if(AppConfigs.featureEnableNetworking) {
-            if(UIUtil.IsButtonClickedLike("GameMode", buttonName)) { 
-                if(UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) { 
+        if (AppConfigs.featureEnableNetworking) {
+            if (UIUtil.IsButtonClickedLike("GameMode", buttonName)) { 
+                if (UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) { 
                     //Gameverses.GameNetworking.Connect();
                 }
                 else {
@@ -3385,7 +3373,7 @@ public class BaseUIController : GameObjectBehavior {
             GameController.GamePlayerUse();
         }
         else if (AllowPress(lastPressMount)
-                 && buttonName == BaseHUDButtonNames.buttonInputMount) {
+            && buttonName == BaseHUDButtonNames.buttonInputMount) {
             GameController.GamePlayerMount();
         }
         else if (buttonName == BaseHUDButtonNames.buttonInputJump) {

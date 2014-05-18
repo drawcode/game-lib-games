@@ -8,7 +8,6 @@ using Engine;
 using Engine.Events;
 using Engine.Utility;
 
-
 public class GameTouchInputAxisPlacement : GameObjectBehavior {
 
     public GameTouchInputAxis axisObject;
@@ -23,7 +22,7 @@ public class GameTouchInputAxisPlacement : GameObjectBehavior {
 
     void OnTriggerEnter(Collider other) {
     
-        if(axisObject != null) {
+        if (axisObject != null) {
 
 
         }

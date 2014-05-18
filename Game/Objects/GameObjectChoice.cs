@@ -27,26 +27,18 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public AppContentChoice appContentChoice;
     public AppContentChoiceItem appContentChoiceItem;
-
     public GameObjectChoiceData choiceData;
-
     public GameObject containerLabel;
     public UILabel labelResponse;
-
     public GameObject containerEffects;
     public GameObject containerEffectsAlwaysOn;
     public GameObject containerEffectsCorrect;
     public GameObject containerEffectsIncorrect;
-
     public GameObject containerAsset;
-
     public Color startColor = Color.red;
-
     public bool isUI = false;
-
     public bool hasBroadcasted = false;
     public bool hasLoadedChoice = false;
-
     public string uuid = "";
 
     public void OnEnable() {
@@ -70,7 +62,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
     }
 
     public void OnGameChoiceObjectDataLoadHandler() {
-        if(!hasLoadedChoice) {
+        if (!hasLoadedChoice) {
             // recieve the message and load if it is this object
         }
     }
@@ -85,33 +77,33 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
         SetChoiceParticleSystemColors();
 
-        if(isUI) {
+        if (isUI) {
             gameObject.SetLayerRecursively("UIDialog");
         }
     }
 
     public void PlayCorrect() {
-        if(containerEffectsCorrect != null) {
+        if (containerEffectsCorrect != null) {
             containerEffectsCorrect.PlayParticleSystem(true);
         }
         BroadcastChoiceDelayed(2f);
     }
 
     public void StopCorrect() {
-        if(containerEffectsCorrect != null) {
+        if (containerEffectsCorrect != null) {
             containerEffectsCorrect.StopParticleSystem(true);
         }
     }
 
     public void PlayIncorrect() {
-        if(containerEffectsIncorrect != null) {
+        if (containerEffectsIncorrect != null) {
             containerEffectsIncorrect.PlayParticleSystem(true);
         }
         BroadcastChoiceDelayed(2f);
     }
 
     public void StopIncorrect() {
-        if(containerEffectsIncorrect != null) {
+        if (containerEffectsIncorrect != null) {
             containerEffectsIncorrect.StopParticleSystem(true);
         }
     }
@@ -142,10 +134,10 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void SetChoiceParticleSystemColors(GameObject go, Color colorTo, bool playNow) {
         startColor = colorTo;
-        if(go != null) {
+        if (go != null) {
             go.SetParticleSystemStartColor(colorTo, true);
 
-            if(playNow) {
+            if (playNow) {
                 go.StopParticleSystem(true);
                 go.PlayParticleSystem(true);
             }
@@ -156,7 +148,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void LoadAsset(string assetCode) {
 
-        if(containerAsset != null && containerAsset.transform.childCount == 0) {
+        if (containerAsset != null && containerAsset.transform.childCount == 0) {
 
             containerAsset.DestroyChildren();
 
@@ -165,8 +157,8 @@ public class GameObjectChoice : BaseGameObjectLevel {
                 ContentPaths.appCacheVersionSharedPrefabLevelAssets,
                 assetCode));
 
-            if(assetItem != null) {
-                if(isUI) {
+            if (assetItem != null) {
+                if (isUI) {
                     assetItem.SetLayerRecursively("UIOverlay");
                 }
                 else {
@@ -180,7 +172,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
                 assetItem.transform.localRotation = Quaternion.identity;
                 assetItem.transform.localScale = Vector3.one;
 
-                foreach(Rigidbody rigidbody in assetItem.GetComponentsInChildren<Rigidbody>(true)) {
+                foreach (Rigidbody rigidbody in assetItem.GetComponentsInChildren<Rigidbody>(true)) {
 
                     GameObject go = rigidbody.gameObject;
 
@@ -232,9 +224,9 @@ public class GameObjectChoice : BaseGameObjectLevel {
         choiceData.choiceItemAssetCode = choiceItemAssetCode;
 
         appContentChoice = AppContentChoices.Instance.GetByCode(choiceCode);
-        if(appContentChoice != null) {
-            foreach(AppContentChoiceItem choiceItem in appContentChoice.choices) {
-                if(choiceItem.code == choiceItemCode) {
+        if (appContentChoice != null) {
+            foreach (AppContentChoiceItem choiceItem in appContentChoice.choices) {
+                if (choiceItem.code == choiceItemCode) {
                     appContentChoiceItem = choiceItem;
                 }
             }
@@ -259,7 +251,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void BroadcastChoice() {
 
-        if(!hasBroadcasted) {
+        if (!hasBroadcasted) {
 
             hasBroadcasted = true;
 
@@ -271,12 +263,12 @@ public class GameObjectChoice : BaseGameObjectLevel {
             //Messenger<AppContentChoiceItem>.Broadcast(
             //    AppContentChoiceMessages.appContentChoiceItem, appContentChoiceItem);
 
-       // Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
+            // Messenger<AppContentChoiceItem>.RemoveListener(AppContentChoiceMessages.appContentChoiceItem, OnAppContentChoiceItemHandler);
         }
     }
 
     public void BroadcastChoiceDelayed(float delay) {
-        if(!hasBroadcasted) {
+        if (!hasBroadcasted) {
             StartCoroutine(BroadcastChoiceDelayedCo(delay));
         }
     }
@@ -290,15 +282,15 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
         LogUtil.Log("GameObjectChoice:HandleChoiceData:" + name);
 
-        if(choiceData != null) {
+        if (choiceData != null) {
 
-            if(choiceData.choiceItemIsCorrect) {
+            if (choiceData.choiceItemIsCorrect) {
                 PlayCorrect();
             }
             else {
                 PlayIncorrect();
 
-                if(gamePlayerController != null) {
+                if (gamePlayerController != null) {
                     gamePlayerController.AddImpact(-gamePlayerController.gameObject.transform.forward, 10f);
                 }
             }
@@ -317,20 +309,20 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
         //LogUtil.Log("GameObjectChoice:go:" + go.name);
 
-        if(go.name.Contains("GamePlayerObject")) {
+        if (go.name.Contains("GamePlayerObject")) {
 
             gamePlayerController = GameController.GetGamePlayerController(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
-                if(gamePlayerController.IsPlayerControlled) {
+                if (gamePlayerController.IsPlayerControlled) {
 
                     HandleChoiceData();
                 }
             }
         }
 
-        if(gamePlayerController == null
+        if (gamePlayerController == null
             && (go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
 
@@ -338,11 +330,11 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
 
                 LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
-                if(gamePlayerController.IsPlayerControlled) {
+                if (gamePlayerController.IsPlayerControlled) {
 
                     HandleChoiceData();
                 }
@@ -352,7 +344,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
     public void OnCollisionEnter(Collision collision) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 

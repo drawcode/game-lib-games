@@ -21,7 +21,7 @@ public class UIGameRPGCurrency : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if(lastTime > 1f) {
+        if (lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -31,7 +31,7 @@ public class UIGameRPGCurrency : UIGameRPGObject {
 
         lastTime += Time.deltaTime;
 
-        if(updateTimeInterval) {
+        if (updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -42,10 +42,10 @@ public class UIGameRPGCurrency : UIGameRPGObject {
 
         HandleUpdate(true);
 
-        if(UIGameKeyCodes.isActionCurrencyAdd) {
+        if (UIGameKeyCodes.isActionCurrencyAdd) {
             GameProfileRPGs.Current.AddCurrency(1000);
         }
-        else if(UIGameKeyCodes.isActionCurrencySubtract) {
+        else if (UIGameKeyCodes.isActionCurrencySubtract) {
             GameProfileRPGs.Current.SubtractCurrency(1000);
         }
     }

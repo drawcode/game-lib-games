@@ -23,7 +23,7 @@ public class UIColorCustomType : GameDataObject {
 }
 
 [ExecuteInEditMode]
-public class UIColorCustomTypeObject : UIColorObject  {
+public class UIColorCustomTypeObject : UIColorObject {
 
     UIColorCustomType colorCustomTypes;
     public UIColorType colorType = UIColorType.colorForeground;
@@ -64,26 +64,26 @@ public class UIColorCustomTypeObject : UIColorObject  {
 
         string colorTypeString = colorType.ToString();
 
-        if(colorCustomTypes == null) {
+        if (colorCustomTypes == null) {
             colorCustomTypes = new UIColorCustomType();
         }
 
-        if(colorCustomTypes.ContainsKey(colorTypeString)) {
+        if (colorCustomTypes.ContainsKey(colorTypeString)) {
 
             colorKey = colorCustomTypes.Get<string>(colorType.ToString());
 
-            if(!string.IsNullOrEmpty(colorKey)) {
+            if (!string.IsNullOrEmpty(colorKey)) {
 
                 AppColor appColor = AppColors.Instance.GetById(colorKey);
 
-                if(appColor != null) {
+                if (appColor != null) {
 
                     Color colorTo = appColor.GetColor();
                     colorTo.a = colorAlpha;
                     UIColors.ColorTo(
                         gameObject, colorTo);
 
-                    foreach(Transform t in gameObject.transform) {
+                    foreach (Transform t in gameObject.transform) {
                         UIColors.ColorTo(
                             t.gameObject, colorTo);
                     }

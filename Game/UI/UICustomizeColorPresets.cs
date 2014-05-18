@@ -11,10 +11,8 @@ using Engine.Utility;
 public class UICustomizeColorPresets : UICustomizeSelectObject {
     
     public string type = "character";
-        
     public Camera cameraCustomize;
     public GameObject colorWheelPanel;
-
     public Dictionary<string, UICheckbox> checkboxes;
 
     public override void OnEnable() {
@@ -59,10 +57,10 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
 
         checkboxes = new Dictionary<string, UICheckbox>();
         
-        foreach(AppContentAssetCustomItem customItem 
+        foreach (AppContentAssetCustomItem customItem 
                 in AppContentAssetCustomItems.Instance.GetListByType(type)) {
                         
-            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+            foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
 
                 checkboxes.Add(prop.code, gameObject.Get<UICheckbox>(prop.code));
             }
@@ -75,30 +73,30 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         
         currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
-        foreach(AppContentAssetCustomItem customItem 
+        foreach (AppContentAssetCustomItem customItem 
                 in AppContentAssetCustomItems.Instance.GetListByType(type)) {
 
             Dictionary<string, Color> colors = new Dictionary<string, Color>();
 
-            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
+            foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
 
                 bool update = false;
 
-                foreach(KeyValuePair<string,UICheckbox> pair in checkboxes) {
-                    if(pair.Value == null) {
+                foreach (KeyValuePair<string,UICheckbox> pair in checkboxes) {
+                    if (pair.Value == null) {
                         LogUtil.Log("Checkbox not found:" + pair.Key);
                         continue;
                     }
 
-                    if(pair.Value.isChecked 
-                       && prop.code == pair.Key) {
+                    if (pair.Value.isChecked 
+                        && prop.code == pair.Key) {
                         update = true;
                     }
                 }
 
                 Color colorTo = currentProfileCustomItem.GetCustomColor(prop.code);
 
-                if(update) {
+                if (update) {
                     color.a = 1;
                     colorTo = color;
                 }
@@ -114,10 +112,10 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     
     public override void OnButtonClickEventHandler(string buttonName) {
         
-        if(UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
+        if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
             ChangePresetPrevious();
         }
-        else if(UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetNext();
         }
     }
@@ -130,10 +128,10 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     void OnCheckboxChangedEventHandler(string checkboxName, bool selected) {
         
         //LogUtil.Log("OnCheckboxChangedEventHandler:", " checkboxName:" + checkboxName + " selected:" + selected);
-        if(checkboxes != null) {
+        if (checkboxes != null) {
 
-            foreach(KeyValuePair<string,UICheckbox> pair in checkboxes) {
-                if(UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
+            foreach (KeyValuePair<string,UICheckbox> pair in checkboxes) {
+                if (UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
                     checkboxes[pair.Key].isChecked = selected;
                 }
             }
@@ -165,13 +163,13 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         
         if (index > -2 && index < countPresets) {
 
-            if(initialProfileCustomItem == null) {
+            if (initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
             }
 
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
-            if(index == -1) {                
+            if (index == -1) {                
 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Colors");
 
@@ -196,8 +194,8 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     }
     
     public override void Update() {
-        if(currentObject) {
-            currentObject.transform.Rotate(0f, -50* Time.deltaTime, 0f);
+        if (currentObject) {
+            currentObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
         }
     }
 

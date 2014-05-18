@@ -30,7 +30,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
     public void Awake() {
 
-        if(Instance != null && this != Instance) {
+        if (Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -41,7 +41,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
      
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -77,7 +77,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
         upgradesAvailable -= val;
 
-        if(upgradesAvailable < 0) {
+        if (upgradesAvailable < 0) {
             upgradesAvailable = 0;
         }
 
@@ -86,32 +86,32 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
     void OnButtonClickEventHandler(string buttonName) {
 
-        if(UIUtil.IsButtonClicked(buttonSaveRPG, buttonName)) {
+        if (UIUtil.IsButtonClicked(buttonSaveRPG, buttonName)) {
             SaveRPG();
         }
         //else if(UIUtil.IsButtonClicked(buttonResetRPG, buttonObj.name)) {
         //    ResetRPG();
         //}
-        else if(UIUtil.IsButtonClicked(buttonBuyUpgrades, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonBuyUpgrades, buttonName)) {
             BuyUpgrades();
         }
 
     }
 
     public void SaveRPG() {
-        foreach(UICustomizeCharacterRPGItem item
+        foreach (UICustomizeCharacterRPGItem item
             in listGridRoot.GetComponentsInChildren<UICustomizeCharacterRPGItem>(true)) {
 
-            if(item.rpgCode.ToLower() == GameDataItemRPGAttributes.speed) {
+            if (item.rpgCode.ToLower() == GameDataItemRPGAttributes.speed) {
                 profileGameDataItemRPG.SetSpeed(item.currentValue);
             }
-            else if(item.rpgCode.ToLower() == GameDataItemRPGAttributes.energy) {
+            else if (item.rpgCode.ToLower() == GameDataItemRPGAttributes.energy) {
                 profileGameDataItemRPG.SetEnergy(item.currentValue);
             }
-            else if(item.rpgCode.ToLower() == GameDataItemRPGAttributes.health) {
+            else if (item.rpgCode.ToLower() == GameDataItemRPGAttributes.health) {
                 profileGameDataItemRPG.SetHealth(item.currentValue);
             }
-            else if(item.rpgCode.ToLower() == GameDataItemRPGAttributes.attack) {
+            else if (item.rpgCode.ToLower() == GameDataItemRPGAttributes.attack) {
                 profileGameDataItemRPG.SetAttack(item.currentValue);
             }
         }
@@ -139,14 +139,14 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     }
 
     public void SetUpgradesAvailable(double upgradesAvailableTo) {
-        if(labelUpgradesAvailable != null) {
+        if (labelUpgradesAvailable != null) {
             upgradesAvailable = upgradesAvailableTo;
             labelUpgradesAvailable.text = upgradesAvailableTo.ToString("N0");
         }
     }
  
     public static void LoadData() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.loadData();
         }
     }
@@ -159,7 +159,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
      
         LogUtil.Log("LoadDataCo");
      
-        if(listGridRoot != null) {
+        if (listGridRoot != null) {
             listGridRoot.DestroyChildren();
          
             yield return new WaitForEndOfFrame();
@@ -192,14 +192,14 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         rpgItems.Add(GameDataItemRPGAttributes.attack);          
         //rpgItems.Add(GameDataItemRPGAttributes.defense);           
      
-        foreach(string rpgItem in rpgItems) {
+        foreach (string rpgItem in rpgItems) {
          
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "AItem" + i;
          
             UICustomizeCharacterRPGItem rpg = item.transform.GetComponent<UICustomizeCharacterRPGItem>();
          
-            if(rpg != null) {
+            if (rpg != null) {
                 rpg.Load(rpgItem);
             }                
                          
@@ -209,16 +209,16 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
     void Update() {
 
-        if(GameConfigs.isGameRunning) {
+        if (GameConfigs.isGameRunning) {
             return;
         }
 
-        if(!isVisible) {
+        if (!isVisible) {
             return;
         }
 
-        if(Input.GetKeyDown("u")) {
-            LogUtil.Log("Adding upgrades:" );
+        if (Input.GetKeyDown("u")) {
+            LogUtil.Log("Adding upgrades:");
             GameProfileRPGs.Current.AddUpgrades(5);
             loadData();
         }
