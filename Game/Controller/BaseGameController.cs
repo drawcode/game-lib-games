@@ -82,6 +82,8 @@ public class BaseGameMessages {
     public static string shot = "game-action-shot";
     public static string launch = "game-action-launch";
     public static string state = "game-action-state";
+    public static string gameInitLevelStart = "game-init-level-start";
+    public static string gameInitLevelEnd = "game-init-level-end";
 }
 
 public class BaseGameStatCodes {
@@ -1249,11 +1251,11 @@ public class BaseGameController : GameObjectBehavior {
         GameController.LoadCharacterStartLevel(characterCode, levelCode);
     }
 
-    public virtual void startLevel(string levelCode) {
-        StartCoroutine(startLevelCo(levelCode));
+    public virtual void initLevel(string levelCode) {
+        StartCoroutine(initLevelCo(levelCode));
     }
        
-    public virtual IEnumerator startLevelCo(string levelCode) {
+    public virtual IEnumerator initLevelCo(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
@@ -1263,6 +1265,7 @@ public class BaseGameController : GameObjectBehavior {
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
+
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
         yield return new WaitForSeconds(1f);
@@ -1273,16 +1276,36 @@ public class BaseGameController : GameObjectBehavior {
         GameController.LoadLevel(levelCode);
         
         // TODO load anim
-        
+    }    
+    
+    public virtual void initLevelFinish(string levelCode) {
+        StartCoroutine(initLevelFinishCo(levelCode));
+    }
+    
+    public virtual IEnumerator initLevelFinishCo(string levelCode) {        
+                
+        Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
+
         yield return new WaitForSeconds(1f);
         
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeOut();
         }
-
+        
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
     }
-     
+    
+    public virtual void startLevel(string levelCode) {
+        StartCoroutine(startLevelCo(levelCode));
+    }
+    
+    public virtual IEnumerator startLevelCo(string levelCode) {
+
+        yield return StartCoroutine(initLevelCo(levelCode));
+        
+        yield return StartCoroutine(initLevelFinishCo(levelCode));
+    }
+         
     public virtual void changeLevelFlash() {
         startLevel("1-2");
     }

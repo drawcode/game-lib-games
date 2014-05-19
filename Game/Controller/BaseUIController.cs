@@ -72,6 +72,16 @@ public class BaseUIButtonNames {
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
     public static string buttonGameProductCurrency = "ButtonGameProductCurrency";
 
+    public static string buttonGameProducts = "ButtonGameProducts";   
+    public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";   
+    public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";   
+    public static string buttonGameProductsFeature = "ButtonGameProductsFeature";   
+    public static string buttonGameProductsPickup = "ButtonGameProductsPickup";   
+    public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";   
+    public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";   
+
+    //ButtonCustomizeCharacterRPGBuyUpgrades
+
     // 
         
     public static string buttonGameModeArcade = "ButtonGameModeArcade";
@@ -3170,6 +3180,31 @@ public class BaseUIController : GameObjectBehavior {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
         }
+
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProducts, buttonName)) {
+            GameUIController.ShowProducts();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCharacterSkin, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.characterSkin);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCurrency, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.currency);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsFeature, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.feature);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsPickup, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.pickup);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsPowerup, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.powerup);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsRPGUpgrade, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.rpgUpgrade);
+        }
+
+
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
             
