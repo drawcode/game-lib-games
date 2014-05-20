@@ -2550,7 +2550,7 @@ public class BaseUIController : GameObjectBehavior {
             GameUIPanel.panelResults,
             "RESULTS");
 
-        GameUIPanelFooter.ShowButtonCustomize();
+        //GameUIPanelFooter.ShowButtonCustomize();
      
         StartCoroutine(HideOverlay());
     }

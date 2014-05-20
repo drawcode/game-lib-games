@@ -32,7 +32,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public string uuid = "";
     public string title = "";
     public string description = "";
-    public string gamePlayerItemCode = "item-coin";
+    //public string gamePlayerItemCode = "item-coin";
 
     public double pointValue = 1.0;
 
@@ -112,7 +112,12 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         if(!isCollecting) {
             LogUtil.Log("CollectContent:Collect", true);
                         
-            isCollecting = true;            
+            isCollecting = true;         
+
+            string gamePlayerItemCode = transform.name.Replace(" (Clone)", "");
+            gamePlayerItemCode = gamePlayerItemCode.Replace("(Clone)", "");
+
+            Debug.Log("CollectContent:" + " gamePlayerItemCode:" + gamePlayerItemCode);
 
             GameItem gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
 
@@ -359,25 +364,25 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
             if(Physics.Raycast(ray, out hit, 50000000)) {      
                                 
                 if(hit.collider != null) {
-                    Transform hitTransform = hit.collider.transform;
+                    //Transform hitTransform = hit.collider.transform;
 
                     //string linkName = hitTransform.name.Replace(
                     //      GamePlayerItemMessages.gamePlayerItemCoin + "_","");
                     //
                     //LogUtil.Log("HIT!item:" + hitTransform.name);                                                                   
                                         
-                    if(hitTransform.name.ToLower().Contains(
-                        GamePlayerItemType.itemCoin)) {
+                    //if(hitTransform.name.ToLower().Contains(
+                     //   GamePlayerItemType.itemCoin)) {
                                                 
-                        downCount = 5;
+                    //    downCount = 5;
 
                         //&& state == ARCustomSceneObjectVidariLaunchState.Started
                         //&& playState == ARCustomSceneObjectVidariPlayState.Completed) {                       
                                                 
                         //LogUtil.Log("linkName:" + linkName);                                            
                                                 
-                        CollectContent();       
-                    }
+                    //    CollectContent();       
+                    //}
                 }
             }
         }

@@ -265,7 +265,7 @@ public class BaseItemController : GameObjectBehavior {
     }
     */
  
-    public virtual void spawnItem(GamePlayerItemType type) {
+    //public virtual void spawnItem(GamePlayerItemType type) {
           
         // Position
      
@@ -274,7 +274,7 @@ public class BaseItemController : GameObjectBehavior {
         //Vector3
         //
      
-    }
+    //}
 
     // MESSAGING
 

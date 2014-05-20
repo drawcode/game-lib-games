@@ -194,11 +194,24 @@ public class BaseGamePlayerControllerData {
     //float controllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
+
+    // powerup modifiers
+
+    // speed
+
     public float modifierItemSpeedCurrent = 1.0f;
     public float modifierItemSpeedMin = 1.0f;
     public float modifierItemSpeedMax = 3.0f;
     public float modifierItemSpeedLerpTime = 10f;
     public float modifierItemSpeedLerp = 0f;
+
+    // scale
+        
+    public float modifierItemScaleCurrent = 1.0f;
+    public float modifierItemScaleMin = 1.0f;
+    public float modifierItemScaleMax = 3.0f;
+    public float modifierItemScaleLerpTime = 10f;
+    public float modifierItemScaleLerp = 0f;
 
     // items
     public GamePlayerItemsData itemsData = new GamePlayerItemsData();
@@ -217,6 +230,7 @@ public class BaseGamePlayerRuntimeRPGData {
     public double modifierPower = .5;
     public double modifierAttack = .5;
     public double modifierDefend = .5;
+    public double modifierScale = .5;
 }
 
 public class GamePlayerItemsData : BaseGamePlayerItemsData {
@@ -581,6 +595,17 @@ public class BaseGamePlayerController : GameActor {
         controllerData.modifierItemSpeedLerpTime = (float)duration;;
         controllerData.modifierItemSpeedLerp = 0f;
     }
+    
+    public virtual void HandleItemStateScaleModifier(double val, double duration) {         
+        controllerData.modifierItemScaleCurrent *= (float)val;
+        controllerData.modifierItemScaleLerpTime = (float)duration;;
+        controllerData.modifierItemScaleLerp = 0f;
+                
+        Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
+        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
+        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerpTime:" + controllerData.modifierItemScaleLerpTime);
+        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerp:" + controllerData.modifierItemScaleLerp);
+    }
 
     public virtual void HandleItemUse(GameItem gameItem) {
         
@@ -595,7 +620,12 @@ public class BaseGamePlayerController : GameActor {
         GameDataItemRPG rpg = new GameDataItemRPG();
 
         if(data.HasRPGs()) {
-            rpg = data.GetRPG();
+            rpg = data.GetRPG();            
+            
+            Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
+
+            HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
+            HandleItemStateScaleModifier(rpg.scale, rpg.duration);
         }
         
         // rewards
@@ -636,7 +666,6 @@ public class BaseGamePlayerController : GameActor {
                     GamePlayerProgress.SetStatCoinsPickup(val);     
                     
                     HandleItemStateCurrency(val);
-                    HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
                     
                     broadcastEvent = true;
                     broadcastVal = val;
@@ -647,8 +676,7 @@ public class BaseGamePlayerController : GameActor {
                     double val = item.valDouble * modifier;  
                     
                     HandleItemStateHealth(val);
-                    HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
-                    
+
                     GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(val); // refill
                     GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(val); // refill                        
                     
@@ -656,7 +684,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastVal = val;
                 }
                 
-                if(broadcastEvent) {                        
+                if(broadcastEvent) {        
                     Messenger<string, object>.Broadcast(GameMessages.item, item.code, broadcastVal);
                 }
                 
@@ -1405,6 +1433,8 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.localPosition = Vector3.zero;
                 gameObjectLoad.transform.rotation = gamePlayerModelHolderModel.transform.rotation;
                 gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
+                                
+                initialScale = transform.localScale;
                 
                 //LogUtil.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
@@ -3732,7 +3762,24 @@ public class BaseGamePlayerController : GameActor {
             controllerData.modifierItemSpeedCurrent = Mathf.Clamp(
                 controllerData.modifierItemSpeedCurrent, 0, 5);
         }
+
+        // scale
+        
+        if(controllerData.modifierItemScaleLerp < 1f) {
+            
+            controllerData.modifierItemScaleLerp += Time.deltaTime / (controllerData.modifierItemScaleLerpTime * 1000);
+            
+            controllerData.modifierItemScaleCurrent = Mathf.Lerp(
+                controllerData.modifierItemScaleCurrent, 
+                controllerData.modifierItemScaleMin, 
+                controllerData.modifierItemScaleLerp);     
+            
+            controllerData.modifierItemScaleCurrent = Mathf.Clamp(
+                controllerData.modifierItemScaleCurrent, 0, 5);
+        }
     }
+
+    public Vector3 initialScale = Vector3.one;
 
     public virtual void HandleRPGProperties() {
 
@@ -3744,20 +3791,28 @@ public class BaseGamePlayerController : GameActor {
                 GetPlayerProgress();
             }
     
-            controllerData.runtimeRPGData.modifierSpeed = (controllerData.currentRPGItem.GetSpeed() / 3
-                + controllerData.rpgModifierDefault);
+            controllerData.runtimeRPGData.modifierSpeed = controllerData.currentRPGItem.GetSpeed();
 
-            controllerData.runtimeRPGData.modifierEnergy = (controllerData.currentRPGItem.GetEnergy() / 3
-                + controllerData.rpgModifierDefault)
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy() * 1.2f;
+            controllerData.runtimeRPGData.modifierEnergy = controllerData.currentRPGItem.GetEnergy()
+                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+
+            controllerData.runtimeRPGData.modifierHealth = controllerData.currentRPGItem.GetHealth()
+                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth();
     
-            controllerData.runtimeRPGData.modifierHealth = (controllerData.currentRPGItem.GetHealth() / 3
-                + controllerData.rpgModifierDefault)
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth() * 1.2f;
-    
-            controllerData.runtimeRPGData.modifierAttack = (controllerData.currentRPGItem.GetAttack() / 3
-                + controllerData.rpgModifierDefault)
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy() * 1.2f;
+            controllerData.runtimeRPGData.modifierAttack = controllerData.currentRPGItem.GetAttack()
+                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+
+            controllerData.runtimeRPGData.modifierScale = controllerData.currentRPGItem.GetScale();
+
+            //Debug.Log("modifierScale:" + controllerData.runtimeRPGData.modifierScale);
+            //Debug.Log("modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
+                        
+            Vector3 scalePos = initialScale * Mathf.Clamp((float)controllerData.runtimeRPGData.modifierScale
+                * controllerData.modifierItemScaleCurrent, .4f, 2.3f);
+            
+            //Debug.Log("scalePos:" + scalePos);
+
+            transform.localScale = scalePos;
     
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.walkSpeed = Mathf.Clamp(
@@ -3836,25 +3891,7 @@ public class BaseGamePlayerController : GameActor {
 
                 controllerData.thirdPersonController.Init();
 
-                controllerData.thirdPersonController.walkSpeed = 
-                        5 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                    controllerData.runtimeRPGData.modifierEnergy);
-
-                controllerData.thirdPersonController.trotSpeed = 
-                        12 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                    controllerData.runtimeRPGData.modifierEnergy);
-
-                controllerData.thirdPersonController.runSpeed = 
-                        20 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                    controllerData.runtimeRPGData.modifierEnergy);
-
-                controllerData.thirdPersonController.inAirControlAcceleration = 3;
-                controllerData.thirdPersonController.jumpHeight = .8f;
-                controllerData.thirdPersonController.extraJumpHeight = 1f;
-                controllerData.thirdPersonController.trotAfterSeconds = .5f;
-                controllerData.thirdPersonController.getUserInput = false;
-                controllerData.thirdPersonController.capeFlyGravity = 8f;
-                controllerData.thirdPersonController.gravity = 16f;
+                HandleRPGProperties();
             }
             
             // 
@@ -3874,21 +3911,21 @@ public class BaseGamePlayerController : GameActor {
                     controllerData.navMeshAgent.height = 3.19f;
                     controllerData.navMeshAgent.radius = 1.29f;
                     controllerData.navMeshAgent.baseOffset = -0.30f;
-                    controllerData.navMeshAgent.stoppingDistance = 3f;
+                    controllerData.navMeshAgent.stoppingDistance = 2f;
                     //}
                     
                     controllerData.navMeshAgent.speed = 
-                        10 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
+                        12 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
                         controllerData.runtimeRPGData.modifierEnergy) + 
-                        UnityEngine.Random.Range(1, 3);
+                        UnityEngine.Random.Range(1, 5);
                     
                     controllerData.navMeshAgent.acceleration = 
                         8 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
                         controllerData.runtimeRPGData.modifierEnergy) + 
-                        UnityEngine.Random.Range(1, 3);
+                        UnityEngine.Random.Range(1, 5);
                     
                     controllerData.navMeshAgent.angularSpeed = 
-                        120 + UnityEngine.Random.Range(1, 3);
+                        120 + UnityEngine.Random.Range(1, 5);
 
                 }
             }
@@ -4188,8 +4225,6 @@ public class BaseGamePlayerController : GameActor {
 
         }
 
-        HandleItemProperties();
-
         bool shouldBeGrounded = true;
         if (controllerData.thirdPersonController != null) {
             if (controllerData.thirdPersonController.IsJumping()) {
@@ -4200,6 +4235,11 @@ public class BaseGamePlayerController : GameActor {
         if (shouldBeGrounded) {
             ResetPositionAir(0f);
         }
+        
+        if (IsPlayerControlled) {
+            HandleItemProperties();
+            HandleRPGProperties();
+        }
 
         // periodic      
      
@@ -4209,7 +4249,6 @@ public class BaseGamePlayerController : GameActor {
             runUpdate = true;
 
             if (IsPlayerControlled) {
-                HandleRPGProperties();
                 Score(2 * 1);
             }
         }
