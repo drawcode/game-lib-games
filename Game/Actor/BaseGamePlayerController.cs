@@ -807,7 +807,7 @@ public class BaseGamePlayerController : GameActor {
     public bool playerEffectsGroundShow {
         get {
             
-            if(FPSDisplay.isUnder25FPS) {
+            if(FPSDisplay.isUnder20FPS) {
                 return false;
             }
 
@@ -3426,7 +3426,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void UpdatePhysicsState() {
 
-
+        StartCoroutine(UpdatePhysicStateCo());
     }
 
     public virtual IEnumerator UpdatePhysicStateCo() {
@@ -3750,6 +3750,7 @@ public class BaseGamePlayerController : GameActor {
 
         // speed
 
+        /*
         if(controllerData.modifierItemSpeedLerp < 1f) {
 
             controllerData.modifierItemSpeedLerp += Time.deltaTime / (controllerData.modifierItemSpeedLerpTime * 1000);
@@ -3761,7 +3762,7 @@ public class BaseGamePlayerController : GameActor {
 
             controllerData.modifierItemSpeedCurrent = Mathf.Clamp(
                 controllerData.modifierItemSpeedCurrent, 0, 5);
-        }
+        }*/
 
         // scale
         
