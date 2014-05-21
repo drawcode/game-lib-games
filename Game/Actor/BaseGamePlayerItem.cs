@@ -42,7 +42,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public Transform cameraTransform;
     public bool allowCollect = false;
     public bool isCollecting = false;
-    public float collectRange = 3f;
+    public float collectRange = 5f;
                
     public virtual void Awake() {
         bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);

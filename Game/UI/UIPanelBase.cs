@@ -50,25 +50,25 @@ public class UIPanelBase : UIAppPanel {
         leftOpenX = 0f;
     [NonSerialized]
     public float
-        leftClosedX = -2500f;
+        leftClosedX = -4500f;
     [NonSerialized]
     public float
         rightOpenX = 0f;
     [NonSerialized]
     public float
-        rightClosedX = 2500f;
+        rightClosedX = 4500f;
     [NonSerialized]
     public float
         bottomOpenY = 0f;
     [NonSerialized]
     public float
-        bottomClosedY = -2500f;
+        bottomClosedY = -4500f;
     [NonSerialized]
     public float
         topOpenY = 0f;
     [NonSerialized]
     public float
-        topClosedY = 2500f;
+        topClosedY = 4500f;
     public int increment = 0;
     public List<string> panelTypes = new List<string>();//UIPanelBaseTypes.typeDefault;
 

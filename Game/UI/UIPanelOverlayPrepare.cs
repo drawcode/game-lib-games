@@ -290,7 +290,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
         UIColors.UpdateColors();
 
-        InvokeRepeating("ShowOverviewTip", 0, 6);
+        InvokeRepeating("ShowOverviewTip", 0, 15);
     }
 
     List<AppContentTip> currentTips;

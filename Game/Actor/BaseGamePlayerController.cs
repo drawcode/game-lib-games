@@ -202,7 +202,7 @@ public class BaseGamePlayerControllerData {
     public float modifierItemSpeedCurrent = 1.0f;
     public float modifierItemSpeedMin = 1.0f;
     public float modifierItemSpeedMax = 3.0f;
-    public float modifierItemSpeedLerpTime = 10f;
+    public float modifierItemSpeedLerpTime = 5f;
     public float modifierItemSpeedLerp = 0f;
 
     // scale
@@ -210,7 +210,7 @@ public class BaseGamePlayerControllerData {
     public float modifierItemScaleCurrent = 1.0f;
     public float modifierItemScaleMin = 1.0f;
     public float modifierItemScaleMax = 3.0f;
-    public float modifierItemScaleLerpTime = 10f;
+    public float modifierItemScaleLerpTime = 5f;
     public float modifierItemScaleLerp = 0f;
 
     // items
@@ -364,7 +364,6 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerModelHolderWeaponsHolder;
     public GameObject gamePlayerModelHolderItems;
     public GameObject gamePlayerModelHolderSkills;
-
     public Vector3 initialGamePlayerWeaponContainer = Vector3.zero;
     public Vector3 currentGamePlayerWeaponContainer = Vector3.zero;
 
@@ -592,13 +591,15 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandleItemStateSpeedModifier(double val, double duration) {         
         controllerData.modifierItemSpeedCurrent *= (float)val;
-        controllerData.modifierItemSpeedLerpTime = (float)duration;;
+        controllerData.modifierItemSpeedLerpTime = (float)duration;
+        ;
         controllerData.modifierItemSpeedLerp = 0f;
     }
     
     public virtual void HandleItemStateScaleModifier(double val, double duration) {         
         controllerData.modifierItemScaleCurrent *= (float)val;
-        controllerData.modifierItemScaleLerpTime = (float)duration;;
+        controllerData.modifierItemScaleLerpTime = (float)duration;
+        ;
         controllerData.modifierItemScaleLerp = 0f;
                 
         Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
@@ -611,7 +612,7 @@ public class BaseGamePlayerController : GameActor {
         
         GameDataObjectItem data = gameItem.data;
         
-        if(data == null) {
+        if (data == null) {
             return;
         }
         
@@ -619,7 +620,7 @@ public class BaseGamePlayerController : GameActor {
 
         GameDataItemRPG rpg = new GameDataItemRPG();
 
-        if(data.HasRPGs()) {
+        if (data.HasRPGs()) {
             rpg = data.GetRPG();            
             
             Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
@@ -630,23 +631,23 @@ public class BaseGamePlayerController : GameActor {
         
         // rewards
         
-        if(data.HasRewards()) {
+        if (data.HasRewards()) {
             
             List<GameDataItemReward> items = data.rewards;
             
             bool broadcastEvent = false;
             object broadcastVal = null;
             
-            foreach(GameDataItemReward item in items) {
+            foreach (GameDataItemReward item in items) {
                 
                 broadcastEvent = false;
                 broadcastVal = null;
                 
-                if(item.val == null) {
+                if (item.val == null) {
                     continue;
                 }
                 
-                if(item.code == GameDataItemReward.xp) {
+                if (item.code == GameDataItemReward.xp) {
 
                     double val = item.valDouble * modifier;   
                     
@@ -657,8 +658,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                
-                else if(item.code == GameDataItemReward.currency) {
+                else if (item.code == GameDataItemReward.currency) {
                     
                     double val = item.valDouble * modifier;   
                     
@@ -670,8 +670,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                
-                else if(item.code == GameDataItemReward.health) {
+                else if (item.code == GameDataItemReward.health) {
                     
                     double val = item.valDouble * modifier;  
                     
@@ -684,7 +683,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastVal = val;
                 }
                 
-                if(broadcastEvent) {        
+                if (broadcastEvent) {        
                     Messenger<string, object>.Broadcast(GameMessages.item, item.code, broadcastVal);
                 }
                 
@@ -695,11 +694,11 @@ public class BaseGamePlayerController : GameActor {
         
         GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
         
-        if(data.HasSounds()) {
+        if (data.HasSounds()) {
             
             List<GameDataSound> items = data.sounds;
             
-            foreach(GameDataSound item in items) {
+            foreach (GameDataSound item in items) {
                 item.PlaySoundType(GameDataSound.reward);
             }
         }           
@@ -807,7 +806,7 @@ public class BaseGamePlayerController : GameActor {
     public bool playerEffectsGroundShow {
         get {
             
-            if(FPSDisplay.isUnder20FPS) {
+            if (FPSDisplay.isUnder20FPS) {
                 return false;
             }
 
@@ -817,7 +816,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void PlayerEffectsGroundFadeIn() {
 
-        if(!playerEffectsGroundShow) {
+        if (!playerEffectsGroundShow) {
             return;
         }
 
@@ -827,7 +826,7 @@ public class BaseGamePlayerController : GameActor {
     
     public virtual void PlayerEffectsGroundFadeOut() {
         
-        if(!playerEffectsGroundShow) {
+        if (!playerEffectsGroundShow) {
             return;
         }
 
@@ -853,7 +852,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void PlayerEffectsGroundTime(float time) {
         
-        if(!playerEffectsGroundShow) {
+        if (!playerEffectsGroundShow) {
             return;
         }
 
@@ -910,7 +909,7 @@ public class BaseGamePlayerController : GameActor {
     
     public virtual void HandlePlayerEffectsGroundTick() {
         
-        if(!playerEffectsGroundShow) {
+        if (!playerEffectsGroundShow) {
             return;
         }
 
@@ -1435,6 +1434,19 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                                 
                 initialScale = transform.localScale;
+
+                // load items
+
+                foreach (GamePlayerObjectItem objectItem 
+                        in gameObjectLoad.GetComponentsInChildren<GamePlayerObjectItem>(true)) {
+
+                    if (IsPlayerControlled) {
+                        objectItem.gameObject.Show();
+                    }
+                    else {
+                        objectItem.gameObject.Hide();                        
+                    }
+                }
                 
                 //LogUtil.Log("LoadCharacter:create game object:gameObjectLoad.name:" + gameObjectLoad.name);
 
@@ -1459,6 +1471,8 @@ public class BaseGamePlayerController : GameActor {
         ChangePlayerState(controllerState);
              
         LoadWeapons();
+
+
 
         controllerData.loadingCharacter = false;
     }
@@ -1502,7 +1516,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadWeapons() {
         
         //LogUtil.Log("LoadWeapons");
-        if(gamePlayerModelHolderWeaponsHolder != null) {
+        if (gamePlayerModelHolderWeaponsHolder != null) {
             initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
             currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
 
@@ -1569,7 +1583,7 @@ public class BaseGamePlayerController : GameActor {
         go.ResetPosition();
         go.ResetRotation();
 
-        if(GameConfigs.isGameRunning && IsPlayerControlled) {
+        if (GameConfigs.isGameRunning && IsPlayerControlled) {
             UINotificationDisplayTip.Instance.QueueTip(
                 "Weapon Loaded:" + gameWeaponData.display_name,
                 gameWeaponData.description);
@@ -1833,7 +1847,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if(controllerData.mountData.isMountedVehicle) {
+        if (controllerData.mountData.isMountedVehicle) {
             Unmount();
         }
         else {
@@ -1849,23 +1863,23 @@ public class BaseGamePlayerController : GameActor {
         float mountRange = 10f;
         float shortestDistance = mountRange * 2;
 
-        foreach(Collider collide in Physics.OverlapSphere(transform.position, mountRange)) {
+        foreach (Collider collide in Physics.OverlapSphere(transform.position, mountRange)) {
 
             Transform t = collide.transform;
 
-            if(t != null) {
+            if (t != null) {
 
-                if(t.name.ToLower().Contains("mount")) {
+                if (t.name.ToLower().Contains("mount")) {
 
                     T mountObject = t.gameObject.Get<T>();
 
-                    if(mountObject != null) {
+                    if (mountObject != null) {
                        
                         float currentDistance = Vector3.Distance(
                             transform.position,
                             mountObject.transform.position);
 
-                        if(currentDistance < shortestDistance) {
+                        if (currentDistance < shortestDistance) {
                             found = true;
                             shortestDistance = currentDistance; 
                             nearest = mountObject;
@@ -1876,7 +1890,7 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        if(found && nearest != null) {
+        if (found && nearest != null) {
             Mount(nearest.gameObject);
         }
     }
@@ -1894,7 +1908,7 @@ public class BaseGamePlayerController : GameActor {
 
                 GameObjectMountWeaponHolder weaponHolder = controllerData.mountData.mountVehicle.GetWeaponHolder();
 
-                if(weaponHolder != null) {
+                if (weaponHolder != null) {
                     currentGamePlayerWeaponContainer = weaponHolder.transform.position;
                     //gamePlayerModelHolderWeaponsHolder.transform.position = currentGamePlayerWeaponContainer;
                     
@@ -2126,7 +2140,7 @@ public class BaseGamePlayerController : GameActor {
             
             float power = projectilePower / 10f;
 
-            if(IsPlayerControlled) {
+            if (IsPlayerControlled) {
                 // 1/20th power for friendly fire
                 power = power / 20f;
             }
@@ -2516,7 +2530,6 @@ public class BaseGamePlayerController : GameActor {
         // USE
 
     }
-
     
     public virtual void InputMount() {
         // MOUNT
@@ -3436,7 +3449,7 @@ public class BaseGamePlayerController : GameActor {
         // apply the controllerData.impact force:
         //if (controllerData.impact.magnitude > 0.3f) {
         
-        if(controllerData.characterController.enabled) {
+        if (controllerData.characterController.enabled) {
             controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
         }
         //}
@@ -3750,7 +3763,6 @@ public class BaseGamePlayerController : GameActor {
 
         // speed
 
-        /*
         if(controllerData.modifierItemSpeedLerp < 1f) {
 
             controllerData.modifierItemSpeedLerp += Time.deltaTime / (controllerData.modifierItemSpeedLerpTime * 1000);
@@ -3762,11 +3774,11 @@ public class BaseGamePlayerController : GameActor {
 
             controllerData.modifierItemSpeedCurrent = Mathf.Clamp(
                 controllerData.modifierItemSpeedCurrent, 0, 5);
-        }*/
+        }
 
         // scale
         
-        if(controllerData.modifierItemScaleLerp < 1f) {
+        if (controllerData.modifierItemScaleLerp < 1f) {
             
             controllerData.modifierItemScaleLerp += Time.deltaTime / (controllerData.modifierItemScaleLerpTime * 1000);
             
@@ -3809,7 +3821,7 @@ public class BaseGamePlayerController : GameActor {
             //Debug.Log("modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
                         
             Vector3 scalePos = initialScale * Mathf.Clamp((float)controllerData.runtimeRPGData.modifierScale
-                * controllerData.modifierItemScaleCurrent, .4f, 2.3f);
+                * controllerData.modifierItemScaleCurrent, .4f, 2.4f);
             
             //Debug.Log("scalePos:" + scalePos);
 
@@ -3818,15 +3830,15 @@ public class BaseGamePlayerController : GameActor {
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.walkSpeed = Mathf.Clamp(
                     5 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 4, 8)
-                    * controllerData.modifierItemSpeedCurrent;
+                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
     
                 controllerData.thirdPersonController.trotSpeed = Mathf.Clamp(
                     12 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 9, 14)
-                    * controllerData.modifierItemSpeedCurrent;
+                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
     
                 controllerData.thirdPersonController.runSpeed = Mathf.Clamp(
-                    20 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 14, 28)
-                    * controllerData.modifierItemSpeedCurrent;
+                    20 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 14, 34)
+                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
     
                 controllerData.thirdPersonController.inAirControlAcceleration = 3;
                 controllerData.thirdPersonController.jumpHeight = .8f;
@@ -3849,11 +3861,11 @@ public class BaseGamePlayerController : GameActor {
             // 
             // CHARACTER
 
-            if(gameObject == null) {
+            if (gameObject == null) {
                 return;
             }
 
-            if(controllerData == null) {
+            if (controllerData == null) {
                 return;
             }
          
@@ -4186,8 +4198,8 @@ public class BaseGamePlayerController : GameActor {
                 gamePlayerModelHolder.transform.rotation = 
                     Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
 
-                if(controllerData.mountData.isMountedVehicle) {
-                    controllerData.mountData.mountVehicle.SetMountWeaponRotator( 
+                if (controllerData.mountData.isMountedVehicle) {
+                    controllerData.mountData.mountVehicle.SetMountWeaponRotator(
                         Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection));
                 }
 
@@ -4204,7 +4216,7 @@ public class BaseGamePlayerController : GameActor {
             }
             else {
                                 
-                if(controllerData.mountData.isMountedVehicle) {
+                if (controllerData.mountData.isMountedVehicle) {
                     //controllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
                 }
 
@@ -4419,7 +4431,7 @@ public class BaseGamePlayerController : GameActor {
             && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
             float currentSpeed = 0;
 
-            if(controllerData.mountData.isMountedVehicle) {
+            if (controllerData.mountData.isMountedVehicle) {
                 currentSpeed = controllerData.mountData.mountVehicle.driver.currentSpeed;
             }
             else {
@@ -4514,11 +4526,11 @@ public class BaseGamePlayerController : GameActor {
  
     public override void Update() {        
         
-        if(GameConfigs.isUIRunning) {
+        if (GameConfigs.isUIRunning) {
             return;
         }
         
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
      
