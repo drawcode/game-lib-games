@@ -27,8 +27,14 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public UILabel labelOverviewTip;
     public UILabel labelOverviewType;
     public UILabel labelOverviewStatus;
+    
+    public UILabel labelTipTitle;
+    public UILabel labelTipDescription;
+    public UILabel labelTipType;
 
     public UIImageButton buttonReady;
+    
+    public UIImageButton buttonTipNext;
         
     //public UIPanelTips tips
 
@@ -60,7 +66,6 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     
     public override void Init() {
         base.Init();
-
         Ready();
     }
     
@@ -108,6 +113,12 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     }
 
     void OnButtonClickEventHandler(string buttonName) {
+
+        if(UIUtil.IsButtonClicked(buttonTipNext, buttonName)) {           
+            
+            CancelInvoke("ShowOverviewTip");
+            ShowOverviewTip();
+        }
         /*
         if (UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
             Ready();
@@ -126,6 +137,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public void Ready() {
         //HideAll();
+        HideStates();
     }
 
     public void ChangeTipsState(AppOverviewFlowState flowStateTo) {
@@ -241,7 +253,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
             //LogUtil.Log("OnGameLevelItemsLoadedHandler2");
         }
-
+        
+        UIUtil.SetLabelValue(labelOverviewTip, "READY TO PLAY?");
         ShowButtonPlay();
     }
 
@@ -261,6 +274,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
         HideStates();
 
+        containerOverview.Show();
+
         // Update team display
 
         //LogUtil.Log("ShowOverview:");
@@ -274,11 +289,45 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         AnimateInBottom(containerOverview);
 
         UIColors.UpdateColors();
+
+        InvokeRepeating("ShowOverviewTip", 0, 6);
     }
+
+    List<AppContentTip> currentTips;
+    AppContentTip currentTip;
+
+    public void ShowOverviewTip() {
+        
+        if(currentTips == null) {
+            currentTips = AppContentTips.Instance.items;
+        }
+
+        if(currentTips == null) {
+            return;
+        }
+
+        if(currentTips.Count == 0) {
+            return;
+        }
+        
+        currentTips.Shuffle();
+
+        currentTip = currentTips[0];
+
+        UIUtil.SetLabelValue(labelTipTitle, currentTip.display_name);
+        UIUtil.SetLabelValue(labelTipDescription, currentTip.description);
+        UIUtil.SetLabelValue(labelTipType, currentTip.keys[0] + " Tips");
+                
+    }
+
 
     public void HideOverview() {
 
         AnimateOutBottom(containerOverview, 0f, 0f);
+        
+        containerOverview.Hide();
+
+        CancelInvoke("ShowOverviewTip");
     }
 
     public void ShowCurrentState() {        
@@ -288,6 +337,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public void HideStates() { 
 
         HideButtonPlay();
+
+        UIUtil.SetLabelValue(labelOverviewTip, "Loading Level...");
 
         UIPanelDialogBackground.HideAll();
         

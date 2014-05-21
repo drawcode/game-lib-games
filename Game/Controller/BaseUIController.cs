@@ -3217,6 +3217,10 @@ public class BaseUIController : GameObjectBehavior {
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
             
             //AdNetworks.ShowFullscreenAd();
+
+            //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
+            //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
+            //}
             
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
             GameController.LoadStartLevel("1-1");
