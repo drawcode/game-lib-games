@@ -1266,6 +1266,8 @@ public class BaseGameController : GameObjectBehavior {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
 
+        UIPanelOverlayPrepare.ShowDefault();
+
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
         yield return new WaitForSeconds(1f);
@@ -1293,18 +1295,24 @@ public class BaseGameController : GameObjectBehavior {
         }
         
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
+        
+        UIPanelOverlayPrepare.HideAll();
+        
+        Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
     }
     
     public virtual void startLevel(string levelCode) {
-        StartCoroutine(startLevelCo(levelCode));
+        initLevel(levelCode);
     }
-    
+
+    /*
     public virtual IEnumerator startLevelCo(string levelCode) {
 
         yield return StartCoroutine(initLevelCo(levelCode));
         
         yield return StartCoroutine(initLevelFinishCo(levelCode));
     }
+    */
          
     public virtual void changeLevelFlash() {
         startLevel("1-2");

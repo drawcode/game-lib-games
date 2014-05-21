@@ -98,6 +98,8 @@ public class BaseUIButtonNames {
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
     public static string buttonGameNetworkJoinGame = "ButtonGameNetworkJoinGame";
+    public static string buttonGameInitFinish = "ButtonGameInitFinish";
+    //ButtonGameInitFinish
 
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
@@ -3203,12 +3205,18 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsRPGUpgrade, buttonName)) {
             GameUIController.ShowProducts(GameProductType.rpgUpgrade);
         }
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
 
+            UIPanelOverlayPrepare.HideAll();
 
+            GameController.InitLevelFinish();
+
+        }  
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
             
-            AdNetworks.ShowFullscreenAd();
+            //AdNetworks.ShowFullscreenAd();
             
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
             GameController.LoadStartLevel("1-1");
