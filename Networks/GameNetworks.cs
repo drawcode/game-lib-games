@@ -126,15 +126,6 @@ public class GameNetworks : GameObjectBehavior {
         }
 		
         Instance = this;
-				
-#if UNITY_EDITOR	
-#elif UNITY_STANDALONE_OSX
-#elif UNITY_STANDALONE_WIN
-#elif UNITY_IPHONE
-#elif UNITY_ANDROID
-
-#endif
-
 	}
 		
 	void Start() {
@@ -254,7 +245,7 @@ public class GameNetworks : GameObjectBehavior {
         InitEvents(GameNetworkType.gameNetworkAppleGameCenter);		
 		LoginNetwork(GameNetworkType.gameNetworkAppleGameCenter);			
 		
-		LogUtil.Log("InitNetwork iOS Apple GameCenter init...");
+        Debug.Log("InitNetwork iOS Apple GameCenter init...");
 #endif
 		
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY	
@@ -279,7 +270,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public static bool IsThirdPartyNetworkAvailable(string networkTypeTo) {
 
-        LogUtil.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
+        Debug.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
 		
 		bool isAvailable = false;
 		
@@ -291,7 +282,7 @@ public class GameNetworks : GameObjectBehavior {
 			isAvailable = isAvailableAndroidGooglePlay;
 		}
                 
-        LogUtil.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
+        Debug.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
 	
 		return isAvailable;
 	}
@@ -754,12 +745,13 @@ public class GameNetworks : GameObjectBehavior {
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER			
     		if(GameCenterBinding.isGameCenterAvailable()) {
-    			GameCenterBinding.authenticateLocalPlayer();
+                GameCenterBinding.authenticateLocalPlayer();
+                Debug.Log("GameCenter LoginNetwork is available...");
     		}
 			
 		// Check existing achievements and update them if missing
 			
-		LogUtil.Log("GameCenter LoginNetwork...");
+            Debug.Log("GameCenter LoginNetwork...");
 #endif		
         }
 
@@ -794,7 +786,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 		GameCenterBinding.getAchievements();
 			
-		//LogUtil.Log("GameCenter GetAchievements...");
+		Debug.Log("GameCenter GetAchievements...");
 #endif	
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
@@ -937,7 +929,7 @@ public class GameNetworks : GameObjectBehavior {
 	}
 	
     public void setLocalProfileToNetworkUsername(string networkTypeTo) {
-		LogUtil.Log("setLocalProfileToNetworkUsername");
+        Debug.Log("setLocalProfileToNetworkUsername");
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {			
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 				setLocalProfileToNetworkUsernameAppleGameCenter();
@@ -952,7 +944,7 @@ public class GameNetworks : GameObjectBehavior {
 	public void setLocalProfileToNetworkUsernameAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER	
 		string networkUsername = GameCenterBinding.playerAlias();
-		LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
+        Debug.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
 		
 		if(!string.IsNullOrEmpty(networkUsername)) {
 			//GameState.ChangeUser(networkUsername);
@@ -1019,7 +1011,7 @@ public class GameNetworks : GameObjectBehavior {
 		networkUser = GameCenterBinding.playerAlias();
 		if(networkUser != GameProfiles.Current.username 
 			&& !string.IsNullOrEmpty(networkUser)) {
-			LogUtil.Log("GetNetworkUsername: " + networkUser);			
+			Debug.Log("GetNetworkUsername: " + networkUser);			
 		}
 #endif			
 		return networkUser; 
@@ -1568,18 +1560,21 @@ public class GameNetworks : GameObjectBehavior {
     
 #if GAMENETWORK_IOS_APPLE_GAMECENTER    
     void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
+        Debug.Log("GameNetworks:GameCenter:achievementsLoaded"); 
         gameCenterAchievementsNetwork = achievementsNetworkResult;
         CheckAchievementsState();
 	}
 	
-	void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
+    void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
+        Debug.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
 		gameCenterAchievementsMetaNetwork = achievementsMetaNetworkResult;
-		CheckAchievementsState();
+        CheckAchievementsState();
 	}
 	
-	void playerAuthenticated() {
+    void playerAuthenticated() {
+        Debug.Log("GameNetworks:GameCenter:playerAuthenticated"); 
 		SetLocalProfileToNetworkUsername();
-		GetAchievements();
+        GetAchievements();
  	}
 #endif	
 	

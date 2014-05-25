@@ -80,7 +80,7 @@ public class BaseGamePlayerControllerData {
     public bool initialized = false;
     public bool dying = false;
     public float lastDie = 0f;
-    public string lastPrefabName = null;
+    public string lastCharacterCode = null;
     
     // animation
     public GamePlayerControllerAnimation gamePlayerControllerAnimation;
@@ -330,7 +330,7 @@ public class BaseGamePlayerMountData {
 public class BaseGamePlayerController : GameActor {
  
     //public string uuid = "";
-    public string prefabName = "bot1";
+    public string characterCode = "character-bot-1";
     public Transform currentTarget;
  
     // asset
@@ -397,6 +397,8 @@ public class BaseGamePlayerController : GameActor {
     public float characterRadius = 1f;
     public float characterHeight = 2.5f;
     public Vector3 characterCenter = new Vector3(0f, 0f, 0f);
+    
+    GameObject gameObjectLoad = null;
      
     // weapons
     public Dictionary<string, GamePlayerWeapon> weapons = new Dictionary<string, GamePlayerWeapon>();
@@ -510,7 +512,7 @@ public class BaseGamePlayerController : GameActor {
             
         InitControls();
      
-        LoadCharacter(prefabName);  
+        LoadCharacter(characterCode);  
 
         //LoadWeapons();
      
@@ -1034,7 +1036,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastCharacterLoadedCheck = Time.time;
             
             if (!isCharacterLoaded) {
-                LoadCharacter(prefabName);
+                LoadCharacter(characterCode);
             }
         }        
 
@@ -1134,38 +1136,7 @@ public class BaseGamePlayerController : GameActor {
             return runtimeData.health > 0f ? true : false;
         }
     }
- 
-    public virtual bool isRanged {
-        get {
-            return prefabName.IndexOf("playerGirl") > -1 ? true : false;
-        }
-    }
-
-    public virtual bool isMelee {
-        get {
-            return prefabName.IndexOf("playerBoy") > -1 ? false : true;
-        }
-    }
-
-    public virtual bool isGirl {
-        get {
-            return prefabName.IndexOf("playerGirl") > -1 ? true : false;
-        }
-    }
-
-    public virtual bool isBoy {
-        get {
-            return prefabName.IndexOf("playerBoy") > -1 ? true : false;
-        }
-    }
-
-    public virtual bool isBotZombie {
-        get {
-            return (prefabName.ToLower().IndexOf("bot1") > -1)
-             ? true : false;
-        }
-    }
- 
+  
     public virtual bool IsPlayerControlled {
         get {
             if (controllerState == GamePlayerControllerState.ControllerPlayer
@@ -1295,8 +1266,7 @@ public class BaseGamePlayerController : GameActor {
         }
         else {
             controllerData.audioObjectFootstepsSource.pitch = 0f;
-        }
-    
+        }    
     }
 
     public virtual bool isCharacterLoaded {
@@ -1304,69 +1274,46 @@ public class BaseGamePlayerController : GameActor {
             return gamePlayerModelHolderModel.transform.childCount > 0;   
         }
     }
- 
-    public virtual void LoadCharacter(string prefabNameObject) {
-        prefabName = prefabNameObject;
+     
+    public virtual void LoadCharacter(string characterCodeTo) {
+
+        characterCode = characterCodeTo;
 
         if (controllerData == null) {
             controllerData = new GamePlayerControllerData();
         }
 
         //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
-        if (controllerData.lastPrefabName != prefabName || controllerData.lastPrefabName == null || !isCharacterLoaded) {
-            controllerData.lastPrefabName = prefabName;
+        if (controllerData.lastCharacterCode != characterCode 
+            || controllerData.lastCharacterCode == null 
+            || !isCharacterLoaded) {
+
+            controllerData.lastCharacterCode = characterCode;
+
             if (gameObject.activeInHierarchy) {
-                StartCoroutine(LoadCharacterFromPrefab(prefabName));
+                StartCoroutine(LoadCharacterObject());
             }
         }
     }
-
-    GameObject gameObjectLoad = null;
  
-    public virtual IEnumerator LoadCharacterFromPrefab(string prefabNameObject) {
+    public virtual IEnumerator LoadCharacterObject() {
         
         if (controllerData.loadingCharacter) {
             yield break;
-        }          
-        
-        if (!IsPlayerControlled) {
-            // apply team 
-            
-            GameTeam team = GameTeams.Current;
-            
-            // TODO randomize
-            
-            if (team != null) {
-                if (team.data != null) {
+        }   
 
-                    GameDataModel item = team.data.GetModel();
+        GameCharacter gameCharacter = 
+            GameCharacters.Instance.GetById(characterCode);
 
-                    if (item != null) {
-                        prefabName = item.code;
-                        prefabNameObject = item.code;
-                        controllerData.lastPrefabName = item.code;                    
-                    }
-                    /*
-                    foreach (GameTeamDataItem item in team.data.models) {
-                        prefabName = item.code;
-                        prefabNameObject = item.code;
-                        controllerData.lastPrefabName = item.code;
-                        break;
-                    }
-*/
-                }
-            }            
+        if(gameCharacter == null) {
+            yield break;
         }
-
-        string path = 
-         ContentPaths.appCacheVersionSharedPrefabCharacters + prefabNameObject;
-
         controllerData.loadingCharacter = true;
         
         //LogUtil.Log("LoadCharacter:path:" + path);
         
-        GameObject prefabObject = PrefabsPool.PoolPrefab(path);
-                
+        GameObject prefabObject = gameCharacter.LoadPrefab();
+                        
         //LogUtil.Log("LoadCharacter:prefabObject:" + prefabObject != null);
 
         if (prefabObject != null) {
@@ -1404,8 +1351,9 @@ public class BaseGamePlayerController : GameActor {
                 }
                 
                 
-                if (!IsPlayerControlled) {
-                    // apply team 
+                if (!IsPlayerControlled 
+                    && GameAIController.generateType == GameAICharacterGenerateType.team) {
+                    // apply team colors and textures
 
                     GameTeam team = GameTeams.Current;
 
@@ -1422,8 +1370,7 @@ public class BaseGamePlayerController : GameActor {
 
                             gameCustomEnemy.Load(customInfo);
                         }
-                    }
-                    
+                    }                    
                 }
 
                 gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
@@ -1471,8 +1418,6 @@ public class BaseGamePlayerController : GameActor {
         ChangePlayerState(controllerState);
              
         LoadWeapons();
-
-
 
         controllerData.loadingCharacter = false;
     }
@@ -3508,17 +3453,9 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-
-            if (isGirl) {
-                //GameAudio.PlayEffect(transform, "shotgun_shot");
-                int randAudio = UnityEngine.Random.Range(1, 5);
-                GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            }
-            else {
-                //GameAudio.PlayEffect(transform, "attack-sword-hit-1");
-                int randAudio = UnityEngine.Random.Range(1, 5);
-                GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            }
+            //GameAudio.PlayEffect(transform, "attack-sword-hit-1");
+            int randAudio = UnityEngine.Random.Range(1, 5);
+            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
         }
         else {
             //if(isBotZombie) {
@@ -3542,17 +3479,9 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-
-            if (isGirl) {
-                //GameAudio.PlayEffect(transform, "hit-girl-grunt-2");
-                int randAudio = UnityEngine.Random.Range(1, 5);
-                GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            }
-            else {
-                //GameAudio.PlayEffect(transform, "hit-grunt-3");
-                int randAudio = UnityEngine.Random.Range(1, 5);
-                GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            }
+            //GameAudio.PlayEffect(transform, "hit-grunt-3");
+            int randAudio = UnityEngine.Random.Range(1, 5);
+            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
         }
         else {
             //if(isBotZombie) {
@@ -3580,16 +3509,9 @@ public class BaseGamePlayerController : GameActor {
             GameAudioController.Instance.PlayOh();
             GameAudioController.Instance.PlayWhistle();
 
-            if (isGirl) {
-                //GameAudio.PlayEffect(transform, "hit-girl-grunt-2");
-                int randAudio = UnityEngine.Random.Range(1, 3);
-                GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
-            }
-            else {
-                //GameAudio.PlayEffect(transform, "hit-grunt-3");
-                int randAudio = UnityEngine.Random.Range(1, 3);
-                GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
-            }
+            //GameAudio.PlayEffect(transform, "hit-grunt-3");
+            int randAudio = UnityEngine.Random.Range(1, 3);
+            GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
         }
         else {
             //if(isBotZombie) {

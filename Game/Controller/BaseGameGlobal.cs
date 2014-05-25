@@ -217,7 +217,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     public virtual void InitPlayerProgress() {
         gameNetworks = gameObject.AddComponent<GameNetworks>();  
         if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
-            //gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
+            gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
         }
         if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {        
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);

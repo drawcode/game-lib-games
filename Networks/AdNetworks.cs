@@ -670,7 +670,7 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 #endif
-#if !UNITY_ANDROID && !UNITY_WEBPLAYER
+#if !UNITY_ANDROID && !UNITY_WEBPLAYER && AD_USE_ADMOB
     public AdMobBannerType admobGetBannerType(AdBannerType bannerType) {
         if (bannerType == AdBannerType.iPad_320x250) {
             return AdMobBannerType.iPad_320x250;
@@ -724,7 +724,7 @@ public class AdNetworks : GameObjectBehavior {
 #endif
 #endif
     
-#if !UNITY_ANDROID && !UNITY_WEBPLAYER
+#if !UNITY_ANDROID && !UNITY_WEBPLAYER && AD_USE_ADMOB
     public AdMobAdPosition admobGetPosition(AdPosition position) {
         if (position == AdPosition.BottomLeft) {
             return AdMobAdPosition.BottomLeft;

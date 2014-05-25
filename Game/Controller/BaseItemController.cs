@@ -158,7 +158,7 @@ public class BaseItemController : GameObjectBehavior {
          
             float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
 
-            GameItemPreset preset = GameItemPresets.Instance.GetByCode("default");
+            GamePreset preset = GamePresets.Get(GamePresetTypeDefault.itemDefault);
             
             if (preset == null) {
                 return;

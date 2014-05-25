@@ -21,26 +21,27 @@ public enum GameAIDifficulty {
 }
 
 public class GameAIDirectorData {
+    
+    public string code = "";
+    public string type = "";
+    public double currentSpawnAmount = 1;
+
     public float speed = .3f;
     public float attack = .3f;
     public float scale = .3f;
-    public int randomCharacter = 1;
-    public float currentSpawnAmount = .3f;
-    public string characterCode = "";
-    public GameProfileRPGItem actorRPG;
 
     public GameAIDirectorData() {
         Reset();
     }
 
     public void Reset() {
-        randomCharacter = SetRandomCharacter(2);
-        actorRPG = new GameProfileRPGItem();
+        code = "";
     }
+}
 
-    public int SetRandomCharacter(int maxCharacters) {
-        return UnityEngine.Random.Range(1, maxCharacters);
-    }
+public enum GameAICharacterGenerateType {
+    probabalistic,
+    team
 }
 
 public class BaseAIController : GameObjectBehavior {
@@ -63,6 +64,10 @@ public class BaseAIController : GameObjectBehavior {
     public bool stopDirector = false;
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
     public Dictionary<string, GamePlayerSpawn> spawns;
+
+    public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
+
+   
 
     // ----------------------------------------------------------------------
 
@@ -182,34 +187,80 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void directAI() {
 
-        currentFPS = FPSDisplay.GetCurrentFPS();
-    
-        if ((currentActorCount < currentCharacterLimit
-            && currentFPS > 20f)
-            || currentActorCount < currentCharacterMin) {
+        currentFPS = FPSDisplay.GetCurrentFPS();    
         
+        if ((currentActorCount < currentCharacterLimit
+             && currentFPS > 20f) || currentActorCount < currentCharacterMin) {
+            
             // do some spawning
-    
+            
             if (currentActorCount < currentCharacterMin * 2) {
                 currentSpawnAmount = 1;
             }
+            
+            float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
+            
+            GamePreset preset = GamePresets.Get(GamePresetTypeDefault.characterDefault);
+            
+            if (preset == null) {
+                return;
+            }
+            
+            List<GamePresetItem> presetItems = preset.data.items;
+            
+            List<float> probs = new List<float>();
+            foreach (GamePresetItem item in presetItems) {
+                probs.Add((float)item.probability);
+            }
 
-            int randomCharacter = UnityEngine.Random.Range(0, (int)currentCharacterTypeCount);
+            string characterCode = "";            
 
+            /*
+            if (!IsPlayerControlled) {
+                // apply team 
+                
+                GameTeam team = GameTeams.Current;
+                
+                // TODO randomize
+                
+                if (team != null) {
+                    if (team.data != null) {
+                        
+                        GameDataModel item = team.data.GetModel();
+                        
+                        if (item != null) {
+                            characterCode = item.code;
+                            controllerData.lastCharacterCode = item.code;                    
+                        }
+                    }
+                }            
+            }
+            */
+            
+            GamePresetItem selectByProbabilityItem = 
+                MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
+            characterCode = selectByProbabilityItem.code;
+            
+            if (selectByProbabilityItem == null) {
+                return;
+            }
+            
             float speed = .3f;
             float attack = .3f;
             float scale = 1f;
-    
-            scale = UnityEngine.Random.Range(.8f, 1.6f);
+            
             speed = UnityEngine.Random.Range(.8f, 1.6f);
+            attack = UnityEngine.Random.Range(.3f, .4f);
+            scale = UnityEngine.Random.Range(.8f, 1.6f);
 
-            GameAIDirectorData actor = new GameAIDirectorData();
-            actor.SetRandomCharacter(randomCharacter);
-            actor.speed = speed;
-            actor.attack = attack;
-            actor.scale = scale;
-
-            GameAIController.LoadCharacter(actor);
+            GameAIDirectorData characterData = new GameAIDirectorData();
+            characterData.code = characterCode;
+            characterData.type =  GameActorType.enemy;
+            characterData.speed = speed;
+            characterData.attack = attack;
+            characterData.scale = scale;
+            
+            GameAIController.LoadCharacter(characterData);
         }
     }
 

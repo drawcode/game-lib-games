@@ -62,6 +62,12 @@ public enum GameStateGlobal {
     GameContentDisplay, // dialog or in progress choice/content/collection status
 }
 
+public class GameActorType {
+    public static string enemy = "enemy";
+    public static string player = "player";
+    public static string sidekick = "sidekick";
+}
+
 public class GameActorDataItem {
     public float health = 1f;
     public float difficulty = .3f;
@@ -69,8 +75,8 @@ public class GameActorDataItem {
     public float speed = 1f;
     public float attack = 1f;
     public float defense = 1f;
-    public string characterCode = "character-enemy-goblin";
-    public string prefabCode = "GameEnemyGobln";
+    public string characterCode = "";
+    public string characterType = GameActorType.player;
 }
 
 public class BaseGameMessages {
@@ -1378,16 +1384,6 @@ public class BaseGameController : GameObjectBehavior {
         // GameController(levelCode);
     }
 
-    public virtual void loadEnemyBot1(float scale, float speed, float attack) {
-        GameActorDataItem character = new GameActorDataItem();
-        character.characterCode = "character-enemy-bot1";
-        character.prefabCode = "GameEnemyBot1";
-        character.scale = scale;
-        character.attack = attack;
-        character.speed = speed;
-        GameController.LoadActor(character);
-    }
-
     public virtual void loadActor(GameActorDataItem character) {
         StartCoroutine(loadActorCo(character));
     }
@@ -1448,20 +1444,6 @@ public class BaseGameController : GameObjectBehavior {
 
         return spawnLocation;
     }
-
-    public virtual string getCharacterModelPath(GameActorDataItem character) {
-        string modelPath = ContentPaths.appCacheVersionSharedPrefabCharacters;
-        // TODO load up dater
-        modelPath = PathUtil.Combine(modelPath, "GameEnemyBot1");
-        return modelPath;
-    }
-
-    public virtual string getCharacterType(GameActorDataItem character) {
-        string type = "bot1";
-        // TODO load up
-        type = "bot1";
-        return type;
-    }
     
     bool loadingCharacterContainer = false;
 
@@ -1473,8 +1455,14 @@ public class BaseGameController : GameObjectBehavior {
 
         loadingCharacterContainer = true;
 
-        string modelPath = GameController.GetCharacterModelPath(character);
-        string characterType = GameController.GetCharacterType(character);
+        GameCharacter gameCharacter = GameCharacters.Instance.GetById(character.characterCode);
+
+        if(gameCharacter == null) {
+            yield break;
+        }
+        
+        string modelPath = ContentPaths.appCacheVersionSharedPrefabCharacters;
+        modelPath = PathUtil.Combine(modelPath, "GamePlayerObject");
 
         // TODO data and pooling and network
 
@@ -1538,47 +1526,29 @@ public class BaseGameController : GameObjectBehavior {
             GamePlayerController characterGamePlayerController
                 = characterObject.GetComponentInChildren<GamePlayerController>();
 
-            characterGamePlayerController.LoadCharacter(characterType);
-
-            characterGamePlayerController.transform.localScale
-                = characterGamePlayerController.transform.localScale * character.scale;
-            
-            //yield return new WaitForSeconds(2f);
-
-            // Wire up ai controller to setup player health, speed, attack etc.
-
-            //characterGamePlayerController.runtimeData.
-
-            if (characterGamePlayerController != null) {
-                //characterObject.Hide();
-                //yield return new WaitForEndOfFrame();
-                // wire up properties
-        
-                // TODO network and player target
-                //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
-                //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
-                //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-                //characterObject.Show();
-
-                // Add indicator to HUD
-        
-                //GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
-                //                                 characterObject, characterType);
-
-                //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+            if(characterGamePlayerController != null) {
+                
+                if(character.characterType == GameActorType.enemy) {                        
+                    characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
+                    characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
+                    characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
+                    characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+                }
+                
+                else if(character.characterType == GameActorType.player) {
+                }
+                
+                else if(character.characterType == GameActorType.sidekick) {
+                }
+                
+                characterGamePlayerController.LoadCharacter(character.characterCode);
+                
+                characterGamePlayerController.transform.localScale
+                    = characterGamePlayerController.transform.localScale * character.scale;
             }
         }
         
         loadingCharacterContainer = false;
-
-    }
-
-    public virtual string getItemPath(GameItem item) {
-        string modelPath = ContentPaths.appCacheVersionSharedPrefabLevelItems;
-        if (item != null) {
-            modelPath = PathUtil.Combine(modelPath, item.GetModelCode());
-        }
-        return modelPath;
     }
 
     public virtual IEnumerator loadItemCo(GameItem item) {
@@ -1587,8 +1557,7 @@ public class BaseGameController : GameObjectBehavior {
             yield break;
         }
 
-        string path = GameController.GetItemPath(item);
-
+        string path = Path.Combine(ContentPaths.appCacheVersionSharedPrefabLevelItems, item.data.GetModel().code);
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
         Vector3 spawnLocation = Vector3.zero;
 
@@ -1654,36 +1623,6 @@ public class BaseGameController : GameObjectBehavior {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
             GamePlayerIndicator.AddIndicator(spawnObj, item.code);
         }
-
-        /*
-        GamePlayerController characterGamePlayerController
-            = characterObject.GetComponentInChildren<GamePlayerController>();
-
-        characterGamePlayerController.transform.localScale
-            = characterGamePlayerController.transform.localScale * character.scale;
-
-        // Wire up ai controller to setup player health, speed, attack etc.
-
-        //characterGamePlayerController.runtimeData.
-
-        if(characterGamePlayerController != null) {
-            characterObject.Hide();
-            yield return new WaitForEndOfFrame();
-            // wire up properties
-    
-            // TODO network and player target
-            //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
-            //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgent);
-            //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-            characterObject.Show();
-
-            // Add indicator to HUD
-
-            GameHUD.Instance.AddIndicator(characterObject, characterType);
-
-            //characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
-        }
-        */
     }
 
 
@@ -3141,29 +3080,8 @@ public class BaseGameController : GameObjectBehavior {
         
         if (currentTimeBlockBase > actionIntervalBase) {
             currentTimeBlockBase = 0.0f;
-        }       
-        
-        // debug/dev
-        
-        if (Application.isEditor) {
-            if (Input.GetKeyDown(KeyCode.L)) {
-                GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
-                UnityEngine.Random.Range(.3f, 1.3f),
-                UnityEngine.Random.Range(.3f, 1.3f));
-            }
-            else if (Input.GetKeyDown(KeyCode.K)) {
-                GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
-                UnityEngine.Random.Range(.3f, 1.3f),
-                UnityEngine.Random.Range(.3f, 1.3f));
-            }
-            else if (Input.GetKeyDown(KeyCode.J)) {
-                GameController.LoadEnemyBot1(UnityEngine.Random.Range(1.5f, 2.5f),
-                UnityEngine.Random.Range(.3f, 1.3f),
-                UnityEngine.Random.Range(.3f, 1.3f));
-            }
         }
-    }
-    
+    }    
 
     // ----------------------------------------------------------------------
 
