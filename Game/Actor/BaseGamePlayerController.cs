@@ -16,7 +16,8 @@ public enum GamePlayerControllerState {
     ControllerAgent = 0,
     ControllerPlayer = 1,
     ControllerUI = 2,
-    ControllerNetwork = 3
+    ControllerNetwork = 3,
+    ControllerNotSet = 4,
 }
 
 public enum GamePlayerActorState {
@@ -35,7 +36,8 @@ public enum GamePlayerContextState {
     ContextScript,
     ContextRandom,
     ContextUI,
-    ContextNetwork
+    ContextNetwork,
+    ContextNotSet
 }
 
 public class BaseGamePlayerSlots {
@@ -330,7 +332,7 @@ public class BaseGamePlayerMountData {
 public class BaseGamePlayerController : GameActor {
  
     //public string uuid = "";
-    public string characterCode = "character-bot-1";
+    public string characterCode = "character-player-boy-1";
     public Transform currentTarget;
  
     // asset
@@ -376,8 +378,8 @@ public class BaseGamePlayerController : GameActor {
     public GameObject skillObject;
  
     // states
-    public GamePlayerControllerState controllerState = GamePlayerControllerState.ControllerPlayer;
-    public GamePlayerContextState contextState = GamePlayerContextState.ContextInput;
+    public GamePlayerControllerState controllerState = GamePlayerControllerState.ControllerNotSet;
+    public GamePlayerContextState contextState = GamePlayerContextState.ContextNotSet;
 
     // controller runtime state
     public GamePlayerControllerData controllerData;
@@ -436,14 +438,13 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public override void Start() {
-        Init(controllerState);
+        //Init(controllerState);
     }
  
     public override void OnEnable() {
         //MessengerObject<InputTouchInfo>.AddListener(MessengerObjectMessageType.OnEventInputDown, OnInputDown);
         //MessengerObject<InputTouchInfo>.AddListener(MessengerObjectMessageType.OnEventInputUp, OnInputUp);
-     
-     
+          
         Messenger<string, Vector3>.AddListener("input-axis", OnInputAxis);//"input-axis-" + axisName, axisInput);
      
         Messenger<string, string>.AddListener(GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
@@ -471,13 +472,24 @@ public class BaseGamePlayerController : GameActor {
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
  
     }
- 
+
     public virtual void SetRuntimeData(GamePlayerRuntimeData data) {
         if (data == null) {
             data = new GamePlayerRuntimeData();
         }
-     
+        
         runtimeData = data;
+        
+        // TODO sync if needed... to update 
+        // runtime expensive states that can't be polled.
+    }
+ 
+    public virtual void SetControllerData(GamePlayerControllerData data) {
+        if (data == null) {
+            data = new GamePlayerControllerData();
+        }
+     
+        controllerData = data;
      
         // TODO sync if needed... to update 
         // runtime expensive states that can't be polled.
@@ -494,37 +506,12 @@ public class BaseGamePlayerController : GameActor {
         // runtime expensive states that can't be polled.
     }
      
-    public virtual void Init(GamePlayerControllerState controlState) {
-
-        controllerState = controlState;
-     
-        // TODO wire in network/local unique ids.
-        if (IsPlayerControlled) {
-            uniqueId = UniqueUtil.Instance.currentUniqueId;
-        }
-        else {
-            uniqueId = UniqueUtil.Instance.CreateUUID4();
-        }
-
-        controllerData = new GamePlayerControllerData();
+    public virtual void Init(
+        GamePlayerControllerState controllerStateTo, 
+        GamePlayerContextState contextStateTo) {
         
-        SetRuntimeData(new GamePlayerRuntimeData());
-            
-        InitControls();
-     
-        LoadCharacter(characterCode);  
+        SetUp(controllerStateTo, contextStateTo);
 
-        //LoadWeapons();
-     
-        // Add weapons and modifiers
-     
-        // modifierSpeed = controllerData.gamePlayerAttributes.GetDefense();
-     
-        // effects init
-     
-        HidePlayerEffectWarp();
-     
-        controllerData.initialized = true;      
     }
 
     // SPEED
@@ -538,6 +525,10 @@ public class BaseGamePlayerController : GameActor {
     public virtual float GamePlayerMoveSpeed() {
 
         float currentSpeed = 0f;
+
+        if(controllerData == null) {
+            return currentSpeed;
+        }
         
         if (controllerData.thirdPersonController != null) {
             currentSpeed = controllerData.thirdPersonController.GetSpeed();
@@ -1308,15 +1299,13 @@ public class BaseGamePlayerController : GameActor {
         if(gameCharacter == null) {
             yield break;
         }
+
         controllerData.loadingCharacter = true;
+
+        string prefabCode = gameCharacter.data.GetModel().code;
         
         //LogUtil.Log("LoadCharacter:path:" + path);
-        
-        GameObject prefabObject = gameCharacter.LoadPrefab();
-                        
-        //LogUtil.Log("LoadCharacter:prefabObject:" + prefabObject != null);
-
-        if (prefabObject != null) {
+        if(!string.IsNullOrEmpty(prefabCode)) {
             if (gamePlayerModelHolderModel.transform.childCount > 0) {
                 // Remove all current characters
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
@@ -1328,8 +1317,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
 
-            gameObjectLoad = GameObjectHelper.CreateGameObject(
-                prefabObject, Vector3.zero, Quaternion.identity, GameConfigs.usePooledGamePlayers);
+            gameObjectLoad = AppContentAssets.LoadAsset(prefabCode);
 
             if (gameObjectLoad != null) {           
 
@@ -1342,6 +1330,7 @@ public class BaseGamePlayerController : GameActor {
                     }
                 }
                 else {
+
                     if (!gameObjectLoad.Has<GameCustomEnemy>()) {
                         gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
                     }
@@ -1349,8 +1338,7 @@ public class BaseGamePlayerController : GameActor {
                         gameCustomEnemy = gameObjectLoad.GetComponent<GameCustomEnemy>();
                     }
                 }
-                
-                
+                                
                 if (!IsPlayerControlled 
                     && GameAIController.generateType == GameAICharacterGenerateType.team) {
                     // apply team colors and textures
@@ -1391,7 +1379,7 @@ public class BaseGamePlayerController : GameActor {
                         objectItem.gameObject.Show();
                     }
                     else {
-                        objectItem.gameObject.Hide();                        
+                        objectItem.gameObject.Hide(); 
                     }
                 }
                 
@@ -1407,11 +1395,13 @@ public class BaseGamePlayerController : GameActor {
              
                 if (controllerData.gamePlayerControllerAnimation != null) {
                     controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);
+                    controllerData.gamePlayerControllerAnimation.Reset();
                 }
 
                 if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
                     gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
                 }
+
             }
         }
              
@@ -1559,6 +1549,10 @@ public class BaseGamePlayerController : GameActor {
     public virtual void OnInputAxis(string name, Vector3 axisInput) {
                      
         if (!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        if(controllerData == null) {
             return;
         }
      
@@ -2251,6 +2245,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetPositionAir(float y) {    
 
+        //if(IsPlayerControlled) {
         if (controllerData.lastAirCheck > 1f) {
             controllerData.lastAirCheck = 0;
 
@@ -2261,6 +2256,7 @@ public class BaseGamePlayerController : GameActor {
         }
 
         controllerData.lastAirCheck += Time.deltaTime;
+        //}
     }
 
     public virtual void ResetPosition() {
@@ -2275,37 +2271,72 @@ public class BaseGamePlayerController : GameActor {
 
         //transform.position = Vector3.zero.WithY(1.5f);
     }
+
+    
+    public virtual void SetUp(
+        GamePlayerControllerState controllerStateTo, 
+        GamePlayerContextState contextStateTo) {        
+        
+        if(controllerState != controllerStateTo 
+           || controllerState == GamePlayerControllerState.ControllerNotSet) {
+           
+            controllerState = controllerStateTo;
+            contextState = contextStateTo;
+        }
+
+        Reset();
+    }
          
     public virtual void Reset() {
 
-        if (controllerData == null) {
-            controllerData = new GamePlayerControllerData();
+        if(IsPlayerControlled) {
+            
+            SetControllerData(new GamePlayerControllerData());
         }
+
+        SetControllerData(new GamePlayerControllerData());
+        SetRuntimeData(new GamePlayerRuntimeData());
+                
         controllerData.dying = false;
         controllerData.effectWarpEnabled = false;
-        runtimeData = new GamePlayerRuntimeData();
-
-        GetPlayerProgress();
-
+             
+        if (IsPlayerControlled) {
+            uniqueId = UniqueUtil.Instance.currentUniqueId;
+        }
+        else {
+            uniqueId = UniqueUtil.Instance.CreateUUID4();
+        }
+        
+        LoadCharacter(characterCode);  
+        
+        InitControls();
+                
         if (controllerData.thirdPersonController != null) {
             controllerData.thirdPersonController.Reset();           
         }
-
+        
         if (controllerData.gamePlayerControllerAnimation != null) {
-            controllerData.gamePlayerControllerAnimation.ResetPlayState();
+            controllerData.gamePlayerControllerAnimation.Reset();
         }
+
         if (controllerState == GamePlayerControllerState.ControllerAgent) {
             controllerData.navMeshAgent.enabled = true;
-        }
-
-        ResetPosition();
+        } 
         
-        Init(controllerState);
+        ResetPosition();
+
+        // effects init
+        
+        HidePlayerEffectWarp();
 
         if (IsPlayerControlled) {
+            GetPlayerProgress();
+
             controllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
         }
+        
+        controllerData.initialized = true;
     }
  
     public virtual void Remove() {
@@ -2511,7 +2542,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerState == GamePlayerControllerState.ControllerPlayer) {          
+        if (IsPlayerControlled) {          
             GameHUD.Instance.ShowHitOne((float)(1.5 - runtimeData.health));
             Score(2 * power);
             DeviceUtil.Vibrate();
@@ -2536,7 +2567,7 @@ public class BaseGamePlayerController : GameActor {
         if (controllerState == GamePlayerControllerState.ControllerAgent) {
             power = power * 1;
         }
-        else if (controllerState == GamePlayerControllerState.ControllerPlayer) {
+        else if (IsPlayerControlled) {
             power = power * 1;
         }
      
@@ -3023,7 +3054,7 @@ public class BaseGamePlayerController : GameActor {
             directionAttack = controllerData.thirdPersonController.aimingDirection;
         }        
      
-        Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        //Debug.DrawRay(transform.position, directionAttack * attackDistance);
         hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
         int i = 0;
         while (i < hits.Length) {
@@ -3606,7 +3637,7 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void ChangeContextState(GamePlayerContextState contextStateTo) {
-        if (contextStateTo != contextState) {
+        //if (contextStateTo != contextState) {
             contextState = contextStateTo;
          
             if (controllerData.thirdPersonController != null) {
@@ -3643,7 +3674,7 @@ public class BaseGamePlayerController : GameActor {
                     //navMeshAgent.enabled = false;
                 }
             }
-        }
+        //}
     }
  
     // --------------------------------------------------------------------
@@ -3770,6 +3801,12 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.thirdPersonController.capeFlyGravity = 8f;
                 controllerData.thirdPersonController.gravity = 16f;
             }
+            
+            attackDistance = 50f;
+        }
+        else {            
+            // TODO add to RPG from character
+            attackDistance = 4f;
         }
 
     }
@@ -3919,7 +3956,8 @@ public class BaseGamePlayerController : GameActor {
             controllerData.gamePlayerControllerAnimation.Init(); 
 
             if (gamePlayerModelHolderModel != null) {
-                controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);            
+                controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);    
+                controllerData.gamePlayerControllerAnimation.Reset();
             }
                       
             float smoothing = .8f;
@@ -4234,7 +4272,7 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerData.dying) {
-            transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
+            //transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
         }
      
         //bool runUpdate = false;

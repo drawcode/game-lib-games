@@ -505,7 +505,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     public virtual void ResetAnimatedActor(GameObject actorItem) {
         animationData.actor = actorItem;
         animationData.animator = null;
-        //FindAnimatedActor();
+        FindAnimatedActor();
     }
  
     public virtual void FindAnimatedActor() {

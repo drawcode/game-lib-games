@@ -671,7 +671,7 @@ public class BaseGameController : GameObjectBehavior {
 
     // ---------------------------------------------------------------------
 
-    // GAMEPLAYER CONTROLLER
+    // GAMEPLAYER CONTROLLER   
     
     public virtual GamePlayerController getCurrentPlayerController {
         get {
@@ -1081,7 +1081,7 @@ public class BaseGameController : GameObjectBehavior {
         GameLevelItems.Current.code = code;
     
         // Clear items from LevelContainer
-        GameController.Reset();
+        //GameController.Reset();
 
         // Change data codes
         GameLevels.Instance.ChangeCurrentAbsolute(code);
@@ -1265,7 +1265,7 @@ public class BaseGameController : GameObjectBehavior {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
-        GameController.ResetCurrentGamePlayer();
+        //GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelEnemies();
 
         if (currentGamePlayerController != null) {
@@ -1364,6 +1364,11 @@ public class BaseGameController : GameObjectBehavior {
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
         string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
+
+        GameController.CurrentGamePlayerController.Init(
+            GamePlayerControllerState.ControllerPlayer, 
+            GamePlayerContextState.ContextInput);
+
         GameController.CurrentGamePlayerController.LoadCharacter(characterSkinCode);
     
         //GameCustomController.SetCustomColorsPlayer(
@@ -1494,10 +1499,10 @@ public class BaseGameController : GameObjectBehavior {
 
                 // get random
                 if (currentGameZone == GameZones.right) {
-                    spawnLocation = Vector3.zero.WithX(80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero.WithX(80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
                 else if (currentGameZone == GameZones.left) {
-                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
             }
 
@@ -1520,8 +1525,8 @@ public class BaseGameController : GameObjectBehavior {
             characterObject.transform.parent = levelActorsContainerObject.transform;
             
             characterObject.transform.localScale = Vector3.one;
-            characterObject.transform.position = Vector3.zero;
-            characterObject.transform.localPosition = Vector3.zero;
+            //characterObject.transform.localPosition = Vector3.zero;
+            characterObject.transform.position = spawnLocation;
         
             GamePlayerController characterGamePlayerController
                 = characterObject.GetComponentInChildren<GamePlayerController>();
@@ -1530,15 +1535,20 @@ public class BaseGameController : GameObjectBehavior {
                 
                 if(character.characterType == GameActorType.enemy) {                        
                     characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
-                    characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
-                    characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
-                    characterGamePlayerController.Init(GamePlayerControllerState.ControllerAgent);
+                    //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
+                    //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
+                    characterGamePlayerController.Init(
+                        GamePlayerControllerState.ControllerAgent, GamePlayerContextState.ContextFollowAgentAttack);
+
+                    characterGamePlayerController.attackRange = 3f;
                 }
                 
                 else if(character.characterType == GameActorType.player) {
+                
                 }
                 
                 else if(character.characterType == GameActorType.sidekick) {
+
                 }
                 
                 characterGamePlayerController.LoadCharacter(character.characterCode);
@@ -1984,7 +1994,7 @@ public class BaseGameController : GameObjectBehavior {
 
         //LogUtil.Log("GAME START FLOW: STEP #7: onGamePrepare: startGame:" + startGame);
 
-        GameController.ResetRuntimeData();
+        //GameController.ResetRuntimeData();
 
         //GameUIController.HideUI(true);
         GameUIController.HideHUD();

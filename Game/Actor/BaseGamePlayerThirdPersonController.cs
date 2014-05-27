@@ -535,7 +535,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
     public virtual void ResetPlayState() {   
         enabled = true;
         controllerData.removing = false;
-        transform.position = Vector3.zero;
+        //transform.position = Vector3.zero;
     }
 }
 // Require a character controller to be attached to the same game object
