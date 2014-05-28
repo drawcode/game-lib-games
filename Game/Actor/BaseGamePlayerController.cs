@@ -76,6 +76,7 @@ public class BaseGamePlayerRuntimeData {
 public class BaseGamePlayerControllerData {  
     public bool loadingCharacter = false;
     public bool gameModelVisible = true;
+    public bool paused = true;
 
     // player
     public bool visible = true;
@@ -334,6 +335,7 @@ public class BaseGamePlayerController : GameActor {
     //public string uuid = "";
     public string characterCode = "character-player-boy-1";
     public Transform currentTarget;
+    public bool paused = true;
  
     // asset
     public GamePlayerControllerAsset gamePlayerControllerAsset;
@@ -1328,8 +1330,17 @@ public class BaseGamePlayerController : GameActor {
                     else {
                         gameCustomPlayer = gameObjectLoad.GetComponent<GameCustomPlayer>();
                     }
+
+                    if(gamePlayerEffectsContainer != null) {
+                        gamePlayerEffectsContainer.Show();
+                    }
+
                 }
                 else {
+                    
+                    if(gamePlayerEffectsContainer != null) {
+                        gamePlayerEffectsContainer.Hide();
+                    }
 
                     if (!gameObjectLoad.Has<GameCustomEnemy>()) {
                         gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
@@ -2269,6 +2280,10 @@ public class BaseGamePlayerController : GameActor {
             t.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
 
+        if(IsPlayerControlled) {
+            gameObject.ResetPosition();
+        }
+
         //transform.position = Vector3.zero.WithY(1.5f);
     }
 
@@ -3025,7 +3040,7 @@ public class BaseGamePlayerController : GameActor {
         ActionAttack();
     }
      
-    public float attackDistance = 50f;
+    public float attackDistance = 10f;
 
     public virtual void CastAttack() {       
              
@@ -3802,7 +3817,7 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.thirdPersonController.gravity = 16f;
             }
             
-            attackDistance = 50f;
+            attackDistance = 10f;
         }
         else {            
             // TODO add to RPG from character
@@ -4485,8 +4500,12 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public override void Update() {        
-        
+
         if (GameConfigs.isUIRunning) {
+            return;
+        }
+                
+        if (paused) {
             return;
         }
         

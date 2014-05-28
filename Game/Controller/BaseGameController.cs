@@ -1081,7 +1081,7 @@ public class BaseGameController : GameObjectBehavior {
         GameLevelItems.Current.code = code;
     
         // Clear items from LevelContainer
-        //GameController.Reset();
+        GameController.Reset();
 
         // Change data codes
         GameLevels.Instance.ChangeCurrentAbsolute(code);
@@ -1276,7 +1276,11 @@ public class BaseGameController : GameObjectBehavior {
 
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
+
+        // PRELOAD/CACHE/POOL CONTROLLERS
+
+        yield return StartCoroutine(GameAIController.Instance.preloadCo());
         
         GameHUD.Instance.ResetIndicators();
 
@@ -1532,15 +1536,17 @@ public class BaseGameController : GameObjectBehavior {
                 = characterObject.GetComponentInChildren<GamePlayerController>();
 
             if(characterGamePlayerController != null) {
+
+                characterGamePlayerController.paused = true;
                 
                 if(character.characterType == GameActorType.enemy) {                        
-                    characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
+                    //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
                     //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
                     //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
                     characterGamePlayerController.Init(
                         GamePlayerControllerState.ControllerAgent, GamePlayerContextState.ContextFollowAgentAttack);
 
-                    characterGamePlayerController.attackRange = 3f;
+                    characterGamePlayerController.attackRange = 12f;
                 }
                 
                 else if(character.characterType == GameActorType.player) {
@@ -1555,6 +1561,8 @@ public class BaseGameController : GameObjectBehavior {
                 
                 characterGamePlayerController.transform.localScale
                     = characterGamePlayerController.transform.localScale * character.scale;
+                
+                characterGamePlayerController.paused = false;
             }
         }
         

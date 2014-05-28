@@ -66,8 +66,8 @@ public class BaseAIController : GameObjectBehavior {
     public Dictionary<string, GamePlayerSpawn> spawns;
 
     public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
-
-   
+    
+    public string currentPresetCode = GamePresetTypeDefault.characterDefault;   
 
     // ----------------------------------------------------------------------
 
@@ -97,6 +97,10 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void init() {
         GameAIController.CheckSpawns();
+    }    
+    
+    public virtual void changePreset(string presetCode) {
+        currentPresetCode = presetCode;   
     }
 
     public virtual void checkSpawns() {
@@ -126,6 +130,61 @@ public class BaseAIController : GameObjectBehavior {
             }
         }
         return null;
+    }
+    
+    // PRELOAD
+    
+    public virtual void preload() {
+        StartCoroutine(preloadCo());
+    }
+    
+    public virtual IEnumerator preloadCo() {
+        
+        yield return new WaitForEndOfFrame();        
+        
+        GamePreset preset = GamePresets.Get(currentPresetCode);
+        
+        if (preset == null) {
+            yield break;
+        }
+        
+        List<GamePresetItem> presetItems = preset.data.items;
+
+        foreach (GamePresetItem item in presetItems) {
+
+            yield return new WaitForEndOfFrame();
+
+            GameAIController.Load(item.code);
+        }
+                
+        yield return new WaitForSeconds(1f);
+
+        // remove all characters
+
+        GameController.ResetLevelEnemies();
+
+        yield return new WaitForEndOfFrame();
+    }
+
+    public virtual void load(string code) {
+        // Load by character code
+        
+        float speed = .3f;
+        float attack = .3f;
+        float scale = 1f;
+        
+        speed = UnityEngine.Random.Range(.8f, 1.6f);
+        attack = UnityEngine.Random.Range(.3f, .4f);
+        scale = UnityEngine.Random.Range(.8f, 1.6f);
+
+        GameAIDirectorData itemData = new GameAIDirectorData();
+        itemData.code = code;
+        itemData.type = GameActorType.enemy;
+        itemData.speed = speed;
+        itemData.attack = attack;
+        itemData.scale = scale;
+        
+        GameAIController.LoadCharacter(itemData);
     }
 
     // RUNNER/STOPPER
@@ -244,23 +303,8 @@ public class BaseAIController : GameObjectBehavior {
             if (selectByProbabilityItem == null) {
                 return;
             }
-            
-            float speed = .3f;
-            float attack = .3f;
-            float scale = 1f;
-            
-            speed = UnityEngine.Random.Range(.8f, 1.6f);
-            attack = UnityEngine.Random.Range(.3f, .4f);
-            scale = UnityEngine.Random.Range(.8f, 1.6f);
 
-            GameAIDirectorData characterData = new GameAIDirectorData();
-            characterData.code = characterCode;
-            characterData.type =  GameActorType.enemy;
-            characterData.speed = speed;
-            characterData.attack = attack;
-            characterData.scale = scale;
-            
-            GameAIController.LoadCharacter(characterData);
+            GameAIController.Load(characterCode);
         }
     }
 
