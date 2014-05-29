@@ -66,8 +66,6 @@ public class BaseAIController : GameObjectBehavior {
     public Dictionary<string, GamePlayerSpawn> spawns;
 
     public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
-    
-    public string currentPresetCode = GamePresetTypeDefault.characterDefault;   
 
     // ----------------------------------------------------------------------
 
@@ -98,10 +96,6 @@ public class BaseAIController : GameObjectBehavior {
     public virtual void init() {
         GameAIController.CheckSpawns();
     }    
-    
-    public virtual void changePreset(string presetCode) {
-        currentPresetCode = presetCode;   
-    }
 
     public virtual void checkSpawns() {
         if (spawns == null) {
@@ -142,7 +136,7 @@ public class BaseAIController : GameObjectBehavior {
         
         yield return new WaitForEndOfFrame();        
         
-        GamePreset preset = GamePresets.Get(currentPresetCode);
+        GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
         
         if (preset == null) {
             yield break;
@@ -161,7 +155,7 @@ public class BaseAIController : GameObjectBehavior {
 
         // remove all characters
 
-        GameController.ResetLevelEnemies();
+        GameController.ResetLevelActors();
 
         yield return new WaitForEndOfFrame();
     }
@@ -259,8 +253,8 @@ public class BaseAIController : GameObjectBehavior {
             
             float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
             
-            GamePreset preset = GamePresets.Get(GamePresetTypeDefault.characterDefault);
-            
+            GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
+
             if (preset == null) {
                 return;
             }
@@ -298,13 +292,14 @@ public class BaseAIController : GameObjectBehavior {
             
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
-            characterCode = selectByProbabilityItem.code;
             
             if (selectByProbabilityItem == null) {
                 return;
             }
+            
+            string code = selectByProbabilityItem.code;
 
-            GameAIController.Load(characterCode);
+            GameAIController.Load(code);
         }
     }
 

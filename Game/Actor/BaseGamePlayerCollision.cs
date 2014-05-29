@@ -28,7 +28,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
     private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
 
     public virtual void OnParticleCollision(GameObject other) {
-        
+
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -41,6 +41,10 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
         
         if (gamePlayerController != null) {
+            
+            if(!gamePlayerController.controllerReady) {
+                return;
+            }
 
             /*
             ParticleSystem particleSystem;
@@ -114,6 +118,11 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
 
         if (gamePlayerController != null) {
+            
+            if(!gamePlayerController.controllerReady) {
+                return;
+            }
+
             //foreach (ContactPoint contact in collision.contacts) {
             gamePlayerController.HandleCollision(collision);
             //  LogUtil.Log("contact:" + contact);

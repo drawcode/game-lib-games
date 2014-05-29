@@ -662,11 +662,26 @@ public class BaseGameController : GameObjectBehavior {
     }
 
     public virtual void OnGameAIDirectorData(GameAIDirectorData actor) {
-
+        
+        // DEFAULT BOT LOADING
+        
+        GameActorDataItem actorDataItem = new GameActorDataItem();
+        actorDataItem.characterCode = actor.code;
+        actorDataItem.characterType = actor.type;
+        
+        for(int i = 0; i < actor.currentSpawnAmount; i++) {
+            GameController.LoadActor(actorDataItem);
+        }
     }
 
     public virtual void OnGameItemDirectorData(GameItemDirectorData item) {
-
+        
+        // DEFAULT ITEM LOADING
+        
+        for(int i = 0; i < item.currentSpawnAmount; i++) {
+            
+            GameController.LoadItemData(item);
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -1266,7 +1281,7 @@ public class BaseGameController : GameObjectBehavior {
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
 
         //GameController.ResetCurrentGamePlayer();
-        GameController.ResetLevelEnemies();
+        GameController.ResetLevelActors();
 
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
@@ -1281,6 +1296,8 @@ public class BaseGameController : GameObjectBehavior {
         // PRELOAD/CACHE/POOL CONTROLLERS
 
         yield return StartCoroutine(GameAIController.Instance.preloadCo());
+        
+        yield return StartCoroutine(GameItemController.Instance.preloadCo());
         
         GameHUD.Instance.ResetIndicators();
 
@@ -1398,7 +1415,7 @@ public class BaseGameController : GameObjectBehavior {
     }
 
     public virtual void loadItemData(GameItemDirectorData data) {
-        GameItem item = GameItems.Instance.GetById(data.itemCode);        
+        GameItem item = GameItems.Instance.GetById(data.code);        
         GameController.LoadItem(item);
     }
 
@@ -1467,6 +1484,7 @@ public class BaseGameController : GameObjectBehavior {
         GameCharacter gameCharacter = GameCharacters.Instance.GetById(character.characterCode);
 
         if(gameCharacter == null) {
+            loadingCharacterContainer = false;
             yield break;
         }
         
@@ -1561,8 +1579,7 @@ public class BaseGameController : GameObjectBehavior {
                 
                 characterGamePlayerController.transform.localScale
                     = characterGamePlayerController.transform.localScale * character.scale;
-                
-                characterGamePlayerController.paused = false;
+
             }
         }
         
@@ -1647,7 +1664,7 @@ public class BaseGameController : GameObjectBehavior {
     // ---------------------------------------------------------------------
     // RESETS
     
-    public virtual void resetLevelEnemies() {
+    public virtual void resetLevelActors() {
         if (levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
@@ -1666,7 +1683,7 @@ public class BaseGameController : GameObjectBehavior {
         GameController.ResetRuntimeData();
         GameController.ResetCurrentGamePlayer();
 
-        GameController.ResetLevelEnemies();
+        GameController.ResetLevelActors();
         GameUIController.HideGameCanvas();
 
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
@@ -1677,7 +1694,7 @@ public class BaseGameController : GameObjectBehavior {
     public virtual void resetRuntimeData() {
 
         GameController.ResetCurrentGamePlayer();
-        GameController.ResetLevelEnemies();
+        GameController.ResetLevelActors();
 
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);

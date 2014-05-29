@@ -21,7 +21,7 @@ public class GameItemDirectorMessages {
 }
 
 public class GameItemDirectorData {
-    public string itemCode = "item-coin";
+    public string code = "item-coin";
     public double currentSpawnAmount = 1;
 
     public GameItemDirectorData() {
@@ -29,7 +29,7 @@ public class GameItemDirectorData {
     }
 
     public void Reset() {
-        itemCode = "item-coin";
+        code = "item-coin";
         currentSpawnAmount = 1;
     }
 }
@@ -82,6 +82,63 @@ public class BaseItemController : GameObjectBehavior {
     public virtual void init() {
 
     }
+    
+    // PRELOAD
+    
+    public virtual void preload() {
+        StartCoroutine(preloadCo());
+    }
+    
+    public virtual IEnumerator preloadCo() {
+        
+        yield return new WaitForEndOfFrame();        
+        
+        GamePreset preset = GamePresets.Instance.GetCurrentPresetDataItem();
+        
+        if (preset == null) {
+            yield break;
+        }
+        
+        List<GamePresetItem> presetItems = preset.data.items;
+        
+        foreach (GamePresetItem item in presetItems) {
+            
+            yield return new WaitForEndOfFrame();
+            
+            GameAIController.Load(item.code);
+        }
+        
+        yield return new WaitForSeconds(1f);
+        
+        // remove all characters
+        
+        GameController.ResetLevelActors();
+        
+        yield return new WaitForEndOfFrame();
+    }
+    
+    public virtual void load(string code) {
+        // Load by character code
+        
+        //float speed = 1f;
+        //float attack = 1f;
+        //float scale = 1f;
+        
+        //speed = UnityEngine.Random.Range(.8f, 1.6f);
+        //attack = UnityEngine.Random.Range(.3f, .4f);
+        //scale = UnityEngine.Random.Range(.8f, 1.6f);
+        
+        GameItemDirectorData itemData = new GameItemDirectorData();
+        itemData.code = code;
+        //itemData.type = GameActorType.enemy;
+        //itemData.speed = speed;
+        //itemData.attack = attack;
+        //itemData.scale = scale;
+        
+        GameItemController.LoadItem(itemData);
+    }
+
+    // RUN
 
     public virtual void run(bool run) {
         runDirector = run;
@@ -158,7 +215,7 @@ public class BaseItemController : GameObjectBehavior {
          
             float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
 
-            GamePreset preset = GamePresets.Get(GamePresetTypeDefault.itemDefault);
+            GamePreset preset = GamePresets.Instance.GetCurrentPresetDataItem();
             
             if (preset == null) {
                 return;
@@ -170,18 +227,17 @@ public class BaseItemController : GameObjectBehavior {
             foreach (GamePresetItem item in presetItems) {
                 probs.Add((float)item.probability);
             }
-
+                        
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
             
             if (selectByProbabilityItem == null) {
                 return;
             }
-
-            GameItemDirectorData itemData = new GameItemDirectorData();
-            itemData.itemCode = selectByProbabilityItem.code;
-
-            GameItemController.LoadItem(itemData);
+            
+            string code = selectByProbabilityItem.code;
+            
+            GameItemController.Load(code);
         }
      
     }

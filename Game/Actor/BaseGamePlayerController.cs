@@ -426,7 +426,10 @@ public class BaseGamePlayerController : GameActor {
 
     // If this is an enemy see if we should attack
     
-    public float attackRange = 12f;  // within 6 yards
+    public float attackRange = 12f;  // within 6 yards    
+    public float attackDistance = 10f;
+    
+    public float lastStateEvaded = 0f;
 
     // quality settings
         
@@ -1421,6 +1424,8 @@ public class BaseGamePlayerController : GameActor {
         LoadWeapons();
 
         controllerData.loadingCharacter = false;
+        
+        paused = false;
     }
  
     // --------------------------------------------------------------------
@@ -1894,12 +1899,28 @@ public class BaseGamePlayerController : GameActor {
             StartNavAgent();
         }
     }
+
+    public bool controllerReady {
+        get{
+            if(paused) {
+                return false;
+            }
+
+            if(!paused && controllerData != null) {
+                if(!controllerData.loadingCharacter) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
  
     // --------------------------------------------------------------------
     // COLLISIONS/TRIGGERS
 
     public virtual void HandleCollision(Collision collision) {
-             
+                        
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -1908,6 +1929,10 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastCollision = Time.time;
         }
         else {
+            return;
+        }
+        
+        if(!controllerReady) {
             return;
         }
 
@@ -1976,6 +2001,10 @@ public class BaseGamePlayerController : GameActor {
                             t.gameObject, false);
 
                         if (controllerData.collisionController != null) {
+                            
+                            if(!controllerData.collisionController.controllerReady) {
+                                break;
+                            }
 
                             if (!IsPlayerControlled) {
                                 // we hit a player, so we are an enemy
@@ -2045,6 +2074,10 @@ public class BaseGamePlayerController : GameActor {
     //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
     public virtual void OnParticleCollision(GameObject other) {
+
+        if(!controllerReady) {
+            return;
+        }
         
         if (!GameConfigs.isGameRunning) {
             return;
@@ -2122,6 +2155,11 @@ public class BaseGamePlayerController : GameActor {
     }
      
     public virtual void OnTriggerEnter(Collider collider) {
+        
+        if(!controllerReady) {
+            return;
+        }
+
         // Check if we hit an actual destroyable sprite
         if (!GameController.shouldRunGame) {
             return;
@@ -3039,10 +3077,12 @@ public class BaseGamePlayerController : GameActor {
         yield return new WaitForSeconds(.5f);
         ActionAttack();
     }
-     
-    public float attackDistance = 10f;
 
-    public virtual void CastAttack() {       
+    public virtual void CastAttack() {      
+
+        if(controllerReady) {
+            return;
+        }
              
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4248,8 +4288,6 @@ public class BaseGamePlayerController : GameActor {
         SyncNavAgent();  
      
     }
-
-    public float lastStateEvaded = 0f;
  
     public virtual void UpdateVisibleState() {
      
