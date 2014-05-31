@@ -10,7 +10,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
     float intervalCollision = .2f;
     
     public virtual void Start() {
-        InvokeRepeating("FindPlayerCollisionParent", 1f, 10);
+        InvokeRepeating("FindPlayerCollisionParent", 1f, 1f);
     }
     
     public virtual void FindPlayerCollisionParent() {

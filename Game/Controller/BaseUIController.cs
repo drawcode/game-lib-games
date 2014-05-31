@@ -3215,6 +3215,7 @@ public class BaseUIController : GameObjectBehavior {
         }  
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
+
             GameController.PlayGame();
         }  
 

@@ -1920,7 +1920,7 @@ public class BaseGamePlayerController : GameActor {
                 return false;
             }
 
-            if(!gameObject.activeInHierarchy || !gameObject.activeSelf) {
+            if(!gameObject.activeSelf) {
                 return false;
             }
 

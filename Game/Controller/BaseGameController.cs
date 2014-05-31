@@ -1261,17 +1261,20 @@ public class BaseGameController : GameObjectBehavior {
     }
 
     public virtual void playGame() {
-        
-        //AdNetworks.ShowFullscreenAd();
-        
-        //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
-        //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
-        //}
-        
-        //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
-        //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
 
-        GameController.StartGame("1-1");
+        if(!levelInitializing) {
+        
+            //AdNetworks.ShowFullscreenAd();
+            
+            //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
+            //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
+            //}
+            
+            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
+            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
+
+            GameController.LoadStartLevel("1-1");
+        }
     }
 
     public virtual void loadStartLevel(string levelCode) {
@@ -1289,10 +1292,13 @@ public class BaseGameController : GameObjectBehavior {
     public virtual void initLevel(string levelCode) {
         StartCoroutine(initLevelCo(levelCode));
     }
+
+    bool levelInitializing = false;
        
     public virtual IEnumerator initLevelCo(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
+        levelInitializing = true;
 
         //GameController.ResetCurrentGamePlayer();
         GameController.ResetLevelActors();
@@ -1340,6 +1346,8 @@ public class BaseGameController : GameObjectBehavior {
         UIPanelOverlayPrepare.HideAll();
         
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
+
+        levelInitializing = false;
     }
     
     public virtual void startLevel(string levelCode) {
