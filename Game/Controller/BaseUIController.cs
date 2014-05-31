@@ -3101,7 +3101,7 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowSettings();
         }
 
-        //
+        // rating/community
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAppRate, buttonName)) {
             //GameUIController.ShowSettings();
@@ -3214,17 +3214,8 @@ public class BaseUIController : GameObjectBehavior {
 
         }  
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
-            || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
-            
-            //AdNetworks.ShowFullscreenAd();
-
-            //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
-            //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
-            //}
-            
-            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
-            GameController.LoadStartLevel("1-1");
-            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
+            || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
+            GameController.PlayGame();
         }  
 
         // BACK BUTTON

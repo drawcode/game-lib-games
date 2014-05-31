@@ -1032,7 +1032,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastCharacterLoadedCheck = Time.time;
             
             if (!isCharacterLoaded) {
-                LoadCharacter(characterCode);
+                //LoadCharacter(characterCode);
             }
         }        
 
@@ -1281,8 +1281,7 @@ public class BaseGamePlayerController : GameActor {
 
         //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
         if (controllerData.lastCharacterCode != characterCode 
-            || controllerData.lastCharacterCode == null 
-            || !isCharacterLoaded) {
+            || controllerData.lastCharacterCode == null) {
 
             controllerData.lastCharacterCode = characterCode;
 
@@ -1418,14 +1417,29 @@ public class BaseGamePlayerController : GameActor {
 
             }
         }
-             
+
         ChangePlayerState(controllerState);
              
         LoadWeapons();
 
         controllerData.loadingCharacter = false;
         
-        paused = false;
+        ResetPosition();       
+        
+        InitControls();
+        
+        paused = false; 
+        
+        HidePlayerEffectWarp();
+        
+        if (IsPlayerControlled) {
+            GetPlayerProgress();
+            controllerData.lastPlayerEffectsTrailUpdate = 0;
+            HandlePlayerEffectsTick();
+        }
+        
+        controllerData.initialized = true;
+
     }
  
     // --------------------------------------------------------------------
@@ -1906,6 +1920,10 @@ public class BaseGamePlayerController : GameActor {
                 return false;
             }
 
+            if(!gameObject.activeInHierarchy || !gameObject.activeSelf) {
+                return false;
+            }
+
             if(!paused && controllerData != null) {
                 if(!controllerData.loadingCharacter) {
                     return true;
@@ -1920,7 +1938,7 @@ public class BaseGamePlayerController : GameActor {
     // COLLISIONS/TRIGGERS
 
     public virtual void HandleCollision(Collision collision) {
-                        
+                                
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -2350,9 +2368,6 @@ public class BaseGamePlayerController : GameActor {
         SetControllerData(new GamePlayerControllerData());
         SetRuntimeData(new GamePlayerRuntimeData());
                 
-        controllerData.dying = false;
-        controllerData.effectWarpEnabled = false;
-             
         if (IsPlayerControlled) {
             uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
@@ -2361,35 +2376,7 @@ public class BaseGamePlayerController : GameActor {
         }
         
         LoadCharacter(characterCode);  
-        
-        InitControls();
-                
-        if (controllerData.thirdPersonController != null) {
-            controllerData.thirdPersonController.Reset();           
-        }
-        
-        if (controllerData.gamePlayerControllerAnimation != null) {
-            controllerData.gamePlayerControllerAnimation.Reset();
-        }
 
-        if (controllerState == GamePlayerControllerState.ControllerAgent) {
-            controllerData.navMeshAgent.enabled = true;
-        } 
-        
-        ResetPosition();
-
-        // effects init
-        
-        HidePlayerEffectWarp();
-
-        if (IsPlayerControlled) {
-            GetPlayerProgress();
-
-            controllerData.lastPlayerEffectsTrailUpdate = 0;
-            HandlePlayerEffectsTick();
-        }
-        
-        controllerData.initialized = true;
     }
  
     public virtual void Remove() {
@@ -2713,6 +2700,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StrafeLeft(Vector3 dir, float power) {
         //LogUtil.Log("GamePlayerController:DidStrafeLeft:");
+
+        if(!controllerReady) {
+            return;
+        }
 
         if (isDead) {
             return;
@@ -3109,26 +3100,29 @@ public class BaseGamePlayerController : GameActor {
             directionAttack = controllerData.thirdPersonController.aimingDirection;
         }        
      
-        //Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        Debug.DrawRay(transform.position, directionAttack * attackDistance);
+
         hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
         int i = 0;
         while (i < hits.Length) {
             RaycastHit hit = hits[i];
             Transform hitObject = hit.transform;
          
-            //if(hitObject.name.IndexOf("Game") > -1) {
-            if (hitObject != null) {
-                GamePlayerController playerController = GetController(hitObject);
-                if (playerController != null) {
-                 
-                    ScoreAttack();
-                 
-                    playerController.Hit(1f);
-                 
-                    playerController.InputAttack();
+            if(hitObject.name.IndexOf("Game") > -1) {
+                if (hitObject != null) {
+                    GamePlayerController playerController = GetController(hitObject);
+                    if (playerController != null) {
+
+                        Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
+                                             
+                        ScoreAttack();
+                     
+                        playerController.Hit(1f);
+                     
+                        playerController.InputAttack();
+                    }
                 }
             }
-            //}
          
             // Renderer renderer = hit.collider.renderer;
             //if (renderer) {
@@ -3469,6 +3463,10 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void UpdatePhysicsState() {
+        
+        if(!controllerReady) {
+            return;
+        }
 
         StartCoroutine(UpdatePhysicStateCo());
     }
@@ -3504,7 +3502,11 @@ public class BaseGamePlayerController : GameActor {
         UpdatePlayerEffectsState();
     }
 
-    public virtual void  UpdatePlayerEffectsState() {        
+    public virtual void  UpdatePlayerEffectsState() { 
+        
+        if(!controllerReady) {
+            return;
+        }
 
         float trailTime =
             (Math.Abs(controllerData.impact.x) +
@@ -3856,12 +3858,6 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.thirdPersonController.capeFlyGravity = 8f;
                 controllerData.thirdPersonController.gravity = 16f;
             }
-            
-            attackDistance = 10f;
-        }
-        else {            
-            // TODO add to RPG from character
-            attackDistance = 4f;
         }
 
     }
@@ -4048,6 +4044,18 @@ public class BaseGamePlayerController : GameActor {
             }
 
             StartNavAgent();
+                        
+            if (controllerData.thirdPersonController != null) {
+                controllerData.thirdPersonController.Reset();           
+            }
+            
+            if (controllerData.gamePlayerControllerAnimation != null) {
+                controllerData.gamePlayerControllerAnimation.Reset();
+            }
+            
+            if (controllerState == GamePlayerControllerState.ControllerAgent) {
+                controllerData.navMeshAgent.enabled = true;
+            } 
         }
     }
  
@@ -4504,6 +4512,11 @@ public class BaseGamePlayerController : GameActor {
     //}
 
     public virtual void FixedUpdate() {
+        
+        if(!controllerReady) {
+            return;
+        }
+
         if (!controllerData.initialized) {
             return;
         }
@@ -4516,6 +4529,10 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LateUpdate() {
+        
+        if(!controllerReady) {
+            return;
+        }
 
         if (controllerData == null) {
             return;
@@ -4537,16 +4554,16 @@ public class BaseGamePlayerController : GameActor {
         HandlePlayerInactionState();
     }
  
-    public override void Update() {        
+    public override void Update() {   
+        
+        if(!controllerReady) {
+            return;
+        }
 
         if (GameConfigs.isUIRunning) {
             return;
         }
-                
-        if (paused) {
-            return;
-        }
-        
+                 
         if (!GameConfigs.isGameRunning) {
             return;
         }

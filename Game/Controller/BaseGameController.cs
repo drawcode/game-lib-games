@@ -1260,6 +1260,20 @@ public class BaseGameController : GameObjectBehavior {
             GameController.Instance.levelItemsContainerObject);
     }
 
+    public virtual void playGame() {
+        
+        //AdNetworks.ShowFullscreenAd();
+        
+        //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
+        //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
+        //}
+        
+        //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
+        //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
+
+        GameController.StartGame("1-1");
+    }
+
     public virtual void loadStartLevel(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
@@ -1385,13 +1399,14 @@ public class BaseGameController : GameObjectBehavior {
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
         string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
+        string characterCodeTo = GameProfileCharacters.Current.GetCurrentCharacterCode();
+
+        GameController.CurrentGamePlayerController.characterCode = characterCode;
 
         GameController.CurrentGamePlayerController.Init(
             GamePlayerControllerState.ControllerPlayer, 
             GamePlayerContextState.ContextInput);
 
-        GameController.CurrentGamePlayerController.LoadCharacter(characterSkinCode);
-    
         //GameCustomController.SetCustomColorsPlayer(
         //    GameController.CurrentGamePlayerController.gameObject);
     }

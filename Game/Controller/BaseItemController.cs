@@ -103,9 +103,11 @@ public class BaseItemController : GameObjectBehavior {
         
         foreach (GamePresetItem item in presetItems) {
             
-            yield return new WaitForEndOfFrame();
-            
-            GameAIController.Load(item.code);
+            for(int i = 0; i < item.limit; i++) {
+                yield return new WaitForEndOfFrame();
+                
+                GameAIController.Load(item.code);
+            }
         }
         
         yield return new WaitForSeconds(1f);
