@@ -73,6 +73,7 @@ public class BaseGamePlayerRuntimeData {
     }
 }
 
+[System.Serializable]
 public class BaseGamePlayerControllerData {  
     public bool loadingCharacter = false;
     public bool gameModelVisible = true;
@@ -1920,7 +1921,7 @@ public class BaseGamePlayerController : GameActor {
                 return false;
             }
 
-            if(!gameObject.activeSelf) {
+            if(!gameObject.activeSelf && !gameObject.activeInHierarchy) {
                 return false;
             }
 

@@ -922,9 +922,9 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                         animationData.isRunningClampAnimation = true;
                         PauseAnimationUpdate(.5f);
                         animationData.actor.animation.Play(animationName, PlayMode.StopAll);
-                        if (animationData.actor.animation["hit"] != null) {
-                            animationData.actor.animation.Play("hit", PlayMode.StopAll);
-                        }
+                        //if (animationData.actor.animation["hit"] != null) {
+                        //    animationData.actor.animation.Play("hit", PlayMode.StopAll);
+                        //}
                     }
                 }
             }
@@ -1029,9 +1029,9 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                         PauseAnimationUpdate(.5f);
                         animationData.actor.animation.Play(animationName, PlayMode.StopAll);
                         
-                        if (animationData.actor.animation["hit"] != null) {
-                            animationData.actor.animation.Play("hit", PlayMode.StopAll);
-                        }
+                        //if (animationData.actor.animation["hit"] != null) {
+                        //    animationData.actor.animation.Play("hit", PlayMode.StopAll);
+                        //}
                     }
                 }
             }
