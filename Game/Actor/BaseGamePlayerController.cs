@@ -106,6 +106,8 @@ public class BaseGamePlayerControllerData {
     public float actionInterval = .33f;
     public bool initLoaded = false;
     public float lastCollision = 0f;
+    public float intervalCollision = .05f;
+
     public float lastHit = 0f;
     public Vector3 positionPlayer;
     public Vector3 positionTackler;
@@ -336,7 +338,6 @@ public class BaseGamePlayerController : GameActor {
     //public string uuid = "";
     public string characterCode = "character-player-boy-1";
     public Transform currentTarget;
-    public bool paused = true;
  
     // asset
     public GamePlayerControllerAsset gamePlayerControllerAsset;
@@ -431,6 +432,9 @@ public class BaseGamePlayerController : GameActor {
     public float attackDistance = 10f;
     
     public float lastStateEvaded = 0f;
+    
+    public float lastCollision = 0f;
+    public float intervalCollision = .2f;
 
     // quality settings
         
@@ -1324,7 +1328,20 @@ public class BaseGamePlayerController : GameActor {
 
             gameObjectLoad = AppContentAssets.LoadAsset(prefabCode);
 
-            if (gameObjectLoad != null) {           
+            if (gameObjectLoad != null) {  
+
+                // Wire up collision object
+
+                GamePlayerCollision gamePlayerCollision;
+                
+                if (gameObjectLoad.Has<GamePlayerCollision>()) {
+                    gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
+
+                    gamePlayerCollision.gamePlayerController = gameObject.Get<GamePlayerController>();
+                }
+
+                // Wire up custom objects
+
 
                 if (IsPlayerControlled) {                    
                     if (!gameObjectLoad.Has<GameCustomPlayer>()) {
@@ -1426,10 +1443,8 @@ public class BaseGamePlayerController : GameActor {
         controllerData.loadingCharacter = false;
         
         ResetPosition();       
-        
-        InitControls();
-        
-        paused = false; 
+                
+        controllerData.initialized = true;
         
         HidePlayerEffectWarp();
         
@@ -1438,8 +1453,6 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
         }
-        
-        controllerData.initialized = true;
 
     }
  
@@ -1917,15 +1930,26 @@ public class BaseGamePlayerController : GameActor {
 
     public bool controllerReady {
         get{
-            if(paused) {
+
+            if (!GameController.shouldRunGame) {
                 return false;
             }
+            
+            if (!GameConfigs.isGameRunning) {
+                return false;
+            }
+
+            if(controllerData == null) {
+                return false;
+            }
+
+            //return true;
 
             if(!gameObject.activeSelf && !gameObject.activeInHierarchy) {
-                return false;
+                //return false;
             }
 
-            if(!paused && controllerData != null) {
+            if(controllerData != null) {
                 if(!controllerData.loadingCharacter) {
                     return true;
                 }
@@ -1940,19 +1964,15 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandleCollision(Collision collision) {
                                 
-        if (!GameConfigs.isGameRunning) {
+        if(!controllerReady) {
             return;
         }
 
-        if (controllerData.lastCollision + .2f < Time.time) {
-            controllerData.lastCollision = Time.time;
+        if (controllerData.lastCollision + controllerData.intervalCollision < Time.time) {
+            //controllerData.lastCollision = Time.time;
         }
         else {
-            return;
-        }
-        
-        if(!controllerReady) {
-            return;
+            //return;
         }
 
         if (collision.contacts.Length > 0) {
@@ -1960,12 +1980,14 @@ public class BaseGamePlayerController : GameActor {
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
                      
                 Transform t = contact.otherCollider.transform;
+
                 if (t.parent != null) {
                     string parentName = t.parent.name;
 
                     // TODO make name recursion by depth limit, for now check three above.
                     string parentParentName = "";
                     string parentParentParentName = "";
+                
                     if (t.parent.parent != null) {
                         parentParentName = t.parent.parent.name;                        
                         if (t.parent.parent.parent != null) {
@@ -1973,23 +1995,17 @@ public class BaseGamePlayerController : GameActor {
                         }
                     }
 
-                    bool isObstacle = parentName.Contains("GameObstacle");                  
+                    bool isObstacle = parentName.Contains("GameObstacle")
+                        || t.name.Contains("GameObstacle");                  
 
                     bool isLevelObject = parentName.Contains("GameItemObject")
                         || parentParentName.Contains("GameItemObject")
-                        || parentParentParentName.Contains("GameItemObject");                
+                            || parentParentParentName.Contains("GameItemObject")
+                            || t.name.Contains("GameItemObject");                   
 
                     bool isPlayerObject = 
-                        parentName.Contains("HelmetContainer")
-                        || parentName.Contains("Helmet")
-                        || parentName.Contains("Facemask")
-                        || t.name.Contains("Helmet")
-                        || t.name.Contains("Facemask")
-                        || parentName.Contains("HitCollider")
-                        || parentName.Contains("GamePlayerCollider");
-                    //|| t.name.Contains("GamePlayerObject")
-                    //|| t.name.Contains("GamePlayerEnemy")
-                    //|| t.name.Contains("GameEnemy");  
+                        t.name.Contains("GamePlayerCollider");
+                        //|| t.name.Contains("GamePlayerObject");
 
                     if (isLevelObject) {
                         GameLevelSprite sprite = t.gameObject.FindTypeAboveRecursive<GameLevelSprite>();
@@ -2005,7 +2021,7 @@ public class BaseGamePlayerController : GameActor {
                     }
                                      
                     if (isObstacle || isLevelObject) {
-                        if (IsPlayerState()) {
+                        if (IsPlayerControlled) {
                             AudioAttack();
                             Score(1);
                             GamePlayerProgress.SetStatHitsObstacles(1f);
@@ -2015,51 +2031,57 @@ public class BaseGamePlayerController : GameActor {
 
                         // handle stat
 
-                        //if (IsPlayerControlled) {
                         controllerData.collisionController = GameController.GetGamePlayerControllerObject(
                             t.gameObject, false);
 
                         if (controllerData.collisionController != null) {
-                            
+                        
                             if(!controllerData.collisionController.controllerReady) {
-                                break;
+                                //break;
                             }
 
-                            if (!IsPlayerControlled) {
-                                // we hit a player, so we are an enemy
-                                GamePlayerProgress.SetStatHitsReceived(1f);
+                            // make sure it isn't own colliders
+                            if(controllerData.collisionController.uniqueId
+                               == uniqueId) {
+                                // It's me, leave it be.
+                                continue;
+                            }
+
+                            // handle hit
+                            
+                            float power = .1f;                            
+                            runtimeData.health -= power;
+                            
+                            //GamePlayerProgress.Instance.ProcessProgressSpins
+                            //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
+                            //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
+                            
+                            Vector3 normal = contact.normal;
+                            float magnitude = contact.point.sqrMagnitude;
+                            float hitPower = (magnitude * (float)runtimeData.mass) / 110;
+
+                            //LogUtil.Log("hitPower:" + hitPower);
+
+                            AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
+
+                            if (IsPlayerControlled) {
+                                // we hit an enemy, so we are the player
+                                GamePlayerProgress.SetStatHits(1f);
+                                Hit(power);
 
                             }
                             else {
-                                // we hit an enemy, so we are the player
-                                GamePlayerProgress.SetStatHits(1f);
+
+                                if(controllerData.collisionController.IsPlayerControlled) {
+                                    Hit(power);
+                                    // we hit a player, so we are an enemy
+                                    GamePlayerProgress.SetStatHitsReceived(1f);
+                                }
                             }
                         }
-                        //}
-
-                        // handle hit
-
-                        float power = .1f;
-
-                        runtimeData.health -= power;
-
-                        //contact.normal.magnitude
-
-                        Hit(power);
-
-                        //GamePlayerProgress.Instance.ProcessProgressSpins
-
-                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
-                        //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
-
-                        Vector3 normal = contact.normal;
-                        float magnitude = contact.point.sqrMagnitude;
-                        float hitPower = (magnitude * (float)runtimeData.mass) / 110;
-                        //LogUtil.Log("hitPower:" + hitPower);
-                        AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
                     }
                 }
-                break;
+                //break;
             }
         }
      
@@ -2069,10 +2091,13 @@ public class BaseGamePlayerController : GameActor {
  
     //GamePlayerController gamePlayerControllerHit;
         
-    //void OnCollisionEnter(Collision collision) {
+    //public void OnCollisionEnter(Collision collision) {
     //    if(!GameController.shouldRunGame) {
     //            return;
     //    }
+    //
+    //    HandleCollision(collision);
+    //}
         
     //GameObject target = collision.collider.gameObject;
     //LogUtil.Log("hit object:" + target);
@@ -2087,9 +2112,6 @@ public class BaseGamePlayerController : GameActor {
     //   }
     //}
     // }
-
-    public float lastCollision = 0f;
-    public float intervalCollision = .2f;
     //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
     public virtual void OnParticleCollision(GameObject other) {
@@ -2098,17 +2120,33 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        if (!GameConfigs.isGameRunning) {
-            return;
-        }
-        
         if (lastCollision + intervalCollision < Time.time) {
-            //lastCollision = Time.time;
+            lastCollision = Time.time;
         }
         else {
-            // return;
+            return;
         }
-
+                
+        if (other.name.Contains("projectile-")) {
+            
+            LogUtil.Log("OnParticleCollision:" + other.name);
+            
+            // todo lookup projectile and power to subtract.
+            
+            float projectilePower = 1;
+            float power = projectilePower / 10f;
+            
+            if (IsPlayerControlled) {
+                // 1/20th power for friendly fire
+                power = power / 20f;
+            }
+            
+            runtimeData.health -= power;
+            
+            //contact.normal.magnitude
+            
+            Hit(power);
+        }
             
         /*
             ParticleSystem particleSystem;
@@ -2129,31 +2167,6 @@ public class BaseGamePlayerController : GameActor {
             }
             */
             
-        //if(gamePlayerController.IsPlayerControlled) {
-        //}
-        //else {
-            
-        if (other.name.Contains("projectile")) {
-            LogUtil.Log("OnParticleCollision:" + other.name);
-
-            // todo lookup projectile and power to subtract.
-
-            float projectilePower = 1;
-            
-            float power = projectilePower / 10f;
-
-            if (IsPlayerControlled) {
-                // 1/20th power for friendly fire
-                power = power / 20f;
-            }
-            
-            runtimeData.health -= power;
-            
-            //contact.normal.magnitude
-            
-            Hit(power);
-        }
-            
         /*
             int safeLength = particleSystem.safeCollisionEventSize;
             if (collisionEvents.Length < safeLength)
@@ -2170,7 +2183,6 @@ public class BaseGamePlayerController : GameActor {
                 i++;
             }
             */
-        //}
     }
      
     public virtual void OnTriggerEnter(Collider collider) {
@@ -2178,17 +2190,8 @@ public class BaseGamePlayerController : GameActor {
         if(!controllerReady) {
             return;
         }
-
-        // Check if we hit an actual destroyable sprite
-        if (!GameController.shouldRunGame) {
-            return;
-        }
-                     
-        if (!GameConfigs.isGameRunning) {
-            return;
-        }
      
-        if (controllerState == GamePlayerControllerState.ControllerPlayer) {
+        if (IsPlayerControlled) {
      
             string colliderName = collider.name;
          
@@ -4092,6 +4095,10 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual bool CheckVisibility() {
+
+        if(!controllerReady) {
+            return false;
+        }
      
         if (controllerData.renderers == null) {
             controllerData.renderers = new List<SkinnedMeshRenderer>(); 
@@ -4169,6 +4176,10 @@ public class BaseGamePlayerController : GameActor {
     // UPDATE/GAME TICK
  
     public virtual void UpdateCommonState() {
+
+        if(!controllerReady) {
+            return;
+        }
         
         currentFPS = FPSDisplay.GetCurrentFPS();
              
@@ -4521,10 +4532,6 @@ public class BaseGamePlayerController : GameActor {
         if (!controllerData.initialized) {
             return;
         }
-     
-        if (!GameController.IsGameRunning) {
-            return;
-        }
 
         HandlePlayerAliveStateFixed();
     }
@@ -4540,10 +4547,6 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (!controllerData.initialized) {
-            return;
-        }
-     
-        if (!GameController.IsGameRunning) {
             return;
         }
 
@@ -4562,10 +4565,6 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (GameConfigs.isUIRunning) {
-            return;
-        }
-                 
-        if (!GameConfigs.isGameRunning) {
             return;
         }
      

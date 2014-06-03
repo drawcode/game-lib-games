@@ -3104,8 +3104,7 @@ public class BaseUIController : GameObjectBehavior {
         // rating/community
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAppRate, buttonName)) {
-            //GameUIController.ShowSettings();
-            //Platforms.AskForReview("","",0, "", "", "");
+            Platforms.ShowReviewAppView();
         }
 
         // Game networks

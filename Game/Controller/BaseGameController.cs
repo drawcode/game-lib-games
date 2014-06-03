@@ -763,8 +763,7 @@ public class BaseGameController : GameObjectBehavior {
 
         if (gamePlayerController == null
             && (go.name.Contains("Game")
-            || go.name.Contains("Helmet")
-            || go.name.Contains("Facemask"))) {
+            || go.name.Contains("GamePlayerCollider"))) {
             //&& (go.name.Contains("Helmet")
             //|| go.name.Contains("Facemask"))) {
 
@@ -1498,16 +1497,16 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual IEnumerator loadActorCo(GameActorDataItem character) {
 
-        if (loadingCharacterContainer) {
-            yield break; 
-        }
+        //if (loadingCharacterContainer) {
+        //    yield break; 
+        //}
 
-        loadingCharacterContainer = true;
+        //loadingCharacterContainer = true;
 
         GameCharacter gameCharacter = GameCharacters.Instance.GetById(character.characterCode);
 
         if(gameCharacter == null) {
-            loadingCharacterContainer = false;
+            //loadingCharacterContainer = false;
             yield break;
         }
         
@@ -1558,7 +1557,7 @@ public class BaseGameController : GameObjectBehavior {
         }
 
         if (prefabObject == null) {            
-            loadingCharacterContainer = false;
+            //loadingCharacterContainer = false;
             yield break;
         }
 
@@ -1578,8 +1577,6 @@ public class BaseGameController : GameObjectBehavior {
 
             if(characterGamePlayerController != null) {
 
-                characterGamePlayerController.paused = true;
-                
                 if(character.characterType == GameActorType.enemy) {                        
                     //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
                     //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
@@ -1606,7 +1603,7 @@ public class BaseGameController : GameObjectBehavior {
             }
         }
         
-        loadingCharacterContainer = false;
+        //loadingCharacterContainer = false;
     }
 
     public virtual IEnumerator loadItemCo(GameItem item) {

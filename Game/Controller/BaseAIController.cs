@@ -146,7 +146,7 @@ public class BaseAIController : GameObjectBehavior {
 
         foreach (GamePresetItem item in presetItems) {
 
-            for(int i = 0; i < item.limit; i++) {
+            for(int i = 0; i < item.limit / 3; i++) {
                 yield return new WaitForEndOfFrame();
 
                 GameAIController.Load(item.code);

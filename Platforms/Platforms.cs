@@ -83,17 +83,42 @@ public class Platforms {
         EtceteraTwoBinding.playMovie(url, showControls, supportLandscape, supportPortrait);
 #endif
     }
-    
-    public static void AskForReview(string appName, string bundleId, int launchesToWait, string title, string message, string packageId) {
-        Instance.askForReview(appName, bundleId, launchesToWait, title, message, packageId);
+
+    public static void ShowReviewAppView() {        
+#if UNITY_ANDROID
+        Platforms.AskForReview(
+            AppConfigs.appGameDisplayName, 
+            AppConfigs.appBundleId);
+#elif UNITY_IPHONE  
+        Platforms.AskForReview(
+            AppConfigs.appGameDisplayName, 
+            AppConfigs.appStoreId);
+#endif     
     }
     
-    public void askForReview(string appName, string bundleId, int launchesToWait, string title, string message, string packageId) {
+    public static void AskForReview(string appName, string bundleId) {
+        Instance.askForReview(appName, bundleId);
+    }
+    
+    public void askForReview(string appName, string bundleId) {
 #if UNITY_ANDROID
-            EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
-#elif UNITY_IPHONE
-            //EtceteraBinding.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
+        EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
+#elif UNITY_IPHONE  
+        EtceteraBinding.askForReview("Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
 #endif      
+    }
+
+    public static void AskForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {
+        Instance.askForReview(appName, bundleId, launchCount, hoursBetweenPrompts);
+    }
+    
+    public void askForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {
+        #if UNITY_ANDROID
+        EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
+        #elif UNITY_IPHONE  
+        EtceteraBinding.askForReview(launchCount, hoursBetweenPrompts, 
+                                     "Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
+        #endif      
     }
     
     public static void ShowEmailView(string to, string subject, string body, bool isHtml) {

@@ -6,11 +6,14 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
     
     public GamePlayerController gamePlayerController;
     private GameObject gamePlayerControllerObject;
+
+    public string type = "default";
+
     float lastCollision = 0f;
-    float intervalCollision = .2f;
+    float intervalCollision = .05f;
     
     public virtual void Start() {
-        InvokeRepeating("FindPlayerCollisionParent", 1f, 1f);
+        //InvokeRepeating("FindPlayerCollisionParent", 1f, 1f);
     }
     
     public virtual void FindPlayerCollisionParent() {
@@ -69,6 +72,8 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
             //}
             //else {
 
+            /*
+
             LogUtil.Log("OnParticleCollision:" + other.name);
             
             ParticleSystem particleSystem;
@@ -100,6 +105,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
                     i++;
                 }
             }
+            */
             //}
         }
     }
@@ -111,10 +117,10 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
 
         if (lastCollision + intervalCollision < Time.time) {
-            lastCollision = Time.time;
+            //lastCollision = Time.time;
         }
         else {
-            return;
+            //return;
         }
 
         if (gamePlayerController != null) {            
