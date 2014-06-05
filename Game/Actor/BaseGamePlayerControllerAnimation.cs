@@ -15,6 +15,7 @@ public enum GamePlayerControllerAnimationType {
     mecanim
 }
 
+/*
 public class BaseGamePlayerAnimationType {
     public static string walk = "walk";
     public static string run = "run";
@@ -44,161 +45,58 @@ public class BaseGamePlayerAnimationType {
     public static string spin = "spin";
 }
 
-public class BaseGamePlayerAnimationData {
-    public string skill = "emo_0";
-    public string jump = "jump_0";
-    public string run = "run_0";
-    public string walk = "walk_0";
-    public string attack = "action_0";
-    public string idle = "idle_0";
-    public string hit = "hit_0";
-    public string death = "death_0";
-    public int skillNum = 0;
-    public int jumpNum = 0;
-    public int idleNum = 0;
-    public int attackNum = 0;
-    public int runNum = 0;
-    public int walkNum = 0;
-    public int hitNum = 0;
-    public int deathNum = 0;
-        
-        
-    // SKILL
-        
-    public int SkillCount() {
-        return 6;
-    }
-        
-    public string Skill() {
-        if (skillNum == 0) {
-            skillNum = UnityEngine.Random.Range(1, SkillCount());
-        }       
-        return Skill(skillNum);
-    }
-        
-    public string Skill(int num) {
-        return skill + num;
-    }
-        
-    // IDLE
-        
-    public int JumpCount() {
-        return 3;
-    }
-        
-    public string Jump() {
-        if (jumpNum == 0) {
-            jumpNum = UnityEngine.Random.Range(1, JumpCount());
-        }       
-        return Jump(jumpNum);
-    }
-        
-    public string Jump(int num) {
-        return jump + num;
-    }
-        
-    // IDLE
-        
-    public int IdleCount() {
-        return 5;
-    }
-        
-    public string Idle() {
-        if (idleNum == 0) {
-            idleNum = UnityEngine.Random.Range(1, IdleCount());
-        }
-        return Idle(idleNum);
-    }
-        
-    public string Idle(int num) {
-        return idle + num;
-    }
-        
-    // ATTACK
-        
-    public int AttackCount() {
-        return 5;
-    }
-        
-    public string Attack() {
-        if (attackNum == 0) {
-            attackNum = UnityEngine.Random.Range(1, AttackCount());
-        }       
-        return Attack(attackNum);
-    }
-        
-    public string Attack(int num) {
-        return attack + num;
-    }
-        
-    // RUN
-        
-    public int RunCount() {
-        return 3;
-    }
-        
-    public string Run() {
-        if (runNum == 0) {
-            runNum = UnityEngine.Random.Range(1, RunCount());
-        }       
-        return Run(runNum);
-    }
-        
-    public string Run(int num) {
-        return run + num;
-    }
-        
-    // WALK
-        
-    public int WalkCount() {
-        return 5;
-    }
-        
-    public string Walk() {
-        if (walkNum == 0) {
-            walkNum = UnityEngine.Random.Range(1, WalkCount());
-        }       
-        return Walk(walkNum);
-    }
-        
-    public string Walk(int num) {
-        return walk + num;
-    }
-        
-    // HIT
-        
-    public int HitCount() {
-        return 3;
-    }
-        
-    public string Hit() {
+*/
 
-        if (hitNum == 0) {
-            hitNum = UnityEngine.Random.Range(1, HitCount());
-        }       
-        return Hit(hitNum);
+
+public class GamePlayerAnimationDataItem : GameDataObject {
+
+}
+
+public class BaseGamePlayerAnimationData {
+
+    public GameCharacter gameCharacter;
+    public Dictionary<string,GamePlayerAnimationDataItem> items;
+
+    public BaseGamePlayerAnimationData() {
+        Reset();
     }
+
+    public void Reset() {
+        items = new Dictionary<string, GamePlayerAnimationDataItem>();        
+    }
+
+    public void LoadCharacterAnimations(string characterCode) {
+        gameCharacter = GameCharacters.Instance.GetById(characterCode);
+
+        foreach (GameDataAnimation item in gameCharacter.data.animations) {
+
+            GamePlayerAnimationDataItem itemData = new GamePlayerAnimationDataItem();
+
+            itemData.code = GetDataAnimation(item.type);
+            itemData.type = item.type;
+            itemData.valFloat = Time.time;
+
+            items.Set(item.type,itemData); 
+        }
+    }
+
+    public string GetDataAnimation(string type) {
+
+        string code = "idle";
+
+        if (gameCharacter != null) {
+            
+            GameDataAnimation data = 
+                gameCharacter.data.GetAnimationByType(
+                    type);
+            
+            if (data != null) {
+                code = data.code;
+            }
+        }
         
-    public string Hit(int num) {
-        return hit + num;
-    }
-                
-    // DEATH
-        
-    public int DeathCount() {
-        return 2;
-    }
-        
-    public string Death() {
-        if (deathNum == 0) {
-            deathNum = UnityEngine.Random.Range(1, DeathCount());
-        }       
-        return Death(deathNum);
-    }
-        
-    public string Death(int num) {
-        return death + num;
-    }
+        return code;
+    }       
 }
 
 public class BaseGamePlayerControllerAnimationData {   
@@ -230,8 +128,8 @@ public class BaseGamePlayerControllerAnimationData {
 
 public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
-
-    public GamePlayerControllerAnimationType animationType = GamePlayerControllerAnimationType.legacy;
+    public GamePlayerControllerAnimationType animationType = 
+        GamePlayerControllerAnimationType.legacy;
     public GamePlayerControllerAnimationData animationData;
  
     public bool isLegacy {
@@ -273,14 +171,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
      
     public virtual void ResetPlayState() {     
         if (!isLegacy && animationData.animator != null) {
-            //animationData.animator.SetFloat(GamePlayerAnimationType.idle, 0f);
+            //animationData.animator.SetFloat(GameDataActionKeys.idle, 0f);
 
-            ResetFloat(GamePlayerAnimationType.speed);
-            ResetFloat(GamePlayerAnimationType.death);
-            ResetFloat(GamePlayerAnimationType.strafe);
-            ResetFloat(GamePlayerAnimationType.jump);
-            ResetFloat(GamePlayerAnimationType.attack);
-            ResetFloat(GamePlayerAnimationType.hit);
+            ResetFloat(GameDataActionKeys.speed);
+            ResetFloat(GameDataActionKeys.death);
+            ResetFloat(GameDataActionKeys.strafe);
+            ResetFloat(GameDataActionKeys.jump);
+            ResetFloat(GameDataActionKeys.attack);
+            ResetFloat(GameDataActionKeys.hit);
         }
     }
 
@@ -495,7 +393,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     }
  
     public virtual void ResetAnimatedActor(GameObject actorItem) {
-        if(actorItem != null) {
+        if (actorItem != null) {
             animationData.actor = actorItem;
             animationData.animator = null;
             FindAnimatedActor();
@@ -666,7 +564,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     }
                 }
                 else if (isMecanim) {
-                    SetFloat(GamePlayerAnimationType.speed, currentSpeed);
+                    SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
 
                 SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
@@ -716,7 +614,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     }
                 }
                 else if (isMecanim) {
-                    SetFloat(GamePlayerAnimationType.speed, currentSpeed);
+                    SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
             }
          // Fade out walk and run
@@ -725,7 +623,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     AnimateIdle();
                 }
                 else if (isMecanim) {
-                    SetFloat(GamePlayerAnimationType.speed, currentSpeed);
+                    SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
             }
          
@@ -778,15 +676,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (isLegacy) {
             
             if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
-                    animationData.actor.animation.CrossFade(GamePlayerAnimationType.jump, 0.2f);
-                    SendMessage("SyncAnimation", GamePlayerAnimationType.jump, 
+                if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
+                    animationData.actor.animation.CrossFade(GameDataActionKeys.jump, 0.2f);
+                    SendMessage("SyncAnimation", GameDataActionKeys.jump, 
                      SendMessageOptions.DontRequireReceiver);
                 }
             }
         }
         else if (isMecanim) {
-            PlayOneShotFloat(GamePlayerAnimationType.jump);
+            PlayOneShotFloat(GameDataActionKeys.jump);
         }
      
         //animationData.actor.animation.CrossFade("jetpackjump", 0.2f);
@@ -814,14 +712,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
 
             if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
-                    animationData.actor.animation.Play(GamePlayerAnimationType.jump);
+                if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
+                    animationData.actor.animation.Play(GameDataActionKeys.jump);
                     SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
                 }
             }
         }
         else if (isMecanim) {
-            PlayOneShotFloat(GamePlayerAnimationType.jump, 1f);
+            PlayOneShotFloat(GameDataActionKeys.jump, 1f);
         }
 
     }
@@ -838,11 +736,11 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
 
             if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GamePlayerAnimationType.idle] != null) {
-                    if (animationData.actor.animation[GamePlayerAnimationType.idle] != null
+                if (animationData.actor.animation[GameDataActionKeys.idle] != null) {
+                    if (animationData.actor.animation[GameDataActionKeys.idle] != null
                         && !animationData.isRunningClampAnimation) {
-                        animationData.actor.animation.CrossFade(GamePlayerAnimationType.idle);
-                        SendMessage("SyncAnimation", GamePlayerAnimationType.idle,
+                        animationData.actor.animation.CrossFade(GameDataActionKeys.idle);
+                        SendMessage("SyncAnimation", GameDataActionKeys.idle,
                          SendMessageOptions.DontRequireReceiver);
                     }
                 }
@@ -869,7 +767,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         }
         else if (isMecanim) {
             if (animationData.animator != null) {                
-                PlayOneShotFloat(GamePlayerAnimationType.attack, 1f);
+                PlayOneShotFloat(GameDataActionKeys.attack, 1f);
             }
         }
     }
@@ -894,7 +792,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     }
 
     public virtual void DidAttack() {        
-        DidAttack(GamePlayerAnimationType.attack);
+        DidAttack(GameDataActionKeys.attack);
     }
  
     public virtual void DidAttackAlt() {
@@ -931,8 +829,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         }
         else {
             if (!animationData.isDead) {
-                // animator.SetFloat(GamePlayerAnimationType.speed, .8f);
-                //PlayOneShotFloat(GamePlayerAnimationType.attack);
+                // animator.SetFloat(GameDataActionKeys.speed, .8f);
+                //PlayOneShotFloat(GameDataActionKeys.attack);
             }
         }
 
@@ -999,19 +897,19 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     }
 
     public virtual void DidDefend() {
-        DidDefend(GamePlayerAnimationType.defend);
+        DidDefend(GameDataActionKeys.defend);
     }
  
     public virtual void DidDefendAlt() {
-        DidDefend(GamePlayerAnimationType.defendAlt);
+        DidDefend(GameDataActionKeys.defend_alt);
     }
  
     public virtual void DidDefendLeft() {
-        DidDefend(GamePlayerAnimationType.defendLeft);
+        DidDefend(GameDataActionKeys.defend_left);
     }
  
     public virtual void DidDefendRight() {
-        DidDefend(GamePlayerAnimationType.defendRight);
+        DidDefend(GameDataActionKeys.defend_right);
     }
  
     public virtual void DidDefend(string animationName) {
@@ -1038,7 +936,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         }
         else {
             if (!animationData.isDead) {
-                SetFloat(GamePlayerAnimationType.speed, .8f);
+                SetFloat(GameDataActionKeys.speed, .8f);
             }
         }
 
@@ -1103,8 +1001,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (isLegacy) {
             if (animationData.actor != null) {
                 if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GamePlayerAnimationType.death] != null) {
-                        animationData.actor.animation.Play(GamePlayerAnimationType.death, PlayMode.StopAll);
+                    if (animationData.actor.animation[GameDataActionKeys.death] != null) {
+                        animationData.actor.animation.Play(GameDataActionKeys.death, PlayMode.StopAll);
                         animationData.isRunningClampAnimation = true;
                     }
                 }
@@ -1117,7 +1015,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     HandleAnimatorState();
                     animationData.isRunningClampAnimation = true;
                     PauseAnimationUpdate(.5f);
-                    SetFloat(GamePlayerAnimationType.death, 1f);
+                    SetFloat(GameDataActionKeys.death, 1f);
                     animationData.isDead = true;
                 }                
             }
@@ -1140,23 +1038,23 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (isLegacy) {
             if (animationData.actor != null) {
                 if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GamePlayerAnimationType.idle] != null) {
+                    if (animationData.actor.animation[GameDataActionKeys.idle] != null) {
                         animationData.isRunningClampAnimation = true;
                         //PauseAnimationUpdate(1f);  
-                        animationData.actor.animation.Play(GamePlayerAnimationType.idle, PlayMode.StopAll);
+                        animationData.actor.animation.Play(GameDataActionKeys.idle, PlayMode.StopAll);
                     }
                 }
             }
         }
         else {
-            ResetFloat(GamePlayerAnimationType.attack);
-            ResetFloat(GamePlayerAnimationType.hit);
-            ResetFloat(GamePlayerAnimationType.strafe);
-            ResetFloat(GamePlayerAnimationType.speed);
-            ResetFloat(GamePlayerAnimationType.run);
-            ResetFloat(GamePlayerAnimationType.walk);
+            ResetFloat(GameDataActionKeys.attack);
+            ResetFloat(GameDataActionKeys.hit);
+            ResetFloat(GameDataActionKeys.strafe);
+            ResetFloat(GameDataActionKeys.speed);
+            ResetFloat(GameDataActionKeys.run);
+            ResetFloat(GameDataActionKeys.walk);
 
-            PlayOneShotFloat(GamePlayerAnimationType.idle);
+            PlayOneShotFloat(GameDataActionKeys.idle);
         }
     }
  
@@ -1175,16 +1073,16 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (isLegacy) {
             if (animationData.actor != null) {
                 if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GamePlayerAnimationType.jump] != null) {
+                    if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
                         animationData.isRunningClampAnimation = true;
                         //PauseAnimationUpdate(1f);  
-                        animationData.actor.animation.Play(GamePlayerAnimationType.jump, PlayMode.StopAll);
+                        animationData.actor.animation.Play(GameDataActionKeys.jump, PlayMode.StopAll);
                     }
                 }
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.jump);
+            PlayOneShotFloat(GameDataActionKeys.jump);
         }
     }
 
@@ -1214,7 +1112,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.strafe, -1f);
+            PlayOneShotFloat(GameDataActionKeys.strafe, -1f);
         }
     }
 
@@ -1244,7 +1142,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.strafe);
+            PlayOneShotFloat(GameDataActionKeys.strafe);
         }
     }
 
@@ -1275,7 +1173,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.boost);
+            PlayOneShotFloat(GameDataActionKeys.boost);
         }
     }
 
@@ -1306,7 +1204,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
         }
         else {
-            PlayOneShotFloat(GamePlayerAnimationType.spin);
+            PlayOneShotFloat(GameDataActionKeys.spin);
         }
     }
      
@@ -1371,18 +1269,18 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 && animationData.animator.enabled
                 && animationData.animator.gameObject.activeInHierarchy
                 && animationData.animator.gameObject.activeSelf) {
-                    animationData.animator.SetBool(paramName, true);
-                    yield return null;
-                    animationData.animator.SetBool(paramName, false);    
+                animationData.animator.SetBool(paramName, true);
+                yield return null;
+                animationData.animator.SetBool(paramName, false);    
             }
         }
     }
     
     public void SetBool(string key, bool val) {
         
-        if(isLegacy) {
+        if (isLegacy) {
         }
-        else if(isMecanim) {
+        else if (isMecanim) {
             
             SyncAnimator();
                         
@@ -1412,21 +1310,21 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             return;
         }
 
-        if(isMecanim) {
+        if (isMecanim) {
 
             if (animationData.animator == null) {
                 FindAnimatedActor();
                 Debug.Log("animationData.animator NULL:" + 
-                          " uniqueId:" + animationData.gamePlayerController.uniqueId);
+                    " uniqueId:" + animationData.gamePlayerController.uniqueId);
             }
         }
     }
         
     public void SetFloat(string key, float val) {
         
-        if(isLegacy) {
+        if (isLegacy) {
         }
-        else if(isMecanim) {
+        else if (isMecanim) {
 
             SyncAnimator();
 

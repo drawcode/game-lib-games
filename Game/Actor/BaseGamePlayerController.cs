@@ -338,11 +338,15 @@ public class BaseGamePlayerController : GameActor {
     //public string uuid = "";
     public string characterCode = "character-player-boy-1";
     public Transform currentTarget;
- 
+
+    // data
+    public GameCharacter gameCharacter;
+
     // asset
     public GamePlayerControllerAsset gamePlayerControllerAsset;
     public GameCustomPlayer gameCustomPlayer;
     public GameCustomEnemy gameCustomEnemy;
+
      
     // player effects
     public GameObject gamePlayerEffectParticleObjects;
@@ -698,15 +702,10 @@ public class BaseGamePlayerController : GameActor {
         GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
         
         if (data.HasSounds()) {
-            
-            List<GameDataSound> items = data.sounds;
-            
-            foreach (GameDataSound item in items) {
-                item.PlaySoundType(GameDataSound.reward);
-            }
+
+            data.PlaySoundType(GameDataActionKeys.reward);
         }           
     }
-
  
     // --------------------------------------------------------------------
     // EFFECTS
@@ -1230,8 +1229,19 @@ public class BaseGamePlayerController : GameActor {
         // TODO footsteps over different terrain
         // Foosteps, breathing etc.
 
+        string soundFootsteps = "audio_footsteps_default";
+
+        if(gameCharacter != null) {
+
+            GameDataSound dataSound = gameCharacter.data.GetSoundByType(GameDataActionKeys.footsteps);
+
+            if(dataSound != null) {
+                soundFootsteps = dataSound.code;
+            }
+        }
+
         if (controllerData.audioObjectFootsteps == null) {
-            controllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, "audio_footsteps_default", true);
+            controllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
             if (controllerData.audioObjectFootsteps != null) {
                 if (controllerData.audioObjectFootsteps.audio != null) {
                     controllerData.audioObjectFootstepsSource = controllerData.audioObjectFootsteps.audio;
@@ -1302,7 +1312,7 @@ public class BaseGamePlayerController : GameActor {
             yield break;
         }   
 
-        GameCharacter gameCharacter = 
+        gameCharacter = 
             GameCharacters.Instance.GetById(characterCode);
 
         if(gameCharacter == null) {
@@ -2229,50 +2239,49 @@ public class BaseGamePlayerController : GameActor {
     // ANIMATION
 
     public virtual void AnimatePlayer(string animationName) {
-        if (animationName == GamePlayerAnimationType.skill) {
+        if (animationName == GameDataActionKeys.skill) {
             InputSkill();
         }
-        else if (animationName == GamePlayerAnimationType.attack) {
+        else if (animationName == GameDataActionKeys.attack) {
             InputAttack();
         }
-        else if (animationName == GamePlayerAnimationType.attackAlt) {
+        else if (animationName == GameDataActionKeys.attack_alt) {
             InputAttackAlt();
         }
-        else if (animationName == GamePlayerAnimationType.attackRight) {
+        else if (animationName == GameDataActionKeys.attack_right) {
             InputAttackRight();
         }
-        else if (animationName == GamePlayerAnimationType.attackLeft) {
+        else if (animationName == GameDataActionKeys.attack_left) {
             InputAttackLeft();
         }
-        else if (animationName == GamePlayerAnimationType.defend) {
+        else if (animationName == GameDataActionKeys.defend) {
             InputDefend();
         }
-        else if (animationName == GamePlayerAnimationType.defendAlt) {
+        else if (animationName == GameDataActionKeys.defend_alt) {
             InputDefendAlt();
         }
-        else if (animationName == GamePlayerAnimationType.defendRight) {
+        else if (animationName == GameDataActionKeys.defend_right) {
             InputDefendRight();
         }
-        else if (animationName == GamePlayerAnimationType.defendLeft) {
+        else if (animationName == GameDataActionKeys.defend_left) {
             InputDefendLeft();
         }
-        else if (animationName == GamePlayerAnimationType.death
-            || animationName == GamePlayerAnimationType.die) {
+        else if (animationName == GameDataActionKeys.death) {
             InputDie();
         }
-        else if (animationName == GamePlayerAnimationType.jump) {
+        else if (animationName == GameDataActionKeys.jump) {
             InputJump();
         }
-        else if (animationName == GamePlayerAnimationType.strafeLeft) {
+        else if (animationName == GameDataActionKeys.strafe_left) {
             InputStrafeLeft();
         }
-        else if (animationName == GamePlayerAnimationType.strafeRight) {
+        else if (animationName == GameDataActionKeys.strafe_right) {
             InputStrafeRight();
         }
-        else if (animationName == GamePlayerAnimationType.use) {
+        else if (animationName == GameDataActionKeys.use) {
             InputUse();
         }
-        else if (animationName == GamePlayerAnimationType.mount) {
+        else if (animationName == GameDataActionKeys.mount) {
             InputMount();
         }
     }
@@ -2402,105 +2411,105 @@ public class BaseGamePlayerController : GameActor {
     public virtual void SendMount() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.mount,
+            GameDataActionKeys.mount,
             UniqueUtil.Instance.currentUniqueId);
     }
  
     public virtual void SendUse() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.use,
+            GameDataActionKeys.use,
             UniqueUtil.Instance.currentUniqueId);
     }
     
     public virtual void SendJump() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.jump,
+            GameDataActionKeys.jump,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendStrafeLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.strafeLeft,
+            GameDataActionKeys.strafe_left,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendStrafeRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.strafeRight,
+            GameDataActionKeys.strafe_right,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendBoost() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.boost,
+            GameDataActionKeys.boost,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendSkill() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.skill,
+            GameDataActionKeys.skill,
             UniqueUtil.Instance.currentUniqueId);
     }
     
     public virtual void SendAttack() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.attack,
+            GameDataActionKeys.attack,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackAlt() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.attackAlt,
+            GameDataActionKeys.attack_alt,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.attackRight,
+            GameDataActionKeys.attack_right,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendAttackLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.attackLeft,
+            GameDataActionKeys.attack_left,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefend() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.defend,
+            GameDataActionKeys.defend,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendAlt() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.defendAlt,
+            GameDataActionKeys.defend_alt,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendRight() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.defendRight,
+            GameDataActionKeys.defend_right,
             UniqueUtil.Instance.currentUniqueId);
     }
 
     public virtual void SendDefendLeft() {
         Messenger<string, string>.Broadcast(
             GamePlayerMessages.PlayerAnimation,
-            GamePlayerAnimationType.defendLeft,
+            GameDataActionKeys.defend_left,
             UniqueUtil.Instance.currentUniqueId);
     }
  
@@ -3544,18 +3553,9 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastAudioPlayedAttack = Time.time;
         }
 
-        if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-            //GameAudio.PlayEffect(transform, "attack-sword-hit-1");
-            int randAudio = UnityEngine.Random.Range(1, 5);
-            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-        }
-        else {
-            //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 5);
-            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            //}
-        }
+        GameDataSound soundAttack = gameCharacter.data.GetSoundByType(GameDataActionKeys.attack);
 
+        GameAudio.PlayEffect(soundAttack.code);
     }
 
     public virtual void AudioHit() {
