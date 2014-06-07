@@ -148,7 +148,7 @@ public class BaseGamePlayerControllerAnimationData {
             return GetAnimation(GameDataActionKeys.walk);
         }
     }
-    
+
     public string animationCodeWalkBack {
         get {
             return GetAnimation(GameDataActionKeys.walk_back);
@@ -164,6 +164,22 @@ public class BaseGamePlayerControllerAnimationData {
     public string animationCodeRunBack {
         get {
             return GetAnimation(GameDataActionKeys.run_back);
+        }
+    }
+
+    //
+        
+    public string animationCodeJump {
+        get {
+            return GetAnimation(GameDataActionKeys.jump);
+        }
+    }
+
+    //    
+    
+    public string animationCodeSkill {
+        get {
+            return GetAnimation(GameDataActionKeys.skill);
         }
     }
 
@@ -715,15 +731,20 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
                 return;
             }
-         
+
+            string currentAnimationRun = animationData.animationCodeRun;
+            string currentAnimationWalk = animationData.animationCodeWalk;
+            string currentAnimationJump = animationData.animationCodeJump;
+
+                     
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (animationData.actor.animation != null) {
-                        if (animationData.actor.animation["run"] != null) {
-                            animationData.actor.animation["run"].normalizedSpeed = animationData.runSpeedScale;
+                        if (animationData.actor.animation[currentAnimationRun] != null) {
+                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
                         }
-                        if (animationData.actor.animation["walk"] != null) {
-                            animationData.actor.animation["walk"].normalizedSpeed = animationData.walkSpeedScale;
+                        if (animationData.actor.animation[currentAnimationWalk] != null) {
+                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                         }
                     }
                 }
@@ -735,14 +756,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actor.animation != null) {
-                            if (animationData.actor.animation["run"] != null) {
-                                if (animationData.actor.animation["run"] != null) {
-                                    animationData.actor.animation["run"].blendMode = AnimationBlendMode.Blend;
+                            if (animationData.actor.animation[currentAnimationRun] != null) {
+                                if (animationData.actor.animation[currentAnimationRun] != null) {
+                                    animationData.actor.animation[currentAnimationRun].blendMode = AnimationBlendMode.Blend;
                                  
                                     if (animationData.thirdPersonController == null) {                      
-                                        animationData.actor.animation["run"].normalizedSpeed = animationData.runSpeedScale;
+                                        animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
                                         //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actor.animation.CrossFade("run", .5f);   
+                                        animationData.actor.animation.CrossFade(currentAnimationRun, .5f);   
                                     }
                                     else {                       
                                  
@@ -755,19 +776,19 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                                                 animationData.thirdPersonController.aimingDirection);
                                          
                                             if (angleTo > 120 && angleTo < 240) {
-                                                animationData.actor.animation["run"].normalizedSpeed = -animationData.runSpeedScale * .9f;                               
+                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = -animationData.runSpeedScale * .9f;                               
                                             }
                                             else {   
-                                                animationData.actor.animation["run"].normalizedSpeed = animationData.runSpeedScale;
+                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
                                             }
                                          
                                             //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
-                                            animationData.actor.animation.Blend("run");    
+                                            animationData.actor.animation.Blend(currentAnimationRun);    
                                         }
                                         else {
-                                            animationData.actor.animation["run"].normalizedSpeed = animationData.runSpeedScale;
+                                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
                                             //animationData.actor.animation["run"].time = 0f;
-                                            animationData.actor.animation.CrossFade("run", .5f);                       
+                                            animationData.actor.animation.CrossFade(currentAnimationRun, .5f);                       
                                         }
                                     }
                                 }
@@ -775,15 +796,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                         }
                     }
                     // We fade out jumpland quick otherwise we get sliding feet
-                    if (animationData.actor.animation["jump"] != null) {
-                        animationData.actor.animation.CrossFade("jump", 0);
+                    if (animationData.actor.animation[currentAnimationJump] != null) {
+                        animationData.actor.animation.CrossFade(currentAnimationJump, 0);
                     }
                 }
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
 
-                SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
+                SendMessage("SyncAnimation", GameDataActionKeys.run , SendMessageOptions.DontRequireReceiver);
             }
          // Fade in walk
             else if (currentSpeed > 0.1) {
@@ -791,16 +812,16 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actor.animation != null) {
-                            if (animationData.actor.animation["jump"] != null) {
-                                if (animationData.actor.animation["jump"] != null) {
-                                    animationData.actor.animation.CrossFade("jump");
+                            if (animationData.actor.animation[currentAnimationJump] != null) {
+                                if (animationData.actor.animation[currentAnimationJump] != null) {
+                                    animationData.actor.animation.CrossFade(currentAnimationJump);
                                 }
                                 // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actor.animation.Blend("jump", 0);
+                                animationData.actor.animation.Blend(currentAnimationJump, 0);
                             }
-                            if (animationData.actor.animation["walk"] != null) {
-                                if (animationData.actor.animation["walk"] != null) {
-                                    animationData.actor.animation["walk"].blendMode = AnimationBlendMode.Blend;
+                            if (animationData.actor.animation[currentAnimationWalk] != null) {
+                                if (animationData.actor.animation[currentAnimationWalk] != null) {
+                                    animationData.actor.animation[currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
                                     if (animationData.thirdPersonController.verticalInput2 != 0f 
                                         || animationData.thirdPersonController.horizontalInput2 != 0f) {
                                         // if angle between axis is over 120 and less than 240 reverse run
@@ -809,21 +830,21 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                                             animationData.thirdPersonController.aimingDirection);
                                                                  
                                         if (angleTo > 120 && angleTo < 240) {
-                                            animationData.actor.animation["walk"].normalizedSpeed = -animationData.walkSpeedScale * .9f;                             
+                                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;                             
                                         }
                                         else {   
-                                            animationData.actor.animation["walk"].normalizedSpeed = animationData.walkSpeedScale;
+                                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                                         }
-                                        animationData.actor.animation.Blend("walk");   
+                                        animationData.actor.animation.Blend(currentAnimationWalk);   
                                     }
                                     else {
-                                        animationData.actor.animation["walk"].normalizedSpeed = animationData.walkSpeedScale;
+                                        animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                                         //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actor.animation.CrossFade("walk", .5f);                      
+                                        animationData.actor.animation.CrossFade(currentAnimationWalk, .5f);                      
                                     }
                                  
                                  
-                                    SendMessage("SyncAnimation", "walk", SendMessageOptions.DontRequireReceiver);
+                                    SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
                                 }
                             }
                         }
@@ -1446,26 +1467,28 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             currentSpeed = animationData.thirdPersonController.GetSpeed();
             walkSpeed = animationData.thirdPersonController.walkSpeed;
         }
+
+        string currentAnimationSkill = animationData.animationCodeSkill;
      
         // Fade in run
         if (currentSpeed > walkSpeed) {
-            if (animationData.actor.animation["skill"] != null) {
-                animationData.actor.animation.Blend("skill");
-                SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
+            if (animationData.actor.animation[currentAnimationSkill] != null) {
+                animationData.actor.animation.Blend(currentAnimationSkill);
+                SendMessage("SyncAnimation", GameDataActionKeys.run, SendMessageOptions.DontRequireReceiver);
             }
         }
      // Fade in walk
         else if (currentSpeed > 0.1) {
-            if (animationData.actor.animation["skill"] != null) {
-                animationData.actor.animation.Blend("skill");
-                SendMessage("SyncAnimation", "walk", SendMessageOptions.DontRequireReceiver);
+            if (animationData.actor.animation[currentAnimationSkill] != null) {
+                animationData.actor.animation.Blend(currentAnimationSkill);
+                SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
             }
         }
      // Fade out walk and run
         else {
-            if (animationData.actor.animation["skill"] != null) {
-                animationData.actor.animation.Play("skill");
-                SendMessage("SyncAnimation", "idle", SendMessageOptions.DontRequireReceiver);
+            if (animationData.actor.animation[currentAnimationSkill] != null) {
+                animationData.actor.animation.Play(currentAnimationSkill);
+                SendMessage("SyncAnimation", GameDataActionKeys.idle, SendMessageOptions.DontRequireReceiver);
             }
         }
         //SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
@@ -1629,7 +1652,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (animationData.actor.animation != null) {
             if (animationData.actor.animation["walljump"] != null) {
                 animationData.actor.animation.Play("walljump");
-                SendMessage("SyncAnimation", "walljump");
+                SendMessage("SyncAnimation", GameDataActionKeys.walljump);
             }
         }
     }
