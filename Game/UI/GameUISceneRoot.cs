@@ -43,7 +43,7 @@ public class GameUISceneRoot : GameObjectBehavior {
     
     IEnumerator Start() {
 
-        var glob = GameGlobal.Instance;
+        //var glob = GameGlobal.Instance;
 
         // HACK to prevent game starting in portrait due to Unity bug 
 

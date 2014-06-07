@@ -37,9 +37,9 @@ public class GameTouchInputAxis : GameObjectBehavior {
     GameTouchInputAxisPad axisPadObject;
     public float scaleModifier = 0.003125f;
     public Vector2 inputSize = Vector2.zero;
-    bool inUse = false;
-    Vector3 anchorPoint = Vector3.zero;
-    Vector3 stretchPoint = Vector3.zero;
+    public bool inUse = false;
+    public Vector3 anchorPoint = Vector3.zero;
+    public Vector3 stretchPoint = Vector3.zero;
 
     void Awake() {
     

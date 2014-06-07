@@ -366,6 +366,7 @@ public class ProductPurchase : GameObjectBehavior {
         GoogleIAB.queryInventory(skus);
 #else
         // Web/PC
+        Debug.Log("skus" + skus.ToJson());
 #endif
 
     }

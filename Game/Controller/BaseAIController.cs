@@ -252,9 +252,7 @@ public class BaseAIController : GameObjectBehavior {
             if (currentActorCount < currentCharacterMin * 2) {
                 currentSpawnAmount = 1;
             }
-            
-            float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
-            
+
             GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
 
             if (preset == null) {
@@ -268,7 +266,7 @@ public class BaseAIController : GameObjectBehavior {
                 probs.Add((float)item.probability);
             }
 
-            string characterCode = "";            
+            //string characterCode = "";            
 
             /*
             if (!IsPlayerControlled) {

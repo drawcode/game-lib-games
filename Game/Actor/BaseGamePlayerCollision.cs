@@ -28,7 +28,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
     }
 
-    private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
+    //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
 
     public virtual void OnParticleCollision(GameObject other) {
 

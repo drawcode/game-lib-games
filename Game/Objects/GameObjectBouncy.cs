@@ -18,7 +18,7 @@ public class GameObjectBouncy : GameObjectBehavior {
         yield return new WaitForSeconds(.8f);
         
         if (gameObject != null) {
-            Vector3 initialPosition = gameObject.transform.position;
+            //Vector3 initialPosition = gameObject.transform.position;
             
 
             // TODO tween bouncy

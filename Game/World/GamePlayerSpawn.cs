@@ -58,8 +58,8 @@ public class GamePlayerSpawn : GameObjectBehavior {
 	
 		yield return new WaitForSeconds(delay);
 		
-		if(gameObject != null) {
-			Vector3 initialPosition = spawnBouncyBaseObject.transform.position;
+		//if(gameObject != null) {
+			//Vector3 initialPosition = spawnBouncyBaseObject.transform.position;
 					
             /*
 			iTween.MoveTo(spawnBouncyBaseObject, 
@@ -75,6 +75,6 @@ public class GamePlayerSpawn : GameObjectBehavior {
 				)			
 			);
    */         
-		}
+		//}
 	}
 }

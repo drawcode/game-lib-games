@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -504,50 +504,7 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 					//actor.animation.Blend("ledgefall", 0.0f, 0.2f);
 				}
 			}
-			
-			
-			/*
-			
-			if(actor.animation[animationData.Jump()] != null) {
-				if(isJumping) {
-					if(isCapeFlying) {
-						//actor.animation.CrossFade("jetpackjump", 0.2f);
-						//SendMessage("SyncAnimation", "jetpackjump", SendMessageOptions.DontRequireReceiver);
-						if(actor.animation[animationData.Jump()] != null) {
-							actor.animation.CrossFade(animationData.Jump(), 0.2f);
-							SendMessage("SyncAnimation", animationData.Jump(), SendMessageOptions.DontRequireReceiver);
-						}
-					}
-					else if(hasJumpReachedApex) {
-						//actor.animation.CrossFade("jumpfall", 0.2f);
-						//SendMessage("SyncAnimation", "jumpfall", SendMessageOptions.DontRequireReceiver);
-						if(actor.animation[animationData.Jump()] != null) {
-							actor.animation.CrossFade(animationData.Jump(), 0.2f);
-							SendMessage("SyncAnimation", animationData.Jump(), SendMessageOptions.DontRequireReceiver);
-						}
-					}
-					else {
-						if(actor.animation[animationData.Jump()] != null) {
-							actor.animation.CrossFade(animationData.Jump(), 0.2f);
-							SendMessage("SyncAnimation", animationData.Jump(), SendMessageOptions.DontRequireReceiver);
-						}
-					}
-				}
-				// We fell down somewhere
-				else if(!isGroundedWithTimeout) {
-					//actor.animation.CrossFade("ledgefall", 0.2f);
-					//SendMessage("SyncAnimation", "ledgefall", SendMessageOptions.DontRequireReceiver);
-				}
-				// We are not falling down anymore
-				else {
-					//actor.animation.Blend("ledgefall", 0.0f, 0.2f);
-				}
-			}
-			*/
-			//}
-			//catch (System.Exception ee) {
-			//	LogUtil.Log("e" + ee);
-			//}
+
 		}
 	}
 	
@@ -643,38 +600,6 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 			
 			}
 		}
-		/*
-		// Fade in run
-		if(currentSpeed > walkSpeed) {
-			if(actor.animation[animationData.Run()] != null 
-				&& actor.animation[animationName] ) {
-				actor.animation[animationName].blendMode = AnimationBlendMode.Additive;
-				actor.animation.Blend(animationName);
-				SendMessage("SyncAnimation", animationData.Run(), 
-					SendMessageOptions.DontRequireReceiver);
-			}
-		}
-		// Fade in walk
-		else if(currentSpeed > 0.1) {
-			if(actor.animation[animationData.Run()] != null 
-				&& actor.animation[animationName] ) {
-				actor.animation[animationName].blendMode = AnimationBlendMode.Additive;
-				actor.animation.Blend(animationName);
-				SendMessage("SyncAnimation", animationData.Walk(), 
-					SendMessageOptions.DontRequireReceiver);
-			}
-		}
-		// Fade out walk and run
-		else {
-			if(actor.animation[animationData.Run()] != null 
-				&& actor.animation[animationName] ) {
-				//actor.animation.Blend(animationName, .6f);
-				actor.animation.Play(animationName);
-				SendMessage("SyncAnimation", animationData.Idle(), 
-					SendMessageOptions.DontRequireReceiver);
-			}
-		}
-		*/
 	}	
 	
 	public void Die() {	
@@ -778,3 +703,4 @@ public class BaseGamePlayerAnimationController : GameObjectBehavior {
 		}
 	}
 }
+*/

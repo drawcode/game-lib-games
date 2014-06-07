@@ -214,8 +214,6 @@ public class BaseItemController : GameObjectBehavior {
             if (currentItemCount < currentItemMin * 2) {
                 currentSpawnAmount = 1;
             }
-         
-            float randomValue = UnityEngine.Random.Range(0.0f, 1.0f);
 
             GamePreset preset = GamePresets.Instance.GetCurrentPresetDataItem();
             

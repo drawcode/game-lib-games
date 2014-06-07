@@ -84,8 +84,8 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
-	[NonSerialized]
-	public GameCenterManager gameCenterManager;
+	//[NonSerialized]
+	//public GameCenterManager gameCenterManager;
 	[NonSerialized]
 	public GameCenterEventListener gameCenterEventListener;
 	[NonSerialized]
@@ -239,7 +239,7 @@ public class GameNetworks : GameObjectBehavior {
 		}
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
-		gameCenterManager = gameNetworkContainer.AddComponent<GameCenterManager>();
+		//gameCenterManager = gameNetworkContainer.AddComponent<GameCenterManager>();
 		gameCenterEventListener = gameNetworkContainer.AddComponent<GameCenterEventListener>();
 		
         InitEvents(GameNetworkType.gameNetworkAppleGameCenter);		
@@ -290,7 +290,7 @@ public class GameNetworks : GameObjectBehavior {
 	public static bool isAvailableiOSAppleGameCenter {
 		get {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER	
-			return GameCenterBinding.isGameCenterAvailable();
+            return true;//return GameCenterBinding.isGameCenterAvailable(); 
 #else
 			return false;
 #endif	
@@ -744,7 +744,7 @@ public class GameNetworks : GameObjectBehavior {
 
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER			
-    		if(GameCenterBinding.isGameCenterAvailable()) {
+            if(isAvailableiOSAppleGameCenter) {
                 GameCenterBinding.authenticateLocalPlayer();
                 Debug.Log("GameCenter LoginNetwork is available...");
     		}

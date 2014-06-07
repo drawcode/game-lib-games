@@ -1405,8 +1405,8 @@ public class BaseGameController : GameObjectBehavior {
 
         GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
 
-        string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
-        string characterCodeTo = GameProfileCharacters.Current.GetCurrentCharacterCode();
+        //string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
+        //string characterCodeTo = GameProfileCharacters.Current.GetCurrentCharacterCode();
 
         GameController.CurrentGamePlayerController.characterCode = characterCode;
 
@@ -1493,7 +1493,7 @@ public class BaseGameController : GameObjectBehavior {
         return spawnLocation;
     }
     
-    bool loadingCharacterContainer = false;
+    //bool loadingCharacterContainer = false;
 
     public virtual IEnumerator loadActorCo(GameActorDataItem character) {
 

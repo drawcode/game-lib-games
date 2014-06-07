@@ -160,9 +160,10 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
         #if ANALYTICS_GAMEANALYTICS
         return true;
-        #endif
+        #else
 
         return false;
+        #endif
     }
         
     // LOG AREA 

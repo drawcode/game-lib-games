@@ -15,6 +15,13 @@ public enum GamePlayerControllerAnimationType {
     mecanim
 }
 
+public class GameDataPlayType {
+    public static string loop = "loop";
+    public static string loop_reverse = "loop_reverse";
+    public static string once = "once";
+    public static string once_reverse = "once_reverse";
+}
+
 /*
 public class BaseGamePlayerAnimationType {
     public static string walk = "walk";
@@ -44,59 +51,49 @@ public class BaseGamePlayerAnimationType {
     public static string boost = "boost";
     public static string spin = "spin";
 }
-
 */
 
-
 public class GamePlayerAnimationDataItem : GameDataObject {
-
-}
-
-public class BaseGamePlayerAnimationData {
-
-    public GameCharacter gameCharacter;
-    public Dictionary<string,GamePlayerAnimationDataItem> items;
-
-    public BaseGamePlayerAnimationData() {
-        Reset();
-    }
-
-    public void Reset() {
-        items = new Dictionary<string, GamePlayerAnimationDataItem>();        
-    }
-
-    public void LoadCharacterAnimations(string characterCode) {
-        gameCharacter = GameCharacters.Instance.GetById(characterCode);
-
-        foreach (GameDataAnimation item in gameCharacter.data.animations) {
-
-            GamePlayerAnimationDataItem itemData = new GamePlayerAnimationDataItem();
-
-            itemData.code = GetDataAnimation(item.type);
-            itemData.type = item.type;
-            itemData.valFloat = Time.time;
-
-            items.Set(item.type,itemData); 
-        }
-    }
-
-    public string GetDataAnimation(string type) {
-
-        string code = "idle";
-
-        if (gameCharacter != null) {
-            
-            GameDataAnimation data = 
-                gameCharacter.data.GetAnimationByType(
-                    type);
-            
-            if (data != null) {
-                code = data.code;
-            }
+        
+    public virtual AnimationState animation_state {
+        get { 
+            return Get<AnimationState>(BaseDataObjectKeys.animation_state);
         }
         
-        return code;
-    }       
+        set {
+            Set<AnimationState>(BaseDataObjectKeys.animation_state, value);
+        }
+    }
+
+    public virtual Animation animation {
+        get { 
+            return Get<Animation>(BaseDataObjectKeys.animation);
+        }
+        
+        set {
+            Set<Animation>(BaseDataObjectKeys.animation, value);
+        }
+    }
+
+    public virtual Animator animator {
+        get { 
+            return Get<Animator>(BaseDataObjectKeys.animator);
+        }
+        
+        set {
+            Set<Animator>(BaseDataObjectKeys.animator, value);
+        }
+    }
+
+    public virtual GamePlayerControllerAnimationType animation_type {
+        get { 
+            return Get<GamePlayerControllerAnimationType>(BaseDataObjectKeys.animation_type);
+        }
+        
+        set {
+            Set<GamePlayerControllerAnimationType>(BaseDataObjectKeys.animation_type, value);
+        }
+    }
 }
 
 public class BaseGamePlayerControllerAnimationData {   
@@ -104,15 +101,26 @@ public class BaseGamePlayerControllerAnimationData {
     public bool initialized = false;
     public float runSpeedScale = 1.2f;
     public float walkSpeedScale = 1.0f;
+
     public bool isRunningClampAnimation = false;
     public bool isRunning = false;
     public bool isDead = false;
+
     public GamePlayerController gamePlayerController;
     public GamePlayerThirdPersonController thirdPersonController;
+
     public NavMeshAgent navAgent;
+
     public Animator animator;
     public Avatar avatar;
     public RuntimeAnimatorController animationController;
+    public GameObject actor;
+    
+    public GamePlayerControllerAnimationType animationType = 
+        GamePlayerControllerAnimationType.legacy;
+
+
+    /*
     public AnimationState animationRun;
     public AnimationState animationWalk;
     public AnimationState animationIdle;
@@ -123,18 +131,327 @@ public class BaseGamePlayerControllerAnimationData {
     public AnimationState animationAttackAlt;
     public AnimationState animationAttackLeft;
     public AnimationState animationAttackRight;
-    public GameObject actor;
+    */
+
+    public Dictionary<string,GamePlayerAnimationDataItem> items;
+
+    // properties / helpers
+    
+    public string animationCodeIdle {
+        get {
+            return GetAnimation(GameDataActionKeys.idle);
+        }
+    }    
+
+    public string animationCodeWalk {
+        get {
+            return GetAnimation(GameDataActionKeys.walk);
+        }
+    }
+    
+    public string animationCodeWalkBack {
+        get {
+            return GetAnimation(GameDataActionKeys.walk_back);
+        }
+    }
+    
+    public string animationCodeRun {
+        get {
+            return GetAnimation(GameDataActionKeys.run);
+        }
+    }
+    
+    public string animationCodeRunBack {
+        get {
+            return GetAnimation(GameDataActionKeys.run_back);
+        }
+    }
+
+    //
+
+    public string animationCodeAttack {
+        get {
+            return GetAnimation(GameDataActionKeys.attack);
+        }
+    }
+    
+    public string animationCodeAttackAlt {
+        get {
+            return GetAnimation(GameDataActionKeys.attack_alt);
+        }
+    }
+    
+    public string animationCodeAttackFar {
+        get {
+            return GetAnimation(GameDataActionKeys.attack_far);
+        }
+    }
+    
+    public string animationCodeAttackNear {
+        get {
+            return GetAnimation(GameDataActionKeys.attack_near);
+        }
+    }
+        
+    public string animationCodeAttackRight {
+        get {
+            return GetAnimation(GameDataActionKeys.attack_right);
+        }
+    }
+    
+    public string animationCodeAttackLeft {
+        get {
+            return GetAnimation(GameDataActionKeys.attack_left);
+        }
+    }
+
+    //
+    
+    public string animationCodeDefend {
+        get {
+            return GetAnimation(GameDataActionKeys.defend);
+        }
+    }
+    
+    public string animationCodeDefendAlt {
+        get {
+            return GetAnimation(GameDataActionKeys.defend_alt);
+        }
+    }
+    
+    public string animationCodeDefendFar {
+        get {
+            return GetAnimation(GameDataActionKeys.defend_far);
+        }
+    }
+    
+    public string animationCodeDefendNear {
+        get {
+            return GetAnimation(GameDataActionKeys.defend_near);
+        }
+    }
+        
+    public string animationCodeDefendRight {
+        get {
+            return GetAnimation(GameDataActionKeys.defend_right);
+        }
+    }
+    
+    public string animationCodeDefendLeft {
+        get {
+            return GetAnimation(GameDataActionKeys.defend_left);
+        }
+    }
+
+    //
+
+    public string animationCodeHit {
+        get {
+            return GetAnimation(GameDataActionKeys.hit);
+        }
+    }
+
+    //
+
+    public BaseGamePlayerControllerAnimationData() {
+        Reset();
+    }
+    
+    public void Reset() {
+        //LoadCharacterAnimations();
+    }
+
+    // LOADING/FIND CHARACTER
+    
+    public virtual void LoadAnimatedActor(GameObject actorItem) {
+
+        if (actorItem != null) {
+
+            animator = null;
+                        
+            actor = actorItem;
+
+            FindAnimatedActor();
+        }
+    }    
+    
+    public virtual void FindAnimatedActor() {
+        
+        if (actor != null) {
+
+            bool loadAnimations = false;
+            
+            // MECANIM
+            if (animator == null 
+                && actor.animation == null) {
+                foreach (Animator anim in actor.GetComponentsInChildren<Animator>()) {
+                    if (anim.runtimeAnimatorController != null 
+                        && anim.avatar != null) {
+                        animator = anim;
+                        actor = anim.gameObject;
+                        animationType = GamePlayerControllerAnimationType.mecanim;
+                        avatar = anim.avatar;
+                        animationController = anim.runtimeAnimatorController;
+                        loadAnimations = true;
+                    }
+                }
+            }
+            
+            // LEGACY TYPE
+            if (actor.animation == null 
+                && animator == null) {
+                
+                foreach (Animation anim in actor.GetComponentsInChildren<Animation>()) {
+                    actor = anim.gameObject;
+                    animationType = GamePlayerControllerAnimationType.legacy;
+                }
+                loadAnimations = true;
+            }
+
+            if(loadAnimations) {
+                LoadGamePlayerAnimations();
+            }
+        }
+        else {
+            Debug.LogWarning("FindAnimatedActor:WARNING:" + " actor IS NULL" + gamePlayerController.uniqueId); 
+        }
+    }
+
+    // LOADING ANIMATION DATA
+
+    public void LoadGamePlayerAnimationData() {
+        
+        if(items == null) {            
+            items = new Dictionary<string, GamePlayerAnimationDataItem>();  
+        }
+        else {
+            items.Clear();
+        }
+        
+        foreach (GameDataAnimation item in gamePlayerController.gameCharacter.data.animations) {
+            
+            GamePlayerAnimationDataItem itemData = new GamePlayerAnimationDataItem();
+            
+            itemData.code = GetDataAnimation(item.type);
+            itemData.type = item.type;
+            itemData.valFloat = Time.time;
+            itemData.layer = item.layer;
+            itemData.data_type = item.type;
+            
+            items.Set(item.type,itemData); 
+        }
+    }
+
+    public void LoadGamePlayerAnimations() {
+
+        LoadGamePlayerAnimationData();
+
+        if (actor != null) {
+            
+            FindAnimatedActor();
+            
+            // LEGACY TYPE   
+            if (actor.animation != null) {
+
+                actor.animation.Stop();
+
+                foreach(GamePlayerAnimationDataItem aniItem in items.Values) {
+
+                    if(aniItem.animation_state == null && aniItem.animator == null) {
+
+                        if(animationType == GamePlayerControllerAnimationType.mecanim) {
+                        
+                        }
+                        else {                            
+                            if (actor.animation[aniItem.code] != null) {
+
+                                aniItem.animation = actor.animation;
+                                aniItem.animation_state = aniItem.animation[aniItem.code];
+
+                                aniItem.animation_state.layer = aniItem.layer;
+
+                                if(aniItem.data_type == GameDataPlayType.loop) {
+                                    aniItem.animation_state.wrapMode = WrapMode.Loop;
+                                }
+                                else {
+                                    aniItem.animation_state.wrapMode = WrapMode.Once;
+                                }
+                            }
+                        }
+                    }                
+                }
+            }            
+        }
+
+        isRunning = true;
+        isDead = false;
+    }
+
+    public GamePlayerAnimationDataItem GetAnimationData(string key) {
+        
+        if(items == null) {
+            items = new Dictionary<string, GamePlayerAnimationDataItem>();
+        }
+
+        if(items.ContainsKey(key)) {
+            
+            return items.Get(key);     
+        }
+
+        return null;
+    }
+
+    public string GetAnimation(string type) {
+
+        string code = GameDataActionKeys.idle;
+
+        if(items == null) {
+            code = GameDataActionKeys.idle;
+        }
+
+        if(items.ContainsKey(type)) {
+
+            GamePlayerAnimationDataItem animationItem = items.Get(type);
+
+            if(animationItem.valFloat + 5f < Time.time) {
+                code = GetDataAnimation(type);                
+            }
+            else {
+                code = animationItem.code;
+            }
+
+        }
+
+        return code;
+    }
+    
+    public string GetDataAnimation(string type) {
+                
+        string code = "idle";
+        
+        if (gamePlayerController.gameCharacter != null) {
+            
+            GameDataAnimation data = 
+                gamePlayerController.gameCharacter.data.GetAnimationByType(
+                    type);
+            
+            if (data != null) {
+                code = data.code;
+            }
+        }
+        
+        return code;
+    }
+
 }
 
 public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
-    public GamePlayerControllerAnimationType animationType = 
-        GamePlayerControllerAnimationType.legacy;
     public GamePlayerControllerAnimationData animationData;
  
     public bool isLegacy {
         get {
-            if (animationType == GamePlayerControllerAnimationType.legacy) { 
+            if (animationData.animationType == GamePlayerControllerAnimationType.legacy) { 
                 return true;
             }
             return false;
@@ -143,7 +460,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
  
     public bool isMecanim {
         get {
-            if (animationType == GamePlayerControllerAnimationType.mecanim) { 
+            if (animationData.animationType == GamePlayerControllerAnimationType.mecanim) { 
                 return true;
             }
             return false;
@@ -187,82 +504,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     }
  
     public virtual void Reset() {
-        if (animationData.actor != null) {
+        animationData.Reset();      
 
-            FindAnimatedActor();
-                 
-            // LEGACY TYPE   
-            if (animationData.actor.animation != null) {
-                         
-                // By default loop all animations
-                animationData.actor.animation.wrapMode = WrapMode.Loop;
-                animationData.actor.animation.Stop();
-             
-                if (animationData.animationRun == null) {
-                    if (animationData.actor.animation["run"] != null) {
-                        animationData.animationRun = animationData.actor.animation["run"];
-                        animationData.animationRun.layer = 1;
-                    }
-                }
-             
-                if (animationData.animationWalk == null) {
-                    if (animationData.actor.animation["walk"] != null) {
-                        animationData.animationWalk = animationData.actor.animation["walk"];
-                        animationData.animationWalk.layer = 1;
-                    }
-                }
-             
-                if (animationData.animationIdle == null) {
-                    if (animationData.actor.animation["idle"] != null) {
-                        animationData.animationIdle = animationData.actor.animation["idle"];
-                        animationData.animationIdle.layer = 1;
-                    }
-                }
-             
-                if (animationData.animationHit == null) {
-                    if (animationData.actor.animation["hit"] != null) {
-                        animationData.animationHit = animationData.actor.animation["hit"];
-                        animationData.animationHit.layer = 2;
-                    }
-                }
-             
-                if (animationData.animationAttack == null) {
-                    if (animationData.actor.animation["attack"] != null) {
-                        animationData.animationAttack = animationData.actor.animation["attack"];
-                        animationData.animationAttack.layer = 2;
-                    }                    
-                }
-             
-                if (animationData.animationAttackAlt == null) {
-                    if (animationData.actor.animation["attack-alt"] != null) {
-                        animationData.animationAttackAlt = animationData.actor.animation["attack-alt"];
-                        animationData.animationAttackAlt.layer = 2;
-                    }                    
-                }
-             
-                if (animationData.animationAttackLeft == null) {
-                    if (animationData.actor.animation["attack-left"] != null) {
-                        animationData.animationAttackLeft = animationData.actor.animation["attack-left"];
-                        animationData.animationAttackLeft.layer = 2;
-                    }                    
-                }
-             
-                if (animationData.animationAttackRight == null) {
-                    if (animationData.actor.animation["attack-right"] != null) {
-                        animationData.animationAttackRight = animationData.actor.animation["attack-right"];
-                        animationData.animationAttackRight.layer = 2;
-                    }                    
-                }
-             
-                AnimationStatePlay(animationData.animationIdle);
-            }
-                     
+        if(isMecanim) {
+            ResetPlayState();
         }
-
-        ResetPlayState();
-     
-        animationData.isRunning = true;
-        animationData.isDead = false;
+        else {
+            //AnimationStatePlay(animationData.animationIdle);
+        }
     }
  
     public virtual void AnimationPlay(Animation ani) {
@@ -392,46 +641,13 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         }
     }
  
-    public virtual void ResetAnimatedActor(GameObject actorItem) {
-        if (actorItem != null) {
-            animationData.actor = actorItem;
-            animationData.animator = null;
-            FindAnimatedActor();
+    public virtual void LoadAnimatedActor(GameObject actorItem) {
+
+        if(actorItem != null && animationData != null) {
+            animationData.LoadAnimatedActor(actorItem);
         }
     }
  
-    public virtual void FindAnimatedActor() {
-
-        if (animationData.actor != null) {
-
-            // MECANIM
-            if (animationData.animator == null && animationData.actor.animation == null) {
-                foreach (Animator anim in animationData.actor.GetComponentsInChildren<Animator>()) {
-                    if (anim.runtimeAnimatorController != null 
-                        && anim.avatar != null) {
-                        animationData.animator = anim;
-                        animationData.actor = anim.gameObject;
-                        animationType = GamePlayerControllerAnimationType.mecanim;
-                        animationData.avatar = anim.avatar;
-                        animationData.animationController = anim.runtimeAnimatorController;
-                    }
-                }
-            }
-         
-            // LEGACY TYPE
-            if (animationData.actor.animation == null && animationData.animator == null) {
-
-                foreach (Animation anim in animationData.actor.GetComponentsInChildren<Animation>()) {
-                    animationData.actor = anim.gameObject;
-                    animationType = GamePlayerControllerAnimationType.legacy;
-                }
-            }
-        }
-        else {
-            Debug.LogWarning("FindAnimatedActor:WARNING:" + " animationData.actor IS NULL" + animationData.gamePlayerController.uniqueId); 
-        }
-    }
-
     public virtual void Update() {
 
         if (!GameConfigs.isGameRunning || GameConfigs.isUIRunning) {
@@ -444,7 +660,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
              
         if (animationData.isRunning) {
                      
-            FindAnimatedActor();
+            animationData.FindAnimatedActor();
          
             float currentSpeed = 0f;
          
@@ -1313,7 +1529,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         if (isMecanim) {
 
             if (animationData.animator == null) {
-                FindAnimatedActor();
+                animationData.FindAnimatedActor();
                 Debug.Log("animationData.animator NULL:" + 
                     " uniqueId:" + animationData.gamePlayerController.uniqueId);
             }

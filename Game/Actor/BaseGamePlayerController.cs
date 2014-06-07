@@ -1435,8 +1435,7 @@ public class BaseGamePlayerController : GameActor {
                 }
              
                 if (controllerData.gamePlayerControllerAnimation != null) {
-                    controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);
-                    controllerData.gamePlayerControllerAnimation.Reset();
+                    controllerData.gamePlayerControllerAnimation.LoadAnimatedActor(gamePlayerModelHolderModel);
                 }
 
                 if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
@@ -1850,7 +1849,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void MountNearest<T>() where T : Component {
 
-        List<T> mounts = new List<T>();
+        //List<T> mounts = new List<T>();
         T nearest = default(T);
         bool found = false;
         float mountRange = 10f;
@@ -4011,8 +4010,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData.gamePlayerControllerAnimation.Init(); 
 
             if (gamePlayerModelHolderModel != null) {
-                controllerData.gamePlayerControllerAnimation.ResetAnimatedActor(gamePlayerModelHolderModel);    
-                controllerData.gamePlayerControllerAnimation.Reset();
+                controllerData.gamePlayerControllerAnimation.LoadAnimatedActor(gamePlayerModelHolderModel);
             }
                       
             float smoothing = .8f;
