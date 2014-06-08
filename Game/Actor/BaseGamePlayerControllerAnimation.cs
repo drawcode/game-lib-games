@@ -1114,13 +1114,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         //SendMessage("SyncAnimation", "jetpackjump", SendMessageOptions.DontRequireReceiver);
         //animationData.actor.animation.CrossFade("jumpfall", 0.2f);
         //SendMessage("SyncAnimation", "jumpfall", SendMessageOptions.DontRequireReceiver);
-        //public virtual void DidLand() {
-            
-            // animationData.actor.animation.Play("jumpland");
-            // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-            // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-        //}
 
+    }
+
+    public virtual void Land() {
+    
+        // animationData.actor.animation.Play("jumpland");
+        // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
+        // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
     }
 
     // --------------
@@ -1344,20 +1345,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     // ACTIONS - EXTRA   
  
     public virtual void ButtStomp() {
-        DidButtStomp();
-    }
-
-    public virtual void DidButtStomp() {
         //animationData.actor.animation.CrossFade("buttstomp", 0.1f);
         //SendMessage("SyncAnimation", "buttstomp", SendMessageOptions.DontRequireReceiver);
         //animationData.actor.animation.CrossFadeQueued("jumpland", 0.2f);
     }
  
     public virtual void WallJump() {
-        DidWallJump();
-    }
-
-    public virtual void DidWallJump() {
         // Wall jump animation is played without fade.
         // We are turning the character controller 180 degrees around when doing a wall jump so the animation accounts for that.
         // But we really have to make sure that the animation is in full control so 

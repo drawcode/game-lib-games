@@ -453,6 +453,8 @@ public class BaseGamePlayerController : GameActor {
  
     public override void Start() {
         //Init(controllerState);
+
+        HidePlayerShadow();
     }
  
     public override void OnEnable() {
@@ -990,6 +992,20 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
+    // PLAYER SHADOW + EFFECTS
+    
+    public virtual void ShowPlayerShadow() {
+        if(gamePlayerShadow != null) {
+            gamePlayerShadow.Show();
+        }
+    }
+    
+    public virtual void HidePlayerShadow() {
+        if(gamePlayerShadow != null) {
+            gamePlayerShadow.Hide();
+        }
+    }
+
     // PLAYER CIRCLE INDICATOR GROUND
  
     public virtual void ShowPlayerEffectCircleFollow() {
@@ -1441,6 +1457,10 @@ public class BaseGamePlayerController : GameActor {
                 if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
                     gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
                 }
+
+                // Visible elements after model loaded
+
+                ShowPlayerShadow();
 
             }
         }

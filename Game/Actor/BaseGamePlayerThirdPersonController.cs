@@ -276,8 +276,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         }
 
         verticalSpeed = CalculateJumpVerticalSpeed(jumpHeight);
-        DidJump();
-        SendMessage("DidWallJump", null, SendMessageOptions.DontRequireReceiver);
+        Jump();
+        SendMessage("WallJump", null, SendMessageOptions.DontRequireReceiver);
     }
 
     public virtual void ApplyJumping() {
@@ -291,7 +291,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
             // - With a timeout so you can press the button slightly before landing      
             if(canJump && Time.time < lastJumpButtonTime + jumpTimeout) {
                 verticalSpeed = CalculateJumpVerticalSpeed(jumpHeight);
-                DidJump();
+                Jump();
             }
         }
     }
@@ -304,7 +304,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         }
      
         if(doAttack) {           
-            //SendMessage("DidAttack", SendMessageOptions.DontRequireReceiver);
+            //SendMessage("Attack", SendMessageOptions.DontRequireReceiver);
             SendMessage("Attack", SendMessageOptions.DontRequireReceiver);
         }
     }
@@ -335,7 +335,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         // When we reach the apex of the jump we send out a message
         if(jumping && !jumpingReachedApex && verticalSpeed <= 0.0) {
             jumpingReachedApex = true;
-            SendMessage("DidJumpReachApex", SendMessageOptions.DontRequireReceiver);
+            SendMessage("JumpReachApex", SendMessageOptions.DontRequireReceiver);
         }
 
         // * When jumping up we don't apply gravity for some time when the user is holding the jump button
@@ -359,14 +359,12 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
     }
 
     public virtual void Jump() {
+
+        if(jumpButton) {
+            return;
+        }
+
         jumpButton = true;
-    }
-    
-    public virtual void JumpStop() {
-        jumpButton = false;
-    }
-    
-    public virtual void DidJump() {
         
         if(navMeshAgent == null) {
             navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
@@ -385,7 +383,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         touchWallJumpTime = -1;
         lastJumpButtonTime = -10;
     }
- 
+    
+    public virtual void JumpStop() {
+        jumpButton = false;
+    }
+     
     // Update is called once per frame
     public virtual void Update() {
 
@@ -456,7 +458,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
             inAirVelocity = Vector3.zero;
             if(jumping) {
                 jumping = false;
-                SendMessage("DidLand", SendMessageOptions.DontRequireReceiver);
+                SendMessage("Land", SendMessageOptions.DontRequireReceiver);
                 JumpStop();
             }
         }
@@ -485,7 +487,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
     public virtual void SuperJump(float height) {
         verticalSpeed = CalculateJumpVerticalSpeed(height);
         collisionFlags = CollisionFlags.None;
-        DidJump();
+        Jump();
     }
 
     public virtual void SuperJump(float height, Vector3 jumpVelocity) {
@@ -493,7 +495,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         inAirVelocity = jumpVelocity;
 
         collisionFlags = CollisionFlags.None;
-        DidJump();
+        Jump();
     }
 
     public virtual Vector3 GetDirection() {
