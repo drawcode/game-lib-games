@@ -22,37 +22,6 @@ public class GameDataPlayType {
     public static string once_reverse = "once_reverse";
 }
 
-/*
-public class BaseGamePlayerAnimationType {
-    public static string walk = "walk";
-    public static string run = "run";
-    public static string attack = "attack";
-    public static string attackAlt = "attack-alt";
-    public static string attackRight = "attack-right";
-    public static string attackLeft = "attack-left";
-    public static string speed = "speed";
-    public static string jump = "jump";
-    public static string defend = "defend";
-    public static string defendAlt = "defend-alt";
-    public static string defendRight = "defend-right";
-    public static string defendLeft = "defend-left";
-    public static string hit = "hit";
-    public static string die = "die";
-    public static string death = "death";
-    public static string skill = "skill";
-    public static string magic = "magic";
-    public static string use = "use";
-    public static string mount = "mount";
-    public static string idle = "idle";
-    public static string emo = "emo";
-    public static string strafe = "strafe";
-    public static string strafeLeft = "strafe-left";
-    public static string strafeRight = "strafe-right";
-    public static string boost = "boost";
-    public static string spin = "spin";
-}
-*/
-
 public class GamePlayerAnimationDataItem : GameDataObject {
         
     public virtual AnimationState animation_state {
@@ -101,39 +70,58 @@ public class BaseGamePlayerControllerAnimationData {
     public bool initialized = false;
     public float runSpeedScale = 1.2f;
     public float walkSpeedScale = 1.0f;
-
     public bool isRunningClampAnimation = false;
     public bool isRunning = false;
     public bool isDead = false;
-
     public GamePlayerController gamePlayerController;
-    public GamePlayerThirdPersonController thirdPersonController;
-
     public NavMeshAgent navAgent;
-
     public Animator animator;
     public Avatar avatar;
     public RuntimeAnimatorController animationController;
     public GameObject actor;
-    
     public GamePlayerControllerAnimationType animationType = 
         GamePlayerControllerAnimationType.legacy;
-
-
-    /*
-    public AnimationState animationRun;
-    public AnimationState animationWalk;
-    public AnimationState animationIdle;
-    public AnimationState animationHit;
-    public AnimationState animationDie;
-    public AnimationState animationJump;
-    public AnimationState animationAttack;
-    public AnimationState animationAttackAlt;
-    public AnimationState animationAttackLeft;
-    public AnimationState animationAttackRight;
-    */
-
     public Dictionary<string,GamePlayerAnimationDataItem> items;
+    bool animationsLoaded = false;
+
+    //
+    
+    public bool isLegacy {
+        get {
+            if (animationType == GamePlayerControllerAnimationType.legacy) { 
+                return true;
+            }
+            return false;
+        }
+    }
+    
+    public bool isMecanim {
+        get {
+            if (animationType == GamePlayerControllerAnimationType.mecanim) { 
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public GamePlayerThirdPersonController thirdPersonController {
+        get {
+        
+            if(gamePlayerController == null) {
+                return null;
+            }
+
+            if(gamePlayerController.controllerData == null) {
+                return null;
+            }
+
+            if(gamePlayerController.controllerData.thirdPersonController == null) {
+                return null;
+            }
+
+            return gamePlayerController.controllerData.thirdPersonController;
+        }
+    }
 
     // properties / helpers
     
@@ -141,7 +129,7 @@ public class BaseGamePlayerControllerAnimationData {
         get {
             return GetAnimation(GameDataActionKeys.idle);
         }
-    }    
+    }
 
     public string animationCodeWalk {
         get {
@@ -180,6 +168,22 @@ public class BaseGamePlayerControllerAnimationData {
     public string animationCodeSkill {
         get {
             return GetAnimation(GameDataActionKeys.skill);
+        }
+    }
+    
+    //    
+    
+    public string animationCodeSpin {
+        get {
+            return GetAnimation(GameDataActionKeys.spin);
+        }
+    }
+    
+    //    
+    
+    public string animationCodeBoost {
+        get {
+            return GetAnimation(GameDataActionKeys.boost);
         }
     }
 
@@ -261,11 +265,33 @@ public class BaseGamePlayerControllerAnimationData {
 
     //
 
+    public string animationCodeStrafeRight {
+        get {
+            return GetAnimation(GameDataActionKeys.strafe_right);
+        }
+    }
+    
+    public string animationCodeStrafeLeft {
+        get {
+            return GetAnimation(GameDataActionKeys.strafe_left);
+        }
+    }
+
+    //
+
     public string animationCodeHit {
         get {
             return GetAnimation(GameDataActionKeys.hit);
         }
     }
+
+    //
+    
+    public string animationCodeDeath {
+        get {
+            return GetAnimation(GameDataActionKeys.death);
+        }
+    }    
 
     //
 
@@ -274,7 +300,7 @@ public class BaseGamePlayerControllerAnimationData {
     }
     
     public void Reset() {
-        //LoadCharacterAnimations();
+
     }
 
     // LOADING/FIND CHARACTER
@@ -284,12 +310,14 @@ public class BaseGamePlayerControllerAnimationData {
         if (actorItem != null) {
 
             animator = null;
-                        
+                                    
             actor = actorItem;
+
+            animationsLoaded = false;
 
             FindAnimatedActor();
         }
-    }    
+    }
     
     public virtual void FindAnimatedActor() {
         
@@ -298,38 +326,50 @@ public class BaseGamePlayerControllerAnimationData {
             bool loadAnimations = false;
             
             // MECANIM
-            if (animator == null 
-                && actor.animation == null) {
+            if ((animator == null 
+                && actor.animation == null)
+                || !animationsLoaded) {
+
                 foreach (Animator anim in actor.GetComponentsInChildren<Animator>()) {
+
                     if (anim.runtimeAnimatorController != null 
                         && anim.avatar != null) {
+
                         animator = anim;
                         actor = anim.gameObject;
                         animationType = GamePlayerControllerAnimationType.mecanim;
                         avatar = anim.avatar;
                         animationController = anim.runtimeAnimatorController;
+
                         loadAnimations = true;
+                        animationsLoaded = true;
                     }
                 }
             }
             
             // LEGACY TYPE
-            if (actor.animation == null 
-                && animator == null) {
+            if ((animator == null 
+                && actor.animation == null)
+                || !animationsLoaded) {
                 
                 foreach (Animation anim in actor.GetComponentsInChildren<Animation>()) {
+
                     actor = anim.gameObject;
                     animationType = GamePlayerControllerAnimationType.legacy;
+                    
+                    loadAnimations = true;
+                    animationsLoaded = true;
                 }
-                loadAnimations = true;
             }
 
-            if(loadAnimations) {
+            if (loadAnimations) {
                 LoadGamePlayerAnimations();
             }
         }
         else {
-            Debug.LogWarning("FindAnimatedActor:WARNING:" + " actor IS NULL" + gamePlayerController.uniqueId); 
+            Debug.LogWarning("FindAnimatedActor:WARNING:" + 
+                " actor IS NULL" + 
+                gamePlayerController.uniqueId); 
         }
     }
 
@@ -337,7 +377,7 @@ public class BaseGamePlayerControllerAnimationData {
 
     public void LoadGamePlayerAnimationData() {
         
-        if(items == null) {            
+        if (items == null) {            
             items = new Dictionary<string, GamePlayerAnimationDataItem>();  
         }
         else {
@@ -347,14 +387,14 @@ public class BaseGamePlayerControllerAnimationData {
         foreach (GameDataAnimation item in gamePlayerController.gameCharacter.data.animations) {
             
             GamePlayerAnimationDataItem itemData = new GamePlayerAnimationDataItem();
-            
+
             itemData.code = GetDataAnimation(item.type);
             itemData.type = item.type;
-            itemData.valFloat = Time.time;
+            itemData.last_update = Time.time;
             itemData.layer = item.layer;
-            itemData.data_type = item.type;
+            itemData.play_type = item.play_type;
             
-            items.Set(item.type,itemData); 
+            items.Set(item.type, itemData); 
         }
     }
 
@@ -364,29 +404,29 @@ public class BaseGamePlayerControllerAnimationData {
 
         if (actor != null) {
             
-            FindAnimatedActor();
-            
             // LEGACY TYPE   
-            if (actor.animation != null) {
+            if (isLegacy) {
 
                 actor.animation.Stop();
 
-                foreach(GamePlayerAnimationDataItem aniItem in items.Values) {
+                foreach (GamePlayerAnimationDataItem aniItem in items.Values) {
 
-                    if(aniItem.animation_state == null && aniItem.animator == null) {
+                    if (aniItem.animation_state == null || aniItem.animator == null) {
 
-                        if(animationType == GamePlayerControllerAnimationType.mecanim) {
-                        
+                        if (animationType == GamePlayerControllerAnimationType.mecanim) {                            
+                            aniItem.animation_type = animationType;
+                            aniItem.animator = animator;
                         }
-                        else {                            
+                        else {                                          
+
                             if (actor.animation[aniItem.code] != null) {
 
                                 aniItem.animation = actor.animation;
-                                aniItem.animation_state = aniItem.animation[aniItem.code];
-
+                                aniItem.animation_state = actor.animation[aniItem.code];
                                 aniItem.animation_state.layer = aniItem.layer;
+                                aniItem.animation_type = animationType;
 
-                                if(aniItem.data_type == GameDataPlayType.loop) {
+                                if (aniItem.play_type == GameDataPlayType.loop) {
                                     aniItem.animation_state.wrapMode = WrapMode.Loop;
                                 }
                                 else {
@@ -405,11 +445,11 @@ public class BaseGamePlayerControllerAnimationData {
 
     public GamePlayerAnimationDataItem GetAnimationData(string key) {
         
-        if(items == null) {
+        if (items == null) {
             items = new Dictionary<string, GamePlayerAnimationDataItem>();
         }
 
-        if(items.ContainsKey(key)) {
+        if (items.ContainsKey(key)) {
             
             return items.Get(key);     
         }
@@ -421,15 +461,15 @@ public class BaseGamePlayerControllerAnimationData {
 
         string code = GameDataActionKeys.idle;
 
-        if(items == null) {
+        if (items == null) {
             code = GameDataActionKeys.idle;
         }
 
-        if(items.ContainsKey(type)) {
+        else if (items.ContainsKey(type)) {
 
             GamePlayerAnimationDataItem animationItem = items.Get(type);
 
-            if(animationItem.valFloat + 5f < Time.time) {
+            if (animationItem.last_update + 5f < Time.time) {
                 code = GetDataAnimation(type);                
             }
             else {
@@ -459,6 +499,377 @@ public class BaseGamePlayerControllerAnimationData {
         return code;
     }
 
+    // ANIMATIONS
+
+    public void ResetPlayState() {
+
+        if (isMecanim) {
+            
+            if(animator == null) {
+                return;
+            }
+            
+            animator.ResetFloat(GameDataActionKeys.speed);
+            animator.ResetFloat(GameDataActionKeys.death);
+            animator.ResetFloat(GameDataActionKeys.strafe);
+            animator.ResetFloat(GameDataActionKeys.jump);
+            animator.ResetFloat(GameDataActionKeys.attack);
+            animator.ResetFloat(GameDataActionKeys.hit);
+        }
+        else {
+            PlayAnimationIdle();
+        }
+    }
+
+    //
+    
+    public virtual void PauseAnimationUpdate(float duration) {
+        CoroutineUtil.Start(PauseAnimationUpdateCo(duration));
+    }
+
+    public IEnumerator PauseAnimationUpdateCo(float duration) {
+        yield return new WaitForSeconds(duration);
+        isRunningClampAnimation = false;         
+    }
+
+    // BLEND PLAY
+    
+    public void PlayAnimationBlend(string type, float weight, float time, 
+                                   AnimationBlendMode blendMode = AnimationBlendMode.Additive) {
+        
+        string currentAnimation = GetAnimation(type);
+        
+        if (isLegacy) {
+            
+            if (actor == null) {
+                return;
+            }
+            
+            if (actor.animation == null) {
+                return;
+            }
+            
+            if (actor.animation[currentAnimation] == null) {
+                return;
+            }
+            
+            if (isRunningClampAnimation) {
+                return;
+            }
+            
+            actor.animation[currentAnimation].blendMode = blendMode;
+            actor.animation.Blend(currentAnimation, weight, time);
+            
+        }
+    }
+
+    // CROSS FADE PLAY
+
+    public void PlayAnimationCrossFade(string type, float time, PlayMode playMode) {
+        
+        string currentAnimation = GetAnimation(type);
+        
+        if (isLegacy) {
+            
+            if (actor == null) {
+                return;
+            }
+            
+            if (actor.animation == null) {
+                return;
+            }
+            
+            if (actor.animation[currentAnimation] == null) {
+                return;
+            }
+            
+            if (isRunningClampAnimation) {
+                return;
+            }
+                        
+            actor.animation.CrossFade(currentAnimation, time, playMode);
+
+        }
+    }    
+    
+    public void AnimationClamp(float time = .5f) {
+        isRunningClampAnimation = true;
+        PauseAnimationUpdate(time);     
+    }
+
+    // GENERIC PLAY
+    
+    public void PlayAnimation(string type, PlayMode playMode) {
+        
+        string currentAnimation = GetAnimation(type);
+        
+        if (isLegacy) {
+            
+            if (actor == null) {
+                return;
+            }
+            
+            if (actor.animation == null) {
+                return;
+            }
+
+            if (actor.animation[currentAnimation] == null) {
+                return;
+            }
+                    
+            actor.animation.Play(currentAnimation, playMode);                    
+        }
+    }
+
+    // idle
+
+    public void PlayAnimationIdle() {
+
+        if(isDead) {
+            return;
+        }
+
+        if(isLegacy) {
+            PlayAnimationCrossFade(GameDataActionKeys.idle, .5f, PlayMode.StopAll);
+        }
+        else if (isMecanim) {
+            ResetPlayState();            
+            
+           animator.PlayOneShotFloat(GameDataActionKeys.idle);
+        }
+    }
+
+    // jump
+
+    public void PlayAnimationJump() {
+
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) {
+            PlayAnimationCrossFade(GameDataActionKeys.jump, .2f, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) {              
+            animator.PlayOneShotFloat(GameDataActionKeys.jump);
+        }
+    }
+    
+    // hit
+    
+    public void PlayAnimationHit() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) {
+            PlayAnimationCrossFade(GameDataActionKeys.hit, .1f, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) {              
+            animator.PlayOneShotFloat(GameDataActionKeys.attack, .6f, 0f);
+        }
+    }
+
+    // DIE
+    
+    public void PlayAnimationDeath() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) {
+            PlayAnimation(GameDataActionKeys.death, PlayMode.StopAll);
+            AnimationClamp(.5f);
+            isDead = true;
+        }
+        else if (isMecanim) {        
+            ResetPlayState(); 
+            AnimationClamp(.5f);  
+            animator.SetFloat(GameDataActionKeys.death, 1f);
+            isDead = true;
+        }
+    }
+        
+    // ATTACK
+
+    // base
+    
+    public void PlayAnimationAttack(string type) {
+
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);
+            PlayAnimationBlend(type, .7f, .5f, AnimationBlendMode.Additive);
+        }
+        else if (isMecanim) { 
+            animator.SetFloat(GameDataActionKeys.speed, .7f);
+            animator.PlayOneShotFloat(GameDataActionKeys.attack, .8f, 0f);
+        }
+    }
+
+    // attack - specific
+    
+    public void PlayAnimationAttack() {        
+        PlayAnimationAttack(GameDataActionKeys.attack);
+    }
+
+    public void PlayAnimationAttackAlt() {        
+        PlayAnimationAttack(GameDataActionKeys.attack_alt);
+    }
+    
+    public void PlayAnimationAttackFar() {        
+        PlayAnimationAttack(GameDataActionKeys.attack_far);
+    }
+    
+    public void PlayAnimationAttackLeft() {        
+        PlayAnimationAttack(GameDataActionKeys.attack_left);
+    }
+    
+    public void PlayAnimationAttackRight() {        
+        PlayAnimationAttack(GameDataActionKeys.attack_right);
+    }    
+    
+    public void PlayAnimationAttackNear() {        
+        PlayAnimationAttack(GameDataActionKeys.attack_near);
+    }
+
+    // DEFEND
+    
+    // base
+    
+    public void PlayAnimationDefend(string type) {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);
+            PlayAnimationBlend(type, .7f, .5f, AnimationBlendMode.Additive);
+        }
+        else if (isMecanim) { 
+            animator.SetFloat(GameDataActionKeys.speed, .7f);
+            animator.PlayOneShotFloat(GameDataActionKeys.attack, .8f, 0f);
+        }
+    }
+    
+    // attack - specific
+    
+    public void PlayAnimationDefend() {        
+        PlayAnimationDefend(GameDataActionKeys.defend);
+    }
+    
+    public void PlayAnimationDefendAlt() {        
+        PlayAnimationDefend(GameDataActionKeys.defend_alt);
+    }
+    
+    public void PlayAnimationDefendFar() {        
+        PlayAnimationDefend(GameDataActionKeys.defend_far);
+    }
+    
+    public void PlayAnimationDefendLeft() {        
+        PlayAnimationDefend(GameDataActionKeys.defend_left);
+    }
+    
+    public void PlayAnimationDefendRight() {        
+        PlayAnimationDefend(GameDataActionKeys.defend_right);
+    }    
+    
+    public void PlayAnimationDefendNear() {        
+        PlayAnimationDefend(GameDataActionKeys.defend_near);
+    }
+
+    // STRAFE
+
+    // left
+    
+    public void PlayAnimationStrafeLeft() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);
+            PlayAnimation(GameDataActionKeys.strafe_left, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) { 
+            animator.PlayOneShotFloat(GameDataActionKeys.strafe, -1f);
+        }
+    }
+
+    // right
+    
+    public void PlayAnimationStrafeRight() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);   
+            PlayAnimation(GameDataActionKeys.strafe_right, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) { 
+            animator.PlayOneShotFloat(GameDataActionKeys.strafe, 1f);
+        }
+    }
+
+    // BOOST
+    
+    public void PlayAnimationBoost() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);  
+            PlayAnimation(GameDataActionKeys.boost, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) { 
+            animator.PlayOneShotFloat(GameDataActionKeys.boost, 1f);
+        }
+    }
+
+    // SPIN
+    
+    public void PlayAnimationSpin() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);   
+            PlayAnimation(GameDataActionKeys.spin, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) { 
+            animator.PlayOneShotFloat(GameDataActionKeys.spin, 1f);
+        }
+    }
+
+    // SPIN
+    
+    public void PlayAnimationSkill() {
+        
+        if(isDead) {
+            return;
+        }
+        
+        if(isLegacy) { 
+            AnimationClamp(.5f);
+            PlayAnimationBlend(GameDataActionKeys.skill, .5f, .6f, AnimationBlendMode.Blend);
+        }
+        else if (isMecanim) { 
+            animator.PlayOneShotFloat(GameDataActionKeys.skill, 1f);
+        }
+    }
 }
 
 public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
@@ -467,19 +878,13 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
  
     public bool isLegacy {
         get {
-            if (animationData.animationType == GamePlayerControllerAnimationType.legacy) { 
-                return true;
-            }
-            return false;
+            return animationData.isLegacy;
         }
     }
  
     public bool isMecanim {
         get {
-            if (animationData.animationType == GamePlayerControllerAnimationType.mecanim) { 
-                return true;
-            }
-            return false;
+            return animationData.isMecanim;
         }
     }
  
@@ -496,221 +901,526 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         animationData = new GamePlayerControllerAnimationData();
         
         animationData.gamePlayerController = GetComponent<GamePlayerController>();
-        animationData.thirdPersonController = animationData.gamePlayerController.controllerData.thirdPersonController;
         animationData.navAgent = GetComponent<NavMeshAgent>();
 
         Reset();
     }
      
-    public virtual void ResetPlayState() {     
-        if (!isLegacy && animationData.animator != null) {
-            //animationData.animator.SetFloat(GameDataActionKeys.idle, 0f);
+    public virtual void ResetPlayState() { 
 
-            ResetFloat(GameDataActionKeys.speed);
-            ResetFloat(GameDataActionKeys.death);
-            ResetFloat(GameDataActionKeys.strafe);
-            ResetFloat(GameDataActionKeys.jump);
-            ResetFloat(GameDataActionKeys.attack);
-            ResetFloat(GameDataActionKeys.hit);
+        if(animationData == null) {
+            return;
         }
+
+        animationData.ResetPlayState();
     }
 
-    public virtual void HandleAnimatorState() {        
+    public virtual void HandleAnimatorState() {
         ResetPlayState();
     }
  
     public virtual void Reset() {
+
+        if(animationData == null) {
+            return;
+        }
+
         animationData.Reset();      
 
-        if(isMecanim) {
-            ResetPlayState();
-        }
-        else {
-            //AnimationStatePlay(animationData.animationIdle);
-        }
-    }
- 
-    public virtual void AnimationPlay(Animation ani) {
-        if (ani == null) {
-            return;
-        }
-        ani.Play();
-    }
- 
-    public virtual void AnimationCrossFade(Animation ani, Animation aniTo) {
-        if (ani == null) {
-            return;
-        }
-     
-        if (aniTo == null) {
-            return;
-        }
-     
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (animationData.actor.animation == null) {
-            return;
-        }
-
-        if (animationData.actor.animation[aniTo.name] != null) {
-            ani.CrossFade(aniTo.name);
-        }
-    }
- 
-    public virtual void AnimationBlend(Animation ani, Animation aniTo) {
-        AnimationBlend(ani, aniTo, .5f, .5f);
-    }
- 
-    public virtual void AnimationBlend(Animation ani, Animation aniTo, float targetWeight) {
-        AnimationBlend(ani, aniTo, targetWeight, .5f);
-    }
- 
-    public virtual void AnimationBlend(Animation ani, Animation aniTo, float targetWeight, float fadeLength) {
-        if (ani == null) {
-            return;
-        }
-     
-        if (aniTo == null) {
-            return;
-        }
-     
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (animationData.actor.animation == null) {
-            return;
-        }
-
-        if (animationData.actor.animation[aniTo.name] != null) {
-            ani.Blend(aniTo.name, targetWeight, fadeLength);
-        }
-    }
- 
-    public virtual void AnimationStatePlay(AnimationState ani) {
-        if (ani == null) {
-            return;
-        }
-     
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (animationData.actor.animation == null) {
-            return;
-        }
-     
-        animationData.actor.animation.Play(ani.name);
-    }
-
-    public virtual void AnimationStateCrossFade(AnimationState ani, AnimationState aniTo) {
-        if (ani == null) {
-            return;
-        }
-     
-        if (aniTo == null) {
-            return;
-        }
-     
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (animationData.actor.animation == null) {
-            return;
-        }
-
-        if (animationData.actor.animation[aniTo.name] != null) {
-            animationData.actor.animation.CrossFade(aniTo.name);
-        }
-    }
- 
-    public virtual void AnimationStateBlend(AnimationState ani, AnimationState aniTo) {
-        AnimationStateBlend(ani, aniTo, .8f, .5f);
-    }
- 
-    public virtual void AnimationStateBlend(AnimationState ani, AnimationState aniTo, float targetWeight) {
-        AnimationStateBlend(ani, aniTo, targetWeight, .5f);
-    }
- 
-    public virtual void AnimationStateBlend(AnimationState ani, AnimationState aniTo, float targetWeight, float fadeLength) {
-        if (ani == null) {
-            return;
-        }
-     
-        if (aniTo == null) {
-            return;
-        }
-     
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (animationData.actor.animation == null) {
-            return;
-        }
-
-        if (animationData.actor.animation[aniTo.name] != null) {
-            animationData.actor.animation.Blend(aniTo.name, targetWeight, fadeLength);
-        }
+        animationData.ResetPlayState();
     }
  
     public virtual void LoadAnimatedActor(GameObject actorItem) {
-
-        if(actorItem != null && animationData != null) {
-            animationData.LoadAnimatedActor(actorItem);
+        
+        if(animationData == null) {
+            return;
         }
+
+        if (actorItem == null) {
+            return;        
+        }
+
+        animationData.LoadAnimatedActor(actorItem);
+    }
+
+    // ATTACK
+ 
+    public virtual void Attack() {       
+        Attack(GameDataActionKeys.attack); 
     }
  
-    public virtual void Update() {
-
-        if (!GameConfigs.isGameRunning || GameConfigs.isUIRunning) {
+    public virtual void AttackAlt() {        
+        Attack(GameDataActionKeys.attack_alt);  
+    }
+ 
+    public virtual void AttackLeft() {   
+        Attack(GameDataActionKeys.attack_left);
+    }
+ 
+    public virtual void AttackRight() {    
+        Attack(GameDataActionKeys.attack_right);
+    }    
+    
+    public virtual void AttackNear() {    
+        Attack(GameDataActionKeys.attack_near);
+    }    
+    
+    public virtual void AttackFar() {    
+        Attack(GameDataActionKeys.attack_far);
+    }
+ 
+    public virtual void Attack(string animationName) {
+        
+        if(animationData == null) {
             return;
         }
      
         if (animationData.isDead) {
             return;
+        }        
+        
+        animationData.PlayAnimationAttack(animationName);
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.attack, 
+                    SendMessageOptions.DontRequireReceiver);       
+    }
+    
+    // --------------
+    // ACTIONS - DEFEND
+
+    public virtual void Defend() {       
+        Defend(GameDataActionKeys.defend); 
+    }
+ 
+    public virtual void DefendAlt() {        
+        Defend(GameDataActionKeys.defend_alt);  
+    }
+ 
+    public virtual void DefendLeft() {   
+        Defend(GameDataActionKeys.defend_left);
+    }
+ 
+    public virtual void DefendRight() {    
+        Defend(GameDataActionKeys.defend_right);
+    }    
+    
+    public virtual void DefendNear() {    
+        Defend(GameDataActionKeys.defend_near);
+    }    
+    
+    public virtual void DefendFar() {    
+        Defend(GameDataActionKeys.defend_far);
+    }
+ 
+    public virtual void Defend(string animationName) {
+        
+        if(animationData == null) {
+            return;
         }
-             
+     
+        if (animationData.isDead) {
+            return;
+        }        
+        
+        animationData.PlayAnimationDefend(animationName);
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.defend, 
+                    SendMessageOptions.DontRequireReceiver);       
+    }
+    
+    // --------------
+    // ACTIONS - HIT 
+    
+    public virtual void Hit() {  
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }       
+    
+        animationData.PlayAnimationHit();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.hit, 
+                    SendMessageOptions.DontRequireReceiver);
+    }
+
+    // --------------
+    // ACTIONS - DIE 
+ 
+    public virtual void Die() {  
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }        
+        
+        animationData.PlayAnimationDeath();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.death, 
+                    SendMessageOptions.DontRequireReceiver); 
+    }
+
+    
+    // --------------
+    // ACTIONS - IDLE    
+    
+    public virtual void Idle() {
+
+        if(animationData == null) {
+            return;
+        }
+
+        if (animationData.isDead) {
+            return;
+        }
+
+        animationData.PlayAnimationIdle();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.idle, 
+                    SendMessageOptions.DontRequireReceiver); 
+    }
+ 
+    // --------------
+    // ACTIONS - JUMP    
+ 
+    public virtual void Jump() {
+                
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
+        animationData.PlayAnimationJump();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.jump, 
+                    SendMessageOptions.DontRequireReceiver);
+        
+        //animationData.actor.animation.CrossFade("jetpackjump", 0.2f);
+        //SendMessage("SyncAnimation", "jetpackjump", SendMessageOptions.DontRequireReceiver);
+        //animationData.actor.animation.CrossFade("jumpfall", 0.2f);
+        //SendMessage("SyncAnimation", "jumpfall", SendMessageOptions.DontRequireReceiver);
+        //public virtual void DidLand() {
+            
+            // animationData.actor.animation.Play("jumpland");
+            // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
+            // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
+        //}
+
+    }
+
+    // --------------
+
+    // ACTIONS - STRAFE LEFT
+
+    public virtual void StrafeLeft() {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
+        animationData.PlayAnimationStrafeLeft();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.strafe_left, 
+                    SendMessageOptions.DontRequireReceiver);
+    }
+
+    // --------------
+
+    // ACTIONS - STRAFE RIGHT
+
+    public virtual void StrafeRight() {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
+        animationData.PlayAnimationStrafeRight();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.strafe_right, 
+                    SendMessageOptions.DontRequireReceiver);
+    }
+
+
+    // --------------
+
+    // ACTIONS - BOOST
+
+    public virtual void Boost() {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
+        animationData.PlayAnimationBoost();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.boost, 
+                    SendMessageOptions.DontRequireReceiver);
+    }
+
+
+    // --------------
+
+    // ACTIONS - SPIN
+
+    public virtual void Spin() {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
+        animationData.PlayAnimationSpin();
+        
+        SendMessage("SyncAnimation", 
+                    GameDataActionKeys.spin, 
+                    SendMessageOptions.DontRequireReceiver);
+    }
+     
+    // --------------
+    // ACTIONS - SKILL   
+ 
+    public virtual void Skill() {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+
+        float currentSpeed = 0f;
+        float walkSpeed = 0f;
+     
+        if (animationData.thirdPersonController != null) {
+            currentSpeed = animationData.thirdPersonController.GetSpeed();
+            walkSpeed = animationData.thirdPersonController.walkSpeed;
+        }
+     
+        if (currentSpeed > walkSpeed) {
+            animationData.PlayAnimationSkill();
+        }
+        else if (currentSpeed > 0.1) {
+            animationData.PlayAnimationSkill();
+        }
+        else {
+            animationData.PlayAnimationSkill();
+        }
+        
+        SendMessage("SyncAnimation", GameDataActionKeys.skill, SendMessageOptions.DontRequireReceiver);
+    }
+    
+    // --------------
+    // TOOLS / HELPERS / UTILS 
+ 
+    public virtual void PlayOneShotBool(string paramName) {
+        StartCoroutine(PlayOneShotBoolCo(paramName));
+    }
+ 
+    public virtual IEnumerator PlayOneShotBoolCo(string paramName) {
+     
+        if (!isLegacy) {
+            
+            SyncAnimator();
+
+            if (animationData.animator != null
+                && animationData.animator.enabled
+                && animationData.animator.gameObject.activeInHierarchy
+                && animationData.animator.gameObject.activeSelf) {
+                animationData.animator.SetBool(paramName, true);
+                yield return null;
+                animationData.animator.SetBool(paramName, false);    
+            }
+        }
+    }
+    
+    public void SetBool(string key, bool val) {
+        
+        if (isLegacy) {
+        }
+        else if (isMecanim) {
+            
+            SyncAnimator();
+                        
+            if (animationData.animator != null
+                && animationData.animator.enabled
+                && animationData.animator.gameObject.activeInHierarchy
+                && animationData.animator.gameObject.activeSelf) {
+                animationData.animator.SetBool(key, val);
+            }
+        }
+    }
+
+    
+    public void SyncAnimator() {       
+        if (animationData == null) {
+            return;
+        }
+        
+        if (isMecanim) {
+            
+            if (animationData.animator == null) {
+                animationData.FindAnimatedActor();
+                Debug.Log("animationData.animator NULL:" + 
+                          " uniqueId:" + animationData.gamePlayerController.uniqueId);
+            }
+        }
+    }
+    
+    public void SetFloat(string key, float val) {
+
+        if(animationData == null) {
+            return;
+        }
+        
+        if (isMecanim) {
+            
+            SyncAnimator();
+            
+            if (animationData.animator != null) {
+                animationData.animator.SetFloat(key, val);
+            }
+        }
+    }
+    
+    public void PlayOneShotFloat(string key) {
+        
+        if(animationData == null) {
+            return;
+        }
+        
+        if (isMecanim) {
+            
+            SyncAnimator();
+            
+            if (animationData.animator != null) {
+                animationData.animator.PlayOneShotFloat(key);
+            }
+        }
+
+    }
+     
+    // --------------
+    // ACTIONS - HIT 
+ 
+    public virtual void ApplyDamage() {
+        Hit();
+    }
+ 
+    // --------------
+    // ACTIONS - EXTRA   
+ 
+    public virtual void ButtStomp() {
+        DidButtStomp();
+    }
+
+    public virtual void DidButtStomp() {
+        //animationData.actor.animation.CrossFade("buttstomp", 0.1f);
+        //SendMessage("SyncAnimation", "buttstomp", SendMessageOptions.DontRequireReceiver);
+        //animationData.actor.animation.CrossFadeQueued("jumpland", 0.2f);
+    }
+ 
+    public virtual void WallJump() {
+        DidWallJump();
+    }
+
+    public virtual void DidWallJump() {
+        // Wall jump animation is played without fade.
+        // We are turning the character controller 180 degrees around when doing a wall jump so the animation accounts for that.
+        // But we really have to make sure that the animation is in full control so 
+        // that we don't do weird blends between 180 degree apart rotations
+        
+        if (animationData.actor.animation != null) {
+            if (animationData.actor.animation["walljump"] != null) {
+                animationData.actor.animation.Play("walljump");
+                SendMessage("SyncAnimation", GameDataActionKeys.walljump);
+            }
+        }
+    }
+    
+    // --------------
+    // GAME TICK / UPDATE  
+    
+    public virtual void Update() {
+        
+        if (!GameConfigs.isGameRunning || GameConfigs.isUIRunning) {
+            return;
+        }
+        
+        if (animationData.isDead) {
+            return;
+        }
+        
         if (animationData.isRunning) {
-                     
+            
             animationData.FindAnimatedActor();
-         
+            
             float currentSpeed = 0f;
-         
+            
             if (animationData.thirdPersonController != null) {
                 currentSpeed = animationData.thirdPersonController.GetSpeed();
             }
-         
+            
             if (animationData.gamePlayerController != null) {
-
+                
                 if (animationData.gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgent
                     || animationData.gamePlayerController.contextState == GamePlayerContextState.ContextFollowAgentAttack
                     || animationData.gamePlayerController.contextState == GamePlayerContextState.ContextRandom) {
-
+                    
                     
                     if (!animationData.gamePlayerController.IsPlayerControlled) {
                         //LogUtil.Log("currentSpeed11:" + currentSpeed);
                     }
-
+                    
                     if (animationData.navAgent != null) {
                         if (animationData.navAgent.enabled) {                       
                             //currentSpeed = navAgent.velocity.magnitude + 20;
-                         
+                            
                             if (animationData.navAgent.velocity.magnitude > 0f) {
                                 currentSpeed = 15f;
                             }
                             else {
                                 currentSpeed = 0;    
                             }
-                         
+                            
                             if (animationData.navAgent.remainingDistance < 
                                 animationData.navAgent.stoppingDistance + 1) {
                                 currentSpeed = 0;
                             }
-                         
+                            
                             if (currentSpeed < animationData.navAgent.speed) {
                                 //currentSpeed = 0;
                             }
@@ -718,25 +1428,25 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     }
                 }
             }
-         
+            
             float walkSpeed = 5f;
-         
+            
             //LogUtil.Log("currentSpeed:" + currentSpeed);
             if (animationData.thirdPersonController != null) {
                 walkSpeed = animationData.thirdPersonController.walkSpeed;
                 //LogUtil.Log("currentSpeed:" + thirdPersonController.walkSpeed);
             }
-         
+            
             if (animationData.actor == null || (animationData.actor.animation == null && animationData.animator == null)) {
                 Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
                 return;
             }
-
+            
             string currentAnimationRun = animationData.animationCodeRun;
             string currentAnimationWalk = animationData.animationCodeWalk;
             string currentAnimationJump = animationData.animationCodeJump;
-
-                     
+            
+            
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (animationData.actor.animation != null) {
@@ -749,44 +1459,49 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     }
                 }
             }
-         
+            
             // Fade in run
             if (currentSpeed > walkSpeed) {
-             
+                
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actor.animation != null) {
                             if (animationData.actor.animation[currentAnimationRun] != null) {
                                 if (animationData.actor.animation[currentAnimationRun] != null) {
+                                    
                                     animationData.actor.animation[currentAnimationRun].blendMode = AnimationBlendMode.Blend;
-                                 
+                                    
                                     if (animationData.thirdPersonController == null) {                      
-                                        animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+                                        animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                            animationData.runSpeedScale;
                                         //animationData.actor.animation["run"].time = 0f;
                                         animationData.actor.animation.CrossFade(currentAnimationRun, .5f);   
                                     }
                                     else {                       
-                                 
+                                        
                                         if (animationData.thirdPersonController.verticalInput2 != 0f 
                                             || animationData.thirdPersonController.horizontalInput2 != 0f) {
-                                         
+                                            
                                             // if angle between axis is over 120 and less than 240 reverse run
                                             float angleTo = Vector3.Angle(
                                                 animationData.thirdPersonController.movementDirection, 
                                                 animationData.thirdPersonController.aimingDirection);
-                                         
+                                            
                                             if (angleTo > 120 && angleTo < 240) {
-                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = -animationData.runSpeedScale * .9f;                               
+                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                                    -animationData.runSpeedScale * .9f;                               
                                             }
                                             else {   
-                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                                    animationData.runSpeedScale;
                                             }
-                                         
+                                            
                                             //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
                                             animationData.actor.animation.Blend(currentAnimationRun);    
                                         }
                                         else {
-                                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+                                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                                animationData.runSpeedScale;
                                             //animationData.actor.animation["run"].time = 0f;
                                             animationData.actor.animation.CrossFade(currentAnimationRun, .5f);                       
                                         }
@@ -803,12 +1518,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
-
-                SendMessage("SyncAnimation", GameDataActionKeys.run , SendMessageOptions.DontRequireReceiver);
+                
+                SendMessage("SyncAnimation", GameDataActionKeys.run, SendMessageOptions.DontRequireReceiver);
             }
-         // Fade in walk
+            // Fade in walk
             else if (currentSpeed > 0.1) {
-             
+                
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actor.animation != null) {
@@ -820,15 +1535,17 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                                 animationData.actor.animation.Blend(currentAnimationJump, 0);
                             }
                             if (animationData.actor.animation[currentAnimationWalk] != null) {
+
                                 if (animationData.actor.animation[currentAnimationWalk] != null) {
                                     animationData.actor.animation[currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
+
                                     if (animationData.thirdPersonController.verticalInput2 != 0f 
                                         || animationData.thirdPersonController.horizontalInput2 != 0f) {
                                         // if angle between axis is over 120 and less than 240 reverse run
                                         float angleTo = Vector3.Angle(
                                             animationData.thirdPersonController.movementDirection, 
                                             animationData.thirdPersonController.aimingDirection);
-                                                                 
+                                        
                                         if (angleTo > 120 && angleTo < 240) {
                                             animationData.actor.animation[currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;                             
                                         }
@@ -842,8 +1559,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                                         //animationData.actor.animation["run"].time = 0f;
                                         animationData.actor.animation.CrossFade(currentAnimationWalk, .5f);                      
                                     }
-                                 
-                                 
+                                    
+                                    
                                     SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
                                 }
                             }
@@ -854,332 +1571,57 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
                     SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
             }
-         // Fade out walk and run
+            // Fade out walk and run
             else {
                 if (isLegacy) {
-                    AnimateIdle();
+                    Idle();
                 }
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, currentSpeed);
                 }
             }
-         
+            
             // JUMPING
-         
+            
             bool isJumping = false;
             bool isCapeFlying = false;
             bool hasJumpReachedApex = false;
             bool isGroundedWithTimeout = false;
-         
+            
             if (animationData.thirdPersonController != null) {
                 isJumping = animationData.thirdPersonController.IsJumping();
                 isCapeFlying = animationData.thirdPersonController.IsCapeFlying();
                 hasJumpReachedApex = animationData.thirdPersonController.HasJumpReachedApex();
                 isGroundedWithTimeout = animationData.thirdPersonController.IsGroundedWithTimeout();
             }
-         
+            
             if (isJumping) {
                 if (isCapeFlying) {
-                    AnimateJump();
+                    Jump();
                 }
                 else if (hasJumpReachedApex) {
-                    AnimateJump();
+                    Jump();
                 }
                 else {
-                    AnimateJump();
+                    Jump();
                 }
             }
-         // We fell down somewhere
+            // We fell down somewhere
             else if (!isGroundedWithTimeout) {
                 //animationData.actor.animation.CrossFade("ledgefall", 0.2f);
                 //SendMessage("SyncAnimation", "ledgefall", SendMessageOptions.DontRequireReceiver);
             }
-         // We are not falling down anymore
+            // We are not falling down anymore
             else {
                 //animationData.actor.animation.Blend("ledgefall", 0.0f, 0.2f);
             }
         }
     }    
 
- 
-    // --------------
-    // JUMP
- 
-    public virtual void AnimateJump() {
-        if (animationData.actor == null) {
-            return;
-        }
-     
-        if (isLegacy) {
-            
-            if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
-                    animationData.actor.animation.CrossFade(GameDataActionKeys.jump, 0.2f);
-                    SendMessage("SyncAnimation", GameDataActionKeys.jump, 
-                     SendMessageOptions.DontRequireReceiver);
-                }
-            }
-        }
-        else if (isMecanim) {
-            PlayOneShotFloat(GameDataActionKeys.jump);
-        }
-     
-        //animationData.actor.animation.CrossFade("jetpackjump", 0.2f);
-        //SendMessage("SyncAnimation", "jetpackjump", SendMessageOptions.DontRequireReceiver);
-        //animationData.actor.animation.CrossFade("jumpfall", 0.2f);
-        //SendMessage("SyncAnimation", "jumpfall", SendMessageOptions.DontRequireReceiver);
-    }
- 
-    public virtual void ResetClampAnimation() {
-        animationData.isRunningClampAnimation = false; 
-    }
- 
-    public virtual void PauseAnimationUpdate(float duration) {
-        Invoke("ResetClampAnimation", duration);
-    }
 
-    public virtual void DidLand() {
+    // BASE
 
-
-        if (isLegacy) {
-            //animationData.actor.animation.Play("jumpland");
-            //SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-            if (animationData.actor == null) {
-                return;
-            }
-
-            if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
-                    animationData.actor.animation.Play(GameDataActionKeys.jump);
-                    SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
-                }
-            }
-        }
-        else if (isMecanim) {
-            PlayOneShotFloat(GameDataActionKeys.jump, 1f);
-        }
-
-    }
- 
-    // --------------
-    // IDLE
- 
-    public virtual void AnimateIdle() {
-
-        if (isLegacy) {
-            
-            if (animationData.actor == null) {
-                return;
-            }
-
-            if (animationData.actor.animation != null) {
-                if (animationData.actor.animation[GameDataActionKeys.idle] != null) {
-                    if (animationData.actor.animation[GameDataActionKeys.idle] != null
-                        && !animationData.isRunningClampAnimation) {
-                        animationData.actor.animation.CrossFade(GameDataActionKeys.idle);
-                        SendMessage("SyncAnimation", GameDataActionKeys.idle,
-                         SendMessageOptions.DontRequireReceiver);
-                    }
-                }
-            }
-        }
-        else if (isMecanim) {
-            ResetPlayState();
-        }
-    }
- 
-    // --------------
-    // HIT
- 
-    public virtual void AnimateHit() {   
-
-        if (isLegacy) {    
-            if (animationData.actor == null) {
-                return;
-            }
-            if (animationData.actor.animation["hit"] != null) {
-                animationData.actor.animation.CrossFade("hit", 0.1f);
-                SendMessage("SyncAnimation", "hit", SendMessageOptions.DontRequireReceiver);
-            }
-        }
-        else if (isMecanim) {
-            if (animationData.animator != null) {                
-                PlayOneShotFloat(GameDataActionKeys.attack, 1f);
-            }
-        }
-    }
- 
-    // --------------
-    // ACTIONS - ATTACK
- 
-    public virtual void Attack() {       
-        DidAttack(); 
-    }
- 
-    public virtual void AttackAlt() {        
-        DidAttackAlt();  
-    }
- 
-    public virtual void AttackLeft() {       
-        DidAttackLeft(); 
-    }
- 
-    public virtual void AttackRight() {      
-        DidAttackRight();    
-    }
-
-    public virtual void DidAttack() {        
-        DidAttack(GameDataActionKeys.attack);
-    }
- 
-    public virtual void DidAttackAlt() {
-        DidAttack("attack-alt");
-    }
- 
-    public virtual void DidAttackLeft() {        
-        DidAttack("attack-left");
-    }
- 
-    public virtual void DidAttackRight() {       
-        DidAttack("attack-right");
-    }
- 
-    public virtual void DidAttack(string animationName) {
-     
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[animationName] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        PauseAnimationUpdate(.5f);
-                        animationData.actor.animation.Play(animationName, PlayMode.StopAll);
-                        //if (animationData.actor.animation["hit"] != null) {
-                        //    animationData.actor.animation.Play("hit", PlayMode.StopAll);
-                        //}
-                    }
-                }
-            }
-        }
-        else {
-            if (!animationData.isDead) {
-                // animator.SetFloat(GameDataActionKeys.speed, .8f);
-                //PlayOneShotFloat(GameDataActionKeys.attack);
-            }
-        }
-
-        /*
-        //LogUtil.Log("GamePlayerControllerAnimation:DidAttack:" + animationName);
-     
-        isRunningClampAnimation = true;
-        PauseAnimationUpdate(1f);            
-     
-        //float currentSpeed = 0f;
-        //float walkSpeed = 0f;
-     
-        if(thirdPersonController != null) {
-            //currentSpeed = thirdPersonController.GetSpeed();
-            //walkSpeed = thirdPersonController.walkSpeed;
-        }
-     
-        if(animationData.actor.animation != null) {
-            if(animationData.actor.animation[animationName]) {
-             
-                animationData.actor.animation[animationName].blendMode = AnimationBlendMode.Additive;
-             
-                if(thirdPersonController != null) {
-                    if(thirdPersonController.verticalInput2 == 0 && thirdPersonController.horizontalInput2 == 0) {
-                        animationData.actor.animation.CrossFade(animationName);            
-                    }
-                    else if(thirdPersonController.verticalInput2 < .5f 
-                     && thirdPersonController.horizontalInput2 < .5f
-                     && thirdPersonController.verticalInput2 > -.5f
-                     && thirdPersonController.horizontalInput2 > -.5f) {
-                        animationData.actor.animation.Blend(animationName, .8f);           
-                    }
-                    else {
-                        animationData.actor.animation.Blend(animationName, .7f); 
-                 
-                    }
-                }
-                else {
-                    animationData.actor.animation.Blend(animationName, .7f); 
-             
-                }
-            }
-        }
-        */
-    }
-
-    // DEFEND
-
-
-    public virtual void Defend() {
-        DidDefend();
-    }
- 
-    public virtual void DefendAlt() {
-        DidDefendAlt();
-    }
-
-    public virtual void DefendLeft() {
-        DidDefendLeft();
-    }
-
-    public virtual void DefendRight() {
-        DidDefendRight();
-    }
-
-    public virtual void DidDefend() {
-        DidDefend(GameDataActionKeys.defend);
-    }
- 
-    public virtual void DidDefendAlt() {
-        DidDefend(GameDataActionKeys.defend_alt);
-    }
- 
-    public virtual void DidDefendLeft() {
-        DidDefend(GameDataActionKeys.defend_left);
-    }
- 
-    public virtual void DidDefendRight() {
-        DidDefend(GameDataActionKeys.defend_right);
-    }
- 
-    public virtual void DidDefend(string animationName) {
-     
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[animationName] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        PauseAnimationUpdate(.5f);
-                        animationData.actor.animation.Play(animationName, PlayMode.StopAll);
-                        
-                        //if (animationData.actor.animation["hit"] != null) {
-                        //    animationData.actor.animation.Play("hit", PlayMode.StopAll);
-                        //}
-                    }
-                }
-            }
-        }
-        else {
-            if (!animationData.isDead) {
-                SetFloat(GameDataActionKeys.speed, .8f);
-            }
-        }
-
-        //LogUtil.Log("GamePlayerControllerAnimation:DidAttack:" + animationName);
-
-        /*
+    /*
         isRunningClampAnimation = true;
         PauseAnimationUpdate(1f);
 
@@ -1224,436 +1666,5 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
 
         }
         */
-    }
- 
-    // --------------
-    // ACTIONS - DIE 
- 
-    public virtual void Die() {  
-        DidDie();
-    }
- 
-    public virtual void DidDie() {   
 
-        if (isLegacy) {
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GameDataActionKeys.death] != null) {
-                        animationData.actor.animation.Play(GameDataActionKeys.death, PlayMode.StopAll);
-                        animationData.isRunningClampAnimation = true;
-                    }
-                }
-            }
-        }
-        else {
-            
-            if (animationData.animator != null) {
-                if (!animationData.isDead) {
-                    HandleAnimatorState();
-                    animationData.isRunningClampAnimation = true;
-                    PauseAnimationUpdate(.5f);
-                    SetFloat(GameDataActionKeys.death, 1f);
-                    animationData.isDead = true;
-                }                
-            }
-        }
-    }
-
-    
-    // --------------
-    // ACTIONS - IDLE    
-    
-    public virtual void Idle() {
-        DidIdle();
-    }
-    
-    public virtual void DidIdle() {
-        if (animationData.isDead) {
-            return;
-        }
-        
-        if (isLegacy) {
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GameDataActionKeys.idle] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);  
-                        animationData.actor.animation.Play(GameDataActionKeys.idle, PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            ResetFloat(GameDataActionKeys.attack);
-            ResetFloat(GameDataActionKeys.hit);
-            ResetFloat(GameDataActionKeys.strafe);
-            ResetFloat(GameDataActionKeys.speed);
-            ResetFloat(GameDataActionKeys.run);
-            ResetFloat(GameDataActionKeys.walk);
-
-            PlayOneShotFloat(GameDataActionKeys.idle);
-        }
-    }
- 
-    // --------------
-    // ACTIONS - JUMP    
- 
-    public virtual void Jump() {
-        DidJump();
-    }
-    
-    public virtual void DidJump() {
-        if (animationData.isDead) {
-            return;
-        }
-     
-        if (isLegacy) {
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation[GameDataActionKeys.jump] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);  
-                        animationData.actor.animation.Play(GameDataActionKeys.jump, PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            PlayOneShotFloat(GameDataActionKeys.jump);
-        }
-    }
-
-
-    // --------------
-
-    // ACTIONS - STRAFE LEFT
-
-    public virtual void StrafeLeft() {
-        DidStrafeLeft();
-    }
-
-    public virtual void DidStrafeLeft() {
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation["strafe_left"] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);
-                        animationData.actor.animation.Play("strafe_left", PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            PlayOneShotFloat(GameDataActionKeys.strafe, -1f);
-        }
-    }
-
-    // --------------
-
-    // ACTIONS - STRAFE RIGHT
-
-    public virtual void StrafeRight() {
-        DidStrafeRight();
-    }
-
-    public virtual void DidStrafeRight() {
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation["strafe_right"] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);
-                        animationData.actor.animation.Play("strafe_right", PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            PlayOneShotFloat(GameDataActionKeys.strafe);
-        }
-    }
-
-
-    // --------------
-
-    // ACTIONS - BOOST
-
-    public virtual void Boost() {
-        DidBoost();
-    }
-
-    public virtual void DidBoost() {
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation["boost"] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);
-                        animationData.actor.animation.Play("boost", PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            PlayOneShotFloat(GameDataActionKeys.boost);
-        }
-    }
-
-
-    // --------------
-
-    // ACTIONS - SPIN
-
-    public virtual void Spin() {
-        DidSpin();
-    }
-
-    public virtual void DidSpin() {
-        if (animationData.isDead) {
-            return;
-        }
-
-        if (isLegacy) {
-            
-            if (animationData.actor != null) {
-                if (animationData.actor.animation != null) {
-                    if (animationData.actor.animation["spin"] != null) {
-                        animationData.isRunningClampAnimation = true;
-                        //PauseAnimationUpdate(1f);
-                        animationData.actor.animation.Play("spin", PlayMode.StopAll);
-                    }
-                }
-            }
-        }
-        else {
-            PlayOneShotFloat(GameDataActionKeys.spin);
-        }
-    }
-     
-    // --------------
-    // ACTIONS - SKILL   
- 
-    public virtual void Skill() {
-        DidSkill();
-    }
- 
-    public virtual void DidSkill() {
-        if (animationData.isDead) {
-            return;
-        }
-     
-        animationData.isRunningClampAnimation = true;
-        PauseAnimationUpdate(1f);    
-        //LogUtil.Log("DidSkill:");
-        float currentSpeed = 0f;
-        float walkSpeed = 0f;
-     
-        if (animationData.thirdPersonController != null) {
-            currentSpeed = animationData.thirdPersonController.GetSpeed();
-            walkSpeed = animationData.thirdPersonController.walkSpeed;
-        }
-
-        string currentAnimationSkill = animationData.animationCodeSkill;
-     
-        // Fade in run
-        if (currentSpeed > walkSpeed) {
-            if (animationData.actor.animation[currentAnimationSkill] != null) {
-                animationData.actor.animation.Blend(currentAnimationSkill);
-                SendMessage("SyncAnimation", GameDataActionKeys.run, SendMessageOptions.DontRequireReceiver);
-            }
-        }
-     // Fade in walk
-        else if (currentSpeed > 0.1) {
-            if (animationData.actor.animation[currentAnimationSkill] != null) {
-                animationData.actor.animation.Blend(currentAnimationSkill);
-                SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
-            }
-        }
-     // Fade out walk and run
-        else {
-            if (animationData.actor.animation[currentAnimationSkill] != null) {
-                animationData.actor.animation.Play(currentAnimationSkill);
-                SendMessage("SyncAnimation", GameDataActionKeys.idle, SendMessageOptions.DontRequireReceiver);
-            }
-        }
-        //SendMessage("SyncAnimation", "run", SendMessageOptions.DontRequireReceiver);
-    }
- 
-    public virtual void PlayOneShotBool(string paramName) {
-        StartCoroutine(PlayOneShotBoolCo(paramName));
-    }
- 
-    public virtual IEnumerator PlayOneShotBoolCo(string paramName) {
-     
-        if (!isLegacy) {
-            
-            SyncAnimator();
-
-            if (animationData.animator != null
-                && animationData.animator.enabled
-                && animationData.animator.gameObject.activeInHierarchy
-                && animationData.animator.gameObject.activeSelf) {
-                animationData.animator.SetBool(paramName, true);
-                yield return null;
-                animationData.animator.SetBool(paramName, false);    
-            }
-        }
-    }
-    
-    public void SetBool(string key, bool val) {
-        
-        if (isLegacy) {
-        }
-        else if (isMecanim) {
-            
-            SyncAnimator();
-                        
-            if (animationData.animator != null
-                && animationData.animator.enabled
-                && animationData.animator.gameObject.activeInHierarchy
-                && animationData.animator.gameObject.activeSelf) {
-                animationData.animator.SetBool(key, val);
-            }
-        }
-    }
-
-    public virtual void ResetFloat(string paramName) { 
-        if (!isLegacy) {
-            
-            SyncAnimator();
-
-            if (animationData.animator != null
-                && animationData.animator.enabled) {
-                animationData.animator.SetFloat(paramName, 0.0f);
-            }
-        }
-    }
-
-    public void SyncAnimator() {       
-        if (animationData == null) {
-            return;
-        }
-
-        if (isMecanim) {
-
-            if (animationData.animator == null) {
-                animationData.FindAnimatedActor();
-                Debug.Log("animationData.animator NULL:" + 
-                    " uniqueId:" + animationData.gamePlayerController.uniqueId);
-            }
-        }
-    }
-        
-    public void SetFloat(string key, float val) {
-        
-        if (isLegacy) {
-        }
-        else if (isMecanim) {
-
-            SyncAnimator();
-
-            if (animationData.animator != null
-                && animationData.animator.enabled
-                && animationData.animator.gameObject.activeInHierarchy
-                && animationData.animator.gameObject.activeSelf) {
-                animationData.animator.SetFloat(key, val);
-            }
-        }
-    }
- 
-    public virtual void PlayOneShotFloat(string paramName) {
-        StartCoroutine(PlayOneShotFloatCo(paramName));
-    }
- 
-    public virtual IEnumerator PlayOneShotFloatCo(string paramName) {
-     
-        if (!isLegacy) {
-            
-            SyncAnimator();
-
-            if (animationData.animator != null
-                && animationData.animator.enabled
-                && animationData.animator.gameObject.activeInHierarchy
-                && animationData.animator.gameObject.activeSelf) {
-                animationData.animator.SetFloat(paramName, 1.0f);
-                yield return null;
-                animationData.animator.SetFloat(paramName, 0.0f);
-            }
-        }
-    }
-
-    public virtual void PlayOneShotFloat(string paramName, float val) {
-        StartCoroutine(PlayOneShotFloatCo(paramName, val));
-    }
- 
-    public virtual IEnumerator PlayOneShotFloatCo(string paramName, float val) {
-     
-        if (!isLegacy) {
-            
-            SyncAnimator();
-
-            if (animationData.animator != null
-                && animationData.animator.enabled
-                && animationData.animator.gameObject.activeInHierarchy
-                && animationData.animator.gameObject.activeSelf) {
-                animationData.animator.SetFloat(paramName, val);
-                yield return null;
-                animationData.animator.SetFloat(paramName, 0.0f);
-            }
-        }
-    }
- 
-     
-    // --------------
-    // ACTIONS - HIT 
- 
-    public virtual void ApplyDamage() {
-        AnimateHit();
-    }
- 
-    // --------------
-    // ACTIONS - EXTRA   
- 
-    public virtual void ButtStomp() {
-        DidButtStomp();
-    }
-
-    public virtual void DidButtStomp() {
-        //animationData.actor.animation.CrossFade("buttstomp", 0.1f);
-        //SendMessage("SyncAnimation", "buttstomp", SendMessageOptions.DontRequireReceiver);
-        //animationData.actor.animation.CrossFadeQueued("jumpland", 0.2f);
-    }
- 
-    public virtual void WallJump() {
-        DidWallJump();
-    }
-
-    public virtual void DidWallJump() {
-        // Wall jump animation is played without fade.
-        // We are turning the character controller 180 degrees around when doing a wall jump so the animation accounts for that.
-        // But we really have to make sure that the animation is in full control so 
-        // that we don't do weird blends between 180 degree apart rotations
-        
-        if (animationData.actor.animation != null) {
-            if (animationData.actor.animation["walljump"] != null) {
-                animationData.actor.animation.Play("walljump");
-                SendMessage("SyncAnimation", GameDataActionKeys.walljump);
-            }
-        }
-    }
 }
