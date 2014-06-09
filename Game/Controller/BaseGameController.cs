@@ -1414,6 +1414,8 @@ public class BaseGameController : GameObjectBehavior {
             GamePlayerControllerState.ControllerPlayer, 
             GamePlayerContextState.ContextInput);
 
+        GameController.CurrentGamePlayerController.LoadCharacter(characterCode);
+
         //GameCustomController.SetCustomColorsPlayer(
         //    GameController.CurrentGamePlayerController.gameObject);
     }

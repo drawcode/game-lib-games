@@ -1192,12 +1192,16 @@ public class BaseGamePlayerController : GameActor {
         }
         return false;
     }
- 
+    
     public virtual void ChangePlayerState(GamePlayerControllerState controllerStateTo) {
+        StartCoroutine(ChangePlayerStateCo(controllerStateTo));
+    }
+
+    public virtual IEnumerator ChangePlayerStateCo(GamePlayerControllerState controllerStateTo) {
         //if (controllerStateTo != controllerState) {
         controllerState = controllerStateTo;
          
-        InitControls();
+        yield return StartCoroutine(InitControlsCo());
          
         if (controllerState == GamePlayerControllerState.ControllerAgent) {
             if (controllerData.navMeshAgent != null) {
@@ -1300,33 +1304,44 @@ public class BaseGamePlayerController : GameActor {
             return gamePlayerModelHolderModel.transform.childCount > 0;   
         }
     }
+
+    public virtual void LoadAnimatedActor() {        
+        if (controllerData == null) {
+            return;
+        }
+
+        if(controllerData.gamePlayerControllerAnimation == null) {
+            return;
+        }
+
+        controllerData.gamePlayerControllerAnimation.LoadAnimatedActor();
+    }
      
     public virtual void LoadCharacter(string characterCodeTo) {
 
+        if(controllerData.loadingCharacter) {
+            return;
+        }
+
         characterCode = characterCodeTo;
 
-        if (controllerData == null) {
-            controllerData = new GamePlayerControllerData();
-        }
+        SetControllerData(new GamePlayerControllerData());
+        SetRuntimeData(new GamePlayerRuntimeData());
 
         //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
-        if (controllerData.lastCharacterCode != characterCode 
-            || controllerData.lastCharacterCode == null) {
+        //if (controllerData.lastCharacterCode != characterCode 
+        //    || controllerData.lastCharacterCode == null) {
 
             controllerData.lastCharacterCode = characterCode;
-
-            if (gameObject.activeInHierarchy) {
-                StartCoroutine(LoadCharacterObject());
-            }
-        }
+                        
+            //if (gameObject.activeInHierarchy) {
+            StartCoroutine(LoadCharacterCo());
+            //}
+        //}
     }
  
-    public virtual IEnumerator LoadCharacterObject() {
+    public virtual IEnumerator LoadCharacterCo() {
         
-        if (controllerData.loadingCharacter) {
-            yield break;
-        }   
-
         gameCharacter = 
             GameCharacters.Instance.GetById(characterCode);
 
@@ -1350,6 +1365,8 @@ public class BaseGamePlayerController : GameActor {
                     //LogUtil.Log("LoadCharacter:destroy pooled:t.name:" + t.name);
                 }
             }
+
+            yield return new WaitForSeconds(.5f);
 
             gameObjectLoad = AppContentAssets.LoadAsset(prefabCode);
 
@@ -1448,10 +1465,12 @@ public class BaseGamePlayerController : GameActor {
                     break;
 
                 }
+                
+                yield return new WaitForEndOfFrame();
             }
         }
 
-        ChangePlayerState(controllerState);
+        yield return StartCoroutine(ChangePlayerStateCo(controllerState));
 
         LoadWorldIndicator();
              
@@ -2393,14 +2412,6 @@ public class BaseGamePlayerController : GameActor {
          
     public virtual void Reset() {
 
-        if(IsPlayerControlled) {
-            
-            SetControllerData(new GamePlayerControllerData());
-        }
-
-        SetControllerData(new GamePlayerControllerData());
-        SetRuntimeData(new GamePlayerRuntimeData());
-                
         if (IsPlayerControlled) {
             uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
@@ -2408,8 +2419,7 @@ public class BaseGamePlayerController : GameActor {
             uniqueId = UniqueUtil.Instance.CreateUUID4();
         }
         
-        LoadCharacter(characterCode);  
-
+        ///LoadCharacter(characterCode);
     }
  
     public virtual void Remove() {
@@ -3823,7 +3833,7 @@ public class BaseGamePlayerController : GameActor {
 
     // HANDLE CONTROLS
  
-    public virtual void InitControls() {
+    public virtual IEnumerator InitControlsCo() {
      
         if (gamePlayerHolder != null) {
             
@@ -3831,13 +3841,22 @@ public class BaseGamePlayerController : GameActor {
             // CHARACTER
 
             if (gameObject == null) {
-                return;
+                yield break;
             }
 
-            if (controllerData == null) {
-                return;
-            }
-         
+            // remove all components
+            
+            //Destroy(gameObject.GetComponent<GamePlayerNavMeshAgentFollowController>());
+            //Destroy(gameObject.GetComponent<GamePlayerNavMeshAgentController>());
+            //Destroy(gameObject.GetComponent<NavMeshAgent>());
+            //Destroy(gameObject.GetComponent<GamePlayerControllerAnimation>());
+            //Destroy(gameObject.GetComponent<GamePlayerThirdPersonController>());
+            //Destroy(gameObject.GetComponent<CharacterController>());
+
+            //
+
+            yield return new WaitForEndOfFrame();                        
+                     
             controllerData.characterController = gameObject.GetComponent<CharacterController>();
 
             if (controllerData.characterController == null) {
@@ -3857,11 +3876,10 @@ public class BaseGamePlayerController : GameActor {
                 || contextState == GamePlayerContextState.ContextInputVehicle
                 || contextState == GamePlayerContextState.ContextFollowInput
                 && !IsUIState())
-                || IsNetworkPlayerState()) {
-         
+                || IsNetworkPlayerState()) {         
                     
                 if (gameObject.Has<GamePlayerThirdPersonController>()) {
-
+                
                     controllerData.thirdPersonController = 
                             gameObject.GetComponent<GamePlayerThirdPersonController>();
                 }
@@ -3949,25 +3967,17 @@ public class BaseGamePlayerController : GameActor {
             
             // 
             // ANIMATION
-
-            //bool addedAnimation = false;
          
             if (gameObject.Has<GamePlayerControllerAnimation>()) {
                 controllerData.gamePlayerControllerAnimation = 
-                    gameObject.GetComponent<GamePlayerControllerAnimation>();
+                    gameObject.GetComponent<GamePlayerControllerAnimation>();  
             }
             else {
                 controllerData.gamePlayerControllerAnimation = 
                     gameObject.AddComponent<GamePlayerControllerAnimation>();  
-
-                //addedAnimation = true;
             }
             
             controllerData.gamePlayerControllerAnimation.Init(); 
-
-            if (gamePlayerModelHolderModel != null) {
-                controllerData.gamePlayerControllerAnimation.LoadAnimatedActor(gamePlayerModelHolderModel);
-            }
                       
             float smoothing = .8f;
 
@@ -4006,14 +4016,12 @@ public class BaseGamePlayerController : GameActor {
             if (controllerData.thirdPersonController != null) {
                 controllerData.thirdPersonController.Reset();           
             }
-            
-            if (controllerData.gamePlayerControllerAnimation != null) {
-                controllerData.gamePlayerControllerAnimation.Reset();
-            }
-            
+                        
             if (controllerState == GamePlayerControllerState.ControllerAgent) {
                 controllerData.navMeshAgent.enabled = true;
             } 
+            
+            yield return new WaitForEndOfFrame();
         }
     }
  
