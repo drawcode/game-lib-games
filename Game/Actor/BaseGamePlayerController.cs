@@ -343,7 +343,6 @@ public class BaseGamePlayerController : GameActor {
     public GameCharacter gameCharacter;
 
     // asset
-    public GamePlayerControllerAsset gamePlayerControllerAsset;
     public GameCustomPlayer gameCustomPlayer;
     public GameCustomEnemy gameCustomEnemy;
 
@@ -1449,23 +1448,12 @@ public class BaseGamePlayerController : GameActor {
                     break;
 
                 }
-             
-                if (controllerData.gamePlayerControllerAnimation != null) {
-                    controllerData.gamePlayerControllerAnimation.LoadAnimatedActor(gamePlayerModelHolderModel);
-                }
-
-                if (!gameObjectLoad.Has<GamePlayerControllerAsset>()) {
-                    gamePlayerControllerAsset = gameObjectLoad.AddComponent<GamePlayerControllerAsset>();
-                }
-
-                // Visible elements after model loaded
-
-                ShowPlayerShadow();
-
             }
         }
 
         ChangePlayerState(controllerState);
+
+        LoadWorldIndicator();
              
         LoadWeapons();
 
@@ -1483,6 +1471,19 @@ public class BaseGamePlayerController : GameActor {
             HandlePlayerEffectsTick();
         }
 
+    }
+
+    public void LoadWorldIndicator() {
+        
+        // Visible elements after model loaded
+        
+        ShowPlayerShadow();
+        
+        if (!IsPlayerControlled) {
+            if(gamePlayerShadow != null) {
+                gamePlayerShadow.SetParticleSystemStartColor(UIColors.colorRed, true);
+            }
+        }
     }
  
     // --------------------------------------------------------------------

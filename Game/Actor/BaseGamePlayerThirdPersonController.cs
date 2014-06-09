@@ -382,6 +382,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         lastJumpStartHeight = transform.position.y;
         touchWallJumpTime = -1;
         lastJumpButtonTime = -10;
+
+        Invoke("JumpStop", .5f);
     }
     
     public virtual void JumpStop() {
