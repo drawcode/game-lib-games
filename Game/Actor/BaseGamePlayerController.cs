@@ -3553,8 +3553,8 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-            GameAudioController.Instance.PlayOh();
-            GameAudioController.Instance.PlayWhistle();
+
+            GameAudioController.PlaySoundPlayerEnd();
         }
         
         GameDataSound dataItem = gameCharacter.data.GetSoundByType(GameDataActionKeys.death);

@@ -2357,8 +2357,7 @@ public class BaseGameController : GameObjectBehavior {
             return;
         }
 
-        GameAudioController.Instance.PlayWhistle();
-        GameAudioController.Instance.PlayOh();
+        GameAudioController.PlaySoundPlayerOutOfBounds();
         GameController.GameContentDisplay(GameContentDisplayTypes.gamePlayerOutOfBounds);
     }
 

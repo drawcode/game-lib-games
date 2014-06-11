@@ -636,15 +636,13 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         if(isCorrect) {//currentChoiceData.CheckChoices(true)) {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorGreen);
             typeValue = "CORRECT!";
-            GameAudioController.Instance.PlayCheer1();
-            GameAudioController.Instance.PlayWhistle();
+            GameAudioController.PlaySoundPlayerActionGood();
             choicesCorrect += 1;
         }
         else {
             UIColors.UpdateColor(containerChoiceResultItem, UIColors.colorRed);
             typeValue = "INCORRECT...";
-            GameAudioController.Instance.PlayWhistle();
-            GameAudioController.Instance.PlayOh();
+            GameAudioController.PlaySoundPlayerActionBad();
         }
 
         foreach(AppContentChoiceItem choiceItem in choice.choices) {
@@ -692,7 +690,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
 
-        GameAudioController.Instance.PlayCheer1();
+        GameAudioController.PlaySoundPlayerActionGood();
 
         //double timeCompleted = 30; // TODO
         double coins = 500;
