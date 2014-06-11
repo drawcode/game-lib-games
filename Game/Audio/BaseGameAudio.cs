@@ -233,6 +233,15 @@ public class BaseGameAudio {
 				(float)GameProfiles.Current.GetAudioEffectsVolume());
 	}
 
+    public static void PlayEffect(string audioEffectName, bool loop) {
+        
+        //LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);
+        
+        if(AudioSystem.Instance != null)
+            AudioSystem.Instance.PlayEffect(audioEffectName, 
+                                            (float)GameProfiles.Current.GetAudioEffectsVolume(), loop);
+    }
+
 	public static void PlayEffect(Transform parentTransform, string audioEffectName) {
 
 		//LogUtil.Log("PlayEffect: audioEffectName:" + audioEffectName);

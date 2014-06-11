@@ -475,9 +475,9 @@ public class BaseGamePlayerControllerAnimationData {
         }
         else if (items.ContainsKey(type)) {
 
-            GamePlayerAnimationDataItem animationItem = items.Get(type);
+            GamePlayerAnimationDataItem animationItem = items.Get<GamePlayerAnimationDataItem>(type);
 
-            if (animationItem.last_update + 5f < Time.time) {
+            if (animationItem.last_update + 5 < Time.time) {
                 animationItem.last_update = Time.time;
                 code = GetDataAnimation(type);                
             }
@@ -1266,11 +1266,13 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         StartCoroutine(PlayOneShotBoolCo(paramName));
     }
  
-    public virtual IEnumerator PlayOneShotBoolCo(string paramName) {
-     
+    public virtual IEnumerator PlayOneShotBoolCo(string paramName) {        
+        
+        if(animationData == null) {
+            yield break;
+        }
+
         if (!isLegacy) {
-            
-            SyncAnimator();
 
             if (animationData.animator != null
                 && animationData.animator.enabled
@@ -1283,14 +1285,13 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
         }
     }
     
-    public void SetBool(string key, bool val) {
+    public void SetBool(string key, bool val) {       
         
-        if (isLegacy) {
+        if(animationData == null) {
+            return;
         }
-        else if (isMecanim) {
-            
-            SyncAnimator();
-                        
+        
+        if (isMecanim) {
             if (animationData.animator != null
                 && animationData.animator.enabled
                 && animationData.animator.gameObject.activeInHierarchy
@@ -1299,32 +1300,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             }
         }
     }
-    
-    public void SyncAnimator() {       
-        if (animationData == null) {
-            return;
-        }
         
-        if (isMecanim) {
-            
-            if (animationData.animator == null) {
-                //animationData.FindAnimatedActor();
-                Debug.Log("animationData.animator NULL:" + 
-                    " uniqueId:" + animationData.gamePlayerController.uniqueId);
-            }
-        }
-    }
-    
     public void SetFloat(string key, float val) {
 
         if (animationData == null) {
             return;
         }
         
-        if (isMecanim) {
-            
-            SyncAnimator();
-            
+        if (isMecanim) {            
             if (animationData.animator != null) {
                 animationData.animator.SetFloat(key, val);
             }
@@ -1337,10 +1320,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
             return;
         }
         
-        if (isMecanim) {
-            
-            SyncAnimator();
-            
+        if (isMecanim) {            
             if (animationData.animator != null) {
                 animationData.animator.PlayOneShotFloat(key);
             }

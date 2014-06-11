@@ -1245,6 +1245,7 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LoadCharacterAttachedSounds() {
+
         // TODO footsteps over different terrain
         // Foosteps, breathing etc.
 
@@ -3535,18 +3536,8 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastAudioPlayedHit = Time.time;
         }
 
-        if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-            //GameAudio.PlayEffect(transform, "hit-grunt-3");
-            int randAudio = UnityEngine.Random.Range(1, 5);
-            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-        }
-        else {
-            //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 5);
-            GameAudio.PlayEffect(transform, "audio_football_hit_good_" + randAudio.ToString());
-            //}
-        }
-
+        GameDataSound dataItem = gameCharacter.data.GetSoundByType(GameDataActionKeys.hit);
+        GameAudio.PlayEffect(transform, dataItem.code);
     }
 
     public virtual void AudioDie() {
@@ -3562,20 +3553,12 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-
             GameAudioController.Instance.PlayOh();
             GameAudioController.Instance.PlayWhistle();
-
-            //GameAudio.PlayEffect(transform, "hit-grunt-3");
-            int randAudio = UnityEngine.Random.Range(1, 3);
-            GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
         }
-        else {
-            //if(isBotZombie) {
-            int randAudio = UnityEngine.Random.Range(1, 3);
-            GameAudio.PlayEffect(transform, "audio_football_grunts_" + randAudio.ToString());
-            //}
-        }
+        
+        GameDataSound dataItem = gameCharacter.data.GetSoundByType(GameDataActionKeys.death);
+        GameAudio.PlayEffect(transform, dataItem.code);
     }    
  
     // --------------------------------------------------------------------
