@@ -107,6 +107,16 @@ public class BaseAudioController : GameObjectBehavior {
         }
     }
 
+    // volume
+
+    public virtual void setVolume(float volume) {
+        if(currentUILoop != null) {
+            if(currentUILoop.audio != null) {
+                currentUILoop.audio.volume = volume;
+            }
+        }
+    }
+
 
     // ui play ui
 
@@ -256,7 +266,7 @@ public class BaseAudioController : GameObjectBehavior {
                 lastUIIntro = currentUIIntro;
                 
                 currentUIIntro = AudioSystem.Instance.PrepareFromResources(
-                    sound.type, sound.code, sound.isPlayTypeLoop, 
+                    sound.type, sound.code, false, 
                     GameProfiles.Current.GetAudioMusicVolume());
             }
             
@@ -294,7 +304,7 @@ public class BaseAudioController : GameObjectBehavior {
                 lastUILoop = currentUILoop;
 
                 currentUILoop = AudioSystem.Instance.PrepareFromResources(
-                    sound.type, sound.code, sound.isPlayTypeLoop, 
+                    sound.type, sound.code, true, 
                     GameProfiles.Current.GetAudioMusicVolume());
             }
 
@@ -323,7 +333,7 @@ public class BaseAudioController : GameObjectBehavior {
                 }
                 else {
                     currentGameLoop = AudioSystem.Instance.PrepareFromResources(
-                        sound.type, sound.code, sound.isPlayTypeLoop, 
+                        sound.type, sound.code, true, 
                         GameProfiles.Current.GetAudioMusicVolume());
                     lastGameLoop = currentGameLoop;
                 }
@@ -412,16 +422,35 @@ public class BaseAudioController : GameObjectBehavior {
 
     // types
 
+    public Dictionary<string, float> playSoundTypeTimes;
+
     public virtual void playSoundType(string type) {
         
         // play sound by world, level or character if overidden
         // TODO custom overrides
 
+        if(playSoundTypeTimes == null) {
+            playSoundTypeTimes = new Dictionary<string, float>();
+        }
+
         foreach (GameDataSound sound in GetSounds(type)) {
-            GameAudio.PlayEffect(
-                sound.code, 
-                GameProfiles.Current.GetAudioEffectsVolume() * sound.modifier, 
-                sound.isPlayTypeLoop);
+
+            float lastPlayed = 0f;
+
+            foreach(KeyValuePair<string, float> pair in playSoundTypeTimes) {
+                lastPlayed = 
+                    playSoundTypeTimes.Get<float>(sound.code);
+            }
+
+            if(lastPlayed + sound.play_delay < Time.time) {
+
+                GameAudio.PlayEffect(
+                    sound.code, 
+                    GameProfiles.Current.GetAudioEffectsVolume() * sound.modifier, 
+                    sound.isPlayTypeLoop);
+
+                playSoundTypeTimes.Set(sound.code, Time.time);
+            }
         }
     }
     
@@ -455,7 +484,7 @@ public class BaseAudioController : GameObjectBehavior {
             
             GameAudioDataItem dataItem = items.Get<GameAudioDataItem>(type);
             
-            if (dataItem.last_update + 5 < Time.time) {
+            if (dataItem.last_update + dataItem.play_delay < Time.time) {
                 dataItem.last_update = Time.time;
 
                 dataItems.Clear();

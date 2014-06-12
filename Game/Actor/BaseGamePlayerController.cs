@@ -355,6 +355,8 @@ public class BaseGamePlayerController : GameActor {
     public ParticleSystem gamePlayerEffectCircleStars;
     public ParticleSystem gamePlayerEffectAttack;
     public ParticleSystem gamePlayerEffectSkill;
+
+
     public ParticleSystem gamePlayerEffectHit;
     public ParticleSystem gamePlayerEffectDeath; 
  
@@ -373,6 +375,7 @@ public class BaseGamePlayerController : GameActor {
     public GameObject gamePlayerModelHolderWeaponsHolder;
     public GameObject gamePlayerModelHolderItems;
     public GameObject gamePlayerModelHolderSkills;
+    public GameObject gamePlayerSpawner;
     public Vector3 initialGamePlayerWeaponContainer = Vector3.zero;
     public Vector3 currentGamePlayerWeaponContainer = Vector3.zero;
 
@@ -454,6 +457,7 @@ public class BaseGamePlayerController : GameActor {
         //Init(controllerState);
 
         HidePlayerShadow();
+        ShowPlayerSpawner();
     }
  
     public override void OnEnable() {
@@ -1005,6 +1009,19 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
+    
+    public virtual void ShowPlayerSpawner() {
+        if(gamePlayerSpawner != null) {
+            gamePlayerSpawner.Show();
+        }
+    }
+    
+    public virtual void HidePlayerSpawner() {
+        if(gamePlayerSpawner != null) {
+            gamePlayerSpawner.Hide();
+        }
+    }
+
     // PLAYER CIRCLE INDICATOR GROUND
  
     public virtual void ShowPlayerEffectCircleFollow() {
@@ -1353,7 +1370,7 @@ public class BaseGamePlayerController : GameActor {
         controllerData.loadingCharacter = true;
 
         string prefabCode = gameCharacter.data.GetModel().code;
-        
+
         //LogUtil.Log("LoadCharacter:path:" + path);
         if(!string.IsNullOrEmpty(prefabCode)) {
             if (gamePlayerModelHolderModel.transform.childCount > 0) {
@@ -1490,7 +1507,6 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
         }
-
     }
 
     public void LoadWorldIndicator() {
@@ -1498,6 +1514,7 @@ public class BaseGamePlayerController : GameActor {
         // Visible elements after model loaded
         
         ShowPlayerShadow();
+        HidePlayerSpawner();
         
         if (!IsPlayerControlled) {
             if(gamePlayerShadow != null) {
