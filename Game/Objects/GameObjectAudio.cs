@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameObjectInactive : GameObjectBehavior {
+public class GameObjectAudio : GameObjectBehavior {
     
     // Apply this class to objects needed to be hidden but later found
     // by using GetComponentsInChildren with the inactive flag set without
@@ -9,6 +9,8 @@ public class GameObjectInactive : GameObjectBehavior {
 
     public string code = "";
     public string type = "";
+    public string file = "";
+    public string path = "";
     
     void Start() {
         

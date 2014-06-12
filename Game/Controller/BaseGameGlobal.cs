@@ -246,7 +246,8 @@ public class BaseGameGlobal : GameObjectBehavior {
         */
         if(audioSystem == null) {
             audioSystem = gameObject.AddComponent<AudioSystem>();   
-            
+
+            /*
             audioSystem.PrepareIntroFileFromResources(
                 GameAudioEffects.audio_loop_intro_1, false, 
                 (float)GameProfiles.Current.GetAudioMusicVolume());
@@ -270,6 +271,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             audioSystem.PrepareGameLapLoopFileFromResources(
                 3, GameAudioEffects.audio_loop_game_4, true,
                 (float)GameProfiles.Current.GetAudioMusicVolume());
+                */
             
             audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());

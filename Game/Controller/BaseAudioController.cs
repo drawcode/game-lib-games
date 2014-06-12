@@ -52,6 +52,290 @@ public class BaseAudioController : GameObjectBehavior {
         items = new Dictionary<string, GameAudioDataItem>();
     }
 
+    // MUSIC
+        
+    public GameObject lastUIIntro;
+    public GameObject lastUILoop;
+    public GameObject lastGameLoop;
+    public GameObject currentUIIntro;
+    public GameObject currentUILoop;
+    public GameObject currentGameLoop;
+
+    public bool isUIMusicPlaying {
+        get {
+            if (currentUILoop == null) {
+                return false;
+            }
+
+            if (currentUIIntro == null) {
+                return false;
+            }
+
+            if (currentUILoop.IsAudioSourcePlaying()) {
+                return true;
+            }
+            
+            if (currentUIIntro.IsAudioSourcePlaying()) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public bool isGameMusicPlaying {
+        get {
+            if (currentGameLoop == null) {
+                return false;
+            }
+            
+            if (currentGameLoop.IsAudioSourcePlaying()) {
+                return true;
+            }
+            
+            return false;
+        }
+    }
+
+    public bool isMusicPlaying {
+        get {
+            if (isGameMusicPlaying && isUIMusicPlaying) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+
+    // ui play ui
+
+    public virtual void playMusic() {
+        if (GameConfigs.isUIRunning) {
+            playUIMusic();
+        }
+        else {
+            playGameMusicLoop();
+        }
+    }
+
+    public virtual void playUIMusic() {
+
+        if (isUIMusicPlaying) {
+            return;
+        }
+
+        if(isGameMusicPlaying) {
+            stopGameMusic();
+        }
+
+        StartCoroutine(playUIMusicCo());    
+    }
+    
+    public virtual IEnumerator playUIMusicCo() {
+        
+        if (!GameConfigs.isUIRunning) {
+            yield break;
+        }
+        
+        playUIMusicIntro();
+
+        float waitTime  = 0f;
+        
+        AudioSource audioSource = currentUIIntro.Get<AudioSource>();
+        
+        if (audioSource != null) {
+            
+            waitTime = audioSource.clip == null ? 0 : audioSource.clip.length;
+        }      
+        
+        yield return new WaitForSeconds(waitTime);
+        
+        playUIMusicLoop();
+    }
+    
+    public virtual void stopUIMusic() {
+        
+        if (!isUIMusicPlaying) {
+            return;
+        }
+        
+        StartCoroutine(stopUIMusicCo());    
+    }
+        
+    public virtual IEnumerator stopUIMusicCo() {
+
+        yield return new WaitForEndOfFrame();
+
+        stopUIMusicIntro();
+        stopUIMusicLoop();
+    }
+
+    public virtual void stopUIMusicIntro() {
+        if(currentUIIntro.IsAudioSourcePlaying()) {
+            currentUIIntro.StopSounds();
+        }
+    }
+
+    public virtual void stopUIMusicLoop() {
+        if(currentUILoop.IsAudioSourcePlaying()) {
+            currentUILoop.StopSounds();
+        }
+    }
+
+    // game music
+
+    
+    public virtual void playGameMusic() {
+        
+        if (isGameMusicPlaying) {
+            return;
+        }
+        
+        if(isUIMusicPlaying) {
+            stopUIMusic();
+        }
+        
+        StartCoroutine(playGameMusicCo());    
+    }
+    
+    public virtual IEnumerator playGameMusicCo() {
+        
+        if (GameConfigs.isUIRunning) {
+            yield break;
+        }
+        
+        playGameMusicLoop();
+    }
+    
+    public virtual void stopGameMusic() {
+        
+        if (!isGameMusicPlaying) {
+            return;
+        }
+        
+        StartCoroutine(stopGameMusicCo());    
+    }
+    
+    public virtual IEnumerator stopGameMusicCo() {
+        
+        yield return new WaitForEndOfFrame();
+        
+        stopGameMusicLoop();
+    }
+    
+    public virtual void stopGameMusicLoop() {
+        if(currentGameLoop.IsAudioSourcePlaying()) {
+            currentGameLoop.StopSounds();
+        }
+    }
+
+    // ui intro
+
+    public virtual void playUIMusicIntro() {
+
+        if (!GameConfigs.isUIRunning) {
+            return;
+        }
+        
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_intro)) {            
+            
+            bool handled = false;
+            
+            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+                
+                if (objectAudio.type == GameDataActionKeys.music_ui_intro) {
+                    
+                    lastUIIntro = currentUIIntro;
+                    currentUIIntro = objectAudio.gameObject;    
+                    handled = true;
+                }
+            }  
+            
+            if(!handled) {
+                lastUIIntro = currentUIIntro;
+                
+                currentUIIntro = AudioSystem.Instance.PrepareFromResources(
+                    sound.type, sound.code, sound.isPlayTypeLoop, 
+                    GameProfiles.Current.GetAudioMusicVolume());
+            }
+            
+            break;
+        }
+        
+        if (currentUIIntro != null) {
+            currentUIIntro.PlaySounds();
+        }
+    }
+
+    // ui loops
+
+    public virtual void playUIMusicLoop() {
+        
+        if (!GameConfigs.isUIRunning) {
+            return;
+        }
+        
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_loop)) {            
+            
+            bool handled = false;
+
+            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+                                
+                if (objectAudio.type == GameDataActionKeys.music_ui_loop) {
+                    
+                    lastUILoop = currentUILoop;
+                    currentUILoop = objectAudio.gameObject;    
+                    handled = true;
+                }
+            }  
+                        
+            if(!handled) {
+                lastUILoop = currentUILoop;
+
+                currentUILoop = AudioSystem.Instance.PrepareFromResources(
+                    sound.type, sound.code, sound.isPlayTypeLoop, 
+                    GameProfiles.Current.GetAudioMusicVolume());
+            }
+
+            break;
+        }
+        
+        if (currentUILoop != null) {
+            currentUILoop.PlaySounds();
+        }
+    }
+
+    // game loops
+    public virtual void playGameMusicLoop() {
+        
+        if (GameConfigs.isUIRunning) {
+            return;
+        }
+        
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_game)) {            
+            
+            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+                
+                if (objectAudio.type == GameDataActionKeys.music_game) {
+                    currentGameLoop = objectAudio.gameObject;                    
+                    lastGameLoop = currentGameLoop;
+                }
+                else {
+                    currentGameLoop = AudioSystem.Instance.PrepareFromResources(
+                        sound.type, sound.code, sound.isPlayTypeLoop, 
+                        GameProfiles.Current.GetAudioMusicVolume());
+                    lastGameLoop = currentGameLoop;
+                }
+            }  
+            break;
+        }
+        
+        if (currentGameLoop != null) {
+            currentGameLoop.PlaySounds();
+        }
+    }
+
     // SOUNDS
 
     // scores

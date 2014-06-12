@@ -148,7 +148,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         //}
         if(deferTap) {
             deferTap = false;
-            return;
+            //return;
         }
         
         if(gesture.Taps > 0) {

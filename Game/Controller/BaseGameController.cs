@@ -2357,6 +2357,10 @@ public class BaseGameController : GameObjectBehavior {
             return;
         }
 
+        if(AppModes.Instance.isAppModeGameTraining) {
+            return;
+        }
+
         GameAudioController.PlaySoundPlayerOutOfBounds();
         GameController.GameContentDisplay(GameContentDisplayTypes.gamePlayerOutOfBounds);
     }

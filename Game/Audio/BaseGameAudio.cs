@@ -330,14 +330,26 @@ public class BaseGameAudio {
 			return 0.0;
 	}	
 	
+    //static bool ambienceDelayed = false;
+
 	public static void StartAmbience() {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.StartAmbience();
+
+        //if(ambienceDelayed) {
+        GameAudioController.PlayUIMusic();
+        GameAudioController.StopGameMusic();
+        //    ambienceDelayed = true;
+        //}
+		//if(AudioSystem.Instance != null)
+		//	AudioSystem.Instance.StartAmbience();
 	}
 	
 	public static void StopAmbience() {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.StopAmbience();
+        
+        GameAudioController.StopUIMusic();
+        GameAudioController.PlayGameMusic();
+
+		//if(AudioSystem.Instance != null)
+		//	AudioSystem.Instance.StopAmbience();
 	}
 	
 	public static void SetVolumeForRace(bool inRace) {

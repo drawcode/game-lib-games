@@ -1890,6 +1890,8 @@ public class BaseUIController : GameObjectBehavior {
  
     public virtual void showGameMode() {
 
+        showUI();
+
         showUIPanel(
             typeof(GameUIPanelGameMode),
             BaseUIPanel.panelGameMode,

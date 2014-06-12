@@ -30,6 +30,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
     public GameObjectChoiceData choiceData;
     public GameObject containerLabel;
     public UILabel labelResponse;
+    public UILabel labelResponseShadow;
     public GameObject containerEffects;
     public GameObject containerEffectsAlwaysOn;
     public GameObject containerEffectsCorrect;
@@ -244,6 +245,7 @@ public class GameObjectChoice : BaseGameObjectLevel {
         LogUtil.Log("LoadChoice:SetLabel:choiceData.choiceItemDisplay:" + choiceData.choiceItemDisplay);
 
         UIUtil.SetLabelValue(labelResponse, choiceData.choiceItemDisplay);
+        UIUtil.SetLabelValue(labelResponseShadow, choiceData.choiceItemDisplay);
         //LogUtil.Log("LoadChoice:SetLabel:labelResponse:" + labelResponse.text);
 
         hasLoadedChoice = true;
@@ -323,10 +325,9 @@ public class GameObjectChoice : BaseGameObjectLevel {
         }
 
         if (gamePlayerController == null
-            && (go.name.Contains("Helmet")
-            || go.name.Contains("Facemask"))) {
+            && (go.name.Contains("GamePlayerCollider"))) {
 
-            LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+            LogUtil.Log("GameObjectChoice:GamePlayerCollider:" + go.name);
 
             gamePlayerController = GameController.GetGamePlayerControllerParent(go);
 
