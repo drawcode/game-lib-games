@@ -109,10 +109,22 @@ public class BaseAudioController : GameObjectBehavior {
 
     // volume
 
-    public virtual void setVolume(float volume) {
+    public virtual void setVolume(double volume) {
         if(currentUILoop != null) {
             if(currentUILoop.audio != null) {
-                currentUILoop.audio.volume = volume;
+                currentUILoop.audio.volume = (float)volume;
+            }
+        }
+
+        if(currentUIIntro != null) {
+            if(currentUIIntro.audio != null) {
+                currentUIIntro.audio.volume = (float)volume;
+            }
+        }
+        
+        if(currentGameLoop != null) {
+            if(currentGameLoop.audio != null) {
+                currentGameLoop.audio.volume = (float)volume;
             }
         }
     }
@@ -437,9 +449,8 @@ public class BaseAudioController : GameObjectBehavior {
 
             float lastPlayed = 0f;
 
-            foreach(KeyValuePair<string, float> pair in playSoundTypeTimes) {
-                lastPlayed = 
-                    playSoundTypeTimes.Get<float>(sound.code);
+            if(playSoundTypeTimes.ContainsKey(sound.code)) {
+                lastPlayed = playSoundTypeTimes.Get(sound.code);
             }
 
             if(lastPlayed + sound.play_delay < Time.time) {

@@ -307,11 +307,15 @@ public class BaseGameAudio {
 	}
 		
 	public static void SetAmbienceVolume(double volume) {
+        
+        GameAudioController.SetVolume(volume);
+
 		if(AudioSystem.Instance != null) 
 			AudioSystem.Instance.SetAmbienceVolume(volume);
 	}
 	
 	public static void SetEffectsVolume(double volume) {
+
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.SetEffectsVolume(volume);
 	}
