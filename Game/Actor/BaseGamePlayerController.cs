@@ -4309,6 +4309,18 @@ public class BaseGamePlayerController : GameActor {
         if (controllerData.dying) {
             //transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
         }
+
+        // fix after jump
+        if(gamePlayerModelHolderModel != null) {
+            foreach(Transform t in gamePlayerModelHolderModel.transform) { 
+                if(controllerData.thirdPersonController != null) {
+                    if (!controllerData.thirdPersonController.IsJumping()) {
+                        t.position = Vector3.Lerp(t.position, t.position.WithY(0), 2 + Time.deltaTime);
+                    }
+                }
+                break;
+            }
+        }
      
         //bool runUpdate = false;
 

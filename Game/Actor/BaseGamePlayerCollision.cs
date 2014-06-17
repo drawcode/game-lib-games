@@ -10,7 +10,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
     public string type = "default";
 
     float lastCollision = 0f;
-    float intervalCollision = .05f;
+    float intervalCollision = .042f;
     
     public virtual void Start() {
         //InvokeRepeating("FindPlayerCollisionParent", 1f, 1f);
@@ -37,10 +37,10 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
         
         if (lastCollision + intervalCollision < Time.time) {
-            //lastCollision = Time.time;
+            lastCollision = Time.time;
         }
         else {
-            // return;
+             return;
         }
         
         if (gamePlayerController != null) {
@@ -117,10 +117,10 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
 
         if (lastCollision + intervalCollision < Time.time) {
-            //lastCollision = Time.time;
+            lastCollision = Time.time;
         }
         else {
-            //return;
+            return;
         }
 
         if (gamePlayerController != null) {            
