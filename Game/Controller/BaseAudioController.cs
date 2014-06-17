@@ -110,21 +110,28 @@ public class BaseAudioController : GameObjectBehavior {
     // volume
 
     public virtual void setVolume(double volume) {
+        setVolumeGame(volume);
+        setVolumeUI(volume);
+    }
+    
+    public virtual void setVolumeGame(double volume) {
+        if(currentGameLoop != null) {
+            if(currentGameLoop.audio != null) {
+                currentGameLoop.audio.volume = (float)volume;
+            }
+        }
+    }
+
+    public virtual void setVolumeUI(double volume) {
         if(currentUILoop != null) {
             if(currentUILoop.audio != null) {
                 currentUILoop.audio.volume = (float)volume;
             }
         }
-
+        
         if(currentUIIntro != null) {
             if(currentUIIntro.audio != null) {
                 currentUIIntro.audio.volume = (float)volume;
-            }
-        }
-        
-        if(currentGameLoop != null) {
-            if(currentGameLoop.audio != null) {
-                currentGameLoop.audio.volume = (float)volume;
             }
         }
     }
@@ -196,12 +203,13 @@ public class BaseAudioController : GameObjectBehavior {
     public virtual void stopUIMusicIntro() {
         if(currentUIIntro.IsAudioSourcePlaying()) {
             currentUIIntro.StopSounds();
+            currentUIIntro.audio.FadeOut(1.5f);
         }
     }
 
     public virtual void stopUIMusicLoop() {
         if(currentUILoop.IsAudioSourcePlaying()) {
-            currentUILoop.StopSounds();
+            currentUILoop.audio.FadeOut(1.5f);
         }
     }
 
@@ -248,7 +256,7 @@ public class BaseAudioController : GameObjectBehavior {
     
     public virtual void stopGameMusicLoop() {
         if(currentGameLoop.IsAudioSourcePlaying()) {
-            currentGameLoop.StopSounds();
+            currentGameLoop.audio.FadeOut(1.3f);
         }
     }
 
@@ -278,15 +286,15 @@ public class BaseAudioController : GameObjectBehavior {
                 lastUIIntro = currentUIIntro;
                 
                 currentUIIntro = AudioSystem.Instance.PrepareFromResources(
-                    sound.type, sound.code, false, 
-                    GameProfiles.Current.GetAudioMusicVolume());
+                    sound.type, sound.code, false, 0f);
             }
             
             break;
         }
         
         if (currentUIIntro != null) {
-            currentUIIntro.PlaySounds();
+            currentUIIntro.audio.FadeIn(
+                (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
     }
 
@@ -316,15 +324,15 @@ public class BaseAudioController : GameObjectBehavior {
                 lastUILoop = currentUILoop;
 
                 currentUILoop = AudioSystem.Instance.PrepareFromResources(
-                    sound.type, sound.code, true, 
-                    GameProfiles.Current.GetAudioMusicVolume());
+                    sound.type, sound.code, true, 0f);
             }
 
             break;
         }
         
         if (currentUILoop != null) {
-            currentUILoop.PlaySounds();
+            currentUILoop.audio.FadeIn(
+                (float)GameProfiles.Current.GetAudioMusicVolume(), 1.7f);
         }
     }
 
@@ -345,8 +353,7 @@ public class BaseAudioController : GameObjectBehavior {
                 }
                 else {
                     currentGameLoop = AudioSystem.Instance.PrepareFromResources(
-                        sound.type, sound.code, true, 
-                        GameProfiles.Current.GetAudioMusicVolume());
+                        sound.type, sound.code, true, 0f);
                     lastGameLoop = currentGameLoop;
                 }
             }  
@@ -354,7 +361,8 @@ public class BaseAudioController : GameObjectBehavior {
         }
         
         if (currentGameLoop != null) {
-            currentGameLoop.PlaySounds();
+            currentGameLoop.audio.FadeIn(
+                (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
     }
 
@@ -536,6 +544,6 @@ public class BaseAudioController : GameObjectBehavior {
     //
 
     public virtual void Update() {
-    
+
     }
 }
