@@ -187,7 +187,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
             HideTipsObjects();
 
             foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
-                
+                                
                 if(!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
                     tips.gameObject.Show();
                     UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 0f);
@@ -387,7 +387,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         ShowCurrentState();
         
         UpdateTipsStates();
-        
+
         yield return new WaitForSeconds(.1f);
     }
 

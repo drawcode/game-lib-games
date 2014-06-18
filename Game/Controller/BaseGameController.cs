@@ -1292,7 +1292,7 @@ public class BaseGameController : GameObjectBehavior {
         StartCoroutine(initLevelCo(levelCode));
     }
 
-    bool levelInitializing = false;
+    public bool levelInitializing = false;
        
     public virtual IEnumerator initLevelCo(string levelCode) {
 
@@ -1331,7 +1331,10 @@ public class BaseGameController : GameObjectBehavior {
     }
     
     public virtual IEnumerator initLevelFinishCo(string levelCode) {        
-                
+        if(UIPanelOverlayPrepare.Instance != null) {
+            UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
+        }
+                       
         Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
 
         yield return new WaitForSeconds(1f);
@@ -1345,6 +1348,8 @@ public class BaseGameController : GameObjectBehavior {
         UIPanelOverlayPrepare.HideAll();
         
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
+                
+        UIPanelOverviewMode.ShowDefault();
 
         levelInitializing = false;
     }
@@ -2501,7 +2506,7 @@ public class BaseGameController : GameObjectBehavior {
 
         // HANDLE RPG
 
-        GameProfileRPGs.Current.AddCurrency(runtimeData.coins);
+        GameProfileRPGs.Current.AddCurrency(currentGamePlayerController.runtimeData.coins);
 
         // TODO by skill/RPG
 

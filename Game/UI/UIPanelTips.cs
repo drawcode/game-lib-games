@@ -121,18 +121,20 @@ public class UIPanelTips : UIAppPanelBaseList {
     
     public void OnInputSwipe(SwipeGesture gesture) {
         
-        //if(!isVisible) {
-        //  return;
-        //}
+        if(!isVisible) {
+          return;
+        }
         
         if(gesture.Direction == FingerGestures.SwipeDirection.Right
            || gesture.Direction == FingerGestures.SwipeDirection.UpperRightDiagonal
+           || gesture.Direction == FingerGestures.SwipeDirection.LowerRightDiagonal
            || gesture.Direction == FingerGestures.SwipeDirection.Down) {
             deferTap = true;
             ShowTipsPrevious();
             
         }
         else if(gesture.Direction == FingerGestures.SwipeDirection.Left
+                || gesture.Direction == FingerGestures.SwipeDirection.UpperLeftDiagonal
                 || gesture.Direction == FingerGestures.SwipeDirection.LowerLeftDiagonal
                 || gesture.Direction == FingerGestures.SwipeDirection.Up) {
             deferTap = true;
@@ -142,20 +144,31 @@ public class UIPanelTips : UIAppPanelBaseList {
     }
     
     public void OnInputTap(TapGesture gesture) {
+        StartCoroutine(OnInputTapCo(gesture));
+    }
+
+    public IEnumerator OnInputTapCo(TapGesture gesture) {
+        yield return new WaitForSeconds(.3f);
         
-        //if(!isVisible) {
-        //  return;
-        //}
+        if(!isVisible) {
+            yield break;
+        }
+        
+        if(GameController.Instance.levelInitializing) {
+            ShowTipsFirst();
+            yield break;
+        }
+        
         if(deferTap) {
             deferTap = false;
-            //return;
+            yield break;
         }
         
-        if(gesture.Taps > 0) {
-            
-            ShowTipsNext();
-            
-        }
+        //if(gesture.Taps > 0) {
+        
+        ShowTipsNext();
+        
+        //}
     }
     
     public void HideControlsAll() {
@@ -226,6 +239,8 @@ public class UIPanelTips : UIAppPanelBaseList {
     }
     
     public void ShowTipsFirst() {
+        isVisible = true;
+
         if(tipsMode == TipsMode.Loading) {
             ShowTipsRandomNext();
         }
@@ -427,7 +442,7 @@ public class UIPanelTips : UIAppPanelBaseList {
         
         hidden = true;
         base.AnimateOut();
-        
+
         HidePanelDefault();
     }
     
