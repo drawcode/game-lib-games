@@ -102,7 +102,7 @@ public class Platforms {
     
     public void askForReview(string appName, string bundleId) {
 #if UNITY_ANDROID
-        EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
+        EtceteraAndroid.askForReviewNow("Review " + appName + "!", "Review " + appName + " if you like it.");
 #elif UNITY_IPHONE  
         EtceteraBinding.askForReview("Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
 #endif      

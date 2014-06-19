@@ -33,13 +33,7 @@ public class AnalyticsNetworksMessages {
 }
 
 public class AnalyticsNetworks : GameObjectBehavior {
-    #if UNITY_EDITOR    
-    #elif UNITY_STANDALONE_OSX
-    #elif UNITY_STANDALONE_WIN
-    #elif UNITY_ANDROID    
-    #elif UNITY_IPHONE
-    #endif
-    
+
     #if ANALYTICS_GAMEANALYTICS
     public GA_SystemTracker analyticsGameAnalytics;
     #endif

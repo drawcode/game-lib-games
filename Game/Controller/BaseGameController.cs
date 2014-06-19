@@ -1349,7 +1349,7 @@ public class BaseGameController : GameObjectBehavior {
         
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
                 
-        UIPanelOverviewMode.ShowDefault();
+        //UIPanelOverviewMode.ShowDefault();
 
         levelInitializing = false;
     }

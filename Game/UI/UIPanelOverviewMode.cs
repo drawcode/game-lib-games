@@ -84,6 +84,8 @@ public class UIPanelOverviewMode : UIPanelBase {
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
 
         Messenger<string>.AddListener(UIPanelTipsMessages.tipsCycle, OnTipsCycleHandler);
+        
+        Messenger<string>.AddListener(GameMessages.gameInitLevelEnd, OnGameInitLevelEnd);
     }
     
     public override void OnDisable() {
@@ -95,6 +97,12 @@ public class UIPanelOverviewMode : UIPanelBase {
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
 
         Messenger<string>.RemoveListener(UIPanelTipsMessages.tipsCycle, OnTipsCycleHandler);
+        
+        Messenger<string>.RemoveListener(GameMessages.gameInitLevelEnd, OnGameInitLevelEnd);
+    }
+    
+    void OnGameInitLevelEnd(string levelCode) {
+        ShowTipsObjectMode();
     }
 
     string lastTipObjectName = "";
