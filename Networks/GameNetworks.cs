@@ -314,7 +314,7 @@ public class GameNetworks : GameObjectBehavior {
     public static bool IsThirdPartyNetworkUserAuthenticated(string networkType) {
 		bool isAuthenticated = false;
         
-        //LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
+        Debug.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
 		
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
 			isAuthenticated = isAuthenticatediOSAppleGameCenter;
@@ -324,7 +324,7 @@ public class GameNetworks : GameObjectBehavior {
 			isAuthenticated = isAuthenticatedAndroidGooglePlay;
 		}
                 
-        //LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
+        Debug.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
 
 		return isAuthenticated;
 	}
@@ -372,7 +372,7 @@ public class GameNetworks : GameObjectBehavior {
 
     public static void ShowAchievementsOrLogin(string networkTypeTo) {  
         
-        LogUtil.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if(Instance != null) {
             Instance.showAchievementsOrLogin(networkTypeTo);
@@ -381,7 +381,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void showAchievementsOrLogin(string networkTypeTo) {
         
-        LogUtil.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
@@ -398,14 +398,14 @@ public class GameNetworks : GameObjectBehavior {
 	public static void showAchievementsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
         
-        //LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+        //Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
                   //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
 			
 		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
 
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
                                
-            LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
                   authenticated);
 
             if(authenticated) {
@@ -421,14 +421,14 @@ public class GameNetworks : GameObjectBehavior {
 	public static void showAchievementsOrLoginAndroidGooglePlay() {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
         
-        LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+        Debug.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
             GameNetworks.gameNetworkAndroidGooglePlayEnabled);
 		
 		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
         
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices);
         
-            LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:authenticated:" + 
+            Debug.Log("showAchievementsOrLoginAndroidGooglePlay:authenticated:" + 
                   authenticated);
 
             if(authenticated) {
@@ -502,16 +502,16 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
 
-        LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay");
+        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay");
         
-        LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
                   GameNetworks.gameNetworkAndroidGooglePlayEnabled);
 			
 			if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
                 if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                     if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices)) {	
                     
-                    LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
+                    Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
 
 						PlayGameServices.showLeaderboards();
 					}
