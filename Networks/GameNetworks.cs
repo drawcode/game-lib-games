@@ -245,7 +245,7 @@ public class GameNetworks : GameObjectBehavior {
         InitEvents(GameNetworkType.gameNetworkAppleGameCenter);		
 		LoginNetwork(GameNetworkType.gameNetworkAppleGameCenter);			
 		
-        Debug.Log("InitNetwork iOS Apple GameCenter init...");
+        LogUtil.Log("InitNetwork iOS Apple GameCenter init...");
 #endif
 		
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY	
@@ -270,7 +270,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public static bool IsThirdPartyNetworkAvailable(string networkTypeTo) {
 
-        Debug.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
+        LogUtil.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
 		
 		bool isAvailable = false;
 		
@@ -282,7 +282,7 @@ public class GameNetworks : GameObjectBehavior {
 			isAvailable = isAvailableAndroidGooglePlay;
 		}
                 
-        Debug.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
+        LogUtil.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
 	
 		return isAvailable;
 	}
@@ -314,7 +314,7 @@ public class GameNetworks : GameObjectBehavior {
     public static bool IsThirdPartyNetworkUserAuthenticated(string networkType) {
 		bool isAuthenticated = false;
         
-        Debug.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
+        LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
 		
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
 			isAuthenticated = isAuthenticatediOSAppleGameCenter;
@@ -324,7 +324,7 @@ public class GameNetworks : GameObjectBehavior {
 			isAuthenticated = isAuthenticatedAndroidGooglePlay;
 		}
                 
-        Debug.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
+        LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
 
 		return isAuthenticated;
 	}
@@ -372,7 +372,7 @@ public class GameNetworks : GameObjectBehavior {
 
     public static void ShowAchievementsOrLogin(string networkTypeTo) {  
         
-        Debug.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        LogUtil.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if(Instance != null) {
             Instance.showAchievementsOrLogin(networkTypeTo);
@@ -381,7 +381,7 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void showAchievementsOrLogin(string networkTypeTo) {
         
-        Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        LogUtil.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 			
@@ -398,14 +398,14 @@ public class GameNetworks : GameObjectBehavior {
 	public static void showAchievementsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
         
-        //Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+        //LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
                   //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
 			
 		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
 
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
                                
-            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+            LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
                   authenticated);
 
             if(authenticated) {
@@ -421,14 +421,14 @@ public class GameNetworks : GameObjectBehavior {
 	public static void showAchievementsOrLoginAndroidGooglePlay() {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
         
-        Debug.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+        LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
             GameNetworks.gameNetworkAndroidGooglePlayEnabled);
 		
 		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
         
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices);
         
-            Debug.Log("showAchievementsOrLoginAndroidGooglePlay:authenticated:" + 
+            LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:authenticated:" + 
                   authenticated);
 
             if(authenticated) {
@@ -502,16 +502,16 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
 
-        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay");
+        LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay");
         
-        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+        LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
                   GameNetworks.gameNetworkAndroidGooglePlayEnabled);
 			
 			if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
                 if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                     if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices)) {	
                     
-                    Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
+                    LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
 
 						PlayGameServices.showLeaderboards();
 					}
@@ -576,14 +576,14 @@ public class GameNetworks : GameObjectBehavior {
 	
     public void reportScore(string networkTypeTo, string key, long keyValue) {
         
-        //Debug.Log("reportScore:" + 
+        //LogUtil.Log("reportScore:" + 
         //            " networkTypeTo:" + networkTypeTo+ 
         //            " key:" + key+ 
         //            " keyValue:" + keyValue);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {	
             
-            //Debug.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
+            //LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
             //            " networkTypeTo:" + networkTypeTo+ 
             //            " key:" + key+ 
             //            " keyValue:" + keyValue);
@@ -605,7 +605,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 		if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
-                Debug.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue); 
+                LogUtil.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue); 
 				GameCenterBinding.reportScore(keyValue, key);
 			}
 		}
@@ -616,7 +616,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
 		if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                Debug.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
+                LogUtil.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
 				PlayGameServices.submitScore(key, keyValue);
 			}
 		}
@@ -746,12 +746,12 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER			
             if(isAvailableiOSAppleGameCenter) {
                 GameCenterBinding.authenticateLocalPlayer();
-                Debug.Log("GameCenter LoginNetwork is available...");
+                LogUtil.Log("GameCenter LoginNetwork is available...");
     		}
 			
 		// Check existing achievements and update them if missing
 			
-            Debug.Log("GameCenter LoginNetwork...");
+            LogUtil.Log("GameCenter LoginNetwork...");
 #endif		
         }
 
@@ -786,7 +786,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
 		GameCenterBinding.getAchievements();
 			
-		Debug.Log("GameCenter GetAchievements...");
+		LogUtil.Log("GameCenter GetAchievements...");
 #endif	
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY
@@ -929,7 +929,7 @@ public class GameNetworks : GameObjectBehavior {
 	}
 	
     public void setLocalProfileToNetworkUsername(string networkTypeTo) {
-        Debug.Log("setLocalProfileToNetworkUsername");
+        LogUtil.Log("setLocalProfileToNetworkUsername");
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {			
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 				setLocalProfileToNetworkUsernameAppleGameCenter();
@@ -944,7 +944,7 @@ public class GameNetworks : GameObjectBehavior {
 	public void setLocalProfileToNetworkUsernameAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER	
 		string networkUsername = GameCenterBinding.playerAlias();
-        Debug.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
+        LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
 		
 		if(!string.IsNullOrEmpty(networkUsername)) {
 			//GameState.ChangeUser(networkUsername);
@@ -1011,7 +1011,7 @@ public class GameNetworks : GameObjectBehavior {
 		networkUser = GameCenterBinding.playerAlias();
 		if(networkUser != GameProfiles.Current.username 
 			&& !string.IsNullOrEmpty(networkUser)) {
-			Debug.Log("GetNetworkUsername: " + networkUser);			
+			LogUtil.Log("GetNetworkUsername: " + networkUser);			
 		}
 #endif			
 		return networkUser; 
@@ -1560,19 +1560,19 @@ public class GameNetworks : GameObjectBehavior {
     
 #if GAMENETWORK_IOS_APPLE_GAMECENTER    
     void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
-        Debug.Log("GameNetworks:GameCenter:achievementsLoaded"); 
+        LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
         gameCenterAchievementsNetwork = achievementsNetworkResult;
         CheckAchievementsState();
 	}
 	
     void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
-        Debug.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
+        LogUtil.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
 		gameCenterAchievementsMetaNetwork = achievementsMetaNetworkResult;
         CheckAchievementsState();
 	}
 	
     void playerAuthenticated() {
-        Debug.Log("GameNetworks:GameCenter:playerAuthenticated"); 
+        LogUtil.Log("GameNetworks:GameCenter:playerAuthenticated"); 
 		SetLocalProfileToNetworkUsername();
         GetAchievements();
  	}
@@ -1586,34 +1586,34 @@ public class GameNetworks : GameObjectBehavior {
     // Fired when authentication succeeds. Includes the user_id
 
     public void authenticationSucceededEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:authenticationSucceededEvent:" + " val:" + val);
+            LogUtil.Log("GameNetworks:PlayServices:authenticationSucceededEvent:" + " val:" + val);
             SetLocalProfileToNetworkUsername();
             GetAchievements();
     }
     
     // Fired when authentication fails
     public void authenticationFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:authenticationFailedEvent:" + " val:" + val);
+            LogUtil.Log("GameNetworks:PlayServices:authenticationFailedEvent:" + " val:" + val);
     }
     
     // iOS only. Fired when the user signs out. This could happen if in a leaderboard they touch the settings button and logout from there.
     public void userSignedOutEvent() {
-            Debug.Log("GameNetworks:PlayServices:userSignedOutEvent"); 
+            LogUtil.Log("GameNetworks:PlayServices:userSignedOutEvent"); 
     }
     
     // Fired when data fails to reload for a key. This particular model data is usually the player info or leaderboard/achievment metadata that is auto loaded.
     public void reloadDataForKeyFailedEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:reloadDataForKeyFailedEvent:" + " val:" + val);
+            LogUtil.Log("GameNetworks:PlayServices:reloadDataForKeyFailedEvent:" + " val:" + val);
     }
 
     // Fired when data is reloaded for a key
     public void reloadDataForKeySucceededEvent(string val) {
-            Debug.Log("GameNetworks:PlayServices:reloadDataForKeySucceededEvent:" + " val:" + val);
+            LogUtil.Log("GameNetworks:PlayServices:reloadDataForKeySucceededEvent:" + " val:" + val);
     }
     
     // Android only. Fired when a license check fails
     public void licenseCheckFailedEvent() {
-            Debug.Log("GameNetworks:PlayServices:licenseCheckFailedEvent");
+            LogUtil.Log("GameNetworks:PlayServices:licenseCheckFailedEvent");
     }
     
     // ##### ##### ##### ##### ##### ##### #####
@@ -1622,42 +1622,42 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when loading cloud data fails
     public void loadCloudDataForKeyFailedEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:loadCloudDataForKeyFailedEvent:" + " val:" + val);
+        LogUtil.Log("GameNetworks:PlayServices:loadCloudDataForKeyFailedEvent:" + " val:" + val);
     }
 
     // Fired when loading cloud data succeeds and includes the key and data
     public void loadCloudDataForKeySucceededEvent(int key, string val) {
-        Debug.Log("GameNetworks:PlayServices:loadCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);
+        LogUtil.Log("GameNetworks:PlayServices:loadCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);
     }
     
     // Fired when updating cloud data fails
     public void updateCloudDataForKeyFailedEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:updateCloudDataForKeyFailedEvent:" + " val:" + val);
+        LogUtil.Log("GameNetworks:PlayServices:updateCloudDataForKeyFailedEvent:" + " val:" + val);
     }
     
     // Fired when updating cloud data succeeds and includes the key and data
     public void updateCloudDataForKeySucceededEvent(int key, string val) {
-        Debug.Log("GameNetworks:PlayServices:updateCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);      
+        LogUtil.Log("GameNetworks:PlayServices:updateCloudDataForKeySucceededEvent:" + " key:" + key + " val:" + val);      
     }
     
     // Fired when clearing cloud data fails
     public void clearCloudDataForKeyFailedEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:clearCloudDataForKeyFailedEvent:" + " val:" + val);        
+        LogUtil.Log("GameNetworks:PlayServices:clearCloudDataForKeyFailedEvent:" + " val:" + val);        
     }
     
     // Fired when clearing cloud data succeeds and includes the key
     public void clearCloudDataForKeySucceededEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:clearCloudDataForKeySucceededEvent:" + " val:" + val);      
+        LogUtil.Log("GameNetworks:PlayServices:clearCloudDataForKeySucceededEvent:" + " val:" + val);      
     }
     
     // Fired when deleting cloud data fails
     public void deleteCloudDataForKeyFailedEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:deleteCloudDataForKeyFailedEvent:" + " val:" + val);  
+        LogUtil.Log("GameNetworks:PlayServices:deleteCloudDataForKeyFailedEvent:" + " val:" + val);  
     }
     
     // Fired when deleting cloud data succeeds and includes the key
     public void deleteCloudDataForKeySucceededEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:deleteCloudDataForKeySucceededEvent:" + " val:" + val);
+        LogUtil.Log("GameNetworks:PlayServices:deleteCloudDataForKeySucceededEvent:" + " val:" + val);
     }
     
     // ##### ##### ##### ##### ##### ##### #####
@@ -1666,32 +1666,32 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when unlocking an achievement fails. Provides the achievmentId and the error in that order.
     public void unlockAchievementFailedEvent(string val, string error) {
-        Debug.Log("GameNetworks:PlayServices:unlockAchievementFailedEvent:" + " val:" + val + " error:" + error);
+        LogUtil.Log("GameNetworks:PlayServices:unlockAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
 
     // Fired when unlocking an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
     public void unlockAchievementSucceededEvent(string val, bool completed) {
-        Debug.Log("GameNetworks:PlayServices:unlockAchievementSucceededEvent:" + " val:" + val + " completed:" + completed);
+        LogUtil.Log("GameNetworks:PlayServices:unlockAchievementSucceededEvent:" + " val:" + val + " completed:" + completed);
     }
     
     // Fired when incrementing an achievement fails. Provides the achievmentId and the error in that order.
     public void incrementAchievementFailedEvent(string val, string error) {
-        Debug.Log("GameNetworks:PlayServices:incrementAchievementFailedEvent:" + " val:" + val + " error:" + error);
+        LogUtil.Log("GameNetworks:PlayServices:incrementAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fired when incrementing an achievement succeeds. Provides the achievementId and a bool that lets you know if it was newly unlocked.
     public void incrementAchievementSucceededEvent(string val, bool completed) {
-        Debug.Log("GameNetworks:PlayServices:incrementAchievementSucceededEvent:" + " val:" + val + " completed:" + completed); 
+        LogUtil.Log("GameNetworks:PlayServices:incrementAchievementSucceededEvent:" + " val:" + val + " completed:" + completed); 
     }
     
     // Fired when revealing an achievement fails. Provides the achievmentId and the error in that order.
     public void revealAchievementFailedEvent(string val, string error) {
-        Debug.Log("GameNetworks:PlayServices:revealAchievementFailedEvent:" + " val:" + val + " error:" + error);
+        LogUtil.Log("GameNetworks:PlayServices:revealAchievementFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fired when revealing an achievement succeeds. The string lets you know the achievementId.
     public void revealAchievementSucceededEvent(string val) {
-        Debug.Log("GameNetworks:PlayServices:revealAchievementSucceededEvent:" + " val:" + val);
+        LogUtil.Log("GameNetworks:PlayServices:revealAchievementSucceededEvent:" + " val:" + val);
     }
     
     // ##### ##### ##### ##### ##### ##### #####
@@ -1700,23 +1700,23 @@ public class GameNetworks : GameObjectBehavior {
     
     // Fired when submitting a score fails. Provides the leaderboardId and the error in that order.
     public void submitScoreFailedEvent(string val, string error) {
-        Debug.Log("GameNetworks:PlayServices:submitScoreFailedEvent:" + " val:" + val + " error:" + error);     
+        LogUtil.Log("GameNetworks:PlayServices:submitScoreFailedEvent:" + " val:" + val + " error:" + error);     
     }
     
     // Fired when submitting a scores succeeds. Returns the leaderboardId and a dictionary with some extra data with the fields from
     // the GPGScoreReport class: https://developers.google.com/games/services/ios/api/interface_g_p_g_score_report
     public void submitScoreSucceededEvent(string val, Dictionary<string,object> data) {
-        Debug.Log("GameNetworks:PlayServices:submitScoreSucceededEvent:" + " val:" + val + " data:" + data.ToJson());
+        LogUtil.Log("GameNetworks:PlayServices:submitScoreSucceededEvent:" + " val:" + val + " data:" + data.ToJson());
     }
     
     // Fired when loading scores fails. Provides the leaderboardId and the error in that order.
     public void loadScoresFailedEvent(string val, string error) {
-        Debug.Log("GameNetworks:PlayServices:loadScoresFailedEvent:" + " val:" + val + " error:" + error);
+        LogUtil.Log("GameNetworks:PlayServices:loadScoresFailedEvent:" + " val:" + val + " error:" + error);
     }
     
     // Fires when loading scores succeeds
     public void loadScoresSucceededEvent(List<GPGScore> val) {
-            Debug.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + val.ToJson());
+            LogUtil.Log("GameNetworks:PlayServices:loadScoresSucceededEvent:" + val.ToJson());
     }
 #endif
 

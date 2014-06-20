@@ -355,6 +355,8 @@ public class BaseGamePlayerController : GameActor {
     public ParticleSystem gamePlayerEffectCircleStars;
     public ParticleSystem gamePlayerEffectAttack;
     public ParticleSystem gamePlayerEffectSkill;
+    
+    public GameObject gamePlayerEffectMarker;
 
 
     public ParticleSystem gamePlayerEffectHit;
@@ -1519,6 +1521,12 @@ public class BaseGamePlayerController : GameActor {
         if (!IsPlayerControlled) {
             if(gamePlayerShadow != null) {
                 gamePlayerShadow.SetParticleSystemStartColor(UIColors.colorRed, true);
+            }
+
+            if(FPSDisplay.isUnder30FPS) {
+                if(gamePlayerEffectMarker != null)  {
+                    gamePlayerEffectMarker.Hide();
+                }
             }
         }
     }
@@ -3594,7 +3602,9 @@ public class BaseGamePlayerController : GameActor {
         FindNetworkContainer(uniqueId);      
      
         if (currentNetworkPlayerContainer != null) {
+#if NETWORK_UNITY || NETWORK_PHOTON
             currentNetworkPlayerContainer.networkViewObject.observed = currentNetworkPlayerContainer;
+#endif
             currentNetworkPlayerContainer.gamePlayer = gameObject;
             if (controllerData.thirdPersonController != null) {
                 currentNetworkPlayerContainer.currentSpeedNetwork = controllerData.thirdPersonController.moveSpeed;
