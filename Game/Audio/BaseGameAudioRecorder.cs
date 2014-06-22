@@ -50,16 +50,24 @@ public class BaseGameAudioRecorder {
 	public BaseGameAudioRecorder() {
 		loadedClips = new Dictionary<string, AudioClip>();
 
-        #if UNITY_WEBPLAYER  
-        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone);
-        if (Application.HasUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone)) {
-        
-        }
-        else {
-        
-        }
-        #endif
 	}
+
+    public void RequestUserAuthorization() {
+        //StartCo
+    }
+
+    public IEnumerator RequestUserAuthorizationCo() {     
+        yield return new WaitForEndOfFrame();
+        #if UNITY_WEBPLAYER  
+        //yield return Application.RequestUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone);
+        //if (Application.HasUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone)) {
+            
+        //}
+        //else {
+            
+        //}
+        #endif
+    }
 	
 	public virtual void OnEnable() {
 
