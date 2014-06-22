@@ -6,9 +6,19 @@ using UnityEngine;
 
 using Engine.Events;
 
+public class GameUIPanelFooterButtons {
+    public static string gameNetworks = "game-networks";
+    public static string character = "character";
+    public static string statistics = "statistics";
+    public static string achievements = "achievements";
+    public static string progression = "progression";
+}
+
 public class BaseGameUIPanelFooter : GameUIPanelBase {
     
-    public static GameUIPanelFooter Instance;       
+    public static GameUIPanelFooter Instance;      
+
+    public GameObject containerButtons;
 			    
     public GameObject containerButtonsSettings;
     public GameObject containerButtonsCustomize;   
@@ -16,6 +26,9 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     public GameObject containerButtonsGameNetworks;    
     public GameObject containerButtonsProgression;    
     public GameObject containerButtonsCharacterHelp;
+    
+    public GameObject containerButtonsProgressionAchievements;
+    public GameObject containerButtonsProgressionStatistics;  
 
     public bool optionsVisible = false;
     
@@ -163,10 +176,34 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         hideButtonSettings();
         hideButtonCustomize();
 
-        HideButtonsCharacterHelp();
-        HideButtonsGameNetworks();
-        HideButtonsProgression();
+        HideAllButtons();
   	}   
+
+    //
+
+    public virtual void ShowButtons(string code) {
+        
+        AnimateIn();
+                
+        foreach(GameObjectShowItem item in 
+                containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
+
+            if(item.code == code) {
+                HideAllButtons();
+                ShowPanelBottom(item.gameObject);
+                item.gameObject.ShowObjectDelayed(.7f);
+            }
+        }
+    }
+
+    public virtual void HideAllButtons() {        
+        
+        foreach(GameObjectShowItem item in 
+                containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
+            HidePanelBottom(item.gameObject);
+            item.gameObject.HideObjectDelayed(.5f);
+        }
+    }
 
     // HIDE/SHOW
         
@@ -239,30 +276,14 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 	
     // BUTTONS
 
-    public virtual void ResetButtons() {
-        HideButtonsCharacterHelp();
-        HideButtonsGameNetwork();
-        HideButtonsProgression();
-    }
-
     public virtual void ShowButtonsGameNetwork() {
-        if(containerButtonsGameNetworks != null) {
-            ResetButtons();
-            ShowPanelBottom(containerButtonsGameNetworks);
-        }
-    }
-    
-    public virtual void HideButtonsGameNetwork() {
-        if(containerButtonsGameNetworks != null) {
-            HidePanelBottom(containerButtonsGameNetworks);
-        }
+        ShowButtons(GameUIPanelFooterButtons.gameNetworks);
     }
 
     public virtual void ShowButtonsGameNetwork(string networkTypeTo) {
         if(containerButtonsGameNetworks != null) {
 
-            ResetButtons();
-            ShowPanelBottom(containerButtonsGameNetworks);
+            ShowButtonsGameNetwork();
 
             foreach(GameObjectInactive item in 
                     containerButtonsGameNetworks.GetComponentsInChildren<GameObjectInactive>(true)) {
@@ -277,7 +298,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
     
     public virtual void HideButtonsGameNetworks() {
-        if(containerButtonsGameNetworks != null) {ResetButtons();
+        if(containerButtonsGameNetworks != null) {
             foreach(GameObjectInactive item in 
                     containerButtonsGameNetworks.GetComponentsInChildren<GameObjectInactive>(true)) {
                 item.gameObject.Hide();
@@ -285,31 +306,46 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         }
     }
 
+    //
+    
+    public static void ShowButtonsCharacterHelp() {
+        if(isInst) {
+            Instance.showButtonsCharacterHelp();
+        }
+    }
 
-    public virtual void ShowButtonsCharacterHelp() {
-        if(containerButtonsCharacterHelp != null) {
-            ResetButtons();
-            ShowPanelBottom(containerButtonsCharacterHelp);
+    public virtual void showButtonsCharacterHelp() {
+        ShowButtons(GameUIPanelFooterButtons.character);
+    }
+    
+    public static void ShowButtonsProgression() {
+        if(isInst) {
+            Instance.showButtonsProgression();
         }
     }
     
-    public virtual void HideButtonsCharacterHelp() {
-        if(containerButtonsCharacterHelp != null) {
-            HidePanelBottom(containerButtonsCharacterHelp);
+    public virtual void showButtonsProgression() {        
+        ShowButtons(GameUIPanelFooterButtons.progression);
+    }
+    
+    public static void ShowButtonsStatistics() {
+        if(isInst) {
+            Instance.showButtonsStatistics();
         }
     }
     
-    public virtual void ShowButtonsProgression() {
-        if(containerButtonsProgression != null) {
-            ResetButtons();
-            ShowPanelBottom(containerButtonsProgression);
+    public virtual void showButtonsStatistics() {        
+        ShowButtons(GameUIPanelFooterButtons.statistics);
+    }
+    
+    public static void ShowButtonsAchievements() {
+        if(isInst) {
+            Instance.showButtonsAchievements();
         }
     }
     
-    public virtual void HideButtonsProgression() {
-        if(containerButtonsProgression != null) {
-            HidePanelBottom(containerButtonsProgression);
-        }
+    public virtual void showButtonsAchievements() {        
+        ShowButtons(GameUIPanelFooterButtons.achievements);
     }
 
     //

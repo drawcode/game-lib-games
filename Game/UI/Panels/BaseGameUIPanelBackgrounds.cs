@@ -15,10 +15,6 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 	public GameObject backgroundPlainObject;
 	public GameObject backgroundStarryObject;
 	public GameObject backgroundStarryTopObject;
-	public GameObject backgroundScaryObject;
-	public GameObject backgroundGlowObject;
-	public GameObject backgroundCloudLeftObject;
-    public GameObject backgroundCloudRightObject;
     
     public static bool isInst {
         get {
@@ -66,6 +62,28 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
     }
+    
+    public override void OnUIControllerPanelAnimateIn(string classNameTo) {
+        if (className == classNameTo) {
+            AnimateIn();
+        }
+    }
+    
+    public override void OnUIControllerPanelAnimateOut(string classNameTo) {
+        if (className == classNameTo) {
+            AnimateOut();
+        }
+    }
+    
+    public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
+        if (className == classNameTo) {
+            //
+            if(code.Contains("in-between")) {
+                AnimateIn();
+            }
+
+        }
+    }
 
     public virtual void OnButtonClickEventHandler(string buttonName) {
 
@@ -78,9 +96,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 	public override void Init() {
 		base.Init();
 
-        AnimateInCenter(0,0);		
-		//LoadData();
-		//AnimateIn();
+        AnimateInCenter(0,0);
 	}
 	
 	public virtual void LoadData() {
@@ -91,6 +107,8 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 		yield break;
 	}
 	
+    //
+
     public virtual void ShowBackgroundPlain() {
 		if(backgroundPlainObject != null) {
 			UITweenerUtil.FadeTo(backgroundPlainObject, 
@@ -104,6 +122,8 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
 		}
 	}
+
+    //
 		
     public virtual void ShowBackgroundStarry() {
 		if(backgroundStarryObject != null) {
@@ -118,6 +138,8 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
 		}
 	}
+
+    //
 	
     public virtual void ShowBackgroundStarryTop() {
 		if(backgroundStarryTopObject != null) {
@@ -132,129 +154,27 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
 		}
 	}
-	
-    public virtual void ShowBackgroundScary() {
-		if(backgroundScaryObject != null) {
-			UITweenerUtil.FadeTo(backgroundScaryObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
-	}
-	
-    public virtual void HideBackgroundScary() {
-		if(backgroundScaryObject != null) {
-			UITweenerUtil.FadeTo(backgroundScaryObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
-	}
-	
-    public virtual void ShowBackgroundGlow() {
-		if(backgroundGlowObject != null) {
-			UITweenerUtil.FadeTo(backgroundGlowObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
-	}
-	
-    public virtual void HideBackgroundGlow() {
-		if(backgroundGlowObject != null) {	
-			
-			UITweenerUtil.FadeTo(backgroundGlowObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
-	}
-	
-    public virtual void ShowCloudLeft() {
-		if(backgroundCloudLeftObject != null) {
-			UITweenerUtil.MoveTo(backgroundCloudLeftObject, 
-				UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, Vector3.zero.WithX(0));	
-			
-			UITweenerUtil.FadeTo(backgroundCloudLeftObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
-	}
-	
-    public virtual void HideCloudLeft() {
-		if(backgroundCloudLeftObject != null) {			
-			UITweenerUtil.MoveTo(backgroundCloudLeftObject, 
-				UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, Vector3.zero.WithX(leftClosedX));	
-			
-			UITweenerUtil.FadeTo(backgroundCloudLeftObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
-	}
-	
-    public virtual void ShowCloudRight() {
-		if(backgroundCloudRightObject != null) {
-			UITweenerUtil.MoveTo(backgroundCloudRightObject, 
-				UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, Vector3.zero.WithX(0));		
-			
-			UITweenerUtil.FadeTo(backgroundCloudRightObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
-	}
-	
-    public virtual void HideCloudRight() {
-		if(backgroundCloudRightObject != null) {
-			UITweenerUtil.MoveTo(backgroundCloudRightObject, 
-				UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, Vector3.zero.WithX(rightClosedX));			
-			
-			UITweenerUtil.FadeTo(backgroundCloudRightObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
-	}
-	
-	
-	public override void AnimateIn() {
-		
-		base.AnimateIn();
-		
-		ShowBackgroundPlain();
-		ShowBackgroundGlow();
-		ShowBackgroundScary();
-		
-		HideBackgroundStarry();
-		HideBackgroundStarryTop();
-		HideCloudLeft();
-		HideCloudRight();
-	}
-	
-    public virtual void AnimateInStarry() {
-		
-		base.AnimateIn();
-		
-		ShowBackgroundPlain();
-		ShowBackgroundGlow();
-		ShowBackgroundStarry();
-		ShowBackgroundStarryTop();
-		
-		ShowCloudLeft();
-		ShowCloudRight();
-		
-		HideBackgroundScary();
-	}
-	
-    public virtual void AnimateInScary() {
-		
-		base.AnimateIn();
-		
-		ShowBackgroundPlain();
-		ShowBackgroundGlow();
-		ShowBackgroundScary();
-		
-		HideBackgroundStarry();
-		HideBackgroundStarryTop();
-	}
-	
+
+    //
+            
+    public override void AnimateIn() {
+        
+        base.AnimateIn();
+        
+        ShowBackgroundPlain();
+        //
+        HideBackgroundStarry();
+        HideBackgroundStarryTop();
+    }
+
 	public override void AnimateOut() {
 		
 		base.AnimateOut();
-		
-		HideBackgroundGlow();
+        
+        HideBackgroundPlain();
+        //
 		HideBackgroundStarry();
-		HideBackgroundStarryTop();
-		HideBackgroundScary();
-		HideBackgroundPlain();
-		HideCloudLeft();
-		HideCloudRight();
+        HideBackgroundStarryTop();
 	}
 	
     public virtual void Update() {
@@ -286,8 +206,75 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 			backgroundStarryTopObject.transform.Rotate(Vector3.forward * (ry * .0045f) * Time.deltaTime);
 		}
 	}
-	
-	/*
+    
+    /*
+    
+    public virtual void ShowCloudLeft() {
+        if(backgroundCloudLeftObject != null) {
+            UITweenerUtil.MoveTo(backgroundCloudLeftObject, 
+                UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, Vector3.zero.WithX(0));  
+            
+            UITweenerUtil.FadeTo(backgroundCloudLeftObject, 
+                UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
+        }
+    }
+    
+    public virtual void HideCloudLeft() {
+        if(backgroundCloudLeftObject != null) {         
+            UITweenerUtil.MoveTo(backgroundCloudLeftObject, 
+                UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, Vector3.zero.WithX(leftClosedX));    
+            
+            UITweenerUtil.FadeTo(backgroundCloudLeftObject, 
+                UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+        }
+    }
+    
+    public virtual void ShowCloudRight() {
+        if(backgroundCloudRightObject != null) {
+            UITweenerUtil.MoveTo(backgroundCloudRightObject, 
+                UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, Vector3.zero.WithX(0));      
+            
+            UITweenerUtil.FadeTo(backgroundCloudRightObject, 
+                UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
+        }
+    }
+    
+    public virtual void HideCloudRight() {
+        if(backgroundCloudRightObject != null) {
+            UITweenerUtil.MoveTo(backgroundCloudRightObject, 
+                UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, Vector3.zero.WithX(rightClosedX));           
+            
+            UITweenerUtil.FadeTo(backgroundCloudRightObject, 
+                UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+        }
+    }
+
+    public virtual void AnimateInStarry() {
+        
+        base.AnimateIn();
+        
+        ShowBackgroundPlain();
+        ShowBackgroundGlow();
+        ShowBackgroundStarry();
+        ShowBackgroundStarryTop();
+        
+        ShowCloudLeft();
+        ShowCloudRight();
+        
+        HideBackgroundScary();
+    }
+    
+    public virtual void AnimateInScary() {
+        
+        base.AnimateIn();
+        
+        ShowBackgroundPlain();
+        ShowBackgroundGlow();
+        ShowBackgroundScary();
+        
+        HideBackgroundStarry();
+        HideBackgroundStarryTop();
+    }
 
     void OnButtonClickEventHandler(string buttonName) {
 		LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
@@ -296,7 +283,6 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 			|| buttonName == buttonNorahStaticObject.name) {
 			LogUtil.Log("Norah Clicked: " + buttonName);
 		}
-
     }
 	
     void OnListItemClickEventHandler(string listName, string listIndex, bool selected) {

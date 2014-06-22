@@ -153,7 +153,7 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
 
-        GameUIPanelFooter.ShowButtonGameNetworks();
+        GameUIPanelFooter.ShowButtonsAchievements();
 
         //AdNetworks.ShowAd(AdBannerType.SmartBannerLandscape, AdPosition.BottomCenter);
 		

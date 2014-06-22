@@ -200,7 +200,7 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
                 
         GameUIPanelHeader.ShowCharacter();
         
-        GameUIPanelFooter.ShowButtonGameNetworks();
+        GameUIPanelFooter.ShowButtonsStatistics();
 
 		loadData();
 	}

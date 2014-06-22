@@ -1838,6 +1838,8 @@ public class BaseUIController : GameObjectBehavior {
         HandleInUIAudio();
         
         GameController.HandleCamerasInUI();
+        
+        GameUIPanelBackgrounds.Instance.AnimateIn();   
     }   
      
     // ------------------------------------------------------------
@@ -1858,7 +1860,7 @@ public class BaseUIController : GameObjectBehavior {
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
 
-        GameUIPanelBackgrounds.Instance.AnimateInScary();        
+        //GameUIPanelBackgrounds.Instance.AnimateInScary();        
         
         GameUIPanelHeader.Instance.AnimateInMain();
         
@@ -3089,7 +3091,13 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         // UI / MODES
-
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameAchievements, buttonName)) {
+            GameUIController.ShowAchievements();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameStatistics, buttonName)) {
+            GameUIController.ShowStatistics();
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipmentRoom, buttonName)) {
             GameUIController.ShowEquipment();
         }
