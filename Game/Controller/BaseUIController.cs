@@ -354,9 +354,11 @@ public class BaseUIController : GameObjectBehavior {
 
         HideAllPanelsNow();
 
-        broadcastUIMessageAnimateType(
-            "GameUIPanelBackgrounds",
-            UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
+        if(panelCode != BaseUIPanel.panelMain) {
+            broadcastUIMessageAnimateType(
+                "GameUIPanelBackgrounds",
+                UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
+        }
 
         //GameUIPanelBackgrounds.Instance.AnimateInStarry();
 
@@ -1860,7 +1862,7 @@ public class BaseUIController : GameObjectBehavior {
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
 
-        //GameUIPanelBackgrounds.Instance.AnimateInScary();        
+        GameUIPanelBackgrounds.Instance.AnimateIn();        
         
         GameUIPanelHeader.Instance.AnimateInMain();
         

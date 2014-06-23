@@ -15,7 +15,8 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 	public GameObject backgroundPlainObject;
 	public GameObject backgroundStarryObject;
 	public GameObject backgroundStarryTopObject;
-    
+    public GameObject backgroundUI;
+        
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -79,7 +80,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
         if (className == classNameTo) {
             //
             if(code.Contains("in-between")) {
-                AnimateIn();
+                AnimateInUI();
             }
 
         }
@@ -154,8 +155,39 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
 		}
 	}
+    // ui 
+    
+    public static void ShowUI() {
+        if(Instance != null) {
+            Instance.showUI();
+        }
+    }
+    
+    public void showUI() {
+        StartCoroutine(showUICo());
+    }
+    
+    public IEnumerator showUICo() {
+        yield return new WaitForSeconds(.55f);
+        ShowPanelBottom(backgroundUI, false);
+    }
+    
+    public static void HideUI() {
+        if(Instance != null) {
+            Instance.hideUI();
+        }
+    }
+    
+    public void hideUI() {
+        HidePanelBottom(backgroundUI, false);
+    }
 
     //
+    
+    public void AnimateInUI() {
+        AnimateIn();
+        ShowUI();
+    }
             
     public override void AnimateIn() {
         
@@ -165,7 +197,11 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
         //
         HideBackgroundStarry();
         HideBackgroundStarryTop();
+
+        //ShowUI();
     }
+
+    //bool loaded = false;
 
 	public override void AnimateOut() {
 		
@@ -175,6 +211,14 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
         //
 		HideBackgroundStarry();
         HideBackgroundStarryTop();
+
+        //if(!loaded) {
+        //    loaded = true;
+            HideUI();
+        //}
+        //else {
+        //    ShowUI();
+        //}
 	}
 	
     public virtual void Update() {

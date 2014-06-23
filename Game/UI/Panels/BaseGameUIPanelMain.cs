@@ -116,6 +116,8 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
     public override void AnimateIn() {
         base.AnimateIn();
+        
+        GameUIPanelBackgrounds.HideUI();
 
         AnimateStartCharacter();
         Invoke("AnimateInDelayed", 1);
@@ -124,6 +126,8 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public virtual void AnimateInDelayed() {
         
         GameUIPanelFooter.ShowMain();
+        
+        GameUIPanelBackgrounds.HideUI();
     }
     
     public virtual void AnimateStartCharacter() {
@@ -144,7 +148,8 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public virtual void OnButtonClickEventHandler(string buttonName) {
 
         bool loadCharacter = false;
-        
+
+        /*
         if (UIUtil.IsButtonClicked(buttonPlayerUCFObject, buttonName)) {
 
             GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
@@ -181,14 +186,17 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
             
             loadCharacter = true;
         }
-        else if (UIUtil.IsButtonClicked(buttonPlayerDefaultObject, buttonName)) {
+        else 
+        */
+
+        if (UIUtil.IsButtonClicked(buttonPlayerDefaultObject, buttonName)) {
             loadCharacter = true; 
         }
 
         if (loadCharacter) {
             LogUtil.Log("Player Clicked: " + buttonName);                 
             
-            GameController.LoadProfileCharacter("character-boy-1");
+            GameController.LoadProfileCharacter("character-bot-1");
             GameUIController.ShowGameMode();   
         }
     }

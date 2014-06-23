@@ -174,9 +174,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsSupported();
-        #endif
-
+        #else
         return false;
+        #endif
     }
 
     // IS RECORDING SUPPORTED    
@@ -192,9 +192,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsRecordingSupported();
-        #endif
-
+        #else
         return false;
+        #endif
     }
         
     // IS RECORDING    
@@ -210,9 +210,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsRecording();
-        #endif
-
+        #else
         return false;
+        #endif
     }
     
     // IS RECORDING    
@@ -228,9 +228,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         return Everyplay.SharedInstance.IsPaused();
-        #endif
-
+        #else
         return false;
+        #endif
     }
 
     // START RECORDING
