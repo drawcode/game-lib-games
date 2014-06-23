@@ -71,9 +71,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         // ------------
         // EVERPLAY
         
-        Everyplay.SharedInstance.RecordingStarted += everyplayRecordingStartedDelegate;
-        Everyplay.SharedInstance.RecordingStopped += everyplayRecordingStoppedDelegate;
-        Everyplay.SharedInstance.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
+        Everyplay.RecordingStarted += everyplayRecordingStartedDelegate;
+        Everyplay.RecordingStopped += everyplayRecordingStoppedDelegate;
+        Everyplay.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
 
         #endif
 
@@ -87,9 +87,9 @@ public class BroadcastNetworks : GameObjectBehavior {
         // ------------
         // EVERPLAY
         
-        Everyplay.SharedInstance.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
-        Everyplay.SharedInstance.RecordingStarted -= everyplayRecordingStartedDelegate;
-        Everyplay.SharedInstance.RecordingStopped -= everyplayRecordingStoppedDelegate;
+        Everyplay.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
+        Everyplay.RecordingStarted -= everyplayRecordingStartedDelegate;
+        Everyplay.RecordingStopped -= everyplayRecordingStoppedDelegate;
 
         #endif
 
@@ -119,9 +119,9 @@ public class BroadcastNetworks : GameObjectBehavior {
             }
         }
 
-        broadcastEveryplay.clientId = AppConfigs.broadcastEveryplayClientId;
-        broadcastEveryplay.clientSecret = AppConfigs.broadcastEveryplayClientSecret;
-        broadcastEveryplay.redirectURI = AppConfigs.broadcastEveryplayAuthUrl;
+        //broadcastEveryplay.clientId = AppConfigs.broadcastEveryplayClientId;
+        //Everyplay.broadcastEveryplay.clientSecret = AppConfigs.broadcastEveryplayClientSecret;
+        //broadcastEveryplay.redirectURI = AppConfigs.broadcastEveryplayAuthUrl;
         
     }
     
@@ -129,7 +129,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     
     public void everyplayIsRecordingSupported() {
         LogUtil.Log("everyplayIsRecordingSupported");        
-        Everyplay.SharedInstance.IsRecordingSupported();
+        Everyplay.IsRecordingSupported();
     }        
     
     public void everyplayRecordingStartedDelegate() {
@@ -173,7 +173,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public bool isSupported() {
         
         #if BROADCAST_USE_EVERYPLAY
-        return Everyplay.SharedInstance.IsSupported();
+        return Everyplay.IsSupported();
         #else
         return false;
         #endif
@@ -191,7 +191,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public bool isRecordingSupported() {
         
         #if BROADCAST_USE_EVERYPLAY
-        return Everyplay.SharedInstance.IsRecordingSupported();
+        return Everyplay.IsRecordingSupported();
         #else
         return false;
         #endif
@@ -209,7 +209,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public bool isRecording() {
         
         #if BROADCAST_USE_EVERYPLAY
-        return Everyplay.SharedInstance.IsRecording();
+        return Everyplay.IsRecording();
         #else
         return false;
         #endif
@@ -227,7 +227,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public bool isPaused() {
         
         #if BROADCAST_USE_EVERYPLAY
-        return Everyplay.SharedInstance.IsPaused();
+        return Everyplay.IsPaused();
         #else
         return false;
         #endif
@@ -245,7 +245,7 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         if(IsRecording()) {
-            Everyplay.SharedInstance.StartRecording();
+            Everyplay.StartRecording();
         }
         #endif
     }
@@ -262,7 +262,7 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         if(IsRecording()) {
-            Everyplay.SharedInstance.StopRecording();
+            Everyplay.StopRecording();
         }
         #endif
     }
@@ -279,7 +279,7 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         if(IsRecording() && IsPaused()) {
-            Everyplay.SharedInstance.ResumeRecording();
+            Everyplay.ResumeRecording();
         }
         #endif
     }
@@ -296,16 +296,16 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         #if BROADCAST_USE_EVERYPLAY
         if(IsRecording()) {
-            Everyplay.SharedInstance.PauseRecording();
+            Everyplay.PauseRecording();
         }
         #endif
     }
 
     /*
      * 
-     * Everyplay.SharedInstance.SetMetadata("level", levelNumber);
-Everyplay.SharedInstance.SetMetadata("level_name", levelName);
-Everyplay.SharedInstance.SetMetadata("score", score)
+     * Everyplay.SetMetadata("level", levelNumber);
+Everyplay.SetMetadata("level_name", levelName);
+Everyplay.SetMetadata("score", score)
 */
 
     
