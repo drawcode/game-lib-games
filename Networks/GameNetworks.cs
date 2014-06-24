@@ -1178,7 +1178,7 @@ public class GameNetworks : GameObjectBehavior {
 		}
 	}	
 	
-	public static string testFacebookScoresResult = "{\"data\":[{\"user\":{\"name\":\"Draw Code\",\"id\":\"1351861467\"},\"score\":240,\"application\":{\"name\":\"PopAR Game Community\",\"namespace\":\"popartoyscommunity\",\"id\":\"135612503258930\"}},{\"user\":{\"name\":\"Draw Labs\",\"id\":\"1494687700\"},\"score\":23,\"application\":{\"name\":\"PopAR Game Community\",\"namespace\":\"popartoyscommunity\",\"id\":\"135612503258930\"}}]}";
+    public static string testFacebookScoresResult = "";
 	
 	public static void ParseTestScoresFacebook(string responseText) {
 		GameCommunityLeaderboardData leaderboardData = ParseScoresFacebook(responseText);
@@ -1205,25 +1205,25 @@ public class GameNetworks : GameObjectBehavior {
 				      {
 				         "user":{
 				            "name":"Draw Code",
-				            "id":"1351861467"
+				            "id":"111111"
 				         },
 				         "score":240,
 				         "application":{
-				            "name":"PopAR Game Community",
-				            "namespace":"popartoyscommunity",
-				            "id":"135612503258930"
+				            "name":"Game Community",
+				            "namespace":"community",
+				            "id":"111111"
 				         }
 				      },
 				      {
 				         "user":{
 				            "name":"Draw Labs",
-				            "id":"1494687700"
+				            "id":"111111"
 				         },
 				         "score":23,
 				         "application":{
-				            "name":"PopAR Game Community",
-				            "namespace":"popartoyscommunity",
-				            "id":"135612503258930"
+				            "name":"Game Community",
+				            "namespace":"community",
+				            "id":"11111"
 				         }
 				      }
 				   ]

@@ -310,7 +310,7 @@ public class ProductPurchase : GameObjectBehavior {
 
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Google Play IAB/Android added...");
 
-            GoogleIAB.init("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiG/tGK3EWFkqZr8AqQykgCPnUkO+SLFAtffa2xaHCiZZIm/aFXbo3/y+ZQNRKCW59y8izSHyB8rbevboh1tJDbxkCCRIomaMrChdyN84YSp9pyg4xl1C23on0Aq4OrRUvhmBoN9ASuURolo8ikWbSpYsRA4qowSbxx1uwuk2hbuCFBJpmyFq4Y7FBOYg/2tJ+76TcZCPeGYKvgs+mO7rbzdqZlCPM1OCS+ngjiWTetfzEMPzY79zYrXHNjt6G4fTZzboYQEyufVXVJamc6lgYyifyL+srDlSVF9CulzWgthZde48TuPRNkHGRsDAnYuPFyrd6PvdKBisPuPZFYOSmwIDAQAB");
+            GoogleIAB.init(AppConfigs.productGoogleKey);
 #elif UNITY_WEBPLAYER
             LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
 #else

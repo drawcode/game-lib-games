@@ -46,9 +46,9 @@ public class SocialNetworks : GameObjectBehavior {
 	public GameObject socialNetworkTwitterAndroid;
 	public GameObject socialNetworkiOS;
 		
-	public string FACEBOOK_APP_ID = AppConfigs.socialFacebookAppId;// "133833223395676";
-	public string FACEBOOK_SECRET = AppConfigs.socialFacebookSecret;//"133833223395676";
-	public string TWITTER_KEY = AppConfigs.socialTwitterAppId;//"nQuQQSKCPg0uVl8Im1ykMQ";
+	public string FACEBOOK_APP_ID = AppConfigs.socialFacebookAppId;// "111111111111111";
+	public string FACEBOOK_SECRET = AppConfigs.socialFacebookSecret;//"111111111111111";
+	public string TWITTER_KEY = AppConfigs.socialTwitterAppId;//"nnnnnnnnnnnnnnnnn";
 	public string TWITTER_SECRET = AppConfigs.socialTwitterSecret;//;
 	
 	public static SocialNetworks Instance;	

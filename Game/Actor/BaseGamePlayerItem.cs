@@ -376,8 +376,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                                                 
                     //    downCount = 5;
 
-                        //&& state == ARCustomSceneObjectVidariLaunchState.Started
-                        //&& playState == ARCustomSceneObjectVidariPlayState.Completed) {                       
+                        //&& state == ARCustomSceneObjectLaunchState.Started
+                        //&& playState == ARCustomSceneObjectPlayState.Completed) {                       
                                                 
                         //LogUtil.Log("linkName:" + linkName);                                            
                                                 

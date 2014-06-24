@@ -202,7 +202,7 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         ListClear();
         
         // title        
-        LoadObjectTitle("Vidari Points", "Get to the points! Track your Vidari collected points here.", "", AppViewerSectionNames.points);
+        LoadObjectTitle("Points", "Get to the points! Track your collected points here.", "", AppViewerSectionNames.points);
         
         yield return new WaitForEndOfFrame();
         

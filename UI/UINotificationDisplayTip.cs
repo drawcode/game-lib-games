@@ -383,7 +383,7 @@ public class UINotificationDisplayTip
         if (Input.GetKeyDown(KeyCode.Alpha9)) {
             //achievementNumber++;
             QueueTip("CONTROL TIPS", "SWIPE TO ROTATE | PINCH TO ZOOM | TAP TO ADVANCE");
-            QueueTip("SPECIAL TIPS", "TAP the crank on the box to start the Vidari box.");
+            QueueTip("SPECIAL TIPS", "TAP the crank on the box to start the box.");
         }
         
         if (Input.GetKeyDown(KeyCode.Alpha0)) {
