@@ -25,6 +25,7 @@ public class UINotificationTipItem {
     public string description = "";
     public string score = "";
     public string icon = "";
+    public bool immediate = false;
     public UINotificationTipType notificationType = UINotificationTipType.Info;
     
     public UINotificationTipItem() {
@@ -129,13 +130,24 @@ public class UINotificationDisplayTip
         string title, 
         string description, 
         double score, 
-        UINotificationTipType notificationType) {       
+        UINotificationTipType notificationType) {      
+
+        QueueNotification(title, description, score, notificationType, false);
+    }
+    
+    public void QueueNotification(
+        string title, 
+        string description, 
+        double score, 
+        UINotificationTipType notificationType,
+        bool immediate) { 
         
         UINotificationTipItem notification = new UINotificationTipItem();
         notification.title = title;
         notification.description = description;
         notification.notificationType = notificationType;
         notification.score = score.ToString("N0");
+        notification.immediate = immediate;
         QueueNotification(notification);
     }
     
@@ -164,6 +176,12 @@ public class UINotificationDisplayTip
             QueueNotification(title, description, 0, UINotificationTipType.Tip);    
         }
     }
+
+    public void QueueTip(string title, string description, bool immediate) {    
+        if (notificationQueue.Count < 10) {          
+            QueueNotification(title, description, 0, UINotificationTipType.Tip, immediate);    
+        }
+    }
     
     public void QueueNotification(UINotificationTipItem notificationItem) {
         notificationQueue.Enqueue(notificationItem);
@@ -176,7 +194,11 @@ public class UINotificationDisplayTip
             + notificationItem.notificationType
                     
         );  
-        
+
+        if(notificationItem.immediate) {
+            HideDialog();
+        }
+
         ProcessNotifications();
     }
     
@@ -290,7 +312,7 @@ public class UINotificationDisplayTip
             .6f, 
             Vector3.zero.WithY(positionYOpenInGame));
         
-        //Invoke("HideDialog", 4.5f);
+        Invoke("HideDialog", 3.0f);
         
         SetStateShowing();
         

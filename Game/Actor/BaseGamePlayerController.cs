@@ -1400,6 +1400,15 @@ public class BaseGamePlayerController : GameActor {
                     gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
 
                     gamePlayerCollision.gamePlayerController = gameObject.Get<GamePlayerController>();
+                    
+                    if (IsPlayerControlled) {     
+                        gamePlayerCollision.tag = "Player";
+                        tag = "Player";
+                    }
+                    else {
+                        gamePlayerCollision.tag = "Enemy";
+                        tag = "Enemy";
+                    }
                 }
 
                 // Wire up custom objects
@@ -1416,7 +1425,6 @@ public class BaseGamePlayerController : GameActor {
                     if(gamePlayerEffectsContainer != null) {
                         gamePlayerEffectsContainer.Show();
                     }
-
                 }
                 else {
                     
@@ -1639,8 +1647,8 @@ public class BaseGamePlayerController : GameActor {
 
         if (GameConfigs.isGameRunning && IsPlayerControlled) {
             UINotificationDisplayTip.Instance.QueueTip(
-                "Weapon Loaded:" + gameWeaponData.display_name,
-                gameWeaponData.description);
+                "Weapon Loaded: " + gameWeaponData.display_name,
+                gameWeaponData.description, true);
                 
         }
 

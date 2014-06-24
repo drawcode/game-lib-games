@@ -27,6 +27,9 @@ public class BaseGamePlayerWeapon : GameActor {
     public GamePlayerController gamePlayerController;
     public GameWeapon gameWeaponData;
 
+    public bool hasGameWeaponLauncher = false;
+    public GameWeaponLauncher gameWeaponLauncher;
+
     public virtual void Awake() {
         
     }
@@ -59,6 +62,12 @@ public class BaseGamePlayerWeapon : GameActor {
     }
     
     public virtual void Load() {
+
+
+        foreach(GameWeaponLauncher launch in GetComponentsInChildren<GameWeaponLauncher>(true)) {
+            gameWeaponLauncher = launch;
+        }
+
         currentItems = new List<GameObject>();
                 
         string pathPrefab = System.IO.Path.Combine(
@@ -91,15 +100,21 @@ public class BaseGamePlayerWeapon : GameActor {
         PlayParticleSystem(particleSystemAttackProjectile1);
         PlayParticleSystem(particleSystemAttackProjectile2);
     }
-    
+        
     public virtual void Attack() {
 
-        PlayProjectiles();
+       if(gameWeaponLauncher != null) {
+            gameWeaponLauncher.Shoot();
+        }
+        else {
 
-        AttackEffects();
-        
-        PlayAttackSounds();
+            PlayProjectiles();
 
+            AttackEffects();
+            
+            PlayAttackSounds();
+
+        }
         // TODO play effect from weapon data
     }
 
@@ -189,6 +204,11 @@ public class BaseGamePlayerWeapon : GameActor {
     
     public virtual void AttackPrimary() {
         
+        if(gameWeaponLauncher != null) {
+            gameWeaponLauncher.Shoot();
+        }
+        else {
+
         if (!useGameObjectProjectile) {
         
         }
@@ -265,7 +285,9 @@ public class BaseGamePlayerWeapon : GameActor {
                         projectile.Launch();
                     }
                 }
+                }
             }
+
         }
     }
     
