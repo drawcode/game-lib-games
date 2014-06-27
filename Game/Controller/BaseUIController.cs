@@ -80,6 +80,12 @@ public class BaseUIButtonNames {
     public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";   
     public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";   
 
+    
+    public static string buttonGameCustomize = "ButtonGameCustomize";
+    public static string buttonGameCustomizeCharacter = "ButtonGameCustomizeCharacter";
+    public static string buttonGameCustomizeCharacterColors = "ButtonGameCustomizeCharacterColors";   
+    public static string buttonGameCustomizeCharacterRPG = "ButtonGameCustomizeCharacterRPG";   
+
     //ButtonCustomizeCharacterRPGBuyUpgrades
 
     // 
@@ -180,6 +186,7 @@ public class BaseUIPanel {
     public static string panelProductCurrency = "PanelProductCurrency";
     public static string panelProductCurrencyEarn = "PanelProductCurrencyEarn";
     public static string panelCustomize = "PanelCustomize";
+    public static string panelCustomizeCharacter = "PanelCustomizeCharacter";
     public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
     public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
     public static string panelCustomizeAudio = "PanelCustomizeAudio";
@@ -2783,6 +2790,33 @@ public class BaseUIController : GameObjectBehavior {
     //public virtual void hideCustomizeAudio() {
     //   GameUIPanelCustomizeAudio.Instance.AnimateOut();
     //}
+    
+    // ------------------------------------------------------------
+    // EQUIPMENT - CUSTOMIZE CHARACTER
+    
+    //public static void ShowCustomizeCharacter() {
+    //   if(isInst) {
+    //       Instance.showCustomizeCharacter();
+    //   }
+    //}
+    
+    public virtual void showCustomizeCharacter() {
+        showUIPanel(
+            typeof(GameUIPanelCustomizeCharacter),
+            GameUIPanel.panelCustomizeCharacter,
+            "CUSTOMIZE CHARACTER");
+    }
+    
+    //public static void HideCustomizeCharacter() {
+    //   if(isInst) {
+    //       Instance.hideCustomizeCharacter();
+    //   }
+    //}
+    
+    public virtual void hideCustomizeCharacter() {
+        hideUIPanel(
+            typeof(GameUIPanelCustomizeCharacter));
+    }
      
     // ------------------------------------------------------------
     // EQUIPMENT - CUSTOMIZE CHARACTER COLORS    
@@ -3194,6 +3228,7 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowGameModeTrainingMode();
         }
 
+        // PRODUCTS
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProducts, buttonName)) {
             GameUIController.ShowProducts();
@@ -3216,6 +3251,23 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsRPGUpgrade, buttonName)) {
             GameUIController.ShowProducts(GameProductType.rpgUpgrade);
         }
+
+        // CUSTOMIZE
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterColors, buttonName)) {
+            GameUIController.ShowCustomizeCharacterColors();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterRPG, buttonName)) {
+            GameUIController.ShowCustomizeCharacterRPG();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacter, buttonName)) {
+            GameUIController.ShowCustomizeCharacter();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomize, buttonName)) {
+            GameUIController.ShowCustomize();
+        }
+
+        // GAME INIT
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
 

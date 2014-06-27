@@ -94,5 +94,19 @@ public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
 
         yield return new WaitForSeconds(1f);
     }
+        
+    public override void AnimateIn() {
+        
+        base.AnimateIn();        
+        
+        GameUIPanelHeader.ShowCharacter();
+        
+        loadData();
+    }
+    
+    public override void AnimateOut() {
+        
+        base.AnimateOut();
+    }
 
 }

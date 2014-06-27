@@ -97,17 +97,6 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
 		
     public virtual void OnButtonClickEventHandler(string buttonName) {
 		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-		
-		if(UIUtil.IsButtonClicked(
-			buttonCustomizeCharacterColors, buttonName)) {
-			GameUIController.ShowCustomizeCharacterColors();
-		
-		}
-		else if(UIUtil.IsButtonClicked(
-			buttonCustomizeCharacterRPG, buttonName)) {
-			GameUIController.ShowCustomizeCharacterRPG();
-		}
-		
     }
 		
     public virtual void UpdateControls() {

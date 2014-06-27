@@ -271,6 +271,8 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 		base.AnimateIn();
 		
 		LoadData(currentProductType);
+
+        GameUIPanelHeader.ShowCharacter();
 	}
 
 	public override void AnimateOut() {

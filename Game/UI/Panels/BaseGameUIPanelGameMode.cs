@@ -96,7 +96,7 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
         
         base.AnimateIn();
         
-        //GameUIPanelHeader.ShowCharacter();
+        GameUIPanelHeader.ShowCharacter();
         
         loadData();
     }
