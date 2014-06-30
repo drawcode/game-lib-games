@@ -336,7 +336,7 @@ public class BaseGamePlayerMountData {
 public class BaseGamePlayerController : GameActor {
  
     //public string uuid = "";
-    public string characterCode = "character-player-boy-1";
+    public string characterCode = "character-bot-1";
     public Transform currentTarget;
 
     // data
@@ -1335,6 +1335,16 @@ public class BaseGamePlayerController : GameActor {
         }
 
         controllerData.gamePlayerControllerAnimation.LoadAnimatedActor();
+    }
+    
+    public virtual void ChangeCharacter(string characterCodeTo) {
+        characterCode = characterCodeTo;
+
+        Init(
+            GamePlayerControllerState.ControllerPlayer, 
+            GamePlayerContextState.ContextInput);
+
+        LoadCharacter(characterCode);
     }
      
     public virtual void LoadCharacter(string characterCodeTo) {
@@ -3473,11 +3483,23 @@ public class BaseGamePlayerController : GameActor {
         }
         //LogUtil.Log("AddImpact:name:", transform.name + "controllerData.impact:" + controllerData.impact.x);
     }
- 
+    
+    
+    float lastUpdatePhysics = 0;
+
     public virtual void UpdatePhysicsState() {
         
         if(!controllerReady) {
             return;
+        }
+                
+        if(lastUpdatePhysics + .2f < Time.time) {
+            lastUpdatePhysics = Time.time;
+        }
+        else {
+            if(!IsPlayerControlled) {
+                return;
+            }
         }
 
         StartCoroutine(UpdatePhysicStateCo());

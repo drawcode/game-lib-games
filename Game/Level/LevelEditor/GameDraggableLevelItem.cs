@@ -180,8 +180,17 @@ public class GameDraggableLevelItem : GameObjectBehavior {
             gameObject.UnFreezeRigidBodies();
         }
     }
+
+    float lastUpdate = 0;
  
     void Update() {
+
+        if(lastUpdate + 1 < Time.time) {
+            lastUpdate = Time.time;
+        }
+        else {
+            return;
+        }
 
         //if(GameConfigs.isUIRunning) {
         //    return;

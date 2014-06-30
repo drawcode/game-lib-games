@@ -155,7 +155,7 @@ public class UICustomizeCharacterRPGItem : GameObjectBehavior {
     }
  
     public void Load(string rpgCodeTo) {
-        Load(rpgCodeTo, GameProfileCharacters.Current.GetCurrentCharacterCode());
+        Load(rpgCodeTo, GameProfileCharacters.Current.GetCurrentCharacterProfileCode());
     }
  
     public void Load(string rpgCodeTo, string characterCodeTo) {

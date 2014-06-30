@@ -1687,8 +1687,109 @@ public class BaseUIController : GameObjectBehavior {
         }            
     }
  
-    public virtual void NavigateBack(string buttonName) {    
+    public virtual bool NavigateBack(string buttonName) {    
  
+        bool handled = false;
+
+        if(buttonName == BaseUIButtonNames.buttonBack) {
+            if(!GameUIController.Instance.uiVisible) {
+                HideAllPanels();
+                GameUIPanelHeader.Instance.AnimateOut();
+                GameUIPanelBackgrounds.Instance.AnimateOut();
+                GameHUD.Instance.AnimateIn();
+                handled = true;
+            }
+            else {
+                if(currentPanel 
+                   == GameUIPanel.panelSettingsAudio
+                   || currentPanel 
+                   == GameUIPanel.panelSettingsControls
+                   || currentPanel 
+                   == GameUIPanel.panelSettingsHelp
+                   || currentPanel 
+                   == GameUIPanel.panelSettingsCredits
+                   || currentPanel 
+                   == GameUIPanel.panelSettingsProfile) {
+                    
+                    GameUIController.ShowSettings(); 
+                    handled = true;       
+                    
+                }
+                else 
+                    if(currentPanel 
+                       == GameUIPanel.panelAchievements
+                       || currentPanel 
+                       == GameUIPanel.panelCustomize
+                       || currentPanel 
+                       == GameUIPanel.panelProducts
+                       || currentPanel 
+                      == GameUIPanel.panelStatistics) {
+                    
+                    GameUIController.ShowEquipment();       
+                    handled = true;
+                    
+                }
+                else
+                    if(currentPanel 
+                       == GameUIPanel.panelCustomizeCharacterRPG
+                       || currentPanel 
+                       == GameUIPanel.panelCustomizeCharacterColors
+                       || currentPanel 
+                       == GameUIPanel.panelCustomizeCharacter
+                       || currentPanel 
+                      == GameUIPanel.panelCustomizeAudio) {
+                    
+                    GameUIController.ShowCustomize();
+                    handled = true;
+                    
+                }
+                else
+                    if(currentPanel
+                       == GameUIPanel.panelGameModeArcade
+                       || currentPanel
+                       == GameUIPanel.panelGameModeCareer
+                       || currentPanel
+                       == GameUIPanel.panelGameModeChallenge
+                       || currentPanel
+                       == GameUIPanel.panelGameModeCoop
+                       || currentPanel
+                       == GameUIPanel.panelGameModeMissions
+                       || currentPanel
+                       == GameUIPanel.panelGameModeMultiplayer
+                       || currentPanel
+                       == GameUIPanel.panelGameModeMultiplayerCoop
+                       || currentPanel
+                       == GameUIPanel.panelGameModeMultiplayerMatchup
+                       || currentPanel
+                       == GameUIPanel.panelGameModeTraining
+                       || currentPanel
+                      == GameUIPanel.panelGameModeTrainingMode) {
+                    
+                    GameUIController.ShowGameMode();
+                    handled = true;
+                    
+                }
+                
+                else
+                    if(currentPanel
+                       == GameUIPanel.panelGameModeTrainingModeContent
+                       || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeChoice)
+                      || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeCollection)) {
+                    
+                    //GameUIController.ShowGameModeTrainingMode();
+                    GameUIController.ShowGameMode();
+                    handled = true;
+                    
+                }
+                else {
+                    GameUIController.ShowMain(); 
+                    handled = true;                   
+                }
+            }
+        }   
+                
+        return handled;
+
         /*
      if(buttonName == BaseUIButtonNames.buttonBack) {
          if(!GameUIController.Instance.uiVisible) {

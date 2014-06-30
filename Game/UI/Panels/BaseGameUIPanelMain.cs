@@ -196,7 +196,7 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
         if (loadCharacter) {
             LogUtil.Log("Player Clicked: " + buttonName);                 
             
-            GameController.LoadProfileCharacter("character-bot-1");
+            GameController.LoadCurrentProfileCharacter();
             GameUIController.ShowGameMode();   
         }
     }

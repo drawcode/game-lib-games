@@ -120,6 +120,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
             if(!string.IsNullOrEmpty(productTypeUse)
                 && !string.IsNullOrEmpty(productCodeUse)
                 && !string.IsNullOrEmpty(productCharacterUse)) {
+
                 GameStoreController.Purchase(productCodeUse, 1);
 
                 loadData(productTypeUse);
@@ -248,7 +249,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 					// TODO change to get from character skin
 					string productType = product.type;
 					string productCode = product.code;
-					string productCharacter = GameProfileCharacters.Current.GetCurrentCharacter().code;
+					string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode;
 					
 					//productCode = productCode.Replace(productType + "-", "");
 										

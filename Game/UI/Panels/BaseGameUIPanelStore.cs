@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -145,7 +146,7 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 				productCharacterUse = commandActionParams[2];
 			
 			string weaponType = "ranged";
-			if(productCharacterUse == "jaime") {
+			if(productCharacterUse == "...") {
 				weaponType = "melee";
 			}
 			
@@ -153,7 +154,7 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 				&& !string.IsNullOrEmpty(productCodeUse)
 				&& !string.IsNullOrEmpty(productCharacterUse)) {
 				
-				GameProfileCharacters.Current.SetCurrentCharacterCode(productCharacterUse);				
+				GameProfileCharacters.Current.SetCurrentCharacterProfileCode(productCharacterUse);				
 				
 				// TODO CHECK if can use or buy.. for now grant power and control 
 				// and access beyond all virtual currency bounds...
@@ -164,7 +165,7 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 					GameCharacterSkin skin = GameCharacterSkins.Instance.GetById(productCodeUse);
 					GameCharacterSkinItemRPG rpg = skin.GetGameCharacterSkinByData(productCharacterUse, weaponType);
 					if(rpg != null) {						
-						GameProfileCharacters.Current.SetCurrentCharacterCostumeCode(rpg.prefab);						
+						////GameProfileCharacters.Current.SetCurrentCharacterCostumeCode(rpg.prefab);						
 					}										
 				}				
 			}			
@@ -469,7 +470,7 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 		}
 	}	
 	
-	public override void AnimateIn() {
+	public override void AnimateIn() { 
 		
 		base.AnimateIn();
 		
@@ -497,3 +498,4 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 	}
 	
 }
+*/

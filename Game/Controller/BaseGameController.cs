@@ -1276,18 +1276,6 @@ public class BaseGameController : GameObjectBehavior {
         }
     }
 
-    public virtual void loadStartLevel(string levelCode) {
-
-        //LogUtil.Log("GAME START FLOW: STEP #1: loadStartLevel: levelCode:" + levelCode);
-
-        string characterCode = GameProfileCharacters.Current.GetCurrentCharacterCode();
-        GameController.LoadCharacterStartLevel(characterCode, levelCode);
-    }
-
-    public virtual void loadStartLevel(string characterCode, string levelCode) {
-        GameController.LoadCharacterStartLevel(characterCode, levelCode);
-    }
-
     public virtual void initLevel(string levelCode) {
         StartCoroutine(initLevelCo(levelCode));
     }
@@ -1403,40 +1391,42 @@ public class BaseGameController : GameObjectBehavior {
         LogUtil.Log("changeGameStates:appContentState:AFTER:" + appContentState);
 
     }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
-    
-    public virtual void loadProfileCharacter(string characterCode) {
 
-        //LogUtil.Log("GAME START FLOW: STEP #3: loadProfileCharacter: characterCode:" + characterCode);
+    public virtual void changeCharacterModel(string characterCode) {
+        GameController.CurrentGamePlayerController.ChangeCharacter(characterCode);
+    }
 
-        GameProfileCharacters.Current.SetCurrentCharacterCode(characterCode);
+    public virtual void loadCurrentProfileCharacter() {
 
-        //string characterSkinCode = GameProfileCharacters.Current.GetCurrentCharacterCostumeCode();
-        //string characterCodeTo = GameProfileCharacters.Current.GetCurrentCharacterCode();
+        string characterProfileCode = GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
 
-        GameController.CurrentGamePlayerController.characterCode = characterCode;
+        loadProfileCharacter(characterProfileCode);
+    }
 
-        GameController.CurrentGamePlayerController.Init(
-            GamePlayerControllerState.ControllerPlayer, 
-            GamePlayerContextState.ContextInput);
+    public virtual void loadProfileCharacter(string characterProfileCode) {
 
-        GameController.CurrentGamePlayerController.LoadCharacter(characterCode);
+        GameProfileCharacterItem profileCharacterItem = 
+            GameProfileCharacters.Current.GetCharacter(characterProfileCode);
 
-        //GameCustomController.SetCustomColorsPlayer(
-        //    GameController.CurrentGamePlayerController.gameObject);
+        if(profileCharacterItem == null) {
+            return;
+        }
+
+        GameProfileCharacters.Current.SetCurrentCharacterProfileCode(characterProfileCode);
+               
+        string characterCode = ProfileConfigs.defaultGameCharacterCode;
+        
+        if(!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
+            characterCode = profileCharacterItem.characterCode;
+        }
+        
+        GameController.ChangeCharacterModel(characterCode);
     }
     
-    public virtual void loadCharacterStartLevel(string characterCode, string levelCode) {
-
-        //LogUtil.Log("GAME START FLOW: STEP #2: loadCharacterStartLevel: characterCode:" + characterCode +
-        //    " levelCode:" + levelCode);
-
-        loadProfileCharacter(characterCode);
-        ////GameHUD.Instance.ShowCharacter(characterCode);
+    public virtual void loadStartLevel(string levelCode) {
         
         GameDraggableEditor.ChangeStateEditing(GameDraggableEditEnum.StateNotEditing);
         GameController.StartLevel(levelCode);
-
-        // GameController(levelCode);
     }
 
     public virtual void loadActor(GameActorDataItem character) {
