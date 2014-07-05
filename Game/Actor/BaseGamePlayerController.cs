@@ -3080,9 +3080,21 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }
-        if (Time.time > controllerData.lastAttackTime + 1f) {
-            controllerData.lastAttackTime = Time.time;
-            StartCoroutine(AttackCo());
+
+        bool shouldShoot = true;
+
+        if(weaponPrimary != null) {
+            if(weaponPrimary.isAuto) {
+                weaponPrimary.Attack();
+                shouldShoot = false;
+            }
+        }
+
+        if(shouldShoot) {    
+            if (Time.time > controllerData.lastAttackTime + 1f) {
+                controllerData.lastAttackTime = Time.time;
+                StartCoroutine(AttackCo());
+            }
         }
     }
  

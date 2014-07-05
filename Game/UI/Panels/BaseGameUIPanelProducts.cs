@@ -249,7 +249,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 					// TODO change to get from character skin
 					string productType = product.type;
 					string productCode = product.code;
-					string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode;
+					string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
 					
 					//productCode = productCode.Replace(productType + "-", "");
 										

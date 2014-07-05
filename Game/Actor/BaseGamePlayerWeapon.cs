@@ -65,6 +65,7 @@ public class BaseGamePlayerWeapon : GameActor {
 
 
         foreach(GameWeaponLauncher launch in GetComponentsInChildren<GameWeaponLauncher>(true)) {
+            launch.gamePlayerController = gamePlayerController;
             gameWeaponLauncher = launch;
         }
 

@@ -3,16 +3,16 @@ using System.Collections;
 
 public class GameDamage : GameDamageBase {
     public bool Explosive;
-    public float ExplosionRadius = 20;
-    public float ExplosionForce = 1000;
+    public float ExplosionRadius = 3;
+    public float ExplosionForce = 300;
     public bool HitedActive = true;
     public float TimeActive = 0;
     private float timetemp = 0;
 
     private void Start() {
-        if (!Owner || !Owner.collider)
+        if (!gamePlayerController || !gamePlayerController.collider)
             return;
-        Physics.IgnoreCollision(collider, Owner.collider);
+        Physics.IgnoreCollision(collider, gamePlayerController.collider);
         
         timetemp = Time.time;
     }
@@ -65,8 +65,21 @@ public class GameDamage : GameDamageBase {
     }
 
     private void OnCollisionEnter(Collision collision) {
+
         if (HitedActive) {
-            if (collision.gameObject.tag != "Particle" && collision.gameObject.tag != this.gameObject.tag) {
+            
+            if(collision.transform.name == "GamePlayerCollider") {
+                GamePlayerCollision gamePlayerCollision = 
+                    collision.transform.gameObject.Get<GamePlayerCollision>();
+                if(gamePlayerCollision != null) {
+                    if(gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                        return;
+                    }
+                }
+            }
+
+            if (collision.gameObject.tag != "Particle" && collision.gameObject.tag != "Player" 
+                && collision.gameObject.tag != this.gameObject.tag) {
                 if (!Explosive)
                     NormalDamage(collision);
                 Active();

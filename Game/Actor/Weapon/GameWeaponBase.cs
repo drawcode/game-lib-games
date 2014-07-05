@@ -5,7 +5,7 @@ public class GameDamageBase : MonoBehaviour {
 
 	public GameObject Effect;
 	[HideInInspector]
-    public GameObject Owner;
+    public GamePlayerController gamePlayerController;
     public int Damage = 20;
 	
 	public string[] TargetTag = new string[1]{"Enemy"};
@@ -13,7 +13,7 @@ public class GameDamageBase : MonoBehaviour {
 
 public class GameWeaponBase : MonoBehaviour {
 	[HideInInspector]
-    public GameObject Owner;
+    public GamePlayerController gamePlayerController;
 	[HideInInspector]
 	public GameObject Target;
 	

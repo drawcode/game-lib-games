@@ -51,8 +51,6 @@ public class GameWeaponLauncher : GameWeaponBase {
         ReloadingProcess;
     
     private void Start() {
-        if (!Owner) 
-            Owner = this.transform.root.gameObject;
         
         if (!audio) {
             audio = this.GetComponent<AudioSource>();
@@ -324,20 +322,20 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         GameDamageBase damangeBase = bullet.GetComponent<GameDamageBase>();
                         if (damangeBase) {
-                            damangeBase.Owner = Owner;
+                            damangeBase.gamePlayerController = gamePlayerController;
                             damangeBase.TargetTag = TargetTag;
                         }
                         GameWeaponBase weaponBase = bullet.GetComponent<GameWeaponBase>();
                         if (weaponBase) {
-                            weaponBase.Owner = Owner;
+                            weaponBase.gamePlayerController = gamePlayerController;
                             weaponBase.Target = target;
                             weaponBase.TargetTag = TargetTag;
                         }
                         bullet.transform.forward = direction;
                         if (RigidbodyProjectile) {
                             if (bullet.rigidbody) {
-                                if (Owner != null && Owner.rigidbody) {
-                                    bullet.rigidbody.velocity = Owner.rigidbody.velocity;
+                                if (gamePlayerController != null && gamePlayerController.rigidbody) {
+                                    bullet.rigidbody.velocity = gamePlayerController.rigidbody.velocity;
                                 }
                                 bullet.rigidbody.AddForce(direction * ForceShoot);  
                             }

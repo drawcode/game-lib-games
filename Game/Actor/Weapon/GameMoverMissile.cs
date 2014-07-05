@@ -32,8 +32,8 @@ public class GameMoverMissile : GameWeaponBase {
 
     private void Update() {
         if (Time.time >= (timeCount + LifeTime) - 0.5f) {
-            if (GetComponent<Damage>()) {
-                GetComponent<Damage>().Active();
+            if (GetComponent<GameDamage>()) {
+                GetComponent<GameDamage>().Active();
             }
         }
         
