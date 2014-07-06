@@ -2464,8 +2464,11 @@ public class BaseGamePlayerController : GameActor {
         }
 
         ResetPosition();
+
+        //SetControllerData(new GamePlayerControllerData());
+        SetRuntimeData(new GamePlayerRuntimeData());
         
-        ///LoadCharacter(characterCode);
+        //LoadCharacter(characterCode);
     }
  
     public virtual void Remove() {
