@@ -209,6 +209,8 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
         
+        GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        
         loadData();
     }
     

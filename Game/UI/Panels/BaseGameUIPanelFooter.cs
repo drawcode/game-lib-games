@@ -12,6 +12,7 @@ public class GameUIPanelFooterButtons {
     public static string statistics = "statistics";
     public static string achievements = "achievements";
     public static string progression = "progression";
+    public static string customize = "customize";
 }
 
 public class BaseGameUIPanelFooter : GameUIPanelBase {
@@ -25,7 +26,8 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 	
     public GameObject containerButtonsGameNetworks;    
     public GameObject containerButtonsProgression;    
-    public GameObject containerButtonsCharacterHelp;
+    public GameObject containerButtonsCharacterHelp; 
+    public GameObject containerButtonsCharacterCustomize;
     
     public GameObject containerButtonsProgressionAchievements;
     public GameObject containerButtonsProgressionStatistics;  
@@ -304,6 +306,18 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
                 item.gameObject.Hide();
             }
         }
+    }
+
+    //
+          
+    public static void ShowButtonsCharacterCustomize() {
+        if(isInst) {
+            Instance.showButtonsCharacterCustomize();
+        }
+    }
+    
+    public virtual void showButtonsCharacterCustomize() {        
+        ShowButtons(GameUIPanelFooterButtons.customize);
     }
 
     //

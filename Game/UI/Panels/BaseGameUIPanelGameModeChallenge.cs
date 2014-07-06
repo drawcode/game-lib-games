@@ -97,6 +97,8 @@ public class BaseGameUIPanelGameModeChallenge : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
         
+        GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        
         loadData();
     }
 

@@ -97,6 +97,8 @@ public class BaseGameUIPanelGameModeArcade : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
         
+        GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        
         loadData();
     }
 	

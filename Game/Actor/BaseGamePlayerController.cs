@@ -3862,19 +3862,25 @@ public class BaseGamePlayerController : GameActor {
             //Debug.Log("scalePos:" + scalePos);
 
             transform.localScale = scalePos;
+
+            float modifiedPower = (float)(controllerData.runtimeRPGData.modifierSpeed + 
+                                          controllerData.runtimeRPGData.modifierEnergy);
+            
+            float modifiedItem = Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
+
+            float baseWalkSpeed = 5f;
+            float baseTrotSpeed = 12f;
+            float baseRunSpeed = 24f;
+
+            float modifiedRunSpeed = Mathf.Clamp(baseRunSpeed * modifiedPower, 14, 34) * modifiedItem;            
+            float modifiedTrotSpeed = Mathf.Clamp(baseTrotSpeed * modifiedPower, 9, 14) * modifiedItem;            
+            float modifiedWalkSpeed = Mathf.Clamp(baseWalkSpeed * modifiedPower, 4, 8) * modifiedItem;
     
             if (controllerData.thirdPersonController != null) {
-                controllerData.thirdPersonController.walkSpeed = Mathf.Clamp(
-                    5 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 4, 8)
-                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
-    
-                controllerData.thirdPersonController.trotSpeed = Mathf.Clamp(
-                    12 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 9, 14)
-                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
-    
-                controllerData.thirdPersonController.runSpeed = Mathf.Clamp(
-                    20 * (float)(controllerData.runtimeRPGData.modifierSpeed + controllerData.runtimeRPGData.modifierEnergy), 14, 34)
-                    * Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
+
+                controllerData.thirdPersonController.walkSpeed = modifiedRunSpeed;    
+                controllerData.thirdPersonController.trotSpeed = modifiedTrotSpeed;    
+                controllerData.thirdPersonController.runSpeed = modifiedRunSpeed;
     
                 controllerData.thirdPersonController.inAirControlAcceleration = 3;
                 controllerData.thirdPersonController.jumpHeight = .8f;
@@ -3883,6 +3889,17 @@ public class BaseGamePlayerController : GameActor {
                 controllerData.thirdPersonController.getUserInput = false;
                 controllerData.thirdPersonController.capeFlyGravity = 8f;
                 controllerData.thirdPersonController.gravity = 16f;
+            }                       
+            
+            if (controllerData.gamePlayerControllerAnimation != null) {
+                
+                if (controllerData.gamePlayerControllerAnimation.animationData != null) {
+                    controllerData.gamePlayerControllerAnimation.animationData.runSpeedScale = 
+                        Mathf.Clamp(0.1f * modifiedRunSpeed/baseRunSpeed, 1.5f, 2.8f);
+
+                    controllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale = 
+                        Mathf.Clamp(0.1f * modifiedWalkSpeed/baseWalkSpeed, 1.2f, 1.8f);
+                }
             }
         }
 

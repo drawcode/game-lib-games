@@ -97,6 +97,8 @@ public class BaseGameUIPanelGameModeCoop : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
         
+        GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        
         loadData();
     }
 	

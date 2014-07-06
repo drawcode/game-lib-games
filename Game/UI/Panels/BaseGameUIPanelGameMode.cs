@@ -98,6 +98,8 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
         
         GameUIPanelHeader.ShowCharacter();
         
+        GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        
         loadData();
     }
 
