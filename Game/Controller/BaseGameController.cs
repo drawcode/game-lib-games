@@ -1287,8 +1287,7 @@ public class BaseGameController : GameObjectBehavior {
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
 
-        //GameController.ResetCurrentGamePlayer();
-        GameController.ResetLevelActors();
+        GameController.ResetRuntimeData();
 
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();

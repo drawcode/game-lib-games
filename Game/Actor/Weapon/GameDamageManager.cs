@@ -6,25 +6,42 @@ public class GameDamageManager : MonoBehaviour {
     public GameObject Effect;
     public int HP = 100;
 
-    private void Start() {
+    public GamePlayerController gamePlayerController;
 
+    private void Start() {
+        if(gamePlayerController == null) {
+            gamePlayerController = GetComponent<GamePlayerController>();
+        }
     }
 
     public void ApplyDamage(int damage) {
-        if (HP < 0)
-            return;
-    
-        if (HitSound.Length > 0) {
-            
-            audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 
-            //GameAudio.Play
-            AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,
-                                        (float)GameProfiles.Current.GetAudioEffectsVolume());
+        if(!GameConfigs.isGameRunning) {
+            return;
         }
-        HP -= damage;
-        if (HP <= 0) {
-            Dead();
+
+        if(gamePlayerController != null) {
+            if(!gamePlayerController.isDead 
+               && !gamePlayerController.IsPlayerControlled) {
+                gamePlayerController.Hit(damage / 10);
+            }
+        }
+        else {
+            if (HP < 0)
+                return;
+        
+            if (HitSound.Length > 0) {
+                
+                audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+
+                //GameAudio.Play
+                AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,
+                                            (float)GameProfiles.Current.GetAudioEffectsVolume());
+            }
+            HP -= damage;
+            if (HP <= 0) {
+                Dead();
+            }
         }
     }
 

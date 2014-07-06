@@ -34,8 +34,8 @@ public class GameDamage : GameDamageBase {
         if (Explosive)
             ExplosionDamage();
 
-
         Destroy(gameObject);
+        //GameObjectHelper.DestroyGameObject(gameObject, true);
     }
 
     private void ExplosionDamage() {
@@ -44,13 +44,9 @@ public class GameDamage : GameDamageBase {
             Collider hit = hitColliders[i];
             if (!hit)
                 continue;
-            
-            GameDamageManager damageManage = hit.gameObject.GetComponent<GameDamageManager>();
-            if (damageManage) {
-                if (damageManage) {
-                    damageManage.ApplyDamage(Damage);
-                }
-            }
+
+            HandleApplyDamage(hit.gameObject);
+
             if (hit.rigidbody)
                 hit.rigidbody.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 3.0f);
         }
@@ -58,8 +54,18 @@ public class GameDamage : GameDamageBase {
     }
 
     private void NormalDamage(Collision collision) {
-        GameDamageManager damageManage = collision.gameObject.GetComponent<GameDamageManager>();
+        
+        HandleApplyDamage(collision.gameObject);
+    }
+
+    public void HandleApplyDamage(GameObject go) {
+        GameDamageManager damageManage = go.GetComponent<GameDamageManager>();
         if (damageManage) {
+            if(damageManage.gamePlayerController != null && gamePlayerController != null) {
+                if(damageManage.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                    return;
+                }
+            }
             damageManage.ApplyDamage(Damage);
         }
     }
@@ -67,19 +73,38 @@ public class GameDamage : GameDamageBase {
     private void OnCollisionEnter(Collision collision) {
 
         if (HitedActive) {
+
+            bool doDamage = false;
             
             if(collision.transform.name == "GamePlayerCollider") {
                 GamePlayerCollision gamePlayerCollision = 
                     collision.transform.gameObject.Get<GamePlayerCollision>();
                 if(gamePlayerCollision != null) {
+
+                    if(gamePlayerController == null) {
+                        return;
+                    }
+                    
+                    if(gamePlayerCollision.gamePlayerController == null) {
+                        return;
+                    }
+
                     if(gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
                         return;
+                    }
+                    else {
+                        doDamage = true;
                     }
                 }
             }
 
             if (collision.gameObject.tag != "Particle" && collision.gameObject.tag != "Player" 
                 && collision.gameObject.tag != this.gameObject.tag) {
+
+                doDamage = true;
+            }
+
+            if(doDamage) {                
                 if (!Explosive)
                     NormalDamage(collision);
                 Active();

@@ -2462,6 +2462,8 @@ public class BaseGamePlayerController : GameActor {
         else {
             uniqueId = UniqueUtil.Instance.CreateUUID4();
         }
+
+        ResetPosition();
         
         ///LoadCharacter(characterCode);
     }

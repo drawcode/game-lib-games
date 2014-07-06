@@ -273,6 +273,26 @@ public class GameWeaponLauncher : GameWeaponBase {
         timetolockcount = Time.time;
         target = null;
     }
+
+    public void NameEffect(GameObject bullet) {
+        if(bullet != null) {
+            foreach(ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) { 
+                if(gamePlayerController == null) {
+                    break;
+                }
+                
+                if(gamePlayerController.weaponPrimary == null) {
+                    break;
+                }
+                
+                if(gamePlayerController.weaponPrimary.gameWeaponData == null) {
+                    break;
+                }
+                
+                particleSystem.name = "projectile-" + gamePlayerController.weaponPrimary.gameWeaponData.code;
+            }
+        }
+    }
     
     private int currentOuter = 0;
 
@@ -320,6 +340,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                         GameObject bullet = GameObjectHelper.CreateGameObject(
                             Missile, missileposition, missilerotate, true);
 
+                        NameEffect(bullet);
+
                         GameDamageBase damangeBase = bullet.GetComponent<GameDamageBase>();
                         if (damangeBase) {
                             damangeBase.gamePlayerController = gamePlayerController;
@@ -331,6 +353,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                             weaponBase.Target = target;
                             weaponBase.TargetTag = TargetTag;
                         }
+
+
                         bullet.transform.forward = direction;
                         if (RigidbodyProjectile) {
                             if (bullet.rigidbody) {
