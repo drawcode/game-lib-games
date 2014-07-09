@@ -537,11 +537,15 @@ public class BaseStoreController : GameObjectBehavior {
 
         //string message = "Enjoy your new purchase.";
 
+        bool doPurchase = false;
+
         if (gameProduct.type == GameProductType.rpgUpgrade) {
             // Add upgrades
 
             double val = gameProduct.GetDefaultProductInfoByLocale().quantity;
             GameProfileRPGs.Current.AddUpgrades(val);
+
+            doPurchase = true;
 
             //message = "Advance your character with your upgrades and get to top of the game";
 
@@ -552,20 +556,24 @@ public class BaseStoreController : GameObjectBehavior {
             if (gameProduct.code.Contains("rpg-recharge-full")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(1f, 1f);
                 //message = "Recharging your health + energy...";
+                doPurchase = true;
             }
             else if (gameProduct.code.Contains("rpg-recharge-health")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
                 //message = "Recharging your health...";
+                doPurchase = true;
             }
             else if (gameProduct.code.Contains("rpg-recharge-energy")) {
                 GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
                 //message = "Recharging your health...";
+                doPurchase = true;
             }
 
         }
         else if (gameProduct.type == GameProductType.currency) {
             // Add skraight cash moneh
             GameStoreController.HandleCurrencyPurchase(gameProduct, quantity);
+            doPurchase = true;
 
         }
         else if (gameProduct.type == GameProductType.characterSkin) {
@@ -578,16 +586,84 @@ public class BaseStoreController : GameObjectBehavior {
                 GameProfileCharacters.Current.SetCurrentCharacterCostumeCode(rpg.prefab);
             }
             */
+            doPurchase = true;
+            
+        }
+        else {
+
+            // trigger purchased and rewards from the product items
+            handlePurchaseItems(gameProduct);
+                
+            doPurchase = true;
         }
 
-        GameStoreController.BroadcastPurchaseSuccess(
-            GameStorePurchaseRecord.Create(true,
-                gameProduct, "",
-                "Purchase Successful:" + 
-            gameProduct.GetCurrentProductInfoByLocale().display_name,
-                 gameProduct.GetCurrentProductInfoByLocale().description, 
+        if(doPurchase) {
+            GameStoreController.BroadcastPurchaseSuccess(
+                GameStorePurchaseRecord.Create(true,
+                    gameProduct, "",
+                    "Purchase Successful:" + 
+                    gameProduct.GetCurrentProductInfoByLocale().display_name,
+                    gameProduct.GetCurrentProductInfoByLocale().description, 
                                        gameProduct.code, quantity));
+        }
+    }
 
+    public virtual void handlePurchaseItems(GameProduct gameProduct) {
+                
+        if(gameProduct.data == null) {
+            return;
+        }
+        
+        if(gameProduct.data.items == null) {
+            return;
+        }
+        
+        foreach(GameDataObject item in gameProduct.data.items) {
+
+            if(item.type == GameProductType.character) {
+
+                GameProfileCharacters.Current.AddCharacter(item.code);
+            }
+            else if(item.type == GameProductType.currency) {
+                
+                // Add skraight cash moneh
+                GameProfileRPGs.Current.AddCurrency(item.valDouble);
+            }
+            else if(item.type == GameProductType.item) {
+                
+                // Add skraight cash moneh
+                //GameProfileRPGs.Current.AddCurrency(item.valDouble);
+                //GameProfileCharacters.Current.
+
+            }
+            else if (item.type == GameProductType.powerup) {
+                // Add upgrades
+                
+                if (gameProduct.code.Contains("rpg-recharge-full")) {
+
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(1f, 1f);
+                    //message = "Recharging your health + energy...";
+                    //doPurchase = true;
+                }
+                else if (gameProduct.code.Contains("rpg-recharge-health")) {
+
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(1f);
+                    //message = "Recharging your health...";
+                    //doPurchase = true;
+                }
+                else if (gameProduct.code.Contains("rpg-recharge-energy")) {
+
+                    GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(1f);
+                    //message = "Recharging your health...";
+                    //doPurchase = true;
+                }
+                
+            }
+            else if(item.type == GameProductType.rpgUpgrade) {
+
+                GameProfileRPGs.Current.AddUpgrades(item.valDouble);
+            }
+        }
     }
 
     public virtual void handleCurrencyPurchase(GameProduct gameProduct, double quantity) {
