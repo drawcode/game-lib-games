@@ -64,6 +64,9 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         go.transform.localScale = Vector3.one;
         go.transform.localRotation = Quaternion.Euler(Vector3.zero.WithY(133));
 
+        GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
+
+        GameCustomController.BroadcastCustomColorsSync();
 
         go.SetLayerRecursively("UIDialog");
 
