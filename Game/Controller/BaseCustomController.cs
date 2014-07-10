@@ -14,6 +14,8 @@ public class BaseCustomMessages {
     
     public static string customColorsChanged = "custom-colors-changed";
     public static string customColorChanged = "custom-color-changed";
+    public static string customCharacterModelChanged = "custom-character-model-changed";
+    public static string customCharacterPlayerChanged = "custom-character-player-changed";
     public static string customColorsPlayerChanged = "custom-colors-player-changed";
     public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
     public static string customColorPresetChanged = "custom-color-preset-changed";

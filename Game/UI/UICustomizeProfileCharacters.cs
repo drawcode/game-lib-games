@@ -63,7 +63,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
         
         currentIndex = index;
 
-        if (index > -2 && index < countPresets) {
+        if (index > -1 && index < countPresets) {
             
             if (initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
@@ -73,7 +73,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
             
             if (index == -1) {
                 
-                UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Uniform");
+                UIUtil.SetLabelValue(labelCurrentDisplayName, "Previous");
 
 
 
@@ -86,8 +86,11 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
                     gameProfileCharacterItems.items[currentIndex];
 
                 //GameCustomController.SaveCustomItem(currentProfileCustomItem);
+                                
+                Messenger<string>.Broadcast(
+                    GameCustomMessages.customCharacterPlayerChanged, profileCharacterItem.code);
 
-                UIUtil.SetLabelValue(labelCurrentDisplayName, profileCharacterItem.code);
+                UIUtil.SetLabelValue(labelCurrentDisplayName, profileCharacterItem.characterDisplayName);
             }
         }
     }

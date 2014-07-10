@@ -8,6 +8,9 @@ public class RotateObject : GameObjectBehavior {
     public float RotateSpeedAlongZ = 0.0f;
 
     void Update() {
+                
+        GameUIController.Instance.currentDraggableUIGameObject = gameObject;
+
         // Slowly rotate the object around its axis at 1 degree/second * variable.
         if (transform == null) 
             return;     

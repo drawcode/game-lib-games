@@ -212,6 +212,7 @@ public class BaseUIController : GameObjectBehavior {
     public bool gameLoopsStarted = false;
     public bool inUIAudioPlaying = false;
     public GameObject currentDraggableGameObject = null;
+    public GameObject currentDraggableUIGameObject = null;
     public Vector3 positionStart;
     public Vector3 positionEnd;
     public Vector3 positionLastLaunch;
@@ -470,8 +471,8 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public virtual void FingerGestures_OnDragMove(DragGesture gesture) { //Vector2 fingerPos, Vector2 delta) {
-        //Vector2 fingerPos = gesture.Position;
-        //Vector2 delta = gesture.TotalMove;
+        Vector2 fingerPos = gesture.Position;
+        Vector2 delta = gesture.TotalMove;
      
         if (!IsInputAllowed()) {
             return;
@@ -479,6 +480,10 @@ public class BaseUIController : GameObjectBehavior {
 
         if (currentDraggableGameObject != null) {
             //DragObject(currentDraggableGameObject, fingerPos, delta);
+        }
+
+        if (currentDraggableUIGameObject != null) {
+            DragObject(currentDraggableUIGameObject, fingerPos, delta);
         }
     }
 
@@ -497,8 +502,8 @@ public class BaseUIController : GameObjectBehavior {
                 go.rigidbody.angularDrag = 2f;
             }
          
-            if (Math.Abs(delta.x) > .8f) {
-                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 4, 0));                
+            if (Math.Abs(delta.x) > .05f) {
+                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 10, 0));                
             }
             else {
                 go.rigidbody.angularVelocity = Vector3.zero;

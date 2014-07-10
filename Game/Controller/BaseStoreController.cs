@@ -592,7 +592,7 @@ public class BaseStoreController : GameObjectBehavior {
         else {
 
             // trigger purchased and rewards from the product items
-            handlePurchaseItems(gameProduct);
+            handleGameProductItems(gameProduct);
                 
             doPurchase = true;
         }
@@ -608,7 +608,7 @@ public class BaseStoreController : GameObjectBehavior {
         }
     }
 
-    public virtual void handlePurchaseItems(GameProduct gameProduct) {
+    public virtual void handleGameProductItems(GameProduct gameProduct) {
                 
         if(gameProduct.data == null) {
             return;
