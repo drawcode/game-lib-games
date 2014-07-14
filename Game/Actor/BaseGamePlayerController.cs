@@ -1117,34 +1117,7 @@ public class BaseGamePlayerController : GameActor {
 
         OnInputAxis(GameTouchInputAxis.inputAxisMove, Vector3.zero.WithY(-1));
 
-        // Randomize animations that are ok for idle
-
-        int randomize = UnityEngine.Random.Range(0, 5);
-
-        if (randomize == 0) {
-            for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
-                Idle();
-            }
-        }
-        else if (randomize == 1) {
-            for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
-                Idle();
-            }
-        }
-        else if (randomize == 2) {
-            for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
-                //StrafeLeft();
-                Idle();
-            }
-        }
-        else if (randomize == 3) {
-            for (int i = 0; i < UnityEngine.Random.Range(1, 4); i++) {
-                //StrafeRight();
-                Idle();
-            }
-        }
-
-
+		Idle();
     }
  
     // --------------------------------------------------------------------
@@ -1268,20 +1241,22 @@ public class BaseGamePlayerController : GameActor {
         // TODO footsteps over different terrain
         // Foosteps, breathing etc.
 
-        string soundFootsteps = "audio_footsteps_default";
-
-        if(gameCharacter != null) {
-
-            GameDataSound dataSound = gameCharacter.data.GetSoundByType(GameDataActionKeys.footsteps);
-
-            if(dataSound != null) {
-                soundFootsteps = dataSound.code;
-            }
-        }
-
         if (controllerData.audioObjectFootsteps == null) {
-            controllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
-            if (controllerData.audioObjectFootsteps != null) {
+        
+			string soundFootsteps = "audio_footsteps_default";
+			
+			if(gameCharacter != null) {
+				
+				GameDataSound dataSound = gameCharacter.data.GetSoundByType(GameDataActionKeys.footsteps);
+				
+				if(dataSound != null) {
+					soundFootsteps = dataSound.code;
+				}
+			}
+
+			controllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
+            
+			if (controllerData.audioObjectFootsteps != null) {
                 if (controllerData.audioObjectFootsteps.audio != null) {
                     controllerData.audioObjectFootstepsSource = controllerData.audioObjectFootsteps.audio;
 
@@ -1306,6 +1281,10 @@ public class BaseGamePlayerController : GameActor {
 
         LoadCharacterAttachedSounds();
 
+		if(controllerData.audioObjectFootstepsSource == null) {
+			return;
+		}
+
         controllerData.audioObjectFootstepsSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 
         if (gamePlayerMoveSpeed > .1f) {
@@ -1316,7 +1295,7 @@ public class BaseGamePlayerController : GameActor {
         }
         else {
             controllerData.audioObjectFootstepsSource.pitch = 0f;
-        }    
+        }
     }
 
     public virtual bool isCharacterLoaded {
@@ -1586,11 +1565,19 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void LoadWeapons() {
+				
+		foreach(GameObjectMountWeaponHolder holder in 
+		        gamePlayerModelHolderModel.GetComponentsInChildren<GameObjectMountWeaponHolder>(true)) {	
+			gamePlayerModelHolderWeaponsHolder = holder.gameObject;
+			gamePlayerModelHolderWeapons = gamePlayerModelHolderWeaponsHolder.transform.parent.gameObject;
+		}
         
         //LogUtil.Log("LoadWeapons");
         if (gamePlayerModelHolderWeaponsHolder != null) {
-            initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
-            currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
+			// check if character or vehicle has holder for weapons placement
+							
+			initialGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
+			currentGamePlayerWeaponContainer = gamePlayerModelHolderWeaponsHolder.transform.position;
 
             LoadInventory();
 
@@ -2038,9 +2025,9 @@ public class BaseGamePlayerController : GameActor {
 
             //return true;
 
-            if(!gameObject.activeSelf && !gameObject.activeInHierarchy) {
+            //if(!gameObject.activeSelf && !gameObject.activeInHierarchy) {
                 //return false;
-            }
+            //}
 
             if(controllerData != null) {
                 if(!controllerData.loadingCharacter) {
@@ -4344,9 +4331,13 @@ public class BaseGamePlayerController : GameActor {
         SyncNavAgent();  
      
     }
+
+	bool shadowActive = false;
  
     public virtual void UpdateVisibleState() {
      
+		// Handle navagent on/off while jumping
+
         if (controllerData.thirdPersonController != null) {
             if (controllerData.thirdPersonController.IsJumping()) {
                 if (controllerData.navMeshAgent != null) {
@@ -4374,15 +4365,21 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (isCharacterLoaded) {
-            actorShadow.gameObject.Show();
+			if(!shadowActive) {
+            	actorShadow.gameObject.Show();
+				shadowActive = true;
+			}
         }
-        else {
-            actorShadow.gameObject.Hide();
+		else {
+			if(shadowActive) {
+            	actorShadow.gameObject.Hide();
+				shadowActive = false;
+			}
         }
 
-        if (controllerData.dying) {
+        //if (controllerData.dying) {
             //transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
-        }
+        //}
 
         // fix after jump
         if(gamePlayerModelHolderModel != null) {
@@ -4396,11 +4393,11 @@ public class BaseGamePlayerController : GameActor {
             }
         }
      
-        //bool runUpdate = false;
+        bool runUpdate = false;
 
         if (controllerData.currentTimeBlock + controllerData.actionInterval < Time.time) {
             controllerData.currentTimeBlock = Time.time;
-            // runUpdate = true;
+            runUpdate = true;
         }
      
         if (controllerState == GamePlayerControllerState.ControllerAgent
@@ -4409,104 +4406,104 @@ public class BaseGamePlayerController : GameActor {
             && GameController.Instance.gameState == GameStateGlobal.GameStarted
             && isAlive) {
 
-            //if(runUpdate) {
-            GameObject go = GameController.CurrentGamePlayerController.gameObject;
+            if(runUpdate) {
+	            GameObject go = GameController.CurrentGamePlayerController.gameObject;
 
-            if (go != null) {
-                
-                controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
-                    go.transform.position,
-                    transform.position);
+	            if (go != null) {
+	                
+	                controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
+	                    go.transform.position,
+	                    transform.position);
 
-                // check distance for evades
+	                // check distance for evades
 
-                if (lastStateEvaded > .3f) {
+	                if (lastStateEvaded > .3f) {
 
-                    lastStateEvaded += Time.deltaTime;
+	                    lastStateEvaded += Time.deltaTime;
+
+	                    if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
+	                        controllerData.isWithinEvadeRange = true;
+	                    }
+	                    else {
+	                        controllerData.isWithinEvadeRange = false;
+	                    }
+
+	                    if (controllerData.lastIsWithinEvadeRange != controllerData.isWithinEvadeRange) {
+	                        if (controllerData.lastIsWithinEvadeRange && !controllerData.isWithinEvadeRange) {
+	                            // evaded!
+	                            GamePlayerProgress.SetStatEvaded(1f);
+	                        }
+	                        controllerData.lastIsWithinEvadeRange = controllerData.isWithinEvadeRange;
+	                    }
+	                }
+
+	                // check attack/lunge range
+
+	                if (controllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
+	                    //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
+
+	                    // Turn towards player and attack!
+
+						/// TODO
+
+	                    GamePlayerController gamePlayerControllerHit
+	                        = GameController.GetGamePlayerControllerObject(go, true);
+
+	                    if (gamePlayerControllerHit != null
+	                        && !gamePlayerControllerHit.controllerData.dying) {
 
 
-                    if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
-                        controllerData.isWithinEvadeRange = true;
-                    }
-                    else {
-                        controllerData.isWithinEvadeRange = false;
-                    }
+	                        if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
+	                            // LEAP AT THEM within three
+	                            Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 20f));
+	                        }
+	                        else {
+	                            // PURSUE FASTER
+	                            Tackle(gamePlayerControllerHit, 3.23f);
+	                        }
+	                    }
+	                }
 
+	                // CHECK RANDOM DIE RANGE
 
-                    if (controllerData.lastIsWithinEvadeRange != controllerData.isWithinEvadeRange) {
-                        if (controllerData.lastIsWithinEvadeRange && !controllerData.isWithinEvadeRange) {
-                            // evaded!
-                            GamePlayerProgress.SetStatEvaded(1f);
-                        }
-                        controllerData.lastIsWithinEvadeRange = controllerData.isWithinEvadeRange;
-                    }
-                }
+	                bool shouldRandomlyDie = false;
+	                
+	                if (controllerData.distanceToPlayerControlledGamePlayer >= controllerData.distanceRandomDie) {
+	                    controllerData.isInRandomDieRange = true;
+	                }
+	                else {
+	                    controllerData.isInRandomDieRange = false;
+	                }
 
-                // check attack/lunge range
+	                if (controllerData.isInRandomDieRange) {
+	                    if (controllerData.lastRandomDie > UnityEngine.Random.Range(
+	                        controllerData.timeMinimumRandomDie, 
+	                        controllerData.timeMinimumRandomDie + controllerData.timeMinimumRandomDie / 2)) {
+	                        
+	                        controllerData.lastRandomDie = 0;
+	                        //shouldRandomlyDie = true;
+	                    }
+	                    
+	                    controllerData.lastRandomDie += Time.deltaTime;
+	                }
+	                
+	                //public float controllerData.distanceRandomDie = 30f;
+	                //public float controllerData.timeMinimumRandomDie = 5f;
+	                
+	                if (controllerData.lastIsInRandomDieRange != controllerData.isInRandomDieRange) {
+	                    if (controllerData.lastIsInRandomDieRange && !controllerData.isInRandomDieRange) {
+	                        // out of range random!
+	                        //GameController.CurrentGamePlayerController.Score(5);
+	                        //GamePlayerProgress.SetStatEvaded(1f);
+	                    }
+	                    controllerData.lastIsWithinEvadeRange = controllerData.isInRandomDieRange;
+	                }
 
-                if (controllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
-                    //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
-
-                    // Turn towards player and attack!
-
-                    GamePlayerController gamePlayerControllerHit
-                        = GameController.GetGamePlayerControllerObject(go, true);
-
-                    if (gamePlayerControllerHit != null
-                        && !gamePlayerControllerHit.controllerData.dying) {
-
-
-                        if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
-                            // LEAP AT THEM within three
-                            Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 20f));
-                        }
-                        else {
-                            // PURSUE FASTER
-                            Tackle(gamePlayerControllerHit, 3.23f);
-                        }
-                    }
-                }
-
-                // CHECK RANDOM DIE RANGE
-
-                bool shouldRandomlyDie = false;
-                
-                if (controllerData.distanceToPlayerControlledGamePlayer >= controllerData.distanceRandomDie) {
-                    controllerData.isInRandomDieRange = true;
-                }
-                else {
-                    controllerData.isInRandomDieRange = false;
-                }
-
-                if (controllerData.isInRandomDieRange) {
-                    if (controllerData.lastRandomDie > UnityEngine.Random.Range(
-                        controllerData.timeMinimumRandomDie, 
-                        controllerData.timeMinimumRandomDie + controllerData.timeMinimumRandomDie / 2)) {
-                        
-                        controllerData.lastRandomDie = 0;
-                        //shouldRandomlyDie = true;
-                    }
-                    
-                    controllerData.lastRandomDie += Time.deltaTime;
-                }
-                
-                //public float controllerData.distanceRandomDie = 30f;
-                //public float controllerData.timeMinimumRandomDie = 5f;
-                
-                if (controllerData.lastIsInRandomDieRange != controllerData.isInRandomDieRange) {
-                    if (controllerData.lastIsInRandomDieRange && !controllerData.isInRandomDieRange) {
-                        // out of range random!
-                        //GameController.CurrentGamePlayerController.Score(5);
-                        //GamePlayerProgress.SetStatEvaded(1f);
-                    }
-                    controllerData.lastIsWithinEvadeRange = controllerData.isInRandomDieRange;
-                }
-
-                if (shouldRandomlyDie) {
-                    runtimeData.hitCount += 10; 
-                }
+	                if (shouldRandomlyDie) {
+	                    runtimeData.hitCount += 10; 
+	                }
+	            }
             }
-            //}
         }
         else if (controllerState == GamePlayerControllerState.ControllerPlayer
             && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
