@@ -110,7 +110,7 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
 		
 		base.AnimateIn();	
 
-        //GameUIPanelHeader.ShowCharacter();
+        GameUIPanelHeader.ShowCharacter();
 	}
 	
 	public override void AnimateOut() {

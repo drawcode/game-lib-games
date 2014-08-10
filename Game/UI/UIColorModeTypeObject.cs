@@ -10,7 +10,7 @@ using Engine.Events;
 public class UIColorModeTypeObject : UIColorObject {
 
     public override void Awake() {
-        SyncColors();
+        //SyncColors();
     }
     
     public override void Start() {

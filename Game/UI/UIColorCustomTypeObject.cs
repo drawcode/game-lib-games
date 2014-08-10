@@ -31,11 +31,11 @@ public class UIColorCustomTypeObject : UIColorObject {
     public float colorAlpha = 1f;
     
     public override void Awake() {
-        SyncColors();
+
     }
     
     public override void Start() {
-        //Init();
+        Init();
     }
     
     public override void Init() {

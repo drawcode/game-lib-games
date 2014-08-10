@@ -248,8 +248,10 @@ public class BaseGameCustomController : GameObjectBehavior {
 
         // get a random
 
-        int randomIndex = UnityEngine.Random.Range(1, AppColorPresets.Instance.GetListByType(type).Count - 1);
-        AppColorPreset randomPreset = AppColorPresets.Instance.items[randomIndex];
+        List<AppColorPreset> colors = AppColorPresets.Instance.GetListByType(type);
+
+        int randomIndex = UnityEngine.Random.Range(1, colors.Count - 1);
+        AppColorPreset randomPreset = colors[randomIndex];
 
         customItemTo = loadColorPresetCustomItem(customItemTo, randomPreset);
 
