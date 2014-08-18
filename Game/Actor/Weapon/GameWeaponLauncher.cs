@@ -204,13 +204,13 @@ public class GameWeaponLauncher : GameWeaponBase {
                 Vector3 screenPos = CurrentCamera.WorldToScreenPoint(aimtarget.transform.position);
                 float distance = Vector3.Distance(transform.position, aimtarget.transform.position);
                 if (locked) {
-                    if (TargetLockedTexture)
-                        GUI.DrawTexture(new Rect(screenPos.x - TargetLockedTexture.width / 2, Screen.height - screenPos.y - TargetLockedTexture.height / 2, TargetLockedTexture.width, TargetLockedTexture.height), TargetLockedTexture);
-                    GUI.Label(new Rect(screenPos.x + 40, Screen.height - screenPos.y, 200, 30), aimtarget.name + " " + Mathf.Floor(distance) + "m.");
+                    //if (TargetLockedTexture)
+                        //GUI.DrawTexture(new Rect(screenPos.x - TargetLockedTexture.width / 2, Screen.height - screenPos.y - TargetLockedTexture.height / 2, TargetLockedTexture.width, TargetLockedTexture.height), TargetLockedTexture);
+                    //GUI.Label(new Rect(screenPos.x + 40, Screen.height - screenPos.y, 200, 30), aimtarget.name + " " + Mathf.Floor(distance) + "m.");
                 }
                 else {
-                    if (TargetLockOnTexture)
-                        GUI.DrawTexture(new Rect(screenPos.x - TargetLockOnTexture.width / 2, Screen.height - screenPos.y - TargetLockOnTexture.height / 2, TargetLockOnTexture.width, TargetLockOnTexture.height), TargetLockOnTexture);
+                    //if (TargetLockOnTexture)
+                    //    GUI.DrawTexture(new Rect(screenPos.x - TargetLockOnTexture.width / 2, Screen.height - screenPos.y - TargetLockOnTexture.height / 2, TargetLockOnTexture.width, TargetLockOnTexture.height), TargetLockOnTexture);
                 }
                 
                 
@@ -231,7 +231,7 @@ public class GameWeaponLauncher : GameWeaponBase {
             Vector3 screenPosAim = CurrentCamera.WorldToScreenPoint(AimPoint);
             crosshairPos += ((screenPosAim - crosshairPos) / 5);
             if (CrosshairTexture) {
-                GUI.DrawTexture(new Rect(crosshairPos.x - CrosshairTexture.width / 2, Screen.height - crosshairPos.y - CrosshairTexture.height / 2, CrosshairTexture.width, CrosshairTexture.height), CrosshairTexture);
+                //GUI.DrawTexture(new Rect(crosshairPos.x - CrosshairTexture.width / 2, Screen.height - crosshairPos.y - CrosshairTexture.height / 2, CrosshairTexture.width, CrosshairTexture.height), CrosshairTexture);
                 
             }
         }
@@ -367,7 +367,9 @@ public class GameWeaponLauncher : GameWeaponBase {
                     
                     }
                 }
-                if (Shell) {
+
+
+                if (!FPSDisplay.isUnder25FPS && Shell) {
                     Transform shelloutpos = this.transform;
                     if (ShellOuter.Length > 0) {
                         shelloutpos = ShellOuter[currentOuter];

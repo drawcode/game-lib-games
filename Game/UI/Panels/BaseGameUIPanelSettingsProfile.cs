@@ -99,7 +99,8 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 	
 	public virtual void OnProfileInputChanged(string controlName, string data) {
 		
-		if(inputProfileName != null && controlName == inputProfileName.name) {
+		if(inputProfileName != null 
+           && controlName == inputProfileName.name) {
 			ChangeUsername(data);
 		}
 	}

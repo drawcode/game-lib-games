@@ -9,6 +9,8 @@ using Engine.Events;
 public class GameUIPanelFooterButtons {
     public static string gameNetworks = "game-networks";
     public static string character = "character";
+    public static string characterHelp = "character-help";
+    public static string characterCustomize = "character-customize";
     public static string statistics = "statistics";
     public static string achievements = "achievements";
     public static string progression = "progression";
@@ -23,6 +25,8 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 			    
     public GameObject containerButtonsSettings;
     public GameObject containerButtonsCustomize;   
+    
+    public GameObject containerButtonsCharacter;   
 	
     public GameObject containerButtonsGameNetworks;    
     public GameObject containerButtonsProgression;    
@@ -317,7 +321,19 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
     
     public virtual void showButtonsCharacterCustomize() {        
-        ShowButtons(GameUIPanelFooterButtons.customize);
+        ShowButtons(GameUIPanelFooterButtons.characterCustomize);
+    }
+    
+    //
+    
+    public static void ShowButtonsCharacter() {
+        if(isInst) {
+            Instance.showButtonsCharacter();
+        }
+    }
+    
+    public virtual void showButtonsCharacter() {        
+        ShowButtons(GameUIPanelFooterButtons.character);
     }
 
     //
@@ -329,7 +345,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
 
     public virtual void showButtonsCharacterHelp() {
-        ShowButtons(GameUIPanelFooterButtons.character);
+        ShowButtons(GameUIPanelFooterButtons.characterHelp);
     }
     
     public static void ShowButtonsProgression() {

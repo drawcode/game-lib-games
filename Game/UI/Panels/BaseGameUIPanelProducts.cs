@@ -17,9 +17,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public string productCodeUse = "";
     public string productTypeUse = "";
     public string productCharacterUse = "";
-    
-    string buttonBuyUseName = "ButtonActionItemBuyUse";
-    
+        
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -94,38 +92,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     }
 
     public virtual void OnButtonClickEventHandler(string buttonName) {
-        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
     
-        /*
-        if(buttonName == buttonSatchelClothing.name) {
-        changeList(BaseGameUIPanelStoreListType.Clothing);
-        }
-        else */
-
-        if(buttonName.IndexOf(buttonBuyUseName + "$") > -1) {
-
-             productCodeUse = "";
-             productTypeUse = "";
-             productCharacterUse = "";
-             
-             string[] commandActionParams = buttonName.Replace(buttonBuyUseName + "$", "").Split('$');
-            
-             if(commandActionParams.Length > 0)
-                 productTypeUse = commandActionParams[0];
-             if(commandActionParams.Length > 1)
-                 productCodeUse = commandActionParams[1];
-             if(commandActionParams.Length > 2)
-                 productCharacterUse = commandActionParams[2];
-
-            if(!string.IsNullOrEmpty(productTypeUse)
-                && !string.IsNullOrEmpty(productCodeUse)
-                && !string.IsNullOrEmpty(productCharacterUse)) {
-
-                GameStoreController.Purchase(productCodeUse, 1);
-
-                loadData(productTypeUse);
-            }
-        }
     }
 
     /*
@@ -141,8 +108,19 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
      AnimateInList();
  }
  */
+
+    public static void LoadData() {
+        if(GameUIPanelProducts.Instance != null) {
+            GameUIPanelProducts.Instance.loadData();
+        }
+    }
+    
+    public virtual void loadData() {
+        loadData(currentProductType);
+    }
 	
-	public static void LoadData(string productType) {
+
+    public static void LoadData(string productType) {
         if(GameUIPanelProducts.Instance != null) {
             GameUIPanelProducts.Instance.loadData(productType);
 		}
@@ -156,15 +134,18 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
 		StartCoroutine(loadDataCo(productType));
 	}
-	
+
+    string lastProductType = "";
+    	
 	IEnumerator loadDataCo(string productType) {
 		
 		LogUtil.Log("LoadDataCo");
-
+        
         currentProductType = productType;
 		
 		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
+			//listGridRoot.DestroyChildren();
+            ClearList();
 			
 	        yield return new WaitForEndOfFrame();
 					
@@ -173,6 +154,11 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 	        yield return new WaitForEndOfFrame();
 	        listGridRoot.GetComponent<UIGrid>().Reposition();
 	        yield return new WaitForEndOfFrame();				
+        }
+        
+        if(lastProductType != currentProductType) {
+            lastProductType = currentProductType;
+            listGridRoot.GetComponent<UIGrid>().Reposition();            
         }
 	}
 
@@ -253,7 +239,8 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 					
 					//productCode = productCode.Replace(productType + "-", "");
 										
-					button.name = buttonBuyUseName + "$" + productType + "$" + productCode + "$" + productCharacter;
+					button.name = BaseUIButtonNames.buttonActionItemBuyUse + 
+                        "$" + productType + "$" + productCode + "$" + productCharacter;
 				}
 			}
 			

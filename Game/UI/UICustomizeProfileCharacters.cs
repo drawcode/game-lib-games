@@ -11,13 +11,37 @@ using Engine.Utility;
 public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
     public string type = "character";
+    public UIInput inputCurrentDisplayCode;
+
+    GameProfileCharacterItem profileCharacterItem;
 
     public override void OnEnable() {
         base.OnEnable();
+        
+        Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
     }
     
     public override void OnDisable() {
         base.OnDisable();
+        
+        Messenger<string, string>.RemoveListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
+    }
+    
+    void OnInputChanged(string controlName, string data) {
+
+        Debug.Log("OnInputChanged:" + " controlName:" + controlName + " data:" + data);
+
+        
+        if(inputCurrentDisplayName != null 
+           && controlName == inputCurrentDisplayName.name) {
+
+            ChangeCharacterDisplayName(data);
+        }
+        else if(inputCurrentDisplayCode != null 
+                && controlName == inputCurrentDisplayCode.name) {
+            
+            ChangeCharacterDisplayCode(data);
+        }
     }
 
     public override void Start() {
@@ -36,6 +60,54 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
         else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetPrevious();
         }
+    }
+
+    public virtual void ChangeCharacterDisplayName(string val) {
+
+        if(inputCurrentDisplayName == null) {
+            return;
+        }        
+        
+        if(profileCharacterItem == null) {
+            return;
+        }        
+
+        if(string.IsNullOrEmpty(val)) {
+            return;
+        }
+
+        Debug.Log("ChangeCharacterDisplayName:" + " val:" + val);
+
+        UIUtil.SetInputValue(inputCurrentDisplayName, val);
+
+        profileCharacterItem.characterDisplayName = val;
+        GameProfileCharacters.Current.SetCharacter(profileCharacterItem);
+
+        GameState.SaveProfile();            
+    }
+    
+    public virtual void ChangeCharacterDisplayCode(string val) {
+        
+        if(inputCurrentDisplayCode == null) {
+            return;
+        }        
+
+        if(profileCharacterItem == null) {
+            return;
+        }        
+
+        if(string.IsNullOrEmpty(val)) {
+            return;
+        }
+
+        Debug.Log("ChangeCharacterDisplayCode:" + " val:" + val);
+
+        UIUtil.SetInputValue(inputCurrentDisplayCode, val);
+
+        profileCharacterItem.characterDisplayCode = val;
+        GameProfileCharacters.Current.SetCharacter(profileCharacterItem);
+                
+        GameState.SaveProfile();
     }
 
     public void ChangePresetNext() {
@@ -74,7 +146,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
             if (index == -1) {
                 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Previous");
-
+                UIUtil.SetLabelValue(labelCurrentType, "");
 
 
                 //GameCustomController.UpdateTexturePresetObject(
@@ -82,7 +154,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
             }
             else {
 
-                GameProfileCharacterItem profileCharacterItem = 
+                profileCharacterItem = 
                     gameProfileCharacterItems.items[currentIndex];
 
                 //GameCustomController.SaveCustomItem(currentProfileCustomItem);
@@ -90,7 +162,18 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
                 Messenger<string>.Broadcast(
                     GameCustomMessages.customCharacterPlayerChanged, profileCharacterItem.code);
 
+                string characterType = "";
+                GameCharacter gameCharacter = GameCharacters.Instance.GetById(profileCharacterItem.characterCode);
+                if(gameCharacter != null) {
+                    characterType = gameCharacter.display_name;
+                    characterType = "- TYPE: " + characterType + " -";
+                }
+                
+                UIUtil.SetInputValue(inputCurrentDisplayName, profileCharacterItem.characterDisplayName);
                 UIUtil.SetLabelValue(labelCurrentDisplayName, profileCharacterItem.characterDisplayName);
+                UIUtil.SetLabelValue(labelCurrentType, characterType);
+                
+                UIUtil.SetInputValue(inputCurrentDisplayCode, profileCharacterItem.characterDisplayCode);
             }
         }
     }

@@ -141,6 +141,8 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
         loadData();
 
         GameUIPanelHeader.ShowCharacter();
+
+        GameUIPanelFooter.ShowButtonsCharacter();
     }
     
     public override void AnimateOut() {

@@ -73,12 +73,15 @@ public class BaseUIButtonNames {
     public static string buttonGameProductCurrency = "ButtonGameProductCurrency";
 
     public static string buttonGameProducts = "ButtonGameProducts";   
+    public static string buttonGameProductsCharacter = "ButtonGameProductsCharacter";   
     public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";   
     public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";   
     public static string buttonGameProductsFeature = "ButtonGameProductsFeature";   
     public static string buttonGameProductsPickup = "ButtonGameProductsPickup";   
     public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";   
     public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";   
+    
+    public static string buttonActionItemBuyUse = "ButtonActionItemBuyUse";
 
     
     public static string buttonGameCustomize = "ButtonGameCustomize";
@@ -427,20 +430,28 @@ public class BaseUIController : GameObjectBehavior {
      
     }
     
-    public virtual void OnListItemClickEventHandler(string listName, string listIndex, bool selected) {
-        LogUtil.Log("OnListItemClickEventHandler: listName:" + listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
+    public virtual void OnListItemClickEventHandler(
+        string listName, string listIndex, bool selected) {
+        LogUtil.Log("OnListItemClickEventHandler: listName:" + 
+                    listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
     }
     
-    public virtual void OnListItemSelectEventHandler(string listName, string selectName) {
-        LogUtil.Log("OnListItemSelectEventHandler: listName:" + listName + " selectName:" + selectName);
+    public virtual void OnListItemSelectEventHandler(
+        string listName, string selectName) {
+        LogUtil.Log("OnListItemSelectEventHandler: listName:" + 
+                    listName + " selectName:" + selectName);
     }
     
-    public virtual void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
-        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue);
+    public virtual void OnSliderChangeEventHandler(
+        string sliderName, float sliderValue) {
+        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + 
+                    sliderName + " sliderValue:" + sliderValue);
     }
     
-    public virtual void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
-        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected);
+    public virtual void OnCheckboxChangeEventHandler(
+        string checkboxName, bool selected) {
+        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + 
+                    checkboxName + " selected:" + selected);
     }
     
     public virtual void OnApplicationQuit() {
@@ -3336,11 +3347,11 @@ public class BaseUIController : GameObjectBehavior {
 
         // PRODUCTS
         
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProducts, buttonName)) {
-            GameUIController.ShowProducts();
-        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCharacterSkin, buttonName)) {
             GameUIController.ShowProducts(GameProductType.characterSkin);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCharacter, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.character);
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCurrency, buttonName)) {
             GameUIController.ShowProducts(GameProductType.currency);
@@ -3356,6 +3367,36 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsRPGUpgrade, buttonName)) {
             GameUIController.ShowProducts(GameProductType.rpgUpgrade);
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProducts, buttonName)) {
+            GameUIController.ShowProducts();
+        }
+
+        // ACTION ITEMS / USE
+
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonActionItemBuyUse + "$") > -1) {
+            
+            string productCodeUse = "";
+            string productTypeUse = "";
+            string productCharacterUse = "";
+            
+            string[] commandActionParams = buttonName.Replace(BaseUIButtonNames.buttonActionItemBuyUse + "$", "").Split('$');
+            
+            if(commandActionParams.Length > 0)
+                productTypeUse = commandActionParams[0];
+            if(commandActionParams.Length > 1)
+                productCodeUse = commandActionParams[1];
+            if(commandActionParams.Length > 2)
+                productCharacterUse = commandActionParams[2];
+            
+            if(!string.IsNullOrEmpty(productTypeUse)
+               && !string.IsNullOrEmpty(productCodeUse)
+               && !string.IsNullOrEmpty(productCharacterUse)) {
+                
+                GameStoreController.Purchase(productCodeUse, 1);
+
+                GameUIPanelProducts.LoadData();
+            }
         }
 
         // CUSTOMIZE
