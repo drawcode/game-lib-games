@@ -50,15 +50,43 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
     public override void Load() {
         base.Load();
+
+        ShowCurrentProfileCharacter();
+    }
+
+    public void ShowCurrentProfileCharacter() {
+        
+        GameProfileCharacterItems gameProfileCharacterItems =
+            GameProfileCharacters.Current.GetCharacters();
+        
+        int countPresets = gameProfileCharacterItems.items.Count;
+        int index = 0;
+        
+        string currentCharacterCode = 
+            GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
+        
+        foreach(GameProfileCharacterItem gameProfileCharacterItem 
+                in gameProfileCharacterItems.items) {
+            if(gameProfileCharacterItem.code == currentCharacterCode) {
+                ChangePreset(index);
+                break;
+            }
+            index++;
+        }
+
+        if(index == countPresets - 1) {
+            ChangePreset(0);
+        }
+
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
         if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
-            ChangePresetNext();
+            ChangePresetPrevious();
         }
         else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
-            ChangePresetPrevious();
+            ChangePresetNext();
         }
     }
 
@@ -125,12 +153,12 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
         int countPresets = gameProfileCharacterItems.items.Count;
 
-        if (index < -1) {
+        if (index < 0) {
             index = countPresets - 1;    
         }
         
         if (index > countPresets - 1) {
-            index = -1;
+            index = 0;
         }
         
         currentIndex = index;
@@ -174,6 +202,8 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
                 UIUtil.SetLabelValue(labelCurrentType, characterType);
                 
                 UIUtil.SetInputValue(inputCurrentDisplayCode, profileCharacterItem.characterDisplayCode);
+
+                UIUtil.SetLabelValue(labelCurrentStatus, string.Format("{0}/{1}", index + 1, countPresets));
             }
         }
     }

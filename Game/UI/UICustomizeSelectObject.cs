@@ -14,6 +14,7 @@ public class UICustomizeSelectObject : UICustomizeObject {
     public UIImageButton buttonCycleRight;
     public UILabel labelCurrentDisplayName;
     public UILabel labelCurrentType;
+    public UILabel labelCurrentStatus;
     public UIInput inputCurrentDisplayName;
     public GameProfileCustomItem currentProfileCustomItem;
     public GameProfileCustomItem initialProfileCustomItem;
