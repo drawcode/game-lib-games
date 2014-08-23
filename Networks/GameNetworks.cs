@@ -1127,7 +1127,7 @@ public class GameNetworks : GameObjectBehavior {
 		
 		if(leaderboardData != null) {
 			Messenger<GameCommunityLeaderboardData>.Broadcast(
-				GameCommunityPlatformMessages.gameCommunityLeaderboardFriendData, leaderboardData);
+				GameCommunityMessages.gameCommunityLeaderboardFriendData, leaderboardData);
 		}
 		
 	}
@@ -1174,7 +1174,7 @@ public class GameNetworks : GameObjectBehavior {
 		
 		if(leaderboardData != null) {
 			Messenger<GameCommunityLeaderboardData>.Broadcast(
-				GameCommunityPlatformMessages.gameCommunityLeaderboardData, leaderboardData);
+				GameCommunityMessages.gameCommunityLeaderboardData, leaderboardData);
 		}
 	}	
 	
@@ -1184,7 +1184,7 @@ public class GameNetworks : GameObjectBehavior {
 		GameCommunityLeaderboardData leaderboardData = ParseScoresFacebook(responseText);
 		
 		Messenger<GameCommunityLeaderboardData>.Broadcast(
-			GameCommunityPlatformMessages.gameCommunityLeaderboardData, leaderboardData);
+			GameCommunityMessages.gameCommunityLeaderboardData, leaderboardData);
 	}
 	
 	

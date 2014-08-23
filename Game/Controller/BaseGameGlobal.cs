@@ -29,6 +29,12 @@ public class BaseGameGlobal : GameObjectBehavior {
     public GameNetworking networking;
     public GameversesGameObject gameversesGameObject;
     public AudioRecordObject audioRecorder; 
+
+	public GameCommunityController platformController;
+	public GameCommunityService platformService;
+	public GameCommunityUIController platformAppViewerUIController;
+	public GameCommunitySocialController platformSocialController;
+	public GameCommunityTrackingController platformTrackingController;
     
     //public Gameverses.GameversesAPI gameversesAPI;
     
@@ -293,6 +299,17 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         LogUtil.Log("GameGlobal InitAudio init...");
     }
+
+	
+	public void InitCommunity() {		
+		platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
+		platformController = gameObject.AddComponent<GameCommunityController>();
+		platformAppViewerUIController = gameObject.AddComponent<GameCommunityUIController>();
+		platformSocialController = gameObject.AddComponent<GameCommunitySocialController>();
+		platformTrackingController = gameObject.AddComponent<GameCommunityTrackingController>();
+		
+		Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);		
+	}
     
     public virtual void InitSocial() {
         socialNetworks = gameObject.AddComponent<SocialNetworks>();
