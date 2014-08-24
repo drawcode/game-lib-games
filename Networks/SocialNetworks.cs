@@ -518,19 +518,21 @@ public class SocialNetworks : GameObjectBehavior {
 	
 	public void likeUrlFacebook(string urlLike) {
 				
-		string userId = GameProfiles.Current.GetSocialNetworkUserId();
+        string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);//GetSocialNetworkUserId();
 			
 		if(!string.IsNullOrEmpty(userId) && IsLoggedInFacebook()) {
 		
 			Dictionary<string, object> data = new Dictionary<string, object>();
+
+            string access_token = GameProfiles.Current.GetNetworkValueToken(SocialNetworkTypes.facebook);
 			
 			data.Add("object", urlLike);
 			data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
-			data.Add("access_token", GameProfiles.Current.GetSocialNetworkAuthTokenUser());
+            data.Add("access_token", access_token);//GetSocialNetworkAuthTokenUser());
 				
 			LogUtil.Log("likeUrlFacebook object:" + urlLike);
 			LogUtil.Log("likeUrlFacebook app_access_token:" + SocialNetworks.Instance.appAccessToken);
-			LogUtil.Log("likeUrlFacebook access_token:" + GameProfiles.Current.GetSocialNetworkAuthTokenUser());
+            LogUtil.Log("likeUrlFacebook access_token:" + access_token);//);
 			
 			string url = facebookOpenGraphUrl + userId + "/og.likes";
 			
@@ -567,7 +569,8 @@ public class SocialNetworks : GameObjectBehavior {
 	}	
 	
 	public void postScoreFacebook(int score) {
-		string userId = GameProfiles.Current.GetSocialNetworkUserId();
+        
+        string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);
 		LogUtil.Log("PostScoreFacebook: userId:" + userId);
 		LogUtil.Log("PostScoreFacebook: score:" + score);
 		

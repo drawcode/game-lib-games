@@ -1055,14 +1055,18 @@ public class GameNetworks : GameObjectBehavior {
 	public void postScoreFacebook(string userId, int score) {
 		
 		Dictionary<string, object> data = new Dictionary<string, object>();
+
+        string networkType = SocialNetworkTypes.facebook;
+
+        string access_token = GameProfiles.Current.GetNetworkValueToken(networkType);
 		
 		data.Add("score", score);
 		data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
-		data.Add("access_token", GameProfiles.Current.GetSocialNetworkAuthTokenUser());
+        data.Add("access_token", access_token);//SocialNetworks.faGetSocialNetworkAuthTokenUser());
 		
 		LogUtil.Log("PostScoreFacebook score:" + score);
 		LogUtil.Log("PostScoreFacebook app_access_token:" + SocialNetworks.Instance.appAccessToken);
-		LogUtil.Log("PostScoreFacebook access_token:" + GameProfiles.Current.GetSocialNetworkAuthTokenUser());
+        LogUtil.Log("PostScoreFacebook access_token:" + access_token);
 		
 		string url = facebookOpenGraphUrl + userId + "/scores";
 		
@@ -1095,8 +1099,8 @@ public class GameNetworks : GameObjectBehavior {
 		
 		Dictionary<string, object> data = new Dictionary<string, object>();
 		
-		string accessToken = GameProfiles.Current.GetSocialNetworkAuthTokenUser();
-		string userId = GameProfiles.Current.GetSocialNetworkUserId();
+        string accessToken = GameProfiles.Current.GetNetworkValueToken(SocialNetworkTypes.facebook);//.GetSocialNetworkAuthTokenUser();
+        string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);//GetSocialNetworkUserId();
 		string appId = SocialNetworks.Instance.FACEBOOK_APP_ID;
 		
 		//data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
@@ -1142,7 +1146,8 @@ public class GameNetworks : GameObjectBehavior {
 		
 		Dictionary<string, object> data = new Dictionary<string, object>();
 		
-		string accessToken = GameProfiles.Current.GetSocialNetworkAuthTokenUser();
+        string accessToken = 
+            GameProfiles.Current.GetNetworkValueToken(SocialNetworkTypes.facebook);//GetSocialNetworkAuthTokenUser();
 		string appId = SocialNetworks.Instance.FACEBOOK_APP_ID;
 		
 		//data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);

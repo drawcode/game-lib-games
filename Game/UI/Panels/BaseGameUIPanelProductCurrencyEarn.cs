@@ -170,7 +170,7 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
 
             OnFacebookLike("drawlabs");
             
-            GameCommunity.LikeUrl("http://actionbotsgame.com/");
+            GameCommunity.LikeUrl(SocialNetworkTypes.facebook, "http://actionbotsgame.com/");
         }
         else if(UIUtil.IsButtonClicked(buttonEarnTwitter, buttonName)) {
             
