@@ -95,10 +95,6 @@ public class BaseGameUIPanelGameModeArcade : GameUIPanelBase {
         
         base.AnimateIn();
         
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonsCharacterCustomize();
-        
         loadData();
     }
 	

@@ -99,8 +99,6 @@ public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
         
         base.AnimateIn();        
         
-        GameUIPanelHeader.ShowCharacter();
-        
         loadData();
     }
     

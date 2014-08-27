@@ -95,10 +95,6 @@ public class BaseGameUIPanelGameModeCoop : GameUIPanelBase {
         
         base.AnimateIn();
         
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonsCharacterCustomize();
-        
         loadData();
     }
 	

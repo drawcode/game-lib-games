@@ -95,8 +95,6 @@ public class BaseGameUIPanelLevels : GameUIPanelBase {
         
         base.AnimateIn();
         
-        GameUIPanelHeader.ShowCharacter();
-        
         loadData();
     }
 	

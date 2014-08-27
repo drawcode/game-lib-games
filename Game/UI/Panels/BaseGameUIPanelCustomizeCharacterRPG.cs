@@ -140,8 +140,6 @@ public class BaseGameUIPanelCustomizeCharacterRPG : GameUIPanelBase {
         base.AnimateIn();
      
         loadData();
-
-        GameUIPanelHeader.ShowCharacter();
     }
  
     public override void AnimateOut() {

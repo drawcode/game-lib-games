@@ -118,8 +118,6 @@ public class BaseGameUIPanelCustomizeCharacterColors : GameUIPanelBase {
 		base.AnimateIn();
 		
         loadData();
-
-        GameUIPanelHeader.ShowCharacter();
 	}
 	
 	public override void AnimateOut() {

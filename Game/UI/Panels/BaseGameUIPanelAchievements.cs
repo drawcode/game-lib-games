@@ -197,10 +197,6 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 	public override void AnimateIn() {
 		
 		base.AnimateIn();
-                
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonsStatistics();
 
 		loadData();
 	}

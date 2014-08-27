@@ -139,8 +139,6 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
 	public override void AnimateIn() {
 		
         base.AnimateIn();
-        
-        GameUIPanelHeader.ShowCharacter();
 		
 		loadData();
 	}

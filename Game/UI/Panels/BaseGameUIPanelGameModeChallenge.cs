@@ -95,10 +95,6 @@ public class BaseGameUIPanelGameModeChallenge : GameUIPanelBase {
         
         base.AnimateIn();
         
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonsCharacterCustomize();
-        
         loadData();
     }
 

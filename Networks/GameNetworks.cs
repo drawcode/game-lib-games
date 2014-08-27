@@ -542,7 +542,7 @@ public class GameNetworks : GameObjectBehavior {
                 
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
         
-        LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
+        //LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
         
         if(item == null) {
             return;
@@ -582,6 +582,10 @@ public class GameNetworks : GameObjectBehavior {
         //            " keyValue:" + keyValue);
 
 		if(IsThirdPartyNetworkAvailable(networkTypeTo)) {	
+
+            if(key.IndexOf("time-played") > -1) {
+                keyValue = keyValue * 100;
+            }
             
             //LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
             //            " networkTypeTo:" + networkTypeTo+ 

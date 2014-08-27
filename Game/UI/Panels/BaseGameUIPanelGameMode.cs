@@ -11,7 +11,7 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
     public static GameUIPanelGameMode Instance;
 	
     public GameObject listItemPrefab;
-    
+        
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -95,11 +95,7 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
     public override void AnimateIn() {
         
         base.AnimateIn();
-        
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonsCharacterCustomize();
-        
+                
         loadData();
     }
 

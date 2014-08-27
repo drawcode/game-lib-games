@@ -1340,14 +1340,14 @@ public class BaseGamePlayerProgress {
 
     public virtual void ProcessProgressLeaderboards() {
 
-        Debug.Log("ProcessProgressLeaderboards");
+        //Debug.Log("ProcessProgressLeaderboards");
 
         // Submit all leaderboards
         foreach (GameLeaderboard board in GameLeaderboards.Instance.GetAll()) {
 
             string key = board.code;
                         
-            Debug.Log("ProcessProgressLeaderboards:" + " key:" + key);
+            //Debug.Log("ProcessProgressLeaderboards:" + " key:" + key);
 
             long keyValueLong = 0;                
 
@@ -1356,11 +1356,11 @@ public class BaseGamePlayerProgress {
 
             keyValueLong = (long)keyValueDouble;
 
-            Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+            //Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
             if (keyValueLong > 0) {
                 
-                Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+                //Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
                 GameNetworks.SendScore(key, keyValueLong);
             }

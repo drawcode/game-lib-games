@@ -109,6 +109,10 @@ public class BaseUIButtonNames {
     public static string buttonGameNetworkJoinGame = "ButtonGameNetworkJoinGame";
     public static string buttonGameInitFinish = "ButtonGameInitFinish";
     //ButtonGameInitFinish
+    
+    public static string buttonGameCommunityCameraSaveTwitter = "ButtonGameCommunityCameraSaveTwitter";
+    public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
+    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";
 
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
@@ -195,6 +199,9 @@ public class BaseUIPanel {
     public static string panelCustomizeAudio = "PanelCustomizeAudio";
     public static string panelCustomSafety = "PanelCustomSafety";
     public static string panelCustomSmarts = "panelCustomSmarts";
+    public static string panelCommunityCamera = "PanelCommunityCamera";
+    public static string panelCommunityComment = "PanelCommunityComment";
+
 }
 
 public class BaseUIController : GameObjectBehavior { 

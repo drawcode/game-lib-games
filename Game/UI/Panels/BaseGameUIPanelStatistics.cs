@@ -150,12 +150,6 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
 	public override void AnimateIn() {
 		
         base.AnimateIn();
-        
-        GameUIPanelHeader.ShowCharacter();
-
-        GameUIPanelFooter.ShowButtonsAchievements();
-
-        //AdNetworks.ShowAd(AdBannerType.SmartBannerLandscape, AdPosition.BottomCenter);
 		
 		loadData();
 	}

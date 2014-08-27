@@ -161,10 +161,6 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     public override void AnimateIn() {
         base.AnimateIn();
-        
-        GameUIPanelHeader.ShowCharacter();
-        
-        GameUIPanelFooter.ShowButtonGameNetworks();
 
         loadData();
     }

@@ -109,8 +109,6 @@ public class BaseGameUIPanelSettingsHelp : GameUIPanelBase {
         
         base.AnimateIn();
         
-        GameUIPanelHeader.ShowCharacter();
-        
         loadData();
     }
     
