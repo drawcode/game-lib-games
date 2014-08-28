@@ -239,7 +239,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 					
 					//productCode = productCode.Replace(productType + "-", "");
 										
-					button.name = BaseUIButtonNames.buttonActionItemBuyUse + 
+					button.name = BaseUIButtonNames.buttonGameActionItemBuyUse + 
                         "$" + productType + "$" + productCode + "$" + productCharacter;
 				}
 			}

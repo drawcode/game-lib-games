@@ -80,8 +80,10 @@ public class BaseUIButtonNames {
     public static string buttonGameProductsPickup = "ButtonGameProductsPickup";   
     public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";   
     public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";   
-    
-    public static string buttonActionItemBuyUse = "ButtonActionItemBuyUse";
+        
+    public static string buttonGamePlayerPresets = "ButtonGamePlayerPresets";
+
+    public static string buttonGameActionItemBuyUse = "ButtonGameActionItemBuyUse";
 
     
     public static string buttonGameCustomize = "ButtonGameCustomize";
@@ -3381,13 +3383,13 @@ public class BaseUIController : GameObjectBehavior {
 
         // ACTION ITEMS / USE
 
-        else if (buttonName.IndexOf(BaseUIButtonNames.buttonActionItemBuyUse + "$") > -1) {
+        else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameActionItemBuyUse + "$") > -1) {
             
             string productCodeUse = "";
             string productTypeUse = "";
             string productCharacterUse = "";
             
-            string[] commandActionParams = buttonName.Replace(BaseUIButtonNames.buttonActionItemBuyUse + "$", "").Split('$');
+            string[] commandActionParams = buttonName.Replace(BaseUIButtonNames.buttonGameActionItemBuyUse + "$", "").Split('$');
             
             if(commandActionParams.Length > 0)
                 productTypeUse = commandActionParams[0];
@@ -3428,13 +3430,80 @@ public class BaseUIController : GameObjectBehavior {
             UIPanelOverlayPrepare.HideAll();
 
             GameController.InitLevelFinish();
-
         }  
+        
+        // GAME PRESET CHARACTER COLORS
+        
+        else if (UIUtil.IsButtonClickedLike(UIButtonNames.buttonGamePlayerPresets, buttonName)) {
+            
+            GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+            
+            string[] arrButtonName = buttonName.Split('$');
+            
+            string presetTexture = "";
+            string presetColor = "";
+            
+            string panelNext = "";
+            
+            string markerTexture = "preset-texture--";
+            string markerColor = "preset-color--";
+            string markerNext = "panel-next--";
+            
+            if(arrButtonName != null) {
+                
+                foreach(string s in arrButtonName) {
+                    if(s.Contains(markerTexture)) {
+                        presetTexture = s.Replace(markerTexture, "");
+                    }
+                    if(s.Contains(markerColor)) {
+                        presetColor = s.Replace(markerColor, "");
+                    }
+                    if(s.Contains(markerNext)) {
+                        panelNext = s.Replace(markerNext, "");
+                    }
+                }
+            }
+            
+            bool loadCharacter = false;
+            
+            if(!string.IsNullOrEmpty(presetTexture)) {
+                // SET CUSTOM VALUES FOR THIS PLAYER
+                
+                customItem = GameCustomController.UpdateTexturePresetObject(
+                    customItem, GameController.CurrentGamePlayerController.gameObject,  
+                    AppContentAssetTexturePresets.Instance.GetByCode(presetTexture));
+                
+                loadCharacter = true;
+            }
+            
+            
+            if(!string.IsNullOrEmpty(presetColor)) {
+                customItem = GameCustomController.UpdateColorPresetObject(
+                    customItem, GameController.CurrentGamePlayerController.gameObject,   
+                    AppColorPresets.Instance.GetByCode(presetColor));
+                
+                loadCharacter = true;
+            }
+            
+            if(loadCharacter) {                
+                GameCustomController.SaveCustomItem(customItem); 
+                GameController.LoadCurrentProfileCharacter();
+            }
+            
+            if(!string.IsNullOrEmpty(panelNext)) {
+                if(panelNext == BaseUIPanel.panelGameMode) {                    
+                    GameUIController.ShowGameMode(); 
+                }
+            }
+        }
+
+        // LAST 
+
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
 
             GameController.PlayGame();
-        }  
+        }
 
         // BACK BUTTON
 
