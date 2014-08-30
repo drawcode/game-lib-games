@@ -15,6 +15,8 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
     GameProfileCharacterItem profileCharacterItem;
 
+    public UIImageButton buttonSave;
+
     public override void OnEnable() {
         base.OnEnable();
         
@@ -88,6 +90,32 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
         else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetNext();
         }
+        else if(UIUtil.IsButtonClicked(buttonSave, buttonName)) {
+            SaveInputs();
+        }
+    }
+
+    public virtual void SaveInputs() {
+        SaveCharacterDisplayNameInput();
+        SaveCharacterDisplayCodeInput();
+    }
+
+    public virtual void SaveCharacterDisplayNameInput() {
+        
+        if(inputCurrentDisplayName == null) {
+            return;
+        } 
+
+        ChangeCharacterDisplayName(inputCurrentDisplayName.text);
+    }
+
+    public virtual void SaveCharacterDisplayCodeInput() {        
+        
+        if(inputCurrentDisplayCode == null) {
+            return;
+        } 
+        
+        ChangeCharacterDisplayCode(inputCurrentDisplayCode.text);
     }
 
     public virtual void ChangeCharacterDisplayName(string val) {

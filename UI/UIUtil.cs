@@ -312,6 +312,50 @@ public class UIUtil {
         }
     }
 
+    public static void SetTextValue(GameObject go, string code, string val) {
+        
+        //LogUtil.Log("SetMaterialColor name:" + name + " color:" + color );
+        
+        UILabel[] labels = go.GetComponentsInChildren<UILabel>();
+        
+        foreach (UILabel label in labels) {
+            
+            if(label.gameObject.name.Contains(code)) {
+                UIUtil.SetLabelValue(label, val);
+            }
+        }
+        
+        UIInput[] inputs = go.GetComponentsInChildren<UIInput>();
+        
+        foreach (UIInput input in inputs) {
+            if(input.gameObject.name.Contains(code)) {
+                UIUtil.SetInputValue(input, val);
+            }
+        }
+    }
+
+    public static void SetTextColor(GameObject go, string code, Color color) {
+        
+        //LogUtil.Log("SetMaterialColor name:" + name + " color:" + color );
+        
+        UILabel[] labels = go.GetComponentsInChildren<UILabel>();
+        
+        foreach (UILabel label in labels) {
+
+            if(label.gameObject.name.Contains(code)) {
+                SetSpriteColor(label.gameObject, color);
+            }
+        }
+
+        UIInput[] inputs = go.GetComponentsInChildren<UIInput>();
+        
+        foreach (UIInput input in inputs) {
+            if(input.gameObject.name.Contains(code)) {
+                SetSpriteColor(input.gameObject, color);
+            }
+        }
+    }
+
     public static void UpdateLabelObject(GameObject parentGo, string key, string val) {
         UpdateLabelObject(parentGo.transform, key, val);
     }
@@ -463,6 +507,14 @@ public class UIUtil {
             UITweenerUtil.ColorTo(go,
                  UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
         }
+    }
+
+    public static void SetLabelColor(UILabel labelTo, Color colorTo) {            
+        if(labelTo == null)
+            return;
+        
+        UITweenerUtil.ColorTo(labelTo.gameObject, 
+                              UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
     }
  
     public static void SetButtonColor(UIButton buttonTo, Color colorTo) {            

@@ -226,6 +226,17 @@ public class BaseGameCustomController : GameObjectBehavior {
                         profileCustomItem.SetCustomColor(prop.code, colorTo);
                         
                         go.SetMaterialColor(prop.code, colorTo);
+
+                        UIUtil.SetTextColor(go, prop.code, colorTo);
+
+                        string key = "profile-character-display-";
+
+                        UIUtil.SetTextValue(go, 
+                                            key + BaseDataObjectKeys.name, 
+                                            GameProfileCharacters.currentCharacter.characterDisplayName);
+                        UIUtil.SetTextValue(go, 
+                                            key + BaseDataObjectKeys.code, 
+                                            GameProfileCharacters.currentCharacter.characterDisplayCode);
                         
                         //LogUtil.Log("updateColorPresetObject:preset:" + 
                         //          " prop.code:" + prop.code + 
@@ -238,6 +249,32 @@ public class BaseGameCustomController : GameObjectBehavior {
         }
         
         return profileCustomItem;
+    }
+
+    public virtual void updateProfileCharacterDisplay(GameObject go) {
+        updateProfileCharacterDisplayName(go);
+        updateProfileCharacterDisplayCode(go);    
+    }
+
+    public virtual void updateProfileCharacterDisplayName(GameObject go) {        
+        
+        string key = "profile-character-display-";
+        
+        UIUtil.SetTextValue(
+            go, 
+            key + BaseDataObjectKeys.name, 
+            GameProfileCharacters.currentCharacter.characterDisplayName);  
+    }    
+    
+    public virtual void updateProfileCharacterDisplayCode(GameObject go) {        
+        
+        string key = "profile-character-display-";
+        
+        UIUtil.SetTextValue(
+            go, 
+            key + BaseDataObjectKeys.code, 
+            GameProfileCharacters.currentCharacter.characterDisplayCode);
+        
     }
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
