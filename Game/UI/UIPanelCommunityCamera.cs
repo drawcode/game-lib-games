@@ -12,13 +12,16 @@ public class UIPanelCommunityCamera : UIPanelBase {
 
     public static UIPanelCommunityCamera Instance;
     public GameObject panelCameraButton;
+    public GameObject panelCameraBackground;
     public GameObject panelCameraPhoto;
     public GameObject photoObject;
     public Material photoMaterial;
-    public UIButton buttonPhotoLibrarySave;
-    public UIButton buttonPhotoFacebook;
-    public UIButton buttonPhotoTwitter;
-    public UIButton buttonPhotoClose;
+    public UIImageButton buttonPhotoLibrarySave;
+    public UIImageButton buttonPhotoFacebook;
+    public UIImageButton buttonPhotoTwitter;
+    public UIImageButton buttonPhotoClose;
+    
+    public UIImageButton buttonPhotoTake;
 
     public void Awake() {
 
@@ -44,6 +47,8 @@ public class UIPanelCommunityCamera : UIPanelBase {
         base.Init();
 
         //loadData();
+
+        ShowCameraButton();
     }
 
     public override void Start() {
@@ -67,17 +72,21 @@ public class UIPanelCommunityCamera : UIPanelBase {
     }
 
     public void OnButtonClickEventHandler(string buttonName) {
-        //if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
-        //GameStoreController.Purchase("rpg-recharge-full-1", 1);
-        //}
-        //else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
-        //GameController.QuitGame();
-        //GameUIController.ShowGameMode();
-        //}
-        //else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
-        //HideAll();
-        //GameController.ResumeGame();
-        // }
+
+        if(UIUtil.IsButtonClicked(buttonPhotoTake, buttonName)) {
+            TakePhoto();
+        }
+        else if(UIUtil.IsButtonClicked(buttonPhotoClose, buttonName)) {
+            ShowCameraButton();
+            
+            GameController.GameRunningStateRun();
+        }
+        else if(UIUtil.IsButtonClicked(buttonPhotoFacebook, buttonName)) {
+            GameCommunitySocialController.UploadCurrentPhotoToFacebook();
+        }
+        else if(UIUtil.IsButtonClicked(buttonPhotoTwitter, buttonName)) {
+            GameCommunitySocialController.UploadCurrentPhotoToTwitter();
+        }
     }
 
     
@@ -98,9 +107,7 @@ public class UIPanelCommunityCamera : UIPanelBase {
     
     IEnumerator takePhotoCo() { 
 
-        //GameController.PauseGame();
-        
-        GameCommunitySocialController.Instance.photoMaterial = photoMaterial;
+        ShowNone();
 
         GameUIPanelOverlays.Instance.ShowOverlayWhiteFlash();
         
@@ -108,18 +115,17 @@ public class UIPanelCommunityCamera : UIPanelBase {
         
         PhotoObjectSize();
         
-        GameCommunitySocialController.TakePhoto();
+        GameCommunitySocialController.TakePhoto(photoMaterial);
+        
+        GameController.GameRunningStateContent();
         
         yield return new WaitForSeconds(.5f);
         
         yield return new WaitForSeconds(.5f);
         
         UINotificationDisplay.Instance.QueueInfo("Loading Photo", "Photo just taken is saving.");
-        
-        //ShowDefault();
 
-        // Reshow UI Elements
-        //AppViewerUIPanelHUD.ShowDefault();
+        ShowCameraPhoto();
     }
     
     
@@ -156,6 +162,7 @@ public class UIPanelCommunityCamera : UIPanelBase {
     public void HidePanels() {
         HideCameraPhoto();
         HideCameraButton();
+        HideCameraBackground();
     }
 
     //
@@ -179,6 +186,28 @@ public class UIPanelCommunityCamera : UIPanelBase {
 
     public void hideCameraButton() {
         AnimateInRight(panelCameraButton);
+    }    
+    
+    //
+    
+    public static void ShowCameraBackground() {
+        if (isInst) {
+            Instance.showCameraBackground();
+        }
+    }
+    
+    public void showCameraBackground() { 
+        AnimateInRight(panelCameraBackground);
+    }
+    
+    public static void HideCameraBackground() {
+        if (isInst) {
+            Instance.hideCameraBackground();
+        }
+    }
+    
+    public void hideCameraBackground() {
+        AnimateInRight(panelCameraBackground);
     }
 
     //
@@ -225,9 +254,46 @@ public class UIPanelCommunityCamera : UIPanelBase {
     public void loadData() {
 
     }
+    
+    public static void ShowButton() {
+        if (isInst) {
+            Instance.showButton();
+        }
+    }
+
+    public void showButton() {
+        ShowCameraButton();
+        HideCameraPhoto();
+        HideCameraBackground();
+    }
+
+    public static void ShowDialog() {
+        if (isInst) {
+            Instance.showDialog();
+        }
+    }
+    
+    public void showDialog() {
+        HideCameraButton();
+        ShowCameraPhoto();
+        ShowCameraBackground();
+    }
+        
+    public static void ShowNone() {
+        if (isInst) {
+            Instance.showNone();
+        }
+    }
+    
+    public void showNone() {
+        HideCameraButton();
+        HideCameraPhoto();
+    }
 
     public override void AnimateIn() {
         base.AnimateIn();
+
+
 
     }
 
