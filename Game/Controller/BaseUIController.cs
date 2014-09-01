@@ -2564,7 +2564,7 @@ public class BaseUIController : GameObjectBehavior {
  
     public virtual void showSettingsAudio() {
         showUIPanel(
-            typeof(UIPanelSettingsAudio),
+            typeof(GameUIPanelSettingsAudio),
             GameUIPanel.panelSettingsAudio,
             "SETTINGS: AUDIO");
     } 
@@ -2577,7 +2577,7 @@ public class BaseUIController : GameObjectBehavior {
     
     public virtual void hideSettingsAudio() {
         hideUIPanel(
-            typeof(UIPanelSettingsAudio));
+            typeof(GameUIPanelSettingsAudio));
     }
      
     // ------------------------------------------------------------

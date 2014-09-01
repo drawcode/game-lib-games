@@ -20,6 +20,9 @@ public class BaseCustomMessages {
     public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
     public static string customColorPresetChanged = "custom-color-preset-changed";
     public static string customTexturePresetChanged = "custom-texture-preset-changed";
+    
+    public static string customCharacterDisplayNameChanged = "custom-character-display-name-changed";
+    public static string customCharacterDisplayCodeChanged = "custom-character-display-code-changed";
 
 }
 
@@ -343,6 +346,25 @@ public class BaseGameCustomController : GameObjectBehavior {
             
         }
     }
+
+    // VALUES
+
+    public virtual void broadcastCustomCharacterDataSync() {
+        GameCustomController.BroadcastCustomCharacterDisplayCodeChanged();
+        GameCustomController.BroadcastCustomCharacterDisplayNameChanged();
+        
+        //LogUtil.Log("broadcastCustomColorsSync");
+    }
+    
+    public virtual void broadcastCustomCharacterDisplayCodeChanged() {
+        Messenger.Broadcast(GameCustomMessages.customCharacterDisplayCodeChanged);
+    }
+    
+    public virtual void broadcastCustomCharacterDisplayNameChanged() {
+        Messenger.Broadcast(GameCustomMessages.customCharacterDisplayNameChanged);
+    }
+
+    // COLORS
     
     public virtual void broadcastCustomColorsSync() {
         GameCustomController.BroadcastCustomColorsChanged();

@@ -12,8 +12,8 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
 	
     public GameObject listItemPrefab;	
 	
-	public UISlider sliderMusicVolume;
-    public UISlider sliderEffectsVolume;
+	//public UISlider sliderMusicVolume;
+    //public UISlider sliderEffectsVolume;
     
     public static bool isInst {
         get {
@@ -37,6 +37,7 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
 	public override void Start() {
 		Init();
 		
+        /*
 		float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 		float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
 		
@@ -49,6 +50,7 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
 			sliderEffectsVolume.sliderValue = effectsVolume;
 			sliderEffectsVolume.ForceUpdate();
 		}
+  */      
 	}
 
     public override void OnEnable() {
@@ -115,14 +117,14 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
 
         //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
 
-        if (sliderName == sliderEffectsVolume.name) {
-            GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
-			GameState.SaveProfile();
-        }
-        else if (sliderName == sliderMusicVolume.name) {
-            GameProfiles.Current.SetAudioMusicVolume(sliderValue);
-			GameState.SaveProfile();
-        }
+        //if (sliderName == sliderEffectsVolume.name) {
+        //    GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
+		//	GameState.SaveProfile();
+        //}
+        //else if (sliderName == sliderMusicVolume.name) {
+        //    GameProfiles.Current.SetAudioMusicVolume(sliderValue);
+		//	GameState.SaveProfile();
+        //}
     }
 	
     public virtual void loadData() {

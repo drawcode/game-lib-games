@@ -179,6 +179,8 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
 	
 	public override void AnimateIn() {
+
+        backgroundDisplayState = GameBackgroundDisplayState.None;
 		
 		base.AnimateIn();
 	}

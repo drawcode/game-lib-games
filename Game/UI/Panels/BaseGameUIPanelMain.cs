@@ -115,9 +115,10 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     }
 
     public override void AnimateIn() {
-        base.AnimateIn();
 
         backgroundDisplayState = GameBackgroundDisplayState.None;
+
+        base.AnimateIn();
 
         AnimateStartCharacter();
         Invoke("AnimateInDelayed", 1);

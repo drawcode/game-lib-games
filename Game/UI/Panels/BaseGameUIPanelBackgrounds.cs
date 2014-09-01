@@ -96,8 +96,8 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 	
 	public override void Init() {
 		base.Init();
-
-        AnimateInCenter(0,0);
+        AnimateIn();
+        //AnimateInCenter(0,0);
 	}
 	
 	public virtual void LoadData() {
@@ -165,11 +165,14 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     
     public void showUI() {
         StartCoroutine(showUICo());
+        Debug.Log("GameUIPanelBackgrounds::ShowUI");
     }
     
     public IEnumerator showUICo() {
         yield return new WaitForSeconds(.55f);
         ShowPanelBottom(backgroundUI, false);
+
+        Debug.Log("GameUIPanelBackgrounds::ShowUICo");
     }
     
     public static void HideUI() {
@@ -180,13 +183,14 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     
     public void hideUI() {
         HidePanelBottom(backgroundUI, false);
+        Debug.Log("GameUIPanelBackgrounds::HideUI");
     }
 
     //
     
     public void AnimateInUI() {
         AnimateIn();
-        ShowUI();
+        //ShowUI();
     }
             
     public override void AnimateIn() {
