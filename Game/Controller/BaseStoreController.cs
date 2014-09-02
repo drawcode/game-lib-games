@@ -335,7 +335,7 @@ public class BaseStoreController : GameObjectBehavior {
             ResetPurchase(itemPurchasing.product.code);
         }
 
-        UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+        UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
     }
 
     public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {
@@ -349,7 +349,7 @@ public class BaseStoreController : GameObjectBehavior {
             ResetPurchase(itemPurchasing.product.code);
         }
 
-        UINotificationDisplay.Instance.QueueError(data.messageTitle, data.messageDescription);
+        UINotificationDisplay.QueueError(data.messageTitle, data.messageDescription);
     }
 
     // THIRD PARTY
@@ -365,7 +365,7 @@ public class BaseStoreController : GameObjectBehavior {
         if (data != null) {
 
             LogUtil.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+            UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
         }
                 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
@@ -387,7 +387,7 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (data != null) {
             LogUtil.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.Instance.QueueInfo(data.messageTitle, data.messageDescription);
+            UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
@@ -597,12 +597,12 @@ public class BaseStoreController : GameObjectBehavior {
             doPurchase = true;
         }
 
-        if(doPurchase) {
+        if (doPurchase) {
             GameStoreController.BroadcastPurchaseSuccess(
                 GameStorePurchaseRecord.Create(true,
                     gameProduct, "",
                     "Purchase Successful:" + 
-                    gameProduct.GetCurrentProductInfoByLocale().display_name,
+                gameProduct.GetCurrentProductInfoByLocale().display_name,
                     gameProduct.GetCurrentProductInfoByLocale().description, 
                                        gameProduct.code, quantity));
         }
@@ -610,26 +610,26 @@ public class BaseStoreController : GameObjectBehavior {
 
     public virtual void handleGameProductItems(GameProduct gameProduct) {
                 
-        if(gameProduct.data == null) {
+        if (gameProduct.data == null) {
             return;
         }
         
-        if(gameProduct.data.items == null) {
+        if (gameProduct.data.items == null) {
             return;
         }
         
-        foreach(GameDataObject item in gameProduct.data.items) {
+        foreach (GameDataObject item in gameProduct.data.items) {
 
-            if(item.type == GameProductType.character) {
+            if (item.type == GameProductType.character) {
 
                 GameProfileCharacters.Current.AddCharacter(item.code);
             }
-            else if(item.type == GameProductType.currency) {
+            else if (item.type == GameProductType.currency) {
                 
                 // Add skraight cash moneh
                 GameProfileRPGs.Current.AddCurrency(item.valDouble);
             }
-            else if(item.type == GameProductType.item) {
+            else if (item.type == GameProductType.item) {
                 
                 // Add skraight cash moneh
                 //GameProfileRPGs.Current.AddCurrency(item.valDouble);
@@ -659,7 +659,7 @@ public class BaseStoreController : GameObjectBehavior {
                 }
                 
             }
-            else if(item.type == GameProductType.rpgUpgrade) {
+            else if (item.type == GameProductType.rpgUpgrade) {
 
                 GameProfileRPGs.Current.AddUpgrades(item.valDouble);
             }

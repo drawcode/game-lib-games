@@ -1,4 +1,4 @@
-//#define BROADCAST_USE_EVERYPLAY
+#define BROADCAST_USE_EVERYPLAY
 //#define BROADCAST_USE_TWITCH
 
 using System;
@@ -160,6 +160,22 @@ public class BroadcastNetworks : GameObjectBehavior {
     // ----------------------------------------------------------------------
     
     // BROADCAST
+
+    // OPEN
+    
+    public static void Open() {
+        if (Instance != null) {
+            Instance.open();
+        }
+    }
+    
+    public void open() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.Show();
+        #else
+        #endif
+    }
 
     // IS SUPPORTED
 

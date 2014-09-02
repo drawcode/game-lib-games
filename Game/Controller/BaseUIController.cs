@@ -116,6 +116,12 @@ public class BaseUIButtonNames {
     public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
     public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";
 
+    // broadcast
+    
+    public static string buttonGameBroadcastStart = "ButtonGameBroadcastStart";
+    public static string buttonGameBroadcastStop = "ButtonGameBroadcastStop";
+    public static string buttonGameBroadcastShow = "ButtonGameBroadcastShow";
+
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
@@ -3421,6 +3427,18 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomize, buttonName)) {
             GameUIController.ShowCustomize();
+        }
+
+        // BROADCAST
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastStart, buttonName)) {
+            BroadcastNetworks.StartRecording();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastStop, buttonName)) {
+            BroadcastNetworks.StopRecording();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastShow, buttonName)) {
+            BroadcastNetworks.Open();
         }
 
         // GAME INIT

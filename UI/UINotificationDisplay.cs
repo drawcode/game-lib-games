@@ -145,8 +145,24 @@ public class UINotificationDisplay
 		}
 
     }	
+
+    // NOTIFICATION
+    
+    public static void QueueNotification(
+        string title, 
+        string description, 
+        double score, 
+        UINotificationType notificationType) {  
+        if(Instance != null) {
+            Instance.queueNotification(
+                title, 
+                description, 
+                score, 
+                notificationType);
+        }
+    }
 	
-	public void QueueNotification(
+	public void queueNotification(
 		string title, 
 		string description, 
 		double score, 
@@ -160,28 +176,75 @@ public class UINotificationDisplay
 		QueueNotification(notification);
 	}
 	
+    // ACHIEVEMENT
+        
+    public static void QueueAchievement(string title, string description, double points) {            
+        if(Instance != null) {
+            Instance.queueAchievement(title, description, points);   
+        }
+    }
 	
-	public void QueueAchievement(string title, string description, double points) {				
-		QueueNotification(title, description, points, UINotificationType.Achievement);		
+	public void queueAchievement(string title, string description, double points) {				
+		queueNotification(title, description, points, UINotificationType.Achievement);		
 	}
 	
-	public void QueuePoint(string title, string description, double points) {				
-		QueueNotification(title, description, points, UINotificationType.Point);		
+    // POINT
+    
+    public static void QueuePoint(string title, string description, double points) {            
+        if(Instance != null) {
+            Instance.queuePoint(title, description, points);   
+        }
+    }
+
+	public void queuePoint(string title, string description, double points) {				
+		queueNotification(title, description, points, UINotificationType.Point);		
 	}
 		
-	public void QueueInfo(string title, string description) {				
+    // INFO
+
+    public static void QueueInfo(string title, string description) {            
+        if(Instance != null) {
+            Instance.queueInfo(title, description);   
+        }
+    }
+
+	public void queueInfo(string title, string description) {				
 		QueueNotification(title, description, 0, UINotificationType.Info);		
 	}
-		
-	public void QueueError(string title, string description) {				
+
+    // ERROR
+    
+    public static void QueueError(string title, string description) {            
+        if(Instance != null) {
+            Instance.queueError(title, description);   
+        }
+    }
+
+	public void queueError(string title, string description) {				
 		QueueNotification(title, description, 0, UINotificationType.Error);		
 	}
-		
-	public void QueueTip(string title, string description) {				
+
+    // TIP
+    
+    public static void QueueTip(string title, string description) {            
+        if(Instance != null) {
+            Instance.queueTip(title, description);   
+        }
+    }
+
+	public void queueTip(string title, string description) {				
 		QueueNotification(title, description, 0, UINotificationType.Tip);		
 	}
-	
-	public void QueueNotification(UINotificationItem notificationItem) {
+
+    // NOTIFICATION MAIN
+    
+    public void QueueNotification(UINotificationItem notificationItem) {
+        if(Instance != null) { 
+            Instance.queueNotification(notificationItem);
+        }
+    }
+
+	public void queueNotification(UINotificationItem notificationItem) {
 
         foreach(UINotificationItem item in notificationQueue) {
             if(item.title == notificationItem.title) {

@@ -123,7 +123,7 @@ public class UIPanelCommunityCamera : UIPanelBase {
         
         yield return new WaitForSeconds(.5f);
         
-        UINotificationDisplay.Instance.QueueInfo("Loading Photo", "Photo just taken is saving.");
+        UINotificationDisplay.QueueInfo("Loading Photo", "Photo just taken is saving.");
 
         ShowCameraPhoto();
     }

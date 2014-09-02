@@ -4665,34 +4665,34 @@ public class BaseGamePlayerController : GameActor {
                 else if (Input.GetKey(KeyCode.V)) {                  
                     LoadWeapon("weapon-machine-gun-1");
 
-                    UINotificationDisplay.Instance.QueueTip(
+                    UINotificationDisplay.QueueTip(
                         "Machine Gun Enabled",
                         "Machine gun simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.B)) {                  
                     LoadWeapon("weapon-flame-thrower-1");
 
-                    UINotificationDisplay.Instance.QueueTip(
+                    UINotificationDisplay.QueueTip(
                         "Flame Thrower Enabled",
                         "Flame thrower simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.N)) {                  
                     LoadWeapon("weapon-shotgun-1");
-                    UINotificationDisplay.Instance.QueueTip(
+                    UINotificationDisplay.QueueTip(
                         "Shotgun Enabled",
                         "Shotgun simulation trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.M)) {                  
                     LoadWeapon("weapon-rocket-launcher-1");
 
-                    UINotificationDisplay.Instance.QueueTip(
+                    UINotificationDisplay.QueueTip(
                             "Rocket Launcher Enabled",
                             "Rocket launcher trigger and action installed and ready.");
                 }
                 else if (Input.GetKey(KeyCode.C)) {                  
                     LoadWeapon("weapon-rifle-1");
 
-                    UINotificationDisplay.Instance.QueueTip(
+                    UINotificationDisplay.QueueTip(
                             "Rifle Enabled",
                             "Rifle simulation trigger and action installed and ready.");
                 }
