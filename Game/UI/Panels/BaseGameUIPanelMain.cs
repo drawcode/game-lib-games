@@ -22,7 +22,6 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public UIButton buttonPlayerUCFObject;
     public UIButton buttonPlayerBUObject;
     public GameObject containerStartObject;
-    public UILabel labelStartObject;
     
     public static bool isInst {
         get {
