@@ -115,6 +115,8 @@ public class BaseUIButtonNames {
     public static string buttonGameCommunityCameraSaveTwitter = "ButtonGameCommunityCameraSaveTwitter";
     public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
     public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";
+    
+    public static string buttonGameCommunityCameraTakePhoto = "ButtonGameCommunityCameraTakePhoto";
 
     // broadcast
     
@@ -3439,6 +3441,14 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastShow, buttonName)) {
             BroadcastNetworks.Open();
+        }
+
+        // COMMUNITY
+
+        // BROADCAST
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
+            UIPanelCommunityCamera.TakePhoto();
         }
 
         // GAME INIT
