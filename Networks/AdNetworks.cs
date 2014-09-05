@@ -17,7 +17,7 @@ using Engine.Events;
 using Engine.Utility; 
 
 #if PROMO_USE_CHARTBOOST
-using Chartboost;
+using ChartboostSDK;
 #endif
 
 public enum AdNetworkType {
@@ -141,10 +141,10 @@ public class AdNetworks : GameObjectBehavior {
         // CHARTBOOST
 
         // Listen to some interstitial-related events
-        CBManager.didFailToLoadInterstitialEvent += chartboostDidFailToLoadInterstitialEvent;
-        CBManager.didCloseInterstitialEvent += chartboostDidCloseInterstitialEvent;
-        CBManager.didCacheInterstitialEvent += chartboostDidCacheInterstitialEvent;
-        CBManager.didShowInterstitialEvent += chartboostDidShowInterstitialEvent;
+        ChartboostSDK.Chartboost.didFailToLoadInterstitial += chartboostDidFailToLoadInterstitialEvent;
+        ChartboostSDK.Chartboost.didCloseInterstitial += chartboostDidCloseInterstitialEvent;
+        ChartboostSDK.Chartboost.didCacheInterstitial += chartboostDidCacheInterstitialEvent;
+        ChartboostSDK.Chartboost.didDisplayInterstitial += chartboostDidShowInterstitialEvent;
 #endif
 
 #if PROMO_USE_VUNGLE
@@ -204,10 +204,10 @@ public class AdNetworks : GameObjectBehavior {
         // CHARTBOOST
 
         // Remove event handlers
-        CBManager.didFailToLoadInterstitialEvent -= chartboostDidFailToLoadInterstitialEvent;
-        CBManager.didCloseInterstitialEvent -= chartboostDidCloseInterstitialEvent;
-        CBManager.didCacheInterstitialEvent -= chartboostDidCacheInterstitialEvent;
-        CBManager.didShowInterstitialEvent -= chartboostDidShowInterstitialEvent;
+        ChartboostSDK.Chartboost.didFailToLoadInterstitial -= chartboostDidFailToLoadInterstitialEvent;
+        ChartboostSDK.Chartboost.didCloseInterstitial -= chartboostDidCloseInterstitialEvent;
+        ChartboostSDK.Chartboost.didCacheInterstitial -= chartboostDidCacheInterstitialEvent;
+        ChartboostSDK.Chartboost.didDisplayInterstitial -= chartboostDidShowInterstitialEvent;
 #endif
 
 #if PROMO_USE_VUNGLE
@@ -484,9 +484,9 @@ public class AdNetworks : GameObjectBehavior {
     public void chartboostInit() {
 
         #if UNITY_ANDROID
-            CBBinding.init(AppConfigs.publisherIdCharboostAndroid, AppConfigs.publisherSecretCharboostAndroid);
+           // ChartboostSDK.Chartboost.init(AppConfigs.publisherIdCharboostAndroid, AppConfigs.publisherSecretCharboostAndroid);
         #elif UNITY_IPHONE
-            CBBinding.init(AppConfigs.publisherIdCharboostiOS, AppConfigs.publisherSecretCharboostiOS);
+            //CBBinding.init(AppConfigs.publisherIdCharboostiOS, AppConfigs.publisherSecretCharboostiOS);
         #endif
     }
 
@@ -494,44 +494,40 @@ public class AdNetworks : GameObjectBehavior {
         chartboostShowInterstitial(null);
     }
     
-    public void chartboostShowInterstitial(string location) {
-        CBBinding.showInterstitial(location);
+    public void chartboostShowInterstitial(CBLocation location) {
+        Chartboost.showInterstitial(location);
     }
     
     public void chartboostCacheInterstitial() {
         chartboostCacheInterstitial(null);
     }
 
-    public void chartboostCacheInterstitial(string location) {
-        CBBinding.cacheInterstitial(location);
+    public void chartboostCacheInterstitial(CBLocation location) {
+        Chartboost.cacheInterstitial(location);
     }
     
-    public void chartboostCacheMoreApps() {
-        CBBinding.cacheMoreApps();
+    public void chartboostCacheMoreApps(CBLocation location) {
+        Chartboost.cacheMoreApps(location);
     }
 
-    public void chartboostForceOrientation(ScreenOrientation screenOrientation) {
-        CBBinding.forceOrientation(screenOrientation);
-    }
+    //public void chartboostForceOrientation(ScreenOrientation screenOrientation) {
+    //    Chartboost..forceOrientation(screenOrientation);
+    //}
 
-    public bool chartboostHasCachedInterstitial(string location) {
-        return CBBinding.hasCachedInterstitial(location);
-    }
-        
-    public bool chartboostHasCachedInterstitial() {
-        return chartboostHasCachedInterstitial(null);
+    public bool chartboostHasInterstitial(CBLocation location) {
+        return Chartboost.hasInterstitial(location);
     }
     
-    public void chartboostHasCachedMoreApps() {
-        CBBinding.hasCachedMoreApps();
+    public void chartboostHasMoreApps(CBLocation location) {
+        Chartboost.hasMoreApps(location);
     }
     
     public bool chartboostIsImpressionVisible() {
-        return CBBinding.isImpressionVisible();
+        return Chartboost.isImpressionVisible();
     }
     
-    public void chartboostShowMoreApps() {
-        CBBinding.showMoreApps();
+    public void chartboostShowMoreApps(CBLocation location) {
+        Chartboost.showMoreApps(location);
     }
     
     public void chartboostTrackEvent(string eventIdentifier, double value, Dictionary<string,object> metaData) {
@@ -540,38 +536,38 @@ public class AdNetworks : GameObjectBehavior {
 
     /// Fired when an interstitial fails to load
     /// First parameter is the location.
-    public void chartboostDidFailToLoadInterstitialEvent(string data, CBManager.CBImpressionError error) {
+    public void chartboostDidFailToLoadInterstitialEvent(CBLocation data, ChartboostSDK.CBImpressionError error) {
 
     }
     
     /// Fired when an interstitial is finished via any method
     /// This will always be paired with either a close or click event
     /// First parameter is the location.
-    public void chartboostDidDismissInterstitialEvent(string data) {
+    public void chartboostDidDismissInterstitialEvent(CBLocation data) {
         
     }
     
     /// Fired when an interstitial is closed (i.e. by tapping the X or hitting the Android back button)
     /// First parameter is the location.
-    public void chartboostDidCloseInterstitialEvent(string data) {
+    public void chartboostDidCloseInterstitialEvent(CBLocation data) {
         
     }
     
     /// Fired when an interstitial is clicked
     /// First parameter is the location.
-    public void didClickInterstitialEvent(string data) {
+    public void didClickInterstitialEvent(CBLocation data) {
         
     }
     
     /// Fired when an interstitial is cached
     /// First parameter is the location.
-    public void chartboostDidCacheInterstitialEvent(string data) {
+    public void chartboostDidCacheInterstitialEvent(CBLocation data) {
         
     }
     
     /// Fired when an interstitial is shown
     /// First parameter is the location.
-    public void chartboostDidShowInterstitialEvent(string data) {
+    public void chartboostDidShowInterstitialEvent(CBLocation data) {
         
     }
     
@@ -971,7 +967,8 @@ public class AdNetworks : GameObjectBehavior {
     public void showMoreApps() {
         
         #if PROMO_USE_CHARTBOOST
-        chartboostShowMoreApps();
+        CBLocation location = CBLocation.LevelStart;
+        chartboostShowMoreApps(location);
         #endif
     }
 
@@ -997,9 +994,9 @@ public class AdNetworks : GameObjectBehavior {
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
                 #if PROMO_USE_CHARTBOOST
-                if (CBBinding.onBackPressed())
-                    return;
-                else
+                //if (Chartboost..onBackPressed())
+                //    return;
+                //else
                     Application.Quit();
                 #else 
                 Application.Quit();
