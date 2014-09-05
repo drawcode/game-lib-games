@@ -6,6 +6,25 @@ using UnityEngine;
 
 using Engine.Events;
 
+public enum UIPanelBackgroundDisplayState {
+    None,
+    PanelBacker
+}
+
+public enum UIPanelCharacterDisplayState {
+    None,
+    Character
+}
+
+public enum UIPanelButtonsDisplayState {
+    None,
+    Character,
+    CharacterCustomize,
+    Statistics,
+    Achievements,
+    GameNetworks
+}
+
 public class UIPanelBaseTypes {
     public static string typeDefault = "type-default";
     public static string typeDialogHUD = "type-dialog-hud";
@@ -19,6 +38,10 @@ public class UIPanelBaseTypes {
 }
 
 public class UIPanelBase : UIAppPanel {
+    
+    public UIPanelCharacterDisplayState characterDisplayState = UIPanelCharacterDisplayState.None;
+    public UIPanelButtonsDisplayState buttonDisplayState = UIPanelButtonsDisplayState.None;
+    public UIPanelBackgroundDisplayState backgroundDisplayState = UIPanelBackgroundDisplayState.None;
 
     public GameObject listGridRoot;
     public UIGrid listGrid;
@@ -484,6 +507,12 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateIn(float time, float delay) {
+                    
+        HandleCharacterDisplay();
+            
+        HandleButtonDisplay();
+            
+        HandleBackgroundDisplay();
              
         AnimateInCenter(time, delay);
         AnimateInLeft(time, delay);
@@ -943,5 +972,62 @@ public class UIPanelBase : UIAppPanel {
         }
         return null;
     }
+
+    // PANEL SECTIONS STATES
+
+    
+    public void HandleCharacterDisplay() {
+        
+        // handle character display
+        
+        if(characterDisplayState == 
+           UIPanelCharacterDisplayState.Character) {
+            
+            GameUIPanelHeader.ShowCharacter();
+        }
+    }    
+    
+    public void HandleButtonDisplay() {
+        
+        // handle buttons
+        
+        if(buttonDisplayState == 
+           UIPanelButtonsDisplayState.CharacterCustomize) {
+            
+            GameUIPanelFooter.ShowButtonsCharacterCustomize();
+        }
+        else if(buttonDisplayState == 
+                UIPanelButtonsDisplayState.Character) {
+            
+            GameUIPanelFooter.ShowButtonsCharacter();
+        }
+        else if(buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
+            
+            GameUIPanelFooter.ShowButtonsStatistics();
+        }
+        else if(buttonDisplayState == UIPanelButtonsDisplayState.Achievements) {
+            
+            GameUIPanelFooter.ShowButtonsAchievements();
+        }
+        else if(buttonDisplayState == UIPanelButtonsDisplayState.GameNetworks) {
+            
+            GameUIPanelFooter.ShowButtonGameNetworks();
+        }
+    }
+    
+    public void HandleBackgroundDisplay() {
+        
+        // handle character display
+        
+        if(backgroundDisplayState == 
+           UIPanelBackgroundDisplayState.PanelBacker) {
+            
+            GameUIPanelBackgrounds.ShowUI();
+        }
+        else if (backgroundDisplayState == 
+                 UIPanelBackgroundDisplayState.None){
+            GameUIPanelBackgrounds.HideUI();
+        }
+    }    
 }
 
