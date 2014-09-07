@@ -8,20 +8,12 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIPanelCommunityBroadcast : UIPanelBase {
+public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public static UIPanelCommunityBroadcast Instance;
-    public GameObject panelCameraButton;
-    public GameObject panelCameraBackground;
-    public GameObject panelCameraPhoto;
-    public GameObject photoObject;
-    public Material photoMaterial;
-    public UIImageButton buttonPhotoLibrarySave;
-    public UIImageButton buttonPhotoFacebook;
-    public UIImageButton buttonPhotoTwitter;
-    public UIImageButton buttonPhotoClose;
     
-    public UIImageButton buttonPhotoTake;
+    public GameObject panelBroadcastButton;
+    public GameObject panelBroadcastRecord;
 
     public void Awake() {
 
@@ -48,7 +40,7 @@ public class UIPanelCommunityBroadcast : UIPanelBase {
 
         //loadData();
 
-        ShowCameraButton();
+        ShowBroadcastButton();
     }
 
     public override void Start() {
@@ -73,164 +65,61 @@ public class UIPanelCommunityBroadcast : UIPanelBase {
 
     public void OnButtonClickEventHandler(string buttonName) {
 
-        if(UIUtil.IsButtonClicked(buttonPhotoTake, buttonName)) {
-            TakePhoto();
-        }
-        else if(UIUtil.IsButtonClicked(buttonPhotoClose, buttonName)) {
-            ShowCameraButton();
-            
-            GameController.GameRunningStateRun();
-        }
-        else if(UIUtil.IsButtonClicked(buttonPhotoFacebook, buttonName)) {
-            GameCommunitySocialController.UploadCurrentPhotoToFacebook();
-        }
-        else if(UIUtil.IsButtonClicked(buttonPhotoTwitter, buttonName)) {
-            GameCommunitySocialController.UploadCurrentPhotoToTwitter();
-        }
     }
-
-    
-    public static void TakePhoto() {
-        if(isInst) {
-            Instance.takePhoto();
-        }
-    }
-    
-    public void takePhoto() {   
-        if(photoMaterial == null) {
-            Debug.LogWarning("No photoMaterial found");
-            return;
-        }
-        
-        StartCoroutine(takePhotoCo());
-    }
-    
-    IEnumerator takePhotoCo() { 
-
-        ShowNone();
-
-        GameUIPanelOverlays.Instance.ShowOverlayWhiteFlash();
-        
-        yield return new WaitForSeconds(.8f);
-        
-        PhotoObjectSize();
-        
-        GameCommunitySocialController.TakePhoto(photoMaterial);
-        
-        GameController.GameRunningStateContent();
-        
-        yield return new WaitForSeconds(.5f);
-        
-        yield return new WaitForSeconds(.5f);
-        
-        UINotificationDisplay.QueueInfo("Loading Photo", "Photo just taken is saving.");
-
-        ShowCameraPhoto();
-    }
-    
-    
-    public void PhotoObjectSize() {
-        // current size 250x250
-        
-        float currentWidth = Screen.width;
-        float currentHeight = Screen.height;
-        
-        float photoWidth = 640f;
-        float photoHeight = 420f;
-        
-        float currentRatioWidth = photoWidth/currentWidth;
-        float currentRatioHeight = photoHeight/currentHeight;
-        
-        if(currentRatioHeight < currentRatioWidth) {
-            currentWidth *= currentRatioHeight;
-            currentHeight *= currentRatioHeight;
-        }
-        else if(currentRatioWidth < currentRatioHeight) {
-            currentWidth *= currentRatioWidth;
-            currentHeight *= currentRatioWidth;
-        }
-        
-        photoObject.transform.localScale 
-            = photoObject.transform.localScale
-                .WithX(currentWidth).WithY(currentHeight);  
-        
-    }
-
 
     // SHOW/LOAD
 
     public void HidePanels() {
-        HideCameraPhoto();
-        HideCameraButton();
-        HideCameraBackground();
+        HideBroadcastRecord();
+        HideBroadcastButton();
     }
 
     //
         
-    public static void ShowCameraButton() {
+    public static void ShowBroadcastButton() {
         if (isInst) {
-            Instance.showCameraButton();
+            Instance.showBroadcastButton();
         }
     }
 
-    public void showCameraButton() { 
+    public void showBroadcastButton() { 
         HidePanels();
-        AnimateInRight(panelCameraButton);
+        AnimateInBottom(panelBroadcastButton);
     }
     
-    public static void HideCameraButton() {
+    public static void HideBroadcastButton() {
         if (isInst) {
-            Instance.hideCameraButton();
+            Instance.hideBroadcastButton();
         }
     }
 
-    public void hideCameraButton() {
-        AnimateInRight(panelCameraButton);
+    public void hideBroadcastButton() {
+        AnimateOutBottom(panelBroadcastButton);
     }    
     
     //
     
-    public static void ShowCameraBackground() {
+    public static void ShowBroadcastRecord() {
         if (isInst) {
-            Instance.showCameraBackground();
-        }
-    }
-    
-    public void showCameraBackground() { 
-        AnimateInRight(panelCameraBackground);
-    }
-    
-    public static void HideCameraBackground() {
-        if (isInst) {
-            Instance.hideCameraBackground();
-        }
-    }
-    
-    public void hideCameraBackground() {
-        AnimateInRight(panelCameraBackground);
-    }
-
-    //
-    
-    public static void ShowCameraPhoto() {
-        if (isInst) {
-            Instance.showCameraPhoto();
+            Instance.showBroadcastRecord();
         }
     }
 
-    public void showCameraPhoto() {
+    public void showBroadcastRecord() {
         HidePanels();
-        AnimateInBottom(panelCameraPhoto);
+        AnimateInBottom(panelBroadcastRecord);
+                
+        UIPanelCommunityBackground.ShowBackground();
     }
         
-    public static void HideCameraPhoto() {
+    public static void HideBroadcastRecord() {
         if (isInst) {
-            Instance.hideCameraPhoto();
+            Instance.hideBroadcastRecord();
         }
     }
     
-    public void hideCameraPhoto() {
-        AnimateOutBottom(panelCameraPhoto);
+    public void hideBroadcastRecord() {
+        AnimateOutBottom(panelBroadcastRecord);
     }
 
     public static void ShowDefault() {
@@ -262,9 +151,8 @@ public class UIPanelCommunityBroadcast : UIPanelBase {
     }
 
     public void showButton() {
-        ShowCameraButton();
-        HideCameraPhoto();
-        HideCameraBackground();
+        ShowBroadcastButton();
+        HideBroadcastRecord();
     }
 
     public static void ShowDialog() {
@@ -274,9 +162,7 @@ public class UIPanelCommunityBroadcast : UIPanelBase {
     }
     
     public void showDialog() {
-        HideCameraButton();
-        ShowCameraPhoto();
-        ShowCameraBackground();
+        ShowBroadcastRecord();
     }
         
     public static void ShowNone() {
@@ -286,20 +172,18 @@ public class UIPanelCommunityBroadcast : UIPanelBase {
     }
     
     public void showNone() {
-        HideCameraButton();
-        HideCameraPhoto();
+        HideBroadcastButton();
+        HideBroadcastRecord();
     }
 
     public override void AnimateIn() {
         base.AnimateIn();
-
-
-
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
 
+        ShowBroadcastButton();
     }
 
     public void Update() {

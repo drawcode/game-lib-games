@@ -1,6 +1,12 @@
 #define BROADCAST_USE_EVERYPLAY
 //#define BROADCAST_USE_TWITCH
 
+#if UNITY_STANDALONE_OSX
+#elif UNITY_STANDALONE_WIN
+#elif UNITY_ANDROID    
+#elif UNITY_IPHONE
+    #define BROADCAST_USE_EVERYPLAY
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,6 +25,7 @@ public enum BroadcastNetworkType {
 
 public class BroadcastNetworksMessages {
     
+    public static string broadcastRecordingStatusChanged = "broadcast-recording-status-changed";
     public static string broadcastRecordingStart = "broadcast-recording-start";
     public static string broadcastRecordingStop = "broadcast-recording-stop";
     public static string broadcastRecordingPlayback = "broadcast-recording-playback";
@@ -74,6 +81,13 @@ public class BroadcastNetworks : GameObjectBehavior {
         Everyplay.RecordingStarted += everyplayRecordingStartedDelegate;
         Everyplay.RecordingStopped += everyplayRecordingStoppedDelegate;
         Everyplay.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
+        
+        Everyplay.ReadyForRecording += everyplayReadyForRecordingDelegate;
+        Everyplay.UploadDidComplete += everyplayUploadDidCompleteDelegate;
+        Everyplay.UploadDidProgress += everyplayUploadDidProgressDelegate;
+        Everyplay.UploadDidStart += everyplayUploadDidStartDelegate;
+        Everyplay.WasClosed += everyplayWasClosedDelegate;
+
 
         #endif
 
@@ -86,10 +100,16 @@ public class BroadcastNetworks : GameObjectBehavior {
         #if BROADCAST_USE_EVERYPLAY
         // ------------
         // EVERPLAY
-        
-        Everyplay.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
+
         Everyplay.RecordingStarted -= everyplayRecordingStartedDelegate;
         Everyplay.RecordingStopped -= everyplayRecordingStoppedDelegate;
+        Everyplay.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
+        
+        Everyplay.ReadyForRecording -= everyplayReadyForRecordingDelegate;
+        Everyplay.UploadDidComplete -= everyplayUploadDidCompleteDelegate;
+        Everyplay.UploadDidProgress -= everyplayUploadDidProgressDelegate;
+        Everyplay.UploadDidStart -= everyplayUploadDidStartDelegate;
+        Everyplay.WasClosed -= everyplayWasClosedDelegate;
 
         #endif
 
@@ -105,10 +125,12 @@ public class BroadcastNetworks : GameObjectBehavior {
     #if BROADCAST_USE_EVERYPLAY
     // ----------------------------------------------------------------------
     // EVERPLAY - https://developers.everyplay.com/doc/Everyplay-integration-to-Unity3d-game
+
+    bool facecamPermissionGranted = false;
     
     public void everyplayInit() {
 
-        if(broadcastEveryplay == null) {
+        if (broadcastEveryplay == null) {
                 
             broadcastEveryplay = FindObjectOfType(typeof(Everyplay)) as Everyplay;
                 
@@ -116,6 +138,11 @@ public class BroadcastNetworks : GameObjectBehavior {
                 var obj = new GameObject("_BroadcastEveryplay");
                 broadcastEveryplay = obj.AddComponent<Everyplay>();
                 DontDestroyOnLoad(broadcastEveryplay);
+
+                if (IsSupported()) {
+                    // Subscribe to the permission events
+                    Everyplay.SharedInstance.FaceCamRecordingPermission += everyplayCheckForRecordingPermission;
+                }
             }
         }
 
@@ -124,13 +151,26 @@ public class BroadcastNetworks : GameObjectBehavior {
         //broadcastEveryplay.redirectURI = AppConfigs.broadcastEveryplayAuthUrl;
         
     }
+
+    // Method to listen for permissions
+
+    private void everyplayCheckForRecordingPermission(bool granted) {
+        if (granted) {
+            Debug.Log("Microphone access was granted");
+            facecamPermissionGranted = granted;
+            // * HERE YOU CAN START YOUR FACECAM SAFELY * //
+        }
+        else {
+            Debug.Log("Microphone access was DENIED");
+        }
+    }
     
     // RECORDING
     
-    public void everyplayIsRecordingSupported() {
+    public bool everyplayIsRecordingSupported() {
         LogUtil.Log("everyplayIsRecordingSupported");        
-        Everyplay.IsRecordingSupported();
-    }        
+        return Everyplay.IsRecordingSupported();
+    }
     
     public void everyplayRecordingStartedDelegate() {
         LogUtil.Log("Recording was started");
@@ -145,10 +185,35 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
     
     public void everyplayThumbnailReadyAtFilePathDelegate(string path) {
-        LogUtil.Log("Thumbnail ready: "  + path);
-        //this.thumbnailPath = path;
-    }
+        LogUtil.Log("Thumbnail ready: " + path);
 
+        recordingThumbnailPath = path;
+    }
+    
+    public void everyplayReadyForRecordingDelegate(bool isSupported) {
+        LogUtil.Log("everyplayReadyForRecordingDelegate: isSupported:", isSupported);
+
+    }
+    
+    public void everyplayUploadDidCompleteDelegate(int videoId) {
+        LogUtil.Log("everyplayUploadDidCompleteDelegate: videoId:", videoId);
+
+    }
+    
+    public void everyplayUploadDidProgressDelegate(int videoId, float progress) {
+        LogUtil.Log("everyplayUploadDidProgressDelegate: videoId:", videoId + " progress:" + progress);
+
+    }
+    
+    public void everyplayUploadDidStartDelegate(int videoId) {
+        LogUtil.Log("everyplayUploadDidStartDelegate: videoId:", videoId);
+
+    }
+    
+    public void everyplayWasClosedDelegate() {
+        LogUtil.Log("everyplayWasClosedDelegate");
+
+    }
     #endif
         
     
@@ -171,8 +236,71 @@ public class BroadcastNetworks : GameObjectBehavior {
     
     public void open() {
         
+        if (!IsSupported()) {
+            return;
+        }
+
         #if BROADCAST_USE_EVERYPLAY
         Everyplay.Show();
+        #else
+        #endif
+    }
+    
+    // OPEN MODAL
+    
+    public static void OpenSharing() {
+        if (Instance != null) {
+            Instance.openSharing();
+        }
+    }
+    
+    public void openSharing() {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.ShowSharingModal();
+        #else
+        #endif
+    }
+
+    
+    // METADATA
+    
+    public static void SetMetadata(string key, object val) {
+        if (Instance != null) {
+            Instance.setMetadata(key, val);
+        }
+    }
+    
+    public void setMetadata(string key, object val) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetMetadata(key, val);
+        #else
+        #endif
+    }
+
+    public static void SetMetadata(string key, Dictionary<string,object> values) {
+        if (Instance != null) {
+            Instance.setMetadata(key, values);
+        }
+    }
+    
+    public void setMetadata(string key, Dictionary<string,object> values) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetMetadata(key, values);
         #else
         #endif
     }
@@ -194,8 +322,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         return false;
         #endif
     }
-
-    // IS RECORDING SUPPORTED    
+    
+    // IS RECORDING SUPPORTED
     
     public static bool IsRecordingSupported() {
         if (Instance != null) {
@@ -207,7 +335,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public bool isRecordingSupported() {
         
         #if BROADCAST_USE_EVERYPLAY
-        return Everyplay.IsRecordingSupported();
+        return everyplayIsRecordingSupported();
         #else
         return false;
         #endif
@@ -248,6 +376,27 @@ public class BroadcastNetworks : GameObjectBehavior {
         return false;
         #endif
     }
+    
+    // TOGGLE RECORDING
+    
+    public static void ToggleRecording() {
+        if (Instance != null) {
+            Instance.toggleRecording();
+        }
+    }
+    
+    public void toggleRecording() {
+        if (!IsSupported() || !IsRecordingSupported()) {
+            return;
+        }
+
+        if(IsRecording()) {
+            StopRecording();
+        }
+        else {
+            StartRecording();
+        }
+    }
 
     // START RECORDING
     
@@ -258,9 +407,18 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
         
     public void startRecording() {
+        if (!IsSupported() || !IsRecordingSupported()) {
+            return;
+        }
+
+        SetMaxRecordingMinutesLength(10);
+
+        if (FPSDisplay.isUnder25FPS) {
+            SetLowMemoryDevice(true);
+        }
         
         #if BROADCAST_USE_EVERYPLAY
-        if(IsRecording()) {
+        if (!IsRecording()) {
             Everyplay.StartRecording();
         }
         #endif
@@ -275,9 +433,12 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
     
     public void stopRecording() {
-        
+        if (!IsSupported()) {
+            return;
+        }
+                
         #if BROADCAST_USE_EVERYPLAY
-        if(IsRecording()) {
+        if (IsRecording()) {
             Everyplay.StopRecording();
         }
         #endif
@@ -292,9 +453,12 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
     
     public void resumeRecording() {
-        
+        if (!IsSupported()) {
+            return;
+        }
+                
         #if BROADCAST_USE_EVERYPLAY
-        if(IsRecording() && IsPaused()) {
+        if (IsRecording() && IsPaused()) {
             Everyplay.ResumeRecording();
         }
         #endif
@@ -309,12 +473,193 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
     
     public void pauseRecording() {
-        
+        if (!IsSupported()) {
+            return;
+        }
+                
         #if BROADCAST_USE_EVERYPLAY
-        if(IsRecording()) {
+        if (IsRecording()) {
             Everyplay.PauseRecording();
         }
         #endif
+    }
+
+    // PLAY LAST RECORDING
+
+    public static void PlayLastRecording() {
+        if (Instance != null) {
+            Instance.playLastRecording();
+        }
+    }
+    
+    public void playLastRecording() {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.PlayLastRecording();
+        #else
+        #endif
+    }
+
+    // TAKE THUMBNAIL
+    
+    public static void TakeThumbnail() {
+        if (Instance != null) {
+            Instance.takeThumbnail();
+        }
+    }
+    
+    public void takeThumbnail() {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.TakeThumbnail();
+        #else
+        #endif
+    }
+    
+    // PERFORMANCE
+    
+    public static void SetLowMemoryDevice(bool isLowMemory) {
+        if (Instance != null) {
+            Instance.setLowMemoryDevice(isLowMemory);
+        }
+    }
+    
+    public void setLowMemoryDevice(bool isLowMemory) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetLowMemoryDevice(isLowMemory);
+        #else
+        #endif
+    }
+    
+    // PERFORMANCE
+    
+    public static void SetDisableSingleCoreDevices(bool isLowMemory) {
+        if (Instance != null) {
+            Instance.setDisableSingleCoreDevices(isLowMemory);
+        }
+    }
+    
+    public void setDisableSingleCoreDevices(bool isLowMemory) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetDisableSingleCoreDevices(isLowMemory);
+        #else
+        #endif
+    }
+    
+    // PERFORMANCE
+    
+    public static void SetMaxRecordingMinutesLength(int maxlength) {
+        if (Instance != null) {
+            Instance.setMaxRecordingMinutesLength(maxlength);
+        }
+    }
+    
+    public void setMaxRecordingMinutesLength(int maxlength) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetMaxRecordingMinutesLength(maxlength);
+        #else
+        #endif
+    }
+
+    // THUMBNAIL
+    
+    #if BROADCAST_USE_EVERYPLAY
+    public static void LoadThumbnailFromFilePath(
+        string path, 
+        Everyplay.ThumbnailLoadReadyDelegate thumbnailLoadReadyDelegate, 
+        Everyplay.ThumbnailLoadFailedDelegate thumbnailLoadFailedDelegate) {
+
+        if (Instance != null) {
+            Instance.loadThumbnailFromFilePath(
+                path, 
+                thumbnailLoadReadyDelegate, 
+                thumbnailLoadFailedDelegate);
+        }
+    }
+    
+    public void loadThumbnailFromFilePath(
+        string path, 
+        Everyplay.ThumbnailLoadReadyDelegate thumbnailLoadReadyDelegate, 
+        Everyplay.ThumbnailLoadFailedDelegate thumbnailLoadFailedDelegate) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+
+        Everyplay.LoadThumbnailFromFilePath(
+            path, 
+            thumbnailLoadReadyDelegate, 
+            thumbnailLoadFailedDelegate);
+    }
+    #else
+    #endif
+
+    public static void SetThumbnailWidth(int thumbnailWidth) {
+        
+        if (Instance != null) {
+            Instance.setThumbnailWidth(thumbnailWidth);
+        }
+    }
+    
+    public void setThumbnailWidth(int thumbnailWidth) {
+        
+        if (!IsSupported()) {
+            return;
+        }
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.SetThumbnailWidth(thumbnailWidth);
+        #else
+        #endif
+    }
+
+    // The filepath we're getting from the thumbnail event
+    string recordingThumbnailPath;
+    
+    /* Delegate for event (see section on getting events) */
+    public void recordingThumbnailReadyAtFilePathDelegate(string filePath) {
+        recordingThumbnailPath = filePath;
+    }
+    
+    /* Define delegate methods */
+    // Success delegate
+    public void recordingThumbnailSuccess(Texture2D texture) {
+        // Yay, we have a video thumbnail, now we present it to the user
+    }
+    
+    // Error delegate
+    public void recordingThumbnailError(string error) {
+        // Oh noes, something went wrong
+        Debug.Log("Thumbnail loading failed: " + error);
+    }
+    
+    // Our own method that is used when the game is in a proper session to load and show the thumbnail
+    public void recordingShowThumbnailToTheUserInTheUI() {
+        // Load the thumbnail, using our delegates as parameter
+        LoadThumbnailFromFilePath(recordingThumbnailPath, recordingThumbnailSuccess, recordingThumbnailError);
     }
 
     /*
@@ -324,7 +669,383 @@ Everyplay.SetMetadata("level_name", levelName);
 Everyplay.SetMetadata("score", score)
 */
 
+    // -------------------
+    // FACECAM
+
     
+    // IS FACECAM SESSION RUNNING
+    
+    public static bool IsFacecamSessionRunning() {
+        if (Instance != null) {
+            return Instance.isFacecamSessionRunning();
+        }
+        return false;
+    }
+    
+    public bool isFacecamSessionRunning() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        return Everyplay.FaceCamIsSessionRunning();
+        #else
+        return false;
+        #endif
+    }
+    
+    // IS FACECAM SESSION RUNNING
+    
+    public static bool IsFacecamAudioRecordingSupported() {
+        if (Instance != null) {
+            return Instance.isFacecamAudioRecordingSupported();
+        }
+        return false;
+    }
+    
+    public bool isFacecamAudioRecordingSupported() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        return Everyplay.FaceCamIsAudioRecordingSupported();
+        #else
+        return false;
+        #endif
+    }
+    
+    // IS FACECAM HEADPHONES PLUGGED IN
+    
+    public static bool IsFacecamHeadphonesPluggedIn() {
+        if (Instance != null) {
+            return Instance.isFacecamHeadphonesPluggedIn();
+        }
+        return false;
+    }
+    
+    public bool isFacecamHeadphonesPluggedIn() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        return Everyplay.FaceCamIsHeadphonesPluggedIn();
+        #else
+        return false;
+        #endif
+    }
+    
+    // IS FACECAM RECORDING PERMISSION GRANTED
+    
+    public static bool IsFacecamRecordingPermissionGranted() {
+        if (Instance != null) {
+            return Instance.isFacecamRecordingPermissionGranted();
+        }
+        return false;
+    }
+    
+    public bool isFacecamRecordingPermissionGranted() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        return Everyplay.FaceCamIsRecordingPermissionGranted();
+        #else
+        return false;
+        #endif
+    }    
+    
+    // IS FACECAM VIDEO RECORDING SUPPORTED 
+    
+    public static bool IsFacecamVideoRecordingSupported() {
+        if (Instance != null) {
+            return Instance.isFacecamVideoRecordingSupported();
+        }
+        return false;
+    }
+    
+    public bool isFacecamVideoRecordingSupported() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        return Everyplay.FaceCamIsVideoRecordingSupported();
+        #else
+        return false;
+        #endif
+    }
+    
+    // FACECAM START SESSION
+    
+    public static void FacecamToggle() {
+        if (Instance != null) {
+            Instance.facecamToggle();
+        }
+    }
+    
+    public void facecamToggle() {
+
+        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+            return;
+        }
+        
+        if(IsFacecamSessionRunning()) {
+            FacecamStop();
+        }
+        else {
+            FacecamStart();
+        }
+    }
+    
+    // FACECAM START SESSION
+    
+    public static void FacecamStart() {
+        if (Instance != null) {
+            Instance.facecamStart();
+        }
+    }
+    
+    public void facecamStart() {
+
+        //if(!IsFacecamRecordingPermissionGranted()) {
+                    
+        //}
+        //else {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamStartSession();
+        #else
+
+        #endif
+        //}
+    }
+
+    // FACECAM STOP SESSION
+    
+    public static void FacecamStop() {
+        if (Instance != null) {
+            Instance.facecamStop();
+        }
+    }
+    
+    public void facecamStop() {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamStopSession();
+        #else
+
+        #endif
+    }
+
+    // FACECAM SETTINGS
+    
+    public static void FaceCamSetAudioOnly(bool val) {
+        if (Instance != null) {
+            Instance.faceCamSetAudioOnly(val);
+        }
+    }
+    
+    public void faceCamSetAudioOnly(bool val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetAudioOnly(val);
+        #else
+
+        #endif
+    }
+
+    //
+
+    public static void FaceCamSetMonitorAudioLevels(bool val) {
+        if (Instance != null) {
+            Instance.faceCamSetMonitorAudioLevels(val);
+        }
+    }
+    
+    public void faceCamSetMonitorAudioLevels(bool val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetMonitorAudioLevels(val);
+        #else
+
+        #endif
+    }
+        
+    //
+    
+    public static void FaceCamSetPreviewBorderColor(float r, float g, float b, float a) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewBorderColor(r, g, b, a);
+        }
+    }
+    
+    public void faceCamSetPreviewBorderColor(float r, float g, float b, float a) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewBorderColor(r, g, b, a);
+        #else
+
+        #endif
+    }
+        
+    //
+    
+    public static void FaceCamSetPreviewBorderWidth(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewBorderWidth(val);
+        }
+    }
+    
+    public void faceCamSetPreviewBorderWidth(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewBorderWidth(val);
+        #else
+
+        #endif
+    }
+
+    //
+    
+    public static void FaceCamSetPreviewOrigin(Everyplay.FaceCamPreviewOrigin val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewOrigin(val);
+        }
+    }
+    
+    public void faceCamSetPreviewOrigin(Everyplay.FaceCamPreviewOrigin val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewOrigin(val);
+        #else
+
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetPreviewPositionX(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewPositionX(val);
+        }
+    }
+    
+    public void faceCamSetPreviewPositionX(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewPositionX(val);
+        #else
+
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetPreviewPositionY(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewPositionY(val);
+        }
+    }
+    
+    public void faceCamSetPreviewPositionY(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewPositionY(val);
+        #else
+        
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetPreviewScaleRetina(bool val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewScaleRetina(val);
+        }
+    }
+    
+    public void faceCamSetPreviewScaleRetina(bool val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewScaleRetina(val);
+        #else
+        
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetPreviewSideWidth(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewSideWidth(val);
+        }
+    }
+    
+    public void faceCamSetPreviewSideWidth(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewSideWidth(val);
+        #else
+        
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetPreviewVisible(bool val) {
+        if (Instance != null) {
+            Instance.faceCamSetPreviewVisible(val);
+        }
+    }
+    
+    public void faceCamSetPreviewVisible(bool val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetPreviewVisible(val);
+        #else
+        
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetTargetTextureHeight(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetTargetTextureHeight(val);
+        }
+    }
+    
+    public void faceCamSetTargetTextureHeight(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetTargetTextureHeight(val);
+        #else
+        
+        #endif
+    }
+
+    //
+    
+    public static void FaceCamSetTargetTextureId(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetTargetTextureId(val);
+        }
+    }
+    
+    public void faceCamSetTargetTextureId(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetTargetTextureId(val);
+        #else
+        
+        #endif
+    }
+    
+    //
+    
+    public static void FaceCamSetTargetTextureWidth(int val) {
+        if (Instance != null) {
+            Instance.faceCamSetTargetTextureWidth(val);
+        }
+    }
+    
+    public void faceCamSetTargetTextureWidth(int val) {
+        
+        #if BROADCAST_USE_EVERYPLAY
+        Everyplay.FaceCamSetTargetTextureWidth(val);
+        #else
+        
+        #endif
+    }
+
     // ----------------------------------------------------------------------
     
     public static void HandleUpdate() {        

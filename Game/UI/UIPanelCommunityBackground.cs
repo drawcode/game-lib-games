@@ -71,7 +71,9 @@ public class UIPanelCommunityBackground : UIPanelBase {
     }
     
     public void showBackground() { 
-        AnimateInRight(panelBackground);
+        AnimateInBottom(panelBackground);
+
+        //Debug.Log("ShowBackground:");
     }
     
     public static void HideBackground() {
@@ -81,7 +83,7 @@ public class UIPanelCommunityBackground : UIPanelBase {
     }
     
     public void hideBackground() {
-        AnimateInRight(panelBackground);
+        AnimateOutBottom(panelBackground);
     }
 
     public static void ShowDefault() {
@@ -133,6 +135,7 @@ public class UIPanelCommunityBackground : UIPanelBase {
     public override void AnimateOut() {
         base.AnimateOut();
 
+        ShowNone();
     }
 
     //public void Update() {

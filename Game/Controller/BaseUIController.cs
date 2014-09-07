@@ -111,12 +111,30 @@ public class BaseUIButtonNames {
     public static string buttonGameNetworkJoinGame = "ButtonGameNetworkJoinGame";
     public static string buttonGameInitFinish = "ButtonGameInitFinish";
     //ButtonGameInitFinish
+
+    // COMMUNITY
+        
+    public static string buttonGameCommunityClose = "ButtonGameCommunityClose";
     
     public static string buttonGameCommunityCameraSaveTwitter = "ButtonGameCommunityCameraSaveTwitter";
     public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
-    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";
-    
+    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";    
     public static string buttonGameCommunityCameraTakePhoto = "ButtonGameCommunityCameraTakePhoto";
+    
+    public static string buttonGameCommunityBroadcastNetworkOpen = "ButtonGameCommunityBroadcastNetworkOpen";
+        
+    public static string buttonGameCommunityBroadcastOpen = "ButtonGameCommunityBroadcastOpen";
+
+    public static string buttonGameCommunityBroadcastClose = "ButtonGameCommunityBroadcastClose";
+    public static string buttonGameCommunityBroadcastPlayLast = "ButtonGameCommunityBroadcastPlayLast";
+    
+    public static string buttonGameCommunityBroadcastRecordStart = "ButtonGameCommunityBroadcastRecordStart";
+    public static string buttonGameCommunityBroadcastRecordStop = "ButtonGameCommunityBroadcastRecordStop";
+    public static string buttonGameCommunityBroadcastRecordToggle = "ButtonGameCommunityBroadcastRecordToggle";
+    
+    public static string buttonGameCommunityBroadcastFacecamStart = "ButtonGameCommunityBroadcastFacecamStart";
+    public static string buttonGameCommunityBroadcastFacecamStop = "ButtonGameCommunityBroadcastFacecamStop";
+    public static string buttonGameCommunityBroadcastFacecamToggle = "ButtonGameCommunityBroadcastFacecamToggle";
 
     // broadcast
     
@@ -3236,6 +3254,20 @@ public class BaseUIController : GameObjectBehavior {
 
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(-970));  
     }
+
+    // COMMUNITY - PANELS
+
+    public static void HideGameCommunity() {
+        GameUIController.Instance.hideGameCommunityPanels();
+    }
+
+    public virtual void hideGameCommunityPanels() {        
+        Debug.Log("hideGameCommunity");
+
+        UIPanelCommunityBroadcast.HideAll();
+        UIPanelCommunityCamera.HideAll();
+        UIPanelCommunityBackground.HideBackground();
+    }
             
     public virtual void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
@@ -3431,24 +3463,66 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowCustomize();
         }
 
-        // BROADCAST
+        // COMMUNITY
+                
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
+            GameUIController.HideGameCommunity();
+        }       
+
+        // COMMUNITY - BROADCAST
         
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastStart, buttonName)) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastRecordStart, buttonName)) {
             BroadcastNetworks.StartRecording();
         }
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastStop, buttonName)) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastRecordStop, buttonName)) {
             BroadcastNetworks.StopRecording();
         }
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameBroadcastShow, buttonName)) {
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastRecordToggle, buttonName)) {
+            BroadcastNetworks.ToggleRecording();
+        }        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastOpen, buttonName)) {
+            UIPanelCommunityBroadcast.ShowDialog();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpen, buttonName)) {
             BroadcastNetworks.Open();
         }
 
-        // COMMUNITY
-
-        // BROADCAST
+        //else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpenSharing, buttonName)) {
+        //    BroadcastNetworks.OpenSharing();
+        //}
         
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastClose, buttonName)) {
+            GameUIController.HideGameCommunity();
+        }        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastPlayLast, buttonName)) {
+            BroadcastNetworks.PlayLastRecording();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStart, buttonName)) {
+            BroadcastNetworks.FacecamStart();
+        }        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStop, buttonName)) {
+            BroadcastNetworks.FacecamStop();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamToggle, buttonName)) {
+            BroadcastNetworks.FacecamToggle();
+        }
+
+        // COMMUNITY - CAMERA
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
             UIPanelCommunityCamera.TakePhoto();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastClose, buttonName)) {
+            GameUIController.HideGameCommunity();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)) {
+            GameCommunitySocialController.UploadCurrentPhotoToFacebook();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveTwitter, buttonName)) {
+            GameCommunitySocialController.UploadCurrentPhotoToTwitter();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveLibrary, buttonName)) {
+            GameCommunitySocialController.SaveImageToLibraryDefault();
         }
 
         // GAME INIT
