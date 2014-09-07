@@ -3516,10 +3516,10 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.HideGameCommunity();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)) {
-            GameCommunitySocialController.UploadCurrentPhotoToFacebook();
+            GameCommunitySocialController.StartPhotoUploadToFacebook();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveTwitter, buttonName)) {
-            GameCommunitySocialController.UploadCurrentPhotoToTwitter();
+            GameCommunitySocialController.StartPhotoUploadToTwitter();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveLibrary, buttonName)) {
             GameCommunitySocialController.SaveImageToLibraryDefault();

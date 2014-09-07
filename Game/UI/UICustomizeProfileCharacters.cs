@@ -98,6 +98,8 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     public virtual void SaveInputs() {
         SaveCharacterDisplayNameInput();
         SaveCharacterDisplayCodeInput();
+
+        GameCustomController.BroadcastCustomCharacterDisplayChanged();
     }
 
     public virtual void SaveCharacterDisplayNameInput() {

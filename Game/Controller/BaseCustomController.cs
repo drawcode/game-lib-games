@@ -23,11 +23,15 @@ public class BaseCustomMessages {
     
     public static string customCharacterDisplayNameChanged = "custom-character-display-name-changed";
     public static string customCharacterDisplayCodeChanged = "custom-character-display-code-changed";
+    public static string customCharacterDisplayChanged = "custom-character-display-changed";
 
 }
 
 public class BaseGameCustomItemNames {
+}
 
+public class GameCustomKeys {
+    public static string profileCharacterDisplay = "profile-character-display";
 }
 
 public class BaseGameCustomColors : DataObjectItem {
@@ -232,15 +236,8 @@ public class BaseGameCustomController : GameObjectBehavior {
 
                         UIUtil.SetTextColor(go, prop.code, colorTo);
 
-                        string key = "profile-character-display-";
+                        updateProfileCharacterDisplay(go);
 
-                        UIUtil.SetTextValue(go, 
-                                            key + BaseDataObjectKeys.name, 
-                                            GameProfileCharacters.currentCharacter.characterDisplayName);
-                        UIUtil.SetTextValue(go, 
-                                            key + BaseDataObjectKeys.code, 
-                                            GameProfileCharacters.currentCharacter.characterDisplayCode);
-                        
                         //LogUtil.Log("updateColorPresetObject:preset:" + 
                         //          " prop.code:" + prop.code + 
                         //         " colorTo:" + colorTo.ToString());
@@ -259,25 +256,26 @@ public class BaseGameCustomController : GameObjectBehavior {
         updateProfileCharacterDisplayCode(go);    
     }
 
-    public virtual void updateProfileCharacterDisplayName(GameObject go) {        
+    public virtual void updateProfileCharacterDisplayName(GameObject go) {  
+
+        string key = 
+            GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.name;
+        string val = GameProfileCharacters.currentCharacter.characterDisplayName;
         
-        string key = "profile-character-display-";
-        
-        UIUtil.SetTextValue(
-            go, 
-            key + BaseDataObjectKeys.name, 
-            GameProfileCharacters.currentCharacter.characterDisplayName);  
+        Debug.Log("updateProfileCharacterDisplayName: val:" + val);
+
+        UIUtil.SetTextValue(go, key, val);  
     }    
     
     public virtual void updateProfileCharacterDisplayCode(GameObject go) {        
         
-        string key = "profile-character-display-";
+        string key = 
+            GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.code;
+        string val = GameProfileCharacters.currentCharacter.characterDisplayCode;
         
-        UIUtil.SetTextValue(
-            go, 
-            key + BaseDataObjectKeys.code, 
-            GameProfileCharacters.currentCharacter.characterDisplayCode);
+        Debug.Log("updateProfileCharacterDisplayCode: val:" + val);
         
+        UIUtil.SetTextValue(go, key, val);  
     }
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
@@ -350,6 +348,7 @@ public class BaseGameCustomController : GameObjectBehavior {
     // VALUES
 
     public virtual void broadcastCustomCharacterDataSync() {
+        GameCustomController.BroadcastCustomCharacterDisplayChanged();
         GameCustomController.BroadcastCustomCharacterDisplayCodeChanged();
         GameCustomController.BroadcastCustomCharacterDisplayNameChanged();
         
@@ -362,6 +361,10 @@ public class BaseGameCustomController : GameObjectBehavior {
     
     public virtual void broadcastCustomCharacterDisplayNameChanged() {
         Messenger.Broadcast(GameCustomMessages.customCharacterDisplayNameChanged);
+    }
+    
+    public virtual void broadcastCustomCharacterDisplayChanged() {
+        Messenger.Broadcast(GameCustomMessages.customCharacterDisplayChanged);
     }
 
     // COLORS

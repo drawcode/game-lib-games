@@ -15,15 +15,23 @@ public class GameCustomPlayer : BaseGameCustom {
         base.OnEnable();
 
         Messenger.AddListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
+        
+        Messenger.AddListener(GameCustomMessages.customCharacterDisplayChanged, OnCustomizationCharacterDisplayChangedHandler);
     }
     
     public override void OnDisable() {
         base.OnDisable();
 
         Messenger.RemoveListener(GameCustomMessages.customColorsPlayerChanged, OnCustomizationColorsPlayerChangedHandler);
+        
+        Messenger.RemoveListener(GameCustomMessages.customCharacterDisplayChanged, OnCustomizationCharacterDisplayChangedHandler);
     }
     
     void OnCustomizationColorsPlayerChangedHandler() {
         //// UpdatePlayer();
+    }
+
+    void OnCustomizationCharacterDisplayChangedHandler() {
+        GameCustomController.UpdateProfileCharacterDisplay(gameObject);
     }
 }

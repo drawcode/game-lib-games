@@ -29,6 +29,9 @@ public class BroadcastNetworksMessages {
     public static string broadcastRecordingStart = "broadcast-recording-start";
     public static string broadcastRecordingStop = "broadcast-recording-stop";
     public static string broadcastRecordingPlayback = "broadcast-recording-playback";
+    
+    public static string broadcastFacecamStart = "broadcast-facecam-start";
+    public static string broadcastFacecamStop = "broadcast-facecam-stop";
 }
 
 public class BroadcastNetworks : GameObjectBehavior { 
@@ -121,6 +124,40 @@ public class BroadcastNetworks : GameObjectBehavior {
         Invoke("everyplayInit", 1);
         #endif       
     }
+
+    // MESSAGES 
+
+    public void BroadcastRecordingStart() {
+        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingStart);
+    }
+    
+    public void BroadcastRecordingStop() {
+        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingStop);
+    }
+    
+    public void BroadcastRecordingPlayback() {
+        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingPlayback);
+    }
+
+    // MESSAGE STATE STATUS
+    
+    public void BroadcastRecordingStatusChanged(string status) {
+        Messenger<string>.Broadcast(BroadcastNetworksMessages.broadcastRecordingStatusChanged, status);
+    }
+
+    public void BroadcastMessage(string code) {
+        Messenger.Broadcast(code);
+        BroadcastRecordingStatusChanged(code);    
+    }
+
+    // FACECAM MESSAGES
+
+    public void BroadcastFacecamStart() {
+        BroadcastMessage(BroadcastNetworksMessages.broadcastFacecamStart);
+    }
+    public void BroadcastFacecamStop() {
+        BroadcastMessage(BroadcastNetworksMessages.broadcastFacecamStop);
+    }
     
     #if BROADCAST_USE_EVERYPLAY
     // ----------------------------------------------------------------------
@@ -159,6 +196,7 @@ public class BroadcastNetworks : GameObjectBehavior {
             Debug.Log("Microphone access was granted");
             facecamPermissionGranted = granted;
             // * HERE YOU CAN START YOUR FACECAM SAFELY * //
+            FacecamStart();
         }
         else {
             Debug.Log("Microphone access was DENIED");
@@ -412,6 +450,13 @@ public class BroadcastNetworks : GameObjectBehavior {
         }
 
         SetMaxRecordingMinutesLength(10);
+
+        SetMetadata("game", AppConfigs.appGameDisplayName);
+        SetMetadata("level", "Arcade Mode");
+
+        //    Everyplay.SetMetadata("level", levelNumber);
+        //Everyplay.SetMetadata("level_name", levelName);
+        //Everyplay.SetMetadata("score", score);
 
         if (FPSDisplay.isUnder25FPS) {
             SetLowMemoryDevice(true);
@@ -784,6 +829,27 @@ Everyplay.SetMetadata("score", score)
             FacecamStart();
         }
     }
+
+    // FACECAM PERMISSION
+
+    public static void FacecamGetPermission() {
+        if (Instance != null) {
+            Instance.facecamGetPermission();
+        }
+    }
+    
+    public void facecamGetPermission() {
+        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+            return;
+        }
+            
+            #if BROADCAST_USE_EVERYPLAY
+            Everyplay.SharedInstance.FaceCamRequestRecordingPermission();
+            #else
+            
+            #endif
+    }
+
     
     // FACECAM START SESSION
     
@@ -795,17 +861,17 @@ Everyplay.SetMetadata("score", score)
     
     public void facecamStart() {
 
-        //if(!IsFacecamRecordingPermissionGranted()) {
-                    
-        //}
-        //else {
+        if(!IsFacecamRecordingPermissionGranted()) {
+            FacecamGetPermission();
+        }
+        else {
         
         #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamStartSession();
         #else
 
         #endif
-        //}
+        }
     }
 
     // FACECAM STOP SESSION

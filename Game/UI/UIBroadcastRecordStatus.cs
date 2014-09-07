@@ -47,8 +47,12 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     
     void OnBroadcastRecordStatusChanged(string broadcastStatus) {
         
+        UIUtil.SetLabelValue(labelStatus, "TAP TO REC");
+        
         if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
             RecordingObjectPingPong();
+
+            UIUtil.SetLabelValue(labelStatus, "REC...");
         }
         else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStop) {            
             RecordingObjectStop();
@@ -78,7 +82,7 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
                 go,
                 UITweener.Method.EaseInOut, 
                 UITweener.Style.PingPong, 
-                2f, 0f, .3f);
+                1f, 0f, .3f);
         }   
     }
 
