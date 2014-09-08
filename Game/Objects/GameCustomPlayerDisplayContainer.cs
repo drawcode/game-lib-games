@@ -6,11 +6,10 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIGamePlayerDisplay : MonoBehaviour {
+public class GameCustomPlayerDisplayContainer : MonoBehaviour {
     
-    public GameObject containerPlayer;
-    
-    public string characterCode = ProfileConfigs.defaultGameCharacterCode;
+    public GameObject containerPlayerDisplay;
+    public UnityEngine.Object prefabPlayerDisplay;
     
     public void Awake() {
     }
@@ -20,7 +19,7 @@ public class UIGamePlayerDisplay : MonoBehaviour {
     }
     
     public void Init() {
-        LoadPlayer(characterCode);
+        Load();
     }
     
     void OnEnable() {
@@ -31,18 +30,19 @@ public class UIGamePlayerDisplay : MonoBehaviour {
         //Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
     
-    public void LoadPlayer(string characterCodeTo) {
+    public void Load() {
         
-        characterCode = characterCodeTo;
-        
-        if(containerPlayer != null) {
+        if(prefabPlayerDisplay != null
+           && containerPlayerDisplay != null) {
             
-            GameObject go = GameCharacters.Load(characterCode);
-
+            containerPlayerDisplay.DestroyChildren();
+            
+            GameObject go = PrefabsPool.Instantiate(prefabPlayerDisplay) as GameObject;
+            
             if(go != null) {
-                containerPlayer.DestroyChildren();
-
-                go.transform.parent = containerPlayer.transform;
+                
+                go.transform.parent = transform;
+                
                 go.ResetObject();
             }
         }
