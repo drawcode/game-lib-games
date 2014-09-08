@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class UIGamePlayerCustomContainer : MonoBehaviour {
+public class UIGamePlayerDisplayContainer : MonoBehaviour {
     
     public GameObject containerPlayerDisplay;
     public UnityEngine.Object prefabPlayerDisplay;
@@ -19,7 +19,7 @@ public class UIGamePlayerCustomContainer : MonoBehaviour {
     }
     
     public void Init() {
-
+        Load();
     }
     
     void OnEnable() {
@@ -30,9 +30,20 @@ public class UIGamePlayerCustomContainer : MonoBehaviour {
         //Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
 
-    void LoadPlayerDisplay() {
-        if(prefabPlayerDisplay != null) {
-            
+    public void Load() {
+        if(prefabPlayer != null
+           && containerPlayer != null) {
+
+            containerPlayerDisplay.DestroyChildren();
+
+            GameObject go = PrefabsPool.Instantiate(prefabPlayerDisplay) as GameObject;
+
+            if(go != null) {
+
+                go.transform.parent = transform;
+
+                go.ResetObject();
+            }
         }
     }
 }
