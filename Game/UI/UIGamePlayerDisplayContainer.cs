@@ -31,8 +31,9 @@ public class UIGamePlayerDisplayContainer : MonoBehaviour {
     }
 
     public void Load() {
-        if(prefabPlayer != null
-           && containerPlayer != null) {
+
+        if(prefabPlayerDisplay != null
+           && containerPlayerDisplay != null) {
 
             containerPlayerDisplay.DestroyChildren();
 
