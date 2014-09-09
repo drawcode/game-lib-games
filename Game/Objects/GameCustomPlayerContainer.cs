@@ -78,7 +78,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         
         GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
         
-        GameCustomController.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomSync();
         
         go.SetLayerRecursively("UIDialog");
     }

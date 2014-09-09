@@ -15,6 +15,19 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public GameObject panelBroadcastButton;
     public GameObject panelBroadcastRecord;
 
+    public GameObject buttonBroadcastReplay;
+    public GameObject buttonBroadcastShare;
+    public GameObject buttonBroadcastRecordStart;
+    public GameObject buttonBroadcastRecordStop;
+
+    public GameObject buttonBroadcastFacecamToggle;
+    public GameObject buttonBroadcastBroadcastOpen;
+
+    public GameObject containerSupported;
+    public GameObject containerNotSupported;
+
+    public UICheckbox toggleRecordReplaysLevel;
+
     public void Awake() {
 
         if (Instance != null && this != Instance) {
@@ -41,6 +54,8 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         //loadData();
 
         ShowBroadcastButton();
+
+        UpdateState();
     }
 
     public override void Start() {
@@ -54,6 +69,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
     }
     
     public override void OnDisable() {
@@ -61,10 +77,65 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         base.OnDisable();
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
     }
 
     public void OnButtonClickEventHandler(string buttonName) {
 
+    }
+
+    public void OnToggleChangedEventHandler(string checkboxName, bool selected) {
+
+        Debug.Log("OnToggleChangedEventHandler" + " checkboxName:" + checkboxName + " selected:" + selected.ToString());
+    }
+
+    // STATE
+
+    public void UpdateState() {
+
+        bool isSupported = BroadcastNetworks.IsSupported();
+        bool isRecordingSupported = BroadcastNetworks.IsRecordingSupported();
+        bool isFacecamSupported = BroadcastNetworks.IsFacecamVideoRecordingSupported();
+
+        ShowContainerNotSupported();
+
+        if(Application.isEditor) {
+            isSupported = true;
+            isRecordingSupported = true;
+
+        }
+        
+        if(isSupported) {           
+           
+            if(isRecordingSupported) {
+                ShowContainerSupported();
+            }
+        }
+
+        if(isFacecamSupported) {
+            ShowButtonFacecam();
+        }
+        else {
+            HideButtonFacecam();
+        }
+    }
+
+    public void ShowContainerSupported() {
+        containerSupported.Show();
+        containerNotSupported.Hide();        
+    }
+    
+    public void ShowContainerNotSupported() {
+        containerSupported.Hide();
+        containerNotSupported.Show();
+    }
+
+    public void ShowButtonFacecam() {
+        buttonBroadcastFacecamToggle.Show();
+    }
+        
+    public void HideButtonFacecam() {
+        buttonBroadcastFacecamToggle.Hide();
     }
 
     // SHOW/LOAD
@@ -108,6 +179,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void showBroadcastRecord() {
         HidePanels();
         AnimateInBottom(panelBroadcastRecord);
+        UpdateState();
                 
         UIPanelCommunityBackground.ShowBackground();
     }
@@ -178,6 +250,8 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public override void AnimateIn() {
         base.AnimateIn();
+
+        UpdateState();
     }
 
     public override void AnimateOut() {

@@ -447,26 +447,28 @@ public class BroadcastNetworks : GameObjectBehavior {
     public void startRecording() {
         if (!IsSupported() || !IsRecordingSupported()) {
             return;
-        }
-
-        SetMaxRecordingMinutesLength(10);
-
-        SetMetadata("game", AppConfigs.appGameDisplayName);
-        SetMetadata("level", "Arcade Mode");
-
-        //    Everyplay.SetMetadata("level", levelNumber);
-        //Everyplay.SetMetadata("level_name", levelName);
-        //Everyplay.SetMetadata("score", score);
-
-        if (FPSDisplay.isUnder25FPS) {
-            SetLowMemoryDevice(true);
-        }
-        
-        #if BROADCAST_USE_EVERYPLAY
+        }        
+            
         if (!IsRecording()) {
+            SetMaxRecordingMinutesLength(10);
+
+            SetMetadata("game", AppConfigs.appGameDisplayName);
+            SetMetadata("level", "Arcade Mode");
+
+            //    Everyplay.SetMetadata("level", levelNumber);
+            //Everyplay.SetMetadata("level_name", levelName);
+            //Everyplay.SetMetadata("score", score);
+
+            if (FPSDisplay.isUnder25FPS) {
+                SetLowMemoryDevice(true);
+            }
+        
+            #if BROADCAST_USE_EVERYPLAY
             Everyplay.StartRecording();
+            #endif
+            
+            BroadcastRecordingStart();
         }
-        #endif
     }
     
     // STOP RECORDING
@@ -481,12 +483,15 @@ public class BroadcastNetworks : GameObjectBehavior {
         if (!IsSupported()) {
             return;
         }
-                
-        #if BROADCAST_USE_EVERYPLAY
+        
         if (IsRecording()) {
-            Everyplay.StopRecording();
+
+            #if BROADCAST_USE_EVERYPLAY
+            Everyplay.StopRecording();       
+            #endif
+            
+            BroadcastRecordingStop(); 
         }
-        #endif
     }
     
     // RESUME RECORDING
@@ -501,12 +506,15 @@ public class BroadcastNetworks : GameObjectBehavior {
         if (!IsSupported()) {
             return;
         }
-                
-        #if BROADCAST_USE_EVERYPLAY
+        
         if (IsRecording() && IsPaused()) {
+
+            #if BROADCAST_USE_EVERYPLAY
             Everyplay.ResumeRecording();
+            #endif
+            
+            BroadcastRecordingStart();
         }
-        #endif
     }
         
     // PAUSE RECORDING
@@ -521,12 +529,15 @@ public class BroadcastNetworks : GameObjectBehavior {
         if (!IsSupported()) {
             return;
         }
-                
-        #if BROADCAST_USE_EVERYPLAY
+        
         if (IsRecording()) {
+        
+            #if BROADCAST_USE_EVERYPLAY
             Everyplay.PauseRecording();
+            #endif
         }
-        #endif
+        
+        BroadcastRecordingStop(); 
     }
 
     // PLAY LAST RECORDING
@@ -547,6 +558,8 @@ public class BroadcastNetworks : GameObjectBehavior {
         Everyplay.PlayLastRecording();
         #else
         #endif
+        
+        BroadcastRecordingStop(); 
     }
 
     // TAKE THUMBNAIL

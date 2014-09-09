@@ -1,4 +1,3 @@
-#define DEV
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     }
 
     public  void Init() {
-        
+        UpdateBroadcastStatus(BroadcastNetworksMessages.broadcastRecordingStop);
     }
     
     public void Start() {
@@ -47,11 +46,16 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     
     void OnBroadcastRecordStatusChanged(string broadcastStatus) {
         
+        UpdateBroadcastStatus(broadcastStatus);
+    }
+
+    public void UpdateBroadcastStatus(string broadcastStatus) {
+        
         UIUtil.SetLabelValue(labelStatus, "TAP TO REC");
         
         if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
             RecordingObjectPingPong();
-
+            
             UIUtil.SetLabelValue(labelStatus, "REC...");
         }
         else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStop) {            
@@ -78,11 +82,17 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     public virtual void AnimateObjectPingPong(GameObject go) {
         
         if (go != null) {
+            
+            UITweenerUtil.FadeTo(
+                go,
+                UITweener.Method.EaseInOut, 
+                UITweener.Style.Once, 
+                .5f, 0f, 1f);
             UITweenerUtil.FadeTo(
                 go,
                 UITweener.Method.EaseInOut, 
                 UITweener.Style.PingPong, 
-                1f, 0f, .3f);
+                .5f, .5f, .3f);
         }   
     }
 

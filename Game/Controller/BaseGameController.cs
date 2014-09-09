@@ -518,7 +518,7 @@ public class BaseGameController : GameObjectBehavior {
         GameController.LoadCharacterTypes();
         GameDraggableEditor.LoadDraggableContainerObject();
 
-        GameCustomController.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomSync();
     }
 
     public virtual void OnEnable() {

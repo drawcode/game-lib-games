@@ -345,6 +345,14 @@ public class BaseGameCustomController : GameObjectBehavior {
         }
     }
 
+    // MESSAGES ALL
+
+    
+    public virtual void broadcastCustomSync() {
+        broadcastCustomColorsSync();
+        broadcastCustomCharacterDataSync();
+    }
+
     // VALUES
 
     public virtual void broadcastCustomCharacterDataSync() {
@@ -552,7 +560,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         //LogUtil.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
         //LogUtil.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
         
-        GameCustomController.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomSync();
     }
 
     public virtual void loadCustomColors() {

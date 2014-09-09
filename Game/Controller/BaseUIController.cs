@@ -124,9 +124,14 @@ public class BaseUIButtonNames {
     public static string buttonGameCommunityBroadcastNetworkOpen = "ButtonGameCommunityBroadcastNetworkOpen";
         
     public static string buttonGameCommunityBroadcastOpen = "ButtonGameCommunityBroadcastOpen";
+    public static string buttonGameCommunityBroadcastOpenShare = "ButtonGameCommunityBroadcastOpenShare";
+    
+    public static string buttonGameCommunityBroadcastReplayShare = "ButtonGameCommunityBroadcastReplayShare";
+    public static string buttonGameCommunityBroadcastReplayWatch = "ButtonGameCommunityBroadcastReplayWatch";
 
     public static string buttonGameCommunityBroadcastClose = "ButtonGameCommunityBroadcastClose";
     public static string buttonGameCommunityBroadcastPlayLast = "ButtonGameCommunityBroadcastPlayLast";
+    public static string buttonGameCommunityBroadcastShareLast = "ButtonGameCommunityBroadcastShareLast";
     
     public static string buttonGameCommunityBroadcastRecordStart = "ButtonGameCommunityBroadcastRecordStart";
     public static string buttonGameCommunityBroadcastRecordStop = "ButtonGameCommunityBroadcastRecordStop";
@@ -419,7 +424,7 @@ public class BaseUIController : GameObjectBehavior {
         broadcastUIMessageAnimateIn(objName); // animate in
 
         // TODO base
-        GameCustomController.BroadcastCustomColorsSync();
+        GameCustomController.BroadcastCustomSync();
 
         UIColors.UpdateColors();
 
@@ -3487,16 +3492,22 @@ public class BaseUIController : GameObjectBehavior {
             BroadcastNetworks.Open();
         }
 
+        // 
+
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastReplayShare, buttonName)) {
+            BroadcastNetworks.OpenSharing();
+        }     
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastReplayWatch, buttonName)) {
+            BroadcastNetworks.PlayLastRecording();
+        }
+
         //else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpenSharing, buttonName)) {
         //    BroadcastNetworks.OpenSharing();
         //}
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastClose, buttonName)) {
             GameUIController.HideGameCommunity();
-        }        
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastPlayLast, buttonName)) {
-            BroadcastNetworks.PlayLastRecording();
-        }
+        }   
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStart, buttonName)) {
             BroadcastNetworks.FacecamStart();
         }        
