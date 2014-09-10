@@ -60,6 +60,7 @@ public enum GameStateGlobal {
     GameResume,
     GameResults,
     GameContentDisplay, // dialog or in progress choice/content/collection status
+    GameOverlay, // external dialog such as sharing/community/over
 }
 
 public class GameActorType {
@@ -1942,12 +1943,34 @@ public class BaseGameController : GameObjectBehavior {
     }
 
     public virtual void gameRunningStateContent(float timeScale) {
-        gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.PAUSED;
         GameController.Instance.gameState = GameStateGlobal.GameContentDisplay;
+        gameSetTimeScale(timeScale);
+    }
+
+    // OVERLAY
+    
+    public virtual void gameRunningStateOverlay() {
+        gameRunningStateOverlay(1f);
+    }
+    
+    public virtual void gameRunningStateOverlay(float timeScale) {
+        gameRunningState = GameRunningState.PAUSED;
+        GameController.Instance.gameState = GameStateGlobal.GameOverlay;
+        gameSetTimeScale(timeScale);
     }
 
     // EVENTS ON
+        
+    public virtual void onGameOverlay() {
+        handleOverlay();
+    }
+
+    //
+
+    public virtual void handleOverlay() {
+        // handled externally
+    }
 
     public virtual void onGameContentDisplay() {
         // Show runtime content display data
@@ -2028,6 +2051,19 @@ public class BaseGameController : GameObjectBehavior {
     public virtual void onGameContentDisplayResume() {
         GameDraggableEditor.HideAllEditDialogs();
         UIPanelDialogBackground.HideAll();
+        GameController.GameRunningStateRun();
+    }
+
+    
+    public virtual void onGameOverlayPause() {
+        GameDraggableEditor.HideAllEditDialogs();
+        //UIPanelDialogBackground.ShowDefault();
+        GameController.GameRunningStatePause();
+    }
+    
+    public virtual void onGameOverlayResume() {
+        GameDraggableEditor.HideAllEditDialogs();
+        //UIPanelDialogBackground.HideAll();
         GameController.GameRunningStateRun();
     }
 
@@ -2159,6 +2195,9 @@ public class BaseGameController : GameObjectBehavior {
         }
         else if (gameState == GameStateGlobal.GameContentDisplay) {
             GameController.OnGameContentDisplay();
+        }
+        else if (gameState == GameStateGlobal.GameOverlay) {
+            GameController.OnGameOverlay();
         }
         else if (gameState == GameStateGlobal.GamePrepare) {
             GameController.OnGamePrepare();

@@ -3471,6 +3471,10 @@ public class BaseUIController : GameObjectBehavior {
         // COMMUNITY
                 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
+            
+            if(GameController.Instance.gameState == GameStateGlobal.GameOverlay) { 
+                GameController.GameRunningStateRun();
+            }
             GameUIController.HideGameCommunity();
         }       
 
@@ -3486,6 +3490,9 @@ public class BaseUIController : GameObjectBehavior {
             BroadcastNetworks.ToggleRecording();
         }        
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastOpen, buttonName)) {
+            if(GameController.Instance.gameState == GameStateGlobal.GameStarted) { 
+                GameController.GameRunningStateOverlay();
+            }
             UIPanelCommunityBroadcast.ShowDialog();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpen, buttonName)) {
@@ -3504,10 +3511,7 @@ public class BaseUIController : GameObjectBehavior {
         //else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpenSharing, buttonName)) {
         //    BroadcastNetworks.OpenSharing();
         //}
-        
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastClose, buttonName)) {
-            GameUIController.HideGameCommunity();
-        }   
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStart, buttonName)) {
             BroadcastNetworks.FacecamStart();
         }        
@@ -3523,9 +3527,6 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
             UIPanelCommunityCamera.TakePhoto();
         }
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastClose, buttonName)) {
-            GameUIController.HideGameCommunity();
-        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)) {
             GameCommunitySocialController.StartPhotoUploadToFacebook();
         }
@@ -3539,6 +3540,8 @@ public class BaseUIController : GameObjectBehavior {
         // GAME INIT
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
+
+            HideGameCommunity();
 
             UIPanelOverlayPrepare.HideAll();
 
@@ -3614,6 +3617,8 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
+            
+            HideGameCommunity();
 
             GameController.PlayGame();
         }
