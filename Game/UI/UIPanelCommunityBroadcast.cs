@@ -21,7 +21,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public GameObject buttonBroadcastRecordStop;
 
     public GameObject buttonBroadcastFacecamToggle;
-    public GameObject buttonBroadcastBroadcastOpen;
+    public GameObject buttonBroadcastOpen;
 
     public GameObject containerSupported;
     public GameObject containerNotSupported;
@@ -53,9 +53,16 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
         //loadData();
 
-        ShowBroadcastButton();
+        showBroadcastButton();
 
         UpdateState();
+
+        UpdateBroadcastStatus(BroadcastNetworksMessages.broadcastRecordingStop);
+
+        // hide before any recording has been made
+
+        hideButtonBroadcastShare();
+        hideButtonBroadcastReplay();
     }
 
     public override void Start() {
@@ -70,6 +77,10 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
+        
+        Messenger<string>.AddListener(
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            OnBroadcastRecordStatusChanged);
     }
     
     public override void OnDisable() {
@@ -78,7 +89,12 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
+
+        Messenger<string>.RemoveListener(
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            OnBroadcastRecordStatusChanged);
     }
+
 
     public void OnButtonClickEventHandler(string buttonName) {
 
@@ -87,6 +103,150 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void OnToggleChangedEventHandler(string checkboxName, bool selected) {
 
         Debug.Log("OnToggleChangedEventHandler" + " checkboxName:" + checkboxName + " selected:" + selected.ToString());
+    }    
+    
+    public void OnBroadcastRecordStatusChanged(string broadcastStatus) {
+        
+        UpdateBroadcastStatus(broadcastStatus);
+    }
+    
+    public void UpdateBroadcastStatus(string broadcastStatus) {
+                
+        if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
+            HandleUIBroadcastStart();
+        }
+        else {
+            HandleUIBroadcastStop();
+        }
+    }
+
+    public void HandleUIBroadcastStart() {
+
+        hideButtonBroadcastOpen();
+        hideButtonBroadcastShare();
+        hideButtonBroadcastReplay();
+        hideButtonBroadcastRecordStart();
+        showButtonBroadcastRecordStop();
+    }
+    
+    public void HandleUIBroadcastStop() {
+        
+        showButtonBroadcastOpen();
+        showButtonBroadcastShare();
+        showButtonBroadcastReplay();
+        showButtonBroadcastRecordStart();
+        hideButtonBroadcastRecordStop();
+
+    }
+    
+    //
+    
+    public static void ShowButtonBroadcastRecordStart() {
+        if(isInst) {
+            Instance.showButtonBroadcastRecordStart();
+        }
+    }
+    
+    public void showButtonBroadcastRecordStart() {
+        buttonBroadcastRecordStart.Show();
+    }
+    
+    public static void HideButtonBroadcastRecordStart() {
+        if(isInst) {
+            Instance.hideButtonBroadcastRecordStart();
+        }
+    }
+    
+    public void hideButtonBroadcastRecordStart() {
+        buttonBroadcastRecordStart.Hide();
+    }
+    
+    //
+    
+    public static void ShowButtonBroadcastRecordStop() {
+        if(isInst) {
+            Instance.showButtonBroadcastRecordStop();
+        }
+    }
+    
+    public void showButtonBroadcastRecordStop() {
+        buttonBroadcastRecordStop.Show();
+    }
+    
+    public static void HideButtonBroadcastRecordStop() {
+        if(isInst) {
+            Instance.hideButtonBroadcastRecordStop();
+        }
+    }
+    
+    public void hideButtonBroadcastRecordStop() {
+        buttonBroadcastRecordStop.Hide();
+    }
+
+    //
+    
+    public static void ShowButtonBroadcastOpen() {
+        if(isInst) {
+            Instance.showButtonBroadcastOpen();
+        }
+    }
+    
+    public void showButtonBroadcastOpen() {
+        buttonBroadcastOpen.Show();
+    }
+    
+    public static void HideButtonBroadcastOpen() {
+        if(isInst) {
+            Instance.hideButtonBroadcastOpen();
+        }
+    }
+    
+    public void hideButtonBroadcastOpen() {
+        buttonBroadcastOpen.Hide();
+    }
+
+    //
+    
+    public static void ShowButtonBroadcastReplay() {
+        if(isInst) {
+            Instance.showButtonBroadcastReplay();
+        }
+    }
+    
+    public void showButtonBroadcastReplay() {
+        buttonBroadcastReplay.Show();
+    }
+    
+    public static void HideButtonBroadcastReplay() {
+        if(isInst) {
+            Instance.hideButtonBroadcastReplay();
+        }
+    }
+    
+    public void hideButtonBroadcastReplay() {
+        buttonBroadcastReplay.Hide();
+    }
+
+    //
+
+    public static void ShowButtonBroadcastShare() {
+        if(isInst) {
+            Instance.showButtonBroadcastShare();
+        }
+    }
+
+    public void showButtonBroadcastShare() {
+        buttonBroadcastShare.Show();
+    }
+    
+    public static void HideButtonBroadcastShare() {
+        if(isInst) {
+            Instance.hideButtonBroadcastShare();
+        }
+    }
+
+    public void hideButtonBroadcastShare() {
+        buttonBroadcastShare.Hide();
     }
 
     // STATE
@@ -102,7 +262,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         if(Application.isEditor) {
             isSupported = true;
             isRecordingSupported = true;
-
+            isFacecamSupported = true;
         }
         
         if(isSupported) {           
@@ -118,6 +278,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         else {
             HideButtonFacecam();
         }
+
     }
 
     public void ShowContainerSupported() {

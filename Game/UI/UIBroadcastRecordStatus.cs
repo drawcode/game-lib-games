@@ -72,11 +72,31 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     }
         
     public virtual void RecordingObjectPingPong() {
-        AnimateObjectPingPong(objectRecordStatusLight);
+
+        AnimateObjectPingPongRecursive(objectRecordStatusLight);
     }
     
     public virtual void RecordingObjectStop() {
-        AnimateObjectFadeOut(objectRecordStatusLight);
+        AnimateObjectFadeOutRecursive(objectRecordStatusLight);
+    }
+
+    
+    public virtual void AnimateObjectPingPongRecursive(GameObject go) {
+
+        AnimateObjectPingPong(go);
+
+        foreach(Transform t in go.transform) {
+            AnimateObjectPingPongRecursive(t.gameObject);
+        }
+    }
+
+    public virtual void AnimateObjectFadeOutRecursive(GameObject go) {
+        
+        AnimateObjectFadeOut(go);
+        
+        foreach(Transform t in go.transform) {
+            AnimateObjectFadeOutRecursive(t.gameObject);
+        }
     }
     
     public virtual void AnimateObjectPingPong(GameObject go) {
@@ -88,11 +108,12 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
                 UITweener.Method.EaseInOut, 
                 UITweener.Style.Once, 
                 .5f, 0f, 1f);
+
             UITweenerUtil.FadeTo(
                 go,
                 UITweener.Method.EaseInOut, 
                 UITweener.Style.PingPong, 
-                .5f, .5f, .3f);
+                .5f, .5f, .4f);
         }   
     }
 

@@ -1145,6 +1145,32 @@ Everyplay.SetMetadata("score", score)
         #endif
         */
     }
+
+    public void Update() { 
+        if(Application.isEditor) {
+            if(Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.B)) {
+            
+
+                if(Input.GetKeyDown(KeyCode.I)) {
+                    // start
+
+                    Debug.Log("BroadcastNetworks:" + " test start:");
+
+                    BroadcastRecordingStart();
+                }
+
+                
+                else if(Input.GetKeyDown(KeyCode.O)) {
+                    // start
+                    
+                    Debug.Log("BroadcastNetworks:" + " test stop:");
+                    
+                    BroadcastRecordingStop();
+                }
+
+            }
+        }
+    }
     
 }
 
