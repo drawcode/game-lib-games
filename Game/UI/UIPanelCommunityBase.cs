@@ -43,25 +43,29 @@ public class UIPanelCommunityBase : UIPanelBase {
 
     }
 
-    public virtual void HidePanels() {
-        UIPanelCommunityBackground.HideAll();
-    }
+    public virtual void showDialog() {
 
-    public virtual void ShowDialog() {
+        GameUIController.HideGameCommunity();
+
         UIPanelCommunityBackground.ShowBackground();  
 
         if(GameController.Instance.gameRunningState == GameRunningState.RUNNING) {
-            GameController.GameRunningStateContent();
+            GameController.GameRunningStateOverlay();
+        }
+    }
+
+    public virtual void hideDialog() {
+        
+        UIPanelCommunityBackground.HideBackground();  
+        
+        if(GameController.Instance.gameRunningState != GameRunningState.RUNNING
+           && GameController.Instance.gameState == GameStateGlobal.GameOverlay) {
+            GameController.GameRunningStateRun();
         }
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
-
-        if(GameController.Instance.gameRunningState == GameRunningState.PAUSED
-           && GameController.Instance.gameState == GameStateGlobal.GameContentDisplay) {
-            GameController.GameRunningStateRun();
-        }
     }
 
     public void Update() {

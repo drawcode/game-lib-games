@@ -377,14 +377,21 @@ public class BaseGameCustom : GameObjectBehavior {
             }
         }
     }
+
+    float lastCustomUpdate = 0;
         
     void Update() {
 
-        HandleCustomPlayer();
+        if(lastCustomUpdate + 1 < Time.time) {
+            lastCustomUpdate = Time.time;
 
-        if (freezeRotation) {
-            gameObject.transform.rotation = Quaternion.identity;
-            gameObject.transform.localRotation = Quaternion.identity;
+            HandleCustomPlayer();
+            
+            if (freezeRotation) {
+                gameObject.transform.rotation = Quaternion.identity;
+                gameObject.transform.localRotation = Quaternion.identity;
+            }
         }
+
     }
 }

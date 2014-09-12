@@ -163,6 +163,15 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         base.AnimateIn();
 
         loadData();
+
+        GameUIController.ShowBroadcastRecordingReplayShare();
+    }
+
+    
+    public override void AnimateOut() {
+        base.AnimateOut();
+        
+        GameUIController.HideBroadcastRecordingReplayShare();
     }
 	
 }

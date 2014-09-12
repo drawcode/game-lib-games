@@ -10,6 +10,7 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
 
     public GameObject objectRecordStatusLight;
     public UILabel labelStatus;
+    public UILabel labelStatusAction;
 
     public void Awake() {
         
@@ -51,12 +52,14 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
 
     public void UpdateBroadcastStatus(string broadcastStatus) {
         
-        UIUtil.SetLabelValue(labelStatus, "TAP TO REC");
+        UIUtil.SetLabelValue(labelStatus, "NOT RECORDING...");
+        UIUtil.SetLabelValue(labelStatusAction, "TAP TO START");
         
         if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
             RecordingObjectPingPong();
             
-            UIUtil.SetLabelValue(labelStatus, "REC...");
+            UIUtil.SetLabelValue(labelStatus, "RECORDING...");
+            UIUtil.SetLabelValue(labelStatusAction, "TAP TO STOP");
         }
         else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStop) {            
             RecordingObjectStop();

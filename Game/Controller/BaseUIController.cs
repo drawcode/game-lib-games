@@ -118,9 +118,12 @@ public class BaseUIButtonNames {
     
     public static string buttonGameCommunityCameraSaveTwitter = "ButtonGameCommunityCameraSaveTwitter";
     public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
-    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";    
+    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";   
     public static string buttonGameCommunityCameraTakePhoto = "ButtonGameCommunityCameraTakePhoto";
     
+    public static string buttonGameCommunityShareResultFacebook = "ButtonGameCommunityShareResultFacebook";
+    public static string buttonGameCommunityShareResultTwitter = "ButtonGameCommunityShareResultTwitter";
+
     public static string buttonGameCommunityBroadcastNetworkOpen = "ButtonGameCommunityBroadcastNetworkOpen";
         
     public static string buttonGameCommunityBroadcastOpen = "ButtonGameCommunityBroadcastOpen";
@@ -3272,7 +3275,34 @@ public class BaseUIController : GameObjectBehavior {
         UIPanelCommunityBroadcast.HideAll();
         UIPanelCommunityCamera.HideAll();
         UIPanelCommunityBackground.HideBackground();
+
     }
+
+    //
+
+
+    
+    //
+
+    public static void ShowBroadcastRecordingReplayShare() {
+        GameUIController.Instance.showBroadcastRecordingReplayShare();
+    }
+    
+    public void showBroadcastRecordingReplayShare() {
+
+        UIPanelCommunityBroadcast.ShowBroadcastRecordPlayShare();
+    }
+
+    public static void HideBroadcastRecordingReplayShare() {
+        GameUIController.Instance.hideBroadcastRecordingReplayShare();
+    }
+
+    public void hideBroadcastRecordingReplayShare() {  
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
+    }
+
+    // EVENTS
             
     public virtual void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
@@ -3471,10 +3501,6 @@ public class BaseUIController : GameObjectBehavior {
         // COMMUNITY
                 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
-            
-            if(GameController.Instance.gameState == GameStateGlobal.GameOverlay) { 
-                GameController.GameRunningStateRun();
-            }
             GameUIController.HideGameCommunity();
         }       
 
@@ -3490,9 +3516,6 @@ public class BaseUIController : GameObjectBehavior {
             BroadcastNetworks.ToggleRecording();
         }        
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastOpen, buttonName)) {
-            if(GameController.Instance.gameState == GameStateGlobal.GameStarted) { 
-                GameController.GameRunningStateOverlay();
-            }
             UIPanelCommunityBroadcast.ShowDialog();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastNetworkOpen, buttonName)) {

@@ -101,7 +101,7 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
 
         yield return new WaitForSeconds(.5f);
 
-        ShowCameraPhoto();
+        showDialog();
     }
     
     public void PhotoObjectSize() {
@@ -133,8 +133,7 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
 
     // SHOW/LOAD
 
-    public override void HidePanels() {
-        base.HidePanels();
+    public void HidePanels() {
 
         HideCameraPhoto();
         HideCameraButton();
@@ -221,15 +220,30 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
         HideCameraPhoto();
     }
 
+    // DIALOG
+    
     public static void ShowDialog() {
         if (isInst) {
             Instance.showDialog();
         }
     }
     
-    public void showDialog() {
-        HideCameraButton();
+    public override void showDialog() {
+        base.showDialog();
+
         ShowCameraPhoto();
+    }
+    
+    public static void HideDialog() {
+        if (isInst) {
+            Instance.hideDialog();
+        }
+    }
+    
+    public override void hideDialog() {
+        base.hideDialog();        
+        
+        ShowCameraButton();  
     }
         
     public static void ShowNone() {
@@ -249,8 +263,8 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
 
     public override void AnimateOut() {
         base.AnimateOut();
-        
-        ShowCameraButton();        
+
+        hideDialog();
     }
 
     public void Update() {

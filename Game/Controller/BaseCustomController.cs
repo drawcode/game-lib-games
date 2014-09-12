@@ -236,7 +236,7 @@ public class BaseGameCustomController : GameObjectBehavior {
 
                         UIUtil.SetTextColor(go, prop.code, colorTo);
 
-                        updateProfileCharacterDisplay(go);
+                        //updateProfileCharacterDisplay(go);
 
                         //LogUtil.Log("updateColorPresetObject:preset:" + 
                         //          " prop.code:" + prop.code + 
@@ -262,7 +262,7 @@ public class BaseGameCustomController : GameObjectBehavior {
             GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.name;
         string val = GameProfileCharacters.currentCharacter.characterDisplayName;
         
-        Debug.Log("updateProfileCharacterDisplayName: val:" + val);
+        ////////Debug.Log("updateProfileCharacterDisplayName: val:" + val);
 
         UIUtil.SetTextValue(go, key, val);  
     }    
@@ -272,8 +272,12 @@ public class BaseGameCustomController : GameObjectBehavior {
         string key = 
             GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.code;
         string val = GameProfileCharacters.currentCharacter.characterDisplayCode;
+
+        if(string.IsNullOrEmpty(val)) {
+            val = UnityEngine.Random.Range(0,99).ToString();
+        }
         
-        Debug.Log("updateProfileCharacterDisplayCode: val:" + val);
+        ////////Debug.Log("updateProfileCharacterDisplayCode: val:" + val);
         
         UIUtil.SetTextValue(go, key, val);  
     }

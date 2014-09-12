@@ -314,7 +314,7 @@ public class UIUtil {
 
     public static void SetTextValue(GameObject go, string code, string val) {
         
-        Debug.Log("SetTextValue:" + " code:" + code + " val:" + val );
+        ////////Debug.Log("SetTextValue:" + " code:" + code + " val:" + val );
         
         UILabel[] labels = go.GetComponentsInChildren<UILabel>();
         

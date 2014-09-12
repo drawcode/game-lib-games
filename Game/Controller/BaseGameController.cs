@@ -91,6 +91,8 @@ public class BaseGameMessages {
     public static string state = "game-action-state";
     public static string gameInitLevelStart = "game-init-level-start";
     public static string gameInitLevelEnd = "game-init-level-end";
+    public static string gameLevelStart = "game-level-start";
+    public static string gameLevelEnd = "game-level-end";
 }
 
 public class BaseGameStatCodes {
@@ -1337,6 +1339,8 @@ public class BaseGameController : GameObjectBehavior {
         
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
                 
+        Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
+                
         //UIPanelOverviewMode.ShowDefault();
 
         levelInitializing = false;
@@ -2580,6 +2584,16 @@ public class BaseGameController : GameObjectBehavior {
         //GameAudio.StartGameLoop(4);
         isAdvancing = false;
         GameController.GameRunningStateStopped();
+
+        broadcastResultsDelayed();
+    }
+
+    public virtual void broadcastResultsDelayed(float delay) {
+        Invoke("broadcastResultsDelayed", .5f);    
+    }
+
+    public virtual void broadcastResultsDelayed() {
+        Messenger<string>.Broadcast(GameMessages.gameLevelEnd, GameLevels.Current.code);
     }
     
     //public virtual void ProcessStatShot() {
