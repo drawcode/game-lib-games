@@ -23,7 +23,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public GameObject containerSupported;
     public GameObject containerNotSupported;
     public UICheckbox toggleRecordReplaysLevel;
-    
+
     bool isEnabled = false;
     bool isSupported = false;
     bool isRecordingSupported = false;
@@ -164,10 +164,10 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
                     BroadcastNetworks.SetMetadata("game", AppConfigs.appGameDisplayName);
                     BroadcastNetworks.SetMetadata("level", levelCode);
                     BroadcastNetworks.SetMetadata("level_name", "Arcade Mode");
-                    BroadcastNetworks.SetMetadata("score", runtimeData.score);
-                    BroadcastNetworks.SetMetadata("scores", runtimeData.scores);
-                    BroadcastNetworks.SetMetadata("coins", runtimeData.coins);
-                    BroadcastNetworks.SetMetadata("total_score", runtimeData.totalScoreValue);
+                    BroadcastNetworks.SetMetadata("score", runtimeData.score.ToString("N0"));
+                    BroadcastNetworks.SetMetadata("scores", runtimeData.scores.ToString("N0"));
+                    BroadcastNetworks.SetMetadata("coins", runtimeData.coins.ToString("N0"));
+                    BroadcastNetworks.SetMetadata("total_score", runtimeData.totalScoreValue.ToString("N0"));
                     
                     Debug.Log("OnGameLevelEnd" + " runtimeData.scores:" + runtimeData.scores);
                 }

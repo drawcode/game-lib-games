@@ -92,7 +92,7 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
         yield return new WaitForSeconds(.7f);
 
         PhotoObjectSize();
-        
+
         GameCommunitySocialController.TakePhoto(photoMaterial);
                 
         UINotificationDisplay.QueueInfo("Loading Photo", "Photo just taken is saving.");
@@ -107,27 +107,9 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
     public void PhotoObjectSize() {
         // current size 250x250
         
-        float currentWidth = Screen.width;
-        float currentHeight = Screen.height;
-        
-        float photoWidth = 640f;
-        float photoHeight = 420f;
-        
-        float currentRatioWidth = photoWidth / currentWidth;
-        float currentRatioHeight = photoHeight / currentHeight;
-        
-        if (currentRatioHeight < currentRatioWidth) {
-            currentWidth *= currentRatioHeight;
-            currentHeight *= currentRatioHeight;
+        if(photoObject != null) {
+            photoObject.ResizePreservingAspectToScreen(640f, 420f);
         }
-        else if (currentRatioWidth < currentRatioHeight) {
-            currentWidth *= currentRatioWidth;
-            currentHeight *= currentRatioWidth;
-        }
-        
-        photoObject.transform.localScale 
-            = photoObject.transform.localScale
-                .WithX(currentWidth).WithY(currentHeight);  
         
     }
 

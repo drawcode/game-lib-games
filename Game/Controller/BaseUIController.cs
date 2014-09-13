@@ -61,6 +61,10 @@ public class BaseUIButtonNames {
     public static string buttonWorlds = "ButtonWorlds";
     public static string buttonLevels = "ButtonLevels";
     public static string buttonLevel = "ButtonLevel";
+
+    public static string buttonCoin = "ButtonCoin";
+    public static string buttonProductCurrency = "ButtonProductCurrency";
+
     public static string buttonGameSettingsAudio = "ButtonGameSettingsAudio";
     public static string buttonGamePause = "ButtonGamePause";
     public static string buttonGameResume = "ButtonGameResume";
@@ -3275,6 +3279,9 @@ public class BaseUIController : GameObjectBehavior {
         UIPanelCommunityBroadcast.HideAll();
         UIPanelCommunityCamera.HideAll();
         UIPanelCommunityBackground.HideBackground();
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
+        //GameUIController.HideBroadcastRecordingReplayShare();
 
     }
 
@@ -3560,6 +3567,16 @@ public class BaseUIController : GameObjectBehavior {
             GameCommunitySocialController.SaveImageToLibraryDefault();
         }
 
+        // COMMUNITY - RESULTS / SHARE
+
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultFacebook, buttonName)) {
+            GameCommunitySocialController.PostGameResultsFacebook();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultTwitter, buttonName)) {
+            GameCommunitySocialController.PostGameResultsTwitter();
+        }
+
         // GAME INIT
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
@@ -3636,12 +3653,24 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
 
+        
+        // COIN / CURRENCY
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProductCurrency, buttonName)) {
+            
+            HideGameCommunity();
+            
+            showProductCurrency();
+        }  
+
         // LAST 
 
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
             
             HideGameCommunity();
+            
+            GameUIController.HideBroadcastRecordingReplayShare();
 
             GameController.PlayGame();
         }
@@ -3650,6 +3679,9 @@ public class BaseUIController : GameObjectBehavior {
 
         else {
             if (buttonName == BaseUIButtonNames.buttonBack) {
+
+                HideGameCommunity();
+
                 NavigateBack(buttonName);
             }
         }

@@ -169,9 +169,10 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     
     public override void AnimateOut() {
-        base.AnimateOut();
         
         GameUIController.HideBroadcastRecordingReplayShare();
+
+        base.AnimateOut();
     }
 	
 }
