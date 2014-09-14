@@ -10,6 +10,8 @@ public class UIBroadcastRecordThumbnail : GameObjectBehavior {
     
     public GameObject placeholderReplayTextureObject;
 
+    float initialHeight = 160;
+    float initialWidth = 120;
 
     public void Awake() {
         
@@ -18,7 +20,11 @@ public class UIBroadcastRecordThumbnail : GameObjectBehavior {
     public  void Init() {
     
         if(placeholderReplayTextureObject != null) {
-            placeholderReplayTextureObject.ResizePreservingAspectToScreen(150f, 120f);
+
+            initialWidth = placeholderReplayTextureObject.transform.localScale.x;
+            initialHeight = placeholderReplayTextureObject.transform.localScale.y;
+
+            placeholderReplayTextureObject.ResizePreservingAspectToScreen(initialWidth, initialHeight);
         }   
     }
     
