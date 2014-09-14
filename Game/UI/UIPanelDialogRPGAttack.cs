@@ -71,7 +71,7 @@ public class UIPanelDialogRPGAttack : UIPanelBase {
         //Messenger<AppContentChoiceItem>.Broadcast(AppContentChoiceMessages.appContentChoiceItem, choiceItem);
     }
 
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if (UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
 
             // buy recharge

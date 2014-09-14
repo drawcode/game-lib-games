@@ -49,7 +49,7 @@ public class UIPanelModeMatchup : UIPanelBase {
         base.OnDisable();
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
 	}
 

@@ -103,7 +103,7 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
         }
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
         if(UIUtil.IsButtonClicked(buttonGameBuyProducts, buttonName)) {
             GameUIController.ShowProducts();

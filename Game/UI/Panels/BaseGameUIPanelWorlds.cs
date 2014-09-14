@@ -177,7 +177,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         HidePanelBottom(containerButtons);
     }
 	
-    public virtual void OnButtonClickEventHandler(string buttonName) {		
+    public override void OnButtonClickEventHandler(string buttonName) {		
 		if(UIUtil.IsButtonClicked(buttonWorldNext, buttonName)) {            
             Messenger.Broadcast(GameWorldsMessages.gameWorldNext);
         }        

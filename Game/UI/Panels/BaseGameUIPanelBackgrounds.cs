@@ -86,7 +86,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
         }
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
     }
 	

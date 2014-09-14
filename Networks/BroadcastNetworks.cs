@@ -145,7 +145,7 @@ public class BroadcastNetworks : GameObjectBehavior {
         Messenger<string>.Broadcast(BroadcastNetworksMessages.broadcastRecordingStatusChanged, status);
     }
 
-    public void BroadcastMessage(string code) {
+    public void BroadcastRecordingEvents(string code) {
         Messenger.Broadcast(code);
         BroadcastRecordingStatusChanged(code);    
     }
@@ -178,7 +178,7 @@ public class BroadcastNetworks : GameObjectBehavior {
 
                 if (IsSupported()) {
                     // Subscribe to the permission events
-                    Everyplay.SharedInstance.FaceCamRecordingPermission += everyplayCheckForRecordingPermission;
+                    Everyplay.FaceCamRecordingPermission += everyplayCheckForRecordingPermission;
                 }
             }
         }
@@ -193,8 +193,9 @@ public class BroadcastNetworks : GameObjectBehavior {
 
     private void everyplayCheckForRecordingPermission(bool granted) {
         if (granted) {
-            Debug.Log("Microphone access was granted");
             facecamPermissionGranted = granted;
+            
+            Debug.Log("Microphone access was granted:" + " facecamPermissionGranted:" + facecamPermissionGranted);
             // * HERE YOU CAN START YOUR FACECAM SAFELY * //
             FacecamStart();
         }
@@ -857,7 +858,7 @@ Everyplay.SetMetadata("score", score)
         }
             
             #if BROADCAST_USE_EVERYPLAY
-            Everyplay.SharedInstance.FaceCamRequestRecordingPermission();
+            Everyplay.FaceCamRequestRecordingPermission();
             #else
             
             #endif

@@ -69,7 +69,7 @@ public class UIPanelPause : UIPanelBase {
 
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
 	}
 	

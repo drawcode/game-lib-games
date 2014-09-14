@@ -87,7 +87,7 @@ public class BaseGameUIPanelGameModeTrainingModeCollectionSafety : GameUIPanelBa
         }
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         //
     }
 	

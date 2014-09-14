@@ -116,7 +116,7 @@ public class BaseGameHUD : GameUIPanelBase {
         Messenger<double>.RemoveListener(GameMessages.scores, OnGameShooterScores);
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if (buttonName == buttonCamera.name) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             if (!AppModes.Instance.isAppModeGameTraining) {

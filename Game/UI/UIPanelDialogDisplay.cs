@@ -67,7 +67,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
     }
     
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if (UIUtil.IsButtonClicked(buttonDialogOk, buttonName)) {
             HideAll();
             GameController.GameRunningStateRun();

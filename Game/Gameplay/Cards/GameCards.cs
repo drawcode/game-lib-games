@@ -28,19 +28,27 @@ public class GameCardTypes {
 }
 
 public class GameCard : GameDataObject {
-    public string type = GameCardTypes.cardNormal;
-    public string val = "";
-
+    public GameCard() {
+        type = GameCardTypes.cardNormal;
+        val = "";
+    }
 }
 
 public class GameCardDeck { 
-    List<GameCard> cards = new List<GameCard>();
+    public List<GameCard> cards;
+
+    public GameCardDeck() {
+        cards = new List<GameCard>();
+    }
 }
 
 public class GameCardSet {
-    List<GameCardDeck> decks = new List<GameCardDeck>();
-}
+    public List<GameCardDeck> decks;
 
+    public GameCardSet() {
+        decks = new List<GameCardDeck>();
+    }
+}
 
 public class GameCards {
     

@@ -84,7 +84,7 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
         SetUpgradesAvailable(upgradesAvailable);
     }
 
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
         if (UIUtil.IsButtonClicked(buttonSaveRPG, buttonName)) {
             SaveRPG();

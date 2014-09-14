@@ -16,7 +16,7 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
     public GameObject photoObject;
     public Material photoMaterial;
 
-    public void Awake() {
+    public override void Awake() {
 
         if (Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -64,8 +64,8 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
 
-    public void OnButtonClickEventHandler(string buttonName) {
-
+    public override void OnButtonClickEventHandler(string buttonName) {
+        base.OnButtonClickEventHandler(buttonName);
     }
     
     public static void TakePhoto() {
@@ -249,7 +249,7 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
         hideDialog();
     }
 
-    public void Update() {
-        //base.Update();
+    public override void Update() {
+        base.Update();
     } 
 }

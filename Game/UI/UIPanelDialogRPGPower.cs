@@ -11,11 +11,8 @@ using Engine.Events;
 public class UIPanelDialogRPGPower : UIPanelBase {
 
     public static UIPanelDialogRPGPower Instance;
-
     public GameObject containerContent;
-
     public UILabel labelTitle;
-
     public UIImageButton buttonBuyRecharge;
     public UIImageButton buttonEarn;
 
@@ -34,12 +31,12 @@ public class UIPanelDialogRPGPower : UIPanelBase {
 
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
         }
-    }   
+    }
 
     public override void Init() {
         base.Init();
@@ -75,14 +72,13 @@ public class UIPanelDialogRPGPower : UIPanelBase {
         //Messenger<AppContentChoiceItem>.Broadcast(AppContentChoiceMessages.appContentChoiceItem, choiceItem);
     }
 
-
-    void OnButtonClickEventHandler(string buttonName) {
-        if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
+    public override void OnButtonClickEventHandler(string buttonName) {
+        if (UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
 
             // buy recharge
             LogUtil.Log("Recharge:");
         }
-        else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameUIController.ShowGameModeTrainingModeChoiceQuiz();
         }
     }
@@ -94,13 +90,13 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     // SHOW/LOAD
 
     public static void ShowDefault() {
-        if(isInst) {
+        if (isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if(isInst) {
+        if (isInst) {
             Instance.AnimateOut();
         }
     }
@@ -110,7 +106,7 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     }
 
     public static void LoadData() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.loadData();
         }
     }

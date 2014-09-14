@@ -90,7 +90,7 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
         }
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         /*
         if(UIUtil.IsButtonClicked(buttonGamePlayChoiceQuiz, buttonName)) {
 

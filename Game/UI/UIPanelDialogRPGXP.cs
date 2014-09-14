@@ -79,7 +79,7 @@ public class UIPanelDialogRPGXP : UIPanelBase {
     }
 
 
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
 
             // buy recharge

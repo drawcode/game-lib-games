@@ -10,7 +10,7 @@ using Engine.Events;
 
 public class UIPanelCommunityBase : UIPanelBase {
 
-    public void Awake() {
+    public virtual void Awake() {
 
     }
 
@@ -39,8 +39,8 @@ public class UIPanelCommunityBase : UIPanelBase {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
 
-    public void OnButtonClickEventHandler(string buttonName) {
-
+    public override void OnButtonClickEventHandler(string buttonName) {
+        base.OnButtonClickEventHandler(buttonName);
     }
 
     public virtual void showDialog() {
@@ -68,7 +68,7 @@ public class UIPanelCommunityBase : UIPanelBase {
         base.AnimateOut();
     }
 
-    public void Update() {
+    public virtual void Update() {
         //base.Update();
     } 
 }

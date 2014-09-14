@@ -49,7 +49,7 @@ public class UIPanelModeCoop : UIPanelBase {
         base.OnDisable();
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
 	}
 

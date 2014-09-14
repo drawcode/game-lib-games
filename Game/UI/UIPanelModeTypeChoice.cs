@@ -199,7 +199,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);
     }
 
-    public void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if(UIUtil.IsButtonClicked(buttonDisplayItemAdvance, buttonName)) {
             Advance();
         }

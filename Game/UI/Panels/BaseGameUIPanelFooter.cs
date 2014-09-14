@@ -142,7 +142,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         }
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
     }

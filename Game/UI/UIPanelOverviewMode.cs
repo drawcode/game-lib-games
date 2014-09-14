@@ -121,7 +121,7 @@ public class UIPanelOverviewMode : UIPanelBase {
         }
     }
 
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
         if (UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
             Ready();
         }

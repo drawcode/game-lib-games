@@ -90,7 +90,7 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
         }
     }
 		
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 		
 		if(UIUtil.IsButtonClicked(buttonAchievements, buttonName)) {
 			GameUIController.ShowAchievements();

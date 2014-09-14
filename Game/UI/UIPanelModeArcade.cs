@@ -49,7 +49,7 @@ public class UIPanelModeArcade : UIPanelBase {
 
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
 	}
 

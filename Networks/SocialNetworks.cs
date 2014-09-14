@@ -592,6 +592,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
     void onFacebookAppAccessToken(string token) {
         appAccessToken = token;
         Debug.Log("appAccessToken:" + appAccessToken);
+
+        GameProfiles.Current.SetNetworkValueToken(SocialNetworkTypes.facebook, token);
         // TODO save?
     }
     
@@ -752,18 +754,26 @@ public static event Action<bool> tweetSheetCompletedEvent;
         
         GameNetworks.PostScoreFacebook(score);
     }
-    
-    public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
-        if (Instance != null) {
-            Instance.postMessageFacebook(message, url, title, linkToImage, caption);
-        }
-    }
-    
+
     void completionHandler(string error, object result) {
-        if (error != null)
+
+
+        if (error != null) {
+            
+            Debug.Log("SocialNetworks:completionHandler:"
+                + " error:" + error
+            );
+
             Debug.LogError(error);
-        else
+        }
+        else {
+            
+            Debug.Log("SocialNetworks:completionHandler:"
+                + " result:" + result
+            );
+
             Prime31.Utils.logObject(result);
+        }
     }
     
     public void ShowComposerFacebook(string message, string url, string title, string linkToImage, string caption) {
@@ -796,11 +806,16 @@ public static event Action<bool> tweetSheetCompletedEvent;
             Debug.Log(String.Format("Facebook posting for web: title:{0} caption:{0} message:{0} url:{0} caption:{0}", title, caption, message, url, caption) );
 #endif
     }
-    
-    
+        
     // Shows the Facebook share dialog. Valid dictionary keys 
     // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
     
+    public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
+        if (Instance != null) {
+            Instance.postMessageFacebook(message, url, title, linkToImage, caption);
+        }
+    }
+
     public void postMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
 
         Debug.Log("SocialNetworks:postMessageFacebook:"
@@ -828,6 +843,21 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrPostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
+
+        bool loggedIn = IsLoggedInFacebook();
+        
+        Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
+            + " loggedIn:" + loggedIn
+        );
+
+        Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
+            + " message:" + message
+            + " url:" + url
+            + " title:" + title
+            + " linkToImage:" + linkToImage
+            + " caption:" + caption
+        );
+
         if (IsLoggedInFacebook()) {
             PostMessageFacebook(message, url, title, linkToImage, caption);
         }

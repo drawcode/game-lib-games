@@ -49,7 +49,7 @@ public class UIPanelModeChallenge : UIPanelBase {
 
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 
 	}
 

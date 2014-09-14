@@ -1,3 +1,4 @@
+#pragma warning disable 0108
 using System;
 using UnityEngine;
 using System.Collections;
@@ -201,8 +202,8 @@ public class GameWeaponLauncher : GameWeaponBase {
             Vector3 dir = (aimtarget.position - CurrentCamera.transform.position).normalized;
             float direction = Vector3.Dot(dir, CurrentCamera.transform.forward);
             if (direction > 0.5f) {
-                Vector3 screenPos = CurrentCamera.WorldToScreenPoint(aimtarget.transform.position);
-                float distance = Vector3.Distance(transform.position, aimtarget.transform.position);
+                //Vector3 screenPos = CurrentCamera.WorldToScreenPoint(aimtarget.transform.position);
+                //float distance = Vector3.Distance(transform.position, aimtarget.transform.position);
                 if (locked) {
                     //if (TargetLockedTexture)
                         //GUI.DrawTexture(new Rect(screenPos.x - TargetLockedTexture.width / 2, Screen.height - screenPos.y - TargetLockedTexture.height / 2, TargetLockedTexture.width, TargetLockedTexture.height), TargetLockedTexture);

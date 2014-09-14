@@ -29,7 +29,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     bool isRecordingSupported = false;
     bool isFacecamSupported = false;
 
-    public void Awake() {
+    public override void Awake() {
 
         if (Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -103,8 +103,8 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         Messenger<string>.RemoveListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
     }
 
-    public void OnButtonClickEventHandler(string buttonName) {
-
+    public override void OnButtonClickEventHandler(string buttonName) {
+        base.OnButtonClickEventHandler(buttonName);
     }
 
     public void OnToggleChangedEventHandler(string checkboxName, bool selected) {
@@ -563,8 +563,8 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         hideDialog();
     }
 
-    public void Update() {
-        //base.Update();
+    public override void Update() {
+        base.Update();
     }
  
 }

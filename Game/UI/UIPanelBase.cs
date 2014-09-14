@@ -123,6 +123,10 @@ public class UIPanelBase : UIAppPanel {
 
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
     }
+    
+    public virtual void OnButtonClickEventHandler(string buttonName) {
+        
+    }
 
     public virtual void OnUIControllerPanelAnimateIn(string classNameTo) {
 

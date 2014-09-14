@@ -63,7 +63,7 @@ public class UIPanelSettingsAudio : UIPanelBase {
         Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
     }
 	
-    void OnButtonClickEventHandler(string buttonName) {
+    public override void OnButtonClickEventHandler(string buttonName) {
 		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);					
 	}
 	
