@@ -470,7 +470,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
         }
         else {
             Debug.Log("Facebook App is installed, loading Facebook APP flow, actually web view for now. Still a problem pulling auth creds from ios6.");      
-            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.ForcingWebView);    
+            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.WithFallbackToWebView);    
         }           
         
         /*
@@ -483,7 +483,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
         This is ALSO DEFINED in the info.plist and Prime31 has 
         a menu item to update this at
         Prime31->Info.plist additions. 
-        This is in the format fb[appid][schema]
+        This is in the format fb[appid][scheme]
 
         */
         
@@ -557,10 +557,10 @@ public static event Action<bool> tweetSheetCompletedEvent;
                 
                 dumpPermissionsToLog(permissions);
                 
-                GameCommunityUIPanelLoading.ShowGameCommunityLoading(
-                    "Loading...", 
-                    "Asking for permission to post scores."
-                );
+                //GameCommunityUIPanelLoading.ShowGameCommunityLoading(
+                //    "Loading...", 
+                //    "Asking for permission to post scores."
+                //);
                 
 #if UNITY_IPHONE
                 FacebookBinding.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);        
@@ -844,7 +844,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
     
     public void showLoginOrPostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
 
-        bool loggedIn = IsLoggedInFacebook();
+        bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.facebook);
         
         Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
             + " loggedIn:" + loggedIn
@@ -858,11 +858,11 @@ public static event Action<bool> tweetSheetCompletedEvent;
             + " caption:" + caption
         );
 
-        if (IsLoggedInFacebook()) {
+        if (loggedIn) {
             PostMessageFacebook(message, url, title, linkToImage, caption);
         }
         else {
-            ShowLoginFacebook();
+            GameCommunity.Login(SocialNetworkTypes.facebook);
         }
     }
             
@@ -1083,12 +1083,33 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrPostMessageTwitter(string message, string pathToImage) {
-        if (IsLoggedInTwitter()) {
+
+        
+        bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+        
+        Debug.Log("SocialNetworks:showLoginOrPostMessageTwitter:"
+                  + " loggedIn:" + loggedIn
+                  );
+        
+        Debug.Log("SocialNetworks:showLoginOrPostMessageTwitter:"
+                  + " message:" + message
+                  + " pathToImage:" + pathToImage
+                  );
+        
+        if (loggedIn) {
             postMessageTwitter(message, pathToImage);
         }
         else {
-            showLoginTwitter();
+            GameCommunity.Login(SocialNetworkTypes.twitter);
         }
+
+
+        //if (IsLoggedInTwitter()) {
+        //    postMessageTwitter(message, pathToImage);
+        //}
+        //else {
+        //    showLoginTwitter();
+        //}
     }
     
     public static void ShowLoginOrComposerTwitter(string message) {
