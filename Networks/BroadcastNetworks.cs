@@ -1,11 +1,11 @@
-#define BROADCAST_USE_EVERYPLAY
+//#define BROADCAST_USE_EVERYPLAY
 //#define BROADCAST_USE_TWITCH
 
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID    
 #elif UNITY_IPHONE
-    #define BROADCAST_USE_EVERYPLAY
+    //#define BROADCAST_USE_EVERYPLAY
 #endif
 using System;
 using System.Collections;
@@ -128,15 +128,15 @@ public class BroadcastNetworks : GameObjectBehavior {
     // MESSAGES 
 
     public void BroadcastRecordingStart() {
-        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingStart);
+        BroadcastRecordingEvents(BroadcastNetworksMessages.broadcastRecordingStart);
     }
     
     public void BroadcastRecordingStop() {
-        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingStop);
+        BroadcastRecordingEvents(BroadcastNetworksMessages.broadcastRecordingStop);
     }
     
     public void BroadcastRecordingPlayback() {
-        BroadcastMessage(BroadcastNetworksMessages.broadcastRecordingPlayback);
+        BroadcastRecordingEvents(BroadcastNetworksMessages.broadcastRecordingPlayback);
     }
 
     // MESSAGE STATE STATUS
