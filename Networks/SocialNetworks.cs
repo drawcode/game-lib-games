@@ -470,7 +470,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
         }
         else {
             Debug.Log("Facebook App is installed, loading Facebook APP flow, actually web view for now. Still a problem pulling auth creds from ios6.");      
-            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.WithFallbackToWebView);    
+            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.ForcingWebView);    
         }           
         
         /*
@@ -1068,7 +1068,11 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrPostMessageTwitter(string message) {
-        if (IsLoggedInTwitter()) {
+        //if (IsLoggedInTwitter()) {
+        
+        bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+
+        if(loggedIn) {
             postMessageTwitter(message);
         }
         else {
@@ -1119,7 +1123,11 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrComposerTwitter(string message) {
-        if (IsLoggedInTwitter()) {
+        //if (IsLoggedInTwitter()) {
+        
+        bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+
+        if(loggedIn) {
             showComposerTwitter(message);
         }
         else {
@@ -1134,7 +1142,11 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrComposerTwitter(string message, string pathToImage) {
-        if (IsLoggedInTwitter()) {
+       // if (IsLoggedInTwitter()) {
+        
+        bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+
+        if(loggedIn) {
             showComposerTwitter(message, pathToImage);
         }
         else {

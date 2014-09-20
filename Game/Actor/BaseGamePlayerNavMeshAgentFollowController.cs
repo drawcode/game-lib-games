@@ -40,8 +40,8 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     
     public virtual void StartAgent() {
         if(agent != null && agentState != GamePlayerNavMeshAgentState.PURSUE) {
-            agent.Resume();
             agentState = GamePlayerNavMeshAgentState.PURSUE;
+            agent.Resume();
             NavigateToDestination();
         }
     }
@@ -86,6 +86,9 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
         if(!GameConfigs.isGameRunning) {
             StopAgent();
             return;
+        }
+        else {
+            StartAgent();
         }
 
         FindGamePlayer();

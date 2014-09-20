@@ -1290,6 +1290,8 @@ public class BaseGameController : GameObjectBehavior {
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
 
+
+
         GameController.ResetRuntimeData();
 
         if (currentGamePlayerController != null) {
@@ -1702,9 +1704,7 @@ public class BaseGameController : GameObjectBehavior {
         GameController.StopDirectors();
 
         GameController.ResetRuntimeData();
-        GameController.ResetCurrentGamePlayer();
 
-        GameController.ResetLevelActors();
         GameUIController.HideGameCanvas();
 
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
