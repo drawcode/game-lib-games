@@ -383,6 +383,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         touchWallJumpTime = -1;
         lastJumpButtonTime = -10;
 
+        CancelInvoke("JumpStop");
         Invoke("JumpStop", .5f);
     }
     
@@ -539,6 +540,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
     public virtual void ResetPlayState() {   
         enabled = true;
         controllerData.removing = false;
+        jumping = false;
         //transform.position = Vector3.zero;
     }
 }

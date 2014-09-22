@@ -125,6 +125,10 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 return;
             }
 
+            // add state for item
+
+            GamePlayerProgress.SetStatItems(gameItem.code, 1);
+
             GameController.CurrentGamePlayerController.HandleItemUse(gameItem);                  
                                 
             //UINotificationDisplay.Instance.QueuePoint(title, description, pointValue);

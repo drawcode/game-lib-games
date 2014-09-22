@@ -2503,7 +2503,48 @@ public class BaseGamePlayerProgress {
             SetStatTotal(GameStatCodes.cutsLeft, val);
         }
     }
+        
+    // item collected
     
+    public static void SetStatItems(string itemCode, double val) {
+        SetStatItems(itemCode, (float)val);
+    }
+    
+    public static void SetStatItems(string itemCode, float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatItems(itemCode, val);
+        }
+    }
+    
+    float lastItemsTime = 0;
+    
+    public virtual void setStatItems(string code, float val) {
+        if (lastItemsTime + .05f < Time.time) {
+            lastItemsTime = Time.time;
+            SetStatTotal(code, val);
+        }
+    }
+    
+    // custom
+    
+    public static void SetStatCustom(string code, double val) {
+        SetStatCustom(code, (float)val);
+    }
+    
+    public static void SetStatCustom(string code, float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatCustom(code, val);
+        }
+    }
+    
+    float lastCustomTime = 0;
+    
+    public virtual void setStatCustom(string code, float val) {
+        if (lastCustomTime + .05f < Time.time) {
+            lastCustomTime = Time.time;
+            SetStatTotal(code, val);
+        }
+    }    
     
     // attacks
     

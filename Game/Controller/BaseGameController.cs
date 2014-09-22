@@ -129,6 +129,8 @@ public class BaseGameStatCodes {
     public static string cutsRight = "cuts-right";//
     public static string boosts = "boosts";//
     public static string spins = "spins";//
+    public static string total = "total";//
+    public static string item = "item";//
 
     // lows
 
@@ -1098,7 +1100,8 @@ public class BaseGameController : GameObjectBehavior {
         GameLevelItems.Current.code = code;
     
         // Clear items from LevelContainer
-        GameController.Reset();
+        //GameController.Reset();
+        GameController.ResetLevelActors();
 
         // Change data codes
         GameLevels.Instance.ChangeCurrentAbsolute(code);
@@ -1818,7 +1821,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void prepareGame(string levelCode) {
 
-        GameController.Reset();
+        //GameController.Reset();
         
         GameController.LoadLevelAssets(levelCode);
         
