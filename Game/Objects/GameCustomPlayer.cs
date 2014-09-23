@@ -34,4 +34,5 @@ public class GameCustomPlayer : BaseGameCustom {
     void OnCustomizationCharacterDisplayChangedHandler() {
         GameCustomController.UpdateProfileCharacterDisplay(gameObject);
     }
+
 }

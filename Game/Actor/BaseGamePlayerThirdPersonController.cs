@@ -359,6 +359,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
     }
 
     public virtual void Jump() {
+        Jump(.5f);
+    }
+
+    public virtual void Jump(float duration) {
 
         if(jumpButton) {
             return;
@@ -384,7 +388,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
         lastJumpButtonTime = -10;
 
         CancelInvoke("JumpStop");
-        Invoke("JumpStop", .5f);
+        Invoke("JumpStop", duration);
     }
     
     public virtual void JumpStop() {

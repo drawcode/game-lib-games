@@ -382,10 +382,15 @@ public class BaseGameCustom : GameObjectBehavior {
         
     void Update() {
 
+        if(GameConfigs.isGameRunning) {
+            gameObject.ResetPosition();
+        }
+
         if(lastCustomUpdate + 1 < Time.time) {
             lastCustomUpdate = Time.time;
 
             HandleCustomPlayer();
+
             
             if (freezeRotation) {
                 gameObject.transform.rotation = Quaternion.identity;
