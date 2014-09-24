@@ -86,6 +86,9 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         
         Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.AddListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
+                
+        Messenger.AddListener(GameMessages.gameResultsStart, OnGameResultsStart);
+        Messenger.AddListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
     }
     
     public override void OnDisable() {
@@ -101,6 +104,9 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         
         Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.RemoveListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
+        
+        Messenger.RemoveListener(GameMessages.gameResultsStart, OnGameResultsStart);
+        Messenger.RemoveListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -120,6 +126,14 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void OnBroadcastRecordStatusChanged(string broadcastStatus) {
         
         UpdateBroadcastStatus(broadcastStatus);
+    }
+
+    public void OnGameResultsStart() {
+        ShowBroadcastRecordPlayShare();
+    }
+
+    public void OnGameResultsEnd() {
+        HideBroadcastRecordPlayShare();
     }
 
     public void OnGameLevelStart(string levelCode) {

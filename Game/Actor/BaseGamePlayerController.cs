@@ -634,10 +634,10 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData.modifierItemScaleLerp = 0f;
                 
-        Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
-        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
-        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerpTime:" + controllerData.modifierItemScaleLerpTime);
-        Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerp:" + controllerData.modifierItemScaleLerp);
+        //Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
+        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
+        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerpTime:" + controllerData.modifierItemScaleLerpTime);
+        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerp:" + controllerData.modifierItemScaleLerp);
     }
 
     public virtual void HandleItemStateFlyModifier(double val, double duration) {         
@@ -646,10 +646,10 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData.modifierItemFlyLerp = 0f;
         
-        Debug.Log("HandleItemStateFlyModifier::" + " val:" + val + " duration:" + duration);
-        Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyCurrent:" + controllerData.modifierItemFlyCurrent);
-        Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerpTime:" + controllerData.modifierItemFlyLerpTime);
-        Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerp:" + controllerData.modifierItemFlyLerp);
+        //Debug.Log("HandleItemStateFlyModifier::" + " val:" + val + " duration:" + duration);
+        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyCurrent:" + controllerData.modifierItemFlyCurrent);
+        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerpTime:" + controllerData.modifierItemFlyLerpTime);
+        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerp:" + controllerData.modifierItemFlyLerp);
     }
 
     public virtual void HandleItemUse(GameItem gameItem) {
@@ -3171,7 +3171,7 @@ public class BaseGamePlayerController : GameActor {
             directionAttack = controllerData.thirdPersonController.aimingDirection;
         }        
      
-        Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        //Debug.DrawRay(transform.position, directionAttack * attackDistance);
 
         hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
         int i = 0;
@@ -3184,7 +3184,7 @@ public class BaseGamePlayerController : GameActor {
                     GamePlayerController playerController = GetController(hitObject);
                     if (playerController != null) {
 
-                        Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
+                        //Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
                                              
                         ScoreAttack();
                      
@@ -3544,7 +3544,7 @@ public class BaseGamePlayerController : GameActor {
 
         controllerData.impact += delta;
 
-        Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
+        //Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
 
     }
     
@@ -3901,7 +3901,7 @@ public class BaseGamePlayerController : GameActor {
 
             if (marker != null) {
 
-                Debug.Log("marker:" + marker.name);
+                //Debug.Log("marker:" + marker.name);
 
                 // goalFly position
 
@@ -3980,11 +3980,26 @@ public class BaseGamePlayerController : GameActor {
                 //    lastTimeGoalFlyFlap = Time.time;
 
                 if (gameObject.transform.position.y < UnityEngine.Random.Range(1.3f, 1.8f)) { //UnityEngine.Random.Range(1f, 2f)) {
+                      
+                    // jagged jumps
+                    //if (Mathf.Abs(distanceCurrent) > .5f) {
+                    //    Jump(.05f);
+                    //}
 
                     Vector3 dir = gameGoalNext.transform.position - transform.position;
-                    dir.y = 50f;//UnityEngine.Random.Range(120f, 200f);
+                    dir.y = distanceCurrent/2f;//UnityEngine.Random.Range(120f, 200f);
                     AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
                 }
+
+
+                //// TODO - hook to controller type - update controls temporarily
+                //Vector3 axisInput = Vector3.zero;
+                //float directionX = transform.position.x;
+
+                //axisInput.WithX(directionX/Math.Abs(directionX));
+
+                //OnInputAxis(GameTouchInputAxis.inputAxisMove, axisInput);
+
                 //}
 
                 //modifierItemGoalNextPosMax = MathUtil.LerpPercent(modifierItemGoalNextPosMax, gameGoalNext.transform.position, .1f);

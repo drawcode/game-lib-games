@@ -373,20 +373,16 @@ public class BaseGameCustom : GameObjectBehavior {
 
                 lastCustomColorCode = customInfo.presetColorCode;
 
-
             }
         }
     }
 
     float lastCustomUpdate = 0;
         
-    void Update() {
+    public virtual void Update() {
 
-        if(GameConfigs.isGameRunning) {
-            gameObject.ResetPosition();
-        }
 
-        if(lastCustomUpdate + 1 < Time.time) {
+        if (lastCustomUpdate + 1 < Time.time) {
             lastCustomUpdate = Time.time;
 
             HandleCustomPlayer();
@@ -396,6 +392,11 @@ public class BaseGameCustom : GameObjectBehavior {
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localRotation = Quaternion.identity;
             }
+        }
+        
+        if (GameConfigs.isGameRunning) {
+            gameObject.transform.localPosition = 
+                Vector3.Lerp(gameObject.transform.localPosition, Vector3.zero, Time.deltaTime);
         }
 
     }

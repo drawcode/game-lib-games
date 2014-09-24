@@ -872,12 +872,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //LogUtil.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
         AnimateInBottom(containerChoiceResults);
         ContentPause();
+        
+        Messenger.Broadcast(GameMessages.gameResultsStart);
     }
 
     public void HideResults() {
         //LogUtil.Log("UIPanelModeTypeChoice:HideResults:flowState:" + flowState);
         AnimateOutBottom(containerChoiceResults, 0f, 0f);
         ContentRun();
+
+        Messenger.Broadcast(GameMessages.gameResultsEnd);
     }
 
     // SHOW/LOAD

@@ -32,7 +32,6 @@ public class BaseGameContentDisplayTypes {
     public static string gameModeContentOverview = "content-game-mode-content-overview";
 }
 
-
 // GLOBAL
 
 public enum GameControllerType {
@@ -93,6 +92,8 @@ public class BaseGameMessages {
     public static string gameInitLevelEnd = "game-init-level-end";
     public static string gameLevelStart = "game-level-start";
     public static string gameLevelEnd = "game-level-end";
+    public static string gameResultsStart = "game-results-start";
+    public static string gameResultsEnd = "game-results-end";
 }
 
 public class BaseGameStatCodes {
@@ -674,7 +675,7 @@ public class BaseGameController : GameObjectBehavior {
         actorDataItem.characterCode = actor.code;
         actorDataItem.characterType = actor.type;
         
-        for(int i = 0; i < actor.currentSpawnAmount; i++) {
+        for (int i = 0; i < actor.currentSpawnAmount; i++) {
             GameController.LoadActor(actorDataItem);
         }
     }
@@ -683,7 +684,7 @@ public class BaseGameController : GameObjectBehavior {
         
         // DEFAULT ITEM LOADING
         
-        for(int i = 0; i < item.currentSpawnAmount; i++) {
+        for (int i = 0; i < item.currentSpawnAmount; i++) {
             
             GameController.LoadItemData(item);
         }
@@ -1098,10 +1099,9 @@ public class BaseGameController : GameObjectBehavior {
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
         GameLevelItems.Current.code = code;
-    
+            
         // Clear items from LevelContainer
-        //GameController.Reset();
-        GameController.ResetLevelActors();
+        GameController.Reset();
 
         // Change data codes
         GameLevels.Instance.ChangeCurrentAbsolute(code);
@@ -1267,7 +1267,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual void playGame() {
 
-        if(!levelInitializing) {
+        if (!levelInitializing) {
         
             //AdNetworks.ShowFullscreenAd();
             
@@ -1293,9 +1293,7 @@ public class BaseGameController : GameObjectBehavior {
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
 
-
-
-        GameController.ResetRuntimeData();
+        //GameController.ResetRuntimeData();
 
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
@@ -1319,14 +1317,14 @@ public class BaseGameController : GameObjectBehavior {
         GameController.LoadLevel(levelCode);
         
         // TODO load anim
-    }    
+    }
     
     public virtual void initLevelFinish(string levelCode) {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
     
     public virtual IEnumerator initLevelFinishCo(string levelCode) {        
-        if(UIPanelOverlayPrepare.Instance != null) {
+        if (UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
                        
@@ -1417,7 +1415,7 @@ public class BaseGameController : GameObjectBehavior {
         GameProfileCharacterItem profileCharacterItem = 
             GameProfileCharacters.Current.GetCharacter(characterProfileCode);
 
-        if(profileCharacterItem == null) {
+        if (profileCharacterItem == null) {
             return;
         }
 
@@ -1425,7 +1423,7 @@ public class BaseGameController : GameObjectBehavior {
                
         string characterCode = ProfileConfigs.defaultGameCharacterCode;
         
-        if(!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
+        if (!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
             characterCode = profileCharacterItem.characterCode;
         }
         
@@ -1511,7 +1509,7 @@ public class BaseGameController : GameObjectBehavior {
 
         GameCharacter gameCharacter = GameCharacters.Instance.GetById(character.characterCode);
 
-        if(gameCharacter == null) {
+        if (gameCharacter == null) {
             //loadingCharacterContainer = false;
             yield break;
         }
@@ -1581,9 +1579,9 @@ public class BaseGameController : GameObjectBehavior {
             GamePlayerController characterGamePlayerController
                 = characterObject.GetComponentInChildren<GamePlayerController>();
 
-            if(characterGamePlayerController != null) {
+            if (characterGamePlayerController != null) {
 
-                if(character.characterType == GameActorType.enemy) {                        
+                if (character.characterType == GameActorType.enemy) {                        
                     //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
                     //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
                     //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
@@ -1592,12 +1590,10 @@ public class BaseGameController : GameObjectBehavior {
 
                     characterGamePlayerController.attackRange = 12f;
                 }
-                
-                else if(character.characterType == GameActorType.player) {
+                else if (character.characterType == GameActorType.player) {
                 
                 }
-                
-                else if(character.characterType == GameActorType.sidekick) {
+                else if (character.characterType == GameActorType.sidekick) {
 
                 }
                 
@@ -1703,11 +1699,16 @@ public class BaseGameController : GameObjectBehavior {
     }
 
     public virtual void reset() {
-        
-        GameController.StopDirectors();
 
         GameController.ResetRuntimeData();
 
+        GameController.ResetLevel();
+    }
+
+    public virtual void resetLevel() {
+        
+        GameController.StopDirectors();
+                
         GameUIController.HideGameCanvas();
 
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
@@ -2060,7 +2061,6 @@ public class BaseGameController : GameObjectBehavior {
         UIPanelDialogBackground.HideAll();
         GameController.GameRunningStateRun();
     }
-
     
     public virtual void onGameOverlayPause() {
         GameDraggableEditor.HideAllEditDialogs();
@@ -2397,7 +2397,7 @@ public class BaseGameController : GameObjectBehavior {
             return;
         }
 
-        if(AppModes.Instance.isAppModeGameTraining) {
+        if (AppModes.Instance.isAppModeGameTraining) {
             return;
         }
 

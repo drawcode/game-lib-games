@@ -164,13 +164,12 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         loadData();
 
-        GameUIController.ShowBroadcastRecordingReplayShare();
+        Messenger.Broadcast(GameMessages.gameResultsStart);
     }
-
-    
-    public override void AnimateOut() {
         
-        GameUIController.HideBroadcastRecordingReplayShare();
+    public override void AnimateOut() {
+
+        Messenger.Broadcast(GameMessages.gameResultsEnd);
 
         base.AnimateOut();
     }
