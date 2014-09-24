@@ -315,6 +315,9 @@ public static event Action<bool> tweetSheetCompletedEvent;
     void twitterLoginSucceededEvent(string val) {
 
         Debug.Log("SocialNetworks:twitterLoginSucceededEvent" + " val:" + val.ToJson());
+        
+        GameProfiles.Current.SetNetworkValueType(SocialNetworkTypes.twitter, SocialNetworkTypes.twitter);
+        GameProfiles.Current.SetNetworkValueUsername(SocialNetworkTypes.twitter, val);
     
     }
     
@@ -806,6 +809,22 @@ public static event Action<bool> tweetSheetCompletedEvent;
             Debug.Log(String.Format("Facebook posting for web: title:{0} caption:{0} message:{0} url:{0} caption:{0}", title, caption, message, url, caption) );
 #endif
     }
+
+    public bool canUseComposer(string networkType) {
+
+        if(networkType == SocialNetworkTypes.facebook) {
+            #if UNITY_ANDROID
+            return true;
+            #elif UNITY_IPHONE
+            return FacebookBinding.canUserUseFacebookComposer();
+            #elif UNITY_WEBPLAYER
+            return true;
+            #endif
+        }
+        else {
+            return true;
+        }
+    }
         
     // Shows the Facebook share dialog. Valid dictionary keys 
     // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
@@ -859,7 +878,12 @@ public static event Action<bool> tweetSheetCompletedEvent;
         );
 
         if (loggedIn) {
-            PostMessageFacebook(message, url, title, linkToImage, caption);
+            if(canUseComposer(SocialNetworkTypes.facebook)) {
+                ShowComposerFacebook(message, url, title, linkToImage, caption);
+            }
+            else {
+                PostMessageFacebook(message, url, title, linkToImage, caption);
+            }
         }
         else {
             GameCommunity.Login(SocialNetworkTypes.facebook);

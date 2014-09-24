@@ -3979,11 +3979,11 @@ public class BaseGamePlayerController : GameActor {
                 //if(lastTimeGoalFlyFlap + .3f < Time.time) { //distanceCurrent % 10 == 0) {
                 //    lastTimeGoalFlyFlap = Time.time;
 
-                if (gameObject.transform.position.y < UnityEngine.Random.Range(1.5f, 3f)) {
+                if (gameObject.transform.position.y < UnityEngine.Random.Range(1.3f, 1.8f)) { //UnityEngine.Random.Range(1f, 2f)) {
 
                     Vector3 dir = gameGoalNext.transform.position - transform.position;
-                    dir.y = 1f;//UnityEngine.Random.Range(120f, 200f);
-                    AddImpactForce(dir, UnityEngine.Random.Range(1f, 10f));
+                    dir.y = 50f;//UnityEngine.Random.Range(120f, 200f);
+                    AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
                 }
                 //}
 
