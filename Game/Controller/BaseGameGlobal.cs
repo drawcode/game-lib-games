@@ -242,48 +242,12 @@ public class BaseGameGlobal : GameObjectBehavior {
 
     public virtual void InitAudio() {    
 
-        /*
-        GameAudioEffects.audio_loop_intro_1 = "ui-music-intro";
-        GameAudioEffects.audio_loop_main_1 = "ui-music-loop";
-        GameAudioEffects.audio_loop_game_1 = "music-level-1";
-        GameAudioEffects.audio_loop_game_2 = "music-level-2";
-        GameAudioEffects.audio_loop_game_3 = "music-level-3";
-        GameAudioEffects.audio_loop_game_4 = "music-quiz";
-        */
         if(audioSystem == null) {
             audioSystem = gameObject.AddComponent<AudioSystem>();   
 
-            /*
-            audioSystem.PrepareIntroFileFromResources(
-                GameAudioEffects.audio_loop_intro_1, false, 
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-
-            audioSystem.PrepareLoopFileFromResources(
-                GameAudioEffects.audio_loop_main_1, true, 
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-            
-            audioSystem.PrepareGameLapLoopFileFromResources(
-                0, GameAudioEffects.audio_loop_game_1, true,
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-
-            audioSystem.PrepareGameLapLoopFileFromResources(
-                1, GameAudioEffects.audio_loop_game_2, true,
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-
-            audioSystem.PrepareGameLapLoopFileFromResources(
-                2, GameAudioEffects.audio_loop_game_3, true,
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-
-            audioSystem.PrepareGameLapLoopFileFromResources(
-                3, GameAudioEffects.audio_loop_game_4, true,
-                (float)GameProfiles.Current.GetAudioMusicVolume());
-                */
-            
             audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
-            
-            
-            //audioSystem.StartAmbience();
+
             #if DEV
             if (Application.isEditor) {
 

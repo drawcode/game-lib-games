@@ -48,5 +48,14 @@ public class GameSceneDynamic : GameUIScene {
         */
     }
 
+    void OnApplicationQuit() {
+        if(Application.isEditor) {
+            GameObject go = GameObject.Find("prime[31]");
+            if(go != null) {
+                Destroy(go);
+            }
+        }
+    }
+
 }
 

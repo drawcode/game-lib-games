@@ -135,9 +135,7 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
     }
         
     public override void AnimateIn() {
-
-        buttonDisplayState = UIPanelButtonsDisplayState.Character;
-        
+                
         base.AnimateIn();
         
         loadData();

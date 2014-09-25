@@ -29,7 +29,7 @@ public class GameCustomPlayerDisplayContainer : MonoBehaviour {
     void OnDisable() {
         //Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
-    
+
     public void Load() {
         
         if(prefabPlayerDisplay != null
@@ -41,9 +41,11 @@ public class GameCustomPlayerDisplayContainer : MonoBehaviour {
             
             if(go != null) {
                 
-                go.transform.parent = transform;
+                go.transform.parent = containerPlayerDisplay.transform;
                 
                 go.ResetObject();
+                
+                go.SetLayerRecursively(gameObject.layer);
             }
         }
     }

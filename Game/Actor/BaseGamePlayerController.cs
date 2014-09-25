@@ -3917,8 +3917,7 @@ public class BaseGamePlayerController : GameActor {
                     
                 Vector3 modifierItemGoalNextPosMax = 
                         GetPositionValue(
-                            GamePlayerModifierKeys.modifierItemGoalNextPosMax, gameGoalNext.transform.position);
-                    
+                            GamePlayerModifierKeys.modifierItemGoalNextPosMax, gameGoalNext.transform.position);                    
                     
                 float modifierItemGoalNextPosStartTime = 
                         GetModifierValue(
@@ -3927,32 +3926,32 @@ public class BaseGamePlayerController : GameActor {
                 modifierItemGoalNextPosCurrent = gameObject.transform.position;
                 modifierItemGoalNextPosMax = gameGoalNext.transform.position;                    
                     
-                float distanceFull = Vector3.Distance(modifierItemGoalNextPosMin, modifierItemGoalNextPosMax);
+                //float distanceFull = Vector3.Distance(modifierItemGoalNextPosMin, modifierItemGoalNextPosMax);
                 float distanceCurrent = Vector3.Distance(modifierItemGoalNextPosCurrent, modifierItemGoalNextPosMax);
                                    
-                float modifierItemGoalNextPosDistance = 
-                        GetModifierValue(
-                            GamePlayerModifierKeys.modifierItemGoalNextPosDistance, distanceFull);
+                //float modifierItemGoalNextPosDistance = 
+                //        GetModifierValue(
+                //           GamePlayerModifierKeys.modifierItemGoalNextPosDistance, distanceFull);
 
-                float lastTimeGoalFlyFlap = 
-                    GetModifierValue(
-                        GamePlayerTimeKeys.lastTimeGoalFlyFlap, 0);
+                //float lastTimeGoalFlyFlap = 
+                //    GetModifierValue(
+                //        GamePlayerTimeKeys.lastTimeGoalFlyFlap, 0);
 
-                float currentFlyFactor = 0f;
-                float duration = Mathf.RoundToInt(distanceFull / 5f);
+                // float currentFlyFactor = 0f;
+                //float duration = Mathf.RoundToInt(distanceFull / 5f);
 
-                float steps = Mathf.RoundToInt(distanceFull / 5f);
-                float step = 0.1f;
+                //float steps = Mathf.RoundToInt(distanceFull / 5f);
+                //float step = 0.1f;
 
                 // handle step
                 
-                float modifierItemGoalNextPosSteps = 
-                    GetModifierValue(
-                        GamePlayerModifierKeys.modifierItemGoalNextPosSteps, steps);
+                //float modifierItemGoalNextPosSteps = 
+                //    GetModifierValue(
+                //        GamePlayerModifierKeys.modifierItemGoalNextPosSteps, steps);
                 
-                float modifierItemGoalNextPosStep = 
-                    GetModifierValue(
-                        GamePlayerModifierKeys.modifierItemGoalNextPosStep, step);
+                //float modifierItemGoalNextPosStep = 
+                //    GetModifierValue(
+                //       GamePlayerModifierKeys.modifierItemGoalNextPosStep, step);
 
                 //
                                 
@@ -3967,17 +3966,10 @@ public class BaseGamePlayerController : GameActor {
 
                 // easing
 
-                if (Time.time - modifierItemGoalNextPosStartTime <= duration) {
-                    currentFlyFactor = (float)AnimationEasing.QuadEaseInOut(
-                        Time.time - modifierItemGoalNextPosStartTime, 0, 1, duration);
-                }
-
-                //modifierItemGoalNextPosCurrent = 
-                //    modifierItemGoalNextPosCurrent + currentFlyFactor * 
-                //       (modifierItemGoalNextPosMax - modifierItemGoalNextPosMin);
-
-                //if(lastTimeGoalFlyFlap + .3f < Time.time) { //distanceCurrent % 10 == 0) {
-                //    lastTimeGoalFlyFlap = Time.time;
+                //if (Time.time - modifierItemGoalNextPosStartTime <= duration) {
+                //    currentFlyFactor = (float)AnimationEasing.QuadEaseInOut(
+                //        Time.time - modifierItemGoalNextPosStartTime, 0, 1, duration);
+                //}
 
                 if (gameObject.transform.position.y < UnityEngine.Random.Range(1.3f, 1.8f)) { //UnityEngine.Random.Range(1f, 2f)) {
                       
@@ -4008,7 +4000,7 @@ public class BaseGamePlayerController : GameActor {
                 SetPositionValue(GamePlayerModifierKeys.modifierItemGoalNextPosMin, modifierItemGoalNextPosMin);
                 SetPositionValue(GamePlayerModifierKeys.modifierItemGoalNextPosMax, modifierItemGoalNextPosMax);
                 
-                SetModifierValue(GamePlayerModifierKeys.modifierItemGoalNextPosStep, modifierItemGoalNextPosStep);
+                //SetModifierValue(GamePlayerModifierKeys.modifierItemGoalNextPosStep, modifierItemGoalNextPosStep);
                                     
                 if (controllerData.thirdPersonController != null) {
                     //if (controllerData.thirdPersonController.IsJumping()) {

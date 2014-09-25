@@ -79,7 +79,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
         
         GameCustomController.BroadcastCustomSync();
-        
-        go.SetLayerRecursively("UIDialog");
+                
+        go.SetLayerRecursively(gameObject.layer);
     }
 }

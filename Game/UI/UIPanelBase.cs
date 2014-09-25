@@ -13,12 +13,14 @@ public enum UIPanelBackgroundDisplayState {
 
 public enum UIPanelCharacterDisplayState {
     None,
-    Character
+    Character,
+    CharacterLarge
 }
 
 public enum UIPanelButtonsDisplayState {
     None,
     Character,
+    CharacterLarge,
     CharacterCustomize,
     Statistics,
     Achievements,
@@ -989,6 +991,11 @@ public class UIPanelBase : UIAppPanel {
             
             GameUIPanelHeader.ShowCharacter();
         }
+        else if(characterDisplayState == 
+           UIPanelCharacterDisplayState.CharacterLarge) {
+            
+            GameUIPanelHeader.ShowCharacterLarge();
+        }
     }    
     
     public void HandleButtonDisplay() {
@@ -1004,6 +1011,11 @@ public class UIPanelBase : UIAppPanel {
                 UIPanelButtonsDisplayState.Character) {
             
             GameUIPanelFooter.ShowButtonsCharacter();
+        }
+        else if(buttonDisplayState == 
+                UIPanelButtonsDisplayState.CharacterLarge) {
+            
+            GameUIPanelFooter.ShowButtonsCharacterLarge();
         }
         else if(buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
             

@@ -53,6 +53,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
     public GameObject containerCharacters;
     public GameObject containerCharacter;
+    public GameObject containerCharacterLarge;
 	
 	public UIImageButton buttonCoins;
 	public UIImageButton buttonBack;
@@ -151,32 +152,6 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
             GameUIController.HideGameCommunity();
 			GameUIController.ShowProductCurrency();
 		}
-		else if(buttonName == buttonBack.name) {
-			
-			bool gotoMain = true;
-			/*
-			if(BaseGameUIPanelStore.Instance.panelMode == UIAppPanelMode.ModeList) {
-				gotoMain = false;
-				BaseGameUIPanelStore.Instance.AnimateInMain();
-			}
-			else if(BaseGameUIPanelSettings.Instance.panelMode == UIAppPanelMode.ModeList) {
-				gotoMain = false;
-				//BaseGameUIPanelSettings.Instance.ShowMain();
-			}
-			*/
-
-
-			//if(GameUIController.Instance.uiVisible) {
-			//	GameUIController.ShowMain();
-			//}
-			
-			if(GameUIController.Instance.uiVisible) {
-				if(gotoMain) {
-					//GameUIController.ShowMain();
-				}
-			}
-		}
-
     }
 	
 	public override void AnimateIn() {
@@ -273,6 +248,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
     public static void HideCharacters() {
         HideCharacter();
+        HideCharacterLarge();
     }
         
     // characters 
@@ -302,6 +278,32 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
         HidePanelTop(containerCharacter, false);
     }
 
+    // large
+        
+    public static void ShowCharacterLarge() {
+        if(GameUIPanelHeader.Instance != null) {
+            GameUIPanelHeader.Instance.showCharacterLarge();
+        }
+    }
+    
+    public virtual void showCharacterLarge() {
+        StartCoroutine(showCharacterLargeCo());
+    }
+    
+    public IEnumerator showCharacterLargeCo() {
+        yield return new WaitForSeconds(.55f);
+        ShowPanelTop(containerCharacterLarge, false);
+    }
+    
+    public static void HideCharacterLarge() {
+        if(GameUIPanelHeader.Instance != null) {
+            GameUIPanelHeader.Instance.hideCharacterLarge();
+        }
+    }
+    
+    public virtual void hideCharacterLarge() {
+        HidePanelTop(containerCharacterLarge, false);
+    }
 	
 	//public void ShowObjectDelayed(GameObject obj, float delay) {
 	//	StartCoroutine(ShowObjectDelayedCo(obj, delay));

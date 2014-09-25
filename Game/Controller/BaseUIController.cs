@@ -543,6 +543,13 @@ public class BaseUIController : GameObjectBehavior {
         if (currentDraggableUIGameObject != null) {
             DragObject(currentDraggableUIGameObject, fingerPos, delta);
         }
+
+        GameObject goRotator = GameObjectHelper.HitObject(
+            Vector3.zero.WithX(fingerPos.x).WithY(fingerPos.y), "rotator");
+
+        if(goRotator != null) {
+            DragObject(goRotator, fingerPos, delta);        
+        }
     }
 
     public virtual void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {
