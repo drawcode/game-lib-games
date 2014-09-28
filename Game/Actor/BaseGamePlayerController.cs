@@ -133,10 +133,13 @@ public class BaseGamePlayerControllerData {
     
     public float lastPlayerEffectsGroundUpdate = 0f;
     public float lastPlayerEffectsBoostUpdate = 0f;
+    public float lastPlayerEffectsIndicatorUpdate = 0f;
     public Color gamePlayerEffectsGroundColorCurrent;
     public Color gamePlayerEffectsGroundColorLast;
     public Color gamePlayerEffectsBoostColorCurrent;
     public Color gamePlayerEffectsBoostColorLast;
+    public Color gamePlayerEffectsIndicatorColorCurrent;
+    public Color gamePlayerEffectsIndicatorColorLast;
 
     // navigation/movement
     public NavMeshAgent navMeshAgent;
@@ -362,7 +365,6 @@ public class BaseGamePlayerController : GameActor {
 
     // asset
     public GameCustomPlayer gameCustomPlayer;
-    public GameCustomEnemy gameCustomEnemy;
 
      
     // player effects
@@ -914,7 +916,12 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandlePlayerEffectsObjectTick(
-        ref GameObject effectsObject, ref Color colorCurrent, ref Color colorLast, ref float lastTime, float speed) {
+        ref GameObject effectsObject, 
+        ref Color colorCurrent, 
+        ref Color colorLast, 
+        ref float lastTime, 
+        float speed, 
+        float alpha = 1.0f) {
                 
         // UPDATE color randomly
         // TODO add other conditions to get colors, health, power etc
@@ -929,7 +936,8 @@ public class BaseGamePlayerController : GameActor {
         }
         else {             
             lastTime = 0;
-            colorCurrent = GameCustomController.GetRandomizedColorFromContextEffects();
+            colorCurrent = 
+                GameCustomController.GetRandomizedColorFromContextEffects();
         }
         
         if (immediate) {
@@ -939,24 +947,28 @@ public class BaseGamePlayerController : GameActor {
             updateTime = lastTime / speed;                
         }
         
+        colorCurrent.a = alpha;
+        colorLast.a = alpha;
+        
         colorLast = 
             Color.Lerp(colorLast, 
                        colorCurrent, 
                        updateTime);
-        
+                
         effectsObject.SetParticleSystemStartColor(colorLast, true);
     }
 
     public virtual void HandlePlayerEffectsTick() {
         
-        if (controllerData.lastPlayerEffectsTrailUpdate + 4 < Time.time) {
-            controllerData.lastPlayerEffectsTrailUpdate = Time.time;
-            HandlePlayerEffectTrailBoostTick();            
-            HandlePlayerEffectTrailGroundTick();  
-        }
+        //if (controllerData.lastPlayerEffectsTrailUpdate + 4 < Time.time) {
+        //controllerData.lastPlayerEffectsTrailUpdate = Time.time;
+        //HandlePlayerEffectTrailBoostTick();            
+        //HandlePlayerEffectTrailGroundTick();  
+        //}
 
         HandlePlayerEffectsGroundTick();
         HandlePlayerEffectsBoostTick();
+        HandlePlayerEffectsIndicatorTick();
     }
     
     public virtual void HandlePlayerEffectsGroundTick() {
@@ -971,9 +983,7 @@ public class BaseGamePlayerController : GameActor {
                                           ref controllerData.gamePlayerEffectsGroundColorCurrent, 
                                           ref controllerData.gamePlayerEffectsGroundColorLast, 
                                           ref controllerData.lastPlayerEffectsGroundUpdate,
-                                          5);
-
-
+                                          5, .95f);
         }
     }
 
@@ -984,9 +994,21 @@ public class BaseGamePlayerController : GameActor {
                                           ref controllerData.gamePlayerEffectsBoostColorCurrent, 
                                           ref controllerData.gamePlayerEffectsBoostColorLast, 
                                           ref controllerData.lastPlayerEffectsBoostUpdate,
-                                          3);
+                                          3, .3f);
         }
-    }  
+    }
+
+    public virtual void HandlePlayerEffectsIndicatorTick() {
+        if (gamePlayerShadow != null) {
+
+            HandlePlayerEffectsObjectTick(ref gamePlayerShadow, 
+                                          ref controllerData.gamePlayerEffectsIndicatorColorCurrent, 
+                                          ref controllerData.gamePlayerEffectsIndicatorColorLast, 
+                                          ref controllerData.lastPlayerEffectsIndicatorUpdate,
+                                          3,
+                                          .3f);
+        }
+    } 
 
     // WARP
      
@@ -1443,15 +1465,12 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 // Wire up custom objects
-
+                
+                gameCustomPlayer = gameObjectLoad.Set<GameCustomPlayer>();
 
                 if (IsPlayerControlled) {                    
-                    if (!gameObjectLoad.Has<GameCustomPlayer>()) {
-                        gameCustomPlayer = gameObjectLoad.AddComponent<GameCustomPlayer>();
-                    }
-                    else {
-                        gameCustomPlayer = gameObjectLoad.GetComponent<GameCustomPlayer>();
-                    }
+
+                    gameCustomPlayer.SetActorHero();
 
                     if (gamePlayerEffectsContainer != null) {
                         gamePlayerEffectsContainer.Show();
@@ -1462,13 +1481,8 @@ public class BaseGamePlayerController : GameActor {
                     if (gamePlayerEffectsContainer != null) {
                         gamePlayerEffectsContainer.Hide();
                     }
-
-                    if (!gameObjectLoad.Has<GameCustomEnemy>()) {
-                        gameCustomEnemy = gameObjectLoad.AddComponent<GameCustomEnemy>();
-                    }
-                    else {
-                        gameCustomEnemy = gameObjectLoad.GetComponent<GameCustomEnemy>();
-                    }
+                    
+                    gameCustomPlayer.SetActorEnemy();
                 }
                                 
                 if (!IsPlayerControlled 
@@ -1480,7 +1494,7 @@ public class BaseGamePlayerController : GameActor {
                     if (team != null) {
                         if (team.data != null) {
                                                                                     
-                            GameCustomInfo customInfo = new GameCustomInfo();
+                            GameCustomCharacterData customInfo = new GameCustomCharacterData();
 
                             customInfo.actorType = GameCustomActorTypes.enemyType;
                             customInfo.presetColorCode = team.data.GetColorPreset().code;//GetColorPresetCode();
@@ -1488,7 +1502,7 @@ public class BaseGamePlayerController : GameActor {
                             customInfo.type = GameCustomTypes.teamType;
                             customInfo.teamCode = team.code;
 
-                            gameCustomEnemy.Load(customInfo);
+                            gameCustomPlayer.Load(customInfo);
                         }
                     }                    
                 }
@@ -1559,7 +1573,11 @@ public class BaseGamePlayerController : GameActor {
         
         if (!IsPlayerControlled) {
             if (gamePlayerShadow != null) {
-                gamePlayerShadow.SetParticleSystemStartColor(UIColors.colorRed, true);
+
+                Color colorTo = UIColors.colorRed;
+                colorTo.a = .3f;
+
+                gamePlayerShadow.SetParticleSystemStartColor(colorTo, true);
             }
 
             if (FPSDisplay.isUnder30FPS) {
@@ -3979,7 +3997,7 @@ public class BaseGamePlayerController : GameActor {
                     //}
 
                     Vector3 dir = gameGoalNext.transform.position - transform.position;
-                    dir.y = distanceCurrent/2f;//UnityEngine.Random.Range(120f, 200f);
+                    dir.y = distanceCurrent / 2f;//UnityEngine.Random.Range(120f, 200f);
                     AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
                 }
 

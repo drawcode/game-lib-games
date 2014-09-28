@@ -13,7 +13,7 @@ using Engine.Utility;
 public class BaseGamePlayerUI : GameObjectBehavior {
 		
 	public float currentTimeBlock = 0.0f;
-	public float actionInterval = 5.0f;
+	public float actionInterval = 0.0f;
 	
 	public float randomSpeed = 0;
 	public float randomStrafe = 0;
@@ -29,6 +29,9 @@ public class BaseGamePlayerUI : GameObjectBehavior {
     public float u = 0;
 
     public bool runOnly = false;
+    public bool resetAnimationObject = true;
+
+    GameObject animateObject;
 
     bool running = false;
 
@@ -57,6 +60,7 @@ public class BaseGamePlayerUI : GameObjectBehavior {
             anim.SetFloat("hit", 0f);
             anim.SetFloat("attack", 0f);
             running = true;
+            animateObject = anim.gameObject;
         }
     }
 	
@@ -67,7 +71,8 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 			anim.SetFloat("jump", u);
 			anim.SetFloat("death", 0);
 			anim.SetFloat("hit", 0);
-			anim.SetFloat("attack", 0);
+            anim.SetFloat("attack", 0);
+            animateObject = anim.gameObject;
 			//Avatar avatar = anim.avatar;
 			//RuntimeAnimatorController controller = anim.runtimeAnimatorController;
 
@@ -87,7 +92,16 @@ public class BaseGamePlayerUI : GameObjectBehavior {
     	//
     	//		RunAnimations();
     	//	}
-        //}
+        //}        
+        
+        if(resetAnimationObject && animateObject != null) {
+            
+            animateObject.transform.localPosition = 
+                Vector3.Lerp(animateObject.transform.localPosition, Vector3.zero, Time.deltaTime);
+            
+            animateObject.transform.localRotation = 
+                Quaternion.Lerp(animateObject.transform.localRotation, Quaternion.identity, Time.deltaTime);
+        }
 
         if(GameConfigs.isGameRunning) {
             return;
@@ -120,8 +134,8 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 			
 			RunAnimations();
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, 1);
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, 1);
+            //transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, 1);
+            //transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, 1);
 					
 		}
 	}

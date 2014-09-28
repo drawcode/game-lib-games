@@ -1,16 +1,15 @@
-using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using UnityEngine;
-
 using Engine.Events;
 
-public class GameCustomPlayerDisplayContainer : MonoBehaviour {
+public class GameCustomPlayerContainerLoader : MonoBehaviour {
     
     public GameObject containerPlayerDisplay;
     public UnityEngine.Object prefabPlayerDisplay;
-    
+    public GameCustomCharacterData customCharacteData = new GameCustomCharacterData();
+
     public void Awake() {
     }
     
@@ -21,32 +20,35 @@ public class GameCustomPlayerDisplayContainer : MonoBehaviour {
     public void Init() {
         Load();
     }
-    
-    void OnEnable() {
-        //Messenger.AddListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
-    }
-    
-    void OnDisable() {
-        //Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
+
+    public void UpdatePlayers() {
+        foreach (GameCustomPlayerContainer playerContainer in 
+                gameObject.GetList<GameCustomPlayerContainer>()) {
+
+            playerContainer.LoadPlayer(customCharacteData);
+        }
     }
 
     public void Load() {
         
-        if(prefabPlayerDisplay != null
-           && containerPlayerDisplay != null) {
+        if (prefabPlayerDisplay != null
+            && containerPlayerDisplay != null) {
             
             containerPlayerDisplay.DestroyChildren();
             
             GameObject go = PrefabsPool.Instantiate(prefabPlayerDisplay) as GameObject;
             
-            if(go != null) {
+            if (go != null) {
                 
                 go.transform.parent = containerPlayerDisplay.transform;
                 
                 go.ResetObject();
                 
                 go.SetLayerRecursively(gameObject.layer);
+
+                UpdatePlayers();
             }
         }
     }
+
 }

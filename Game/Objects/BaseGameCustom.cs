@@ -1,6 +1,7 @@
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 using Engine.Events;
 
@@ -17,16 +18,20 @@ public class GameCustomTypes {
     public static string teamType = "team"; // call out a preset set
 }
 
-public class GameCustomInfo {
+[Serializable]
+public class GameCustomCharacterData {
 
     public string type = GameCustomTypes.defaultType;
     public string actorType = GameCustomActorTypes.heroType;
-    public string teamCode = "game-default";
+    public string teamCode = "default";
     public string presetType = "character";
     public string presetColorCodeDefault = "game-default";
-    public string presetColorCode = "default";
-    public string presetTextureCodeDefault = "default";
-    public string presetTextureCode = "default";
+    public string presetColorCode = GameCustomTypes.defaultType;
+    public string presetTextureCodeDefault = GameCustomTypes.defaultType;
+    public string presetTextureCode = GameCustomTypes.defaultType;
+    public string characterCode = ProfileConfigs.defaultGameCharacterCode;
+    public string characterDisplayName = ProfileConfigs.defaultGameCharacterDisplayName;
+    public string characterDisplayCode = ProfileConfigs.defaultGameCharacterDisplayCode;
 
     public bool isCustomType {
         get {
@@ -51,19 +56,109 @@ public class GameCustomInfo {
             return type == GameCustomTypes.teamType;
         }
     }
+    
+    public bool isActorTypeHero {
+        get {
+            return actorType == GameCustomActorTypes.heroType;
+        }
+    }
+
+    public bool isActorTypeEnemy {
+        get {
+            return actorType == GameCustomActorTypes.enemyType;
+        }
+    }
+
+    public bool isActorTypeSidekick {
+        get {
+            return actorType == GameCustomActorTypes.sidekickType;
+        }
+    }
+
+    public void SetActorEnemy() {
+        SetActorType(GameCustomActorTypes.enemyType);
+    }
+    
+    public void SetActorHero() {
+        SetActorType(GameCustomActorTypes.heroType);
+    }
+    
+    public void SetActorSidekick() {
+        SetActorType(GameCustomActorTypes.sidekickType);
+    }
+
+    public void SetActorType(string actorTypeTo) {
+        actorType = actorTypeTo;
+    }
+}
+
+public class GameCustomCharacterDataCurrent {    
+    
+    public string lastCustomColorCode = "--";
+    public string lastCustomTextureCode = "--";
+    public string lastCustomDisplayName = "";
+    public string lastCustomDisplayCode = "";
+}
+
+/*
+[Serializable]
+public class GameCharacterDataSet { 
+    //public GameCustomCharacterObjectData characterObjectData;
+
+    [HideInInspector]
+    public GameCustomCharacterDataCurrent characterDataCurrent;
+
+    public GameCustomCharacterData characterData;
+
+    public GameCharacterDataSet() {
+        Reset();
+    }
+
+    public void Reset() {
+
+        //characterObjectData = 
+        //    new GameCustomCharacterObjectData();
+
+        characterData = 
+            new GameCustomCharacterData();    
+
+        characterDataCurrent = new GameCustomCharacterDataCurrent();
+    }
+}
+*/
+
+[Serializable]
+public class GameCustomCharacterObjectData {    
+
+    public GameCustomPlayer gameCustomPlayer;
+
+    public GameCustomCharacterObjectData() {
+    
+    }
+
+    public void Fill(GameObject go) {
+        gameCustomPlayer = go.Get<GameCustomPlayer>();
+    }
+        
+    public bool hasPlayer {
+        get {
+            return gameCustomPlayer != null 
+                && gameCustomPlayer.isActorTypeHero;
+        }
+    }
 }
 
 public class BaseGameCustom : GameObjectBehavior {
     
-    public string teamCode = "default";
-    public string presetColorCodeDefault = "game-default";
-    public string customColorCode = GameCustomTypes.defaultType;
-    string lastCustomColorCode = "--";
-    public string customTextureCode = GameCustomTypes.defaultType;
-    string lastCustomTextureCode = "--";
-    public string customActorType = GameCustomActorTypes.heroType;
-    public GameCustomInfo customInfo;
-    bool freezeRotation = false;
+    public GameCustomCharacterDataCurrent customCharacterDataCurrent;
+    public GameCustomCharacterData customCharacterData;
+    [HideInInspector]
+
+    public GameCustomPlayerContainer
+        gameCustomPlayerContainer;
+    public bool freezeRotation = false;
+    public bool resetPositionRotationModel = true;
+    float lastCustomUpdate = 0;
 
     public virtual void Start() {
 
@@ -72,35 +167,93 @@ public class BaseGameCustom : GameObjectBehavior {
 
     public virtual void Init() {
 
-        if (customInfo == null) {
-
-            customInfo = new GameCustomInfo();
-            customInfo.actorType = customActorType;
-
-            customInfo.teamCode = teamCode;
-
-            if (customColorCode == GameCustomTypes.customType) {
-                customInfo.type = GameCustomTypes.customType;
+        if(customCharacterDataCurrent == null) {
+            customCharacterDataCurrent = new GameCustomCharacterDataCurrent();
+        }
+        
+        if (customCharacterData == null) {
+            customCharacterData = new GameCustomCharacterData();
+                        
+            if (customCharacterData.presetColorCode == GameCustomTypes.customType) {
+                customCharacterData.type = GameCustomTypes.customType;
             }
-            else if (customColorCode == GameCustomTypes.defaultType) {
-                customInfo.type = GameCustomTypes.defaultType;
+            else if (customCharacterData.presetColorCode == GameCustomTypes.defaultType) {
+                customCharacterData.type = GameCustomTypes.defaultType;
             }
             else {
-                customInfo.type = GameCustomTypes.explicitType;
-                customInfo.presetColorCode = customColorCode;
-                customInfo.presetTextureCode = customTextureCode;
+                customCharacterData.type = GameCustomTypes.explicitType;
+                customCharacterData.presetColorCode = customCharacterData.presetColorCodeDefault;
+                customCharacterData.presetTextureCode = customCharacterData.presetTextureCodeDefault;
             }
             
-            Load(customInfo);
+            Load(customCharacterData);
         }
     }
     
     public virtual void OnEnable() {
-        Messenger.AddListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
+        Messenger.AddListener(
+            GameCustomMessages.customColorsChanged, 
+            BaseOnCustomizationColorsChangedHandler);
     }
     
     public virtual void OnDisable() {
-        Messenger.RemoveListener(GameCustomMessages.customColorsChanged, BaseOnCustomizationColorsChangedHandler);
+        Messenger.RemoveListener(
+            GameCustomMessages.customColorsChanged, 
+            BaseOnCustomizationColorsChangedHandler);
+    }
+    
+    public void SetActorEnemy() {
+        SetActorType(GameCustomActorTypes.enemyType);
+    }
+    
+    public void SetActorHero() {
+        SetActorType(GameCustomActorTypes.heroType);
+    }
+    
+    public void SetActorSidekick() {
+        SetActorType(GameCustomActorTypes.sidekickType);
+    }
+
+    public bool isActorTypeHero {
+        get {
+
+            if (customCharacterData == null) {
+                return false;
+            }
+            
+            return customCharacterData.isActorTypeHero;
+        }
+    }
+
+    public bool isActorTypeSidekick {
+        get {
+
+            if (customCharacterData == null) {
+                return false;
+            }
+            
+            return customCharacterData.isActorTypeSidekick;
+        }
+    }
+
+    public bool isActorTypeEnemy {
+        get {
+
+            if (customCharacterData == null) {
+                return false;
+            }
+            
+            return customCharacterData.isActorTypeEnemy;
+        }
+    }
+    
+    public void SetActorType(string actorTypeTo) {
+
+        if (customCharacterData == null) {
+            return;
+        }
+
+        customCharacterData.SetActorType(actorTypeTo);
     }
     
     /*
@@ -110,61 +263,65 @@ public class BaseGameCustom : GameObjectBehavior {
 
     public virtual void Load(string typeTo, string actorType, string presetColorCodeTo, string presetTextureCodeTo) {
 
-        GameCustomInfo customInfoTo = new GameCustomInfo();
-        customInfoTo.type = typeTo;
-        customInfo.actorType = actorType;
-        customInfoTo.presetColorCode = presetColorCodeTo;
-        customInfoTo.presetTextureCode = presetTextureCodeTo;
+        GameCustomCharacterData customCharacterDataTo = new GameCustomCharacterData();
+        customCharacterDataTo.type = typeTo;
+        characterData.actorType = actorType;
+        customCharacterDataTo.presetColorCode = presetColorCodeTo;
+        customCharacterDataTo.presetTextureCode = presetTextureCodeTo;
 
-        Load(customInfoTo);
+        Load(customCharacterDataTo);
     }
     */
 
-    public virtual void Load(GameCustomInfo customInfoTo) {
-        Change(customInfoTo);
+    public virtual void Load(GameCustomCharacterData customCharacterDataTo) {
+        Change(customCharacterDataTo);
     }
 
-    public virtual void Change(GameCustomInfo customInfoTo) {
+    public virtual void Change(GameCustomCharacterData customCharacterDataTo) {
 
-        customInfo = customInfoTo;      
+        customCharacterData = customCharacterDataTo;  
 
-        //LogUtil.Log("GameCustomBase:Change:customInfo:" + customInfo.teamCode);
+        if (gameCustomPlayerContainer != null) {
+            gameCustomPlayerContainer.customCharacterData = customCharacterData;
+        }
 
-        if (customInfo != null) {
-            customColorCode = customInfo.presetColorCode;
-            customTextureCode = customInfo.presetTextureCode;
+        //LogUtil.Log("GameCustomBase:Change:characterData:" + characterData.teamCode);
+
+        if (customCharacterData != null) {
+            //customCharacterData.presetColorCode = customCharacterData.presetColorCode;
+            //customCharacterData.presetTextureCode = customCharacterData.presetTextureCode;
             
             //LogUtil.Log("GameCustomBase:Change:customColorCode:" + customColorCode);
             //LogUtil.Log("GameCustomBase:Change:customTextureCode:" + customTextureCode);
 
-            if (!string.IsNullOrEmpty(customInfo.teamCode)
-                && customInfo.teamCode != "default") {
+            if (!string.IsNullOrEmpty(customCharacterData.teamCode)
+                && customCharacterData.teamCode != "default") {
                 
-                //LogUtil.Log("Loading TEAM Custom Type:customInfo.teamCode:" + customInfo.teamCode);
+                //LogUtil.Log("Loading TEAM Custom Type:characterData.teamCode:" + characterData.teamCode);
 
-                GameTeam team = GameTeams.Instance.GetById(customInfo.teamCode);
+                GameTeam team = GameTeams.Instance.GetById(customCharacterData.teamCode);
 
                 if (team != null) {
 
                     if (team.data != null) {
                         
-                        teamCode = team.code;
-                        customInfo.type = GameCustomTypes.teamType;
+                        customCharacterData.teamCode = team.code;
+                        customCharacterData.type = GameCustomTypes.teamType;
                         
                         //LogUtil.Log("Loading TEAM EXISTS Type:teamCode:" + teamCode);                        
                         
                         GameDataTexturePreset itemTexture = team.data.GetTexturePreset();
                         
                         if (itemTexture != null) {  
-                            customInfo.presetTextureCode = itemTexture.code;   
-                            lastCustomColorCode = "--";
+                            customCharacterData.presetTextureCode = itemTexture.code;   
+                            customCharacterDataCurrent.lastCustomColorCode = "--";
                         }
 
                         GameDataColorPreset itemColor = team.data.GetColorPreset();
 
                         if (itemColor != null) { 
-                            customInfo.presetColorCode = itemColor.code;    
-                            lastCustomTextureCode = "--";
+                            customCharacterData.presetColorCode = itemColor.code;    
+                            customCharacterDataCurrent.lastCustomTextureCode = "--";
                         }
                     } 
                 }
@@ -176,24 +333,25 @@ public class BaseGameCustom : GameObjectBehavior {
     
     public virtual void UpdatePlayer() {
 
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             Init();
         }
         /*
         LogUtil.Log("UpdatePlayer"  
-                  + " type:" + customInfo.type
-                  + " presetType:" + customInfo.presetType
-                  + " presetColorCode:" + customInfo.presetColorCode
-                  + " presetTextureCode:" + customInfo.presetTextureCode
-                  + " isCustomType:" + customInfo.isCustomType
-                  + " isDefaultType:" + customInfo.isDefaultType
-                  + " isExplicitType:" + customInfo.isExplicitType);
+                  + " type:" + characterData.type
+                  + " presetType:" + characterData.presetType
+                  + " presetColorCode:" + characterData.presetColorCode
+                  + " presetTextureCode:" + characterData.presetTextureCode
+                  + " isCustomType:" + characterData.isCustomType
+                  + " isDefaultType:" + characterData.isDefaultType
+                  + " isExplicitType:" + characterData.isExplicitType);
                   */
 
-        if (customInfo.isCustomType || customInfo.isTeamType) {
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isTeamType) {
             return;
         }
-        else if (customInfo.isDefaultType) {
+        else if (customCharacterData.isDefaultType) {
             SetCustom();
         }
     }
@@ -206,7 +364,7 @@ public class BaseGameCustom : GameObjectBehavior {
 
     public void SetCustom() {
 
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             Init();
         }
 
@@ -217,23 +375,25 @@ public class BaseGameCustom : GameObjectBehavior {
         
     public void SetCustomColors() {
         
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             return;
         }
 
         //LogUtil.Log("SetCustomColors"  
-        //          + " type:" + customInfo.type
-        //          + " presetType:" + customInfo.presetType
-        //          + " presetColorCode:" + customInfo.presetColorCode
-        //          + " presetTextureCode:" + customInfo.presetTextureCode);
+        //          + " type:" + characterData.type
+        //          + " presetType:" + characterData.presetType
+        //          + " presetColorCode:" + characterData.presetColorCode
+        //          + " presetTextureCode:" + characterData.presetTextureCode);
                   
 
-        if (customInfo.isCustomType || customInfo.isTeamType || customInfo.isExplicitType) {
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isTeamType 
+            || customCharacterData.isExplicitType) {
             return;
         }
-        else if (customInfo.isDefaultType) {
+        else if (customCharacterData.isDefaultType) {
 
-            if (customActorType == GameCustomActorTypes.heroType) {
+            if (customCharacterData.actorType == GameCustomActorTypes.heroType) {
 
                 GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
                 
@@ -245,25 +405,34 @@ public class BaseGameCustom : GameObjectBehavior {
                     if (!customItem.HasData()) {
                         
                         GameCustomController.UpdateColorPresetObject(
-                            gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+                            gameObject, 
+                            AppColorPresets.Instance.GetByCode(
+                                customCharacterData.presetColorCodeDefault));
                     }
                     else {
 
                         //customItem = GameCustomController.FillDefaultCustomColors(customItem, type);
 
-                        GameCustomController.UpdateColorPresetObject(customItem, gameObject, customInfo.presetType);
+                        GameCustomController.UpdateColorPresetObject(
+                            customItem, 
+                            gameObject, 
+                            customCharacterData.presetType);
                     }
                 }
                 else {                
                     
                     GameCustomController.UpdateColorPresetObject(
-                        gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+                        gameObject, 
+                        AppColorPresets.Instance.GetByCode(
+                            customCharacterData.presetColorCodeDefault));
                 }//GameCustomController.BroadcastCustomColorsChanged
             }
             else {    
                 
                 GameCustomController.UpdateColorPresetObject(
-                    gameObject, AppColorPresets.Instance.GetByCode(customInfo.presetColorCodeDefault));
+                    gameObject, 
+                    AppColorPresets.Instance.GetByCode(
+                        customCharacterData.presetColorCodeDefault));
 
             }//GameCustomController.BroadcastCustomColorsChanged
         }
@@ -271,116 +440,159 @@ public class BaseGameCustom : GameObjectBehavior {
     
     public void SetCustomTextures() {
         
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             return;
         }
         
         /*
         LogUtil.Log("SetCustomTextures"  
-                  + " presetType:" + customInfo.presetType
-                  + " presetColorCode:" + customInfo.presetColorCode
-                  + " presetTextureCode:" + customInfo.presetTextureCode);
+                  + " presetType:" + characterData.presetType
+                  + " presetColorCode:" + characterData.presetColorCode
+                  + " presetTextureCode:" + characterData.presetTextureCode);
                   */
         
-        if (customInfo.isCustomType || customInfo.isTeamType || customInfo.isExplicitType) {
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isTeamType 
+            || customCharacterData.isExplicitType) {
             return;
         }
-        else if (customInfo.isDefaultType) {
+        else if (customCharacterData.isDefaultType) {
             
-            if (customActorType == GameCustomActorTypes.heroType) {
+            if (customCharacterData.actorType == GameCustomActorTypes.heroType) {
                 
                 GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
                 
                 if (customItem != null) {
                  
-                    GameCustomController.UpdateTexturePresetObject(customItem, gameObject, customInfo.presetType);
+                    GameCustomController.UpdateTexturePresetObject(
+                        customItem, 
+                        gameObject, 
+                        customCharacterData.presetType);
                 }
                 else {                
                     
                     GameCustomController.UpdateTexturePresetObject(
-                        gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
+                        gameObject, 
+                        AppContentAssetTexturePresets.Instance.GetByCode(
+                        customCharacterData.presetTextureCodeDefault));
                 }//GameCustomController.BroadcastCustomColorsChanged
             }
             else {                
                 GameCustomController.UpdateTexturePresetObject(
-                    gameObject, AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCodeDefault));
+                    gameObject, 
+                    AppContentAssetTexturePresets.Instance.GetByCode(
+                    customCharacterData.presetTextureCodeDefault));
             }
         }
     }
     
     public void HandleCustomPlayer() {
         
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             Init();
         }
 
         HandleCustomPlayerTexture();
         HandleCustomPlayerColor();
+        HandleCustomPlayerDisplayValues();
     }
     
     public void HandleCustomPlayerTexture() {
 
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             Init();
         }
 
-        if (customInfo.isCustomType || customInfo.isDefaultType) {
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isDefaultType) {
             return;
         }
-        else if (lastCustomTextureCode != customInfo.presetTextureCode) {
+        else if (customCharacterDataCurrent.lastCustomTextureCode 
+            != customCharacterData.presetTextureCode) {
             
             //if(AppColorPresets.Instance.CheckByCode(customTextureCode)) {
             
             //LogUtil.Log("HandleCustomPlayerColor:changing:" + 
             //          " lastCustomColorCode:" + lastCustomTextureCode + 
-            //          " customInfo.presetColorCode:" + customInfo.presetTextureCode);
+            //          " characterData.presetColorCode:" + characterData.presetTextureCode);
                 
             AppContentAssetTexturePreset preset = 
-                AppContentAssetTexturePresets.Instance.GetByCode(customInfo.presetTextureCode);
+                AppContentAssetTexturePresets.Instance.GetByCode(
+                    customCharacterData.presetTextureCode);
+
             if (preset != null) {
                 // load from current code
                 GameCustomController.UpdateTexturePresetObject(
                     gameObject, preset);
             }
                 
-            lastCustomTextureCode = customInfo.presetTextureCode;
+            customCharacterDataCurrent.lastCustomTextureCode = 
+                customCharacterData.presetTextureCode;
             //}
         }
     }
 
     public void HandleCustomPlayerColor() {
         
-        if (customInfo == null) {
+        if (customCharacterData == null) {
             Init();
         }
         
-        if (customInfo.isCustomType || customInfo.isDefaultType) {
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isDefaultType) {
             return;
         }
-        else if (lastCustomColorCode != customInfo.presetColorCode) {
+        else if (customCharacterDataCurrent.lastCustomColorCode 
+            != customCharacterData.presetColorCode) {
             
-            if (AppColorPresets.Instance.CheckByCode(customColorCode)) {
+            if (AppColorPresets.Instance.CheckByCode(customCharacterData.presetColorCode)) {
 
                 //LogUtil.Log("HandleCustomPlayerColor:changing:" + 
                 //          " lastCustomColorCode:" + lastCustomColorCode + 
-                //         " customInfo.presetColorCode:" + customInfo.presetColorCode);
+                //         " characterData.presetColorCode:" + characterData.presetColorCode);
 
                 // load from current code
-                AppColorPreset preset = AppColorPresets.Instance.GetByCode(customInfo.presetColorCode);
+                AppColorPreset preset = AppColorPresets.Instance.GetByCode(
+                    customCharacterData.presetColorCode);
 
                 GameCustomController.UpdateColorPresetObject(
                     gameObject, preset);
 
-                lastCustomColorCode = customInfo.presetColorCode;
+                customCharacterDataCurrent.lastCustomColorCode = 
+                    customCharacterData.presetColorCode;
 
             }
         }
     }
 
-    float lastCustomUpdate = 0;
-        
-    public virtual void Update() {
+    public void HandleCustomPlayerDisplayValues() {
+        if (customCharacterDataCurrent.lastCustomDisplayCode 
+            != customCharacterData.characterDisplayCode 
+            || customCharacterDataCurrent.lastCustomDisplayName 
+            != customCharacterData.characterDisplayName) {
 
+            GameCustomController.UpdateCharacterDisplay(
+                gameObject, 
+                customCharacterData.characterDisplayName, 
+                customCharacterData.characterDisplayCode);
+           
+            customCharacterDataCurrent.lastCustomDisplayCode = customCharacterData.characterDisplayCode;
+            customCharacterDataCurrent.lastCustomDisplayName = customCharacterData.characterDisplayName;
+        }
+    }
+        
+    public virtual void Update() {        
+        
+        if (resetPositionRotationModel) {
+            
+            gameObject.transform.localPosition = 
+                Vector3.Lerp(gameObject.transform.localPosition, 
+                             Vector3.zero, Time.deltaTime);
+            
+            gameObject.transform.localRotation = 
+                Quaternion.Lerp(gameObject.transform.localRotation, 
+                                Quaternion.identity, Time.deltaTime);
+        }
 
         if (lastCustomUpdate + 1 < Time.time) {
             lastCustomUpdate = Time.time;
@@ -392,11 +604,6 @@ public class BaseGameCustom : GameObjectBehavior {
                 gameObject.transform.rotation = Quaternion.identity;
                 gameObject.transform.localRotation = Quaternion.identity;
             }
-        }
-        
-        if (GameConfigs.isGameRunning) {
-            gameObject.transform.localPosition = 
-                Vector3.Lerp(gameObject.transform.localPosition, Vector3.zero, Time.deltaTime);
         }
 
     }

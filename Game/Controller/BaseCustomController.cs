@@ -32,6 +32,7 @@ public class BaseGameCustomItemNames {
 
 public class GameCustomKeys {
     public static string profileCharacterDisplay = "profile-character-display";
+    public static string characterDisplay = "character-display";
 }
 
 public class BaseGameCustomColors : DataObjectItem {
@@ -251,6 +252,8 @@ public class BaseGameCustomController : GameObjectBehavior {
         return profileCustomItem;
     }
 
+    // profile character
+
     public virtual void updateProfileCharacterDisplay(GameObject go) {
         updateProfileCharacterDisplayName(go);
         updateProfileCharacterDisplayCode(go);    
@@ -258,26 +261,45 @@ public class BaseGameCustomController : GameObjectBehavior {
 
     public virtual void updateProfileCharacterDisplayName(GameObject go) {  
 
-        string key = 
-            GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.name;
         string val = GameProfileCharacters.currentCharacter.characterDisplayName;
         
-        ////////Debug.Log("updateProfileCharacterDisplayName: val:" + val);
+        GameCustomController.UpdateCharacterDisplayName(go, val);
+    }    
+
+    public virtual void updateProfileCharacterDisplayCode(GameObject go) {        
+        
+        string val = GameProfileCharacters.currentCharacter.characterDisplayCode;
+
+        GameCustomController.UpdateCharacterDisplayCode(go, val);
+    }
+
+    // ANY CHARACTER
+    
+    public virtual void updateCharacterDisplay(GameObject go, string valName, string valCode) {    
+        GameCustomController.UpdateCharacterDisplayName(go, valName);
+        GameCustomController.UpdateCharacterDisplayCode(go, valCode);
+    }
+
+    public virtual void updateCharacterDisplayName(GameObject go, string val) {  
+        
+        string key = 
+            GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.name;
+
+        if(string.IsNullOrEmpty(val)) {
+            val = ProfileConfigs.defaultGameCharacterDisplayName;
+        }
 
         UIUtil.SetTextValue(go, key, val);  
     }    
     
-    public virtual void updateProfileCharacterDisplayCode(GameObject go) {        
+    public virtual void updateCharacterDisplayCode(GameObject go, string val) {        
         
         string key = 
             GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.code;
-        string val = GameProfileCharacters.currentCharacter.characterDisplayCode;
-
+        
         if(string.IsNullOrEmpty(val)) {
             val = UnityEngine.Random.Range(0,99).ToString();
         }
-        
-        ////////Debug.Log("updateProfileCharacterDisplayCode: val:" + val);
         
         UIUtil.SetTextValue(go, key, val);  
     }

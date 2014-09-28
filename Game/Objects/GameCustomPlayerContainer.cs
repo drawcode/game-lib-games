@@ -5,10 +5,15 @@ using System.Collections.Generic;
 using Engine.Events;
 
 public class GameCustomPlayerContainer : MonoBehaviour {
+            
+    public GameCustomCharacterData customCharacterData = new GameCustomCharacterData();
+    public GameObject containerRotator;
+    public GameObject containerPlayerDisplay;
+    public bool allowRotator = false;
+    Rigidbody rotatorRigidbody;
+    RotateObject rotateObject;
+    CapsuleCollider rotatorCollider;
 
-    public GameObject gameCharacterPlayerContainer;
-    public string characterCode = ProfileConfigs.defaultGameCharacterCode;
-    
     public void Awake() {
     }
     
@@ -17,7 +22,17 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     }
     
     public void Init() {
-        LoadPlayer(characterCode);
+
+    }
+
+    public void LoadPlayer() {        
+        LoadPlayer(customCharacterData.characterCode);
+    }
+
+    public void LoadPlayer(GameCustomCharacterData customCharacterDataTo) {
+        customCharacterData = customCharacterDataTo;
+
+        LoadPlayer(customCharacterData.characterCode);
     }
     
     public void OnEnable() {
@@ -39,16 +54,19 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     
     public void LoadPlayer(string characterCodeTo) {
         
-        if (string.IsNullOrEmpty(characterCode)) {
+        if (string.IsNullOrEmpty(characterCodeTo)) {
             return;
         }
+
+        customCharacterData.characterCode = characterCodeTo;
         
-        if (gameCharacterPlayerContainer == null) {
+        if (containerPlayerDisplay == null) {
             return;
         }
         
         GameProfileCharacterItem gameProfileCharacterItem = 
-            GameProfileCharacters.Current.GetCharacter(characterCode);
+            GameProfileCharacters.Current.GetCharacter(
+                customCharacterData.characterCode);
         
         if (gameProfileCharacterItem == null) {
             return;
@@ -62,7 +80,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             return;
         }
         
-        gameCharacterPlayerContainer.DestroyChildren();
+        containerPlayerDisplay.DestroyChildren();
         
         GameObject go = gameCharacter.Load();
         
@@ -70,16 +88,76 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             return;
         }
         
-        go.transform.parent = gameCharacterPlayerContainer.transform;
+        go.transform.parent = containerPlayerDisplay.transform;
         go.transform.position = Vector3.zero;
         go.transform.localPosition = Vector3.zero;
         go.transform.localScale = Vector3.one;
-        go.transform.localRotation = Quaternion.Euler(Vector3.zero.WithY(133));
+        go.transform.localRotation = Quaternion.identity;//.Euler(Vector3.zero.WithY(133));
         
         GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
         
         GameCustomController.BroadcastCustomSync();
                 
         go.SetLayerRecursively(gameObject.layer);
+
+        // LOAD UP PASSED IN VALUES
+
+        GameCustomPlayer customPlayerObject = go.GetOrSet<GameCustomPlayer>();
+
+        if (customPlayerObject == null) {
+            customPlayerObject.Change(customCharacterData);
+        }
+    }
+    
+    public void UpdateRotator() {
+        
+        if (containerRotator == null) {
+            return;
+        }
+        
+        if (rotatorRigidbody == null) {
+            rotatorRigidbody = containerRotator.GetOrSet<Rigidbody>();
+        }
+        
+        if (rotateObject == null) {
+            rotateObject = containerRotator.GetOrSet<RotateObject>();
+        }
+        
+        if (rotatorCollider == null) {
+            rotatorCollider = containerRotator.GetOrSet<CapsuleCollider>();
+        }
+        
+        if (allowRotator) {   
+            
+            if (rotatorRigidbody != null) {
+                rotatorRigidbody.constraints = RigidbodyConstraints.FreezePositionX
+                    | RigidbodyConstraints.FreezePositionY
+                    | RigidbodyConstraints.FreezePositionZ
+                    | RigidbodyConstraints.FreezeRotationX
+                    | RigidbodyConstraints.FreezeRotationZ;
+            }
+            
+            if (rotateObject != null) {
+                rotateObject.RotateSpeedAlongY = 2;
+            }
+        }
+        else {
+            
+            containerRotator.ResetObject();
+            
+            if (rotatorRigidbody != null) {
+                rotatorRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            }
+            
+            if (rotateObject != null) {
+                rotateObject.RotateSpeedAlongY = 0;
+            }
+        }
+    }
+    
+    void Update() {
+        
+        UpdateRotator();
+        
     }
 }

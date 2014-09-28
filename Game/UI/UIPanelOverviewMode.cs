@@ -14,7 +14,6 @@ public class UIPanelOverviewMode : UIPanelBase {
     public GameObject containerOverview;
     public GameObject containerOverviewGameplayTips;
     public GameObject containerTutorial;
-    
     public GameObject containerTips;
     public GameObject containerTipsMode;
     public GameObject containerTipsGameplay;
@@ -24,15 +23,10 @@ public class UIPanelOverviewMode : UIPanelBase {
     public UILabel labelOverviewTip;
     public UILabel labelOverviewType;
     public UILabel labelOverviewStatus;
-
     public UIImageButton buttonOverviewReady;
     public UIImageButton buttonOverviewTutorial;
     public UIImageButton buttonOverviewTips;
     public UIImageButton buttonOverviewMode;
-
-    public GameCustomPlayer gameCustomPlayer;
-    public GameCustomEnemy gameCustomEnemy;
-    
     public UILabel labelOverviewTeamEnemy;
 
     //public UIPanelTips tips
@@ -108,10 +102,10 @@ public class UIPanelOverviewMode : UIPanelBase {
     string lastTipObjectName = "";
 
     void OnTipsCycleHandler(string objName) {
-        if(objName != lastTipObjectName) {
+        if (objName != lastTipObjectName) {
             lastTipObjectName = objName;
             
-            if(flowState == AppOverviewFlowState.GameplayTips) {
+            if (flowState == AppOverviewFlowState.GameplayTips) {
                 ChangeTipsState(AppOverviewFlowState.Mode);
             }
             else {            
@@ -155,7 +149,7 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void UpdateTipsStates() {
     
-        if(flowState == AppOverviewFlowState.GameplayTips) {
+        if (flowState == AppOverviewFlowState.GameplayTips) {
             ShowTipsObjectGameplay();
         }
         else {            
@@ -177,8 +171,8 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public void HideTipsObjects() {        
-        if(containerTips != null) {            
-            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {   
+        if (containerTips != null) {            
+            foreach (UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {   
                 tips.gameObject.Hide();             
                 UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .4f, 0f, 0f);
             }
@@ -187,13 +181,13 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void ShowTipsObject(string objName) {
 
-        if(containerTips != null) {
+        if (containerTips != null) {
 
             HideTipsObjects();
 
-            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
+            foreach (UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
                 
-                if(!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
+                if (!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
                     tips.gameObject.Show();
                     UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 0f);
                     tips.ShowTipsFirst();
@@ -273,45 +267,32 @@ public class UIPanelOverviewMode : UIPanelBase {
         HideStates();
 
         // Update team display
-
         //LogUtil.Log("ShowOverview:");
 
         GameCustomController.BroadcastCustomColorsChanged();
 
-        if(gameCustomPlayer == null) {
-            gameCustomPlayer = gameObject.Get<GameCustomPlayer>();
-            
-            //LogUtil.Log("ShowOverview:gameCustomPlayer:");
-        }
+        foreach (GameCustomPlayer customPlayer in gameObject.GetList<GameCustomPlayer>()) {
+        
+            if (customPlayer.isActorTypeEnemy) {                
+                
+                GameTeam team = GameTeams.Current;
 
-        if(gameCustomEnemy == null) {
-            gameCustomEnemy = gameObject.Get<GameCustomEnemy>();
-            
-            //LogUtil.Log("ShowOverview:gameCustomEnemy:");
-        }
+                if (team != null) {
+                    
+                    UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
+                        
+                    GameCustomCharacterData customInfo = new GameCustomCharacterData();
+                    customInfo.actorType = GameCustomActorTypes.enemyType;
+                    customInfo.presetColorCode = team.data.GetColorPreset().code;
+                    customInfo.presetTextureCode = team.data.GetTexturePreset().code;
+                    customInfo.type = GameCustomTypes.teamType;
+                    customInfo.teamCode = team.code;
 
-        GameTeam team = GameTeams.Current;
-        if(team != null) {
-            
-            //LogUtil.Log("ShowOverview:team:");
-
-            UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
-
-            if(gameCustomPlayer != null) {
-                //gameCustomPlayer.Init();
-            }
-
-            if(gameCustomEnemy != null) {
-
-                GameCustomInfo customInfo = new GameCustomInfo();
-                customInfo.actorType = GameCustomActorTypes.enemyType;
-                customInfo.presetColorCode = team.data.GetColorPreset().code;
-                customInfo.presetTextureCode = team.data.GetTexturePreset().code;
-                customInfo.type = GameCustomTypes.teamType;
-                customInfo.teamCode = team.code;
-                gameCustomEnemy.Load(customInfo);
+                    customPlayer.Load(customInfo);
+                }
             }
         }
+
 
         flowState = AppOverviewFlowState.Mode;
 
