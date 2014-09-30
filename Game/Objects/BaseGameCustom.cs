@@ -182,8 +182,6 @@ public class BaseGameCustom : GameObjectBehavior {
             }
             else {
                 customCharacterData.type = GameCustomTypes.explicitType;
-                customCharacterData.presetColorCode = customCharacterData.presetColorCodeDefault;
-                customCharacterData.presetTextureCode = customCharacterData.presetTextureCodeDefault;
             }
             
             Load(customCharacterData);
@@ -216,10 +214,8 @@ public class BaseGameCustom : GameObjectBehavior {
 
     public bool isActorTypeHero {
         get {
-
-            if (customCharacterData == null) {
-                return false;
-            }
+            
+            CheckData();
             
             return customCharacterData.isActorTypeHero;
         }
@@ -227,10 +223,8 @@ public class BaseGameCustom : GameObjectBehavior {
 
     public bool isActorTypeSidekick {
         get {
-
-            if (customCharacterData == null) {
-                return false;
-            }
+            
+            CheckData();
             
             return customCharacterData.isActorTypeSidekick;
         }
@@ -239,19 +233,15 @@ public class BaseGameCustom : GameObjectBehavior {
     public bool isActorTypeEnemy {
         get {
 
-            if (customCharacterData == null) {
-                return false;
-            }
+            CheckData();
             
             return customCharacterData.isActorTypeEnemy;
         }
     }
     
     public void SetActorType(string actorTypeTo) {
-
-        if (customCharacterData == null) {
-            return;
-        }
+        
+        CheckData();
 
         customCharacterData.SetActorType(actorTypeTo);
     }
@@ -278,6 +268,8 @@ public class BaseGameCustom : GameObjectBehavior {
     }
 
     public virtual void Change(GameCustomCharacterData customCharacterDataTo) {
+        
+        CheckData();
 
         customCharacterData = customCharacterDataTo;  
 
@@ -332,10 +324,9 @@ public class BaseGameCustom : GameObjectBehavior {
     }
     
     public virtual void UpdatePlayer() {
+        
+        CheckData();
 
-        if (customCharacterData == null) {
-            Init();
-        }
         /*
         LogUtil.Log("UpdatePlayer"  
                   + " type:" + characterData.type
@@ -363,21 +354,17 @@ public class BaseGameCustom : GameObjectBehavior {
     }
 
     public void SetCustom() {
-
-        if (customCharacterData == null) {
-            Init();
-        }
+                
+        CheckData();
 
         SetCustomTextures();
 
         SetCustomColors();
     }
         
-    public void SetCustomColors() {
+    public void SetCustomColors() {        
         
-        if (customCharacterData == null) {
-            return;
-        }
+        CheckData();
 
         //LogUtil.Log("SetCustomColors"  
         //          + " type:" + characterData.type
@@ -439,10 +426,9 @@ public class BaseGameCustom : GameObjectBehavior {
     }
     
     public void SetCustomTextures() {
+       
         
-        if (customCharacterData == null) {
-            return;
-        }
+        CheckData();
         
         /*
         LogUtil.Log("SetCustomTextures"  
@@ -487,10 +473,8 @@ public class BaseGameCustom : GameObjectBehavior {
     }
     
     public void HandleCustomPlayer() {
-        
-        if (customCharacterData == null) {
-            Init();
-        }
+                
+        CheckData();
 
         HandleCustomPlayerTexture();
         HandleCustomPlayerColor();
@@ -498,10 +482,8 @@ public class BaseGameCustom : GameObjectBehavior {
     }
     
     public void HandleCustomPlayerTexture() {
-
-        if (customCharacterData == null) {
-            Init();
-        }
+        
+        CheckData();
 
         if (customCharacterData.isCustomType 
             || customCharacterData.isDefaultType) {
@@ -532,11 +514,15 @@ public class BaseGameCustom : GameObjectBehavior {
         }
     }
 
-    public void HandleCustomPlayerColor() {
-        
-        if (customCharacterData == null) {
+    public void CheckData() {        
+        if (customCharacterData == null || customCharacterDataCurrent == null) {
             Init();
         }
+    }
+
+    public void HandleCustomPlayerColor() {
+        
+        CheckData();
         
         if (customCharacterData.isCustomType 
             || customCharacterData.isDefaultType) {
@@ -566,18 +552,25 @@ public class BaseGameCustom : GameObjectBehavior {
     }
 
     public void HandleCustomPlayerDisplayValues() {
-        if (customCharacterDataCurrent.lastCustomDisplayCode 
-            != customCharacterData.characterDisplayCode 
-            || customCharacterDataCurrent.lastCustomDisplayName 
-            != customCharacterData.characterDisplayName) {
+        
+        CheckData();
 
-            GameCustomController.UpdateCharacterDisplay(
-                gameObject, 
-                customCharacterData.characterDisplayName, 
-                customCharacterData.characterDisplayCode);
-           
-            customCharacterDataCurrent.lastCustomDisplayCode = customCharacterData.characterDisplayCode;
-            customCharacterDataCurrent.lastCustomDisplayName = customCharacterData.characterDisplayName;
+        if (customCharacterData.isCustomType 
+            || customCharacterData.isDefaultType) {
+
+             if(customCharacterDataCurrent.lastCustomDisplayCode 
+                != customCharacterData.characterDisplayCode 
+                || customCharacterDataCurrent.lastCustomDisplayName 
+                != customCharacterData.characterDisplayName) {
+
+                GameCustomController.UpdateCharacterDisplay(
+                    gameObject, 
+                    customCharacterData.characterDisplayName, 
+                    customCharacterData.characterDisplayCode);
+               
+                customCharacterDataCurrent.lastCustomDisplayCode = customCharacterData.characterDisplayCode;
+                customCharacterDataCurrent.lastCustomDisplayName = customCharacterData.characterDisplayName;
+            }
         }
     }
         

@@ -18,6 +18,9 @@ public class GameCustomPlayerContainerLoader : MonoBehaviour {
     }
     
     public void Init() {
+
+        gameObject.layer = transform.parent.gameObject.layer;
+
         Load();
     }
 

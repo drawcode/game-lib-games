@@ -54,6 +54,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public GameObject containerCharacters;
     public GameObject containerCharacter;
     public GameObject containerCharacterLarge;
+
+    public GameCustomPlayerContainer containerCustomCharacterSmall;
+    public GameCustomPlayerContainer containerCustomCharacterLarge;
 	
 	public UIImageButton buttonCoins;
 	public UIImageButton buttonBack;
@@ -80,9 +83,22 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 	public override void Init() {
 		base.Init();	
 		loadData();
+
+        InitCharacters();
 		
 		base.AnimateIn();	
 	}
+
+    public virtual void InitCharacters() {
+        
+        if(containerCustomCharacterSmall == null) {
+            containerCustomCharacterSmall = containerCharacter.Get<GameCustomPlayerContainer>();
+        }
+        
+        if(containerCustomCharacterLarge == null) {
+            containerCustomCharacterLarge = containerCharacterLarge.Get<GameCustomPlayerContainer>();
+        }
+    }
 	
     public override void OnEnable() {
 
@@ -185,6 +201,18 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
         HideCharacter();
 	}
+
+    //
+
+    public void CharacterLargeScale(double valStart, double valEnd) {
+        containerCustomCharacterLarge.HandleContainerScale(valStart, valEnd);
+    }
+        
+    public void CharacterSmallScale(double valStart, double valEnd) {
+        containerCustomCharacterSmall.HandleContainerScale(valStart, valEnd);
+    }
+
+    //
 	
 	public static void HideTitle() {
         if(GameUIPanelHeader.Instance != null) {
@@ -437,4 +465,23 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 		yield return new WaitForSeconds(1f);
 	}
 	
+    public virtual void Update() {
+    
+
+        if(Input.GetKey(KeyCode.LeftControl)) {
+            if(Input.GetKey(KeyCode.LeftAlt)) {
+
+                if(Input.GetKey(KeyCode.N)) {
+
+                    CharacterLargeScale(1.0f, 2.0f);
+
+                }
+
+                if(Input.GetKey(KeyCode.M)) {
+                    
+                    CharacterLargeScale(2.0f, 1.0f);
+                }
+            }
+        }
+    }
 }

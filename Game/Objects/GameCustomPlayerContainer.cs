@@ -10,15 +10,25 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     public GameObject containerRotator;
     public GameObject containerPlayerDisplay;
     public bool allowRotator = false;
+    public bool isProfileCharacterCode = false;
     Rigidbody rotatorRigidbody;
     RotateObject rotateObject;
     CapsuleCollider rotatorCollider;
+    GameCustomPlayer customPlayerObject;
+    
+    //float lastUpdateScale = 0;
+    //float factorUpdateScale = 0.0;
+    
+    public double currentContainerScale = 1.0;
+    public double currentContainerStart = 1.0;
+    public double currentContainerEnd = 2.0;
+    public string uuid = System.Guid.NewGuid().ToString();
 
     public void Awake() {
     }
     
     public void Start() {
-        Init();
+        //Init();
     }
     
     public void Init() {
@@ -63,18 +73,24 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerPlayerDisplay == null) {
             return;
         }
+
+        string gameCharacterCode = customCharacterData.characterCode;
+
+        if (isProfileCharacterCode) {
         
-        GameProfileCharacterItem gameProfileCharacterItem = 
-            GameProfileCharacters.Current.GetCharacter(
-                customCharacterData.characterCode);
-        
-        if (gameProfileCharacterItem == null) {
-            return;
+            GameProfileCharacterItem gameProfileCharacterItem = 
+                GameProfileCharacters.Current.GetCharacter(
+                    customCharacterData.characterCode);
+            
+            if (gameProfileCharacterItem == null) {
+                return;
+            }
+
+            gameCharacterCode = gameProfileCharacterItem.characterCode;
         }
         
         GameCharacter gameCharacter = 
-            GameCharacters.Instance.GetById(
-                gameProfileCharacterItem.characterCode);
+            GameCharacters.Instance.GetById(gameCharacterCode);
         
         if (gameCharacter == null) {
             return;
@@ -102,15 +118,79 @@ public class GameCustomPlayerContainer : MonoBehaviour {
 
         // LOAD UP PASSED IN VALUES
 
-        GameCustomPlayer customPlayerObject = go.GetOrSet<GameCustomPlayer>();
+        customPlayerObject = go.GetOrSet<GameCustomPlayer>();
 
-        if (customPlayerObject == null) {
+        if (customPlayerObject != null) {
             customPlayerObject.Change(customCharacterData);
         }
     }
+
+    public void UpdateScale() {
+        
+        if (containerPlayerDisplay == null) {
+            return;
+        }
+        
+        if (containerPlayerDisplay.transform.childCount == 0) {
+            return;
+        }
+        
+        if (containerRotator == null) {
+            return;
+        }
+        
+        currentContainerScale = AnimationEasing.EaseGetValue(uuid, 1.0f);
+        
+        Debug.Log("UpdateScale:" + " currentContainerScale:" + currentContainerScale);
+
+        float scaleTo = (float)currentContainerScale;
+
+        containerPlayerDisplay.transform.localScale = 
+            Vector3.zero
+                .WithX(scaleTo)
+                .WithY(scaleTo)
+                .WithZ(scaleTo);
+
+        //lastUpdateScale += Time.deltaTime;
+
+        //if (Time.time - lastUpdateScale <= duration) {
+        //    factorUpdateScale = (float)AnimationEasing.QuadEaseInOut(
+        //        Time.time - lastUpdateScale, 0, 1, duration);
+        //}
+    }
+
+    public void HandleContainerScale(double valStart, double valEnd) {
+    
+        
+        if (containerPlayerDisplay == null) {
+            return;
+        }
+        
+        if (containerPlayerDisplay.transform.childCount == 0) {
+            return;
+        }
+        
+        if (containerRotator == null) {
+            return;
+        }
+
+        Debug.Log("HandleContainerScale:" + " valStart:" + valStart + " valEnd:" + valEnd);
+
+        AnimationEasing.EaseAdd(uuid, AnimationEasing.Equations.QuadEaseInOut, currentContainerScale, valStart, valEnd, .5, .1);
+            
+       // containerPlayerDisplay.transform.localScale = currentContainerScale;
+    }
     
     public void UpdateRotator() {
-        
+
+        if (containerPlayerDisplay == null) {
+            return;
+        }
+
+        if (containerPlayerDisplay.transform.childCount == 0) {
+            return;
+        }
+
         if (containerRotator == null) {
             return;
         }
@@ -158,6 +238,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     void Update() {
         
         UpdateRotator();
+        UpdateScale();
         
     }
 }
