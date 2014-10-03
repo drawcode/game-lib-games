@@ -21,12 +21,14 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
         base.OnEnable();
         
         Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
+        //Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
     
     public override void OnDisable() {
         base.OnDisable();
         
         Messenger<string, string>.RemoveListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
+        //Messenger<string, string>.RemoveListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
     
     void OnInputChanged(string controlName, string data) {
@@ -44,6 +46,21 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
             
             ChangeCharacterDisplayCode(data);
         }
+    }
+
+    void OnInputClicked(string controlName, string data) {
+        
+        //Debug.Log("OnInputClicked:" + " controlName:" + controlName + " data:" + data);
+        
+        
+        //if(inputCurrentDisplayName != null 
+        //   && controlName == inputCurrentDisplayName.name) {
+        //
+        //}
+        //else if(inputCurrentDisplayCode != null 
+        //       && controlName == inputCurrentDisplayCode.name) {
+        //
+        //}
     }
 
     public override void Start() {

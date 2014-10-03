@@ -20,9 +20,14 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     //float factorUpdateScale = 0.0;
     
     public double currentContainerScale = 1.0;
-    public double currentContainerStart = 1.0;
-    public double currentContainerEnd = 2.0;
+    public double currentContainerRotation = 1.0;
+    public double scaleMax = 1.8;
+    public double scaleMin = 1.0;
     public string uuid = System.Guid.NewGuid().ToString();
+    public double rotationMin = 0.0;
+    public double rotationMax = 360.0;
+    public bool zoomAdjust = false;
+    public double zoomAdjustAmount = 10f;
 
     public void Awake() {
     }
@@ -123,6 +128,10 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (customPlayerObject != null) {
             customPlayerObject.Change(customCharacterData);
         }
+                
+        if (containerRotator != null) {
+            containerRotator.ResetObject();
+        }
     }
 
     public void UpdateScale() {
@@ -138,25 +147,45 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerRotator == null) {
             return;
         }
+
+        string keyScale = "scale-" + uuid;
+
+        if (AnimationEasing.EaseExists(keyScale)) {
         
-        currentContainerScale = AnimationEasing.EaseGetValue(uuid, 1.0f);
+            AnimationEasing.AnimationItem aniItem = AnimationEasing.EaseGet(keyScale);
+
+            currentContainerScale = aniItem.val;//AnimationEasing.EaseGetValue(keyScale, 1.0f);
+
+            if (currentContainerScale != scaleMax || currentContainerScale != scaleMin) {
+
+                currentContainerScale = (double)Mathf.Clamp((float)currentContainerScale, (float)scaleMin, (float)scaleMax);
         
-        Debug.Log("UpdateScale:" + " currentContainerScale:" + currentContainerScale);
+                //Debug.Log("UpdateScale:" + " currentContainerScale:" + currentContainerScale);
 
-        float scaleTo = (float)currentContainerScale;
+                float scaleTo = (float)currentContainerScale;
+                float zoomAdjustY = 0f;
 
-        containerPlayerDisplay.transform.localScale = 
-            Vector3.zero
-                .WithX(scaleTo)
-                .WithY(scaleTo)
-                .WithZ(scaleTo);
+                containerRotator.transform.localScale = 
+                    Vector3.zero
+                        .WithX(scaleTo)
+                        .WithY(scaleTo)
+                        .WithZ(scaleTo);
 
-        //lastUpdateScale += Time.deltaTime;
+                zoomAdjustY = -(Mathf.Abs((float)aniItem.valEnd - scaleTo) / 5);
 
-        //if (Time.time - lastUpdateScale <= duration) {
-        //    factorUpdateScale = (float)AnimationEasing.QuadEaseInOut(
-        //        Time.time - lastUpdateScale, 0, 1, duration);
-        //}
+                if (zoomAdjust && aniItem.valEnd > aniItem.valStart) {
+                    zoomAdjustY = -(scaleTo / (float)zoomAdjustAmount);
+                }
+
+                containerRotator.transform.localPosition = Vector3.zero.WithY(zoomAdjustY);
+                ;
+            }
+        }
+    }
+    
+    public void HandleContainerScale(double valEnd) {
+
+        HandleContainerScale(currentContainerScale, valEnd);
     }
 
     public void HandleContainerScale(double valStart, double valEnd) {
@@ -173,12 +202,46 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerRotator == null) {
             return;
         }
+        
+        string keyScale = "scale-" + uuid;
 
         Debug.Log("HandleContainerScale:" + " valStart:" + valStart + " valEnd:" + valEnd);
 
-        AnimationEasing.EaseAdd(uuid, AnimationEasing.Equations.QuadEaseInOut, currentContainerScale, valStart, valEnd, .5, .1);
-            
-       // containerPlayerDisplay.transform.localScale = currentContainerScale;
+        AnimationEasing.EaseAdd(
+            keyScale, 
+            AnimationEasing.Equations.QuadEaseInOut, 
+            currentContainerScale, 
+            valStart, 
+            valEnd, 
+            .5, 
+            .1
+        );
+    }
+    
+    public void HandleContainerRotation(double valEnd) {        
+        HandleContainerRotation(currentContainerRotation, valEnd);
+    }
+        
+    public void HandleContainerRotation(double valStart, double valEnd) {
+        
+        
+        if (containerPlayerDisplay == null) {
+            return;
+        }
+        
+        if (containerPlayerDisplay.transform.childCount == 0) {
+            return;
+        }
+        
+        if (containerRotator == null) {
+            return;
+        }
+        
+        string keyRotation = "rotation-" + uuid;
+        
+        //Debug.Log("HandleContainerRotation:" + " valStart:" + valStart + " valEnd:" + valEnd);
+        
+        AnimationEasing.EaseAdd(keyRotation, AnimationEasing.Equations.QuadEaseInOut, currentContainerRotation, valStart, valEnd, .5, .1);
     }
     
     public void UpdateRotator() {
@@ -194,7 +257,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerRotator == null) {
             return;
         }
-        
+
         if (rotatorRigidbody == null) {
             rotatorRigidbody = containerRotator.GetOrSet<Rigidbody>();
         }
@@ -206,7 +269,9 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (rotatorCollider == null) {
             rotatorCollider = containerRotator.GetOrSet<CapsuleCollider>();
         }
-        
+
+        rotateObject.enabled = false;
+
         if (allowRotator) {   
             
             if (rotatorRigidbody != null) {
@@ -217,8 +282,27 @@ public class GameCustomPlayerContainer : MonoBehaviour {
                     | RigidbodyConstraints.FreezeRotationZ;
             }
             
-            if (rotateObject != null) {
-                rotateObject.RotateSpeedAlongY = 2;
+            //if (rotateObject != null) {
+            //    rotateObject.RotateSpeedAlongY = 2;
+            //}
+            
+            string keyRotation = "rotation-" + uuid;
+            
+            if (AnimationEasing.EaseExists(keyRotation)) {
+                
+                currentContainerRotation = AnimationEasing.EaseGetValue(keyRotation, 0.0f);
+                
+                currentContainerRotation = (double)Mathf.Clamp((float)currentContainerRotation, (float)rotationMin, (float)rotationMax);
+                
+                //Debug.Log("UpdateScale:" + " currentContainerScale:" + currentContainerScale);
+                
+                float rotateTo = (float)currentContainerRotation;
+
+                containerRotator.transform.localRotation = 
+                    Quaternion.Euler(Vector3.zero
+                                     .WithX(0)
+                                     .WithY(rotateTo * 360)
+                                     .WithZ(0));
             }
         }
         else {
@@ -239,6 +323,5 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         
         UpdateRotator();
         UpdateScale();
-        
     }
 }

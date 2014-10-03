@@ -10,6 +10,10 @@ public class GameCustomPlayerContainerLoader : MonoBehaviour {
     public UnityEngine.Object prefabPlayerDisplay;
     public GameCustomCharacterData customCharacteData = new GameCustomCharacterData();
 
+    public bool allowRotator = false;
+    public bool zoomAdjust = false;
+    public double zoomAdjustAmount = 5f;
+
     public void Awake() {
     }
     
@@ -27,6 +31,10 @@ public class GameCustomPlayerContainerLoader : MonoBehaviour {
     public void UpdatePlayers() {
         foreach (GameCustomPlayerContainer playerContainer in 
                 gameObject.GetList<GameCustomPlayerContainer>()) {
+
+            playerContainer.allowRotator = allowRotator;
+            playerContainer.zoomAdjust = zoomAdjust;
+            playerContainer.zoomAdjustAmount = zoomAdjustAmount;
 
             playerContainer.LoadPlayer(customCharacteData);
         }

@@ -21,6 +21,7 @@ public enum UIPanelButtonsDisplayState {
     None,
     Character,
     CharacterLarge,
+    CharacterTools,
     CharacterCustomize,
     Statistics,
     Achievements,
@@ -1016,6 +1017,11 @@ public class UIPanelBase : UIAppPanel {
                 UIPanelButtonsDisplayState.CharacterLarge) {
             
             GameUIPanelFooter.ShowButtonsCharacterLarge();
+        }
+        else if(buttonDisplayState == 
+                UIPanelButtonsDisplayState.CharacterTools) {
+            
+            GameUIPanelFooter.ShowButtonsCharacterTools();
         }
         else if(buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
             

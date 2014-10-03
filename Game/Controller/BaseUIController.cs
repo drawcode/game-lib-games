@@ -116,6 +116,11 @@ public class BaseUIButtonNames {
     public static string buttonGameInitFinish = "ButtonGameInitFinish";
     //ButtonGameInitFinish
 
+    public static string buttonGameCustomizeCharacterFront = "ButtonGameCustomizeCharacterFront";
+    public static string buttonGameCustomizeCharacterBack = "ButtonGameCustomizeCharacterBack";
+    public static string buttonGameCustomizeCharacterZoomIn = "ButtonGameCustomizeCharacterZoomIn";
+    public static string buttonGameCustomizeCharacterZoomOut = "ButtonGameCustomizeCharacterZoomOut";
+
     // COMMUNITY
         
     public static string buttonGameCommunityClose = "ButtonGameCommunityClose";
@@ -275,6 +280,9 @@ public class BaseUIController : GameObjectBehavior {
     public bool isCreatingStart = false;
     public bool isCreatingEnd = false;
     public Camera camHud = null;
+    public Camera camUI = null;
+    public Camera camDialog = null;
+    public Camera camOverlay = null;
     float updateTouchStartTime = 0f;
     float updateTouchMaxTime = 2f;
     bool inputGestureDown = false;
@@ -545,11 +553,22 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         GameObject goRotator = GameObjectHelper.HitObject(
-            Vector3.zero.WithX(fingerPos.x).WithY(fingerPos.y), "rotator");
+            camUI, 
+            Vector3.zero.WithX(fingerPos.x).WithY(fingerPos.y), 
+            "rotator");
 
-        if(goRotator != null) {
+        //Debug.Log("goRotator:" + goRotator);
+
+        if(goRotator != null) {            
+            //Debug.Log("goRotator:FOUND:" + goRotator);
+
             DragObject(goRotator, fingerPos, delta);        
         }
+        else {            
+            //Debug.Log("goRotator:NOTFOUND:" + goRotator);
+        }
+
+        Messenger<DragGesture>.Broadcast(InputSystem.EVENT_INPUT_DRAG_MOVE, gesture);
     }
 
     public virtual void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {
@@ -564,17 +583,20 @@ public class BaseUIController : GameObjectBehavior {
                     | RigidbodyConstraints.FreezeRotationX
                     | RigidbodyConstraints.FreezeRotationZ;
                 go.rigidbody.useGravity = false;
-                go.rigidbody.angularDrag = 2f;
+                go.rigidbody.angularDrag = 3f;
             }
          
+            go.transform.localRotation = 
+                Quaternion.Euler(go.transform.localRotation.eulerAngles.WithY(-delta.x));
+
             if (Math.Abs(delta.x) > .05f) {
-                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 10, 0));                
+                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 50, 0));                
             }
             else {
                 go.rigidbody.angularVelocity = Vector3.zero;
             }
 
-            GamePlayerProgress.Instance.ProcessProgressSpins();
+            //GamePlayerProgress.Instance.ProcessProgressSpins();
         }
     }
 
@@ -3365,7 +3387,7 @@ public class BaseUIController : GameObjectBehavior {
         // rating/community
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAppRate, buttonName)) {
-            Platforms.ShowReviewAppView();
+            Platforms.ShowReviewPage();
         }
 
         // Game networks
@@ -3582,6 +3604,21 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultTwitter, buttonName)) {
             GameCommunitySocialController.PostGameResultsTwitter();
+        }
+
+        // CUSTOMIZE 
+
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterZoomIn, buttonName)) {
+            GameUIPanelHeader.CharacterLargeZoomIn();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterZoomOut, buttonName)) {
+            GameUIPanelHeader.CharacterLargeZoomOut();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterFront, buttonName)) {
+            GameUIPanelHeader.CharacterLargeShowFront();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterBack, buttonName)) {
+            GameUIPanelHeader.CharacterLargeShowBack();
         }
 
         // GAME INIT

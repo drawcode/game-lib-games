@@ -84,7 +84,7 @@ public class Platforms {
 #endif
     }
 
-    public static void ShowReviewAppView() {        
+    public static void ShowReviewAskView() {        
 #if UNITY_ANDROID
         Platforms.AskForReview(
             AppConfigs.appGameDisplayName, 
@@ -104,8 +104,22 @@ public class Platforms {
 #if UNITY_ANDROID
         EtceteraAndroid.askForReviewNow("Review " + appName + "!", "Review " + appName + " if you like it.");
 #elif UNITY_IPHONE  
+        //EtceteraBinding.openAppStoreReviewPage(AppConfigs.pu
         EtceteraBinding.askForReview("Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
 #endif      
+    }
+
+    public static void ShowReviewPage() {
+        Instance.showReviewPage();
+    }
+    
+    public void showReviewPage() {
+        #if UNITY_ANDROID
+        bool isAmazon = AppConfigs.platformIsAmazon;
+        EtceteraAndroid.openReviewPageInPlayStore( isAmazon );
+        #elif UNITY_IPHONE  
+        EtceteraBinding.openAppStoreReviewPage(AppConfigs.appStoreId);
+        #endif      
     }
 
     public static void AskForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {

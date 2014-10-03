@@ -10,6 +10,7 @@ public class GameUIPanelFooterButtons {
     public static string gameNetworks = "game-networks";
     public static string character = "character";
     public static string characterLarge = "character-large";
+    public static string characterTools = "character-tools";
     public static string characterHelp = "character-help";
     public static string characterCustomize = "character-customize";
     public static string statistics = "statistics";
@@ -29,6 +30,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     
     public GameObject containerButtonsCharacter;   
     public GameObject containerButtonsCharacterLarge;   
+    public GameObject containerButtonsCharacterTools;   
 	
     public GameObject containerButtonsGameNetworks;    
     public GameObject containerButtonsProgression;    
@@ -348,6 +350,18 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     
     public virtual void showButtonsCharacterLarge() {        
         ShowButtons(GameUIPanelFooterButtons.characterLarge);
+    }
+
+    //
+    
+    public static void ShowButtonsCharacterTools() {
+        if(isInst) {
+            Instance.showButtonsCharacterTools();
+        }
+    }
+    
+    public virtual void showButtonsCharacterTools() {        
+        ShowButtons(GameUIPanelFooterButtons.characterTools);
     }
 
     //

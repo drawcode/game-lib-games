@@ -17,6 +17,9 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
 	
 	public UIImageButton buttonCustomizeCharacterColors;
 	public UIImageButton buttonCustomizeCharacterRPG;
+    
+    public UIInput inputCurrentDisplayCode;
+    public UIInput inputCurrentDisplayName;
 
     public static bool isInst {
         get {

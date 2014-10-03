@@ -13,6 +13,7 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
     public int currentSelectedItem = 0;
     public GameObject playerObject;
     public GameObject playerContainerObject;
+    public UICustomizeProfileCharacters customProfileCharacters;
         
     public static bool isInst {
         get {
@@ -52,6 +53,8 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
         Messenger<string, string>.AddListener(
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
+        
+        Messenger<string, int>.AddListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
 
     public override void OnDisable() {
@@ -69,6 +72,34 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
         Messenger<string, string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
+
+        Messenger<string, int>.RemoveListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
+    }
+
+    void OnInputClicked(string controlName, int data) {
+        
+        Debug.Log("OnInputClicked:" + " controlName:" + controlName + " data:" + data);
+
+        if (customProfileCharacters == null) {            
+            customProfileCharacters = GetComponentInChildren<UICustomizeProfileCharacters>();
+        }
+
+        if (customProfileCharacters == null) {
+            return;
+        }
+        
+        if (customProfileCharacters.inputCurrentDisplayName != null 
+            && controlName == customProfileCharacters.inputCurrentDisplayName.name) {
+            
+            GameUIPanelHeader.CharacterLargeZoomIn();
+            GameUIPanelHeader.CharacterLargeShowBack();
+        }
+        else if (customProfileCharacters.inputCurrentDisplayCode != null 
+            && controlName == customProfileCharacters.inputCurrentDisplayCode.name) {
+            
+            GameUIPanelHeader.CharacterLargeZoomIn();
+            GameUIPanelHeader.CharacterLargeShowFront();
+        }
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
@@ -191,9 +222,9 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
 
     public virtual void LateUpdate() {
         
-        if (playerContainerObject) {
-            playerContainerObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
-        }
+        //if (playerContainerObject) {
+            //playerContainerObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
+        //}
     }   
     
 }
