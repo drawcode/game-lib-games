@@ -552,23 +552,31 @@ public class BaseUIController : GameObjectBehavior {
             DragObject(currentDraggableUIGameObject, fingerPos, delta);
         }
 
+        HandleRotators(camUI, fingerPos, delta);
+
+    }
+
+    public virtual void HandleRotators(Camera cam, Vector2 fingerPos, Vector2 delta) {
+        
         GameObject goRotator = GameObjectHelper.HitObject(
-            camUI, 
-            Vector3.zero.WithX(fingerPos.x).WithY(fingerPos.y), 
+            cam, 
+            Vector3.zero
+            .WithX(fingerPos.x)
+            .WithY(fingerPos.y), 
             "rotator");
-
+        
         //Debug.Log("goRotator:" + goRotator);
-
+        
         if(goRotator != null) {            
             //Debug.Log("goRotator:FOUND:" + goRotator);
-
+            
             DragObject(goRotator, fingerPos, delta);        
         }
         else {            
             //Debug.Log("goRotator:NOTFOUND:" + goRotator);
         }
-
-        Messenger<DragGesture>.Broadcast(InputSystem.EVENT_INPUT_DRAG_MOVE, gesture);
+        
+        Messenger<Vector2,Vector2>.Broadcast(InputSystem.EVENT_INPUT_DRAG_MOVE, fingerPos, delta);
     }
 
     public virtual void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {

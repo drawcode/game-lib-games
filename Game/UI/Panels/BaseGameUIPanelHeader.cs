@@ -399,6 +399,10 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public IEnumerator showCharacterLargeCo() {
         yield return new WaitForSeconds(.55f);
         ShowPanelTop(containerCharacterLarge, false);
+
+        containerCharacterLarge.ResetRigidBodiesVelocity();
+        characterLargeShowFront();
+        characterLargeZoomOut();
     }
     
     public static void HideCharacterLarge() {

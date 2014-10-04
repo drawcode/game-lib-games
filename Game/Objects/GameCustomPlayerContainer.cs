@@ -205,7 +205,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         
         string keyScale = "scale-" + uuid;
 
-        Debug.Log("HandleContainerScale:" + " valStart:" + valStart + " valEnd:" + valEnd);
+        //Debug.Log("HandleContainerScale:" + " valStart:" + valStart + " valEnd:" + valEnd);
 
         AnimationEasing.EaseAdd(
             keyScale, 
@@ -219,6 +219,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     }
     
     public void HandleContainerRotation(double valEnd) {        
+
         HandleContainerRotation(currentContainerRotation, valEnd);
     }
         
@@ -236,6 +237,8 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerRotator == null) {
             return;
         }
+
+        containerRotator.ResetRigidBodiesVelocity();
         
         string keyRotation = "rotation-" + uuid;
         
