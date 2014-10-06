@@ -113,6 +113,8 @@ public class UIPanelOverviewMode : UIPanelBase {
             }
 
         }
+        
+        GameCustomController.BroadcastCustomSync();
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -269,31 +271,6 @@ public class UIPanelOverviewMode : UIPanelBase {
         // Update team display
         //LogUtil.Log("ShowOverview:");
 
-        GameCustomController.BroadcastCustomColorsChanged();
-
-        foreach (GameCustomPlayer customPlayer in gameObject.GetList<GameCustomPlayer>()) {
-        
-            if (customPlayer.isActorTypeEnemy) {                
-                
-                GameTeam team = GameTeams.Current;
-
-                if (team != null) {
-                    
-                    UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
-                        
-                    GameCustomCharacterData customInfo = new GameCustomCharacterData();
-                    customInfo.actorType = GameCustomActorTypes.enemyType;
-                    customInfo.presetColorCode = team.data.GetColorPreset().code;
-                    customInfo.presetTextureCode = team.data.GetTexturePreset().code;
-                    customInfo.type = GameCustomTypes.teamType;
-                    customInfo.teamCode = team.code;
-
-                    customPlayer.Load(customInfo);
-                }
-            }
-        }
-
-
         flowState = AppOverviewFlowState.Mode;
 
         UIPanelDialogBackground.ShowDefault();
@@ -301,6 +278,30 @@ public class UIPanelOverviewMode : UIPanelBase {
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
 
         AnimateInBottom(containerOverview);
+
+        GameCustomController.BroadcastCustomSync();
+        
+        foreach (GameCustomPlayer customPlayer in gameObject.GetList<GameCustomPlayer>()) {
+            
+            if (customPlayer.isActorTypeEnemy) {                
+                
+                GameTeam team = GameTeams.Current;
+                
+                if (team != null) {
+                    
+                    UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
+                    
+                    GameCustomCharacterData customInfo = new GameCustomCharacterData();
+                    customInfo.actorType = GameCustomActorTypes.enemyType;
+                    customInfo.presetColorCode = team.data.GetColorPreset().code;
+                    customInfo.presetTextureCode = team.data.GetTexturePreset().code;
+                    customInfo.type = GameCustomTypes.teamType;
+                    customInfo.teamCode = team.code;
+                    
+                    customPlayer.Load(customInfo);
+                }
+            }
+        }
 
         ContentPause();
 

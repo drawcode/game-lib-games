@@ -104,7 +104,9 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
                 colors.Add(prop.code, colorTo);
             }        
             
-            currentProfileCustomItem = GameCustomController.UpdateColorPresetObject(currentProfileCustomItem, currentObject, type, colors);
+            currentProfileCustomItem = 
+                GameCustomController.UpdateColorPresetObject(
+                    currentProfileCustomItem, currentObject, type, colors);
             
             GameCustomController.SaveCustomItem(currentProfileCustomItem);
         }
@@ -194,9 +196,9 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     }
     
     public override void Update() {
-        if (currentObject) {
-            currentObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
-        }
+        //if (currentObject) {
+        //    currentObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
+        //}
     }
 
 }

@@ -28,11 +28,13 @@ public class GameCustomPlayer : BaseGameCustom {
     }
     
     void OnCustomizationColorsPlayerChangedHandler() {
-        //// UpdatePlayer();
+        //UpdatePlayer();
     }
 
     void OnCustomizationCharacterDisplayChangedHandler() {
-        GameCustomController.UpdateProfileCharacterDisplay(gameObject);
+        if(isActorTypeHero && (isTypeDefault || isTypeCustom)) {
+            GameCustomController.UpdateProfileCharacterDisplay(gameObject);
+        }
     }
 
 }

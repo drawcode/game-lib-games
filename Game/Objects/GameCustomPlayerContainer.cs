@@ -273,7 +273,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             rotatorCollider = containerRotator.GetOrSet<CapsuleCollider>();
         }
 
-        rotateObject.enabled = false;
+        //rotateObject.enabled = false;
 
         if (allowRotator) {   
             
@@ -285,9 +285,9 @@ public class GameCustomPlayerContainer : MonoBehaviour {
                     | RigidbodyConstraints.FreezeRotationZ;
             }
             
-            //if (rotateObject != null) {
-            //    rotateObject.RotateSpeedAlongY = 2;
-            //}
+            if (rotateObject != null) {
+                rotateObject.RotateSpeedAlongY = 2;
+            }
             
             string keyRotation = "rotation-" + uuid;
             

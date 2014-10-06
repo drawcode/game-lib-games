@@ -5,14 +5,12 @@ using UnityEngine;
 
 using Engine.Events;
 
-
 public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 3.0f;
     public float downCount = 5f;
     public bool initialized = false;
-
     public GameObject pointStaticObject;
     public GameObject pointAnimatedObject;
     public GameObject containerPre;
@@ -21,7 +19,6 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public GameObject particleSystemPreObject;
     public GameObject particleSystemPostObject;
     public GameObject particleSystemRunObject;
-
     public float bobSpeed = 10.0f;  //Bob speed
     public float bobHeight = 30.0f; //Bob height
     public float bobOffset = 5f;
@@ -35,14 +32,13 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     //public string gamePlayerItemCode = "item-coin";
 
     public double pointValue = 1.0;
-
     public Vector3 positionEnd = Vector3.zero;
     public bool floaty = false;
     public float bottom;
     public Transform cameraTransform;
     public bool allowCollect = false;
     public bool isCollecting = false;
-    public float collectRange = 5f;
+    public float collectRange = 8f;
                
     public virtual void Awake() {
         bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);
@@ -64,8 +60,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //floaty = true;
         collectRange = 3f;
 
-        if(cameraTransform == null) {
-            if(Camera.main != null) {
+        if (cameraTransform == null) {
+            if (Camera.main != null) {
                 cameraTransform = Camera.main.transform;
             }
         }
@@ -109,7 +105,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
     public virtual void CollectContent() {
                 
-        if(!isCollecting) {
+        if (!isCollecting) {
             LogUtil.Log("CollectContent:Collect", true);
                         
             isCollecting = true;         
@@ -121,7 +117,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
             GameItem gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
 
-            if(gameItem == null) {
+            if (gameItem == null) {
                 return;
             }
 
@@ -205,8 +201,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
         yield return new WaitForSeconds(delay);
                 
-        if(go != null) {        
-            if(!go.activeInHierarchy || !go.activeSelf) {
+        if (go != null) {        
+            if (!go.activeInHierarchy || !go.activeSelf) {
                 ShowObject(go);
             }
             LogUtil.Log("FadeInObject:" + go.name);
@@ -217,17 +213,17 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     public virtual void FadeOutObject(GameObject go) {
                 
-        if(go != null) {                        
+        if (go != null) {                        
             LogUtil.Log("FadeOutObject:" + go.name);
             
             UITweenerUtil.FadeOut(go);        
-           // iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
+            // iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
             HideObjectDelayed(go, 1f);
         }
     }
         
     public virtual void FadeOutObjectNow(GameObject go) {
-        if(go != null) {                        
+        if (go != null) {                        
             LogUtil.Log("FadeOutObjectNow:" + go.name);
             UITweenerUtil.FadeOutNow(go);        
             HideObject(go);
@@ -235,7 +231,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     }
         
     public virtual void ShowObject(GameObject go) {
-        if(go != null) {
+        if (go != null) {
             go.Show();
         }
     }
@@ -246,28 +242,28 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
     public virtual IEnumerator HideObjectCo(GameObject go, float delay) {
         yield return new WaitForSeconds(delay);
-        if(go != null) {
+        if (go != null) {
             go.Hide();
         }
     }
         
     public virtual void HideObject(GameObject go) {
-        if(go != null) {
+        if (go != null) {
             go.Hide();
         }
     }
         
     // Update is called once per frame
     public virtual void FixedUpdate() {
-        if(cameraTransform != null) {
+        if (cameraTransform != null) {
             //transform.LookAt(cameraTransform);
         }
     }
         
     public virtual GamePlayerController GetController(Transform transform) {
-        if(transform != null) {
+        if (transform != null) {
             GamePlayerController gamePlayerController = transform.GetComponentInChildren<GamePlayerController>();
-            if(gamePlayerController != null) {
+            if (gamePlayerController != null) {
                 return gamePlayerController;
             }
         }
@@ -278,19 +274,19 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
         GameObject go = GameController.CurrentGamePlayerController.gameObject;
 
-        if(go != null) {
-    
-            if(Vector3.Distance(
-                go.transform.position,
-                transform.position)
-                    <= collectRange) {
-                    //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
+        if (go != null) {
 
-                    GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+            Vector3 playerPosition = go.transform.position;
+            Vector3 itemPosition = transform.position;
     
-                    if(gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+            if (Vector3.Distance(playerPosition, itemPosition) <= collectRange) {
+                //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
 
-                    if(gamePlayerController.IsPlayerControlled) {
+                GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+    
+                if (gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+
+                    if (gamePlayerController.IsPlayerControlled) {
                         CollectContent();
                     }
                 }
@@ -299,8 +295,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     }
                 
     public virtual void UpdateBounds() {
-        if(GameController.ShouldUpdateBounds() && !isCollecting) {
-            if(!GameController.CheckBounds(transform.position)) {
+        if (GameController.ShouldUpdateBounds() && !isCollecting) {
+            if (!GameController.CheckBounds(transform.position)) {
                 RemoveContent();
             }
         }
@@ -310,15 +306,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
     public virtual void Update() {        
         
-        if(GameConfigs.isUIRunning) {
+        if (GameConfigs.isUIRunning) {
             return;
         }
         
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
                 
-        if(Application.isEditor && Input.GetKeyDown(KeyCode.Space)) {
+        if (Application.isEditor && Input.GetKeyDown(KeyCode.Space)) {
             //ResetContent();
             StopContent();
         }
@@ -347,7 +343,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         UpdateBounds();
         UpdateCollect();
                 
-        if(downCount > 0f) {
+        if (downCount > 0f) {
             downCount -= Time.deltaTime;
         }
         else {
@@ -356,18 +352,18 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
         handleClick = false;
 
-        if(downCount <= 0
+        if (downCount <= 0
             && (Input.GetMouseButtonDown(0) || Input.touchCount > 0)) {
             ////&& !AppViewerUIController.Instance.uiVisible) {
             handleClick = true;
         }               
 
-        if(handleClick) {
+        if (handleClick) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, 50000000)) {      
+            if (Physics.Raycast(ray, out hit, 50000000)) {      
                                 
-                if(hit.collider != null) {
+                if (hit.collider != null) {
                     //Transform hitTransform = hit.collider.transform;
 
                     //string linkName = hitTransform.name.Replace(
@@ -376,14 +372,14 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                     //LogUtil.Log("HIT!item:" + hitTransform.name);                                                                   
                                         
                     //if(hitTransform.name.ToLower().Contains(
-                     //   GamePlayerItemType.itemCoin)) {
+                    //   GamePlayerItemType.itemCoin)) {
                                                 
                     //    downCount = 5;
 
-                        //&& state == ARCustomSceneObjectLaunchState.Started
-                        //&& playState == ARCustomSceneObjectPlayState.Completed) {                       
+                    //&& state == ARCustomSceneObjectLaunchState.Started
+                    //&& playState == ARCustomSceneObjectPlayState.Completed) {                       
                                                 
-                        //LogUtil.Log("linkName:" + linkName);                                            
+                    //LogUtil.Log("linkName:" + linkName);                                            
                                                 
                     //    CollectContent();       
                     //}
@@ -409,20 +405,20 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //Debug.DrawRay(contact.point, contact.normal, Color.white);
         //LogUtil.Log("GamePlayerItem:OnCollisionEnter:", contact.otherCollider.transform.name);
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
         GameObject go = collision.collider.transform.gameObject;
 
-        if(go == null) {
+        if (go == null) {
             return;
         }
 
-        if(GameController.HasGamePlayerControllerObject(go, true)) {
+        if (GameController.HasGamePlayerControllerObject(go, true)) {
             GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
-            if(gamePlayerController != null) {
-                if(gamePlayerController.controllerState == GamePlayerControllerState.ControllerPlayer) {
+            if (gamePlayerController != null) {
+                if (gamePlayerController.controllerState == GamePlayerControllerState.ControllerPlayer) {
                     // If player collect this
                     CollectContent();
                 }

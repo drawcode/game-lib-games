@@ -1398,6 +1398,9 @@ public class BaseGamePlayerController : GameActor {
 
         characterCode = characterCodeTo;
 
+        ResetScale();
+        ResetPosition();
+
         SetControllerData(new GamePlayerControllerData());
         SetRuntimeData(new GamePlayerRuntimeData());
 
@@ -2482,8 +2485,17 @@ public class BaseGamePlayerController : GameActor {
         if (IsPlayerControlled) {
             gameObject.ResetPosition();
         }
+    }
 
-        //transform.position = Vector3.zero.WithY(1.5f);
+    public virtual void ResetScale() {
+        
+        foreach (Transform t in gamePlayerModelHolderModel.transform) {
+            t.localScale = Vector3.one;
+        }
+        
+        if (IsPlayerControlled) {
+            gameObject.ResetScale(1f);
+        }
     }
     
     public virtual void SetUp(

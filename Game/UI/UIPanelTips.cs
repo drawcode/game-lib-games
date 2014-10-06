@@ -325,6 +325,8 @@ public class UIPanelTips : UIAppPanelBaseList {
         UIUtil.SetLabelValue(
             labelCurrentTipStatus, 
             string.Format("Tip {0} of {1}", currentTipIndex + 1, tipsTotal));
+
+        GameCustomController.BroadcastCustomSync();
     }
     
     public void HideAllTipContainers() {

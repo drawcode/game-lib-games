@@ -375,6 +375,9 @@ public class BaseGameCustomController : GameObjectBehavior {
 
     
     public virtual void broadcastCustomSync() {
+
+        Debug.Log("GameCustomController::broadcastCustomSync");
+
         broadcastCustomColorsSync();
         broadcastCustomCharacterDataSync();
     }

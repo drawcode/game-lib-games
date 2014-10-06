@@ -3311,7 +3311,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public virtual void hideGameCommunityPanels() {        
-        Debug.Log("hideGameCommunity");
+        //Debug.Log("hideGameCommunity");
 
         UIPanelCommunityBroadcast.HideAll();
         UIPanelCommunityCamera.HideAll();
