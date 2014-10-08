@@ -67,7 +67,22 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
     public override void OnButtonClickEventHandler(string buttonName) {
         base.OnButtonClickEventHandler(buttonName);
     }
+
+    // TAKE PHOTO STATE
+
+    public static void TakePhotoGameState() {
+        if (isInst) {
+            Instance.takePhotoGameState();
+        }
+    }
     
+    public void takePhotoGameState() {   
+
+        TakePhoto();        
+    }
+
+    // TAKE PHOTO
+
     public static void TakePhoto() {
         if (isInst) {
             Instance.takePhoto();
@@ -103,7 +118,76 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
 
         showDialog();
     }
+
+    /*
+
+    // CAPTURE CAMERA PHOTO
+
+    public static void CaptureCameraPhotoState() {
+        if (isInst) {
+            Instance.captureCameraPhotoState();
+        }
+    }
     
+    public void captureCameraPhotoState() {
+
+        string message = "results! " + GameUIController.Instance.currentPanel;
+ 
+        // TODO base on current game state / scores etc.
+
+        captureCameraPhoto(message);
+    }
+    
+    public static void CaptureCameraPhoto(string message) {
+        if (isInst) {
+            Instance.captureCameraPhoto(message);
+        }
+    }
+    
+    public void captureCameraPhoto(string message) { 
+        captureCameraPhoto( 
+           LayerMask.LayerToName(GameUIController.Instance.camUI.gameObject.layer), 
+           GameUIController.Instance.camUI, 
+           message);
+    }
+
+    public static void CaptureCameraPhoto(string key, Camera cam, string message) {
+        if (isInst) {
+            Instance.captureCameraPhoto(key, cam, message);
+        }
+    }
+    
+    public void captureCameraPhoto(string key, Camera cam, string message) {   
+        if (photoMaterial == null) {
+            Debug.LogWarning("No photoMaterial found");
+            return;
+        }
+        
+        StartCoroutine(captureCameraPhotoCo(key, cam, message));
+    }
+    
+    IEnumerator captureCameraPhotoCo(string key, Camera cam, string message) { 
+        
+        ShowNone();
+        
+        GameUIPanelOverlays.Instance.ShowOverlayWhiteFlash();
+        
+        yield return new WaitForSeconds(.7f);
+        
+        PhotoObjectSize();
+        
+        GameCommunitySocialController.CaptureCameraPhoto(key, cam, photoMaterial);
+        
+        UINotificationDisplay.QueueInfo("Loading Photo", "Photo just taken is saving.");
+        
+        GameController.GameRunningStateContent();
+        
+        yield return new WaitForSeconds(.5f);
+        
+        showDialog();
+    }
+    */
+
     public void PhotoObjectSize() {
         // current size 250x250
         

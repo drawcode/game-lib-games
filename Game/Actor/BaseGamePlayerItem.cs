@@ -349,7 +349,11 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         else {
             downCount = 0;
         }
-                
+
+        // TODO tap to collect
+
+        /*
+
         handleClick = false;
 
         if (downCount <= 0
@@ -386,6 +390,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 }
             }
         }
+        */
     }
                 
     //public virtual void OnTriggerEnter(Collider collider) {

@@ -29,7 +29,6 @@ public class BroadcastNetworksMessages {
     public static string broadcastRecordingStart = "broadcast-recording-start";
     public static string broadcastRecordingStop = "broadcast-recording-stop";
     public static string broadcastRecordingPlayback = "broadcast-recording-playback";
-    
     public static string broadcastFacecamStart = "broadcast-facecam-start";
     public static string broadcastFacecamStop = "broadcast-facecam-stop";
 }
@@ -155,6 +154,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public void BroadcastFacecamStart() {
         BroadcastMessage(BroadcastNetworksMessages.broadcastFacecamStart);
     }
+
     public void BroadcastFacecamStop() {
         BroadcastMessage(BroadcastNetworksMessages.broadcastFacecamStop);
     }
@@ -429,7 +429,7 @@ public class BroadcastNetworks : GameObjectBehavior {
             return;
         }
 
-        if(IsRecording()) {
+        if (IsRecording()) {
             StopRecording();
         }
         else {
@@ -452,13 +452,11 @@ public class BroadcastNetworks : GameObjectBehavior {
             
         if (!IsRecording()) {
             SetMaxRecordingMinutesLength(10);
-
-            SetMetadata("game", AppConfigs.appGameDisplayName);
-            SetMetadata("level", "Arcade Mode");
-
-            //    Everyplay.SetMetadata("level", levelNumber);
-            //Everyplay.SetMetadata("level_name", levelName);
-            //Everyplay.SetMetadata("score", score);
+            
+            SetMetadata("about", Locos.Get(LocoKeys.social_everyplay_game_explore_message));
+            SetMetadata("game", Locos.Get(LocoKeys.app_display_name));
+            SetMetadata("level", Locos.Get(LocoKeys.game_type_arcade));
+            SetMetadata("level_name", Locos.Get(LocoKeys.game_type_arcade_mode));
 
             if (FPSDisplay.isUnder25FPS) {
                 SetLowMemoryDevice(true);
@@ -832,11 +830,11 @@ Everyplay.SetMetadata("score", score)
     
     public void facecamToggle() {
 
-        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+        if (!IsSupported() || !IsFacecamVideoRecordingSupported()) {
             return;
         }
         
-        if(IsFacecamSessionRunning()) {
+        if (IsFacecamSessionRunning()) {
             FacecamStop();
         }
         else {
@@ -853,15 +851,15 @@ Everyplay.SetMetadata("score", score)
     }
     
     public void facecamGetPermission() {
-        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+        if (!IsSupported() || !IsFacecamVideoRecordingSupported()) {
             return;
         }
             
-            #if BROADCAST_USE_EVERYPLAY
+        #if BROADCAST_USE_EVERYPLAY
             Everyplay.FaceCamRequestRecordingPermission();
-            #else
+        #else
             
-            #endif
+        #endif
     }
 
     
@@ -875,16 +873,16 @@ Everyplay.SetMetadata("score", score)
     
     public void facecamStart() {
 
-        if(!IsFacecamRecordingPermissionGranted()) {
+        if (!IsFacecamRecordingPermissionGranted()) {
             FacecamGetPermission();
         }
         else {
         
-        #if BROADCAST_USE_EVERYPLAY
+            #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamStartSession();
-        #else
+            #else
 
-        #endif
+            #endif
         }
     }
 
@@ -1148,20 +1146,18 @@ Everyplay.SetMetadata("score", score)
     }
 
     public void Update() { 
-        if(Application.isEditor) {
-            if(Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.B)) {
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.B)) {
             
 
-                if(Input.GetKeyDown(KeyCode.I)) {
+                if (Input.GetKeyDown(KeyCode.I)) {
                     // start
 
                     Debug.Log("BroadcastNetworks:" + " test start:");
 
                     BroadcastRecordingStart();
                 }
-
-                
-                else if(Input.GetKeyDown(KeyCode.O)) {
+                else if (Input.GetKeyDown(KeyCode.O)) {
                     // start
                     
                     Debug.Log("BroadcastNetworks:" + " test stop:");

@@ -61,10 +61,8 @@ public class BaseUIButtonNames {
     public static string buttonWorlds = "ButtonWorlds";
     public static string buttonLevels = "ButtonLevels";
     public static string buttonLevel = "ButtonLevel";
-
     public static string buttonCoin = "ButtonCoin";
     public static string buttonProductCurrency = "ButtonProductCurrency";
-
     public static string buttonGameSettingsAudio = "ButtonGameSettingsAudio";
     public static string buttonGamePause = "ButtonGamePause";
     public static string buttonGameResume = "ButtonGameResume";
@@ -75,24 +73,19 @@ public class BaseUIButtonNames {
     public static string buttonGameContinue = "ButtonGameContinue";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
     public static string buttonGameProductCurrency = "ButtonGameProductCurrency";
-
-    public static string buttonGameProducts = "ButtonGameProducts";   
-    public static string buttonGameProductsCharacter = "ButtonGameProductsCharacter";   
-    public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";   
-    public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";   
-    public static string buttonGameProductsFeature = "ButtonGameProductsFeature";   
-    public static string buttonGameProductsPickup = "ButtonGameProductsPickup";   
-    public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";   
-    public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";   
-        
+    public static string buttonGameProducts = "ButtonGameProducts";
+    public static string buttonGameProductsCharacter = "ButtonGameProductsCharacter";
+    public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";
+    public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";
+    public static string buttonGameProductsFeature = "ButtonGameProductsFeature";
+    public static string buttonGameProductsPickup = "ButtonGameProductsPickup";
+    public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";
+    public static string buttonGameProductsRPGUpgrade = "ButtonGameProductsRPGUpgrade";
     public static string buttonGamePlayerPresets = "ButtonGamePlayerPresets";
-
     public static string buttonGameActionItemBuyUse = "ButtonGameActionItemBuyUse";
-
-    
     public static string buttonGameCustomize = "ButtonGameCustomize";
     public static string buttonGameCustomizeCharacter = "ButtonGameCustomizeCharacter";
-    public static string buttonGameCustomizeCharacterColors = "ButtonGameCustomizeCharacterColors";   
+    public static string buttonGameCustomizeCharacterColors = "ButtonGameCustomizeCharacterColors";
     public static string buttonGameCustomizeCharacterRPG = "ButtonGameCustomizeCharacterRPG";   
 
     //ButtonCustomizeCharacterRPGBuyUpgrades
@@ -124,31 +117,23 @@ public class BaseUIButtonNames {
     // COMMUNITY
         
     public static string buttonGameCommunityClose = "ButtonGameCommunityClose";
-    
     public static string buttonGameCommunityCameraSaveTwitter = "ButtonGameCommunityCameraSaveTwitter";
     public static string buttonGameCommunityCameraSaveFacebook = "ButtonGameCommunityCameraSaveFacebook";
-    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";   
+    public static string buttonGameCommunityCameraSaveLibrary = "ButtonGameCommunityCameraSaveLibrary";
     public static string buttonGameCommunityCameraTakePhoto = "ButtonGameCommunityCameraTakePhoto";
-    
     public static string buttonGameCommunityShareResultFacebook = "ButtonGameCommunityShareResultFacebook";
     public static string buttonGameCommunityShareResultTwitter = "ButtonGameCommunityShareResultTwitter";
-
     public static string buttonGameCommunityBroadcastNetworkOpen = "ButtonGameCommunityBroadcastNetworkOpen";
-        
     public static string buttonGameCommunityBroadcastOpen = "ButtonGameCommunityBroadcastOpen";
     public static string buttonGameCommunityBroadcastOpenShare = "ButtonGameCommunityBroadcastOpenShare";
-    
     public static string buttonGameCommunityBroadcastReplayShare = "ButtonGameCommunityBroadcastReplayShare";
     public static string buttonGameCommunityBroadcastReplayWatch = "ButtonGameCommunityBroadcastReplayWatch";
-
     public static string buttonGameCommunityBroadcastClose = "ButtonGameCommunityBroadcastClose";
     public static string buttonGameCommunityBroadcastPlayLast = "ButtonGameCommunityBroadcastPlayLast";
     public static string buttonGameCommunityBroadcastShareLast = "ButtonGameCommunityBroadcastShareLast";
-    
     public static string buttonGameCommunityBroadcastRecordStart = "ButtonGameCommunityBroadcastRecordStart";
     public static string buttonGameCommunityBroadcastRecordStop = "ButtonGameCommunityBroadcastRecordStop";
     public static string buttonGameCommunityBroadcastRecordToggle = "ButtonGameCommunityBroadcastRecordToggle";
-    
     public static string buttonGameCommunityBroadcastFacecamStart = "ButtonGameCommunityBroadcastFacecamStart";
     public static string buttonGameCommunityBroadcastFacecamStop = "ButtonGameCommunityBroadcastFacecamStop";
     public static string buttonGameCommunityBroadcastFacecamToggle = "ButtonGameCommunityBroadcastFacecamToggle";
@@ -420,7 +405,7 @@ public class BaseUIController : GameObjectBehavior {
 
         HideAllPanelsNow();
 
-        if(panelCode != BaseUIPanel.panelMain) {
+        if (panelCode != BaseUIPanel.panelMain) {
             broadcastUIMessageAnimateType(
                 "GameUIPanelBackgrounds",
                 UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
@@ -488,25 +473,25 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void OnListItemClickEventHandler(
         string listName, string listIndex, bool selected) {
         LogUtil.Log("OnListItemClickEventHandler: listName:" + 
-                    listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
+            listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
     }
     
     public virtual void OnListItemSelectEventHandler(
         string listName, string selectName) {
         LogUtil.Log("OnListItemSelectEventHandler: listName:" + 
-                    listName + " selectName:" + selectName);
+            listName + " selectName:" + selectName);
     }
     
     public virtual void OnSliderChangeEventHandler(
         string sliderName, float sliderValue) {
         LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + 
-                    sliderName + " sliderValue:" + sliderValue);
+            sliderName + " sliderValue:" + sliderValue);
     }
     
     public virtual void OnCheckboxChangeEventHandler(
         string checkboxName, bool selected) {
         LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + 
-                    checkboxName + " selected:" + selected);
+            checkboxName + " selected:" + selected);
     }
     
     public virtual void OnApplicationQuit() {
@@ -528,8 +513,21 @@ public class BaseUIController : GameObjectBehavior {
     
     public virtual void Update() {
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            GameController.GamePlayerUse();
+        if (Application.isEditor) {
+
+            if (Input.GetKey(KeyCode.LeftControl)) {
+                
+                if (Input.GetKey(KeyCode.Space)) {
+
+                    if (Input.GetKeyDown(KeyCode.Period)) {
+                        GameController.GamePlayerUse();
+                    }
+                    
+                    if (Input.GetKeyDown(KeyCode.C)) {
+                        //UIPanelCommunityCamera.CaptureCameraPhotoState();
+                    }
+                }
+            }
         }
 
         //DetectSwipe();
@@ -567,7 +565,7 @@ public class BaseUIController : GameObjectBehavior {
         
         //Debug.Log("goRotator:" + goRotator);
         
-        if(goRotator != null) {            
+        if (goRotator != null) {            
             //Debug.Log("goRotator:FOUND:" + goRotator);
             
             DragObject(goRotator, fingerPos, delta);        
@@ -1791,8 +1789,8 @@ public class BaseUIController : GameObjectBehavior {
  
         bool handled = false;
 
-        if(buttonName == BaseUIButtonNames.buttonBack) {
-            if(!GameUIController.Instance.uiVisible) {
+        if (buttonName == BaseUIButtonNames.buttonBack) {
+            if (!GameUIController.Instance.uiVisible) {
                 HideAllPanels();
                 GameUIPanelHeader.Instance.AnimateOut();
                 GameUIPanelBackgrounds.Instance.AnimateOut();
@@ -1800,81 +1798,76 @@ public class BaseUIController : GameObjectBehavior {
                 handled = true;
             }
             else {
-                if(currentPanel 
-                   == GameUIPanel.panelSettingsAudio
-                   || currentPanel 
-                   == GameUIPanel.panelSettingsControls
-                   || currentPanel 
-                   == GameUIPanel.panelSettingsHelp
-                   || currentPanel 
-                   == GameUIPanel.panelSettingsCredits
-                   || currentPanel 
-                   == GameUIPanel.panelSettingsProfile) {
+                if (currentPanel 
+                    == GameUIPanel.panelSettingsAudio
+                    || currentPanel 
+                    == GameUIPanel.panelSettingsControls
+                    || currentPanel 
+                    == GameUIPanel.panelSettingsHelp
+                    || currentPanel 
+                    == GameUIPanel.panelSettingsCredits
+                    || currentPanel 
+                    == GameUIPanel.panelSettingsProfile) {
                     
                     GameUIController.ShowSettings(); 
                     handled = true;       
                     
                 }
-                else 
-                    if(currentPanel 
-                       == GameUIPanel.panelAchievements
-                       || currentPanel 
-                       == GameUIPanel.panelCustomize
-                       || currentPanel 
-                       == GameUIPanel.panelProducts
-                       || currentPanel 
-                      == GameUIPanel.panelStatistics) {
+                else if (currentPanel 
+                    == GameUIPanel.panelAchievements
+                    || currentPanel 
+                    == GameUIPanel.panelCustomize
+                    || currentPanel 
+                    == GameUIPanel.panelProducts
+                    || currentPanel 
+                    == GameUIPanel.panelStatistics) {
                     
                     GameUIController.ShowEquipment();       
                     handled = true;
                     
                 }
-                else
-                    if(currentPanel 
-                       == GameUIPanel.panelCustomizeCharacterRPG
-                       || currentPanel 
-                       == GameUIPanel.panelCustomizeCharacterColors
-                       || currentPanel 
-                       == GameUIPanel.panelCustomizeCharacter
-                       || currentPanel 
-                      == GameUIPanel.panelCustomizeAudio) {
+                else if (currentPanel 
+                    == GameUIPanel.panelCustomizeCharacterRPG
+                    || currentPanel 
+                    == GameUIPanel.panelCustomizeCharacterColors
+                    || currentPanel 
+                    == GameUIPanel.panelCustomizeCharacter
+                    || currentPanel 
+                    == GameUIPanel.panelCustomizeAudio) {
                     
                     GameUIController.ShowCustomize();
                     handled = true;
                     
                 }
-                else
-                    if(currentPanel
-                       == GameUIPanel.panelGameModeArcade
-                       || currentPanel
-                       == GameUIPanel.panelGameModeCareer
-                       || currentPanel
-                       == GameUIPanel.panelGameModeChallenge
-                       || currentPanel
-                       == GameUIPanel.panelGameModeCoop
-                       || currentPanel
-                       == GameUIPanel.panelGameModeMissions
-                       || currentPanel
-                       == GameUIPanel.panelGameModeMultiplayer
-                       || currentPanel
-                       == GameUIPanel.panelGameModeMultiplayerCoop
-                       || currentPanel
-                       == GameUIPanel.panelGameModeMultiplayerMatchup
-                       || currentPanel
-                       == GameUIPanel.panelGameModeTraining
-                       || currentPanel
-                      == GameUIPanel.panelGameModeTrainingMode) {
+                else if (currentPanel
+                    == GameUIPanel.panelGameModeArcade
+                    || currentPanel
+                    == GameUIPanel.panelGameModeCareer
+                    || currentPanel
+                    == GameUIPanel.panelGameModeChallenge
+                    || currentPanel
+                    == GameUIPanel.panelGameModeCoop
+                    || currentPanel
+                    == GameUIPanel.panelGameModeMissions
+                    || currentPanel
+                    == GameUIPanel.panelGameModeMultiplayer
+                    || currentPanel
+                    == GameUIPanel.panelGameModeMultiplayerCoop
+                    || currentPanel
+                    == GameUIPanel.panelGameModeMultiplayerMatchup
+                    || currentPanel
+                    == GameUIPanel.panelGameModeTraining
+                    || currentPanel
+                    == GameUIPanel.panelGameModeTrainingMode) {
                     
                     GameUIController.ShowGameMode();
                     handled = true;
                     
                 }
-                
-                else
-                    if(currentPanel
-                       == GameUIPanel.panelGameModeTrainingModeContent
-                       || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeChoice)
-                      || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeCollection)) {
+                else if (currentPanel
+                    == GameUIPanel.panelGameModeTrainingModeContent
+                    || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeChoice)
+                    || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeCollection)) {
                     
                     //GameUIController.ShowGameModeTrainingMode();
                     GameUIController.ShowGameMode();
@@ -3510,16 +3503,16 @@ public class BaseUIController : GameObjectBehavior {
             
             string[] commandActionParams = buttonName.Replace(BaseUIButtonNames.buttonGameActionItemBuyUse + "$", "").Split('$');
             
-            if(commandActionParams.Length > 0)
+            if (commandActionParams.Length > 0)
                 productTypeUse = commandActionParams[0];
-            if(commandActionParams.Length > 1)
+            if (commandActionParams.Length > 1)
                 productCodeUse = commandActionParams[1];
-            if(commandActionParams.Length > 2)
+            if (commandActionParams.Length > 2)
                 productCharacterUse = commandActionParams[2];
             
-            if(!string.IsNullOrEmpty(productTypeUse)
-               && !string.IsNullOrEmpty(productCodeUse)
-               && !string.IsNullOrEmpty(productCharacterUse)) {
+            if (!string.IsNullOrEmpty(productTypeUse)
+                && !string.IsNullOrEmpty(productCodeUse)
+                && !string.IsNullOrEmpty(productCharacterUse)) {
                 
                 GameStoreController.Purchase(productCodeUse, 1);
 
@@ -3558,7 +3551,7 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastRecordToggle, buttonName)) {
             BroadcastNetworks.ToggleRecording();
-        }        
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastOpen, buttonName)) {
             UIPanelCommunityBroadcast.ShowDialog();
         }
@@ -3570,7 +3563,7 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastReplayShare, buttonName)) {
             BroadcastNetworks.OpenSharing();
-        }     
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastReplayWatch, buttonName)) {
             BroadcastNetworks.PlayLastRecording();
         }
@@ -3581,7 +3574,7 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStart, buttonName)) {
             BroadcastNetworks.FacecamStart();
-        }        
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastFacecamStop, buttonName)) {
             BroadcastNetworks.FacecamStop();
         }
@@ -3608,10 +3601,12 @@ public class BaseUIController : GameObjectBehavior {
 
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultFacebook, buttonName)) {
-            GameCommunitySocialController.PostGameResultsFacebook();
+            //GameCommunitySocialController.PostGameResultsFacebook();
+            UIPanelCommunityCamera.TakePhotoGameState();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultTwitter, buttonName)) {
-            GameCommunitySocialController.PostGameResultsTwitter();
+            //GameCommunitySocialController.PostGameResultsTwitter();
+            UIPanelCommunityCamera.TakePhotoGameState();
         }
 
         // CUSTOMIZE 
@@ -3657,16 +3652,16 @@ public class BaseUIController : GameObjectBehavior {
             string markerColor = "preset-color--";
             string markerNext = "panel-next--";
             
-            if(arrButtonName != null) {
+            if (arrButtonName != null) {
                 
-                foreach(string s in arrButtonName) {
-                    if(s.Contains(markerTexture)) {
+                foreach (string s in arrButtonName) {
+                    if (s.Contains(markerTexture)) {
                         presetTexture = s.Replace(markerTexture, "");
                     }
-                    if(s.Contains(markerColor)) {
+                    if (s.Contains(markerColor)) {
                         presetColor = s.Replace(markerColor, "");
                     }
-                    if(s.Contains(markerNext)) {
+                    if (s.Contains(markerNext)) {
                         panelNext = s.Replace(markerNext, "");
                     }
                 }
@@ -3674,7 +3669,7 @@ public class BaseUIController : GameObjectBehavior {
             
             bool loadCharacter = false;
             
-            if(!string.IsNullOrEmpty(presetTexture)) {
+            if (!string.IsNullOrEmpty(presetTexture)) {
                 // SET CUSTOM VALUES FOR THIS PLAYER
                 
                 customItem = GameCustomController.UpdateTexturePresetObject(
@@ -3685,7 +3680,7 @@ public class BaseUIController : GameObjectBehavior {
             }
             
             
-            if(!string.IsNullOrEmpty(presetColor)) {
+            if (!string.IsNullOrEmpty(presetColor)) {
                 customItem = GameCustomController.UpdateColorPresetObject(
                     customItem, GameController.CurrentGamePlayerController.gameObject,   
                     AppColorPresets.Instance.GetByCode(presetColor));
@@ -3693,13 +3688,13 @@ public class BaseUIController : GameObjectBehavior {
                 loadCharacter = true;
             }
             
-            if(loadCharacter) {                
+            if (loadCharacter) {                
                 GameCustomController.SaveCustomItem(customItem); 
                 GameController.LoadCurrentProfileCharacter();
             }
             
-            if(!string.IsNullOrEmpty(panelNext)) {
-                if(panelNext == BaseUIPanel.panelGameMode) {                    
+            if (!string.IsNullOrEmpty(panelNext)) {
+                if (panelNext == BaseUIPanel.panelGameMode) {                    
                     GameUIController.ShowGameMode(); 
                 }
             }

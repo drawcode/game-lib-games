@@ -23,7 +23,6 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public GameObject containerSupported;
     public GameObject containerNotSupported;
     public UICheckbox toggleRecordReplaysLevel;
-
     bool isEnabled = false;
     bool isSupported = false;
     bool isRecordingSupported = false;
@@ -115,7 +114,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public void OnToggleChangedEventHandler(string checkboxName, bool selected) {
 
-        if(UIUtil.IsCheckboxChecked(toggleRecordReplaysLevel, checkboxName)) {
+        if (UIUtil.IsCheckboxChecked(toggleRecordReplaysLevel, checkboxName)) {
             Debug.Log("OnToggleChangedEventHandler" + " checkboxName:" + checkboxName + " selected:" + selected.ToString());
         
             GameProfiles.Current.SetBroadcastRecordLevels(selected);
@@ -129,7 +128,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     }
 
     public void OnGameResultsStart() {
-        ShowBroadcastRecordPlayShare();
+        //ShowBroadcastRecordPlayShare();
     }
 
     public void OnGameResultsEnd() {
@@ -140,13 +139,13 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
         Debug.Log("Broadcast: OnGameLevelStart" + " levelCode:" + levelCode);
 
-        if(BroadcastNetworks.broadcastNetworksEnabled) {
+        if (BroadcastNetworks.broadcastNetworksEnabled) {
 
-            if(GameProfiles.Current.GetBroadcastRecordLevels()) {
+            if (GameProfiles.Current.GetBroadcastRecordLevels()) {
                 
                 Debug.Log("OnGameLevelStart" + " record levels:" + GameProfiles.Current.GetBroadcastRecordLevels());
                 
-                if(!BroadcastNetworks.IsRecording()) {
+                if (!BroadcastNetworks.IsRecording()) {
                     BroadcastNetworks.StartRecording();
                 }
             }
@@ -156,34 +155,67 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void OnGameLevelEnd(string levelCode) { 
                 
         Debug.Log("Broadcast: OnGameLevelEnd" + " levelCode:" + levelCode);
-      
-        if(BroadcastNetworks.broadcastNetworksEnabled) {
+
+        BroadcastGameLevelFinishDelayed(5f);
+    }
+
+    public void BroadcastGameLevelFinishDelayed(float delay) {
+        StartCoroutine(BroadcastGameLevelFinishDelayedCo(delay));
+    }
+
+    IEnumerator BroadcastGameLevelFinishDelayedCo(float delay) {
+        Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo" + " delay:" + delay);
+
+        yield return new WaitForSeconds(delay);
         
-            if(GameProfiles.Current.GetBroadcastRecordLevels()) {
-
-                if(BroadcastNetworks.IsRecording()) {
-                                        
-                    Debug.Log("OnGameLevelEnd" + " record levels:" + GameProfiles.Current.GetBroadcastRecordLevels());
+        Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo:Starting");
+        
+        if (BroadcastNetworks.broadcastNetworksEnabled) {
             
+            if (GameProfiles.Current.GetBroadcastRecordLevels()) {
+                
+                if (BroadcastNetworks.IsRecording()) {
+                    
+                    Debug.Log("BroadcastGameLevelFinishDelayedCo" + " record levels:" + 
+                        GameProfiles.Current.GetBroadcastRecordLevels());
+                    
                     BroadcastNetworks.StopRecording();
-
+                    
                     GamePlayerRuntimeData runtimeData = new GamePlayerRuntimeData();
                     GamePlayerController gamePlayerController = GameController.CurrentGamePlayerController;
-
-                    if(gamePlayerController != null) {
-                        runtimeData = gamePlayerController.runtimeData;
-                  
+                    
+                    if (gamePlayerController != null) {
+                        runtimeData = gamePlayerController.runtimeData;                        
                     }
-
-                    BroadcastNetworks.SetMetadata("game", AppConfigs.appGameDisplayName);
-                    BroadcastNetworks.SetMetadata("level", levelCode);
-                    BroadcastNetworks.SetMetadata("level_name", "Arcade Mode");
+                    
+                    List<string> words = new List<string>();
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_1));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_2));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_3));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_4));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_5));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_6));
+                    words.Add(Locos.Get(LocoKeys.game_action_adverb_7));
+                    
+                    words.Shuffle();
+                    
+                    string word = words[0];
+                    
+                    BroadcastNetworks.SetMetadata("about",
+                                                  word + Locos.Get(LocoKeys.social_everyplay_game_results_message));
+                    
+                    BroadcastNetworks.SetMetadata("game", Locos.Get(LocoKeys.app_display_name));
+                    BroadcastNetworks.SetMetadata("level", Locos.Get(LocoKeys.game_type_arcade));
+                    BroadcastNetworks.SetMetadata("level_name", Locos.Get(LocoKeys.game_type_arcade_mode));
+                    BroadcastNetworks.SetMetadata("url", Locos.Get(LocoKeys.app_web_url));
                     BroadcastNetworks.SetMetadata("score", runtimeData.score.ToString("N0"));
                     BroadcastNetworks.SetMetadata("scores", runtimeData.scores.ToString("N0"));
                     BroadcastNetworks.SetMetadata("coins", runtimeData.coins.ToString("N0"));
                     BroadcastNetworks.SetMetadata("total_score", runtimeData.totalScoreValue.ToString("N0"));
                     
-                    Debug.Log("OnGameLevelEnd" + " runtimeData.scores:" + runtimeData.scores);
+                    Debug.Log("BroadcastGameLevelFinishDelayedCo" + " runtimeData.scores:" + runtimeData.scores);
+                    
+                    ShowBroadcastRecordPlayShare();
                 }
             }
         }
@@ -387,7 +419,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
             hideButtonBroadcastFacecamToggle();
         }
 
-        if(toggleRecordReplaysLevel != null) {
+        if (toggleRecordReplaysLevel != null) {
             toggleRecordReplaysLevel.isChecked = GameProfiles.Current.GetBroadcastRecordLevels();
         }
     }
@@ -442,19 +474,19 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     
     public void showBroadcastRecordPlayShare() {
 
-        if(!isEnabled) {
+        if (!isEnabled) {
             return;
         }
         
-        if(!isSupported) {
+        if (!isSupported) {
             return;
         }
         
-        if(!isRecordingSupported) {
+        if (!isRecordingSupported) {
             return;
         }        
         
-        if(!GameProfiles.Current.GetBroadcastRecordLevels()) {
+        if (!GameProfiles.Current.GetBroadcastRecordLevels()) {
             return;
         }
 
