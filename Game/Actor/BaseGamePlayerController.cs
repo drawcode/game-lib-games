@@ -605,6 +605,16 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandleItemStateGoalFly(double val) {    
 
+        // TODO add item multi collect here
+
+        //if(runtimeData.goalFly > 0) {
+        //    return; // only one fly at a time for now...
+        //}
+
+        if(runtimeData.goalFly > 0 && val > 0) {
+            return;
+        }
+
         runtimeData.goalFly += val;
         runtimeData.goalFly = (double)Mathf.Clamp((float)runtimeData.goalFly, 0f, 5f);
     }
@@ -3601,25 +3611,19 @@ public class BaseGamePlayerController : GameActor {
     public virtual IEnumerator UpdatePhysicStateCo() {
         
         //Vectrosity.VectorLine.SetLine (Color.red, transform.position, controllerData.impact);
-        
-        // apply the controllerData.impact force:
-        //if (controllerData.impact.magnitude > 0.3f) {
-        
+
         if (controllerData.characterController.enabled) {
             controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
         }
-        //}
-
-        yield return new WaitForFixedUpdate();
-
-        UpdatePlayerEffectsState();
-        
-        yield return new WaitForFixedUpdate();
-        
+                
         // consumes the controllerData.impact energy each cycle:
         controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
-        
+        //}
+
+        UpdatePlayerEffectsState();
+                
         yield return new WaitForFixedUpdate();
+
     }
 
     public virtual void HandlePlayerEffectsStateChange() {
@@ -3985,8 +3989,8 @@ public class BaseGamePlayerController : GameActor {
 
                 //
                                 
-                if (Mathf.Abs(distanceCurrent) > .5f) {
-                    Jump(.05f);
+                if (Mathf.Abs(distanceCurrent) > 3f) {
+                    Jump(.75f);
                 }
                 
                 if (modifierItemGoalNextPosStartTime == 0) {    
@@ -4707,7 +4711,7 @@ public class BaseGamePlayerController : GameActor {
             foreach (Transform t in gamePlayerModelHolderModel.transform) { 
                 if (controllerData.thirdPersonController != null) {
                     if (!controllerData.thirdPersonController.IsJumping()) {
-                        t.position = Vector3.Lerp(t.position, t.position.WithY(0), 2 + Time.deltaTime);
+                        t.localPosition = Vector3.Lerp(t.localPosition, t.localPosition.WithY(0), 2 + Time.deltaTime);
                     }
                 }
                 break;
@@ -4945,33 +4949,37 @@ public class BaseGamePlayerController : GameActor {
         UpdateCommonState();
 
         if (IsPlayerControlled) {
-            if (Input.GetKey(KeyCode.LeftControl)) {
 
-                //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
-                //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
-                //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
-                //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
-                //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
+            if (Application.isEditor) {
 
-                //LogUtil.Log("GamePlayer:point1:" + point1);
-                //LogUtil.Log("GamePlayer:point2:" + point2);
+                if (Input.GetKey(KeyCode.LeftControl)) {
 
-                float power = 100f;
-                if (Input.GetKey(KeyCode.V)) {
-                    Boost(Vector3.zero.WithZ(1),
-                        power);
-                }
-                else if (Input.GetKey(KeyCode.B)) {
-                    Boost(Vector3.zero.WithZ(-1),
-                        power);
-                }
-                else if (Input.GetKey(KeyCode.N)) {
-                    StrafeLeft(Vector3.zero.WithX(-1),
-                        power);
-                }
-                else if (Input.GetKey(KeyCode.M)) {
-                    StrafeRight(Vector3.zero.WithX(1),
-                        power);
+                    //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
+                    //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
+                    //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
+                    //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
+                    //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
+
+                    //LogUtil.Log("GamePlayer:point1:" + point1);
+                    //LogUtil.Log("GamePlayer:point2:" + point2);
+
+                    float power = 100f;
+                    if (Input.GetKey(KeyCode.V)) {
+                        Boost(Vector3.zero.WithZ(1),
+                            power);
+                    }
+                    else if (Input.GetKey(KeyCode.B)) {
+                        Boost(Vector3.zero.WithZ(-1),
+                            power);
+                    }
+                    else if (Input.GetKey(KeyCode.N)) {
+                        StrafeLeft(Vector3.zero.WithX(-1),
+                            power);
+                    }
+                    else if (Input.GetKey(KeyCode.M)) {
+                        StrafeRight(Vector3.zero.WithX(1),
+                            power);
+                    }
                 }
             }
         }

@@ -878,7 +878,14 @@ public static event Action<bool> tweetSheetCompletedEvent;
         );
 
         if (loggedIn) {
-            if(canUseComposer(SocialNetworkTypes.facebook)) {
+
+            bool hasComposer = canUseComposer(SocialNetworkTypes.facebook);
+
+                Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
+                      + " hasComposer:" + hasComposer
+                      );
+
+            if(hasComposer) {
                 ShowComposerFacebook(message, url, title, linkToImage, caption);
             }
             else {

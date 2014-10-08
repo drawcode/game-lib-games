@@ -312,7 +312,7 @@ public class GameNetworks : GameObjectBehavior {
     public static bool IsThirdPartyNetworkUserAuthenticated(string networkType) {
         bool isAuthenticated = false;
         
-        LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
+        //Debug.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
         
         if (networkType == GameNetworkType.gameNetworkAppleGameCenter) {
             isAuthenticated = isAuthenticatediOSAppleGameCenter;
@@ -321,7 +321,7 @@ public class GameNetworks : GameObjectBehavior {
             isAuthenticated = isAuthenticatedAndroidGooglePlay;
         }
                 
-        LogUtil.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
+        //Debug.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
 
         return isAuthenticated;
     }
@@ -378,7 +378,7 @@ public class GameNetworks : GameObjectBehavior {
     
     public void showAchievementsOrLogin(string networkTypeTo) {
         
-        LogUtil.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if (IsThirdPartyNetworkAvailable(networkTypeTo)) {
             
@@ -401,7 +401,7 @@ public class GameNetworks : GameObjectBehavior {
 
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
                                
-            LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
                   authenticated);
 
             if(authenticated) {
@@ -442,7 +442,7 @@ public class GameNetworks : GameObjectBehavior {
         
     public static void ShowLeaderboardsOrLogin() {  
         
-        LogUtil.Log("ShowLeaderboardsOrLogin");
+        Debug.Log("ShowLeaderboardsOrLogin");
 
         if (Instance != null) {
             Instance.showLeaderboardsOrLogin(currentNetwork);
@@ -457,7 +457,7 @@ public class GameNetworks : GameObjectBehavior {
     
     public void showLeaderboardsOrLogin(string networkTypeTo) {
         
-        LogUtil.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
+        Debug.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
 
         if (IsThirdPartyNetworkAvailable(networkTypeTo)) {
             
@@ -473,7 +473,7 @@ public class GameNetworks : GameObjectBehavior {
     public static void showLeaderboardsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
         
-        //LogUtil.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
+        Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
 
         //LogUtil.Log("showLeaderboardsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
                   //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
@@ -482,7 +482,7 @@ public class GameNetworks : GameObjectBehavior {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
                 if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter)) {
                     
-                    LogUtil.Log("showLeaderboardWithTimeScope::");
+                    Debug.Log("showLeaderboardWithTimeScope::");
 
                     GameCenterBinding.showLeaderboardWithTimeScope(GameCenterLeaderboardTimeScope.AllTime);
                 }
@@ -746,7 +746,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER            
             if(isAvailableiOSAppleGameCenter) {
                 GameCenterBinding.authenticateLocalPlayer();
-                LogUtil.Log("GameCenter LoginNetwork is available...");
+                Debug.Log("GameCenter LoginNetwork is available...");
             }
             
         // Check existing achievements and update them if missing
@@ -1574,7 +1574,7 @@ public class GameNetworks : GameObjectBehavior {
     }
     
     void playerAuthenticated() {
-        LogUtil.Log("GameNetworks:GameCenter:playerAuthenticated"); 
+        Debug.Log("GameNetworks:GameCenter:playerAuthenticated"); 
         SetLocalProfileToNetworkUsername();
         GetAchievements();
     }

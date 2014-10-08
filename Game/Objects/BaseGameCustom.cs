@@ -393,14 +393,14 @@ public class BaseGameCustom : GameObjectBehavior {
 
         if (customCharacterData.isDefaultType) {
             //Debug.Log("BaseOnCustomizationColorsChangedHandler");
-            Debug.Log("UpdatePlayer"  
-                + " type:" + customCharacterData.type
-                + " presetType:" + customCharacterData.presetType
-                + " presetColorCode:" + customCharacterData.presetColorCode
-                + " presetTextureCode:" + customCharacterData.presetTextureCode
-                + " isCustomType:" + customCharacterData.isCustomType
-                + " isDefaultType:" + customCharacterData.isDefaultType
-                + " isExplicitType:" + customCharacterData.isExplicitType);
+            //Debug.Log("UpdatePlayer"  
+            //    + " type:" + customCharacterData.type
+            //    + " presetType:" + customCharacterData.presetType
+            //    + " presetColorCode:" + customCharacterData.presetColorCode
+            //    + " presetTextureCode:" + customCharacterData.presetTextureCode
+            //    + " isCustomType:" + customCharacterData.isCustomType
+            //    + " isDefaultType:" + customCharacterData.isDefaultType
+            //    + " isExplicitType:" + customCharacterData.isExplicitType);
         }
     }
 

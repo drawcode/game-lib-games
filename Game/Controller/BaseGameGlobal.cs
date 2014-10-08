@@ -23,6 +23,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     public SocialNetworks socialNetworks;
     public ProductPurchase productPurchase;
     public GameScreenScaler gameScreenScaler;
+    public string appDisplayCode;
+    public string appDisplayName;
     //public GameMatchup matchup;
     public GameSocialGame socialGame;
     public AudioSystem audioSystem;
@@ -197,6 +199,16 @@ public class BaseGameGlobal : GameObjectBehavior {
         //MatchupServerSettings.
         //socialGame = gameObject.AddComponent<GameSocialGame>();           
         //networking = gameObject.AddComponent<Gameverses.GameNetworking>();
+    }
+
+    public virtual void InitLocalization() {
+        string appDisplayCode = Locos.GetString(LocoKeys.app_display_code);
+        string appDisplayName = Locos.GetString(LocoKeys.app_display_name);
+        appDisplayCode = Locos.GetString(LocoKeys.app_display_code);
+
+        Debug.Log("InitLocalization:" + " appDisplayCode:" + appDisplayCode);
+        Debug.Log("InitLocalization:" + " appDisplayName:" + appDisplayName);
+
     }
     
     public virtual void InitPurchase() {  
