@@ -3560,8 +3560,10 @@ public class BaseGamePlayerController : GameActor {
             force = Mathf.Clamp(force, 0f, 100f);
         }
 
-        controllerData.impact += dir.normalized * force / (float)runtimeData.mass;
-
+        //if(IsPlayerControlled 
+        //   && runtimeData.goalFly == 0) {
+            controllerData.impact += dir.normalized * force / (float)runtimeData.mass;
+        //}
         if (damage) {
             runtimeData.hitCount++;
 
@@ -4014,6 +4016,7 @@ public class BaseGamePlayerController : GameActor {
 
                     Vector3 dir = gameGoalNext.transform.position - transform.position;
                     dir.y = distanceCurrent / 2f;//UnityEngine.Random.Range(120f, 200f);
+                    controllerData.impact = Vector3.zero;
                     AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
                 }
 
