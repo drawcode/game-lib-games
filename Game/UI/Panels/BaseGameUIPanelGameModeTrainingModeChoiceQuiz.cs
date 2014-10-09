@@ -115,6 +115,8 @@ public class BaseGameUIPanelGameModeTrainingModeChoiceQuiz : GameUIPanelBase {
     public override void AnimateIn() {
     
         base.AnimateIn();
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
     
         loadData();
     }

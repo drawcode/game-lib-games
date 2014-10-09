@@ -95,6 +95,8 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
     public override void AnimateIn() {
         
         base.AnimateIn();
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
                 
         loadData();
     }

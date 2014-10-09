@@ -197,6 +197,8 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 	public override void AnimateIn() {
 		
 		base.AnimateIn();
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
 
 		loadData();
 	}

@@ -121,6 +121,8 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
         AnimateStartCharacter();
         Invoke("AnimateInDelayed", 1);
+
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
     }
 
     public virtual void AnimateInDelayed() {

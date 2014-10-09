@@ -150,6 +150,8 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
 	public override void AnimateIn() {
 		
         base.AnimateIn();
+        
+        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
 		
 		loadData();
 	}

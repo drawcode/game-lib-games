@@ -158,7 +158,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
                 
         Debug.Log("Broadcast: OnGameLevelEnd" + " levelCode:" + levelCode);
 
-        BroadcastGameLevelFinishDelayed(5f);
+        BroadcastGameLevelFinishDelayed(3.5f);
     }
 
     public void OnGameLevelQuit(string levelCode) { 
