@@ -85,6 +85,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         
         Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.AddListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
+        Messenger<string>.AddListener(GameMessages.gameLevelQuit, OnGameLevelQuit);
                 
         Messenger.AddListener(GameMessages.gameResultsStart, OnGameResultsStart);
         Messenger.AddListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
@@ -103,6 +104,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         
         Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.RemoveListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
+        Messenger<string>.RemoveListener(GameMessages.gameLevelQuit, OnGameLevelQuit);
         
         Messenger.RemoveListener(GameMessages.gameResultsStart, OnGameResultsStart);
         Messenger.RemoveListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
@@ -159,47 +161,39 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         BroadcastGameLevelFinishDelayed(5f);
     }
 
-    public void BroadcastGameLevelFinishDelayed(float delay) {
-        StartCoroutine(BroadcastGameLevelFinishDelayedCo(delay));
+    public void OnGameLevelQuit(string levelCode) { 
+        
+        Debug.Log("Broadcast: OnGameLevelQuit" + " levelCode:" + levelCode);
+        
+        BroadcastGameLevelFinishData(false);
     }
 
-    IEnumerator BroadcastGameLevelFinishDelayedCo(float delay) {
-        Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo" + " delay:" + delay);
-
-        yield return new WaitForSeconds(delay);
-        
-        Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo:Starting");
+    public void BroadcastGameLevelFinishData(bool showReplayCallout) {
+        Debug.Log("Broadcast: BroadcastGameLevelFinishData:Starting");
         
         if (BroadcastNetworks.broadcastNetworksEnabled) {
             
             if (GameProfiles.Current.GetBroadcastRecordLevels()) {
                 
                 if (BroadcastNetworks.IsRecording()) {
-                    
-                    Debug.Log("BroadcastGameLevelFinishDelayedCo" + " record levels:" + 
-                        GameProfiles.Current.GetBroadcastRecordLevels());
+
+                    Debug.Log("BroadcastGameLevelFinishData" + " record levels:" + 
+                              GameProfiles.Current.GetBroadcastRecordLevels());
                     
                     BroadcastNetworks.StopRecording();
-                    
+                                        
+                    if(showReplayCallout) {
+                        ShowBroadcastRecordPlayShare();
+                    }
+
                     GamePlayerRuntimeData runtimeData = new GamePlayerRuntimeData();
                     GamePlayerController gamePlayerController = GameController.CurrentGamePlayerController;
                     
                     if (gamePlayerController != null) {
                         runtimeData = gamePlayerController.runtimeData;                        
                     }
-                    
-                    List<string> words = new List<string>();
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_1));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_2));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_3));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_4));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_5));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_6));
-                    words.Add(Locos.Get(LocoKeys.game_action_adverb_7));
-                    
-                    words.Shuffle();
-                    
-                    string word = words[0];
+
+                    string word = GameCommunitySocialController.Instance.GetGameAdjective();
                     
                     BroadcastNetworks.SetMetadata("about",
                                                   word + Locos.Get(LocoKeys.social_everyplay_game_results_message));
@@ -213,12 +207,23 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
                     BroadcastNetworks.SetMetadata("coins", runtimeData.coins.ToString("N0"));
                     BroadcastNetworks.SetMetadata("total_score", runtimeData.totalScoreValue.ToString("N0"));
                     
-                    Debug.Log("BroadcastGameLevelFinishDelayedCo" + " runtimeData.scores:" + runtimeData.scores);
+                    Debug.Log("BroadcastGameLevelFinishData" + " runtimeData.scores:" + runtimeData.scores);
                     
-                    ShowBroadcastRecordPlayShare();
                 }
             }
         }
+    }
+
+    public void BroadcastGameLevelFinishDelayed(float delay) {
+        StartCoroutine(BroadcastGameLevelFinishDelayedCo(delay));
+    }
+
+    IEnumerator BroadcastGameLevelFinishDelayedCo(float delay) {
+        Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo" + " delay:" + delay);
+
+        yield return new WaitForSeconds(delay);
+        
+        BroadcastGameLevelFinishData(true);
     }
     
     public void UpdateBroadcastStatus(string broadcastStatus) {

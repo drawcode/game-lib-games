@@ -202,6 +202,16 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
 
     //
+
+    public static void CharacterLargeShowPose() {
+        if (Instance != null) {
+            Instance.characterLargeShowPose();
+        }
+    }
+    
+    public void characterLargeShowPose() {
+        characterLargeRotation(.89);
+    }
         
     public static void CharacterLargeShowFront() {
         if (Instance != null) {
@@ -372,6 +382,15 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public IEnumerator showCharacterCo() {
         yield return new WaitForSeconds(.55f);
         ShowPanelTop(containerCharacter, false);
+
+        if(containerCharacter != null) {
+            containerCharacter.ResetRigidBodiesVelocity();
+        }
+
+        if (containerCustomCharacterSmall != null) {
+            containerCustomCharacterSmall.HandleContainerScale(1);
+            containerCustomCharacterSmall.HandleContainerRotation(.91);
+        }
     }
     
     public static void HideCharacter() {
@@ -399,9 +418,12 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public IEnumerator showCharacterLargeCo() {
         yield return new WaitForSeconds(.55f);
         ShowPanelTop(containerCharacterLarge, false);
+                
+        if (containerCharacterLarge != null) {
+            containerCharacterLarge.ResetRigidBodiesVelocity();
+        }
 
-        containerCharacterLarge.ResetRigidBodiesVelocity();
-        characterLargeShowFront();
+        characterLargeShowPose();
         characterLargeZoomOut();
     }
     

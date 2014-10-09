@@ -221,6 +221,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
 
         Debug.Log("SocialNetworks:facebookSessionOpenedEvent");
         Debug.Log("Successfully logged in to Facebook");
+
+        Messenger<string>.Broadcast(SocialNetworksMessages.socialLoggedIn, SocialNetworkTypes.facebook);
         
         GetProfileDataFacebook();   
         //GetPermissionsFacebook();
@@ -315,6 +317,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
     void twitterLoginSucceededEvent(string val) {
 
         Debug.Log("SocialNetworks:twitterLoginSucceededEvent" + " val:" + val.ToJson());
+        
+        Messenger<string>.Broadcast(SocialNetworksMessages.socialLoggedIn, SocialNetworkTypes.twitter);
         
         GameProfiles.Current.SetNetworkValueType(SocialNetworkTypes.twitter, SocialNetworkTypes.twitter);
         GameProfiles.Current.SetNetworkValueUsername(SocialNetworkTypes.twitter, val);

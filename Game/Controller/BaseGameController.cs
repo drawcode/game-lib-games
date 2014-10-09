@@ -92,6 +92,9 @@ public class BaseGameMessages {
     public static string gameInitLevelEnd = "game-init-level-end";
     public static string gameLevelStart = "game-level-start";
     public static string gameLevelEnd = "game-level-end";
+    public static string gameLevelQuit = "game-level-quit";
+    public static string gameLevelPause = "game-level-pause";
+    public static string gameLevelResume = "game-level-resume";
     public static string gameResultsStart = "game-results-start";
     public static string gameResultsEnd = "game-results-end";
 }
@@ -2122,6 +2125,8 @@ public class BaseGameController : GameObjectBehavior {
         GameDraggableEditor.HideAllUIEditPanels();
         
         AnalyticsNetworks.LogEventLevelQuit(GameLevels.Current.code, GameLevels.Current.display_name);
+
+        Messenger<string>.Broadcast(GameMessages.gameLevelQuit, GameLevels.Current.code);
     
         // Back
         GameUIController.ShowUI();
@@ -2139,6 +2144,9 @@ public class BaseGameController : GameObjectBehavior {
     }
     
     public virtual void onGamePause() {
+        
+        Messenger<string>.Broadcast(GameMessages.gameLevelPause, GameLevels.Current.code);
+
         // Show pause, resume, quit menu
         GameUIController.ShowUIPanelPause();
         UIPanelDialogBackground.ShowDefault();
@@ -2151,6 +2159,8 @@ public class BaseGameController : GameObjectBehavior {
         GameUIController.HideUIPanelPause();
         UIPanelDialogBackground.HideAll();
         GameController.GameRunningStateRun();
+        
+        Messenger<string>.Broadcast(GameMessages.gameLevelResume, GameLevels.Current.code);
     }
     
     public virtual void onGameNotStarted() {

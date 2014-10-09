@@ -302,7 +302,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         }
     }
         
-    bool handleClick = false;
+    //bool handleClick = false;
         
     public virtual void Update() {        
         
