@@ -294,8 +294,7 @@ public class SocialNetworks : GameObjectBehavior {
             Instance.loadSocialLibs();
         }
     }
-    
-    // TODO cleanup...
+
     public void loadSocialLibs() {      
         if (AppConfigs.featureEnableFacebook) {
             initFacebook();
@@ -999,24 +998,25 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void initTwitter() {
-        Debug.Log("LoadSocialLibs TWITTER_KEY..." + TWITTER_KEY);
-        //Debug.Log("LoadSocialLibs TWITTER_SECRET..." + TWITTER_SECRET);
         
+        Debug.Log("LoadSocialLibs RuntimePlatform: " + Application.platform);   
+
         // Social Network Prime31
-#if UNITY_ANDROID           
-        Debug.Log("LoadSocialLibs RuntimePlatform.Android..." + Application.platform);            
-        
-        socialNetworkTwitterAndroid = new GameObject("TwitterAndroidManager");
-        socialNetworkTwitterAndroid.AddComponent<TwitterManager>();
-        socialNetworkTwitterAndroid.AddComponent<TwitterEventListener>();
-        
+
+#if UNITY_ANDROID
+
         TwitterAndroid.init(TWITTER_KEY, TWITTER_SECRET);
         Debug.Log("Twitter init..." + TWITTER_KEY);
+
 #elif UNITY_IPHONE
+
         TwitterBinding.init(TWITTER_KEY, TWITTER_SECRET);   
-        Debug.Log("Twitter init..." + TWITTER_KEY);   
+        Debug.Log("Twitter init..." + TWITTER_KEY);
+
 #elif UNITY_WEBPLAYER
+
         Application.ExternalCall("if(window.console) window.console.log","web twitter init");
+
 #endif
     }
 
