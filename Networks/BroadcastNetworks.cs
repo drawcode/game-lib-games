@@ -230,7 +230,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
     
     public void everyplayReadyForRecordingDelegate(bool isSupported) {
-        LogUtil.Log("everyplayReadyForRecordingDelegate: isSupported:", isSupported);
+        Debug.Log("everyplayReadyForRecordingDelegate: isSupported:" + isSupported);
 
     }
     
@@ -694,7 +694,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
 
     // The filepath we're getting from the thumbnail event
-    string recordingThumbnailPath;
+    public string recordingThumbnailPath;
     
     /* Delegate for event (see section on getting events) */
     public void recordingThumbnailReadyAtFilePathDelegate(string filePath) {
@@ -715,8 +715,10 @@ public class BroadcastNetworks : GameObjectBehavior {
     
     // Our own method that is used when the game is in a proper session to load and show the thumbnail
     public void recordingShowThumbnailToTheUserInTheUI() {
+        #if BROADCAST_USE_EVERYPLAY
         // Load the thumbnail, using our delegates as parameter
         LoadThumbnailFromFilePath(recordingThumbnailPath, recordingThumbnailSuccess, recordingThumbnailError);
+#endif
     }
 
     /*

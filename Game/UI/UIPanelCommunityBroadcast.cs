@@ -400,6 +400,12 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         isRecordingSupported = BroadcastNetworks.IsRecordingSupported();
         isFacecamSupported = BroadcastNetworks.IsFacecamVideoRecordingSupported();
 
+        Debug.Log("UIPanelCommunityBroadcast:" + 
+                  " isEnabled:" + isEnabled + 
+                  " isSuppored:" + isSupported + 
+                  " isRecordingSupported:" + isRecordingSupported + 
+                  " isFacecamSupported:" + isFacecamSupported);
+
         hideBroadcastRecordPlayShare();
 
         ShowContainerNotSupported();

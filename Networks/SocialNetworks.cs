@@ -4,13 +4,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+
 using UnityEngine;
 
 using Engine.Events;
 
 public class SocialNetworksMessages {
     public static string socialLoaded = "social-loaded";
-    public static string socialLoggedIn = "social-loggedin";
+    public static string socialLoggedIn = "social-loggedin-success";
+    public static string socialLoggedInFailed = "social-loggedin-failed";
     public static string socialProfileData = "social-profile-data";
 }
 
@@ -26,7 +28,6 @@ public class SocialNetworkDataTypes {
     public static string achievements = "achievements";
 }
 
-
 //https://developers.facebook.com/docs/reference/login/#permissions
 public static class SocialNetworksFacebookPermissions {
     public static string read_user_games_activity = "user_games_activity";
@@ -36,7 +37,6 @@ public static class SocialNetworksFacebookPermissions {
     public static string read_friends_games_activity = "friends_games_activity";
     public static string write_publish_actions = "publish_actions";
     public static string write_publish_stream = "publish_stream";
-
 }
 
 public class SocialNetworks : GameObjectBehavior {
@@ -66,72 +66,6 @@ public class SocialNetworks : GameObjectBehavior {
         
         Instance = this;    
     }
-
-    /*
-     * 
-// ----------------------------------------------------------------
-
-FacebookManager.cs
-
-// Fired after a successful login attempt was made
-public static event Action sessionOpenedEvent;
-
-// Fired just before the login succeeded event. For interal use only.
-public static event Action preLoginSucceededEvent;
-
-// Fired when an error occurs while logging in
-public static event Action<P31Error> loginFailedEvent;
-
-// Fired when a custom dialog completes with the url passed back from the dialog
-public static event Action<string> dialogCompletedWithUrlEvent;
-
-// Fired when the post message or custom dialog fails
-public static event Action<P31Error> dialogFailedEvent;
-
-// Fired when a graph request finishes
-public static event Action<object> graphRequestCompletedEvent;
-
-// Fired when a graph request fails
-public static event Action<P31Error> graphRequestFailedEvent;
-
-// iOS only. Fired when the Facebook composer completes. True indicates success and false cancel/failure.
-public static event Action<bool> facebookComposerCompletedEvent;
-
-// Fired when reauthorization succeeds
-public static event Action reauthorizationSucceededEvent;
-
-// Fired when reauthorization fails
-public static event Action<P31Error> reauthorizationFailedEvent;
-
-// Fired when the share dialog fails
-public static event Action<P31Error> shareDialogFailedEvent;
-
-// Fired when the share dialog succeeds
-public static event Action<Dictionary<string,object>> shareDialogSucceededEvent;
-
-*/
-
-    /*
-
-// ----------------------------------------------------------------
-
-TwitterBinding.cs
-
-// Fired after a successful login attempt was made. Provides the screenname of the user.
-public static event Action<string> loginSucceededEvent;
-
-// Fired when an error occurs while logging in
-public static event Action<string> loginFailedEvent;
-
-// Fired when a custom request completes. The object will be either an IList or an IDictionary
-public static event Action<object> requestDidFinishEvent;
-
-// Fired when a custom request fails
-public static event Action<string> requestDidFailEvent;
-
-// iOS only. Fired when the tweet sheet completes. True indicates success and false cancel/failure.
-public static event Action<bool> tweetSheetCompletedEvent;
-*/
         
     void OnEnable() {
 
@@ -157,7 +91,6 @@ public static event Action<bool> tweetSheetCompletedEvent;
         FacebookManager.shareDialogFailedEvent += facebookShareDialogFailedEvent;
         FacebookManager.shareDialogSucceededEvent += facebookShareDialogSucceededEvent;
 #endif
-
         
         // -------------------------------------------------------------------
         // TWITTER
@@ -170,7 +103,6 @@ public static event Action<bool> tweetSheetCompletedEvent;
         TwitterManager.requestDidFailEvent += twitterRequestDidFailEvent;
         TwitterManager.tweetSheetCompletedEvent += twitterTweetSheetCompletedEvent;
         #endif
-
 
     }
 
@@ -232,6 +164,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
     void facebookLoginFailed(Prime31.P31Error val) {
         
         Debug.Log("SocialNetworks:facebookLoginFailed" + " val:" + val.ToJson());
+        
+        Messenger<string>.Broadcast(SocialNetworksMessages.socialLoggedInFailed, SocialNetworkTypes.facebook);
 
     }
     
@@ -241,7 +175,6 @@ public static event Action<bool> tweetSheetCompletedEvent;
         Debug.Log("SocialNetworks:facebookPreLoginSucceededEvent");
     
     }
-
 
     // Fired when a custom dialog completes with the url passed back from the dialog
     void facebookDialogCompletedWithUrlEvent(string val) {
@@ -285,8 +218,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
 
         publishActions = true;
         
-        GetProfileDataFacebook();
-        
+        GetProfileDataFacebook();        
     }
     
     // Fired when reauthorization fails
@@ -329,7 +261,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
     void twitterLoginFailedEvent(string val) {
         
         Debug.Log("SocialNetworks:twitterLoginFailedEvent" + " val:" + val.ToJson());
-    
+        
+        Messenger<string>.Broadcast(SocialNetworksMessages.socialLoggedInFailed, SocialNetworkTypes.twitter);
     }
         
     // Fired when a custom request completes. The object will be either an IList or an IDictionary
@@ -374,6 +307,61 @@ public static event Action<bool> tweetSheetCompletedEvent;
         
         Messenger.Broadcast(SocialNetworksMessages.socialLoaded);
     }
+
+    // POST MESSAGE
+
+    public static void PostMessage(
+        string networkType, 
+        string message, 
+        Action<string, object> completionHandler = null) {
+
+        if (Instance != null) {
+            Instance.postMessage(networkType, message, completionHandler);
+        }
+    }
+    
+    public void postMessage(
+        string networkType, 
+        string message, 
+        Action<string, object> completionHandler = null) {
+        
+        if (networkType == SocialNetworkTypes.twitter) {
+            postMessageTwitter(message);
+        }
+        else if (networkType == SocialNetworkTypes.facebook) {
+            postMessageFacebook(message, completionHandler);
+        }
+    }
+
+    // POST MESSAGE - WITH IMAGE
+
+    public static void PostMessage(
+        string networkType, 
+        string message, 
+        byte[] bytesImage, 
+        Action<string, object> completionHandler = null) {
+
+        if (Instance != null) {
+            Instance.postMessage(networkType, message, bytesImage, completionHandler);
+        }
+    }
+    
+    public void postMessage(
+        string networkType, 
+        string message, 
+        byte[] bytesImage, 
+        Action<string, object> completionHandler = null) {
+        
+        if (networkType == SocialNetworkTypes.twitter) {
+            postMessageTwitter(message, bytesImage);
+        }
+        else if (networkType == SocialNetworkTypes.facebook) {
+            postMessageFacebook(message, bytesImage, completionHandler);
+        }
+    }
+
+    // --------------------------------------------------------
+    // FACEBOOK
     
     public static void InitFacebook() {
         if (Instance != null) {
@@ -688,6 +676,9 @@ public static event Action<bool> tweetSheetCompletedEvent;
 #endif
 
     }
+    
+    // ----------------------------------------------------------------
+    // LIKE
         
     public static void LikeUrlFacebook(string urlLike) {
         // https://developers.facebook.com/docs/technical-guides/opengraph/built-in-actions/likes/
@@ -747,6 +738,102 @@ public static event Action<bool> tweetSheetCompletedEvent;
         }
     }
     
+    // ----------------------------------------------------------------
+    // POST MESSAGES
+
+    // POST MESSAGE
+
+    public static void PostMessageFacebook(
+        string message, 
+        Action<string, object> completionHandler) {
+        
+        if (Instance != null) {
+            Instance.postMessageFacebook(message, completionHandler);
+        }
+    }
+    
+    public void postMessageFacebook(
+        string message, 
+        Action<string, object> completionHandler) {
+        
+        #if UNITY_ANDROID || UNITY_IPHONE
+        
+        Facebook.instance.postMessage(
+            message,
+            completionHandler); 
+        
+        #elif UNITY_WEBPLAYER
+        //Application.ExternalCall("postMessageFacebook", message, bytes);            
+        //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
+        
+        #endif
+    }
+
+    // MESSAGE POST - WITH IMAGE
+        
+    public static void PostMessageFacebook(
+        string message, 
+        byte[] bytesImage, 
+        Action<string, object> completionHandler) {
+
+        if (Instance != null) {
+            Instance.postMessageFacebook(message, bytesImage, completionHandler);
+        }
+    }
+    
+    public void postMessageFacebook(
+        string message, 
+        byte[] bytesImage, 
+        Action<string, object> completionHandler) {
+
+#if UNITY_ANDROID || UNITY_IPHONE
+
+        Facebook.instance.postImage(
+            bytesImage, 
+            message,
+            completionHandler); 
+
+#elif UNITY_WEBPLAYER
+        //Application.ExternalCall("postMessageFacebook", message, bytes);            
+        //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
+
+#endif
+    }
+    
+    // POST MESSAGE - FULL
+    
+    // Shows the Facebook share dialog. Valid dictionary keys 
+    // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
+    
+    public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
+        if (Instance != null) {
+            Instance.postMessageFacebook(message, url, title, linkToImage, caption);
+        }
+    }
+    
+    public void postMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
+        
+        Debug.Log("SocialNetworks:postMessageFacebook:"
+            + " message:" + message
+            + " url:" + url
+            + " title:" + title
+            + " linkToImage:" + linkToImage
+            + " caption:" + caption);
+        
+        #if UNITY_ANDROID       
+        Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
+        //FacebookAndroid.postMessage("feed", url, title, linkToImage, caption);
+        #elif UNITY_IPHONE
+        Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
+        #elif UNITY_WEBPLAYER
+        Application.ExternalCall("postFacebookMessage", title, caption, message, url, caption, linkToImage);            
+        Debug.Log(String.Format("Facebook posting for web: title:{0} caption:{0} message:{0} url:{0} caption:{0}", title, caption, message, url, caption) );
+        #endif      
+    }
+
+
+    // POST SCORE
+    
     public static void PostScoreFacebook(int score) {
         if (Instance != null) {
             Instance.postScoreFacebook(score);
@@ -756,6 +843,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
     public void postScoreFacebook(int score) {
         
         string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);
+
         Debug.Log("PostScoreFacebook: userId:" + userId);
         Debug.Log("PostScoreFacebook: score:" + score);
         
@@ -782,6 +870,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
             Prime31.Utils.logObject(result);
         }
     }
+
+    // COMPOSER
     
     public void ShowComposerFacebook(string message, string url, string title, string linkToImage, string caption) {
         if (Instance != null) {
@@ -816,7 +906,7 @@ public static event Action<bool> tweetSheetCompletedEvent;
 
     public bool canUseComposer(string networkType) {
 
-        if(networkType == SocialNetworkTypes.facebook) {
+        if (networkType == SocialNetworkTypes.facebook) {
             #if UNITY_ANDROID
             return true;
             #elif UNITY_IPHONE
@@ -829,36 +919,9 @@ public static event Action<bool> tweetSheetCompletedEvent;
             return true;
         }
     }
-        
-    // Shows the Facebook share dialog. Valid dictionary keys 
-    // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
-    
-    public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
-        if (Instance != null) {
-            Instance.postMessageFacebook(message, url, title, linkToImage, caption);
-        }
-    }
 
-    public void postMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
+    // LOGIN - POST MESSAGE
 
-        Debug.Log("SocialNetworks:postMessageFacebook:"
-            + " message:" + message
-            + " url:" + url
-            + " title:" + title
-            + " linkToImage:" + linkToImage
-            + " caption:" + caption);
-
-#if UNITY_ANDROID       
-        Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
-        //FacebookAndroid.postMessage("feed", url, title, linkToImage, caption);
-#elif UNITY_IPHONE
-        Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
-#elif UNITY_WEBPLAYER
-        Application.ExternalCall("postFacebookMessage", title, caption, message, url, caption, linkToImage);            
-        Debug.Log(String.Format("Facebook posting for web: title:{0} caption:{0} message:{0} url:{0} caption:{0}", title, caption, message, url, caption) );
-#endif      
-    }
-    
     public static void ShowLoginOrPostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
         if (Instance != null) {
             Instance.showLoginOrPostMessageFacebook(message, url, title, linkToImage, caption);
@@ -885,11 +948,11 @@ public static event Action<bool> tweetSheetCompletedEvent;
 
             bool hasComposer = canUseComposer(SocialNetworkTypes.facebook);
 
-                Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
-                      + " hasComposer:" + hasComposer
-                      );
+            Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
+                + " hasComposer:" + hasComposer
+            );
 
-            if(hasComposer) {
+            if (hasComposer) {
                 ShowComposerFacebook(message, url, title, linkToImage, caption);
             }
             else {
@@ -1008,6 +1071,9 @@ public static event Action<bool> tweetSheetCompletedEvent;
 #endif
     }
     
+    // ----------------------------------------------------------------
+    // POST MESSAGE
+    
     public static void PostMessageTwitter(string message) {
         if (Instance != null) {
             Instance.postMessageTwitter(message);
@@ -1016,14 +1082,16 @@ public static event Action<bool> tweetSheetCompletedEvent;
     
     public void postMessageTwitter(string message) {
 #if UNITY_ANDROID               
-            //TwitterAndroid.postUpdate(message);
+        TwitterAndroid.postStatusUpdate(message);
 #elif UNITY_IPHONE
-            TwitterBinding.postStatusUpdate(message);
+        TwitterBinding.postStatusUpdate(message);
 #elif UNITY_WEBPLAYER
-            Application.ExternalCall("postMessageTwitter", message);            
-            Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
+        Application.ExternalCall("postMessageTwitter", message);            
+        Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
+    
+    // POST MESSAGE - IMAGE PATH
     
     public static void PostMessageTwitter(string message, string pathToImage) {
         if (Instance != null) {
@@ -1033,14 +1101,36 @@ public static event Action<bool> tweetSheetCompletedEvent;
     
     public void postMessageTwitter(string message, string pathToImage) {
 #if UNITY_ANDROID               
-            //TwitterAndroid.postUpdate(message);
+        TwitterAndroid.postStatusUpdate(message);
 #elif UNITY_IPHONE
-            TwitterBinding.postStatusUpdate(message, pathToImage);
+        TwitterBinding.postStatusUpdate(message, pathToImage);
 #elif UNITY_WEBPLAYER
-            Application.ExternalCall("postMessageTwitter", message);            
-            Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
+        Application.ExternalCall("postMessageTwitter", message);            
+        Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
+
+    // POST MESSAGE - WITH IMAGE
+
+    public static void PostMessageTwitter(string message, byte[] bytesImage) {
+        if (Instance != null) {
+            Instance.postMessageTwitter(message, bytesImage);
+        }
+    }
+    
+    public void postMessageTwitter(string message, byte[] bytesImage) {
+        #if UNITY_ANDROID               
+        TwitterAndroid.postStatusUpdate(message, bytesImage);
+        #elif UNITY_IPHONE
+        //TwitterBinding.postStatusUpdate(message, pathToImage);
+        #elif UNITY_WEBPLAYER
+        //Application.ExternalCall("postMessageTwitter", message);            
+        //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
+        #endif
+    }
+
+    // ----------------------------------------------------------------
+    // COMPOSER
         
     public static void ShowComposerTwitter(string message) {
         if (Instance != null) {
@@ -1059,6 +1149,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
         //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
+
+    //
     
     public static void ShowComposerTwitter(string message, string pathToImage) {
         if (Instance != null) {
@@ -1077,6 +1169,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
         //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
+
+    //
     
     public static void ShowComposerTwitter(string message, string pathToImage, string link) {
         if (Instance != null) {
@@ -1095,6 +1189,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
         Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
+
+    // LOGIN - MESSAGE
     
     public static void ShowLoginOrPostMessageTwitter(string message) {
         if (Instance != null) {
@@ -1107,13 +1203,15 @@ public static event Action<bool> tweetSheetCompletedEvent;
         
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
 
-        if(loggedIn) {
+        if (loggedIn) {
             postMessageTwitter(message);
         }
         else {
             showLoginTwitter();
         }
     }
+
+    // LOGIN - MESSAGE - IMAGE PATH
     
     public static void ShowLoginOrPostMessageTwitter(string message, string pathToImage) {
         if (Instance != null) {
@@ -1123,33 +1221,17 @@ public static event Action<bool> tweetSheetCompletedEvent;
     
     public void showLoginOrPostMessageTwitter(string message, string pathToImage) {
 
-        
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
-        
-        Debug.Log("SocialNetworks:showLoginOrPostMessageTwitter:"
-                  + " loggedIn:" + loggedIn
-                  );
-        
-        Debug.Log("SocialNetworks:showLoginOrPostMessageTwitter:"
-                  + " message:" + message
-                  + " pathToImage:" + pathToImage
-                  );
-        
+
         if (loggedIn) {
             postMessageTwitter(message, pathToImage);
         }
         else {
             GameCommunity.Login(SocialNetworkTypes.twitter);
         }
-
-
-        //if (IsLoggedInTwitter()) {
-        //    postMessageTwitter(message, pathToImage);
-        //}
-        //else {
-        //    showLoginTwitter();
-        //}
     }
+
+    // LOGIN - COMPOSER
     
     public static void ShowLoginOrComposerTwitter(string message) {
         if (Instance != null) {
@@ -1158,17 +1240,18 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrComposerTwitter(string message) {
-        //if (IsLoggedInTwitter()) {
         
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
 
-        if(loggedIn) {
+        if (loggedIn) {
             showComposerTwitter(message);
         }
         else {
             showLoginTwitter();
         }
     }
+
+    // LOGIN - COMPOSER - IMAGE PATH
     
     public static void ShowLoginOrComposerTwitter(string message, string pathToImage) {
         if (Instance != null) {
@@ -1177,11 +1260,10 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }
     
     public void showLoginOrComposerTwitter(string message, string pathToImage) {
-       // if (IsLoggedInTwitter()) {
         
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
 
-        if(loggedIn) {
+        if (loggedIn) {
             showComposerTwitter(message, pathToImage);
         }
         else {
@@ -1190,6 +1272,8 @@ public static event Action<bool> tweetSheetCompletedEvent;
     }            
 }
 
+
+// ----------------------------------------------------------------
 /*
 Facebook.instance.graphRequest( "me", HTTPVerb.GET, ( error, obj ) => {
     // if we have an error we dont proceed any further
@@ -1486,6 +1570,5 @@ public static event Action<string> requestDidFailEvent;
 
 // iOS only. Fired when the tweet sheet completes. True indicates success and false cancel/failure.
 public static event Action<bool> tweetSheetCompletedEvent;
-
 
 */
