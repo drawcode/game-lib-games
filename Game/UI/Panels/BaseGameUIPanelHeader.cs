@@ -164,7 +164,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
         
         if (buttonName == buttonCoins.name) {
-            GameUIController.HideGameCommunity();
+            GameCommunity.HideGameCommunity();
             GameUIController.ShowProductCurrency();
         }
     }

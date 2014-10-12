@@ -45,7 +45,7 @@ public class UIPanelCommunityBase : UIPanelBase {
 
     public virtual void showDialog() {
 
-        GameUIController.HideGameCommunity();
+        GameCommunity.HideGameCommunity();
 
         UIPanelCommunityBackground.ShowBackground();  
 

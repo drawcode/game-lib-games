@@ -162,7 +162,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
     public override void AnimateIn() {
         base.AnimateIn();
 
-        loadData();
+        loadData();        
+        
+        GameCommunity.ShowSharesCenter();
 
         Messenger.Broadcast(GameMessages.gameResultsStart);
     }
@@ -170,6 +172,8 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
     public override void AnimateOut() {
 
         Messenger.Broadcast(GameMessages.gameResultsEnd);
+                
+        GameCommunity.HideSharesCenter();
 
         base.AnimateOut();
     }

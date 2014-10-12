@@ -9,7 +9,6 @@ using Engine.Events;
 public class BaseGameUIPanelMain : GameUIPanelBase {
 
     public static GameUIPanelMain Instance;
-        
     public GameObject listItemPrefab;
     public GameObject listItemSetPrefab;
     public GameObject containerObject;
@@ -122,7 +121,14 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
         AnimateStartCharacter();
         Invoke("AnimateInDelayed", 1);
 
-        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
+        GameCommunity.ShowActionAppRate();
+        GameCommunity.HideBroadcastRecordPlayShare();
+    }
+
+    public override void AnimateOut() {
+        base.AnimateOut();
+
+        GameCommunity.HideActionAppRate();
     }
 
     public virtual void AnimateInDelayed() {

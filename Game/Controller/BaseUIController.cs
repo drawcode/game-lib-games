@@ -3297,47 +3297,7 @@ public class BaseUIController : GameObjectBehavior {
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(-970));  
     }
 
-    // COMMUNITY - PANELS
-
-    public static void HideGameCommunity() {
-        GameUIController.Instance.hideGameCommunityPanels();
-    }
-
-    public virtual void hideGameCommunityPanels() {        
-        //Debug.Log("hideGameCommunity");
-
-        UIPanelCommunityBroadcast.HideAll();
-        UIPanelCommunityCamera.HideAll();
-        UIPanelCommunityBackground.HideBackground();
-        
-        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
-        //GameUIController.HideBroadcastRecordingReplayShare();
-
-    }
-
-    //
-
-
-    
-    //
-
-    public static void ShowBroadcastRecordingReplayShare() {
-        GameUIController.Instance.showBroadcastRecordingReplayShare();
-    }
-    
-    public void showBroadcastRecordingReplayShare() {
-
-        UIPanelCommunityBroadcast.ShowBroadcastRecordPlayShare();
-    }
-
-    public static void HideBroadcastRecordingReplayShare() {
-        GameUIController.Instance.hideBroadcastRecordingReplayShare();
-    }
-
-    public void hideBroadcastRecordingReplayShare() {  
-        
-        UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
-    }
+    // ------------------------------------------------------------------------
 
     // EVENTS
             
@@ -3538,7 +3498,7 @@ public class BaseUIController : GameObjectBehavior {
         // COMMUNITY
                 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
-            GameUIController.HideGameCommunity();
+            GameCommunity.HideGameCommunity();
         }       
 
         // COMMUNITY - BROADCAST
@@ -3628,7 +3588,7 @@ public class BaseUIController : GameObjectBehavior {
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
 
-            HideGameCommunity();
+            GameCommunity.HideGameCommunity();
 
             UIPanelOverlayPrepare.HideAll();
 
@@ -3705,7 +3665,7 @@ public class BaseUIController : GameObjectBehavior {
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProductCurrency, buttonName)) {
             
-            HideGameCommunity();
+            GameCommunity.HideGameCommunity();
             
             showProductCurrency();
         }  
@@ -3715,9 +3675,8 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
             
-            HideGameCommunity();
-            
-            GameUIController.HideBroadcastRecordingReplayShare();
+            GameCommunity.HideGameCommunity();
+            GameCommunity.HideBroadcastRecordPlayShare();
 
             GameController.PlayGame();
         }
@@ -3726,8 +3685,8 @@ public class BaseUIController : GameObjectBehavior {
 
         else {
             if (buttonName == BaseUIButtonNames.buttonBack) {
-
-                HideGameCommunity();
+                
+                GameCommunity.HideGameCommunity();
 
                 NavigateBack(buttonName);
             }
