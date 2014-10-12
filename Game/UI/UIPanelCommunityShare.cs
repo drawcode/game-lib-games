@@ -69,6 +69,7 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
 
     void InitPlatform() {
         ShowActionTools();
+        ShowActionAppRate();
     }
     
     public void HideAllItems() {

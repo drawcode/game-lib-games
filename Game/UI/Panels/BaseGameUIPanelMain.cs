@@ -120,9 +120,6 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
         AnimateStartCharacter();
         Invoke("AnimateInDelayed", 1);
-
-        GameCommunity.ShowActionAppRate();
-        GameCommunity.HideBroadcastRecordPlayShare();
     }
 
     public override void AnimateOut() {
@@ -132,7 +129,12 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     }
 
     public virtual void AnimateInDelayed() {
+
         GameUIPanelFooter.ShowMain();
+        
+        GameCommunity.HideBroadcastRecordPlayShare();
+        
+        GameCommunity.ShowActionAppRate();
     }
     
     public virtual void AnimateStartCharacter() {
