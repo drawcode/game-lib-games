@@ -138,6 +138,14 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
 			listGridRoot.DestroyChildren();
 		}
 	}
+    
+    public override void HandleShow() {
+        base.HandleShow();
+
+        buttonDisplayState = UIPanelButtonsDisplayState.None;
+        characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 		
 	public override void AnimateIn() {
 		

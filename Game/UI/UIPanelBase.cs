@@ -514,6 +514,8 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateIn(float time, float delay) {
+        
+        HandleShow();
                     
         HandleCharacterDisplay();
             
@@ -533,6 +535,8 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateOut() {
+                
+        HandleHide();
              
         float time = durationHide;
         float delay = durationDelayHide;
@@ -1051,5 +1055,17 @@ public class UIPanelBase : UIAppPanel {
             GameUIPanelBackgrounds.HideUI();
         }
     }    
+
+    //
+    
+    public virtual void HandleShow() {
+        buttonDisplayState = UIPanelButtonsDisplayState.None;
+        characterDisplayState = UIPanelCharacterDisplayState.None;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.None;
+    }
+
+    public virtual void HandleHide() {
+    
+    }
 }
 

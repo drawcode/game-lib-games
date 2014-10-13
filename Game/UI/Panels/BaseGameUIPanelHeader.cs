@@ -274,6 +274,11 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
     
     public void characterLargeRotation(double rotationTo) {
+
+        if(containerCustomCharacterLarge == null) {
+            return;
+        }
+
         containerCustomCharacterLarge.HandleContainerRotation(rotationTo);
     }
 
@@ -286,6 +291,11 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
     
     public void characterLargeScale(double scaleTo) {
+        
+        if(containerCustomCharacterLarge == null) {
+            return;
+        }
+
         containerCustomCharacterLarge.HandleContainerScale(scaleTo);
     }
 
@@ -298,6 +308,11 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
         
     public void characterSmallScale(double scaleTo) {
+        
+        if(containerCustomCharacterSmall == null) {
+            return;
+        }
+
         containerCustomCharacterSmall.HandleContainerScale(scaleTo);
     }
 

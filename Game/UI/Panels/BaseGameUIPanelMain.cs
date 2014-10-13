@@ -111,6 +111,23 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     IEnumerator LoadDataCo() {
         yield break;
     }
+        
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        buttonDisplayState = UIPanelButtonsDisplayState.None;
+        characterDisplayState = UIPanelCharacterDisplayState.None;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.None;
+        
+        GameCommunity.HideBroadcastRecordPlayShare();
+    }
+
+    public override void HandleHide() {
+        base.HandleHide();
+
+        GameCommunity.HideActionAppRate();
+        GameCommunity.HideBroadcastRecordPlayShare();
+    }
 
     public override void AnimateIn() {
 
