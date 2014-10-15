@@ -214,7 +214,13 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
 
         yield return new WaitForEndOfFrame();
 
-	}
+    }
+    
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 
 	public override void AnimateIn() {
 		

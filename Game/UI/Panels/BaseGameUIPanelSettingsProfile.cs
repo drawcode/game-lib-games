@@ -114,7 +114,13 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 		GameProfiles.Current.ChangeUser(username);
 		GameProfiles.Current.username = username;
 		GameState.SaveProfile();
-	}
+    }   
+
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 	
     public virtual void loadData() {
 		StartCoroutine(loadDataCo());

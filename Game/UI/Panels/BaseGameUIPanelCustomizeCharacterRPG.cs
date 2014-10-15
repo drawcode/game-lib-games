@@ -134,6 +134,14 @@ public class BaseGameUIPanelCustomizeCharacterRPG : GameUIPanelBase {
             listGridRoot.DestroyChildren();
         }
     }
+    
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        buttonDisplayState = UIPanelButtonsDisplayState.None;
+        characterDisplayState = UIPanelCharacterDisplayState.Character;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
      
     public override void AnimateIn() {
      

@@ -252,7 +252,15 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 		if (listGridRoot != null) {
 			listGridRoot.DestroyChildren();
 		}
-	}
+    }  
+    
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        buttonDisplayState = UIPanelButtonsDisplayState.CharacterCustomize;
+        characterDisplayState = UIPanelCharacterDisplayState.Character;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 		
 	public override void AnimateIn() {
 		

@@ -125,6 +125,12 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
         //    GameProfiles.Current.SetAudioMusicVolume(sliderValue);
 		//	GameState.SaveProfile();
         //}
+    }   
+
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
 	
     public virtual void loadData() {

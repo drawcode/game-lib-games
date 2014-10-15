@@ -112,6 +112,12 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
             GameUIController.ShowSettingsCredits();
         }
 	}
+        
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 	
     public virtual void loadData() {
 		StartCoroutine(loadDataCo());

@@ -85,8 +85,8 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
     //[NonSerialized]
     //public GameCenterManager gameCenterManager;
-    [NonSerialized]
-    public GameCenterEventListener gameCenterEventListener;
+    //[NonSerialized]
+    //public GameCenterEventListener gameCenterEventListener;
     [NonSerialized]
     public List<GameCenterAchievement> gameCenterAchievementsNetwork;
     [NonSerialized]
@@ -239,7 +239,7 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER
         //gameCenterManager = gameNetworkContainer.AddComponent<GameCenterManager>();
-        gameCenterEventListener = gameNetworkContainer.AddComponent<GameCenterEventListener>();
+        //gameCenterEventListener = gameNetworkContainer.AddComponent<GameCenterEventListener>();
         
         InitEvents(GameNetworkType.gameNetworkAppleGameCenter);     
         LoginNetwork(GameNetworkType.gameNetworkAppleGameCenter);           

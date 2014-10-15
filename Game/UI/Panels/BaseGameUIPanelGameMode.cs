@@ -90,7 +90,15 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {		
 
         ///
-	}
+    }
+    
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        buttonDisplayState = UIPanelButtonsDisplayState.None;
+        characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
     
     public override void AnimateIn() {
         

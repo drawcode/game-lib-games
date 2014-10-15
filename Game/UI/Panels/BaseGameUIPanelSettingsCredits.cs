@@ -94,6 +94,13 @@ public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
 
         yield return new WaitForSeconds(1f);
     }
+    
+    public override void HandleShow() {
+        base.HandleShow();
+
+        characterDisplayState = UIPanelCharacterDisplayState.Character;
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
         
     public override void AnimateIn() {
         

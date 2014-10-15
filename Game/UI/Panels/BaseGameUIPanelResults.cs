@@ -159,6 +159,12 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         ShowContentState();
 	}
 
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
+
     public override void AnimateIn() {
         base.AnimateIn();
 

@@ -150,6 +150,12 @@ public class BaseGameUIPanelSettingsControls : GameUIPanelBase {
 		GameState.SaveProfile();
 		
     }
+    
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
 	
 	public virtual void loadData() {
 		StartCoroutine(loadDataCo());

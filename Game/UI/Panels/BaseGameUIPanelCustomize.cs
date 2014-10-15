@@ -143,7 +143,7 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
         base.HandleShow();
 
         buttonDisplayState = UIPanelButtonsDisplayState.None;
-        characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
+        characterDisplayState = UIPanelCharacterDisplayState.Character;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
 		

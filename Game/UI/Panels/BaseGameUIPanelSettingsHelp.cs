@@ -105,6 +105,12 @@ public class BaseGameUIPanelSettingsHelp : GameUIPanelBase {
         }
     }
     
+    public override void HandleShow() {
+        base.HandleShow();
+        
+        backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+    }
+    
     public override void AnimateIn() {
         
         base.AnimateIn();
