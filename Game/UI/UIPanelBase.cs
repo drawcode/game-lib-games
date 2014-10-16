@@ -28,6 +28,14 @@ public enum UIPanelButtonsDisplayState {
     GameNetworks
 }
 
+public enum UIPanelAdDisplayState {
+    None,
+    BannerTop,
+    BannerBottom,
+    Video,
+    Interstitial
+}
+
 public class UIPanelBaseTypes {
     public static string typeDefault = "type-default";
     public static string typeDialogHUD = "type-dialog-hud";
@@ -45,6 +53,7 @@ public class UIPanelBase : UIAppPanel {
     public UIPanelCharacterDisplayState characterDisplayState = UIPanelCharacterDisplayState.None;
     public UIPanelButtonsDisplayState buttonDisplayState = UIPanelButtonsDisplayState.None;
     public UIPanelBackgroundDisplayState backgroundDisplayState = UIPanelBackgroundDisplayState.None;
+    public UIPanelAdDisplayState adDisplayState = UIPanelAdDisplayState.None;
 
     public GameObject listGridRoot;
     public UIGrid listGrid;
@@ -518,6 +527,8 @@ public class UIPanelBase : UIAppPanel {
         HandleShow();
                     
         HandleCharacterDisplay();
+
+        HandleAdDisplay();
             
         HandleButtonDisplay();
             
@@ -1003,6 +1014,23 @@ public class UIPanelBase : UIAppPanel {
         }
     }    
     
+    public void HandleAdDisplay() {
+        
+        // handle character display
+        
+        if(adDisplayState == 
+           UIPanelAdDisplayState.BannerBottom) {            
+
+            // TODO handle types...
+            AdNetworks.ShowAd();
+        }
+        else {
+            
+            AdNetworks.HideAd();
+        }
+    }  
+
+    
     public void HandleButtonDisplay() {
         
         // handle buttons
@@ -1062,10 +1090,13 @@ public class UIPanelBase : UIAppPanel {
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.None;
         backgroundDisplayState = UIPanelBackgroundDisplayState.None;
+        adDisplayState = UIPanelAdDisplayState.None;
     }
 
     public virtual void HandleHide() {
-    
+        GameCommunity.HideActionAppRate();
+
+        AdNetworks.HideAd();
     }
 }
 

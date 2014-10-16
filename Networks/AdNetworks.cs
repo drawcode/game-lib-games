@@ -4,7 +4,6 @@
 //#define PROMO_USE_VUNGLE
 //#define PROMO_USE_CHARTBOOST
 //#define PROMO_USE_TAPJOY
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ using UnityEngine;
 
 using Engine.Data.Json;
 using Engine.Events;
-using Engine.Utility; 
+using Engine.Utility;
 
 #if PROMO_USE_CHARTBOOST
 using ChartboostSDK;
@@ -39,13 +38,15 @@ public enum AdBanner {
     Full = 6
 }
 
-public enum AdBannerType {
+public enum AdDisplayType {
     iPhone_320x50,
     iPad_728x90,
     iPad_468x60,
     iPad_320x250,
     SmartBannerPortrait,
     SmartBannerLandscape,
+    Banner,
+    Video,
     Interstitial,
     Full
 }
@@ -107,10 +108,9 @@ public class AdNetworks : GameObjectBehavior {
     
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
-
     public bool tapjoyOpeningFullScreenAd = false;
-    
-    private static AdNetworks _instance = null;    
+    private static AdNetworks _instance = null;
+
     public static AdNetworks Instance {
         get {
             if (!_instance) {
@@ -133,7 +133,52 @@ public class AdNetworks : GameObjectBehavior {
         Init();
     }
 
+
+    /*
+ * 
+ * iAd
+// Starts up iAd either on the top or bottom of the screen
+public static void createAdBanner( bool bannerOnBottom );
+
+// Destroys the ad banner and removes it from view
+public static void destroyAdBanner()
+
+// Sets whether or not adDidShow events should be fired or not
+public static void fireHideShowEvents( bool shouldFire )
+
+// Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
+public static bool initializeInterstitial()
+
+// Checks to see if an interstitial ad is loaded.
+public static bool isInterstitalLoaded()
+
+// Shows an interstitial ad.  Will return false if it isn't loaded.
+public static bool showInterstitial()
+
+*/
+    /*
+ * iAd Manager
+// Fired when the adView is either shown or hidden
+public static event Action<bool> adViewDidChange;
+
+// Fired when an interstial ad fails to load or show
+public static event Action<string> interstitalAdFailed;
+
+// Fired when an interstitial ad is loaded and ready to show
+public static event Action interstitialAdLoaded;
+
+*/
+
     void OnEnable() {
+
+#if AD_USE_IAD
+        // ------------
+        // iAd
+
+        AdManager.adViewDidChange += iadAdViewDidChange; // Action<bool> adViewDidChange
+        AdManager.interstitalAdFailed += iadInterstitalAdFailed; // Action<string> interstitalAdFailed
+        AdManager.interstitialAdLoaded += iadInterstitalAdLoaded; // Action interstitialAdLoaded;
+#endif
 
         
 #if PROMO_USE_CHARTBOOST
@@ -197,7 +242,16 @@ public class AdNetworks : GameObjectBehavior {
     }
     
     void OnDisable() {
-       
+        
+#if AD_USE_IAD
+        // ------------
+        // iAd
+        
+        AdManager.adViewDidChange -= iadAdViewDidChange; // Action<bool> adViewDidChange
+        AdManager.interstitalAdFailed -= iadInterstitalAdFailed; // Action<string> interstitalAdFailed
+        AdManager.interstitialAdLoaded -= iadInterstitalAdLoaded; // Action interstitialAdLoaded;
+#endif
+
 
 #if PROMO_USE_CHARTBOOST
         // ------------
@@ -259,6 +313,10 @@ public class AdNetworks : GameObjectBehavior {
     }
     
     public void Init() {  
+#if AD_USE_IAD
+        Invoke("iadInit", 1);
+#endif
+
 
 #if AD_USE_ADMOB
         //Invoke("admobInit", 1);
@@ -603,7 +661,113 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
+    public bool interstitialReady = false;
 
+#if AD_USE_IAD
+    // ----------------------------------------------------------------------
+    // APPLE iAD
+
+    public void iadInit() {
+        //LogUtil.Log("InitiAd AppConfigs.publisherIdAdmobiOS..." + 
+        //            AppConfigs.publisherIdAdmobiOS);
+        //LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobAndroid..." + 
+        //            AppConfigs.publisherIdAdmobAndroid);
+
+        iadFireHideShowEvents(true);
+    }
+
+    public void iadAdViewDidChange(bool visible) {
+    
+        if(visible) {
+            // shown
+        }
+        else {
+            // hidden
+        }
+    }
+
+    public void iadInterstitalAdFailed(string val) {
+        interstitialReady = false;
+    }
+
+    public void iadInterstitalAdLoaded() {
+        interstitialReady = true;
+    }
+
+    // Starts up iAd either on the top or bottom of the screen
+    public static void iadCreateAdBanner( bool bannerOnBottom = true ) {
+        AdBinding.createAdBanner(bannerOnBottom);
+    }
+    
+    // Destroys the ad banner and removes it from view
+    public static void iadDestroyAdBanner() {
+        AdBinding.destroyAdBanner();
+    }
+        
+    // Sets whether or not adDidShow events should be fired or not
+    public static void iadFireHideShowEvents( bool shouldFire ) {
+        AdBinding.fireHideShowEvents(shouldFire);
+    }
+
+    // Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
+    public static bool iadInitializeInterstitial() {
+        return AdBinding.initializeInterstitial();
+    }
+
+    // Checks to see if an interstitial ad is loaded.
+    public static bool iAdIsInterstitalLoaded() {
+        return AdBinding.isInterstitalLoaded();
+    }
+            
+    // Shows an interstitial ad.  Will return false if it isn't loaded.
+    public static bool iadShowInterstitial() {
+
+        return AdBinding.showInterstitial();
+    }
+    
+    #endif
+
+    // HELPERS
+
+    public bool iadShowBannerAd(AdDisplayType bannerType, AdPosition position) {
+        // Try to get each typeof ad then show it
+        
+        bool hasAd = false;
+        
+#if AD_USE_IAD
+        
+        if(bannerType == AdDisplayType.Banner) {
+            
+            bool showOnBottom = true;
+            
+            if(position == AdPosition.TopCenter
+               || position == AdPosition.TopRight
+               || position == AdPosition.TopLeft) {
+                showOnBottom = false;
+            }
+            
+            iadCreateAdBanner(showOnBottom);
+            
+            hasAd = true;
+        }
+
+#endif
+
+        return hasAd;
+    }
+    
+    public bool iadHideBannerAd() {        
+        
+        #if AD_USE_IAD
+        #if UNITY_IPHONE
+            iadDestroyAdBanner();
+        #endif
+        #endif
+        
+        return true;
+    }
+
+    
     // ----------------------------------------------------------------------
     // GOOGLE ADMOB
     
@@ -619,7 +783,7 @@ public class AdNetworks : GameObjectBehavior {
         // Social Network Prime31
         if (Application.platform == RuntimePlatform.Android) {
             //LogUtil.Log("InitAdmob RuntimePlatform.Android..." + 
-                //Application.platform);          
+            //Application.platform);          
 #if UNITY_ANDROID
             //AdMob.init(AppConfigs.publisherIdAdmobAndroid, adNetworkTestingEnabled);            
             //LogUtil.Log("InitAdmob Admob init..." + AppConfigs.publisherIdAdmobAndroid);
@@ -667,20 +831,20 @@ public class AdNetworks : GameObjectBehavior {
 #endif
 #endif
 #if !UNITY_ANDROID && !UNITY_WEBPLAYER && AD_USE_ADMOB
-    public AdMobBannerType admobGetBannerType(AdBannerType bannerType) {
-        if (bannerType == AdBannerType.iPad_320x250) {
+    public AdMobBannerType admobGetBannerType(AdDisplayType bannerType) {
+        if (bannerType == AdDisplayType.iPad_320x250) {
             return AdMobBannerType.iPad_320x250;
         }
-        else if (bannerType == AdBannerType.iPad_468x60) {
+        else if (bannerType == AdDisplayType.iPad_468x60) {
             return AdMobBannerType.iPad_468x60;
         }
-        else if (bannerType == AdBannerType.iPad_728x90) {
+        else if (bannerType == AdDisplayType.iPad_728x90) {
             return AdMobBannerType.iPad_728x90;
         }
-        else if (bannerType == AdBannerType.iPhone_320x50) {
+        else if (bannerType == AdDisplayType.iPhone_320x50) {
             return AdMobBannerType.iPhone_320x50;
         }
-        else if (bannerType == AdBannerType.SmartBannerPortrait) {
+        else if (bannerType == AdDisplayType.SmartBannerPortrait) {
             return AdMobBannerType.SmartBannerPortrait;
         }
         else {
@@ -749,6 +913,62 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
+    // HELPERS
+
+    public bool admobShowBannerAd() {
+        #if AD_USE_ADMOB
+        if (Application.platform == RuntimePlatform.Android) {
+        #if UNITY_ANDROID
+            //AdMob.createBanner(
+            //admobGetBannerType(bannerType), 
+            //admobGetPosition(placementType)
+            //);
+        #endif
+        }
+        else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
+        #if UNITY_IPHONE
+            AdMobBinding.createBanner(
+                admobGetBannerType(bannerType), 
+                admobGetPosition(position)
+                );
+        #endif
+        }
+        else {
+            // Web player...
+        #if UNITY_WEBPLAYER
+            //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
+        #endif
+        }
+        #endif
+
+        return false;
+    }
+
+    public bool admobHideBannerAd() {        
+        
+        #if AD_USE_ADMOB
+        if (Application.platform == RuntimePlatform.Android) {
+        #if UNITY_ANDROID
+            AdMob.destroyBanner();
+            return true;
+        #endif
+        }
+        else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
+        #if UNITY_IPHONE
+            AdMobBinding.destroyBanner();
+            return true;
+        #endif
+        }
+        else {
+            // Web player...
+        #if UNITY_WEBPLAYER
+            //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
+        #endif
+        }
+        #endif
+
+        return false;
+    }
     
     // ----------------------------------------------------------------------
 
@@ -761,48 +981,34 @@ public class AdNetworks : GameObjectBehavior {
 
     //!CBBinding.isImpressionVisible(); 
 
-    public static void ShowAd() {
-        if (Instance != null) {
-            Instance.showAd();
-        }
-    }
+    //public static void ShowAd() {
+    //    if (Instance != null) {
+    //        Instance.showAd();
+    //    }
+    //}
     
-    public static void ShowAd(AdBannerType bannerType, AdPosition position) {
+    public static void ShowAd(
+        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdPosition position = AdPosition.BottomCenter) {
+
         if (Instance != null) {
             Instance.showAd(bannerType, position);
         }
     }
     
     public void showAd() {
-        showAd(AdBannerType.SmartBannerLandscape, AdPosition.BottomCenter);
+        showAd(AdDisplayType.Banner, AdPosition.BottomCenter);
     }
     
-    public void showAd(AdBannerType bannerType, AdPosition position) {
+    public void showAd(
+        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdPosition position = AdPosition.BottomCenter) {
 
-#if AD_USE_ADMOB
-        if (Application.platform == RuntimePlatform.Android) {
-#if UNITY_ANDROID
-            //AdMob.createBanner(
-            //admobGetBannerType(bannerType), 
-            //admobGetPosition(placementType)
-                //);
-#endif
+        if (bannerType == AdDisplayType.Banner) {
+            showBannerAd(bannerType, position);
         }
-        else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
-#if UNITY_IPHONE
-            AdMobBinding.createBanner(
-                admobGetBannerType(bannerType), 
-                admobGetPosition(position)
-                );
-#endif
+        else if (bannerType == AdDisplayType.Interstitial) {
         }
-        else {
-            // Web player...
-#if UNITY_WEBPLAYER
-            //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
-#endif
-        }
-#endif
     }
     
     public static void HideAd() {
@@ -812,24 +1018,66 @@ public class AdNetworks : GameObjectBehavior {
     }
     
     public void hideAd() {
-       
-#if AD_USE_ADMOB
-        if (Application.platform == RuntimePlatform.Android) {
-#if UNITY_ANDROID
-            AdMob.destroyBanner();
-#endif
+        // TODO current ad and ad queue
+
+        hideBannerAd();
+    }
+
+    // ----------------------------------------------------------------------
+    
+    // BANNERS
+    
+    //public static void ShowBannerAd() {
+    //    if (Instance != null) {
+    //        Instance.showBannerAd();
+    //    }
+    //}
+    
+    public static void ShowBannerAd(
+        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdPosition position = AdPosition.BottomCenter) {
+        
+        if (Instance != null) {
+            Instance.showBannerAd(bannerType, position);
         }
-        else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
-#if UNITY_IPHONE
-            AdMobBinding.destroyBanner();
-#endif
+    }
+    
+    public void showBannerAd() {
+        showAd(AdDisplayType.SmartBannerLandscape, AdPosition.BottomCenter);
+    }
+    
+    public void showBannerAd(
+        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdPosition position = AdPosition.BottomCenter) {
+        
+        bool hasAd = false;
+        
+        #if AD_USE_IAD
+        if(!hasAd) {
+            hasAd = iadShowBannerAd(bannerType, position);
         }
-        else {
-            // Web player...
-#if UNITY_WEBPLAYER
-            //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
-#endif
+        #endif
+
+        if (!hasAd) {
+        
         }
+
+    }
+    
+    public static void HideBannerAd() {
+        if (Instance != null) {
+            Instance.hideBannerAd();
+        }
+    }
+    
+    public void hideBannerAd() {
+        
+        #if AD_USE_IAD
+        iadHideBannerAd();
+        #endif
+
+        #if AD_USE_ADMOB
+        admobHideBannerAd();
 #endif
     }
     
@@ -971,7 +1219,6 @@ public class AdNetworks : GameObjectBehavior {
         chartboostShowMoreApps(location);
         #endif
     }
-
     
     public static void ShowInterstitial() {
         if (Instance != null) {
@@ -993,14 +1240,14 @@ public class AdNetworks : GameObjectBehavior {
         #if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
-                #if PROMO_USE_CHARTBOOST
+        #if PROMO_USE_CHARTBOOST
                 //if (Chartboost..onBackPressed())
                 //    return;
                 //else
                     Application.Quit();
-                #else 
+        #else 
                 Application.Quit();
-                #endif
+        #endif
             }
         }
         #endif
@@ -1252,5 +1499,39 @@ public static event Action onAdEndedEvent;
 
 // Fired when a Vungle video is dismissed and provides the time watched and total duration in that order.
 public static event Action<double,double> onAdViewedEvent;
+*/
+/*
+ * 
+ * iAd
+// Starts up iAd either on the top or bottom of the screen
+public static void createAdBanner( bool bannerOnBottom );
+
+// Destroys the ad banner and removes it from view
+public static void destroyAdBanner()
+
+// Sets whether or not adDidShow events should be fired or not
+public static void fireHideShowEvents( bool shouldFire )
+
+// Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
+public static bool initializeInterstitial()
+
+// Checks to see if an interstitial ad is loaded.
+public static bool isInterstitalLoaded()
+
+// Shows an interstitial ad.  Will return false if it isn't loaded.
+public static bool showInterstitial()
+
+*/
+/*
+ * iAd Manager
+// Fired when the adView is either shown or hidden
+public static event Action<bool> adViewDidChange;
+
+// Fired when an interstial ad fails to load or show
+public static event Action<string> interstitalAdFailed;
+
+// Fired when an interstitial ad is loaded and ready to show
+public static event Action interstitialAdLoaded;
+
 */
 

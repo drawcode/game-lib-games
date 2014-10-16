@@ -260,6 +260,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
         buttonDisplayState = UIPanelButtonsDisplayState.CharacterCustomize;
         characterDisplayState = UIPanelCharacterDisplayState.Character;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+        adDisplayState = UIPanelAdDisplayState.BannerBottom;
     }
 		
 	public override void AnimateIn() {

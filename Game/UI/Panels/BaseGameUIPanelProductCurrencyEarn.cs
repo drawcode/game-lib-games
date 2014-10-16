@@ -220,13 +220,13 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
         base.HandleShow();
         
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+        adDisplayState = UIPanelAdDisplayState.BannerBottom;
     }
 
 	public override void AnimateIn() {
 		
 		base.AnimateIn();        
-        
-        AdNetworks.ShowAd();
+
 	}
 
 	public override void AnimateOut() {
