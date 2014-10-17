@@ -546,9 +546,7 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateOut() {
-                
-        HandleHide();
-             
+                             
         float time = durationHide;
         float delay = durationDelayHide;
      
@@ -557,13 +555,15 @@ public class UIPanelBase : UIAppPanel {
  
     public virtual void AnimateOutNow() {
      
-        float time = 0f;
+        float time = .05f;
         float delay = 0f;
      
         AnimateOut(time, delay);
     }
  
     public virtual void AnimateOut(float time, float delay) {
+        
+        HandleHide();
      
         AdNetworks.HideAd();
      
@@ -1019,7 +1019,9 @@ public class UIPanelBase : UIAppPanel {
         // handle character display
         
         if(adDisplayState == 
-           UIPanelAdDisplayState.BannerBottom) {            
+           UIPanelAdDisplayState.BannerBottom
+           || adDisplayState == 
+           UIPanelAdDisplayState.BannerTop) {            
 
             // TODO handle types...
             AdNetworks.ShowAd();
@@ -1091,6 +1093,21 @@ public class UIPanelBase : UIAppPanel {
         characterDisplayState = UIPanelCharacterDisplayState.None;
         backgroundDisplayState = UIPanelBackgroundDisplayState.None;
         adDisplayState = UIPanelAdDisplayState.None;
+
+        bool showAd = false;
+
+        if(GameUIController.Instance.currentPanel != GameUIPanel.panelMain) {
+
+            // show around every third screen
+
+            if(UnityEngine.Random.Range(0, 3) == 0) {
+                showAd = true;
+            }
+        }
+
+        if(showAd) {
+            adDisplayState = UIPanelAdDisplayState.BannerBottom;
+        }
     }
 
     public virtual void HandleHide() {

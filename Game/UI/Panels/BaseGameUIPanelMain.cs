@@ -142,7 +142,7 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public override void AnimateOut() {
         base.AnimateOut();
 
-        GameCommunity.HideActionAppRate();
+        HandleHide();
     }
 
     public virtual void AnimateInDelayed() {

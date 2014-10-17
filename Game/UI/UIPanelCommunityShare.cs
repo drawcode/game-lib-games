@@ -172,6 +172,8 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
             return;
         }
         
+        //Debug.Log("UIPaneCommnityShare::showActionAppRate:");
+        
         ShowPanelRight(containerActionAppRate);
     }
     
@@ -182,6 +184,8 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
     }
     
     public virtual void hideActionAppRate() {   
+
+        //Debug.Log("UIPaneCommnityShare::hideActionAppRate:");
         
         HidePanelRight(containerActionAppRate);
     }
