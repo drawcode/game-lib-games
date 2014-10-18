@@ -721,7 +721,8 @@ public class BaseGamePlayerControllerAnimationData {
         
         if (isLegacy) { 
             AnimationClamp(.5f);
-            PlayAnimationBlend(type, .7f, .5f, AnimationBlendMode.Additive);
+            PlayAnimationBlend(type, .8f, .5f, AnimationBlendMode.Additive);
+            //PlayAnimation(type, PlayMode.StopSameLayer);
         }
         else if (isMecanim) { 
             animator.SetFloat(GameDataActionKeys.speed, .7f);

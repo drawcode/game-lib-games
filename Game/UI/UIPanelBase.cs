@@ -54,7 +54,6 @@ public class UIPanelBase : UIAppPanel {
     public UIPanelButtonsDisplayState buttonDisplayState = UIPanelButtonsDisplayState.None;
     public UIPanelBackgroundDisplayState backgroundDisplayState = UIPanelBackgroundDisplayState.None;
     public UIPanelAdDisplayState adDisplayState = UIPanelAdDisplayState.None;
-
     public GameObject listGridRoot;
     public UIGrid listGrid;
     public UIPanel panelClipped;
@@ -214,7 +213,8 @@ public class UIPanelBase : UIAppPanel {
     
     public void HideAllPanelsNow() {
         foreach (UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
-            baseItem.AnimateOutNow();
+            baseItem.AnimateOut(); // handle per panel actions
+            baseItem.AnimateOutNow(); // but animate it out now it now
         }
     }
 
@@ -555,7 +555,7 @@ public class UIPanelBase : UIAppPanel {
  
     public virtual void AnimateOutNow() {
      
-        float time = .05f;
+        float time = 0f;
         float delay = 0f;
      
         AnimateOut(time, delay);
@@ -1002,26 +1002,26 @@ public class UIPanelBase : UIAppPanel {
         
         // handle character display
         
-        if(characterDisplayState == 
-           UIPanelCharacterDisplayState.Character) {
+        if (characterDisplayState == 
+            UIPanelCharacterDisplayState.Character) {
             
             GameUIPanelHeader.ShowCharacter();
         }
-        else if(characterDisplayState == 
-           UIPanelCharacterDisplayState.CharacterLarge) {
+        else if (characterDisplayState == 
+            UIPanelCharacterDisplayState.CharacterLarge) {
             
             GameUIPanelHeader.ShowCharacterLarge();
         }
-    }    
+    }
     
     public void HandleAdDisplay() {
         
         // handle character display
         
-        if(adDisplayState == 
-           UIPanelAdDisplayState.BannerBottom
-           || adDisplayState == 
-           UIPanelAdDisplayState.BannerTop) {            
+        if (adDisplayState == 
+            UIPanelAdDisplayState.BannerBottom
+            || adDisplayState == 
+            UIPanelAdDisplayState.BannerTop) {            
 
             // TODO handle types...
             AdNetworks.ShowAd();
@@ -1030,42 +1030,41 @@ public class UIPanelBase : UIAppPanel {
             
             AdNetworks.HideAd();
         }
-    }  
-
+    }
     
     public void HandleButtonDisplay() {
         
         // handle buttons
         
-        if(buttonDisplayState == 
-           UIPanelButtonsDisplayState.CharacterCustomize) {
+        if (buttonDisplayState == 
+            UIPanelButtonsDisplayState.CharacterCustomize) {
             
             GameUIPanelFooter.ShowButtonsCharacterCustomize();
         }
-        else if(buttonDisplayState == 
-                UIPanelButtonsDisplayState.Character) {
+        else if (buttonDisplayState == 
+            UIPanelButtonsDisplayState.Character) {
             
             GameUIPanelFooter.ShowButtonsCharacter();
         }
-        else if(buttonDisplayState == 
-                UIPanelButtonsDisplayState.CharacterLarge) {
+        else if (buttonDisplayState == 
+            UIPanelButtonsDisplayState.CharacterLarge) {
             
             GameUIPanelFooter.ShowButtonsCharacterLarge();
         }
-        else if(buttonDisplayState == 
-                UIPanelButtonsDisplayState.CharacterTools) {
+        else if (buttonDisplayState == 
+            UIPanelButtonsDisplayState.CharacterTools) {
             
             GameUIPanelFooter.ShowButtonsCharacterTools();
         }
-        else if(buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
+        else if (buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
             
             GameUIPanelFooter.ShowButtonsStatistics();
         }
-        else if(buttonDisplayState == UIPanelButtonsDisplayState.Achievements) {
+        else if (buttonDisplayState == UIPanelButtonsDisplayState.Achievements) {
             
             GameUIPanelFooter.ShowButtonsAchievements();
         }
-        else if(buttonDisplayState == UIPanelButtonsDisplayState.GameNetworks) {
+        else if (buttonDisplayState == UIPanelButtonsDisplayState.GameNetworks) {
             
             GameUIPanelFooter.ShowButtonGameNetworks();
         }
@@ -1075,13 +1074,13 @@ public class UIPanelBase : UIAppPanel {
         
         // handle character display
         
-        if(backgroundDisplayState == 
-           UIPanelBackgroundDisplayState.PanelBacker) {
+        if (backgroundDisplayState == 
+            UIPanelBackgroundDisplayState.PanelBacker) {
             
             GameUIPanelBackgrounds.ShowUI();
         }
         else if (backgroundDisplayState == 
-                 UIPanelBackgroundDisplayState.None){
+            UIPanelBackgroundDisplayState.None) {
             GameUIPanelBackgrounds.HideUI();
         }
     }    
@@ -1096,22 +1095,22 @@ public class UIPanelBase : UIAppPanel {
 
         bool showAd = false;
 
-        if(GameUIController.Instance.currentPanel != GameUIPanel.panelMain) {
-
+        if (!GameUIController.IsUIPanel(GameUIPanel.panelMain)) {
             // show around every third screen
 
-            if(UnityEngine.Random.Range(0, 3) == 0) {
+            if (UnityEngine.Random.Range(0, 3) == 0) {
                 showAd = true;
             }
         }
 
-        if(showAd) {
+        if (showAd) {
             adDisplayState = UIPanelAdDisplayState.BannerBottom;
         }
     }
 
     public virtual void HandleHide() {
         GameCommunity.HideActionAppRate();
+        GameCommunity.HideSharesCenter();
 
         AdNetworks.HideAd();
     }

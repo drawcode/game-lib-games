@@ -163,6 +163,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         base.HandleShow();
         
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+        adDisplayState = UIPanelAdDisplayState.BannerBottom;
+        characterDisplayState = UIPanelCharacterDisplayState.Character;
+        buttonDisplayState = UIPanelButtonsDisplayState.GameNetworks;
     }
 
     public override void AnimateIn() {

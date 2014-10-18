@@ -387,6 +387,40 @@ public class BaseUIController : GameObjectBehavior {
         Messenger<string, string>.Broadcast(UIControllerMessages.uiPanelAnimateType, objName, code);
     }
 
+    public static bool IsUIPanel(string panelCodeCheck) {
+
+        if(GameUIController.isInst) {
+            return GameUIController.Instance.isUIPanel(panelCodeCheck);
+        }
+
+        return false;
+    }
+
+    public bool isUIPanel(string panelCodeCheck) {
+        if(currentPanel == panelCodeCheck) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static bool IsUIPanelLike(string panelCodeCheck) {
+        
+        if(GameUIController.isInst) {
+            return GameUIController.Instance.isUIPanelLike(panelCodeCheck);
+        }
+        
+        return false;
+    }
+
+    public bool isUIPanelLike(string panelCodeCheck) {
+        if(currentPanel.Contains(panelCodeCheck)) {
+            return true;
+        }
+        
+        return false;
+    }
+
     public void showUIPanel(object obj, string panelCode, string title) {
         Type objType = obj.GetType();
         string objName = objType.Name;
@@ -1798,76 +1832,52 @@ public class BaseUIController : GameObjectBehavior {
                 handled = true;
             }
             else {
-                if (currentPanel 
-                    == GameUIPanel.panelSettingsAudio
-                    || currentPanel 
-                    == GameUIPanel.panelSettingsControls
-                    || currentPanel 
-                    == GameUIPanel.panelSettingsHelp
-                    || currentPanel 
-                    == GameUIPanel.panelSettingsCredits
-                    || currentPanel 
-                    == GameUIPanel.panelSettingsProfile) {
+                if (isUIPanel(GameUIPanel.panelSettingsAudio)
+                    || isUIPanel(GameUIPanel.panelSettingsControls)
+                    || isUIPanel(GameUIPanel.panelSettingsHelp)
+                    || isUIPanel(GameUIPanel.panelSettingsCredits)
+                    || isUIPanel(GameUIPanel.panelSettingsProfile)) {
                     
                     GameUIController.ShowSettings(); 
                     handled = true;       
                     
                 }
-                else if (currentPanel 
-                    == GameUIPanel.panelAchievements
-                    || currentPanel 
-                    == GameUIPanel.panelCustomize
-                    || currentPanel 
-                    == GameUIPanel.panelProducts
-                    || currentPanel 
-                    == GameUIPanel.panelStatistics) {
+                else if (isUIPanel(GameUIPanel.panelAchievements)
+                         || isUIPanel(GameUIPanel.panelCustomize)
+                         || isUIPanel(GameUIPanel.panelProducts)
+                         || isUIPanel(GameUIPanel.panelStatistics)) {
                     
                     GameUIController.ShowEquipment();       
                     handled = true;
                     
                 }
-                else if (currentPanel 
-                    == GameUIPanel.panelCustomizeCharacterRPG
-                    || currentPanel 
-                    == GameUIPanel.panelCustomizeCharacterColors
-                    || currentPanel 
-                    == GameUIPanel.panelCustomizeCharacter
-                    || currentPanel 
-                    == GameUIPanel.panelCustomizeAudio) {
+                else if (isUIPanel(GameUIPanel.panelCustomizeCharacterRPG)
+                        || isUIPanel(GameUIPanel.panelCustomizeCharacterColors)
+                        || isUIPanel(GameUIPanel.panelCustomizeCharacter)
+                        || isUIPanel(GameUIPanel.panelCustomizeAudio)) {
                     
                     GameUIController.ShowCustomize();
                     handled = true;
                     
                 }
-                else if (currentPanel
-                    == GameUIPanel.panelGameModeArcade
-                    || currentPanel
-                    == GameUIPanel.panelGameModeCareer
-                    || currentPanel
-                    == GameUIPanel.panelGameModeChallenge
-                    || currentPanel
-                    == GameUIPanel.panelGameModeCoop
-                    || currentPanel
-                    == GameUIPanel.panelGameModeMissions
-                    || currentPanel
-                    == GameUIPanel.panelGameModeMultiplayer
-                    || currentPanel
-                    == GameUIPanel.panelGameModeMultiplayerCoop
-                    || currentPanel
-                    == GameUIPanel.panelGameModeMultiplayerMatchup
-                    || currentPanel
-                    == GameUIPanel.panelGameModeTraining
-                    || currentPanel
-                    == GameUIPanel.panelGameModeTrainingMode) {
+                else if (isUIPanel(GameUIPanel.panelGameModeArcade)
+                        || isUIPanel(GameUIPanel.panelGameModeCareer)
+                        || isUIPanel(GameUIPanel.panelGameModeChallenge)
+                        || isUIPanel(GameUIPanel.panelGameModeCoop)
+                        || isUIPanel(GameUIPanel.panelGameModeMissions)
+                        || isUIPanel(GameUIPanel.panelGameModeMultiplayer)
+                        || isUIPanel(GameUIPanel.panelGameModeMultiplayerCoop)
+                        || isUIPanel(GameUIPanel.panelGameModeMultiplayerMatchup)
+                        || isUIPanel(GameUIPanel.panelGameModeTraining)
+                        || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
                     
                     GameUIController.ShowGameMode();
                     handled = true;
                     
                 }
-                else if (currentPanel
-                    == GameUIPanel.panelGameModeTrainingModeContent
-                    || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeChoice)
-                    || currentPanel.Contains(GameUIPanel.panelGameModeTrainingModeCollection)) {
+                else if (isUIPanel(GameUIPanel.panelGameModeTrainingModeContent)
+                         || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
+                         || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
                     
                     //GameUIController.ShowGameModeTrainingMode();
                     GameUIController.ShowGameMode();
