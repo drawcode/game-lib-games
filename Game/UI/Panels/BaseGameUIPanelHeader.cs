@@ -405,6 +405,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
         if (containerCustomCharacterSmall != null) {
             containerCustomCharacterSmall.HandleContainerScale(1);
             containerCustomCharacterSmall.HandleContainerRotation(.91);
+            
+            GameUIController.Instance.currentDraggableUIGameObject = 
+                containerCustomCharacterSmall.containerRotator;
         }
     }
     
@@ -416,6 +419,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     
     public virtual void hideCharacter() {
         HidePanelTop(containerCharacter, false);
+        
+        GameUIController.Instance.currentDraggableUIGameObject = 
+            null;
     }
 
     // large
@@ -436,6 +442,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
                 
         if (containerCharacterLarge != null) {
             containerCharacterLarge.ResetRigidBodiesVelocity();
+            
+            GameUIController.Instance.currentDraggableUIGameObject = 
+                containerCustomCharacterLarge.containerRotator;
         }
 
         characterLargeShowPose();
@@ -450,6 +459,8 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     
     public virtual void hideCharacterLarge() {
         HidePanelTop(containerCharacterLarge, false);
+        
+        GameUIController.Instance.currentDraggableUIGameObject = null;
     }
     
     //public void ShowObjectDelayed(GameObject obj, float delay) {

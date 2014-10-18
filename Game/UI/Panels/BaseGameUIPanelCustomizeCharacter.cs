@@ -171,6 +171,10 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
+            }
+
+    public override void HandleHide() {
+        base.HandleHide();
     }
         
     public override void AnimateIn() {
