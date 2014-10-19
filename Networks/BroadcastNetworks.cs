@@ -975,20 +975,24 @@ Everyplay.SetMetadata("score", score)
 
     //
     
+    #if BROADCAST_USE_EVERYPLAY
     public static void FaceCamSetPreviewOrigin(Everyplay.FaceCamPreviewOrigin val) {
         if (Instance != null) {
             Instance.faceCamSetPreviewOrigin(val);
         }
     }
+    #endif
     
+    #if BROADCAST_USE_EVERYPLAY
     public void faceCamSetPreviewOrigin(Everyplay.FaceCamPreviewOrigin val) {
         
         #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetPreviewOrigin(val);
         #else
-
         #endif
+
     }
+    #endif
     
     //
     

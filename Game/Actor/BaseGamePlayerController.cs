@@ -2122,10 +2122,10 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (controllerData.lastCollision + controllerData.intervalCollision < Time.time) {
-            //controllerData.lastCollision = Time.time;
+            controllerData.lastCollision = Time.time;
         }
         else {
-            //return;
+            return;
         }
 
         if (collision.contacts.Length > 0) {
@@ -2234,7 +2234,7 @@ public class BaseGamePlayerController : GameActor {
                         }
                     }
                 }
-                //break;
+                break;
             }
         }
      
@@ -2799,7 +2799,9 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        controllerData.thirdPersonController.Jump(duration);
+		if(controllerData.thirdPersonController != null) {
+        	controllerData.thirdPersonController.Jump(duration);
+		}
         
         controllerData.gamePlayerControllerAnimation.Jump();
         
@@ -3500,7 +3502,7 @@ public class BaseGamePlayerController : GameActor {
 
         //bool allowTackle = false;
 
-        if (controllerData.lastTackle + .1f < Time.time) {
+        if (controllerData.lastTackle + 1f < Time.time) {
             controllerData.lastTackle = Time.time;
             //allowTackle = true;
         }
@@ -3508,16 +3510,18 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        //transform.LookAt(gamePlayerControllerTo.transform);
+        transform.LookAt(gamePlayerControllerTo.transform);
+        
+        Jump();
 
-        controllerData.positionPlayer = transform.position;
+        controllerData.positionPlayer = transform.position.WithY(10);
         controllerData.positionTackler = gamePlayerControllerTo.transform.position;
      
         controllerData.gamePlayerControllerAnimation.Attack();
 
         //Attack();
      
-        AddImpact(controllerData.positionTackler - controllerData.positionPlayer, power, false);
+        AddImpact(controllerData.positionTackler - controllerData.positionPlayer, power, true);
      
     }
 
@@ -3654,7 +3658,7 @@ public class BaseGamePlayerController : GameActor {
         }
         
         // consumes the controllerData.impact energy each cycle:
-        controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+        //controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
     }
 
 
@@ -4781,13 +4785,13 @@ public class BaseGamePlayerController : GameActor {
                             && !gamePlayerControllerHit.controllerData.dying) {
 
 
-                            if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 2.5f) {
+                            if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 3.5f) {
                                 // LEAP AT THEM within three
-                                Tackle(gamePlayerControllerHit, Mathf.Clamp(20f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 20f));
+                                Tackle(gamePlayerControllerHit, Mathf.Clamp(100f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 50f));
                             }
                             else {
                                 // PURSUE FASTER
-                                Tackle(gamePlayerControllerHit, 3.23f);
+								Tackle(gamePlayerControllerHit, 3.5f + controllerData.distanceToPlayerControlledGamePlayer / 2);
                             }
                         }
                     }
