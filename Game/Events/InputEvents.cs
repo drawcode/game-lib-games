@@ -13,8 +13,8 @@ public class InputEvents : GameObjectBehavior {
     void Start() {
         currentObj = GetComponent<UIInput>();
         if (currentObj != null) {
-            currentObj.functionName = "OnActivate";
-            currentObj.eventReceiver = gameObject;
+            //currentObj.functionName = "OnActivate";
+            //currentObj.eventReceiver = gameObject;
         }
     }
         

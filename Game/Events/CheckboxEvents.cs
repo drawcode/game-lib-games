@@ -13,8 +13,8 @@ public class CheckboxEvents : GameObjectBehavior {
     void Start() {
         currentObj = GetComponent<UICheckbox>();
         if (currentObj != null) {
-            currentObj.functionName = "OnActivate";
-            currentObj.eventReceiver = gameObject;
+            //currentObj.functionName = "OnActivate";
+            //currentObj.eventReceiver = gameObject;
         }
     }
     

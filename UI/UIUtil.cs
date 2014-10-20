@@ -3,6 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if USE_NGUI_3
+
+public class UIDraggablePanel : UIDragScrollView {
+	
+	public void ResetPosition() {
+		base.scrollView.ResetPosition();
+	}
+}
+
+public class UICheckbox : UIToggle {
+	
+}
+
+#endif
+
 public delegate void UIButtonEventTap();
 
 public class UIButtonMetaItem {

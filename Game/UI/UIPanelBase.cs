@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
+
 public enum UIPanelBackgroundDisplayState {
     None,
     PanelBacker
@@ -708,6 +709,7 @@ public class UIPanelBase : UIAppPanel {
         if (grid != null) {
             grid.Reposition();          
             if (gridObject.transform.parent != null) {
+
                 UIDraggablePanel[] dragPanels = gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
                 if (dragPanels != null) {                    
                     foreach (UIDraggablePanel panel 

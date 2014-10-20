@@ -13,7 +13,7 @@ public class ListEvents : GameObjectBehavior {
     void Start() {
         UIPopupList popupList = GetComponent<UIPopupList>();
         if (popupList != null) {
-            popupList.functionName = "OnSelectionChange";
+            //popupList.functionName = "OnSelectionChange";
         }
     }
     

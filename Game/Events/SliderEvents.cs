@@ -14,8 +14,8 @@ public class SliderEvents : GameObjectBehavior {
     void Start() {
         currentObj = GetComponent<UISlider>();
         if (currentObj != null) {
-            currentObj.functionName = "OnSliderChange";
-            currentObj.eventReceiver = gameObject;
+            //currentObj.functionName = "OnSliderChange";
+            //currentObj.eventReceiver = gameObject;
         }
         
         LoadData();
