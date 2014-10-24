@@ -21,7 +21,7 @@ public class ButtonEvents : GameObjectBehavior {
     
     void OnClick() {
         GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
-        Messenger<string>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK, transform.name);
         Messenger<GameObject>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, gameObject);
+        //Messenger<string>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK, transform.name);
     }
 }

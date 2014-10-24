@@ -276,14 +276,14 @@ public class UINotificationDisplay
 		
 		LogUtil.Log("Queueing Achievement:achievementCode:" + achievementCode);
 		string packCode = GamePacks.Current.code;
-		string appState = AppStates.Current.code;
-		string appContentState = AppContentStates.Current.code;
+		string app_state = AppStates.Current.code;
+		string app_content_state = AppContentStates.Current.code;
 		
 		string achievementBaseCode = achievementCode;
-		achievementBaseCode = achievementBaseCode.Replace("-" + appState,"");
-		achievementBaseCode = achievementBaseCode.Replace("_" + GameAchievementCodes.formatAchievementCode(appState),"");
-		achievementBaseCode = achievementBaseCode.Replace("-" + appContentState,"");
-		achievementBaseCode = achievementBaseCode.Replace("_" + GameAchievementCodes.formatAchievementCode(appContentState),"");
+		achievementBaseCode = achievementBaseCode.Replace("-" + app_state,"");
+		achievementBaseCode = achievementBaseCode.Replace("_" + GameAchievementCodes.formatAchievementCode(app_state),"");
+		achievementBaseCode = achievementBaseCode.Replace("-" + app_content_state,"");
+		achievementBaseCode = achievementBaseCode.Replace("_" + GameAchievementCodes.formatAchievementCode(app_content_state),"");
 		achievementBaseCode = achievementBaseCode.Replace("-" + packCode,"");
 		achievementBaseCode = achievementBaseCode.Replace("_" + GameAchievementCodes.formatAchievementCode(packCode),"");		
 		
@@ -291,14 +291,14 @@ public class UINotificationDisplay
 			= GameAchievements.Instance.GetByCodeAndPack(
                 achievementCode, 
 				packCode//,
-				//appContentState
+				//app_content_state
 			);
 		
 		
 		if(achievement != null) {
 			//achievement.description = GameAchievements.Instance.FormatAchievementTags(
-			//	appState,
-			//	appContentState, 
+			//	app_state,
+			//	app_content_state, 
 			//	achievement.description);
 			//LogUtil.Log("Queueing Achievement display:" + achievement.display_name);
 			

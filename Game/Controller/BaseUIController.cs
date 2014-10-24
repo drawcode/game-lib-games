@@ -389,7 +389,7 @@ public class BaseUIController : GameObjectBehavior {
 
     public static bool IsUIPanel(string panelCodeCheck) {
 
-        if(GameUIController.isInst) {
+        if (GameUIController.isInst) {
             return GameUIController.Instance.isUIPanel(panelCodeCheck);
         }
 
@@ -397,7 +397,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public bool isUIPanel(string panelCodeCheck) {
-        if(currentPanel == panelCodeCheck) {
+        if (currentPanel == panelCodeCheck) {
             return true;
         }
 
@@ -406,7 +406,7 @@ public class BaseUIController : GameObjectBehavior {
 
     public static bool IsUIPanelLike(string panelCodeCheck) {
         
-        if(GameUIController.isInst) {
+        if (GameUIController.isInst) {
             return GameUIController.Instance.isUIPanelLike(panelCodeCheck);
         }
         
@@ -414,7 +414,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public bool isUIPanelLike(string panelCodeCheck) {
-        if(currentPanel.Contains(panelCodeCheck)) {
+        if (currentPanel.Contains(panelCodeCheck)) {
             return true;
         }
         
@@ -1843,41 +1843,41 @@ public class BaseUIController : GameObjectBehavior {
                     
                 }
                 else if (isUIPanel(GameUIPanel.panelAchievements)
-                         || isUIPanel(GameUIPanel.panelCustomize)
-                         || isUIPanel(GameUIPanel.panelProducts)
-                         || isUIPanel(GameUIPanel.panelStatistics)) {
+                    || isUIPanel(GameUIPanel.panelCustomize)
+                    || isUIPanel(GameUIPanel.panelProducts)
+                    || isUIPanel(GameUIPanel.panelStatistics)) {
                     
                     GameUIController.ShowEquipment();       
                     handled = true;
                     
                 }
                 else if (isUIPanel(GameUIPanel.panelCustomizeCharacterRPG)
-                        || isUIPanel(GameUIPanel.panelCustomizeCharacterColors)
-                        || isUIPanel(GameUIPanel.panelCustomizeCharacter)
-                        || isUIPanel(GameUIPanel.panelCustomizeAudio)) {
+                    || isUIPanel(GameUIPanel.panelCustomizeCharacterColors)
+                    || isUIPanel(GameUIPanel.panelCustomizeCharacter)
+                    || isUIPanel(GameUIPanel.panelCustomizeAudio)) {
                     
                     GameUIController.ShowCustomize();
                     handled = true;
                     
                 }
                 else if (isUIPanel(GameUIPanel.panelGameModeArcade)
-                        || isUIPanel(GameUIPanel.panelGameModeCareer)
-                        || isUIPanel(GameUIPanel.panelGameModeChallenge)
-                        || isUIPanel(GameUIPanel.panelGameModeCoop)
-                        || isUIPanel(GameUIPanel.panelGameModeMissions)
-                        || isUIPanel(GameUIPanel.panelGameModeMultiplayer)
-                        || isUIPanel(GameUIPanel.panelGameModeMultiplayerCoop)
-                        || isUIPanel(GameUIPanel.panelGameModeMultiplayerMatchup)
-                        || isUIPanel(GameUIPanel.panelGameModeTraining)
-                        || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
+                    || isUIPanel(GameUIPanel.panelGameModeCareer)
+                    || isUIPanel(GameUIPanel.panelGameModeChallenge)
+                    || isUIPanel(GameUIPanel.panelGameModeCoop)
+                    || isUIPanel(GameUIPanel.panelGameModeMissions)
+                    || isUIPanel(GameUIPanel.panelGameModeMultiplayer)
+                    || isUIPanel(GameUIPanel.panelGameModeMultiplayerCoop)
+                    || isUIPanel(GameUIPanel.panelGameModeMultiplayerMatchup)
+                    || isUIPanel(GameUIPanel.panelGameModeTraining)
+                    || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
                     
                     GameUIController.ShowGameMode();
                     handled = true;
                     
                 }
                 else if (isUIPanel(GameUIPanel.panelGameModeTrainingModeContent)
-                         || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
-                         || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
+                    || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
+                    || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
                     
                     //GameUIController.ShowGameModeTrainingMode();
                     GameUIController.ShowGameMode();
@@ -3310,9 +3310,38 @@ public class BaseUIController : GameObjectBehavior {
     // ------------------------------------------------------------------------
 
     // EVENTS
+
+    public virtual void OnButtonClickObjectEventHandler(
+        GameObject buttonObject) {
+    
+        Dictionary<string,object> data = new Dictionary<string, object>();
+
+        if (buttonObject.Has<GameObjectData>()) {
+            data = buttonObject.Get<GameObjectData>().ToDictionary();            
+
+            Debug.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
             
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+            OnButtonClickDataEventHandler(buttonObject.name, data);
+        }
+        else {
+            Messenger<string>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK, buttonObject.name);
+        }
+    }
+    
+    public virtual void OnButtonClickEventHandler(
+        string buttonName) {        
+        OnButtonClickDataEventHandler(buttonName, null);
+    }
+            
+    public virtual void OnButtonClickDataEventHandler(
+        string buttonName, 
+        Dictionary<string,object> data = null) {
+
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+
+        if (data == null) {
+            data = new Dictionary<string, object>();
+        }
      
         hasBeenClicked = true;
 
@@ -3404,35 +3433,35 @@ public class BaseUIController : GameObjectBehavior {
         // Game Modes
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameArcade);
             GameUIController.ShowGameModeArcade();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameChallenge);
             GameUIController.ShowGameModeChallenge();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerCoop);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayerCoop);
             GameUIController.ShowGameModeMultiplayerCoop();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerMatchup, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerMatchup);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayerMatchup);
             GameUIController.ShowGameModeMultiplayerMatchup();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayer, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayer);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayer);
             GameUIController.ShowGameModeMultiplayer();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameCoop);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameCoop);
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMissions);
             GameUIController.ShowGameWorlds();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
         }
 
@@ -3684,6 +3713,36 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
+            
+            if (AppContentStates.Instance.isAppContentStateGameMissions) {
+                // setup current mission
+                // missions
+
+                object dataType = null;
+                object dataCode = null;
+
+                if (data.ContainsKey(BaseDataObjectKeys.type)) {
+                    dataType = data.Get(BaseDataObjectKeys.type);
+                }
+                if (data.ContainsKey(BaseDataObjectKeys.code)) {
+                    dataCode = data.Get(BaseDataObjectKeys.code);
+                }
+
+                if (dataType != null) {
+                    
+                    if (dataType == "mission") {
+
+                        string code = dataCode.ToString();
+
+                        if (!string.IsNullOrEmpty(code)) {
+
+                            AppContentCollects.ChangeCurrent(code);
+                       
+                            Debug.Log("ACTION:" + " mission:" + code);
+                        }
+                    }
+                }
+            }
             
             GameCommunity.HideGameCommunity();
             GameCommunity.HideBroadcastRecordPlayShare();

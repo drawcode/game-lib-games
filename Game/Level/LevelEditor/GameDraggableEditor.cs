@@ -1206,7 +1206,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 	
 	public void broadcastStateEditing() {		
 		if(cam == null) {
-			cam = ObjectUtil.FindObject<GameCameraSmoothFollow>();
+			cam = UnityObjectUtil.FindObject<GameCameraSmoothFollow>();
 		}
 		
 		if(appEditState == GameDraggableEditEnum.StateNotEditing) {

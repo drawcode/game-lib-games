@@ -515,7 +515,7 @@ public class BaseGameController : GameObjectBehavior {
 
         GameController.Reset();
 
-        foreach (GamePlayerController gamePlayerController in ObjectUtil.FindObjects<GamePlayerController>()) {
+        foreach (GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
             if (gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
                 break;
@@ -628,7 +628,7 @@ public class BaseGameController : GameObjectBehavior {
             return;
         }
 
-        GamePlayerController[] playerControllers = ObjectUtil.FindObjects<GamePlayerController>();
+        GamePlayerController[] playerControllers = UnityObjectUtil.FindObjects<GamePlayerController>();
     
         if (playerControllers.Length > 0) {
     
@@ -712,7 +712,7 @@ public class BaseGameController : GameObjectBehavior {
 
     public virtual GamePlayerController getGamePlayerController(string uid) {
         foreach (GamePlayerController gamePlayerController 
-                in ObjectUtil.FindObjects<GamePlayerController>()) {
+                in UnityObjectUtil.FindObjects<GamePlayerController>()) {
             if (gamePlayerController.uniqueId == uid) {
                 return gamePlayerController;
             }
@@ -1386,21 +1386,21 @@ public class BaseGameController : GameObjectBehavior {
         GameState.SaveProfile();
     }
 
-    public virtual void changeGameStates(string appContentState) {
+    public virtual void changeGameStates(string app_content_state) {
 
-        LogUtil.Log("changeGameStates:appContentState:" + appContentState);
+        LogUtil.Log("changeGameStates:app_content_state:" + app_content_state);
 
         //try {
-        AppContentStates.Instance.ChangeState(appContentState);
+        AppContentStates.Instance.ChangeState(app_content_state);
         //}
         //catch (Exception e) {
         //    LogUtil.Log("ERROR:changeGameState:e:" + e.Message + e.StackTrace);
         //}
         GameController.SaveGameStates();
 
-        LogUtil.Log("changeGameStates:appContentState:AFTER:" + appContentState);
+        LogUtil.Log("changeGameStates:app_content_state:AFTER:" + app_content_state);
 
-    }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
+    }//AppContentStates.Instance.ChangeState(AppContentStateMeta.app_content_stateGameArcade);
 
     public virtual void changeCharacterModel(string characterCode) {
         GameController.CurrentGamePlayerController.ChangeCharacter(characterCode);

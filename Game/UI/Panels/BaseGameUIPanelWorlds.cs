@@ -20,20 +20,14 @@ public class GameWorldsMessages {
 public class BaseGameUIPanelWorlds : GameUIPanelBase {
     
     public static GameUIPanelWorlds Instance;
-    
     public GameObject listItemPrefab;
-
     public GameWorldsState gameWorldsState = GameWorldsState.selection;
-	
-	public UIImageButton buttonGamePlay;
-	public UIImageButton buttonClose;
-
+    public UIImageButton buttonGamePlay;
+    public UIImageButton buttonClose;
     public UIImageButton buttonWorldNext;
     public UIImageButton buttonWorldPrevious;
-    
     public UILabel labelWorldTitle;
     public UILabel labelWorldDescription;
-
     public GameObject containerMissions;
     public GameObject containerButtons;
     public GameObject containerButtonNext;
@@ -41,7 +35,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -51,18 +45,18 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void Awake() {
         
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
+    
+    public override void Start() {
+        Init();
+    }
+    
+    public override void Init() {
+        base.Init();    
+        
+        loadData();
 
         ChangeState(GameWorldsState.selection);
-	}	
+    }
 
     public override void OnEnable() {
 
@@ -108,20 +102,20 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if(className == classNameTo) {
-           //
+        if (className == classNameTo) {
+            //
         }
     }
 
@@ -151,11 +145,11 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
 
     public virtual void HandleStateChange() {
-        if(gameWorldsState == GameWorldsState.selection) {
+        if (gameWorldsState == GameWorldsState.selection) {
             HideSelect();
             ShowButtons();
         }
-        else if(gameWorldsState == GameWorldsState.missions) {
+        else if (gameWorldsState == GameWorldsState.missions) {
             ShowSelect();
             HideButtons();
         }
@@ -176,18 +170,18 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void HideButtons() {        
         HidePanelBottom(containerButtons);
     }
-	
-    public override void OnButtonClickEventHandler(string buttonName) {		
-		if(UIUtil.IsButtonClicked(buttonWorldNext, buttonName)) {            
+    
+    public override void OnButtonClickEventHandler(string buttonName) {     
+        if (UIUtil.IsButtonClicked(buttonWorldNext, buttonName)) {            
             Messenger.Broadcast(GameWorldsMessages.gameWorldNext);
-        }        
-        else if(UIUtil.IsButtonClicked(buttonWorldPrevious, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(buttonWorldPrevious, buttonName)) {            
             Messenger.Broadcast(GameWorldsMessages.gameWorldPrevious);
-        }      
-        else if(UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {            
+        }
+        else if (UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {            
             Messenger.Broadcast(GameWorldsMessages.gameWorldSelect);
-        }	
-    }	
+        }   
+    }
         
     public virtual void loadData() {
         StartCoroutine(loadDataCo());
@@ -211,14 +205,16 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
     
     public virtual void loadDataMissions() {
-        
+
         LogUtil.Log("Load Missions:");
         
         int i = 0;
         
         //int totalPoints = 0;
-        
-        foreach(AppContentCollect mission in AppContentCollects.Instance.GetMissions()) {
+
+
+        foreach (AppContentCollect mission in 
+                AppContentCollects.GetMissionsByWorld(GameWorlds.Current.code)) {
             
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "MissionItem" + i;
@@ -226,22 +222,84 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelName", mission.display_name);
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelDescription", mission.description);
             
-            //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;  
-            //UISprite iconSprite = iconObject.GetComponent<UISprite>();            
+            // Update button action
+                        
+            Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
+            if(buttonObject != null) {
+                UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
+                if(button != null) {
+                    
+                    string actionType = "mission";
+                    string appContentState = AppContentStates.Current.code;
+                    string appState = AppStates.Current.code;
+                    string missionCode = mission.code;
+
+                    GameObjectData objData = button.gameObject.Get<GameObjectData>();
+
+                    if(objData == null) {
+                        objData = button.gameObject.AddComponent<GameObjectData>();
+                    }
+
+                    if(objData != null) {
+                        objData.Set(BaseDataObjectKeys.type, actionType);
+                        objData.Set(BaseDataObjectKeys.app_content_state, appContentState);
+                        objData.Set(BaseDataObjectKeys.app_state, appState);
+                        objData.Set(BaseDataObjectKeys.code, missionCode);
+                    }
+
+                    button.name = BaseUIButtonNames.buttonGamePlay + 
+                        "$" + appContentState + "$" + missionCode;
+                }
+            }
+
+            string currentType = "action";
             
-            //bool completed = false;
+            foreach (GameObjectInactive obj in item.GetComponentsInChildren<GameObjectInactive>(true)) {
+                if (obj.type == currentType) {
+                    obj.gameObject.Hide();
+                }
+            }
             
-            //bool hasValue = GameProfileAchievements.Current.CheckIfAttributeExists(achievement.code);
+            int j = 0;
+
+            foreach (AppContentCollectItem action in mission.GetItemsData()) {
+                            
+                foreach (GameObjectInactive obj in item.GetComponentsInChildren<GameObjectInactive>(true)) {
+
+                    if (obj.type == currentType) {
+
+                        string currentActionItem = currentType + "-" + (j + 1).ToString();
+
+                        if (obj.code == currentActionItem) {
+                            
+                            Debug.Log("action.data.display_name:" + action.data.display_name);
+
+                            obj.gameObject.Show();
+                                                        
+                            UIUtil.UpdateLabelObject(
+                                obj.gameObject, "LabelDescription", action.data.display_name);
+                        }
+                    }
+                }                
+                
+                j++;
             
-            //if(hasValue) {
-            //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code);
-            //}
+                //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;  
+                //UISprite iconSprite = iconObject.GetComponent<UISprite>();            
             
-            //if(!hasValue) {
-            //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code + "_" + achievement.pack_code);
-            //}
+                //bool completed = false;
             
-            /*
+                //bool hasValue = GameProfileAchievements.Current.CheckIfAttributeExists(achievement.code);
+            
+                //if(hasValue) {
+                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code);
+                //}
+            
+                //if(!hasValue) {
+                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code + "_" + achievement.pack_code);
+                //}
+            
+                /*
             string points = "";
             
             if(completed) {
@@ -267,11 +325,12 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             }
             */
             
-            //item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = points;                
+                //item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = points;                
             
-            // Get trophy icon
+                // Get trophy icon
             
-            i++;
+                i++;
+            }
         }
         
         //if(labelPoints != null) {
@@ -297,5 +356,5 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         base.AnimateOut();
         
         ClearList();
-    }	
+    }   
 }

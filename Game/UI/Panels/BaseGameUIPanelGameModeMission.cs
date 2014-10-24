@@ -136,7 +136,7 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
         
         //int totalPoints = 0;
         
-        foreach(AppContentCollect mission in AppContentCollects.Instance.GetMissions()) {
+        foreach(AppContentCollect mission in AppContentCollects.GetMissions()) {
 
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "MissionItem" + i;

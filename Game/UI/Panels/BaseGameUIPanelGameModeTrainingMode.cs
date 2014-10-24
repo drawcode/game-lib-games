@@ -94,15 +94,15 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
         /*
         if(UIUtil.IsButtonClicked(buttonGamePlayChoiceQuiz, buttonName)) {
 
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingChoiceQuiz);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTrainingChoiceQuiz);
             GameUIController.ShowGameModeTrainingModeChoiceQuiz();
         }
         else if(UIUtil.IsButtonClicked(buttonGamePlayCollectionSmarts, buttonName)) {
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingCollectionSmarts);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTrainingCollectionSmarts);
             GameUIController.ShowGameModeTrainingModeCollectionSmarts();
         }
         else if(UIUtil.IsButtonClicked(buttonGamePlayCollectionSafety, buttonName)) {
-            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingCollectionSafety);
+            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTrainingCollectionSafety);
             GameUIController.ShowGameModeTrainingModeCollectionSafety();
 
         }
@@ -115,7 +115,7 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
     public override void AnimateIn() {
         //base.AnimateIn();
         
-        GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingChoiceQuiz);
+        GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTrainingChoiceQuiz);
         GameUIController.ShowGameModeTrainingModeChoiceQuiz();
     }
 	

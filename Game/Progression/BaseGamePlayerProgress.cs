@@ -53,13 +53,13 @@ public class BaseGamePlayerProgressRuntimeData {
         timesViewed = new Dictionary<string, float>();
     }
     
-    public virtual void StartRuntimeDataCollection(string packCode, string appState, string appContentState) {
+    public virtual void StartRuntimeDataCollection(string packCode, string app_state, string app_content_state) {
         
         isRunning = true;
         
         currentPack = packCode;
-        currentAppState = appState;
-        currentAppContentState = appContentState;
+        currentAppState = app_state;
+        currentAppContentState = app_content_state;
         startTime = Time.time;
         timesViewed = new Dictionary<string, float>();
     }
@@ -181,12 +181,12 @@ public class BaseGameStatisticCodes {
     public static string totalDestroyed = "total-destroyed";
     */
     
-    public static string genericCodeContentState(string code, string appContentState) {
-        return code + "-" + appContentState;
+    public static string genericCodeContentState(string code, string app_content_state) {
+        return code + "-" + app_content_state;
     }
     
-    public static string genericCodePackContentState(string code, string packCode, string appContentState) {
-        return code + "-" + packCode + "-" + appContentState;
+    public static string genericCodePackContentState(string code, string packCode, string app_content_state) {
+        return code + "-" + packCode + "-" + app_content_state;
     }
     
     public static string genericCodePack(string code, string packCode) {
@@ -195,12 +195,12 @@ public class BaseGameStatisticCodes {
     
     // action
     
-    public static string actionCodeContentState(string code, string appContentState) {
-        return action + "-" + code + "-" + appContentState;
+    public static string actionCodeContentState(string code, string app_content_state) {
+        return action + "-" + code + "-" + app_content_state;
     }
     
-    public static string actionCodePackContentState(string code, string packCode, string appContentState) {
-        return action + "-" + code + "-" + packCode + "-" + appContentState;
+    public static string actionCodePackContentState(string code, string packCode, string app_content_state) {
+        return action + "-" + code + "-" + packCode + "-" + app_content_state;
     }
     
     public static string actionCodePack(string code, string packCode) {
@@ -213,12 +213,12 @@ public class BaseGameStatisticCodes {
     
     // high
     
-    public static string highCodeContentState(string code, string appContentState) {
-        return high + "-" + code + "-" + appContentState;
+    public static string highCodeContentState(string code, string app_content_state) {
+        return high + "-" + code + "-" + app_content_state;
     }
     
-    public static string highCodePackContentState(string code, string packCode, string appContentState) {
-        return high + "-" + code + "-" + packCode + "-" + appContentState;
+    public static string highCodePackContentState(string code, string packCode, string app_content_state) {
+        return high + "-" + code + "-" + packCode + "-" + app_content_state;
     }
     
     public static string highCodePack(string code, string packCode) {
@@ -239,12 +239,12 @@ public class BaseGameStatisticCodes {
     
     // low
     
-    public static string lowCodeContentState(string code, string appContentState) {
-        return low + "-" + code + "-" + appContentState;
+    public static string lowCodeContentState(string code, string app_content_state) {
+        return low + "-" + code + "-" + app_content_state;
     }
     
-    public static string lowCodePackContentState(string code, string packCode, string appContentState) {
-        return low + "-" + code + "-" + packCode + "-" + appContentState;
+    public static string lowCodePackContentState(string code, string packCode, string app_content_state) {
+        return low + "-" + code + "-" + packCode + "-" + app_content_state;
     }
     
     public static string lowCodePack(string code, string packCode) {
@@ -265,12 +265,12 @@ public class BaseGameStatisticCodes {
     
     // total
     
-    public static string totalCodeContentState(string code, string appContentState) {
-        return total + "-" + code + "-" + appContentState;
+    public static string totalCodeContentState(string code, string app_content_state) {
+        return total + "-" + code + "-" + app_content_state;
     }
     
-    public static string totalCodePackContentState(string code, string packCode, string appContentState) {
-        return total + "-" + code + "-" + packCode + "-" + appContentState;
+    public static string totalCodePackContentState(string code, string packCode, string app_content_state) {
+        return total + "-" + code + "-" + packCode + "-" + app_content_state;
     }
     
     public static string totalCodePack(string code, string packCode) {
@@ -291,12 +291,12 @@ public class BaseGameStatisticCodes {
     
     // swipes
     
-    public static string swipesContentState(string appContentState) {
-        return swipes + "-" + appContentState;
+    public static string swipesContentState(string app_content_state) {
+        return swipes + "-" + app_content_state;
     }
     
-    public static string swipesPackContentState(string packCode, string appContentState) {
-        return swipes + "-" + packCode + "-" + appContentState;
+    public static string swipesPackContentState(string packCode, string app_content_state) {
+        return swipes + "-" + packCode + "-" + app_content_state;
     }
     
     public static string swipesPack(string packCode) {
@@ -305,12 +305,12 @@ public class BaseGameStatisticCodes {
     
     // taps
     
-    public static string tapsContentState(string appContentState) {
-        return taps + "-" + appContentState;
+    public static string tapsContentState(string app_content_state) {
+        return taps + "-" + app_content_state;
     }
     
-    public static string tapsPackContentState(string packCode, string appContentState) {
-        return taps + "-" + packCode + "-" + appContentState;
+    public static string tapsPackContentState(string packCode, string app_content_state) {
+        return taps + "-" + packCode + "-" + app_content_state;
     }
     
     public static string tapsPack(string packCode) {
@@ -319,12 +319,12 @@ public class BaseGameStatisticCodes {
     
     // taps
     
-    public static string zoomsContentState(string appContentState) {
-        return zooms + "-" + appContentState;
+    public static string zoomsContentState(string app_content_state) {
+        return zooms + "-" + app_content_state;
     }
     
-    public static string zoomsPackContentState(string packCode, string appContentState) {
-        return zooms + "-" + packCode + "-" + appContentState;
+    public static string zoomsPackContentState(string packCode, string app_content_state) {
+        return zooms + "-" + packCode + "-" + app_content_state;
     }
     
     public static string zoomsPack(string packCode) {
@@ -333,12 +333,12 @@ public class BaseGameStatisticCodes {
     
     // spins
     
-    public static string spinsContentState(string appContentState) {
-        return spins + "-" + appContentState;
+    public static string spinsContentState(string app_content_state) {
+        return spins + "-" + app_content_state;
     }
     
-    public static string spinsPackContentState(string packCode, string appContentState) {
-        return spins + "-" + packCode + "-" + appContentState;
+    public static string spinsPackContentState(string packCode, string app_content_state) {
+        return spins + "-" + packCode + "-" + app_content_state;
     }
     
     public static string spinsPack(string packCode) {
@@ -355,20 +355,20 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timePlayed + "-" + code;
     }
     
-    public static string timePlayedCodeContentState(string code, string appContentState) {
-        return timePlayedCode(code) + "-" + appContentState;
+    public static string timePlayedCodeContentState(string code, string app_content_state) {
+        return timePlayedCode(code) + "-" + app_content_state;
     }
     
-    public static string timePlayedCodePackContentState(string code, string packCode, string appContentState) {
-        return timePlayedCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timePlayedCodePackContentState(string code, string packCode, string app_content_state) {
+        return timePlayedCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timePlayedPackContentState(string packCode, string appContentState) {
-        return timePlayedCode() + "-" + packCode + "-" + appContentState;
+    public static string timePlayedPackContentState(string packCode, string app_content_state) {
+        return timePlayedCode() + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timePlayedContentState(string appContentState) {
-        return timePlayedCode() + "-" + appContentState;
+    public static string timePlayedContentState(string app_content_state) {
+        return timePlayedCode() + "-" + app_content_state;
     }
     
     public static string timesPlayedCode() {
@@ -379,20 +379,20 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timesPlayed + "-" + code;
     }
     
-    public static string timesPlayedCodeContentState(string code, string appContentState) {
-        return timesPlayedCode(code) + "-" + appContentState;
+    public static string timesPlayedCodeContentState(string code, string app_content_state) {
+        return timesPlayedCode(code) + "-" + app_content_state;
     }
     
-    public static string timesPlayedCodePackContentState(string code, string packCode, string appContentState) {
-        return timesPlayedCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedCodePackContentState(string code, string packCode, string app_content_state) {
+        return timesPlayedCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timesPlayedPackContentState(string packCode, string appContentState) {
-        return timesPlayedCode() + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedPackContentState(string packCode, string app_content_state) {
+        return timesPlayedCode() + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timesPlayedContentState(string appContentState) {
-        return timesPlayedCode() + "-" + appContentState;
+    public static string timesPlayedContentState(string app_content_state) {
+        return timesPlayedCode() + "-" + app_content_state;
     }
     
     // tracker 
@@ -404,12 +404,12 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timePlayedTracker + "-" + trackerCode;
     }
     
-    public static string timePlayedTrackerCodeContentState(string trackerCode, string appContentState) {
-        return timePlayedTrackerCode(trackerCode) + "-" + appContentState;
+    public static string timePlayedTrackerCodeContentState(string trackerCode, string app_content_state) {
+        return timePlayedTrackerCode(trackerCode) + "-" + app_content_state;
     }
     
-    public static string timePlayedTrackerCodePackContentState(string trackerCode, string packCode, string appContentState) {
-        return timePlayedTrackerCode(trackerCode) + "-" + packCode + "-" + appContentState;
+    public static string timePlayedTrackerCodePackContentState(string trackerCode, string packCode, string app_content_state) {
+        return timePlayedTrackerCode(trackerCode) + "-" + packCode + "-" + app_content_state;
     }
     
     public static string timesPlayedTrackerCode() {
@@ -420,12 +420,12 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timesPlayedTracker + "-" + trackerCode;
     }
     
-    public static string timesPlayedTrackerCodeContentState(string trackerCode, string appContentState) {
-        return timesPlayedTrackerCode(trackerCode) + "-" + appContentState;
+    public static string timesPlayedTrackerCodeContentState(string trackerCode, string app_content_state) {
+        return timesPlayedTrackerCode(trackerCode) + "-" + app_content_state;
     }
     
-    public static string timesPlayedTrackerCodePackContentState(string trackerCode, string packCode, string appContentState) {
-        return timesPlayedTrackerCode(trackerCode) + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedTrackerCodePackContentState(string trackerCode, string packCode, string app_content_state) {
+        return timesPlayedTrackerCode(trackerCode) + "-" + packCode + "-" + app_content_state;
     }
     
     // action
@@ -437,16 +437,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timePlayedAction + "-" + code;
     }
     
-    public static string timePlayedActionCodeContentState(string code, string appContentState) {
-        return timePlayedActionCode(code) + "-" + appContentState;
+    public static string timePlayedActionCodeContentState(string code, string app_content_state) {
+        return timePlayedActionCode(code) + "-" + app_content_state;
     }
     
-    public static string timePlayedActionCodePackContentState(string code, string packCode, string appContentState) {
-        return timePlayedActionCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timePlayedActionCodePackContentState(string code, string packCode, string app_content_state) {
+        return timePlayedActionCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timePlayedActionCodePackContentState(string packCode, string appContentState) {
-        return timePlayedActionCode() + "-" + packCode + "-" + appContentState;
+    public static string timePlayedActionCodePackContentState(string packCode, string app_content_state) {
+        return timePlayedActionCode() + "-" + packCode + "-" + app_content_state;
     }
     
     public static string timesPlayedActionCode() {
@@ -457,16 +457,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timesPlayedAction + "-" + code;
     }
     
-    public static string timesPlayedActionCodeContentState(string code, string appContentState) {
-        return timesPlayedActionCode(code) + "-" + appContentState;
+    public static string timesPlayedActionCodeContentState(string code, string app_content_state) {
+        return timesPlayedActionCode(code) + "-" + app_content_state;
     }
     
-    public static string timesPlayedActionCodePackContentState(string code, string packCode, string appContentState) {
-        return timesPlayedActionCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedActionCodePackContentState(string code, string packCode, string app_content_state) {
+        return timesPlayedActionCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timesPlayedActionCodePackContentState(string packCode, string appContentState) {
-        return timesPlayedActionCode() + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedActionCodePackContentState(string packCode, string app_content_state) {
+        return timesPlayedActionCode() + "-" + packCode + "-" + app_content_state;
     }
     
     public static string timesPlayedActionCodeLevel(string code, string levelCode) {
@@ -487,16 +487,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timePlayedType + "-" + code;
     }
     
-    public static string timePlayedTypeCodeContentState(string code, string appContentState) {
-        return timePlayedTypeCode(code) + "-" + appContentState;
+    public static string timePlayedTypeCodeContentState(string code, string app_content_state) {
+        return timePlayedTypeCode(code) + "-" + app_content_state;
     }
     
-    public static string timePlayedTypeCodePackContentState(string code, string packCode, string appContentState) {
-        return timePlayedTypeCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timePlayedTypeCodePackContentState(string code, string packCode, string app_content_state) {
+        return timePlayedTypeCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timePlayedTypeCodePackContentState(string packCode, string appContentState) {
-        return timePlayedTypeCode() + "-" + packCode + "-" + appContentState;
+    public static string timePlayedTypeCodePackContentState(string packCode, string app_content_state) {
+        return timePlayedTypeCode() + "-" + packCode + "-" + app_content_state;
     }
     
     public static string timesPlayedTypeCode() {
@@ -507,16 +507,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timesPlayedType + "-" + code;
     }
     
-    public static string timesPlayedTypeCodeContentState(string code, string appContentState) {
-        return timesPlayedTypeCode(code) + "-" + appContentState;
+    public static string timesPlayedTypeCodeContentState(string code, string app_content_state) {
+        return timesPlayedTypeCode(code) + "-" + app_content_state;
     }
     
-    public static string timesPlayedTypeCodePackContentState(string code, string packCode, string appContentState) {
-        return timesPlayedTypeCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedTypeCodePackContentState(string code, string packCode, string app_content_state) {
+        return timesPlayedTypeCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timesPlayedTypeCodePackContentState(string packCode, string appContentState) {
-        return timesPlayedTypeCode() + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedTypeCodePackContentState(string packCode, string app_content_state) {
+        return timesPlayedTypeCode() + "-" + packCode + "-" + app_content_state;
     }
     
     // pack
@@ -529,16 +529,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timePlayedPack + "-" + code;
     }
     
-    public static string timePlayedPackCodeContentState(string code, string appContentState) {
-        return timePlayedPackCode(code) + "-" + appContentState;
+    public static string timePlayedPackCodeContentState(string code, string app_content_state) {
+        return timePlayedPackCode(code) + "-" + app_content_state;
     }
     
-    public static string timePlayedPackCodePackContentState(string code, string packCode, string appContentState) {
-        return timePlayedPackCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timePlayedPackCodePackContentState(string code, string packCode, string app_content_state) {
+        return timePlayedPackCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timePlayedPackCodePackContentState(string packCode, string appContentState) {
-        return timePlayedPackCode() + "-" + packCode + "-" + appContentState;
+    public static string timePlayedPackCodePackContentState(string packCode, string app_content_state) {
+        return timePlayedPackCode() + "-" + packCode + "-" + app_content_state;
     }
     
     public static string timesPlayedPackCode() {
@@ -549,16 +549,16 @@ public class BaseGameStatisticCodes {
         return GameStatisticCodes.timesPlayedPack + "-" + code;
     }
     
-    public static string timesPlayedPackCodeContentState(string code, string appContentState) {
-        return timesPlayedPackCode(code) + "-" + appContentState;
+    public static string timesPlayedPackCodeContentState(string code, string app_content_state) {
+        return timesPlayedPackCode(code) + "-" + app_content_state;
     }
     
-    public static string timesPlayedPackCodePackContentState(string code, string packCode, string appContentState) {
-        return timesPlayedPackCode(code) + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedPackCodePackContentState(string code, string packCode, string app_content_state) {
+        return timesPlayedPackCode(code) + "-" + packCode + "-" + app_content_state;
     }
     
-    public static string timesPlayedPackCodePackContentState(string packCode, string appContentState) {
-        return timesPlayedPackCode() + "-" + packCode + "-" + appContentState;
+    public static string timesPlayedPackCodePackContentState(string packCode, string app_content_state) {
+        return timesPlayedPackCode() + "-" + packCode + "-" + app_content_state;
     }
     
 }
@@ -587,14 +587,14 @@ public class BaseGameAchievementCodes {
         return code;
     }
     
-    public static string genericCodeContentState(string code, string appContentState) {
-        code = code + "-" + appContentState;
+    public static string genericCodeContentState(string code, string app_content_state) {
+        code = code + "-" + app_content_state;
         code = formatAchievementCode(code);
         return code;
     }
     
-    public static string genericCodePackContentState(string code, string packCode, string appContentState) {
-        code = code + "-" + packCode + "-" + appContentState;
+    public static string genericCodePackContentState(string code, string packCode, string app_content_state) {
+        code = code + "-" + packCode + "-" + app_content_state;
         code = formatAchievementCode(code);
         return code;
     }
@@ -802,20 +802,20 @@ public class BaseGamePlayerProgress {
     
     public virtual void ProcessProgressTimesPlayedTracker(string trackerCode) {
         string packCode = GamePacks.Current.code;
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timesPlayedTrackerCode();
-        string keyContentState = GameStatisticCodes.timesPlayedTrackerCode(appContentState);
+        string keyContentState = GameStatisticCodes.timesPlayedTrackerCode(app_content_state);
         string keyTracker = GameStatisticCodes.timesPlayedTrackerCode(trackerCode);
         
         string keyTrackerContentState = GameStatisticCodes.timesPlayedTrackerCodeContentState(
             trackerCode,
-            appContentState);
+            app_content_state);
         
         string keyTrackerPackContentState = GameStatisticCodes.timesPlayedTrackerCodePackContentState(
             trackerCode,
             packCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -830,20 +830,20 @@ public class BaseGamePlayerProgress {
     
     public virtual void ProcessProgressTimePlayedTracker(string trackerCode) {
         string packCode = GamePacks.Current.code;
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedTrackerCode();
-        string keyContentState = GameStatisticCodes.timePlayedTrackerCode(appContentState);
+        string keyContentState = GameStatisticCodes.timePlayedTrackerCode(app_content_state);
         string keyTracker = GameStatisticCodes.timePlayedTrackerCode(trackerCode);      
         
         string keyTrackerContentState = GameStatisticCodes.timePlayedTrackerCodeContentState(
             trackerCode,
-            appContentState);
+            app_content_state);
         
         string keyTrackerPackContentState = GameStatisticCodes.timePlayedTrackerCodePackContentState(
             trackerCode,
             packCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyContentState);
@@ -854,20 +854,20 @@ public class BaseGamePlayerProgress {
     
     public virtual void EndProcessProgressTimePlayedTracker(string trackerCode) {
         string packCode = GamePacks.Current.code;
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedTrackerCode();
-        string keyContentState = GameStatisticCodes.timePlayedTrackerCode(appContentState);
+        string keyContentState = GameStatisticCodes.timePlayedTrackerCode(app_content_state);
         string keyTracker = GameStatisticCodes.timePlayedTrackerCode(trackerCode);
         
         string keyTrackerContentState = GameStatisticCodes.timePlayedTrackerCodeContentState(
             trackerCode,
-            appContentState);
+            app_content_state);
         
         string keyTrackerPackContentState = GameStatisticCodes.timePlayedTrackerCodePackContentState(
             trackerCode,
             packCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(keyContentState);
@@ -976,10 +976,10 @@ public class BaseGamePlayerProgress {
     // total process    
     
     public virtual void ProcessProgressTimesPlayedTotal(string code, float val) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.totalCode(code);
-        string keyContentState = GameStatisticCodes.totalCodeContentState(code, appContentState);
+        string keyContentState = GameStatisticCodes.totalCodeContentState(code, app_content_state);
         string keyLevel = GameStatisticCodes.totalCodeLevelCurrent(code);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, val);
@@ -999,10 +999,10 @@ public class BaseGamePlayerProgress {
     // high process
     
     public virtual void ProcessProgressTimesPlayedHigh(string code, float val) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.highCode(code);
-        string keyContentState = GameStatisticCodes.highCodeContentState(code, appContentState);
+        string keyContentState = GameStatisticCodes.highCodeContentState(code, app_content_state);
         string keyLevel = GameStatisticCodes.highCodeLevelCurrent(code);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, val);
@@ -1037,15 +1037,15 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimesPlayedAction(string actionCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timesPlayedActionCode();
-        string keyContentState = GameStatisticCodes.timesPlayedActionCode(appContentState);
+        string keyContentState = GameStatisticCodes.timesPlayedActionCode(app_content_state);
         string keyAction = GameStatisticCodes.timesPlayedActionCode(actionCode);
         
         string keyActionContentState = GameStatisticCodes.timesPlayedActionCodeContentState(
             actionCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1058,15 +1058,15 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimePlayedAction(string actionCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedActionCode();
-        string keyContentState = GameStatisticCodes.timePlayedActionCode(appContentState);
+        string keyContentState = GameStatisticCodes.timePlayedActionCode(app_content_state);
         string keyAction = GameStatisticCodes.timePlayedActionCode(actionCode);
         
         string keyActionContentState = GameStatisticCodes.timePlayedActionCodeContentState(
             actionCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyContentState);
@@ -1081,15 +1081,15 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void EndProcessProgressTimePlayedAction(string actionCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedActionCode();
-        string keyContentState = GameStatisticCodes.timePlayedActionCode(appContentState);
+        string keyContentState = GameStatisticCodes.timePlayedActionCode(app_content_state);
         string keyAction = GameStatisticCodes.timePlayedActionCode(actionCode);
         
         string keyActionContentState = GameStatisticCodes.timePlayedActionCodeContentState(
             actionCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(keyContentState);
@@ -1114,14 +1114,14 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimesPlayedPack(string packCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string keyDefault = GameStatisticCodes.timesPlayed;
         string key = GameStatisticCodes.timesPlayedPackCode();
         string keyPack = GameStatisticCodes.timesPlayedPackCode(packCode);
         
         string keyContentState = GameStatisticCodes.timesPlayedContentState(
-            appContentState);       
+            app_content_state);       
         
         GamePlayerProgress.Instance.SetStatisticValue(keyDefault, 1);
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
@@ -1134,14 +1134,14 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimePlayedPack(string packCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string keyDefault = GameStatisticCodes.timePlayedCode();
         string key = GameStatisticCodes.timePlayedPackCode();
         string keyPack = GameStatisticCodes.timePlayedPackCode(packCode);
         
         string keyContentState = GameStatisticCodes.timePlayedContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyDefault);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(key);
@@ -1150,14 +1150,14 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void EndProcessProgressTimePlayedPack(string packCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string keyDefault = GameStatisticCodes.timePlayedCode();
         string key = GameStatisticCodes.timePlayedPackCode();
         string keyPack = GameStatisticCodes.timePlayedPackCode(packCode);
         
         string keyContentState = GameStatisticCodes.timePlayedContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(keyDefault);             
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(key);
@@ -1188,16 +1188,16 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimesPlayedType(string typeCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timesPlayedTypeCode();
         string keyContentState = GameStatisticCodes.timesPlayedTypeCode(
-            appContentState);
+            app_content_state);
         string keyType = GameStatisticCodes.timesPlayedTypeCode(typeCode);
         
         string keyTypeContentState = GameStatisticCodes.timesPlayedTypeCodeContentState(
             typeCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1210,16 +1210,16 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTimePlayedType(string typeCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedTypeCode();
         string keyContentState = GameStatisticCodes.timePlayedTypeCode(
-            appContentState);
+            app_content_state);
         string keyType = GameStatisticCodes.timePlayedTypeCode(typeCode);
         
         string keyTypeContentState = GameStatisticCodes.timePlayedTypeCodeContentState(
             typeCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.StartTimeViewedCollection(keyContentState);
@@ -1228,16 +1228,16 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void EndProcessProgressTimePlayedType(string typeCode) {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.timePlayedTypeCode();
         string keyContentState = GameStatisticCodes.timePlayedTypeCode(
-            appContentState);
+            app_content_state);
         
         string keyType = GameStatisticCodes.timePlayedTypeCode(typeCode);
         string keyTypeContentState = GameStatisticCodes.timePlayedTypeCodeContentState(
             typeCode,
-            appContentState);
+            app_content_state);
         
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(key);
         GamePlayerProgressRuntimeData.Instance.EndTimeViewedCollection(keyContentState);
@@ -1259,12 +1259,12 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressSwipesFull() {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.swipes;
         
         string keyContentState = GameStatisticCodes.swipesContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1282,12 +1282,12 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressTapsFull() {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.taps;
         
         string keyContentState = GameStatisticCodes.tapsContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1305,12 +1305,12 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressZoomsFull() {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.zooms;
         
         string keyContentState = GameStatisticCodes.zoomsContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1327,12 +1327,12 @@ public class BaseGamePlayerProgress {
     }
     
     public virtual void ProcessProgressSpinsFull() {
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = GameStatisticCodes.spins;
         
         string keyContentState = GameStatisticCodes.spinsContentState(
-            appContentState);
+            app_content_state);
         
         GamePlayerProgress.Instance.SetStatisticValue(key, 1);
         GamePlayerProgress.Instance.SetStatisticValue(keyContentState, 1);
@@ -1370,11 +1370,11 @@ public class BaseGamePlayerProgress {
     // action code / actions found stats
     
     /*
-    public virtual void ProcessStatsActionCode(string packCode, string appContentState, string actionCode) {
+    public virtual void ProcessStatsActionCode(string packCode, string app_content_state, string actionCode) {
         GamePlayerProgress.Instance.SetStatisticValue(
             GetKeyStatisticCodePackContentStateAction("actions-found", 
                 packCode, 
-                appContentState,
+                app_content_state,
                 actionCode)
             , 1f);
     }
@@ -1444,7 +1444,7 @@ public class BaseGamePlayerProgress {
                                     codes.Add(filterCode);
                                 }
                                 
-                                if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                if (filter.includeKeys.app_content_state != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
@@ -1487,7 +1487,7 @@ public class BaseGamePlayerProgress {
                                         codes.Add(filterCode);
                                     }
                                     
-                                    if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                    if (filter.includeKeys.app_content_state != GameFilterIncludeType.none) {
                                         string key = GameStatisticCodes.genericCodeContentState(
                                             filterCode, 
                                             AppContentStates.Current.code);
@@ -1566,7 +1566,7 @@ public class BaseGamePlayerProgress {
                                     }
                                     
                                     /*
-                                    if(filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                    if(filter.includeKeys.app_content_state != GameFilterIncludeType.none) {
                                         string key = GameStatisticCodes.genericCodeContentState(
                                             filterCode, 
                                             AppContentStates.Current.code);
@@ -1726,7 +1726,7 @@ public class BaseGamePlayerProgress {
                                 // add explicit code
                                 codes.Add(filterCode);
                                 
-                                if (filter.includeKeys.appContentState != GameFilterIncludeType.none) {
+                                if (filter.includeKeys.app_content_state != GameFilterIncludeType.none) {
                                     string key = GameStatisticCodes.genericCodeContentState(
                                         filterCode, 
                                         AppContentStates.Current.code);
@@ -1781,7 +1781,7 @@ public class BaseGamePlayerProgress {
         if (full) {
             
             string packCode = GamePacks.Current.code;
-            string appContentState = AppContentStates.Current.code;
+            string app_content_state = AppContentStates.Current.code;
             
             string key = statKey;   
             
@@ -1792,11 +1792,11 @@ public class BaseGamePlayerProgress {
             string keyPackContentState = GameStatisticCodes.genericCodePackContentState(
                 statKey,
                 packCode,
-                appContentState);
+                app_content_state);
             
             string keyContentState = GameStatisticCodes.genericCodeContentState(
                 statKey,
-                appContentState);
+                app_content_state);
             
             LogUtil.Log("Check:key:" + key);
             statValue = GameProfileStatistics.Current.GetStatisticValue(key);           
@@ -1842,10 +1842,10 @@ public class BaseGamePlayerProgress {
                                             StatEqualityTypeEnum equalType, 
                                             float checkValue) {
         // This checks not only the key but also pack, type, tracker and appcontent statekeys
-        string appContentState = AppContentStates.Current.code;
+        string app_content_state = AppContentStates.Current.code;
         
         string key = achievementKey;
-        string keyContentState = achievementKey + "_" + appContentState;
+        string keyContentState = achievementKey + "_" + app_content_state;
         
         CheckStatSetAchievement(key, statValue, equalType, checkValue); 
         CheckStatSetAchievement(keyContentState, statValue, equalType, checkValue);     
@@ -1908,13 +1908,13 @@ public class BaseGamePlayerProgress {
     
     public virtual void SetAchievementAll(string key, bool completed) { 
         string packCode = GamePacks.Current.code;
-        string appContentState = AppContentStates.Current.code;
-        SetAchievementAll(key, packCode, appContentState, completed);
+        string app_content_state = AppContentStates.Current.code;
+        SetAchievementAll(key, packCode, app_content_state, completed);
     }
     
-    public virtual void SetAchievementAll(string key, string packCode, string appContentState, bool completed) {    
+    public virtual void SetAchievementAll(string key, string packCode, string app_content_state, bool completed) {    
         SetAchievement(key, completed);
-        //SetAchievementContentState(key, appContentState, completed);
+        //SetAchievementContentState(key, app_content_state, completed);
     }
     
     public virtual void SetAchievementContentState(string key, string contentState, bool completed) {   

@@ -272,7 +272,7 @@ public class BaseAudioController : GameObjectBehavior {
             
             bool handled = false;
             
-            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
                 
                 if (objectAudio.type == GameDataActionKeys.music_ui_intro) {
                     
@@ -310,7 +310,7 @@ public class BaseAudioController : GameObjectBehavior {
             
             bool handled = false;
 
-            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
                                 
                 if (objectAudio.type == GameDataActionKeys.music_ui_loop) {
                     
@@ -345,7 +345,7 @@ public class BaseAudioController : GameObjectBehavior {
         
         foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_game)) {            
             
-            foreach (GameObjectAudio objectAudio in ObjectUtil.FindObjects<GameObjectAudio>()) {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
                 
                 if (objectAudio.type == GameDataActionKeys.music_game) {
                     currentGameLoop = objectAudio.gameObject;                    

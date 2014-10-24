@@ -3328,7 +3328,7 @@ public class BaseGamePlayerController : GameActor {
         
     public virtual void FindGamePlayerCamera() {
         if (gameCameraSmoothFollow == null || gameCameraSmoothFollowGround == null) {
-            foreach (GameCameraSmoothFollow cam in ObjectUtil.FindObjects<GameCameraSmoothFollow>()) {
+            foreach (GameCameraSmoothFollow cam in UnityObjectUtil.FindObjects<GameCameraSmoothFollow>()) {
                 if (cam.name.Contains("Ground")) {
                     gameCameraSmoothFollowGround = cam;
                 }
@@ -3764,7 +3764,7 @@ public class BaseGamePlayerController : GameActor {
             controllerData.lastNetworkContainerFind = Time.time;
             if (GameController.Instance.gameState == GameStateGlobal.GameStarted) {
                 foreach (Gameverses.GameNetworkPlayerContainer playerContainer 
-                         in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
+                         in UnityObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
                     if (playerContainer.uniqueId == uid) {
                         currentNetworkPlayerContainer = playerContainer;
                         return currentNetworkPlayerContainer;
@@ -3779,7 +3779,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual bool HasNetworkContainer(string uid) {
 
         foreach (Gameverses.GameNetworkPlayerContainer playerContainer 
-                 in ObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
+                 in UnityObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
             if (playerContainer.uniqueId == uid) {
                 currentNetworkPlayerContainer = playerContainer;
                 return true;

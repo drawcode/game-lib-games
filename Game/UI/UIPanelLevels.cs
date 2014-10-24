@@ -76,7 +76,7 @@ public class UIPanelLevels : UIAppPanelBaseList {
                 listSetGrid.Reposition();               
             }
          
-            foreach(UIGrid grid in ObjectUtil.FindObjects<UIGrid>()) {
+            foreach(UIGrid grid in UnityObjectUtil.FindObjects<UIGrid>()) {
                 //yield return new WaitForEndOfFrame();
                 grid.Reposition();
                 //yield return new WaitForEndOfFrame();
