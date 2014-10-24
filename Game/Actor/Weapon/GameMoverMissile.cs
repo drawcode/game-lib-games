@@ -18,7 +18,7 @@ public class GameMoverMissile : GameWeaponBase {
 
     private void Start() {
         timeCount = Time.time;
-        Destroy(gameObject, LifeTime);
+        GameObjectHelper.DestroyGameObject(gameObject, LifeTime, true);
     }
     
     private void FixedUpdate() {
@@ -30,10 +30,15 @@ public class GameMoverMissile : GameWeaponBase {
         }
     }
 
+    GameDamage gameDamageObject = null;
+
     private void Update() {
         if (Time.time >= (timeCount + LifeTime) - 0.5f) {
-            if (GetComponent<GameDamage>()) {
-                GetComponent<GameDamage>().Active();
+            if(gameDamageObject == null) {
+                gameDamageObject = GetComponent<GameDamage>();
+            }
+            if (gameDamageObject != null) {
+                gameDamageObject.Active();
             }
         }
         

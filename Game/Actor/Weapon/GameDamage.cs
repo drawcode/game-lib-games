@@ -27,15 +27,14 @@ public class GameDamage : GameDamageBase {
 
     public void Active() {
         if (Effect) {
-            GameObject obj = (GameObject)Instantiate(Effect, transform.position, transform.rotation);
-            Destroy(obj, 3);
+            GameObject obj = GameObjectHelper.CreateGameObject(Effect, transform.position, transform.rotation, true);
+            GameObjectHelper.DestroyGameObject(obj, 3, true);
         }
 
         if (Explosive)
             ExplosionDamage();
 
-        Destroy(gameObject);
-        //GameObjectHelper.DestroyGameObject(gameObject, true);
+        GameObjectHelper.DestroyGameObject(gameObject, 3, true);
     }
 
     private void ExplosionDamage() {
@@ -58,11 +57,16 @@ public class GameDamage : GameDamageBase {
         HandleApplyDamage(collision.gameObject);
     }
 
+    
+    GameDamageManager damageManage = null;
+
     public void HandleApplyDamage(GameObject go) {
-        GameDamageManager damageManage = go.GetComponent<GameDamageManager>();
-        if (damageManage) {
-            if(damageManage.gamePlayerController != null && gamePlayerController != null) {
-                if(damageManage.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+        if(damageManage == null) {
+            damageManage = go.GetComponent<GameDamageManager>();        
+        }
+        if (damageManage != null) {
+            if (damageManage.gamePlayerController != null && gamePlayerController != null) {
+                if (damageManage.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
                     return;
                 }
             }
@@ -76,20 +80,20 @@ public class GameDamage : GameDamageBase {
 
             bool doDamage = false;
             
-            if(collision.transform.name == "GamePlayerCollider") {
+            if (collision.transform.name == "GamePlayerCollider") {
                 GamePlayerCollision gamePlayerCollision = 
                     collision.transform.gameObject.Get<GamePlayerCollision>();
-                if(gamePlayerCollision != null) {
+                if (gamePlayerCollision != null) {
 
-                    if(gamePlayerController == null) {
+                    if (gamePlayerController == null) {
                         return;
                     }
                     
-                    if(gamePlayerCollision.gamePlayerController == null) {
+                    if (gamePlayerCollision.gamePlayerController == null) {
                         return;
                     }
 
-                    if(gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                    if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
                         return;
                     }
                     else {
@@ -104,9 +108,10 @@ public class GameDamage : GameDamageBase {
                 doDamage = true;
             }
 
-            if(doDamage) {                
-                if (!Explosive)
+            if (doDamage) {                
+                if (!Explosive) {
                     NormalDamage(collision);
+                }
                 Active();
             }
         }

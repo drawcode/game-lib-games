@@ -18,9 +18,10 @@ public class GameExplosionObject : MonoBehaviour {
         }
         if (Prefab) {
             for (int i = 0; i < Num; i++) {
-                Vector3 pos = new Vector3(Random.Range(-10, 10), Random.Range(-10, 20), Random.Range(-10, 10)) / 10f;
-                GameObject obj = (GameObject)Instantiate(Prefab, transform.position + pos, transform.rotation);
-                Destroy(obj, LifeTimeObject);
+                float scaleHalf = Scale/2;
+                Vector3 pos = new Vector3(Random.Range(-scaleHalf, scaleHalf), Random.Range(-scaleHalf, Scale), Random.Range(-scaleHalf, scaleHalf)) / scaleHalf;
+                GameObject obj = GameObjectHelper.CreateGameObject(Prefab, transform.position + pos, transform.rotation, true);
+                GameObjectHelper.DestroyGameObject(obj, LifeTimeObject, true);
                 
                 float scale = Scale;
                 if (RandomScale) {

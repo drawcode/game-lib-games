@@ -5,24 +5,23 @@ public class GameDamageManager : MonoBehaviour {
     public AudioClip[] HitSound;
     public GameObject Effect;
     public int HP = 100;
-
     public GamePlayerController gamePlayerController;
 
     private void Start() {
-        if(gamePlayerController == null) {
+        if (gamePlayerController == null) {
             gamePlayerController = GetComponent<GamePlayerController>();
         }
     }
 
     public void ApplyDamage(int damage) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(gamePlayerController != null) {
-            if(!gamePlayerController.isDead 
-               && !gamePlayerController.IsPlayerControlled) {
+        if (gamePlayerController != null) {
+            if (!gamePlayerController.isDead 
+                && !gamePlayerController.IsPlayerControlled) {
                 gamePlayerController.Hit(damage / 10);
             }
         }
@@ -47,9 +46,10 @@ public class GameDamageManager : MonoBehaviour {
 
     private void Dead() {
         if (Effect) {
-            Instantiate(Effect, transform.position, transform.rotation);
+            GameObjectHelper.CreateGameObject(Effect, transform.position, transform.rotation, true);
         }
-        Destroy(this.gameObject);
+
+        GameObjectHelper.DestroyGameObject(this.gameObject, true);
     }
 
 }

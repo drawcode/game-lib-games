@@ -43,7 +43,6 @@ public class GameWeaponLauncher : GameWeaponBase {
     private Vector3 torqueTemp;
     private float reloadTimeTemp;
     private AudioSource audio;
-
     [HideInInspector]
     public bool
         Reloading;
@@ -70,14 +69,19 @@ public class GameWeaponLauncher : GameWeaponBase {
         AimObject;
 
     private void rayAiming() {
+
         RaycastHit hit;
+
         if (Physics.Raycast(transform.position, this.transform.forward, out hit, MaxAimRange)) {
+
             if (Missile != null && hit.collider.tag != Missile.tag) {
+            
                 AimPoint = hit.point;
                 AimObject = hit.collider.gameObject;
             }
         }
         else {
+        
             AimPoint = this.transform.position + (this.transform.forward * MaxAimRange);
             AimObject = null;
         }
@@ -86,7 +90,7 @@ public class GameWeaponLauncher : GameWeaponBase {
     
     void FixedUpdate() {
 
-        if(GameConfigs.isGameRunning) {
+        if (GameConfigs.isGameRunning) {
             return;
         }
 
@@ -97,7 +101,7 @@ public class GameWeaponLauncher : GameWeaponBase {
     
     private void Update() {
         
-        if(GameConfigs.isGameRunning) {
+        if (GameConfigs.isGameRunning) {
             return;
         }
 
@@ -109,22 +113,31 @@ public class GameWeaponLauncher : GameWeaponBase {
                 CurrentCamera = Camera.current;
         }
         if (OnActive) {
+
             if (TorqueObject) {
+            
                 TorqueObject.transform.Rotate(torqueTemp * Time.deltaTime);
                 torqueTemp = Vector3.Lerp(torqueTemp, Vector3.zero, Time.deltaTime);
             }
             if (Seeker) {
             
                 for (int t=0; t<TargetTag.Length; t++) {
+                
                     if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
+                    
                         GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
                         float distance = int.MaxValue;
                         
                         if (AimObject != null && AimObject.tag == TargetTag[t]) {
+                        
                             float dis = Vector3.Distance(AimObject.transform.position, transform.position);
+
                             if (DistanceLock > dis) {
+                            
                                 if (distance > dis) {
+                            
                                     if (timetolockcount + TimeToLock < Time.time) { 
+                                    
                                         distance = dis;
                                         target = AimObject;
                                     }
@@ -132,14 +145,21 @@ public class GameWeaponLauncher : GameWeaponBase {
                             }   
                         }
                         else {
+
                             for (int i = 0; i < objs.Length; i++) {
+                            
                                 if (objs[i]) {
+                                
                                     Vector3 dir = (objs[i].transform.position - transform.position).normalized;
                                     float direction = Vector3.Dot(dir, transform.forward);
                                     float dis = Vector3.Distance(objs[i].transform.position, transform.position);
+
                                     if (direction >= AimDirection) {
+                                    
                                         if (DistanceLock > dis) {
+                                        
                                             if (distance > dis) {
+                                            
                                                 if (timetolockcount + TimeToLock < Time.time) { 
                                                     distance = dis;
                                                     target = objs[i];
@@ -153,7 +173,9 @@ public class GameWeaponLauncher : GameWeaponBase {
                     }
                 }
             }
+
             if (target) {
+            
                 float targetdistance = Vector3.Distance(transform.position, target.transform.position);
                 Vector3 dir = (target.transform.position - transform.position).normalized;
                 float direction = Vector3.Dot(dir, transform.forward);
@@ -164,7 +186,9 @@ public class GameWeaponLauncher : GameWeaponBase {
             }
         
             if (Reloading) {
+
                 ReloadingProcess = ((1 / ReloadTime) * (reloadTimeTemp + ReloadTime - Time.time));
+
                 if (Time.time >= reloadTimeTemp + ReloadTime) {
                     Reloading = false;
                     if (SoundReloaded) {
@@ -199,14 +223,17 @@ public class GameWeaponLauncher : GameWeaponBase {
             return;
         
         if (CurrentCamera) {
+
             Vector3 dir = (aimtarget.position - CurrentCamera.transform.position).normalized;
+
             float direction = Vector3.Dot(dir, CurrentCamera.transform.forward);
+
             if (direction > 0.5f) {
                 //Vector3 screenPos = CurrentCamera.WorldToScreenPoint(aimtarget.transform.position);
                 //float distance = Vector3.Distance(transform.position, aimtarget.transform.position);
                 if (locked) {
                     //if (TargetLockedTexture)
-                        //GUI.DrawTexture(new Rect(screenPos.x - TargetLockedTexture.width / 2, Screen.height - screenPos.y - TargetLockedTexture.height / 2, TargetLockedTexture.width, TargetLockedTexture.height), TargetLockedTexture);
+                    //GUI.DrawTexture(new Rect(screenPos.x - TargetLockedTexture.width / 2, Screen.height - screenPos.y - TargetLockedTexture.height / 2, TargetLockedTexture.width, TargetLockedTexture.height), TargetLockedTexture);
                     //GUI.Label(new Rect(screenPos.x + 40, Screen.height - screenPos.y, 200, 30), aimtarget.name + " " + Mathf.Floor(distance) + "m.");
                 }
                 else {
@@ -229,8 +256,11 @@ public class GameWeaponLauncher : GameWeaponBase {
             return;
         
         if (CurrentCamera) {
+
             Vector3 screenPosAim = CurrentCamera.WorldToScreenPoint(AimPoint);
+
             crosshairPos += ((screenPosAim - crosshairPos) / 5);
+
             if (CrosshairTexture) {
                 //GUI.DrawTexture(new Rect(crosshairPos.x - CrosshairTexture.width / 2, Screen.height - crosshairPos.y - CrosshairTexture.height / 2, CrosshairTexture.width, CrosshairTexture.height), CrosshairTexture);
                 
@@ -276,17 +306,17 @@ public class GameWeaponLauncher : GameWeaponBase {
     }
 
     public void NameEffect(GameObject bullet) {
-        if(bullet != null) {
-            foreach(ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) { 
-                if(gamePlayerController == null) {
+        if (bullet != null) {
+            foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) { 
+                if (gamePlayerController == null) {
                     break;
                 }
                 
-                if(gamePlayerController.weaponPrimary == null) {
+                if (gamePlayerController.weaponPrimary == null) {
                     break;
                 }
                 
-                if(gamePlayerController.weaponPrimary.gameWeaponData == null) {
+                if (gamePlayerController.weaponPrimary.gameWeaponData == null) {
                     break;
                 }
                 
@@ -298,23 +328,33 @@ public class GameWeaponLauncher : GameWeaponBase {
     private int currentOuter = 0;
 
     public void Shoot() {
+
         if (InfinityAmmo) {
+        
             Ammo = 1;   
         }
+
         if (Ammo > 0) {
+        
             if (Time.time > nextFireTime + FireRate) {
+            
                 nextFireTime = Time.time;
                 torqueTemp = TorqueSpeedAxis;
                 Ammo -= 1;
+
                 Vector3 missileposition = this.transform.position;
                 Quaternion missilerotate = this.transform.rotation;
+
                 if (MissileOuter.Length > 0) {
+                
                     missilerotate = MissileOuter[currentOuter].transform.rotation;  
                     missileposition = MissileOuter[currentOuter].transform.position;    
                 }
 
                 if (MissileOuter.Length > 0) {
+
                     currentOuter += 1;
+
                     if (currentOuter >= MissileOuter.Length)
                         currentOuter = 0;
                 }
@@ -334,12 +374,14 @@ public class GameWeaponLauncher : GameWeaponBase {
                 }
             
                 for (int i = 0; i < NumBullet; i++) {
+                
                     if (Missile) {
+                    
                         Vector3 spread = new Vector3(Random.Range(-Spread, Spread), Random.Range(-Spread, Spread), Random.Range(-Spread, Spread)) / 100;
                         Vector3 direction = this.transform.forward + spread;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
-                            Missile, missileposition, missilerotate, true);
+                            Missile, missileposition, missilerotate, false);
 
                         NameEffect(bullet);
 

@@ -6,21 +6,27 @@ public class GameMoverBullet : GameWeaponBase {
     public float Speed = 80;
     public float SpeedMax = 80;
     public float SpeedMult = 1;
+    private bool hasRigidBody = false;
+    private Rigidbody rigbody;
 
     private void Start() {
-        Destroy(gameObject, Lifetime);
+        GameObjectHelper.DestroyGameObject(gameObject, Lifetime, true);
+        rigbody = this.rigbody;
+        hasRigidBody = rigbody ? true : false;
     }
 
     private void FixedUpdate() {
-        if (!this.rigidbody)
+        if (!hasRigidBody)
             return;
-        
+
+
+
         if (!RigidbodyProjectile) {
-            rigidbody.velocity = transform.forward * Speed;
+            rigbody.velocity = transform.forward * Speed;
         }
         else {
-            if (this.rigidbody.velocity.normalized != Vector3.zero)
-                this.transform.forward = this.rigidbody.velocity.normalized;    
+            if (rigbody.velocity.normalized != Vector3.zero)
+                this.transform.forward = rigbody.velocity.normalized;    
         }
         if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;

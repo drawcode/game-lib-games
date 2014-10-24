@@ -16,12 +16,12 @@ public class GameRayShoot : GameDamageBase {
         if (Physics.Raycast(this.transform.position, this.transform.forward, out hit, Range)) {
             AimPoint = hit.point;
             if (Explosion != null) {
-                explosion = (GameObject)GameObject.Instantiate(Explosion, AimPoint, this.transform.rotation);
+                explosion = GameObjectHelper.CreateGameObject(Explosion, AimPoint, this.transform.rotation, true);
             }
         }
         else {
             AimPoint = this.transform.forward * Range;
-            explosion = (GameObject)GameObject.Instantiate(Explosion, AimPoint, this.transform.rotation);
+            explosion = GameObjectHelper.CreateGameObject(Explosion, AimPoint, this.transform.rotation, true);
             
         }
         if (explosion) {
@@ -35,6 +35,7 @@ public class GameRayShoot : GameDamageBase {
             trail.SetPosition(1, AimPoint);
         }
         Destroy(this.gameObject, LifeTime);
+        GameObjectHelper.DestroyGameObject(this.gameObject, LifeTime, true);
     }
 
     void Update() {
