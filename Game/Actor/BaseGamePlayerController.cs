@@ -1618,7 +1618,9 @@ public class BaseGamePlayerController : GameActor {
         weaponInventory.Clear();
 
         foreach (GameWeapon weapon in GameWeapons.Instance.GetAll()) {
-            weaponInventory.Add(weapon.code);
+            if(weapon.active) {
+                weaponInventory.Add(weapon.code);
+            }
         }
         
         // TODO load from data
@@ -3644,13 +3646,14 @@ public class BaseGamePlayerController : GameActor {
         if (!controllerReady) {
             return;
         }
-
-        float trailTime =
-            (Math.Abs(controllerData.impact.x) +
-            Math.Abs(controllerData.impact.y) +
-            Math.Abs(controllerData.impact.z)) * 5f;
         
         if (IsPlayerControlled) {
+            
+            float trailTime =
+                (Math.Abs(controllerData.impact.x) +
+                 Math.Abs(controllerData.impact.y) +
+                 Math.Abs(controllerData.impact.z)) * 5f;
+
             PlayerEffectTrailBoostTime(trailTime * controllerData.thirdPersonController.moveSpeed);
             PlayerEffectTrailGroundTime(-trailTime + controllerData.thirdPersonController.moveSpeed);
 
