@@ -282,52 +282,5 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 				ShowOverlayWhiteFlash();
 			}
 		}
-	}
-	
-	/*
-
-    void OnButtonClickEventHandler(string buttonName) {
-		LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-		
-		if(buttonName == buttonNorahGlowObject.name 
-			|| buttonName == buttonNorahStaticObject.name) {
-			LogUtil.Log("Norah Clicked: " + buttonName);
-		}
-
-    }
-	
-    void OnListItemClickEventHandler(string listName, string listIndex, bool selected) {
-        LogUtil.Log("OnListItemClickEventHandler: listName:" + listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
-
-	}
-
-    void OnListItemSelectEventHandler(string listName, string selectName) {
-        LogUtil.Log("OnListItemSelectEventHandler: listName:" + listName + " selectName:" + selectName );
-
-        if(listName == "ListState") {
-
-        }
-    }
-
-    void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
-        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
-
-        // Change appstate
-
-        if(sliderName == "AudioEffectsSlider") {
-            //GameProfiles.Current.SetAudioEffectsVolume(sliderValue);
-        }
-    }
-    
-    void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
-        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected );
-        
-        // Change appstate
-        
-        if(checkboxName == "DeviceModeBestCheckbox") {
-            //CameraDevice.Instance.SetFocusMode(
-        }
-    }
-    */
-	
+	}	
 }

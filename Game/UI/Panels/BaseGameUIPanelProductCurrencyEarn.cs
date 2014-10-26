@@ -9,14 +9,11 @@ using Engine.Events;
 public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     
     public static GameUIPanelProductCurrencyEarn Instance;
-
     public UIImageButton buttonHelp;
-    
     public UIImageButton buttonEarnLogin;
     public UIImageButton buttonEarnWebsite;
     public UIImageButton buttonEarnTwitter;
     public UIImageButton buttonEarnFacebook;
-
     public UIImageButton buttonEarnVideoAds;
     public UIImageButton buttonEarnOffers;
     public UIImageButton buttonEarnMoreGames;
@@ -24,7 +21,7 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -34,14 +31,14 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     public virtual void Awake() {
         
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();
-	}
+    
+    public override void Start() {
+        Init();
+    }
+    
+    public override void Init() {
+        base.Init();
+    }
 
     public override void OnEnable() {
 
@@ -86,20 +83,20 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if(className == classNameTo) {
-           //
+        if (className == classNameTo) {
+            //
         }
     }
 
@@ -107,7 +104,7 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     
         LogUtil.Log("OnVideoWatched:" + " amountWatched:" + amountWatched);
 
-        if(amountWatched > .9) {
+        if (amountWatched > .9) {
             GameProfileRPGs.Current.AddCurrency(100);
         }
 
@@ -146,71 +143,76 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
-        if(UIUtil.IsButtonClicked(buttonEarnVideoAds, buttonName)) {
+        if (UIUtil.IsButtonClicked(buttonEarnVideoAds, buttonName)) {
 
             LogUtil.Log("buttonEarnVideoAds: " + buttonName);
 
             AdNetworks.ShowVideoAd();
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnOffers, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnOffers, buttonName)) {
             
             LogUtil.Log("buttonEarnOffers: " + buttonName);
 
             AdNetworks.ShowOfferWall();
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnMoreGames, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnMoreGames, buttonName)) {
             
             LogUtil.Log("buttonEarnMoreGames: " + buttonName);
 
             AdNetworks.ShowMoreApps();
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnFacebook, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnFacebook, buttonName)) {
             
             LogUtil.Log("buttonEarnFacebook: " + buttonName);
 
-            OnFacebookLike("drawlabs");
+            OnFacebookLike("default");
             
-            GameCommunity.LikeUrl(SocialNetworkTypes.facebook, "http://actionbotsgame.com/");
+            GameCommunity.LikeUrl(
+                SocialNetworkTypes.facebook, 
+                Locos.Get(LocoKeys.app_web_url));
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnTwitter, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnTwitter, buttonName)) {
             
             LogUtil.Log("buttonEarnTwitter: " + buttonName);
 
-            OnTwitterFollow("drawlabs");
+            OnTwitterFollow("default");
             
-            Platforms.ShowWebView("Action Bots", "http://twitter.com/actionbots");
+            Platforms.ShowWebView(
+                Locos.Get(LocoKeys.app_display_name), 
+                Locos.Get(LocoKeys.app_web_url_twitter));
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnWebsite, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnWebsite, buttonName)) {
             
             LogUtil.Log("buttonEarnWebsite: " + buttonName);
 
-            OnWebsiteViewed("drawlabs");
+            OnWebsiteViewed("default");
             
-            Platforms.ShowWebView("Action Bots", "http://actionbotsgame.com/");
+            Platforms.ShowWebView(
+                Locos.Get(LocoKeys.app_display_name), 
+                Locos.Get(LocoKeys.app_web_url));
         }
-        else if(UIUtil.IsButtonClicked(buttonEarnViewFullscreenAds, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonEarnViewFullscreenAds, buttonName)) {
             
             LogUtil.Log("buttonEarnViewFullscreenAds: " + buttonName);
             
             AdNetworks.ShowFullscreenAd();
         }
     }
-
-	
-	public static void LoadData() {
-        if(GameUIPanelProductCurrencyEarn.Instance != null) {
+    
+    public static void LoadData() {
+        if (GameUIPanelProductCurrencyEarn.Instance != null) {
             GameUIPanelProductCurrencyEarn.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+    
     public virtual void loadData() {
 
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		LogUtil.Log("LoadDataCo");
+        StartCoroutine(loadDataCo());
+    }
+    
+    IEnumerator loadDataCo() {
+        
+        LogUtil.Log("LoadDataCo");
 
         yield return new WaitForEndOfFrame();
 
@@ -223,16 +225,14 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
         adDisplayState = UIPanelAdDisplayState.BannerBottom;
     }
 
-	public override void AnimateIn() {
-		
-		base.AnimateIn();        
+    public override void AnimateIn() {
+        
+        base.AnimateIn();        
 
-	}
+    }
 
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-	}
-	
-	
+    public override void AnimateOut() {
+        
+        base.AnimateOut();
+    }
 }

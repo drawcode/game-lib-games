@@ -1,4 +1,4 @@
-#define DEV
+//#define DEV
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,21 +44,7 @@ public class UISettingsAudio : GameObjectBehavior {
     void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
         
         //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
-        
-        bool changeAudio = true;
-        
-        #if DEV
-        if (Application.isEditor) {
-            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
-            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);
-            changeAudio = false;
-        }
-        #endif
-        
-        if (!changeAudio) {
-            return;
-        }
-        
+
         if (sliderEffectsVolume != null) {
             if (sliderName == sliderEffectsVolume.name) {
                 GameAudio.SetProfileEffectsVolume(sliderValue);
