@@ -3730,7 +3730,7 @@ public class BaseUIController : GameObjectBehavior {
 
                 if (dataType != null) {
                     
-                    if (dataType == "mission") {
+                    if (dataType.ToString() == "mission") {
 
                         string code = dataCode.ToString();
 

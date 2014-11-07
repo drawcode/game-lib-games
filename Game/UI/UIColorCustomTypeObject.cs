@@ -3,22 +3,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using UnityEngine;
+using UnityEngine; 
 
 using Engine.Events;
 
 public enum UIColorType {
     colorForeground,
-    colorBackground
+	colorBackground,
+	colorForegroundFade,
+	colorOverviewTitle,
+	colorOverviewText
 }
 
 public class UIColorCustomType : GameDataObject {
-    public static string colorForeground = "ui-light";
+	public static string colorForeground = "ui-light";
+	public static string colorForegroundFade = "ui-light-fade";
     public static string colorBackground = "ui-dark";
+	
+	public static string colorOverviewTitle = "ui-overview-title";
+	public static string colorOverviewText = "ui-overview-text";
 
     public UIColorCustomType() {
         this["colorForeground"] = UIColorCustomType.colorForeground;
-        this["colorBackground"] = UIColorCustomType.colorBackground;
+		this["colorBackground"] = UIColorCustomType.colorBackground;
+		this["colorForegroundFade"] = UIColorCustomType.colorForegroundFade;
+		this["colorOverviewTitle"] = UIColorCustomType.colorOverviewTitle;
+		this["colorOverviewText"] = UIColorCustomType.colorOverviewText;
     }
 }
 
