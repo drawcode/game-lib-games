@@ -1,6 +1,62 @@
 using UnityEngine;
 using System.Collections;
 
+public class GameDamageDirector {	
+
+	public static float intervalGameDamageExplosionDamage = 0.2f;	
+	public static float lastGameDamageExplosionDamage = 0;
+	
+	public static float intervalGameDamageChainDamage = 0.2f;	
+	public static float lastGameDamageChainDamage = 0;
+		
+	public static float intervalRayShoot = 0.05f;	
+	public static float lastRayShoot = 0;
+	
+	public static bool AllowExplosion {
+		
+		get {
+			
+			if(GameDamageDirector.lastGameDamageExplosionDamage + 
+			   GameDamageDirector.intervalGameDamageExplosionDamage < Time.time) {
+				GameDamageDirector.lastGameDamageExplosionDamage = Time.time;
+				return true;
+			}
+			
+			return false;
+		}
+	}
+
+	public static bool AllowChain {
+		
+		get {
+			
+			if(GameDamageDirector.lastGameDamageChainDamage + 
+			   GameDamageDirector.intervalGameDamageChainDamage < Time.time) {
+				GameDamageDirector.lastGameDamageChainDamage = Time.time;
+				return true;
+			}
+			
+			return false;
+		}
+	}
+
+	public static bool AllowRayShoot {
+		
+		get {
+			
+			if(GameDamageDirector.lastRayShoot + 
+			   GameDamageDirector.intervalRayShoot < Time.time) {
+				GameDamageDirector.lastRayShoot = Time.time;
+				return true;
+			}
+			
+			return false;
+		}
+	}
+
+}
+
+
 public class GameDamageManager : MonoBehaviour {
     public AudioClip[] HitSound;
     public GameObject Effect;

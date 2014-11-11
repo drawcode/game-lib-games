@@ -18,7 +18,7 @@ public class GameMoverMissile : GameWeaponBase {
 
     private void Start() {
         timeCount = Time.time;
-        GameObjectHelper.DestroyGameObject(gameObject, LifeTime, true);
+        GameObjectHelper.DestroyGameObject(gameObject, LifeTime);
     }
     
     private void FixedUpdate() {

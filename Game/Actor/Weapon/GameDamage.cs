@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 public class GameDamage : GameDamageBase {
-    public bool Explosive;
+
+	public bool Explosive;
     public float ExplosionRadius = 3;
     public float ExplosionForce = 300;
     public bool HitedActive = true;
@@ -10,6 +11,7 @@ public class GameDamage : GameDamageBase {
     private float timetemp = 0;
 
     private void Start() {
+
         if (!gamePlayerController || !gamePlayerController.collider)
             return;
         Physics.IgnoreCollision(collider, gamePlayerController.collider);
@@ -18,6 +20,7 @@ public class GameDamage : GameDamageBase {
     }
 
     private void Update() {
+
         if (!HitedActive || TimeActive > 0) {
             if (Time.time >= (timetemp + TimeActive)) {
                 Active();
@@ -26,18 +29,25 @@ public class GameDamage : GameDamageBase {
     }
 
     public void Active() {
-        if (Effect) {
+				
+		if(!GameDamageDirector.AllowExplosion) {			
+			GameObjectHelper.DestroyGameObject(gameObject);
+			return;
+		}
+
+		if (Effect) {
             GameObject obj = GameObjectHelper.CreateGameObject(Effect, transform.position, transform.rotation, true);
             GameObjectHelper.DestroyGameObject(obj, 3, true);
         }
 
-        if (Explosive)
+		if (Explosive)
             ExplosionDamage();
 
         GameObjectHelper.DestroyGameObject(gameObject, 3, true);
     }
 
     private void ExplosionDamage() {
+
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, ExplosionRadius);
         for (int i = 0; i < hitColliders.Length; i++) {
             Collider hit = hitColliders[i];
@@ -76,7 +86,7 @@ public class GameDamage : GameDamageBase {
 
     private void OnCollisionEnter(Collision collision) {
 
-        if (HitedActive) {
+		if (HitedActive) {
 
             bool doDamage = false;
             

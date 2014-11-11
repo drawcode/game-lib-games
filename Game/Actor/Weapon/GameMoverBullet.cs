@@ -10,7 +10,7 @@ public class GameMoverBullet : GameWeaponBase {
     private Rigidbody rigbody;
 
     private void Start() {
-        GameObjectHelper.DestroyGameObject(gameObject, Lifetime, true);
+        GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
         rigbody = this.rigbody;
         hasRigidBody = rigbody ? true : false;
     }
@@ -19,8 +19,6 @@ public class GameMoverBullet : GameWeaponBase {
         if (!hasRigidBody)
             return;
 
-
-
         if (!RigidbodyProjectile) {
             rigbody.velocity = transform.forward * Speed;
         }
@@ -28,7 +26,8 @@ public class GameMoverBullet : GameWeaponBase {
             if (rigbody.velocity.normalized != Vector3.zero)
                 this.transform.forward = rigbody.velocity.normalized;    
         }
-        if (Speed < SpeedMax) {
+        
+		if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;
         }
     }

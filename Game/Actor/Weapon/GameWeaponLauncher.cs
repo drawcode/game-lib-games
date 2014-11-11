@@ -366,7 +366,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     muzzle.transform.parent = this.transform;
 
-                    GameObjectHelper.DestroyGameObject(muzzle, MuzzleLifeTime, true);
+					GameObjectHelper.DestroyGameObject(muzzle, MuzzleLifeTime);
 
                     if (MissileOuter.Length > 0) {
                         muzzle.transform.parent = MissileOuter[currentOuter].transform;
@@ -381,7 +381,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                         Vector3 direction = this.transform.forward + spread;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
-                            Missile, missileposition, missilerotate, false);
+                            Missile, missileposition, missilerotate, true);
 
                         NameEffect(bullet);
 
@@ -419,8 +419,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                     }
                 
                     GameObject shell = GameObjectHelper.CreateGameObject(
-                        Shell, shelloutpos.position, Random.rotation, true);
-                    GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime, true);
+						Shell, shelloutpos.position, Random.rotation, false);
+					GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
 
                     if (shell.rigidbody) {
                         shell.rigidbody.AddForce(shelloutpos.forward * ShellOutForce);

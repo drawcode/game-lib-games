@@ -3,11 +3,17 @@ using System.Collections;
 
 public class GameChainDamage : GameDamageBase {
     public GameObject ChainObject;
-    public int NumberChain = 5;
+    public int NumberChain = 3;
     public int Distance = 100;
     public float Direction = 0.5f;
+
     
     void Start() {
+
+		if(!GameDamageDirector.AllowChain) {
+			//GameObjectHelper.DestroyGameObject(gameObject);
+			//return;
+		}
 
         int count = 0;
 
