@@ -678,8 +678,8 @@ public class ProductPurchase : GameObjectBehavior {
     }
     
     // Fired when a purchase fails
-    public void purchaseFailedEvent(string error) {
-        Debug.Log("GoogleIABManager:purchaseFailedEvent: " + error);
+    public void purchaseFailedEvent(string error, int val) {
+        Debug.Log("GoogleIABManager:purchaseFailedEvent: " + error + " val:" + val);
     }
     
     // Fired when a call to consume a product succeeds
