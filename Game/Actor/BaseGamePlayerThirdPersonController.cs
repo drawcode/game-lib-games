@@ -12,7 +12,7 @@ public class BaseGamePlayerThirdPersonControllerData {
     public bool removing = false;
 }
 
-public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
+public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public GamePlayerThirdPersonControllerData controllerData;
 
@@ -397,6 +397,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectBehavior {
      
     // Update is called once per frame
     public virtual void Update() {
+        
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameUpdateAll, 1f)) {
+            //return;
+        }
 
         if(!GameConfigs.isGameRunning) {
             return;

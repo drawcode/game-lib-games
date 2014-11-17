@@ -890,7 +890,7 @@ public class BaseGamePlayerControllerAnimationData {
     }
 }
 
-public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
+public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
     public GamePlayerControllerAnimationData animationData;
  
@@ -1363,6 +1363,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectBehavior {
     // GAME TICK / UPDATE  
     
     public virtual void Update() {
+        
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameUpdateAll, 
+            animationData.gamePlayerController.IsPlayerControlled ? 1f : 2f)) {
+            return;
+        }
         
         if (!GameConfigs.isGameRunning || GameConfigs.isUIRunning) {
             return;

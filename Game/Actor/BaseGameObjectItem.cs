@@ -4,7 +4,7 @@ using Engine.Animation;
 using Engine.Events;
 using Engine.Utility;
 
-public class BaseGameObjectItem : GameObjectBehavior {
+public class BaseGameObjectItem : GameObjectTimerBehavior {
 	
 	public string uniqueId;	
 	

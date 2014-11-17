@@ -421,7 +421,7 @@ public enum GameRunningState {
     STOPPED
 }
 
-public class BaseGameController : GameObjectBehavior {
+public class BaseGameController : GameObjectTimerBehavior {
 
     public GamePlayerController currentGamePlayerController;
     public Dictionary<string, GamePlayerController> gamePlayerControllers;
@@ -3150,7 +3150,7 @@ public class BaseGameController : GameObjectBehavior {
         if (!isGameRunning) {
             return;
         }
-        
+
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
         bool handled = false;
@@ -3189,6 +3189,12 @@ public class BaseGameController : GameObjectBehavior {
         
         if (gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+            return;
+        }
+        
+        
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameUpdateAll)) {
             return;
         }
         

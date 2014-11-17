@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
+public class GameFPS : FPSDisplay {
+
+}
+
+
 public class FPSDisplay: GameObjectBehavior {
     
     public  float updateInterval = 0.5F;
@@ -45,11 +50,18 @@ public class FPSDisplay: GameObjectBehavior {
         }
         return 21f;
     }
+
+    public static bool IsFPSLessThan(float val) {
+        if (isInst) {
+            return Instance.lastFPS < val;
+        }
+        return true;
+    }
     
     public static bool isUnder15FPS {
         get {
             if (isInst) {
-                return Instance.lastFPS < 15f;
+                return IsFPSLessThan(15f);
             }
             return false;
         }
@@ -58,7 +70,7 @@ public class FPSDisplay: GameObjectBehavior {
     public static bool isUnder20FPS {
         get {
             if (isInst) {
-                return Instance.lastFPS < 20f;
+                return IsFPSLessThan(20f);
             }
             return false;
         }
@@ -67,7 +79,7 @@ public class FPSDisplay: GameObjectBehavior {
     public static bool isUnder25FPS {
         get {
             if (isInst) {
-                return Instance.lastFPS < 25f;
+                return IsFPSLessThan(25f);
             }
             return false;
         }
@@ -76,7 +88,7 @@ public class FPSDisplay: GameObjectBehavior {
     public static bool isUnder30FPS {
         get {
             if (isInst) {
-                return Instance.lastFPS < 30f;
+                return IsFPSLessThan(30f);
             }
             return false;
         }

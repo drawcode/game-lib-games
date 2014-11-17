@@ -102,6 +102,12 @@ public class BaseGamePlayerControllerData {
     public float lastAudioPlayedHit = 0f;
     public float lastAudioPlayedDie = 0f;
     public float lastNetworkContainerFind = 0f;
+        
+    public float lastUpdateAll = 0;
+    public float lastUpdateAlways = 0;
+    public float lastUpdatePhysics = 0;
+
+
     public bool navAgentRunning = true;
     public float currentTimeBlock = 0.0f;
     public float actionInterval = .33f;
@@ -355,7 +361,27 @@ public class BaseGamePlayerMountData {
 }
 
 public class BaseGamePlayerController : GameActor {
- 
+
+    public float intervalUpdateAll = 0.033f;   
+    public float lastUpdateAll = 0;
+    
+    public bool AllowUpdateAll {
+        
+        get {
+            
+            if(lastUpdateAll + 
+               intervalUpdateAll < Time.time) {
+                lastUpdateAll = Time.time;
+                return true;
+            }
+            
+            return false;
+        }
+    }
+
+    //
+    //
+
     //public string uuid = "";
     public string characterCode = "character-bot-1";
     public Transform currentTarget;
@@ -611,7 +637,7 @@ public class BaseGamePlayerController : GameActor {
         //    return; // only one fly at a time for now...
         //}
 
-        if(runtimeData.goalFly > 0 && val > 0) {
+        if (runtimeData.goalFly > 0 && val > 0) {
             return;
         }
 
@@ -1618,7 +1644,7 @@ public class BaseGamePlayerController : GameActor {
         weaponInventory.Clear();
 
         foreach (GameWeapon weapon in GameWeapons.Instance.GetAll()) {
-            if(weapon.active) {
+            if (weapon.active) {
                 weaponInventory.Add(weapon.code);
             }
         }
@@ -2801,9 +2827,9 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-		if(controllerData.thirdPersonController != null) {
-        	controllerData.thirdPersonController.Jump(duration);
-		}
+        if (controllerData.thirdPersonController != null) {
+            controllerData.thirdPersonController.Jump(duration);
+        }
         
         controllerData.gamePlayerControllerAnimation.Jump();
         
@@ -3568,7 +3594,7 @@ public class BaseGamePlayerController : GameActor {
 
         //if(IsPlayerControlled 
         //   && runtimeData.goalFly == 0) {
-            controllerData.impact += dir.normalized * force / (float)runtimeData.mass;
+        controllerData.impact += dir.normalized * force / (float)runtimeData.mass;
         //}
         if (damage) {
             runtimeData.hitCount++;
@@ -3651,8 +3677,8 @@ public class BaseGamePlayerController : GameActor {
             
             float trailTime =
                 (Math.Abs(controllerData.impact.x) +
-                 Math.Abs(controllerData.impact.y) +
-                 Math.Abs(controllerData.impact.z)) * 5f;
+                Math.Abs(controllerData.impact.y) +
+                Math.Abs(controllerData.impact.z)) * 5f;
 
             PlayerEffectTrailBoostTime(trailTime * controllerData.thirdPersonController.moveSpeed);
             PlayerEffectTrailGroundTime(-trailTime + controllerData.thirdPersonController.moveSpeed);
@@ -4794,7 +4820,7 @@ public class BaseGamePlayerController : GameActor {
                             }
                             else {
                                 // PURSUE FASTER
-								Tackle(gamePlayerControllerHit, 3.5f + controllerData.distanceToPlayerControlledGamePlayer / 2);
+                                Tackle(gamePlayerControllerHit, 3.5f + controllerData.distanceToPlayerControlledGamePlayer / 2);
                             }
                         }
                     }
@@ -4905,6 +4931,11 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void FixedUpdate() {
         
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameFixedUpdateAll, IsPlayerControlled ? 1 : 2)) {
+            return;
+        }
+
         if (!controllerReady) {
             return;
         }
@@ -4917,6 +4948,11 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LateUpdate() {
+
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameLateUpdateAll, IsPlayerControlled ? 1 : 2)) {
+            return;
+        }
         
         if (!controllerReady) {
             return;
@@ -4937,8 +4973,100 @@ public class BaseGamePlayerController : GameActor {
         HandleCharacterAttachedSounds(); // always run to turn off audio when not playing.
         HandlePlayerInactionState();
     }
+
+    public virtual void UpdateEditorTools() {
+        
+        
+        if (IsPlayerControlled) {
+            
+            if (Application.isEditor) {
+                
+                if (Input.GetKey(KeyCode.LeftControl)) {
+                    
+                    //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
+                    //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
+                    //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
+                    //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
+                    //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
+                    
+                    //LogUtil.Log("GamePlayer:point1:" + point1);
+                    //LogUtil.Log("GamePlayer:point2:" + point2);
+                    
+                    float power = 100f;
+                    if (Input.GetKey(KeyCode.V)) {
+                        Boost(Vector3.zero.WithZ(1),
+                              power);
+                    }
+                    else if (Input.GetKey(KeyCode.B)) {
+                        Boost(Vector3.zero.WithZ(-1),
+                              power);
+                    }
+                    else if (Input.GetKey(KeyCode.N)) {
+                        StrafeLeft(Vector3.zero.WithX(-1),
+                                   power);
+                    }
+                    else if (Input.GetKey(KeyCode.M)) {
+                        StrafeRight(Vector3.zero.WithX(1),
+                                    power);
+                    }
+                }
+            }
+            
+            
+            if (Application.isEditor) {
+                if (Input.GetKey(KeyCode.LeftControl)) {
+                    if (Input.GetKey(KeyCode.RightBracket)) {
+                        if (!IsPlayerControlled) {
+                            Die();
+                        }       
+                    }
+                    else if (Input.GetKey(KeyCode.V)) {                  
+                        LoadWeapon("weapon-machine-gun-1");
+                        
+                        UINotificationDisplay.QueueTip(
+                            "Machine Gun Enabled",
+                            "Machine gun simulation trigger and action installed and ready.");
+                    }
+                    else if (Input.GetKey(KeyCode.B)) {                  
+                        LoadWeapon("weapon-flame-thrower-1");
+                        
+                        UINotificationDisplay.QueueTip(
+                            "Flame Thrower Enabled",
+                            "Flame thrower simulation trigger and action installed and ready.");
+                    }
+                    else if (Input.GetKey(KeyCode.N)) {                  
+                        LoadWeapon("weapon-shotgun-1");
+                        UINotificationDisplay.QueueTip(
+                            "Shotgun Enabled",
+                            "Shotgun simulation trigger and action installed and ready.");
+                    }
+                    else if (Input.GetKey(KeyCode.M)) {                  
+                        LoadWeapon("weapon-rocket-launcher-1");
+                        
+                        UINotificationDisplay.QueueTip(
+                            "Rocket Launcher Enabled",
+                            "Rocket launcher trigger and action installed and ready.");
+                    }
+                    else if (Input.GetKey(KeyCode.C)) {                  
+                        LoadWeapon("weapon-rifle-1");
+                        
+                        UINotificationDisplay.QueueTip(
+                            "Rifle Enabled",
+                            "Rifle simulation trigger and action installed and ready.");
+                    }
+                }
+            }
+        }
+
+
+    }
  
-    public override void Update() {   
+    public override void Update() { 
+            
+        if(!gameObjectTimer.IsTimerPerf(
+            GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
+            return;
+        }
         
         if (!controllerReady) {
             return;
@@ -4958,85 +5086,7 @@ public class BaseGamePlayerController : GameActor {
         
         UpdateCommonState();
 
-        if (IsPlayerControlled) {
-
-            if (Application.isEditor) {
-
-                if (Input.GetKey(KeyCode.LeftControl)) {
-
-                    //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
-                    //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
-                    //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
-                    //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
-                    //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
-
-                    //LogUtil.Log("GamePlayer:point1:" + point1);
-                    //LogUtil.Log("GamePlayer:point2:" + point2);
-
-                    float power = 100f;
-                    if (Input.GetKey(KeyCode.V)) {
-                        Boost(Vector3.zero.WithZ(1),
-                            power);
-                    }
-                    else if (Input.GetKey(KeyCode.B)) {
-                        Boost(Vector3.zero.WithZ(-1),
-                            power);
-                    }
-                    else if (Input.GetKey(KeyCode.N)) {
-                        StrafeLeft(Vector3.zero.WithX(-1),
-                            power);
-                    }
-                    else if (Input.GetKey(KeyCode.M)) {
-                        StrafeRight(Vector3.zero.WithX(1),
-                            power);
-                    }
-                }
-            }
-        }
-        
-        if (Application.isEditor) {
-            if (Input.GetKey(KeyCode.LeftControl)) {
-                if (Input.GetKey(KeyCode.RightBracket)) {
-                    if (!IsPlayerControlled) {
-                        Die();
-                    }       
-                }
-                else if (Input.GetKey(KeyCode.V)) {                  
-                    LoadWeapon("weapon-machine-gun-1");
-
-                    UINotificationDisplay.QueueTip(
-                        "Machine Gun Enabled",
-                        "Machine gun simulation trigger and action installed and ready.");
-                }
-                else if (Input.GetKey(KeyCode.B)) {                  
-                    LoadWeapon("weapon-flame-thrower-1");
-
-                    UINotificationDisplay.QueueTip(
-                        "Flame Thrower Enabled",
-                        "Flame thrower simulation trigger and action installed and ready.");
-                }
-                else if (Input.GetKey(KeyCode.N)) {                  
-                    LoadWeapon("weapon-shotgun-1");
-                    UINotificationDisplay.QueueTip(
-                        "Shotgun Enabled",
-                        "Shotgun simulation trigger and action installed and ready.");
-                }
-                else if (Input.GetKey(KeyCode.M)) {                  
-                    LoadWeapon("weapon-rocket-launcher-1");
-
-                    UINotificationDisplay.QueueTip(
-                            "Rocket Launcher Enabled",
-                            "Rocket launcher trigger and action installed and ready.");
-                }
-                else if (Input.GetKey(KeyCode.C)) {                  
-                    LoadWeapon("weapon-rifle-1");
-
-                    UINotificationDisplay.QueueTip(
-                            "Rifle Enabled",
-                            "Rifle simulation trigger and action installed and ready.");
-                }
-            }
-        }
+        UpdateEditorTools();
 
         //if(!controllerData.visible) {
         //UpdateOffscreenState();
