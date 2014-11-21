@@ -1,4 +1,4 @@
-//#define DEV
+#define DEV
 using System;
 using System.IO;
 using System.Collections;
@@ -11,10 +11,22 @@ using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
 
+public enum AppRunState {
+    DEV,
+    LIVE
+}
+
+
 public class BaseGameGlobal : GameObjectBehavior {    
     public GameNetworks gameNetworks;
     public GameState state;
     public Contents contents;
+    
+    #if DEV
+    public static AppRunState appRunState = AppRunState.DEV;
+    #else 
+    public static AppRunState appRunState = AppRunState.LIVE;
+    #endif
     
     //public GameSettings gameSettings;
     //public Recorders raceRecorders;
@@ -261,7 +273,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
 
             #if DEV
-            if (Application.isEditor) {
+            //if (Application.isEditor) {
 
                 GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
                 GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
@@ -269,7 +281,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                 audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
                 GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
                 GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-            }
+            //}
             #endif
         }
         

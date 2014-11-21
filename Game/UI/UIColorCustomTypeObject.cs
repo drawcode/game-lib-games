@@ -32,7 +32,6 @@ public class UIColorCustomType : GameDataObject {
     }
 }
 
-[ExecuteInEditMode]
 public class UIColorCustomTypeObject : UIColorObject {
 
     UIColorCustomType colorCustomTypes;

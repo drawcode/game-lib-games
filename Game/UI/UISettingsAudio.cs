@@ -1,4 +1,4 @@
-//#define DEV
+#define DEV
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,6 +75,14 @@ public class UISettingsAudio : GameObjectBehavior {
             sliderEffectsVolume.ForceUpdate();
             
             GameAudio.SetProfileEffectsVolume(effectsVolume);
+        }
+
+        if(GameGlobal.appRunState == AppRunState.DEV) {
+            
+            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
+            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);
+            GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
+            GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
         }
     }
     
