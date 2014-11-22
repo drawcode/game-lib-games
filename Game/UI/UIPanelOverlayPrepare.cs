@@ -35,6 +35,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public UIImageButton buttonReady;
     
     public UIImageButton buttonTipNext;
+
+    public string loadingLevelDisplay = "Loading Level...";
         
     //public UIPanelTips tips
 
@@ -338,7 +340,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
         HideButtonPlay();
 
-        UIUtil.SetLabelValue(labelOverviewTip, "Loading Level...");
+        UIUtil.SetLabelValue(labelOverviewTip, loadingLevelDisplay);
 
         UIPanelDialogBackground.HideAll();
         

@@ -206,7 +206,7 @@ public class BaseGamePlayerControllerData {
 
     // materials
     
-    //float controllerData.lastUpdate = 0f;
+    //float currentControllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
 
@@ -591,33 +591,33 @@ public class BaseGamePlayerController : GameActor {
             return currentSpeed;
         }
         
-        if (controllerData.thirdPersonController != null) {
-            currentSpeed = controllerData.thirdPersonController.GetSpeed();
+        if (currentControllerData.thirdPersonController != null) {
+            currentSpeed = currentControllerData.thirdPersonController.GetSpeed();
         }
         
         if (contextState == GamePlayerContextState.ContextFollowAgent
             || contextState == GamePlayerContextState.ContextFollowAgentAttack
             || contextState == GamePlayerContextState.ContextRandom) {
 
-            if (controllerData.navMeshAgent != null) {
+            if (currentControllerData.navMeshAgent != null) {
 
-                if (controllerData.navMeshAgent.enabled) {                       
+                if (currentControllerData.navMeshAgent.enabled) {                       
                     //currentSpeed = navAgent.velocity.magnitude + 20;
                     
-                    if (controllerData.navMeshAgent.velocity.magnitude > 0f) {
+                    if (currentControllerData.navMeshAgent.velocity.magnitude > 0f) {
                         currentSpeed = 15f;
                     }
                     else {
                         currentSpeed = 0;    
                     }
                     
-                    if (controllerData.navMeshAgent.remainingDistance < 
-                        controllerData.navMeshAgent.stoppingDistance + 1) {
+                    if (currentControllerData.navMeshAgent.remainingDistance < 
+                        currentControllerData.navMeshAgent.stoppingDistance + 1) {
                         currentSpeed = 0;
                     }
                     
                     if (currentSpeed < 
-                        controllerData.navMeshAgent.speed) {
+                        currentControllerData.navMeshAgent.speed) {
                         //currentSpeed = 0;
                     }
                 }
@@ -660,34 +660,34 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandleItemStateSpeedModifier(double val, double duration) {         
-        controllerData.modifierItemSpeedCurrent *= (float)val;
-        controllerData.modifierItemSpeedLerpTime = (float)duration;
+        currentControllerData.modifierItemSpeedCurrent *= (float)val;
+        currentControllerData.modifierItemSpeedLerpTime = (float)duration;
 
-        controllerData.modifierItemSpeedLerp = 0f;
+        currentControllerData.modifierItemSpeedLerp = 0f;
     }
     
     public virtual void HandleItemStateScaleModifier(double val, double duration) {         
-        controllerData.modifierItemScaleCurrent *= (float)val;
-        controllerData.modifierItemScaleLerpTime = (float)duration;
+        currentControllerData.modifierItemScaleCurrent *= (float)val;
+        currentControllerData.modifierItemScaleLerpTime = (float)duration;
 
-        controllerData.modifierItemScaleLerp = 0f;
+        currentControllerData.modifierItemScaleLerp = 0f;
                 
         //Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
-        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
-        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerpTime:" + controllerData.modifierItemScaleLerpTime);
-        //Debug.Log("HandleItemStateScaleModifier::" + " controllerData.modifierItemScaleLerp:" + controllerData.modifierItemScaleLerp);
+        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
+        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerpTime:" + currentControllerData.modifierItemScaleLerpTime);
+        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerp:" + currentControllerData.modifierItemScaleLerp);
     }
 
     public virtual void HandleItemStateFlyModifier(double val, double duration) {         
-        controllerData.modifierItemFlyCurrent *= (float)val;
-        controllerData.modifierItemFlyLerpTime = (float)duration;
+        currentControllerData.modifierItemFlyCurrent *= (float)val;
+        currentControllerData.modifierItemFlyLerpTime = (float)duration;
 
-        controllerData.modifierItemFlyLerp = 0f;
+        currentControllerData.modifierItemFlyLerp = 0f;
         
         //Debug.Log("HandleItemStateFlyModifier::" + " val:" + val + " duration:" + duration);
-        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyCurrent:" + controllerData.modifierItemFlyCurrent);
-        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerpTime:" + controllerData.modifierItemFlyLerpTime);
-        //Debug.Log("HandleItemStateFlyModifier::" + " controllerData.modifierItemFlyLerp:" + controllerData.modifierItemFlyLerp);
+        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyCurrent:" + currentControllerData.modifierItemFlyCurrent);
+        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerpTime:" + currentControllerData.modifierItemFlyLerpTime);
+        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerp:" + currentControllerData.modifierItemFlyLerp);
     }
 
     public virtual void HandleItemUse(GameItem gameItem) {
@@ -821,16 +821,16 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual bool CheckTrailRendererBoost() {
-        if (controllerData.trailRendererBoost == null && gamePlayerTrailBoost != null) {
-            controllerData.trailRendererBoost = gamePlayerTrailBoost.Get<TrailRenderer>();
+        if (currentControllerData.trailRendererBoost == null && gamePlayerTrailBoost != null) {
+            currentControllerData.trailRendererBoost = gamePlayerTrailBoost.Get<TrailRenderer>();
             return true;
         }
         return false;
     }
 
     public virtual bool CheckTrailRendererGround() {
-        if (controllerData.trailRendererGround == null && gamePlayerTrailGround != null) {
-            controllerData.trailRendererGround = gamePlayerTrailGround.Get<TrailRenderer>();
+        if (currentControllerData.trailRendererGround == null && gamePlayerTrailGround != null) {
+            currentControllerData.trailRendererGround = gamePlayerTrailGround.Get<TrailRenderer>();
             return true;
         }
         return false;
@@ -840,8 +840,8 @@ public class BaseGamePlayerController : GameActor {
         if (gamePlayerTrailBoost != null) {
             CheckTrailRendererBoost();
 
-            if (controllerData.trailRendererBoost != null) {
-                controllerData.trailRendererBoost.time = time;
+            if (currentControllerData.trailRendererBoost != null) {
+                currentControllerData.trailRendererBoost.time = time;
             }
         }
     }
@@ -850,8 +850,8 @@ public class BaseGamePlayerController : GameActor {
         if (gamePlayerTrailGround != null) {
             CheckTrailRendererGround();
 
-            if (controllerData.trailRendererGround != null) {
-                controllerData.trailRendererGround.time = time;
+            if (currentControllerData.trailRendererGround != null) {
+                currentControllerData.trailRendererGround.time = time;
             }
         }
     }
@@ -865,10 +865,10 @@ public class BaseGamePlayerController : GameActor {
 
             CheckTrailRendererGround();
             
-            if (controllerData.trailRendererGround != null) {
+            if (currentControllerData.trailRendererGround != null) {
 
                 //Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
-                //controllerData.trailRendererGround.gameObject.ColorTo(colorTo, 1f, 0f);
+                //currentControllerData.trailRendererGround.gameObject.ColorTo(colorTo, 1f, 0f);
             }
         }
     }
@@ -885,7 +885,7 @@ public class BaseGamePlayerController : GameActor {
             if (gamePlayerTrailBoost != null) {
                 
                 //Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
-                //controllerData.trailRendererBoost.gameObject.ColorTo(colorTo, 1f, 0f);
+                //currentControllerData.trailRendererBoost.gameObject.ColorTo(colorTo, 1f, 0f);
             }
         }
     }
@@ -996,8 +996,8 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandlePlayerEffectsTick() {
         
-        //if (controllerData.lastPlayerEffectsTrailUpdate + 4 < Time.time) {
-        //controllerData.lastPlayerEffectsTrailUpdate = Time.time;
+        //if (currentControllerData.lastPlayerEffectsTrailUpdate + 4 < Time.time) {
+        //currentControllerData.lastPlayerEffectsTrailUpdate = Time.time;
         //HandlePlayerEffectTrailBoostTick();            
         //HandlePlayerEffectTrailGroundTick();  
         //}
@@ -1016,9 +1016,9 @@ public class BaseGamePlayerController : GameActor {
         if (gamePlayerEffectsGround != null) {
 
             HandlePlayerEffectsObjectTick(ref gamePlayerEffectsGround, 
-                                          ref controllerData.gamePlayerEffectsGroundColorCurrent, 
-                                          ref controllerData.gamePlayerEffectsGroundColorLast, 
-                                          ref controllerData.lastPlayerEffectsGroundUpdate,
+                                          ref currentControllerData.gamePlayerEffectsGroundColorCurrent, 
+                                          ref currentControllerData.gamePlayerEffectsGroundColorLast, 
+                                          ref currentControllerData.lastPlayerEffectsGroundUpdate,
                                           5, .95f);
         }
     }
@@ -1027,9 +1027,9 @@ public class BaseGamePlayerController : GameActor {
         if (gamePlayerEffectsBoost != null) {
             
             HandlePlayerEffectsObjectTick(ref gamePlayerEffectsBoost, 
-                                          ref controllerData.gamePlayerEffectsBoostColorCurrent, 
-                                          ref controllerData.gamePlayerEffectsBoostColorLast, 
-                                          ref controllerData.lastPlayerEffectsBoostUpdate,
+                                          ref currentControllerData.gamePlayerEffectsBoostColorCurrent, 
+                                          ref currentControllerData.gamePlayerEffectsBoostColorLast, 
+                                          ref currentControllerData.lastPlayerEffectsBoostUpdate,
                                           3, .3f);
         }
     }
@@ -1038,9 +1038,9 @@ public class BaseGamePlayerController : GameActor {
         if (gamePlayerShadow != null) {
 
             HandlePlayerEffectsObjectTick(ref gamePlayerShadow, 
-                                          ref controllerData.gamePlayerEffectsIndicatorColorCurrent, 
-                                          ref controllerData.gamePlayerEffectsIndicatorColorLast, 
-                                          ref controllerData.lastPlayerEffectsIndicatorUpdate,
+                                          ref currentControllerData.gamePlayerEffectsIndicatorColorCurrent, 
+                                          ref currentControllerData.gamePlayerEffectsIndicatorColorLast, 
+                                          ref currentControllerData.lastPlayerEffectsIndicatorUpdate,
                                           3,
                                           .3f);
         }
@@ -1057,25 +1057,25 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void PlayerEffectWarpAnimate(float fromEmission, float toEmission) {
-        controllerData.effectWarpStart = fromEmission;
-        controllerData.effectWarpEnd = toEmission;
-        controllerData.effectWarpEnabled = true;
+        currentControllerData.effectWarpStart = fromEmission;
+        currentControllerData.effectWarpEnd = toEmission;
+        currentControllerData.effectWarpEnabled = true;
     }
  
     public virtual void HandlePlayerEffectWarpAnimateTick() {
-        if (controllerData.effectWarpEnabled && controllerData.visible) {
+        if (currentControllerData.effectWarpEnabled && currentControllerData.visible) {
             float fadeSpeed = 200f;
-            if (controllerData.effectWarpCurrent < controllerData.effectWarpEnd) {
-                controllerData.effectWarpCurrent += (Time.deltaTime * fadeSpeed);
-                SetPlayerEffectWarp(controllerData.effectWarpCurrent);
+            if (currentControllerData.effectWarpCurrent < currentControllerData.effectWarpEnd) {
+                currentControllerData.effectWarpCurrent += (Time.deltaTime * fadeSpeed);
+                SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
-            else if (controllerData.effectWarpCurrent > controllerData.effectWarpEnd) {
-                controllerData.effectWarpCurrent -= (Time.deltaTime * fadeSpeed);
-                SetPlayerEffectWarp(controllerData.effectWarpCurrent);
+            else if (currentControllerData.effectWarpCurrent > currentControllerData.effectWarpEnd) {
+                currentControllerData.effectWarpCurrent -= (Time.deltaTime * fadeSpeed);
+                SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
             else {
-                controllerData.effectWarpEnabled = false;
-                controllerData.effectWarpCurrent = controllerData.effectWarpEnd;
+                currentControllerData.effectWarpEnabled = false;
+                currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
             }
         }
     }
@@ -1166,8 +1166,8 @@ public class BaseGamePlayerController : GameActor {
     // RUNTIME STATES
     public virtual void HandlePlayerAliveState() {
         
-        if (controllerData.lastCharacterLoadedCheck + 1 < Time.time) {
-            controllerData.lastCharacterLoadedCheck = Time.time;
+        if (currentControllerData.lastCharacterLoadedCheck + 1 < Time.time) {
+            currentControllerData.lastCharacterLoadedCheck = Time.time;
             
             if (!isCharacterLoaded) {
                 //LoadCharacter(characterCode);
@@ -1199,10 +1199,10 @@ public class BaseGamePlayerController : GameActor {
         bool update = false;
 
         if (controllerData != null) {
-            if (controllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
-                controllerData.lastIdleActions = Time.time;
-                if (controllerData.thirdPersonController != null) {
-                    if (controllerData.thirdPersonController.moveSpeed == 0f) {
+            if (currentControllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
+                currentControllerData.lastIdleActions = Time.time;
+                if (currentControllerData.thirdPersonController != null) {
+                    if (currentControllerData.thirdPersonController.moveSpeed == 0f) {
                         update = true;
                     }
                 }
@@ -1296,30 +1296,30 @@ public class BaseGamePlayerController : GameActor {
         yield return StartCoroutine(InitControlsCo());
          
         if (controllerState == GamePlayerControllerState.ControllerAgent) {
-            if (controllerData.navMeshAgent != null) {
+            if (currentControllerData.navMeshAgent != null) {
                 // TODO load script or look for character input.
-                controllerData.navMeshAgent.enabled = true;
+                currentControllerData.navMeshAgent.enabled = true;
             }
         }
         else if (controllerState == GamePlayerControllerState.ControllerPlayer) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;
             }
         }
         else if (controllerState == GamePlayerControllerState.ControllerNetwork) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;
             }
             ChangeContextState(GamePlayerContextState.ContextNetwork);
         }
         else if (controllerState == GamePlayerControllerState.ControllerUI) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;  
-                if (controllerData.thirdPersonController != null) {
-                    controllerData.thirdPersonController.getUserInput = true;
+                if (currentControllerData.thirdPersonController != null) {
+                    currentControllerData.thirdPersonController.getUserInput = true;
                 }                    
             }
         }
@@ -1341,7 +1341,7 @@ public class BaseGamePlayerController : GameActor {
         // TODO footsteps over different terrain
         // Foosteps, breathing etc.
 
-        if (controllerData.audioObjectFootsteps == null) {
+        if (currentControllerData.audioObjectFootsteps == null) {
         
             string soundFootsteps = "audio_footsteps_default";
             
@@ -1354,14 +1354,14 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
 
-            controllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
+            currentControllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
             
-            if (controllerData.audioObjectFootsteps != null) {
-                if (controllerData.audioObjectFootsteps.audio != null) {
-                    controllerData.audioObjectFootstepsSource = controllerData.audioObjectFootsteps.audio;
+            if (currentControllerData.audioObjectFootsteps != null) {
+                if (currentControllerData.audioObjectFootsteps.audio != null) {
+                    currentControllerData.audioObjectFootstepsSource = currentControllerData.audioObjectFootsteps.audio;
 
-                    if (controllerData.audioObjectFootstepsClip == null && controllerData.audioObjectFootstepsSource.clip != null) {
-                        controllerData.audioObjectFootstepsClip = controllerData.audioObjectFootsteps.audio.clip;
+                    if (currentControllerData.audioObjectFootstepsClip == null && currentControllerData.audioObjectFootstepsSource.clip != null) {
+                        currentControllerData.audioObjectFootstepsClip = currentControllerData.audioObjectFootsteps.audio.clip;
                     }
                 }
             }
@@ -1372,8 +1372,8 @@ public class BaseGamePlayerController : GameActor {
     
         if (!GameConfigs.isGameRunning) {
             if (controllerData != null) {
-                if (controllerData.audioObjectFootstepsSource != null) {
-                    controllerData.audioObjectFootstepsSource.StopIfPlaying();
+                if (currentControllerData.audioObjectFootstepsSource != null) {
+                    currentControllerData.audioObjectFootstepsSource.StopIfPlaying();
                 }
             }
             return;
@@ -1381,20 +1381,20 @@ public class BaseGamePlayerController : GameActor {
 
         LoadCharacterAttachedSounds();
 
-        if (controllerData.audioObjectFootstepsSource == null) {
+        if (currentControllerData.audioObjectFootstepsSource == null) {
             return;
         }
 
-        controllerData.audioObjectFootstepsSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+        currentControllerData.audioObjectFootstepsSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 
         if (gamePlayerMoveSpeed > .1f) {
-            ////controllerData.audioObjectFootstepsSource.volume = 1f;
+            ////currentControllerData.audioObjectFootstepsSource.volume = 1f;
             float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + .8f;
             //LogUtil.Log("playSpeed", playSpeed);
-            controllerData.audioObjectFootstepsSource.pitch = playSpeed;
+            currentControllerData.audioObjectFootstepsSource.pitch = playSpeed;
         }
         else {
-            controllerData.audioObjectFootstepsSource.pitch = 0f;
+            currentControllerData.audioObjectFootstepsSource.pitch = 0f;
         }
     }
 
@@ -1409,11 +1409,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (controllerData.gamePlayerControllerAnimation == null) {
+        if (currentControllerData.gamePlayerControllerAnimation == null) {
             return;
         }
 
-        controllerData.gamePlayerControllerAnimation.LoadAnimatedActor();
+        currentControllerData.gamePlayerControllerAnimation.LoadAnimatedActor();
     }
     
     public virtual void ChangeCharacter(string characterCodeTo) {
@@ -1428,7 +1428,7 @@ public class BaseGamePlayerController : GameActor {
      
     public virtual void LoadCharacter(string characterCodeTo) {
 
-        if (controllerData.loadingCharacter) {
+        if (currentControllerData.loadingCharacter) {
             return;
         }
 
@@ -1441,10 +1441,10 @@ public class BaseGamePlayerController : GameActor {
         SetRuntimeData(new GamePlayerRuntimeData());
 
         //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
-        //if (controllerData.lastCharacterCode != characterCode 
-        //    || controllerData.lastCharacterCode == null) {
+        //if (currentControllerData.lastCharacterCode != characterCode 
+        //    || currentControllerData.lastCharacterCode == null) {
 
-        controllerData.lastCharacterCode = characterCode;
+        currentControllerData.lastCharacterCode = characterCode;
                         
         //if (gameObject.activeInHierarchy) {
         StartCoroutine(LoadCharacterCo());
@@ -1461,7 +1461,7 @@ public class BaseGamePlayerController : GameActor {
             yield break;
         }
 
-        controllerData.loadingCharacter = true;
+        currentControllerData.loadingCharacter = true;
 
         string prefabCode = gameCharacter.data.GetModel().code;
 
@@ -1588,17 +1588,17 @@ public class BaseGamePlayerController : GameActor {
              
         LoadWeapons();
 
-        controllerData.loadingCharacter = false;
+        currentControllerData.loadingCharacter = false;
         
         ResetPosition();       
                 
-        controllerData.initialized = true;
+        currentControllerData.initialized = true;
         
         HidePlayerEffectWarp();
         
         if (IsPlayerControlled) {
             GetPlayerProgress();
-            controllerData.lastPlayerEffectsTrailUpdate = 0;
+            currentControllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
         }
     }
@@ -1789,7 +1789,7 @@ public class BaseGamePlayerController : GameActor {
          
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
          
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
              
                 //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
@@ -1806,7 +1806,7 @@ public class BaseGamePlayerController : GameActor {
          
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
          
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
              
                 //LogUtil.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
                 
@@ -1815,8 +1815,8 @@ public class BaseGamePlayerController : GameActor {
                     axisInput.y = 0f;
                 }
                 
-                controllerData.thirdPersonController.horizontalInput2 = axisInput.x;
-                controllerData.thirdPersonController.verticalInput2 = axisInput.y;
+                currentControllerData.thirdPersonController.horizontalInput2 = axisInput.x;
+                currentControllerData.thirdPersonController.verticalInput2 = axisInput.y;
 
             }
         }
@@ -1824,14 +1824,14 @@ public class BaseGamePlayerController : GameActor {
                 
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
                     
                 //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
 
-                    controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                    controllerData.thirdPersonController.verticalInput = 0f;//controllerData.thirdPersonController.verticalInput;
+                    currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
+                    currentControllerData.thirdPersonController.verticalInput = 0f;//currentControllerData.thirdPersonController.verticalInput;
                 }
 
                 if (axisInput.y > .7f) {
@@ -1848,12 +1848,12 @@ public class BaseGamePlayerController : GameActor {
                 
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
                     //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
-                    controllerData.thirdPersonController.horizontalInput = 0f;//axisInput.x;
-                    controllerData.thirdPersonController.verticalInput = axisInput.y;
+                    currentControllerData.thirdPersonController.horizontalInput = 0f;//axisInput.x;
+                    currentControllerData.thirdPersonController.verticalInput = axisInput.y;
                 }
             }
         }
@@ -1861,12 +1861,12 @@ public class BaseGamePlayerController : GameActor {
                 
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
                     
                 //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
                 
-                //controllerData.thirdPersonController.horizontalInput = axisInput.x;
-                //controllerData.thirdPersonController.verticalInput = 0f;
+                //currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
+                //currentControllerData.thirdPersonController.verticalInput = 0f;
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
                     
@@ -1887,13 +1887,13 @@ public class BaseGamePlayerController : GameActor {
             
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
                     //LogUtil.Log("OnInputAxis ATTACK:" + name + "input:" + axisInput);
                     
-                    controllerData.thirdPersonController.horizontalInput2 = -axisInput.x;
-                    controllerData.thirdPersonController.verticalInput2 = 0f;//axisInput.y;
+                    currentControllerData.thirdPersonController.horizontalInput2 = -axisInput.x;
+                    currentControllerData.thirdPersonController.verticalInput2 = 0f;//axisInput.y;
                     
                     //UpdateAim(axisInput.x, axisInput.y);
                 }
@@ -1902,14 +1902,14 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandleThirdPersonControllerAxis(Vector3 axisInput) {
-        if (controllerData.mountData.isMountedVehicle) {
+        if (currentControllerData.mountData.isMountedVehicle) {
 
-            controllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
+            currentControllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
         else {
 
-            controllerData.thirdPersonController.horizontalInput = axisInput.x;
-            controllerData.thirdPersonController.verticalInput = axisInput.y;
+            currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
+            currentControllerData.thirdPersonController.verticalInput = axisInput.y;
         }
     }
         
@@ -1935,28 +1935,28 @@ public class BaseGamePlayerController : GameActor {
         }
      
         if (uniqueId == uid && !isMe) {
-            if (controllerData.lastNetworkAniState != controllerData.currentNetworkAniState) {
-                controllerData.lastNetworkAniState = controllerData.currentNetworkAniState;
+            if (currentControllerData.lastNetworkAniState != currentControllerData.currentNetworkAniState) {
+                currentControllerData.lastNetworkAniState = currentControllerData.currentNetworkAniState;
              
-                if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.walk) {
+                if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.walk) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.run) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.run) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack1) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack1) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack2) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack2) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.death) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.death) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill1) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill1) {
                  
                 }
-                else if (controllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill2) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill2) {
                  
                 }
             }
@@ -1965,24 +1965,24 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void OnNetworkPlayerInputAxisHorizontal(string uid, float horizontalInput) {
         if (uniqueId == uid && !isMe) {
-            if (controllerData.thirdPersonController != null) {
-                controllerData.thirdPersonController.horizontalInput = horizontalInput;
+            if (currentControllerData.thirdPersonController != null) {
+                currentControllerData.thirdPersonController.horizontalInput = horizontalInput;
             }
         }
     }
  
     public virtual void OnNetworkPlayerInputAxisVertical(string uid, float verticalInput) {
         if (uniqueId == uid && !isMe) {
-            if (controllerData.thirdPersonController != null) {
-                controllerData.thirdPersonController.verticalInput = verticalInput;
+            if (currentControllerData.thirdPersonController != null) {
+                currentControllerData.thirdPersonController.verticalInput = verticalInput;
             }
         }
     }
  
     public virtual void OnNetworkPlayerSpeed(string uid, float speed) {
         if (uniqueId == uid && !isMe) {
-            if (controllerData.thirdPersonController != null) {
-                controllerData.thirdPersonController.moveSpeed = speed;
+            if (currentControllerData.thirdPersonController != null) {
+                currentControllerData.thirdPersonController.moveSpeed = speed;
             }            
         }
     }
@@ -1998,20 +1998,20 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void SetControllersState(bool running) {
 
-        if (controllerData.characterController == null) {
+        if (currentControllerData.characterController == null) {
             return;
         }
 
-        controllerData.characterController.enabled = running;
+        currentControllerData.characterController.enabled = running;
     }
 
     public virtual void MountNearest() {
         
-        if (controllerData.mountData == null) {
+        if (currentControllerData.mountData == null) {
             return;
         }
 
-        if (controllerData.mountData.isMountedVehicle) {
+        if (currentControllerData.mountData.isMountedVehicle) {
             Unmount();
         }
         else {
@@ -2061,16 +2061,16 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void Mount(GameObject go) {
         if (go.Has<GameObjectMountVehicle>()) {        // MOUNT VEHICLES     
-            if (!controllerData.mountData.isMountedVehicleObject) {
-                controllerData.mountData.MountVehicle(gameObject, 
+            if (!currentControllerData.mountData.isMountedVehicleObject) {
+                currentControllerData.mountData.MountVehicle(gameObject, 
                     go.Get<GameObjectMountVehicle>());
 
-                if (controllerData.gameModelVisible) {
+                if (currentControllerData.gameModelVisible) {
                     gamePlayerModelHolderModel.Hide();
-                    controllerData.gameModelVisible = false;
+                    currentControllerData.gameModelVisible = false;
                 }
 
-                GameObjectMountWeaponHolder weaponHolder = controllerData.mountData.mountVehicle.GetWeaponHolder();
+                GameObjectMountWeaponHolder weaponHolder = currentControllerData.mountData.mountVehicle.GetWeaponHolder();
 
                 if (weaponHolder != null) {
                     currentGamePlayerWeaponContainer = weaponHolder.transform.position;
@@ -2089,12 +2089,12 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void Unmount() {
-        if (controllerData.mountData.isMountedVehicleObject) {
-            controllerData.mountData.UnmountVehicle();
+        if (currentControllerData.mountData.isMountedVehicleObject) {
+            currentControllerData.mountData.UnmountVehicle();
                         
-            if (!controllerData.gameModelVisible) {
+            if (!currentControllerData.gameModelVisible) {
                 gamePlayerModelHolderModel.Show();
-                controllerData.gameModelVisible = true;
+                currentControllerData.gameModelVisible = true;
             }
                         
             //gamePlayerModelHolderWeaponsHolder.transform.position = initialGamePlayerWeaponContainer;
@@ -2131,7 +2131,7 @@ public class BaseGamePlayerController : GameActor {
             //}
 
             if (controllerData != null) {
-                if (!controllerData.loadingCharacter) {
+                if (!currentControllerData.loadingCharacter) {
                     return true;
                 }
             }
@@ -2149,8 +2149,8 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (controllerData.lastCollision + controllerData.intervalCollision < Time.time) {
-            controllerData.lastCollision = Time.time;
+        if (currentControllerData.lastCollision + currentControllerData.intervalCollision < Time.time) {
+            currentControllerData.lastCollision = Time.time;
         }
         else {
             return;
@@ -2212,17 +2212,17 @@ public class BaseGamePlayerController : GameActor {
 
                         // handle stat
 
-                        controllerData.collisionController = GameController.GetGamePlayerControllerObject(
+                        currentControllerData.collisionController = GameController.GetGamePlayerControllerObject(
                             t.gameObject, false);
 
-                        if (controllerData.collisionController != null) {
+                        if (currentControllerData.collisionController != null) {
                         
-                            if (!controllerData.collisionController.controllerReady) {
+                            if (!currentControllerData.collisionController.controllerReady) {
                                 //break;
                             }
 
                             // make sure it isn't own colliders
-                            if (controllerData.collisionController.uniqueId
+                            if (currentControllerData.collisionController.uniqueId
                                 == uniqueId) {
                                 // It's me, leave it be.
                                 continue;
@@ -2253,7 +2253,7 @@ public class BaseGamePlayerController : GameActor {
                             }
                             else {
 
-                                if (controllerData.collisionController.IsPlayerControlled) {
+                                if (currentControllerData.collisionController.IsPlayerControlled) {
                                     Hit(power);
                                     // we hit a player, so we are an enemy
                                     GamePlayerProgress.SetStatHitsReceived(1f);
@@ -2484,7 +2484,7 @@ public class BaseGamePlayerController : GameActor {
      else  {
      */
         if (IsPlayerControlled) {
-            if (controllerData.gamePlayerControllerAnimation != null) {
+            if (currentControllerData.gamePlayerControllerAnimation != null) {
                 AnimatePlayer(animationName);
             }
         }
@@ -2497,8 +2497,8 @@ public class BaseGamePlayerController : GameActor {
     public virtual void ResetPositionAir(float y) {    
 
         //if(IsPlayerControlled) {
-        if (controllerData.lastAirCheck > 1f) {
-            controllerData.lastAirCheck = 0;
+        if (currentControllerData.lastAirCheck > 1f) {
+            currentControllerData.lastAirCheck = 0;
 
             gameObject.transform.position = Vector3.Lerp(
             gameObject.transform.position, 
@@ -2506,7 +2506,7 @@ public class BaseGamePlayerController : GameActor {
             1 * Time.deltaTime);            
         }
 
-        controllerData.lastAirCheck += Time.deltaTime;
+        currentControllerData.lastAirCheck += Time.deltaTime;
         //}
     }
 
@@ -2778,8 +2778,8 @@ public class BaseGamePlayerController : GameActor {
         else {
             //bool allow = false;
 
-            if (controllerData.lastHit + .3f < Time.time) {
-                controllerData.lastHit = Time.time;
+            if (currentControllerData.lastHit + .3f < Time.time) {
+                currentControllerData.lastHit = Time.time;
                 //allow = true;
             }
             else {
@@ -2813,9 +2813,9 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        //controllerData.thirdPersonController.Idle();
+        //currentControllerData.thirdPersonController.Idle();
         
-        controllerData.gamePlayerControllerAnimation.Idle();
+        currentControllerData.gamePlayerControllerAnimation.Idle();
     }
     
     public virtual void Jump() {
@@ -2827,11 +2827,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        if (controllerData.thirdPersonController != null) {
-            controllerData.thirdPersonController.Jump(duration);
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.Jump(duration);
         }
         
-        controllerData.gamePlayerControllerAnimation.Jump();
+        currentControllerData.gamePlayerControllerAnimation.Jump();
         
         if (gamePlayerEffectSkill != null) {
             gamePlayerEffectSkill.Emit(1);
@@ -2843,7 +2843,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        controllerData.thirdPersonController.JumpStop();
+        currentControllerData.thirdPersonController.JumpStop();
     }
 
     // SKILL
@@ -2853,7 +2853,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        controllerData.gamePlayerControllerAnimation.Skill();
+        currentControllerData.gamePlayerControllerAnimation.Skill();
      
         if (gamePlayerEffectSkill != null) {
             gamePlayerEffectSkill.Emit(1);
@@ -2866,12 +2866,12 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StrafeLeft() {
         Vector3 dir = transform.TransformPoint(transform.localPosition.WithX(-1));//Vector3.zero.WithX(-1);
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         StrafeLeft(dir, power);
     }
 
     public virtual void StrafeLeft(Vector3 dir) {
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         StrafeLeft(dir, power);
     }
 
@@ -2891,13 +2891,13 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (Time.time > controllerData.lastStrafeLeftTime + 1f) {
-            controllerData.gamePlayerControllerAnimation.StrafeLeft();
+        if (Time.time > currentControllerData.lastStrafeLeftTime + 1f) {
+            currentControllerData.gamePlayerControllerAnimation.StrafeLeft();
 
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
 
-            controllerData.lastStrafeLeftTime = Time.time;
+            currentControllerData.lastStrafeLeftTime = Time.time;
             StartCoroutine(StrafeLeftCo(dir, power));
         }
     }
@@ -2912,12 +2912,12 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StrafeRight() {
         Vector3 dir = transform.localPosition.WithX(1);
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         StrafeRight(dir, power);
     }
 
     public virtual void StrafeRight(Vector3 dir) {
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         StrafeRight(dir, power);
     }
 
@@ -2932,14 +2932,14 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }
-        if (Time.time > controllerData.lastStrafeRightTime + 1f) {
+        if (Time.time > currentControllerData.lastStrafeRightTime + 1f) {
 
-            controllerData.gamePlayerControllerAnimation.StrafeRight();
+            currentControllerData.gamePlayerControllerAnimation.StrafeRight();
 
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
 
-            controllerData.lastStrafeRightTime = Time.time;
+            currentControllerData.lastStrafeRightTime = Time.time;
             StartCoroutine(StrafeRightCo(dir, power));
         }
     }
@@ -2953,12 +2953,12 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void Boost() {
         Vector3 dir = transform.forward;
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         Boost(dir, power);
     }
 
     public virtual void Boost(Vector3 dir) {
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         Boost(dir, power);
     }
 
@@ -2972,10 +2972,10 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         //LogUtil.Log("GamePlayerController:Boost:");
-        if (Time.time > controllerData.lastBoostTime + 1f) {
-            controllerData.lastBoostTime = Time.time;
+        if (Time.time > currentControllerData.lastBoostTime + 1f) {
+            currentControllerData.lastBoostTime = Time.time;
 
-            controllerData.gamePlayerControllerAnimation.Boost();
+            currentControllerData.gamePlayerControllerAnimation.Boost();
             GamePlayerProgress.SetStatBoosts(1f);
             StartCoroutine(BoostCo(dir, power, allowY));
         }
@@ -2990,12 +2990,12 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void Spin() {
         Vector3 dir = transform.localPosition.WithZ(-1);
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         Boost(dir, power);
     }
 
     public virtual void Spin(Vector3 dir) {
-        float power = 10f + 5f * (float)controllerData.runtimeRPGData.modifierAttack;
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
         Boost(dir, power);
     }
 
@@ -3009,20 +3009,20 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         //LogUtil.Log("GamePlayerController:Spin:");
-        if (Time.time > controllerData.lastSpinTime + 1f) {
-            controllerData.lastSpinTime = Time.time;
+        if (Time.time > currentControllerData.lastSpinTime + 1f) {
+            currentControllerData.lastSpinTime = Time.time;
 
             //UITweenerUtil.RotateTo(gamePlayerModelHolder, UITweener.Method.Linear, UITweener.Style.Once, .2f, 0f, Vector3.zero.WithY(179));
             //UITweenerUtil.RotateTo(gamePlayerModelHolder, UITweener.Method.Linear, UITweener.Style.Once, .2f, .2f, Vector3.zero.WithY(290));
             //UITweenerUtil.RotateTo(gamePlayerModelHolder, UITweener.Method.Linear, UITweener.Style.Once, .2f, .4f, Vector3.zero.WithY(0));
 
-            controllerData.playerSpin = true;
+            currentControllerData.playerSpin = true;
 
             //iTween.RotateTo(gamePlayerModelHolderModel, iTween.Hash("y", Vector3.zero.WithY(179).y, "time", .2f, "delay", 0f, "easetype", "linear", "space", "local"));
             //iTween.RotateTo(gamePlayerModelHolderModel, iTween.Hash("y", Vector3.zero.WithY(290).y, "time", .2f, "delay", .21f, "easetype", "linear", "space", "local"));
             //iTween.RotateTo(gamePlayerModelHolderModel, iTween.Hash("y", Vector3.zero.WithY(0).y, "time", .2f, "delay", .41f, "easetype", "linear", "space", "local"));
 
-            controllerData.gamePlayerControllerAnimation.Spin();
+            currentControllerData.gamePlayerControllerAnimation.Spin();
             GamePlayerProgress.SetStatSpins(1f);
 
             StartCoroutine(SpinCo(dir, power));
@@ -3057,25 +3057,25 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerData.lastDie + 3f < Time.time) {
-            controllerData.lastDie = Time.time;
+        if (currentControllerData.lastDie + 3f < Time.time) {
+            currentControllerData.lastDie = Time.time;
         }
         else {
             return;
         }
                      
-        if (isDead && controllerData.dying) {
+        if (isDead && currentControllerData.dying) {
             return;
         }
                 
-        if (controllerData.thirdPersonController != null) {
-            controllerData.thirdPersonController.controllerData.removing = true;
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.controllerData.removing = true;
         }
         
-        controllerData.gamePlayerControllerAnimation.Die();
+        currentControllerData.gamePlayerControllerAnimation.Die();
                 
 
-        controllerData.dying = true;
+        currentControllerData.dying = true;
 
         if (IsPlayerControlled) {
             GamePlayerProgress.SetStatDeaths(1f);
@@ -3121,32 +3121,32 @@ public class BaseGamePlayerController : GameActor {
     public virtual void StartNavAgent() {
         
         if (!IsPlayerControlled || gameObject.Has<CharacterController>()) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.enabled = true;
-                controllerData.navMeshAgent.Resume();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.enabled = true;
+                currentControllerData.navMeshAgent.Resume();
             }
-            if (controllerData.navMeshAgentController != null) {
-                controllerData.navMeshAgentController.StartAgent();
+            if (currentControllerData.navMeshAgentController != null) {
+                currentControllerData.navMeshAgentController.StartAgent();
             }
-            if (controllerData.navMeshAgentFollowController != null) {
-                controllerData.navMeshAgentFollowController.StartAgent();
+            if (currentControllerData.navMeshAgentFollowController != null) {
+                currentControllerData.navMeshAgentFollowController.StartAgent();
             }
         }
     }
 
     public virtual void StopNavAgent() {
 
-        if (controllerData.navMeshAgent != null) {
-            if (controllerData.navMeshAgent.enabled) {
-                controllerData.navMeshAgent.Stop(true);
-                controllerData.navMeshAgent.enabled = false;
+        if (currentControllerData.navMeshAgent != null) {
+            if (currentControllerData.navMeshAgent.enabled) {
+                currentControllerData.navMeshAgent.Stop(true);
+                currentControllerData.navMeshAgent.enabled = false;
             }
         }
-        if (controllerData.navMeshAgentController != null) {
-            controllerData.navMeshAgentController.StopAgent();
+        if (currentControllerData.navMeshAgentController != null) {
+            currentControllerData.navMeshAgentController.StopAgent();
         }
-        if (controllerData.navMeshAgentFollowController != null) {
-            controllerData.navMeshAgentFollowController.StopAgent();
+        if (currentControllerData.navMeshAgentFollowController != null) {
+            currentControllerData.navMeshAgentFollowController.StopAgent();
         }
     }
  
@@ -3154,7 +3154,7 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }    
-        controllerData.gamePlayerControllerAnimation.AttackAlt();
+        currentControllerData.gamePlayerControllerAnimation.AttackAlt();
         Invoke("AttackEffect", .5f);
     }
  
@@ -3162,7 +3162,7 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }
-        controllerData.gamePlayerControllerAnimation.AttackLeft();
+        currentControllerData.gamePlayerControllerAnimation.AttackLeft();
         Invoke("AttackEffect", .5f);
     }
  
@@ -3170,7 +3170,7 @@ public class BaseGamePlayerController : GameActor {
         if (isDead) {
             return;
         }
-        controllerData.gamePlayerControllerAnimation.AttackRight();
+        currentControllerData.gamePlayerControllerAnimation.AttackRight();
         Invoke("AttackEffect", .5f);
     }
  
@@ -3198,8 +3198,8 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (shouldShoot) {    
-            if (Time.time > controllerData.lastAttackTime + 1f) {
-                controllerData.lastAttackTime = Time.time;
+            if (Time.time > currentControllerData.lastAttackTime + 1f) {
+                currentControllerData.lastAttackTime = Time.time;
                 StartCoroutine(AttackCo());
             }
         }
@@ -3220,7 +3220,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        // if (Physics.Linecast(transform.position, controllerData.thirdPersonController.aimingDirection)) {
+        // if (Physics.Linecast(transform.position, currentControllerData.thirdPersonController.aimingDirection)) {
             
         //}
      
@@ -3237,8 +3237,8 @@ public class BaseGamePlayerController : GameActor {
         RaycastHit[] hits;
      
         Vector3 directionAttack = transform.forward;
-        if (controllerData.thirdPersonController != null) {
-            directionAttack = controllerData.thirdPersonController.aimingDirection;
+        if (currentControllerData.thirdPersonController != null) {
+            directionAttack = currentControllerData.thirdPersonController.aimingDirection;
         }        
      
         //Debug.DrawRay(transform.position, directionAttack * attackDistance);
@@ -3287,11 +3287,11 @@ public class BaseGamePlayerController : GameActor {
                      
         //LogUtil.Log("GamePlayerController:ActionAttack:");
 
-        //controllerData.thirdPersonController.ApplyAttack();
+        //currentControllerData.thirdPersonController.ApplyAttack();
      
         //gamePlayerControllerAnimation.Attack();
 
-        controllerData.gamePlayerControllerAnimation.Attack();
+        currentControllerData.gamePlayerControllerAnimation.Attack();
      
         Invoke("AttackEffect", .5f);
      
@@ -3380,34 +3380,34 @@ public class BaseGamePlayerController : GameActor {
         if (Math.Abs(x) > axisDeadZone
             && Math.Abs(y) > axisDeadZone) {
             
-            controllerData.currentPosition = model.transform.position;
+            currentControllerData.currentPosition = model.transform.position;
             
-            controllerData.currentAimPosition = -controllerData.currentPosition
-                .WithX(controllerData.currentPosition.x + (x * 100))
-                .WithY(controllerData.currentPosition.y + (y * 100));
+            currentControllerData.currentAimPosition = -currentControllerData.currentPosition
+                .WithX(currentControllerData.currentPosition.x + (x * 100))
+                .WithY(currentControllerData.currentPosition.y + (y * 100));
             
-            //float angle = Vector3.Angle(controllerData.currentPosition, controllerData.currentAimPosition);
-            float dist = Vector3.Distance(controllerData.currentPosition, controllerData.currentAimPosition);
+            //float angle = Vector3.Angle(currentControllerData.currentPosition, currentControllerData.currentAimPosition);
+            float dist = Vector3.Distance(currentControllerData.currentPosition, currentControllerData.currentAimPosition);
             
             model.transform.localScale = Mathf.Clamp(dist * .1f, .5f, 1.3f) * Vector3.one;  
             
-            Vector3 lookAtPos = model.transform.position + (controllerData.currentAimPosition * 10);
+            Vector3 lookAtPos = model.transform.position + (currentControllerData.currentAimPosition * 10);
             
             model.transform.LookAt(lookAtPos);
             
             float amount = Mathf.Abs(dist);
             
-            if (controllerData.gamePlayerEffectAim != null) {
-                controllerData.gamePlayerEffectAim.enableEmission = true;
-                controllerData.gamePlayerEffectAim.emissionRate = amount * 2;
-                controllerData.gamePlayerEffectAim.startLifetime = amount / 400f;
-                controllerData.gamePlayerEffectAim.startSpeed = amount;
-                controllerData.gamePlayerEffectAim.Play();
+            if (currentControllerData.gamePlayerEffectAim != null) {
+                currentControllerData.gamePlayerEffectAim.enableEmission = true;
+                currentControllerData.gamePlayerEffectAim.emissionRate = amount * 2;
+                currentControllerData.gamePlayerEffectAim.startLifetime = amount / 400f;
+                currentControllerData.gamePlayerEffectAim.startSpeed = amount;
+                currentControllerData.gamePlayerEffectAim.Play();
             }
             
-            //controllerData.lineAim..SetLine3D(Color.white, model.transform.position, lookAtPos);
+            //currentControllerData.lineAim..SetLine3D(Color.white, model.transform.position, lookAtPos);
             
-            //LogUtil.Log("UpdateAim:controllerData.currentAimPosition:", controllerData.currentAimPosition);
+            //LogUtil.Log("UpdateAim:currentControllerData.currentAimPosition:", currentControllerData.currentAimPosition);
             
             if (gameCameraSmoothFollow != null) {
                 gameCameraSmoothFollow.offset.x = 
@@ -3435,10 +3435,10 @@ public class BaseGamePlayerController : GameActor {
             model.transform.rotation = gamePlayerHolder.transform.rotation;
             //model.transform.LookAt(gamePlayerModelHolder.transform.position);
             
-            if (controllerData.gamePlayerEffectAim != null) {
-                controllerData.gamePlayerEffectAim.enableEmission = false;
-                controllerData.gamePlayerEffectAim.emissionRate = 1;
-                controllerData.gamePlayerEffectAim.Stop();
+            if (currentControllerData.gamePlayerEffectAim != null) {
+                currentControllerData.gamePlayerEffectAim.enableEmission = false;
+                currentControllerData.gamePlayerEffectAim.emissionRate = 1;
+                currentControllerData.gamePlayerEffectAim.Stop();
             }
             
             if (gameCameraSmoothFollow != null) {
@@ -3530,8 +3530,8 @@ public class BaseGamePlayerController : GameActor {
 
         //bool allowTackle = false;
 
-        if (controllerData.lastTackle + 1f < Time.time) {
-            controllerData.lastTackle = Time.time;
+        if (currentControllerData.lastTackle + 1f < Time.time) {
+            currentControllerData.lastTackle = Time.time;
             //allowTackle = true;
         }
         else {
@@ -3542,14 +3542,14 @@ public class BaseGamePlayerController : GameActor {
         
         Jump();
 
-        controllerData.positionPlayer = transform.position.WithY(10);
-        controllerData.positionTackler = gamePlayerControllerTo.transform.position;
+        currentControllerData.positionPlayer = transform.position.WithY(10);
+        currentControllerData.positionTackler = gamePlayerControllerTo.transform.position;
      
-        controllerData.gamePlayerControllerAnimation.Attack();
+        currentControllerData.gamePlayerControllerAnimation.Attack();
 
         //Attack();
      
-        AddImpact(controllerData.positionTackler - controllerData.positionPlayer, power, true);
+        AddImpact(currentControllerData.positionTackler - currentControllerData.positionPlayer, power, true);
      
     }
 
@@ -3579,7 +3579,7 @@ public class BaseGamePlayerController : GameActor {
             energy, health);
     }
  
-    // call this function to add an controllerData.impact force:
+    // call this function to add an currentControllerData.impact force:
     public virtual void AddImpact(Vector3 dir, float force, bool damage, bool allowY = false) {
 
         dir.Normalize();
@@ -3594,7 +3594,7 @@ public class BaseGamePlayerController : GameActor {
 
         //if(IsPlayerControlled 
         //   && runtimeData.goalFly == 0) {
-        controllerData.impact += dir.normalized * force / (float)runtimeData.mass;
+        currentControllerData.impact += dir.normalized * force / (float)runtimeData.mass;
         //}
         if (damage) {
             runtimeData.hitCount++;
@@ -3608,15 +3608,15 @@ public class BaseGamePlayerController : GameActor {
                     (float)(-.01f * Mathf.Clamp(force / 10f, .3f, 1f)));
             }
         }
-        //LogUtil.Log("AddImpact:name:", transform.name + "controllerData.impact:" + controllerData.impact.x);
+        //LogUtil.Log("AddImpact:name:", transform.name + "currentControllerData.impact:" + currentControllerData.impact.x);
     }
 
-    // call this function to add an controllerData.impact force:
+    // call this function to add an currentControllerData.impact force:
     public virtual void AddImpactForce(Vector3 dir, float force) {
 
         Vector3 delta = dir * force / (float)runtimeData.mass;
 
-        controllerData.impact += delta;
+        currentControllerData.impact += delta;
 
         //Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
 
@@ -3644,14 +3644,14 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual IEnumerator UpdatePhysicStateCo() {
         
-        //Vectrosity.VectorLine.SetLine (Color.red, transform.position, controllerData.impact);
+        //Vectrosity.VectorLine.SetLine (Color.red, transform.position, currentControllerData.impact);
 
-        if (controllerData.characterController.enabled) {
-            controllerData.characterController.Move(controllerData.impact * Time.deltaTime);
+        if (currentControllerData.characterController.enabled) {
+            currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
         }
                 
-        // consumes the controllerData.impact energy each cycle:
-        controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+        // consumes the currentControllerData.impact energy each cycle:
+        currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
         //}
 
         UpdatePlayerEffectsState();
@@ -3661,9 +3661,9 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void HandlePlayerEffectsStateChange() {
-        controllerData.lastPlayerEffectsTrailUpdate = 0;
-        controllerData.lastPlayerEffectsBoostUpdate = -1f;
-        controllerData.lastPlayerEffectsGroundUpdate = -1f;
+        currentControllerData.lastPlayerEffectsTrailUpdate = 0;
+        currentControllerData.lastPlayerEffectsBoostUpdate = -1f;
+        currentControllerData.lastPlayerEffectsGroundUpdate = -1f;
         UpdatePlayerEffectsState();
     }
 
@@ -3676,18 +3676,18 @@ public class BaseGamePlayerController : GameActor {
         if (IsPlayerControlled) {
             
             float trailTime =
-                (Math.Abs(controllerData.impact.x) +
-                Math.Abs(controllerData.impact.y) +
-                Math.Abs(controllerData.impact.z)) * 5f;
+                (Math.Abs(currentControllerData.impact.x) +
+                Math.Abs(currentControllerData.impact.y) +
+                Math.Abs(currentControllerData.impact.z)) * 5f;
 
-            PlayerEffectTrailBoostTime(trailTime * controllerData.thirdPersonController.moveSpeed);
-            PlayerEffectTrailGroundTime(-trailTime + controllerData.thirdPersonController.moveSpeed);
+            PlayerEffectTrailBoostTime(trailTime * currentControllerData.thirdPersonController.moveSpeed);
+            PlayerEffectTrailGroundTime(-trailTime + currentControllerData.thirdPersonController.moveSpeed);
 
             HandlePlayerEffectsTick();
         }
         
-        // consumes the controllerData.impact energy each cycle:
-        //controllerData.impact = Vector3.Lerp(controllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+        // consumes the currentControllerData.impact energy each cycle:
+        //currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
     }
 
 
@@ -3699,11 +3699,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerData.lastAudioPlayedAttack + 1 > Time.time) {
+        if (currentControllerData.lastAudioPlayedAttack + 1 > Time.time) {
             return;
         }
         else {
-            controllerData.lastAudioPlayedAttack = Time.time;
+            currentControllerData.lastAudioPlayedAttack = Time.time;
         }
 
         GameDataSound soundAttack = gameCharacter.data.GetSoundByType(GameDataActionKeys.attack);
@@ -3716,11 +3716,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerData.lastAudioPlayedHit + 1 > Time.time) {
+        if (currentControllerData.lastAudioPlayedHit + 1 > Time.time) {
             return;
         }
         else {
-            controllerData.lastAudioPlayedHit = Time.time;
+            currentControllerData.lastAudioPlayedHit = Time.time;
         }
 
         GameDataSound dataItem = gameCharacter.data.GetSoundByType(GameDataActionKeys.hit);
@@ -3732,11 +3732,11 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerData.lastAudioPlayedDie + 1 > Time.time) {
+        if (currentControllerData.lastAudioPlayedDie + 1 > Time.time) {
             return;
         }
         else {
-            controllerData.lastAudioPlayedDie = Time.time;
+            currentControllerData.lastAudioPlayedDie = Time.time;
         }
 
         if (controllerState == GamePlayerControllerState.ControllerPlayer) {
@@ -3768,10 +3768,10 @@ public class BaseGamePlayerController : GameActor {
             currentNetworkPlayerContainer.networkViewObject.observed = currentNetworkPlayerContainer;
 #endif
             currentNetworkPlayerContainer.gamePlayer = gameObject;
-            if (controllerData.thirdPersonController != null) {
-                currentNetworkPlayerContainer.currentSpeedNetwork = controllerData.thirdPersonController.moveSpeed;
-                currentNetworkPlayerContainer.verticalInputNetwork = controllerData.thirdPersonController.verticalInput;
-                currentNetworkPlayerContainer.horizontalInputNetwork = controllerData.thirdPersonController.horizontalInput;
+            if (currentControllerData.thirdPersonController != null) {
+                currentNetworkPlayerContainer.currentSpeedNetwork = currentControllerData.thirdPersonController.moveSpeed;
+                currentNetworkPlayerContainer.verticalInputNetwork = currentControllerData.thirdPersonController.verticalInput;
+                currentNetworkPlayerContainer.horizontalInputNetwork = currentControllerData.thirdPersonController.horizontalInput;
             }
             currentNetworkPlayerContainer.running = true;                
         }    
@@ -3789,8 +3789,8 @@ public class BaseGamePlayerController : GameActor {
             }
         }
      
-        if (Time.time > controllerData.lastNetworkContainerFind + 5f) {
-            controllerData.lastNetworkContainerFind = Time.time;
+        if (Time.time > currentControllerData.lastNetworkContainerFind + 5f) {
+            currentControllerData.lastNetworkContainerFind = Time.time;
             if (GameController.Instance.gameState == GameStateGlobal.GameStarted) {
                 foreach (Gameverses.GameNetworkPlayerContainer playerContainer 
                          in UnityObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
@@ -3825,10 +3825,10 @@ public class BaseGamePlayerController : GameActor {
         FindNetworkContainer(uniqueId);
      
         if (currentNetworkPlayerContainer != null) {
-            if (controllerData.thirdPersonController != null) {
-                currentNetworkPlayerContainer.currentSpeedNetwork = controllerData.thirdPersonController.moveSpeed;
-                currentNetworkPlayerContainer.verticalInputNetwork = controllerData.thirdPersonController.verticalInput;
-                currentNetworkPlayerContainer.horizontalInputNetwork = controllerData.thirdPersonController.horizontalInput;
+            if (currentControllerData.thirdPersonController != null) {
+                currentNetworkPlayerContainer.currentSpeedNetwork = currentControllerData.thirdPersonController.moveSpeed;
+                currentNetworkPlayerContainer.verticalInputNetwork = currentControllerData.thirdPersonController.verticalInput;
+                currentNetworkPlayerContainer.horizontalInputNetwork = currentControllerData.thirdPersonController.horizontalInput;
             }
             currentNetworkPlayerContainer.running = true;                
         }    
@@ -3838,37 +3838,37 @@ public class BaseGamePlayerController : GameActor {
         //if (contextStateTo != contextState) {
         contextState = contextStateTo;
          
-        if (controllerData.thirdPersonController != null) {
-            controllerData.thirdPersonController.isNetworked = false;
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.isNetworked = false;
         }
          
         if (contextState == GamePlayerContextState.ContextFollowAgent
             || contextState == GamePlayerContextState.ContextFollowAgentAttack
             || contextState == GamePlayerContextState.ContextRandom
             || contextState == GamePlayerContextState.ContextScript) {
-            if (controllerData.navMeshAgent != null) {
+            if (currentControllerData.navMeshAgent != null) {
                 // TODO load script or look for character input.
-                controllerData.navMeshAgent.enabled = true;
+                currentControllerData.navMeshAgent.enabled = true;
             }
         }
         else if (contextState == GamePlayerContextState.ContextInput
             || contextState == GamePlayerContextState.ContextInputVehicle
             || contextState == GamePlayerContextState.ContextFollowInput) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;
             }
         }
         else if (contextState == GamePlayerContextState.ContextNetwork) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;
             }
-            controllerData.thirdPersonController.isNetworked = true;
+            currentControllerData.thirdPersonController.isNetworked = true;
         }
         else if (contextState == GamePlayerContextState.ContextUI) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
                 //navMeshAgent.enabled = false;
             }
         }
@@ -3898,8 +3898,8 @@ public class BaseGamePlayerController : GameActor {
     // HANDLE PROGRESS
 
     public virtual void GetPlayerProgress() {
-        controllerData.currentRPGItem = GameProfileCharacters.Current.GetCurrentCharacterRPG();
-        controllerData.currentPlayerProgressItem = GameProfileCharacters.Current.GetCurrentCharacterProgress();
+        currentControllerData.currentRPGItem = GameProfileCharacters.Current.GetCurrentCharacterRPG();
+        currentControllerData.currentPlayerProgressItem = GameProfileCharacters.Current.GetCurrentCharacterProgress();
     }
 
     public virtual void HandleItemProperties() {    
@@ -3914,48 +3914,48 @@ public class BaseGamePlayerController : GameActor {
 
         // speed
 
-        if (controllerData.modifierItemSpeedLerp < 1f) {
+        if (currentControllerData.modifierItemSpeedLerp < 1f) {
 
-            controllerData.modifierItemSpeedLerp += Time.deltaTime / (controllerData.modifierItemSpeedLerpTime * 1000);
+            currentControllerData.modifierItemSpeedLerp += Time.deltaTime / (currentControllerData.modifierItemSpeedLerpTime * 1000);
                     
-            controllerData.modifierItemSpeedCurrent = Mathf.Lerp(
-                    controllerData.modifierItemSpeedCurrent, 
-                    controllerData.modifierItemSpeedMin, 
-                    controllerData.modifierItemSpeedLerp);     
+            currentControllerData.modifierItemSpeedCurrent = Mathf.Lerp(
+                    currentControllerData.modifierItemSpeedCurrent, 
+                    currentControllerData.modifierItemSpeedMin, 
+                    currentControllerData.modifierItemSpeedLerp);     
 
-            controllerData.modifierItemSpeedCurrent = Mathf.Clamp(
-                controllerData.modifierItemSpeedCurrent, 0, 5);
+            currentControllerData.modifierItemSpeedCurrent = Mathf.Clamp(
+                currentControllerData.modifierItemSpeedCurrent, 0, 5);
         }
 
         // scale
         
-        if (controllerData.modifierItemScaleLerp < 1f) {
+        if (currentControllerData.modifierItemScaleLerp < 1f) {
             
-            controllerData.modifierItemScaleLerp += Time.deltaTime / (controllerData.modifierItemScaleLerpTime * 1000);
+            currentControllerData.modifierItemScaleLerp += Time.deltaTime / (currentControllerData.modifierItemScaleLerpTime * 1000);
             
-            controllerData.modifierItemScaleCurrent = Mathf.Lerp(
-                controllerData.modifierItemScaleCurrent, 
-                controllerData.modifierItemScaleMin, 
-                controllerData.modifierItemScaleLerp);     
+            currentControllerData.modifierItemScaleCurrent = Mathf.Lerp(
+                currentControllerData.modifierItemScaleCurrent, 
+                currentControllerData.modifierItemScaleMin, 
+                currentControllerData.modifierItemScaleLerp);     
             
-            controllerData.modifierItemScaleCurrent = Mathf.Clamp(
-                controllerData.modifierItemScaleCurrent, 0, 5);
+            currentControllerData.modifierItemScaleCurrent = Mathf.Clamp(
+                currentControllerData.modifierItemScaleCurrent, 0, 5);
         }
 
         // fly
 
         /*
-        if (controllerData.modifierItemFlyLerp < 1f) {
+        if (currentControllerData.modifierItemFlyLerp < 1f) {
             
-            controllerData.modifierItemFlyLerp += Time.deltaTime / (controllerData.modifierItemFlyLerpTime * 1000);
+            currentControllerData.modifierItemFlyLerp += Time.deltaTime / (currentControllerData.modifierItemFlyLerpTime * 1000);
             
-            controllerData.modifierItemFlyCurrent = Mathf.Lerp(
-                controllerData.modifierItemFlyCurrent, 
-                controllerData.modifierItemFlyMin, 
-                controllerData.modifierItemFlyLerp);     
+            currentControllerData.modifierItemFlyCurrent = Mathf.Lerp(
+                currentControllerData.modifierItemFlyCurrent, 
+                currentControllerData.modifierItemFlyMin, 
+                currentControllerData.modifierItemFlyLerp);     
             
-            controllerData.modifierItemFlyCurrent = Mathf.Clamp(
-                controllerData.modifierItemFlyCurrent, 0, 5);
+            currentControllerData.modifierItemFlyCurrent = Mathf.Clamp(
+                currentControllerData.modifierItemFlyCurrent, 0, 5);
         }
         */
 
@@ -4049,7 +4049,7 @@ public class BaseGamePlayerController : GameActor {
 
                     Vector3 dir = gameGoalNext.transform.position - transform.position;
                     dir.y = distanceCurrent / 2f;//UnityEngine.Random.Range(120f, 200f);
-                    controllerData.impact = Vector3.zero;
+                    currentControllerData.impact = Vector3.zero;
                     AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
                 }
 
@@ -4072,8 +4072,8 @@ public class BaseGamePlayerController : GameActor {
                 
                 //SetModifierValue(GamePlayerModifierKeys.modifierItemGoalNextPosStep, modifierItemGoalNextPosStep);
                                     
-                if (controllerData.thirdPersonController != null) {
-                    //if (controllerData.thirdPersonController.IsJumping()) {
+                if (currentControllerData.thirdPersonController != null) {
+                    //if (currentControllerData.thirdPersonController.IsJumping()) {
                     //transform.position = modifierItemGoalNextPosCurrent;
                     //}
                 }  
@@ -4122,23 +4122,25 @@ public class BaseGamePlayerController : GameActor {
         public static string lastTimeGoalFlyFlap = "lastTimeGoalFlyFlap";
     }
 
+    public GamePlayerControllerData currentControllerData {
+        get {
+            return controllerData;
+        }    
+    }
+
     void SetModifierValue(string key, float val) {
 
-        if (controllerData == null) {
-            return;
-        }
-
-        controllerData.modifiers.Set(key, val);
+        currentControllerData.modifiers.Set(key, val);
 
     }
 
     float GetModifierValue(string key, float defaultValue) {
         
-        if (!controllerData.modifiers.ContainsKey(key)) {
-            controllerData.modifiers.Set(key, defaultValue);            
+        if (!currentControllerData.modifiers.ContainsKey(key)) {
+            currentControllerData.modifiers.Set(key, defaultValue);            
         }
         
-        return controllerData.modifiers.Get(key);
+        return currentControllerData.modifiers.Get(key);
     }
 
     void SetPositionValue(string key, Vector3 val) {
@@ -4147,17 +4149,17 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
         
-        controllerData.positions.Set(key, val);
+        currentControllerData.positions.Set(key, val);
         
     }
     
     Vector3 GetPositionValue(string key, Vector3 defaultValue) {
 
-        if (!controllerData.positions.ContainsKey(key)) {
-            controllerData.positions.Set(key, defaultValue);            
+        if (!currentControllerData.positions.ContainsKey(key)) {
+            currentControllerData.positions.Set(key, defaultValue);            
         }
         
-        return controllerData.positions.Get(key);
+        return currentControllerData.positions.Get(key);
     }
 
     public Vector3 initialScale = Vector3.one;
@@ -4165,35 +4167,35 @@ public class BaseGamePlayerController : GameActor {
     public virtual void HandleRPGProperties() {
 
         if (IsPlayerControlled) {
-            if (controllerData.currentRPGItem == null
-                || controllerData.currentPlayerProgressItem == null
-                || controllerData.lastRPGModTime < Time.time) {
-                controllerData.lastRPGModTime = Time.time + 3f;
+            if (currentControllerData.currentRPGItem == null
+                || currentControllerData.currentPlayerProgressItem == null
+                || currentControllerData.lastRPGModTime < Time.time) {
+                currentControllerData.lastRPGModTime = Time.time + 3f;
                 GetPlayerProgress();
             }
     
-            controllerData.runtimeRPGData.modifierSpeed = controllerData.currentRPGItem.GetSpeed();
+            currentControllerData.runtimeRPGData.modifierSpeed = currentControllerData.currentRPGItem.GetSpeed();
 
-            controllerData.runtimeRPGData.modifierEnergy = controllerData.currentRPGItem.GetEnergy()
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+            currentControllerData.runtimeRPGData.modifierEnergy = currentControllerData.currentRPGItem.GetEnergy()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
 
-            controllerData.runtimeRPGData.modifierHealth = controllerData.currentRPGItem.GetHealth()
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth();
+            currentControllerData.runtimeRPGData.modifierHealth = currentControllerData.currentRPGItem.GetHealth()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth();
     
-            controllerData.runtimeRPGData.modifierAttack = controllerData.currentRPGItem.GetAttack()
-                + controllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+            currentControllerData.runtimeRPGData.modifierAttack = currentControllerData.currentRPGItem.GetAttack()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
 
-            controllerData.runtimeRPGData.modifierScale = controllerData.currentRPGItem.GetScale();
+            currentControllerData.runtimeRPGData.modifierScale = currentControllerData.currentRPGItem.GetScale();
 
             // HANDLE ITEM RUNTIME
 
             // SCALE
 
-            //Debug.Log("modifierScale:" + controllerData.runtimeRPGData.modifierScale);
-            //Debug.Log("modifierItemScaleCurrent:" + controllerData.modifierItemScaleCurrent);
+            //Debug.Log("modifierScale:" + currentControllerData.runtimeRPGData.modifierScale);
+            //Debug.Log("modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
                         
-            Vector3 scalePos = initialScale * Mathf.Clamp((float)controllerData.runtimeRPGData.modifierScale
-                * controllerData.modifierItemScaleCurrent, .4f, 2.4f);
+            Vector3 scalePos = initialScale * Mathf.Clamp((float)currentControllerData.runtimeRPGData.modifierScale
+                * currentControllerData.modifierItemScaleCurrent, .4f, 2.4f);
             
             //Debug.Log("scalePos:" + scalePos);
 
@@ -4201,11 +4203,11 @@ public class BaseGamePlayerController : GameActor {
 
             // SPEED
             
-            float modifiedItem = Mathf.Clamp(controllerData.modifierItemSpeedCurrent, .3f, 4f);
+            float modifiedItem = Mathf.Clamp(currentControllerData.modifierItemSpeedCurrent, .3f, 4f);
 
             // FLY / JUMP
 
-            float modifiedFly = Mathf.Clamp(controllerData.modifierItemFlyCurrent, .3f, 4f);
+            float modifiedFly = Mathf.Clamp(currentControllerData.modifierItemFlyCurrent, .3f, 4f);
 
             if (modifiedFly > 1.0) {
                 ///Jump();
@@ -4213,8 +4215,8 @@ public class BaseGamePlayerController : GameActor {
 
             // POWER
 
-            float modifiedPower = (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                controllerData.runtimeRPGData.modifierEnergy);
+            float modifiedPower = (float)(currentControllerData.runtimeRPGData.modifierSpeed + 
+                currentControllerData.runtimeRPGData.modifierEnergy);
 
             float baseWalkSpeed = 5f;
             float baseTrotSpeed = 12f;
@@ -4224,28 +4226,28 @@ public class BaseGamePlayerController : GameActor {
             float modifiedTrotSpeed = Mathf.Clamp(baseTrotSpeed * modifiedPower, 9, 14) * modifiedItem;            
             float modifiedWalkSpeed = Mathf.Clamp(baseWalkSpeed * modifiedPower, 4, 8) * modifiedItem;
     
-            if (controllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
 
-                controllerData.thirdPersonController.walkSpeed = modifiedRunSpeed;    
-                controllerData.thirdPersonController.trotSpeed = modifiedTrotSpeed;    
-                controllerData.thirdPersonController.runSpeed = modifiedRunSpeed;
+                currentControllerData.thirdPersonController.walkSpeed = modifiedRunSpeed;    
+                currentControllerData.thirdPersonController.trotSpeed = modifiedTrotSpeed;    
+                currentControllerData.thirdPersonController.runSpeed = modifiedRunSpeed;
     
-                controllerData.thirdPersonController.inAirControlAcceleration = 3;
-                controllerData.thirdPersonController.jumpHeight = .8f;
-                controllerData.thirdPersonController.extraJumpHeight = 1f;
-                controllerData.thirdPersonController.trotAfterSeconds = .5f;
-                controllerData.thirdPersonController.getUserInput = false;
-                controllerData.thirdPersonController.capeFlyGravity = 8f;
-                controllerData.thirdPersonController.gravity = 16f;
+                currentControllerData.thirdPersonController.inAirControlAcceleration = 3;
+                currentControllerData.thirdPersonController.jumpHeight = .8f;
+                currentControllerData.thirdPersonController.extraJumpHeight = 1f;
+                currentControllerData.thirdPersonController.trotAfterSeconds = .5f;
+                currentControllerData.thirdPersonController.getUserInput = false;
+                currentControllerData.thirdPersonController.capeFlyGravity = 8f;
+                currentControllerData.thirdPersonController.gravity = 16f;
             }                       
             
-            if (controllerData.gamePlayerControllerAnimation != null) {
+            if (currentControllerData.gamePlayerControllerAnimation != null) {
                 
-                if (controllerData.gamePlayerControllerAnimation.animationData != null) {
-                    controllerData.gamePlayerControllerAnimation.animationData.runSpeedScale = 
+                if (currentControllerData.gamePlayerControllerAnimation.animationData != null) {
+                    currentControllerData.gamePlayerControllerAnimation.animationData.runSpeedScale = 
                         Mathf.Clamp(0.1f * modifiedRunSpeed / baseRunSpeed, 1.5f, 2.8f);
 
-                    controllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale = 
+                    currentControllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale = 
                         Mathf.Clamp(0.1f * modifiedWalkSpeed / baseWalkSpeed, 1.2f, 1.8f);
                 }
             }
@@ -4279,17 +4281,17 @@ public class BaseGamePlayerController : GameActor {
 
             yield return new WaitForEndOfFrame();                        
                      
-            controllerData.characterController = gameObject.GetComponent<CharacterController>();
+            currentControllerData.characterController = gameObject.GetComponent<CharacterController>();
 
-            if (controllerData.characterController == null) {
-                controllerData.characterController = gameObject.AddComponent<CharacterController>();
+            if (currentControllerData.characterController == null) {
+                currentControllerData.characterController = gameObject.AddComponent<CharacterController>();
             }
             
-            controllerData.characterController.slopeLimit = 45;
-            controllerData.characterController.stepOffset = .3f;
-            controllerData.characterController.radius = 1.67f;
-            controllerData.characterController.height = 2.42f;
-            controllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
+            currentControllerData.characterController.slopeLimit = 45;
+            currentControllerData.characterController.stepOffset = .3f;
+            currentControllerData.characterController.radius = 1.67f;
+            currentControllerData.characterController.height = 2.42f;
+            currentControllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
             
             // 
             // PLAYER CONTROLLERS
@@ -4302,16 +4304,16 @@ public class BaseGamePlayerController : GameActor {
                     
                 if (gameObject.Has<GamePlayerThirdPersonController>()) {
                 
-                    controllerData.thirdPersonController = 
+                    currentControllerData.thirdPersonController = 
                             gameObject.GetComponent<GamePlayerThirdPersonController>();
                 }
                 else {
 
-                    controllerData.thirdPersonController = 
+                    currentControllerData.thirdPersonController = 
                             gameObject.AddComponent<GamePlayerThirdPersonController>();
                 }
 
-                controllerData.thirdPersonController.Init();
+                currentControllerData.thirdPersonController.Init();
 
                 HandleRPGProperties();
             }
@@ -4321,32 +4323,32 @@ public class BaseGamePlayerController : GameActor {
          
             if (!IsUIState()) {
 
-                controllerData.navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+                currentControllerData.navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 
-                if (controllerData.navMeshAgent == null) {
-                    controllerData.navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+                if (currentControllerData.navMeshAgent == null) {
+                    currentControllerData.navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
                 }
 
-                if (controllerData.navMeshAgent != null) {
+                if (currentControllerData.navMeshAgent != null) {
                     //navMeshAgent.enabled = false;
                     //if(!IsPlayerControlled) {
-                    controllerData.navMeshAgent.height = 3.19f;
-                    controllerData.navMeshAgent.radius = 1.29f;
-                    controllerData.navMeshAgent.baseOffset = -0.30f;
-                    controllerData.navMeshAgent.stoppingDistance = 2f;
+                    currentControllerData.navMeshAgent.height = 3.19f;
+                    currentControllerData.navMeshAgent.radius = 1.29f;
+                    currentControllerData.navMeshAgent.baseOffset = -0.30f;
+                    currentControllerData.navMeshAgent.stoppingDistance = 2f;
                     //}
                     
-                    controllerData.navMeshAgent.speed = 
-                        12 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                        controllerData.runtimeRPGData.modifierEnergy) + 
+                    currentControllerData.navMeshAgent.speed = 
+                        12 * (float)(currentControllerData.runtimeRPGData.modifierSpeed + 
+                        currentControllerData.runtimeRPGData.modifierEnergy) + 
                         UnityEngine.Random.Range(1, 5);
                     
-                    controllerData.navMeshAgent.acceleration = 
-                        8 * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                        controllerData.runtimeRPGData.modifierEnergy) + 
+                    currentControllerData.navMeshAgent.acceleration = 
+                        8 * (float)(currentControllerData.runtimeRPGData.modifierSpeed + 
+                        currentControllerData.runtimeRPGData.modifierEnergy) + 
                         UnityEngine.Random.Range(1, 5);
                     
-                    controllerData.navMeshAgent.angularSpeed = 
+                    currentControllerData.navMeshAgent.angularSpeed = 
                         120 + UnityEngine.Random.Range(1, 5);
 
                 }
@@ -4356,69 +4358,69 @@ public class BaseGamePlayerController : GameActor {
                 || contextState == GamePlayerContextState.ContextFollowAgentAttack
                 && !IsUIState()) {
 
-                controllerData.navMeshAgentFollowController = 
+                currentControllerData.navMeshAgentFollowController = 
                     gameObject.GetComponent<GamePlayerNavMeshAgentFollowController>();
                 
-                if (controllerData.navMeshAgentFollowController == null) {
-                    controllerData.navMeshAgentFollowController = 
+                if (currentControllerData.navMeshAgentFollowController == null) {
+                    currentControllerData.navMeshAgentFollowController = 
                         gameObject.AddComponent<GamePlayerNavMeshAgentFollowController>();
                 }
 
-                controllerData.navMeshAgentFollowController.agent = controllerData.navMeshAgent;
+                currentControllerData.navMeshAgentFollowController.agent = currentControllerData.navMeshAgent;
 
-                controllerData.navMeshAgentFollowController.targetFollow = 
+                currentControllerData.navMeshAgentFollowController.targetFollow = 
                     GameController.CurrentGamePlayerController.gamePlayerEnemyTarget.transform;
             }
          
             if (contextState == GamePlayerContextState.ContextRandom
                 && !IsUIState()) {
 
-                controllerData.navMeshAgentController = 
+                currentControllerData.navMeshAgentController = 
                     gameObject.GetComponent<GamePlayerNavMeshAgentController>();
                 
-                if (controllerData.navMeshAgentController == null) {
-                    controllerData.navMeshAgentController = 
+                if (currentControllerData.navMeshAgentController == null) {
+                    currentControllerData.navMeshAgentController = 
                         gameObject.AddComponent<GamePlayerNavMeshAgentController>();
                 }
 
-                controllerData.navMeshAgentController.agent = controllerData.navMeshAgent;
+                currentControllerData.navMeshAgentController.agent = currentControllerData.navMeshAgent;
 
-                controllerData.navMeshAgentController.nextDestination = 
-                    controllerData.navMeshAgentController.GetRandomLocation();
+                currentControllerData.navMeshAgentController.nextDestination = 
+                    currentControllerData.navMeshAgentController.GetRandomLocation();
             }
             
             // 
             // ANIMATION
          
             if (gameObject.Has<GamePlayerControllerAnimation>()) {
-                controllerData.gamePlayerControllerAnimation = 
+                currentControllerData.gamePlayerControllerAnimation = 
                     gameObject.GetComponent<GamePlayerControllerAnimation>();  
             }
             else {
-                controllerData.gamePlayerControllerAnimation = 
+                currentControllerData.gamePlayerControllerAnimation = 
                     gameObject.AddComponent<GamePlayerControllerAnimation>();  
             }
             
-            controllerData.gamePlayerControllerAnimation.Init(); 
+            currentControllerData.gamePlayerControllerAnimation.Init(); 
                       
             float smoothing = .8f;
 
-            if (controllerData.thirdPersonController != null) {
-                smoothing = controllerData.thirdPersonController.speedSmoothing;
+            if (currentControllerData.thirdPersonController != null) {
+                smoothing = currentControllerData.thirdPersonController.speedSmoothing;
             }
             else {
-                smoothing = controllerData.navMeshAgent.velocity.magnitude + 10f;
+                smoothing = currentControllerData.navMeshAgent.velocity.magnitude + 10f;
             }
 
-            controllerData.gamePlayerControllerAnimation.animationData.runSpeedScale = 
-                (smoothing * .15f) * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                controllerData.runtimeRPGData.modifierEnergy);// controllerData.thirdPersonController.trotSpeed / controllerData.thirdPersonController.walkSpeed / 2;
+            currentControllerData.gamePlayerControllerAnimation.animationData.runSpeedScale = 
+                (smoothing * .15f) * (float)(currentControllerData.runtimeRPGData.modifierSpeed + 
+                currentControllerData.runtimeRPGData.modifierEnergy);// currentControllerData.thirdPersonController.trotSpeed / currentControllerData.thirdPersonController.walkSpeed / 2;
 
-            controllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale = 
-                1f * (float)(controllerData.runtimeRPGData.modifierSpeed + 
-                controllerData.runtimeRPGData.modifierEnergy);//controllerData.thirdPersonController.walkSpeed / controllerData.thirdPersonController.walkSpeed;
+            currentControllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale = 
+                1f * (float)(currentControllerData.runtimeRPGData.modifierSpeed + 
+                currentControllerData.runtimeRPGData.modifierEnergy);//currentControllerData.thirdPersonController.walkSpeed / currentControllerData.thirdPersonController.walkSpeed;
 
-            controllerData.gamePlayerControllerAnimation.animationData.isRunning = true;
+            currentControllerData.gamePlayerControllerAnimation.animationData.isRunning = true;
 
             // 
             // SHADOW
@@ -4435,12 +4437,12 @@ public class BaseGamePlayerController : GameActor {
 
             StartNavAgent();
                         
-            if (controllerData.thirdPersonController != null) {
-                controllerData.thirdPersonController.Reset();           
+            if (currentControllerData.thirdPersonController != null) {
+                currentControllerData.thirdPersonController.Reset();           
             }
                         
             if (controllerState == GamePlayerControllerState.ControllerAgent) {
-                controllerData.navMeshAgent.enabled = true;
+                currentControllerData.navMeshAgent.enabled = true;
             } 
             
             yield return new WaitForEndOfFrame();
@@ -4460,8 +4462,8 @@ public class BaseGamePlayerController : GameActor {
             else {
                 // remove
              
-                if (controllerData.thirdPersonController) {
-                    controllerData.thirdPersonController.ApplyDie(true);
+                if (currentControllerData.thirdPersonController) {
+                    currentControllerData.thirdPersonController.ApplyDie(true);
                 }
 
                 UITweenerUtil.FadeTo(
@@ -4484,45 +4486,45 @@ public class BaseGamePlayerController : GameActor {
             return false;
         }
      
-        if (controllerData.renderers == null) {
-            controllerData.renderers = new List<SkinnedMeshRenderer>(); 
+        if (currentControllerData.renderers == null) {
+            currentControllerData.renderers = new List<SkinnedMeshRenderer>(); 
         }
      
-        if (controllerData.renderers.Count == 0) {           
+        if (currentControllerData.renderers.Count == 0) {           
             foreach (SkinnedMeshRenderer rendererSkinned in gamePlayerHolder.GetComponentsInChildren<SkinnedMeshRenderer>()) {
-                controllerData.renderers.Add(rendererSkinned);
+                currentControllerData.renderers.Add(rendererSkinned);
             }
         }            
      
-        controllerData.visible = false;
+        currentControllerData.visible = false;
      
-        if (controllerData.renderers.Count > 0) {
-            foreach (SkinnedMeshRenderer rendererSkinned in controllerData.renderers) {
+        if (currentControllerData.renderers.Count > 0) {
+            foreach (SkinnedMeshRenderer rendererSkinned in currentControllerData.renderers) {
                 if (rendererSkinned != null) {
-                    if (!rendererSkinned.isVisible) {// || !rendererSkinned.IscontrollerData.visibleFrom(Camera.main)) {
-                        controllerData.visible = false;
+                    if (!rendererSkinned.isVisible) {// || !rendererSkinned.IscurrentControllerData.visibleFrom(Camera.main)) {
+                        currentControllerData.visible = false;
                     }
                     else {
-                        controllerData.visible = true;
+                        currentControllerData.visible = true;
                         break;
                     }
                 }        
             }
         }
      
-        //LogUtil.Log("controllerData.visible:" + controllerData.visible);
+        //LogUtil.Log("currentControllerData.visible:" + currentControllerData.visible);
      
-        return controllerData.visible;
+        return currentControllerData.visible;
     }
      
     // --------------------------------------------------------------------
     // AGENTS
  
     public virtual void TurnOffNavAgent() {
-        if (controllerData.navAgentRunning) {
-            if (controllerData.navMeshAgent != null) {
-                controllerData.navMeshAgent.Stop();
-                controllerData.navAgentRunning = false;
+        if (currentControllerData.navAgentRunning) {
+            if (currentControllerData.navMeshAgent != null) {
+                currentControllerData.navMeshAgent.Stop();
+                currentControllerData.navAgentRunning = false;
             }        
         }
     }
@@ -4541,7 +4543,7 @@ public class BaseGamePlayerController : GameActor {
          }
          */
             if (isDead) {
-                controllerData.navAgentRunning = true;
+                currentControllerData.navAgentRunning = true;
             }
         }
         else if (IsPlayerState()) {
@@ -4611,32 +4613,32 @@ public class BaseGamePlayerController : GameActor {
             UpdateNetworkContainerFromSource(uniqueId);
         }
         else if (IsPlayerState()) {           
-            if (controllerData.thirdPersonController.aimingDirection != Vector3.zero) {
+            if (currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
 
-                //gamePlayerHolder.transform.rotation = Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
+                //gamePlayerHolder.transform.rotation = Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection);
                 gamePlayerModelHolder.transform.rotation = 
-                    Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection);
+                    Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection);
 
-                if (controllerData.mountData.isMountedVehicle) {
-                    controllerData.mountData.mountVehicle.SetMountWeaponRotator(
-                        Quaternion.LookRotation(controllerData.thirdPersonController.aimingDirection));
+                if (currentControllerData.mountData.isMountedVehicle) {
+                    currentControllerData.mountData.mountVehicle.SetMountWeaponRotator(
+                        Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection));
                 }
 
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
                     t.localRotation = Quaternion.identity;
                 }
 
-                if (controllerData.thirdPersonController.aimingDirection.IsBiggerThanDeadzone(axisDeadZone)) {
+                if (currentControllerData.thirdPersonController.aimingDirection.IsBiggerThanDeadzone(axisDeadZone)) {
 
-                    if (controllerData.thirdPersonController.aimingDirection != controllerData.thirdPersonController.movementDirection) {
+                    if (currentControllerData.thirdPersonController.aimingDirection != currentControllerData.thirdPersonController.movementDirection) {
                         SendAttack();
                     }
                 }
             }
             else {
                                 
-                if (controllerData.mountData.isMountedVehicle) {
-                    //controllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
+                if (currentControllerData.mountData.isMountedVehicle) {
+                    //currentControllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
                 }
 
                 foreach (Transform t in gamePlayerModelHolderModel.transform) {
@@ -4658,8 +4660,8 @@ public class BaseGamePlayerController : GameActor {
         }
 
         bool shouldBeGrounded = true;
-        if (controllerData.thirdPersonController != null) {
-            if (controllerData.thirdPersonController.IsJumping()) {
+        if (currentControllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController.IsJumping()) {
                 shouldBeGrounded = false;
             }
         }
@@ -4676,8 +4678,8 @@ public class BaseGamePlayerController : GameActor {
         // periodic      
      
         bool runUpdate = false;
-        if (Time.time > controllerData.lastUpdateCommon + 1f) {
-            controllerData.lastUpdateCommon = Time.time;
+        if (Time.time > currentControllerData.lastUpdateCommon + 1f) {
+            currentControllerData.lastUpdateCommon = Time.time;
             runUpdate = true;
 
             if (IsPlayerControlled) {
@@ -4699,11 +4701,11 @@ public class BaseGamePlayerController : GameActor {
      
         // Handle navagent on/off while jumping
 
-        if (controllerData.thirdPersonController != null) {
-            if (controllerData.thirdPersonController.IsJumping()) {
-                if (controllerData.navMeshAgent != null) {
-                    if (controllerData.navMeshAgent.enabled) {
-                        controllerData.navMeshAgent.Stop(true);
+        if (currentControllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController.IsJumping()) {
+                if (currentControllerData.navMeshAgent != null) {
+                    if (currentControllerData.navMeshAgent.enabled) {
+                        currentControllerData.navMeshAgent.Stop(true);
                     }
                 }
                 
@@ -4712,11 +4714,11 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
             else {
-                if (controllerData.navMeshAgent != null) {
-                    if (!controllerData.navMeshAgent.enabled) {
-                        controllerData.navMeshAgent.enabled = true;
+                if (currentControllerData.navMeshAgent != null) {
+                    if (!currentControllerData.navMeshAgent.enabled) {
+                        currentControllerData.navMeshAgent.enabled = true;
                     }
-                    controllerData.navMeshAgent.Resume();
+                    currentControllerData.navMeshAgent.Resume();
                 }                       
                 
                 if (gamePlayerShadow != null) {
@@ -4738,15 +4740,15 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        //if (controllerData.dying) {
+        //if (currentControllerData.dying) {
         //transform.position = Vector3.Lerp(transform.position, transform.position.WithY(1.3f), 1 + Time.deltaTime);
         //}
 
         // fix after jump
         if (gamePlayerModelHolderModel != null) {
             foreach (Transform t in gamePlayerModelHolderModel.transform) { 
-                if (controllerData.thirdPersonController != null) {
-                    if (!controllerData.thirdPersonController.IsJumping()) {
+                if (currentControllerData.thirdPersonController != null) {
+                    if (!currentControllerData.thirdPersonController.IsJumping()) {
                         t.localPosition = Vector3.Lerp(t.localPosition, t.localPosition.WithY(0), 2 + Time.deltaTime);
                     }
                 }
@@ -4756,8 +4758,8 @@ public class BaseGamePlayerController : GameActor {
      
         bool runUpdate = false;
 
-        if (controllerData.currentTimeBlock + controllerData.actionInterval < Time.time) {
-            controllerData.currentTimeBlock = Time.time;
+        if (currentControllerData.currentTimeBlock + currentControllerData.actionInterval < Time.time) {
+            currentControllerData.currentTimeBlock = Time.time;
             runUpdate = true;
         }
      
@@ -4772,7 +4774,7 @@ public class BaseGamePlayerController : GameActor {
 
                 if (go != null) {
                     
-                    controllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
+                    currentControllerData.distanceToPlayerControlledGamePlayer = Vector3.Distance(
                         go.transform.position,
                         transform.position);
 
@@ -4782,25 +4784,25 @@ public class BaseGamePlayerController : GameActor {
 
                         lastStateEvaded += Time.deltaTime;
 
-                        if (controllerData.distanceToPlayerControlledGamePlayer <= controllerData.distanceEvade) {
-                            controllerData.isWithinEvadeRange = true;
+                        if (currentControllerData.distanceToPlayerControlledGamePlayer <= currentControllerData.distanceEvade) {
+                            currentControllerData.isWithinEvadeRange = true;
                         }
                         else {
-                            controllerData.isWithinEvadeRange = false;
+                            currentControllerData.isWithinEvadeRange = false;
                         }
 
-                        if (controllerData.lastIsWithinEvadeRange != controllerData.isWithinEvadeRange) {
-                            if (controllerData.lastIsWithinEvadeRange && !controllerData.isWithinEvadeRange) {
+                        if (currentControllerData.lastIsWithinEvadeRange != currentControllerData.isWithinEvadeRange) {
+                            if (currentControllerData.lastIsWithinEvadeRange && !currentControllerData.isWithinEvadeRange) {
                                 // evaded!
                                 GamePlayerProgress.SetStatEvaded(1f);
                             }
-                            controllerData.lastIsWithinEvadeRange = controllerData.isWithinEvadeRange;
+                            currentControllerData.lastIsWithinEvadeRange = currentControllerData.isWithinEvadeRange;
                         }
                     }
 
                     // check attack/lunge range
 
-                    if (controllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
+                    if (currentControllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
                         //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
 
                         // Turn towards player and attack!
@@ -4811,16 +4813,16 @@ public class BaseGamePlayerController : GameActor {
                             = GameController.GetGamePlayerControllerObject(go, true);
 
                         if (gamePlayerControllerHit != null
-                            && !gamePlayerControllerHit.controllerData.dying) {
+                            && !gamePlayerControllerHit.currentControllerData.dying) {
 
 
-                            if (controllerData.distanceToPlayerControlledGamePlayer < attackRange / 3.5f) {
+                            if (currentControllerData.distanceToPlayerControlledGamePlayer < attackRange / 3.5f) {
                                 // LEAP AT THEM within three
-                                Tackle(gamePlayerControllerHit, Mathf.Clamp(100f - controllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 50f));
+                                Tackle(gamePlayerControllerHit, Mathf.Clamp(100f - currentControllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 50f));
                             }
                             else {
                                 // PURSUE FASTER
-                                Tackle(gamePlayerControllerHit, 3.5f + controllerData.distanceToPlayerControlledGamePlayer / 2);
+                                Tackle(gamePlayerControllerHit, 3.5f + currentControllerData.distanceToPlayerControlledGamePlayer / 2);
                             }
                         }
                     }
@@ -4829,35 +4831,35 @@ public class BaseGamePlayerController : GameActor {
 
                     bool shouldRandomlyDie = false;
                     
-                    if (controllerData.distanceToPlayerControlledGamePlayer >= controllerData.distanceRandomDie) {
-                        controllerData.isInRandomDieRange = true;
+                    if (currentControllerData.distanceToPlayerControlledGamePlayer >= currentControllerData.distanceRandomDie) {
+                        currentControllerData.isInRandomDieRange = true;
                     }
                     else {
-                        controllerData.isInRandomDieRange = false;
+                        currentControllerData.isInRandomDieRange = false;
                     }
 
-                    if (controllerData.isInRandomDieRange) {
-                        if (controllerData.lastRandomDie > UnityEngine.Random.Range(
-                            controllerData.timeMinimumRandomDie, 
-                            controllerData.timeMinimumRandomDie + controllerData.timeMinimumRandomDie / 2)) {
+                    if (currentControllerData.isInRandomDieRange) {
+                        if (currentControllerData.lastRandomDie > UnityEngine.Random.Range(
+                            currentControllerData.timeMinimumRandomDie, 
+                            currentControllerData.timeMinimumRandomDie + currentControllerData.timeMinimumRandomDie / 2)) {
                             
-                            controllerData.lastRandomDie = 0;
+                            currentControllerData.lastRandomDie = 0;
                             //shouldRandomlyDie = true;
                         }
                         
-                        controllerData.lastRandomDie += Time.deltaTime;
+                        currentControllerData.lastRandomDie += Time.deltaTime;
                     }
                     
-                    //public float controllerData.distanceRandomDie = 30f;
-                    //public float controllerData.timeMinimumRandomDie = 5f;
+                    //public float currentControllerData.distanceRandomDie = 30f;
+                    //public float currentControllerData.timeMinimumRandomDie = 5f;
                     
-                    if (controllerData.lastIsInRandomDieRange != controllerData.isInRandomDieRange) {
-                        if (controllerData.lastIsInRandomDieRange && !controllerData.isInRandomDieRange) {
+                    if (currentControllerData.lastIsInRandomDieRange != currentControllerData.isInRandomDieRange) {
+                        if (currentControllerData.lastIsInRandomDieRange && !currentControllerData.isInRandomDieRange) {
                             // out of range random!
                             //GameController.CurrentGamePlayerController.Score(5);
                             //GamePlayerProgress.SetStatEvaded(1f);
                         }
-                        controllerData.lastIsWithinEvadeRange = controllerData.isInRandomDieRange;
+                        currentControllerData.lastIsWithinEvadeRange = currentControllerData.isInRandomDieRange;
                     }
 
                     if (shouldRandomlyDie) {
@@ -4870,11 +4872,11 @@ public class BaseGamePlayerController : GameActor {
             && GameController.Instance.gameState == GameStateGlobal.GameStarted) {
             float currentSpeed = 0;
 
-            if (controllerData.mountData.isMountedVehicle) {
-                currentSpeed = controllerData.mountData.mountVehicle.driver.currentSpeed;
+            if (currentControllerData.mountData.isMountedVehicle) {
+                currentSpeed = currentControllerData.mountData.mountVehicle.driver.currentSpeed;
             }
             else {
-                currentSpeed = controllerData.thirdPersonController.moveSpeed;
+                currentSpeed = currentControllerData.thirdPersonController.moveSpeed;
             }
             //LogUtil.Log("currentSpeed:", currentSpeed);
             
@@ -4889,7 +4891,7 @@ public class BaseGamePlayerController : GameActor {
                 gamePlayerModelTarget.transform.localPosition = pos;
             }
 
-            if (controllerData.playerSpin) {
+            if (currentControllerData.playerSpin) {
                 // Clamps automatically angles between 0 and 360 degrees.
                 float y = 360 * Time.deltaTime;
 
@@ -4897,7 +4899,7 @@ public class BaseGamePlayerController : GameActor {
                     Quaternion.Euler(0, gamePlayerModelHolder.transform.localRotation.eulerAngles.y + y, 0);
 
                 if (gamePlayerModelHolder.transform.localRotation.eulerAngles.y > 330) {
-                    controllerData.playerSpin = false;
+                    currentControllerData.playerSpin = false;
                     gamePlayerModelHolder.transform.localRotation =
                         Quaternion.Euler(0, 0, 0);
                 }
@@ -4908,8 +4910,8 @@ public class BaseGamePlayerController : GameActor {
      // periodic stuff
      
      bool runUpdate = false;
-     if(Time.time > controllerData.lastUpdate + .3f) {
-         controllerData.lastUpdate = Time.time;
+     if(Time.time > currentControllerData.lastUpdate + .3f) {
+         currentControllerData.lastUpdate = Time.time;
          runUpdate = true;
      }
      
@@ -4940,7 +4942,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (!controllerData.initialized) {
+        if (!currentControllerData.initialized) {
             return;
         }
 
@@ -4962,7 +4964,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (!controllerData.initialized) {
+        if (!currentControllerData.initialized) {
             return;
         }
 
@@ -4983,8 +4985,8 @@ public class BaseGamePlayerController : GameActor {
                 
                 if (Input.GetKey(KeyCode.LeftControl)) {
                     
-                    //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.movementDirection);
-                    //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.controllerData.thirdPersonController.aimingDirection);
+                    //LogUtil.Log("GamePlayer:moveDirection:" + GameController.CurrentGamePlayerController.currentControllerData.thirdPersonController.movementDirection);
+                    //LogUtil.Log("GamePlayer:aimDirection:" + GameController.CurrentGamePlayerController.currentControllerData.thirdPersonController.aimingDirection);
                     //LogUtil.Log("GamePlayer:rotation:" + GameController.CurrentGamePlayerController.transform.rotation);
                     //Vector3 point1 = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0));
                     //Vector3 point2 = Camera.main.ScreenToWorldPoint(new Vector3(1, 0, 1));
@@ -5076,7 +5078,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (controllerData != null && !controllerData.initialized) {
+        if (controllerData != null && !currentControllerData.initialized) {
             return;
         }
 
@@ -5088,7 +5090,7 @@ public class BaseGamePlayerController : GameActor {
 
         UpdateEditorTools();
 
-        //if(!controllerData.visible) {
+        //if(!currentControllerData.visible) {
         //UpdateOffscreenState();
         //return;
         //}

@@ -115,7 +115,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         go.transform.localScale = Vector3.one;
         go.transform.localRotation = Quaternion.identity;//.Euler(Vector3.zero.WithY(133));
         
-        GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
+        //GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
         
         GameCustomController.BroadcastCustomSync();
                 

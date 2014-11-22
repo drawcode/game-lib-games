@@ -273,7 +273,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
 
             #if DEV
-            //if (Application.isEditor) {
+            if (Application.isEditor) {
 
                 GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
                 GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
@@ -281,7 +281,9 @@ public class BaseGameGlobal : GameObjectBehavior {
                 audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
                 GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
                 GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-            //}
+
+                AudioListener.volume = GameGlobal.volumeEditorMusic;
+            }
             #endif
         }
         

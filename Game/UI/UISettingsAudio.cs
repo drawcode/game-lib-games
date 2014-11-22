@@ -76,14 +76,6 @@ public class UISettingsAudio : GameObjectBehavior {
             
             GameAudio.SetProfileEffectsVolume(effectsVolume);
         }
-
-        if(GameGlobal.appRunState == AppRunState.DEV) {
-            
-            GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
-            GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);
-            GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
-            GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-        }
     }
     
     public void loadData() {
