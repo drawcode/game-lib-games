@@ -126,6 +126,17 @@ public class GameDraggableEditor : GameObjectBehavior {
 	}
 
 	public void Update () {
+
+        if(Application.isEditor) {
+            if(Input.GetKey(KeyCode.LeftControl)
+               && Input.GetKey(KeyCode.LeftAlt)) {
+                if(Input.GetKeyDown(KeyCode.E)) {
+                    ToggleEditingMode();
+                }
+            }
+        }
+
+
 		if(ShouldUpdate()) {
 			if (useToggleDrag) {
 		        UpdateToggleDrag();
@@ -150,6 +161,19 @@ public class GameDraggableEditor : GameObjectBehavior {
 			return Instance != null ? true : false;
 		}
 	}
+
+    public static GameDraggableCanvasType GetCanvasType() {
+        if(isInst) {
+            return Instance.getCanvasType();
+        }
+
+        return GameDraggableCanvasType.CANVAS_3D;
+    }
+
+    public GameDraggableCanvasType getCanvasType() {
+
+        return gameDraggableCanvasType;
+    }
 	
 	// ----------------------------------------------------------------------
 	

@@ -153,8 +153,17 @@ public class UIPanelEditAsset : UIAppPanel {
 			if(!deferSlider) {
 				UIUtil.SetSliderValue(sliderRotationSpeed, sliderVal);
 			}
+
+            Vector3 posFrom = Vector3.zero;
+
+            if(GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
+                posFrom = posFrom.WithZ(-val);
+            }
+            else {
+                posFrom = posFrom.WithY(-val);                
+            }
 			
-			itemAsset.rotation_speed.FromVector3(Vector3.zero.WithZ(-val));
+            itemAsset.rotation_speed.FromVector3(posFrom);
 		}
 	}
 	
@@ -220,7 +229,19 @@ public class UIPanelEditAsset : UIAppPanel {
 		if(itemAsset != null) {
 			itemAsset.destroy_effect_code = UIUtil.GetInputValue(inputSpriteEffect);
 			itemAsset.asset_code = UIUtil.GetInputValue(inputSprite);
-			itemAsset.rotation_speed.FromVector3(Vector3.zero.WithZ(-float.Parse(UIUtil.GetInputValue(inputRotationSpeed))));
+
+            float rotationSpeed = -float.Parse(UIUtil.GetInputValue(inputRotationSpeed));
+            Vector3 vectorSpeed = Vector3.zero;
+
+            if(GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {                
+                vectorSpeed = Vector3.zero.WithZ(rotationSpeed);
+            }
+            else {
+                vectorSpeed = Vector3.zero.WithY(rotationSpeed);
+            }
+            
+            itemAsset.rotation_speed.FromVector3(vectorSpeed);
+
 			itemAsset.destructable = UIUtil.GetCheckboxValue(checkboxEditAssetDestructable);
 			itemAsset.kinematic = UIUtil.GetCheckboxValue(checkboxEditAssetKinematic);
 			itemAsset.reactive = UIUtil.GetCheckboxValue(checkboxEditAssetReactive);

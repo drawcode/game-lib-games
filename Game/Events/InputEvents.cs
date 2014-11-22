@@ -26,4 +26,14 @@ public class InputEvents : GameObjectBehavior {
         LogUtil.Log("InputEvents:OnActivate: name: " + transform.name + " data:" + data);
         Messenger<string, string>.Broadcast(InputEvents.EVENT_ITEM_CHANGE, transform.name, data);
     }
+
+    void OnInputChanged(UIInput data) {
+        LogUtil.Log("InputEvents:OnInputChanged: name: " + transform.name + " data:" + data.text);
+        Messenger<string, string>.Broadcast(InputEvents.EVENT_ITEM_CHANGE, transform.name, data.text);
+    }
+
+    void OnSubmit(string data) {
+        LogUtil.Log("InputEvents:OnSubmit: name: " + transform.name + " data:" + data);
+        Messenger<string, string>.Broadcast(InputEvents.EVENT_ITEM_CHANGE, transform.name, data);
+    }
 }
