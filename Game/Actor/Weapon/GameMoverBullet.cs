@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GameMoverBullet : GameWeaponBase {
+
     public int Lifetime;
     public float Speed = 80;
     public float SpeedMax = 80;
@@ -9,10 +10,31 @@ public class GameMoverBullet : GameWeaponBase {
     private bool hasRigidBody = false;
     private Rigidbody rigbody;
 
-    private void Start() {
+    private float initialSpeed = 80;
+    private float initialSpeedMax = 80;
+    private float initialSpeedMult = 1;
+    private int initialLifeTime = 5;
+
+    private void Start() {        
+        
         GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
         rigbody = this.rigbody;
         hasRigidBody = rigbody ? true : false;
+
+        initialSpeed = Speed;
+        initialSpeedMax = SpeedMax;
+        initialSpeedMult = SpeedMult;
+        initialLifeTime = Lifetime;
+
+        Reset();
+    }
+    
+    public void Reset() {
+        Speed = initialSpeed;
+        SpeedMax = initialSpeedMax;
+        SpeedMult = initialSpeedMult;
+        Lifetime = initialLifeTime;
+
     }
 
     private void FixedUpdate() {

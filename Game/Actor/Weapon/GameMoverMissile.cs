@@ -16,7 +16,52 @@ public class GameMoverMissile : GameWeaponBase {
     private int timetorock;
     private float timeCount = 0;
 
+    private float initialDamping = 3;
+    private float initialSpeed = 80;
+    private float initialSpeedMax = 80;
+    private float initialSpeedMult = 1;
+    private Vector3 initialNoise = new Vector3(20, 20, 20);
+    private float initialTargetLockDirection = 0.5f;
+    private int initialDistanceLock = 70;
+    private int initialDurationLock = 40;
+    private bool initialSeeker;
+    private float initialLifeTime = 5.0f;
+    private bool initiallocked;
+    private int initialtimetorock;
+    private float initialtimeCount = 0;
+
     private void Start() {
+        
+        initialDamping = Damping;
+        initialSpeed = Speed;
+        initialSpeedMax = SpeedMax;
+        initialSpeedMult = SpeedMult;
+        initialNoise = Noise;
+        initialTargetLockDirection = TargetLockDirection;
+        initialDistanceLock = DistanceLock;
+        initialDurationLock = DurationLock;
+        initialSeeker = Seeker;
+        initialLifeTime = LifeTime;
+        initiallocked = locked;
+        initialtimetorock = timetorock;
+
+        Reset();
+    }
+
+    public void Reset() {
+        Damping = initialDamping;
+        Speed = initialSpeed;
+        SpeedMax = initialSpeedMax;
+        SpeedMult = initialSpeedMult;
+        Noise = initialNoise;
+        TargetLockDirection = initialTargetLockDirection;
+        DistanceLock = initialDistanceLock;
+        DurationLock = initialDurationLock;
+        Seeker = initialSeeker;
+        LifeTime = initialLifeTime;
+        locked = initiallocked;
+        timetorock = initialtimetorock;
+
         timeCount = Time.time;
         GameObjectHelper.DestroyGameObject(gameObject, LifeTime);
     }
