@@ -21,6 +21,7 @@ public class UILocalizedLabel : GameObjectBehavior {
 
     public void Start() {
         FindLabel();
+        UpdateContent();
     }
 
     public void OnEnable() {        
@@ -77,9 +78,12 @@ public class UILocalizedLabel : GameObjectBehavior {
         string content = Locos.GetString(gameLocalizationCode);
 
         if(string.IsNullOrEmpty(content)) {
+
             // try lookup from current content
             string currentContent = GetContent();
-            content = Locos.GetCodeFromContent(currentContent);
+            string currentContentCode = Locos.GetCodeFromContent(currentContent);
+
+            content = Locos.GetString(currentContentCode);
         }
 
         if(!string.IsNullOrEmpty(content)) {
