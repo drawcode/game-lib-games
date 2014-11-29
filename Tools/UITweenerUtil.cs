@@ -101,7 +101,7 @@ public class UITweenerUtil {
     
     public static TweenPosition ResetTween(TweenPosition twn) {
         
-        #if USE_NGUI_3      
+        #if USE_UI_NGUI_3      
         twn.ResetToBeginning();
         #else
         twn.Reset();
@@ -112,7 +112,7 @@ public class UITweenerUtil {
     
     public static TweenAlpha ResetTween(TweenAlpha twn) {
         
-        #if USE_NGUI_3      
+        #if USE_UI_NGUI_3      
         twn.ResetToBeginning();
         #else
         twn.Reset();
@@ -123,7 +123,7 @@ public class UITweenerUtil {
     
     public static TweenRotation ResetTween(TweenRotation twn) {
         
-        #if USE_NGUI_3      
+        #if USE_UI_NGUI_3      
         twn.ResetToBeginning();
         #else
         twn.Reset();
@@ -134,7 +134,7 @@ public class UITweenerUtil {
     
     public static TweenScale ResetTween(TweenScale twn) {
         
-        #if USE_NGUI_3      
+        #if USE_UI_NGUI_3      
         twn.ResetToBeginning();
         #else
         twn.Reset();
@@ -145,7 +145,7 @@ public class UITweenerUtil {
     
     public static TweenColor ResetTween(TweenColor twn) {
         
-        #if USE_NGUI_3      
+        #if USE_UI_NGUI_3      
         twn.ResetToBeginning();
         #else
         twn.Reset();
