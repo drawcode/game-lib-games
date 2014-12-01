@@ -22,12 +22,17 @@ public class UIGameKeyCodes {
     public static KeyCode keyRPGLevelAdd = KeyCode.O;
     public static KeyCode keyRPGLevelSubtract = KeyCode.P;
 
+    
+    public static KeyCode keyRPGPlayerHitAdd = KeyCode.KeypadPlus;
+    public static KeyCode keyRPGPlayerHitSubtract = KeyCode.KeypadMinus;
+
+
     public static bool KeyAction(KeyCode keyCode) {
         return Input.GetKeyDown(keyCode);
     }
 
     public static bool KeyActionControl(KeyCode keyCode) {
-        return (
+        return (Application.isEditor &&
             (Input.GetKey(KeyCode.LeftControl)
             || Input.GetKey(KeyCode.RightControl))
             && Input.GetKeyDown(keyCode));
@@ -42,6 +47,18 @@ public class UIGameKeyCodes {
     public static bool isActionCurrencySubtract {
         get {
             return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGCurrencySubtract);
+        }
+    }
+    
+    public static bool isActionPlayerHitAdd {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGPlayerHitAdd);
+        }
+    }
+    
+    public static bool isActionPlayerHitSubtract {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyRPGPlayerHitSubtract);
         }
     }
 

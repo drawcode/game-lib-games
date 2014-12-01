@@ -282,7 +282,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                 GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
                 GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
 
-                AudioListener.volume = GameGlobal.volumeEditorMusic;
+                AudioListener.volume = GameGlobal.volumeEditorEffects;
             }
             #endif
         }

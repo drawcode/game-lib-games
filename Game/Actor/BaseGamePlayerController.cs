@@ -72,6 +72,12 @@ public class BaseGamePlayerRuntimeData {
             return (float)(score + (coins * 50) + (scores * 500));
         }
     }
+
+    public double hitHealthRemaining {
+        get {
+            return hitCount > 0 ? ((hitLimit - hitCount) / hitLimit) : 1;
+        }
+    }
 }
 
 [System.Serializable]
