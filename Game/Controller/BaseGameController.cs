@@ -1101,7 +1101,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
     
-        GameLevelItems.Current.code = code;
+        //GameLevelItems.Current.code = code;
             
         // Clear items from LevelContainer
         GameController.Reset();
@@ -1280,8 +1280,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
-
-            GameController.LoadStartLevel("1-1");
+                        
+            GameController.LoadStartLevel();
         }
     }
 
@@ -1431,6 +1431,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
         
         GameController.ChangeCharacterModel(characterCode);
+    }
+    
+    public virtual void loadStartLevel() {
+        GameController.LoadStartLevel("1-1");
     }
     
     public virtual void loadStartLevel(string levelCode) {

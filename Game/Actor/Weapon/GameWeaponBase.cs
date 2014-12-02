@@ -21,5 +21,6 @@ public class GameWeaponBase : MonoBehaviour {
 	public bool RigidbodyProjectile;
 	public Vector3 TorqueSpeedAxis;
 	public GameObject TorqueObject;
+
 }
 

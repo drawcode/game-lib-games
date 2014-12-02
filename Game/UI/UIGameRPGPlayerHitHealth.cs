@@ -7,7 +7,7 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class UIGameRPGPlayerHitHealth : UIGameRPGObject {
+public class UIGameRPGPlayerHitHealth : UIGameRPGPlayerObject {
 
     public override void Start() {
         incrementValue = .01;
@@ -18,15 +18,15 @@ public class UIGameRPGPlayerHitHealth : UIGameRPGObject {
 
     public override void UpdateValue() {
 
-        if(GameController.CurrentGamePlayerController == null) {
+        if(gamePlayerController == null) {
             return;
         }
         
-        if(GameController.CurrentGamePlayerController.runtimeData == null) {
+        if(gamePlayerController.runtimeData == null) {
             return;
         }
 
-        profileValue = GameController.CurrentGamePlayerController.runtimeData.hitHealthRemaining;
+        profileValue = gamePlayerController.runtimeData.hitHealthRemaining;
                 
     }
 
@@ -54,11 +54,11 @@ public class UIGameRPGPlayerHitHealth : UIGameRPGObject {
 
         if (UIGameKeyCodes.isActionPlayerHitAdd) {
             LogUtil.Log("PlayerHitAdd:" + incrementValue);
-            GameController.CurrentGamePlayerController.Hit(1);
+            //gamePlayerController.Hit(1);
         }
         else if (UIGameKeyCodes.isActionPlayerHitSubtract) {
             LogUtil.Log("PlayerHitSubtract:" + incrementValue);
-            GameController.CurrentGamePlayerController.Hit(-1);
+            //gamePlayerController.Hit(-1);
         }
     }
 }

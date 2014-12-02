@@ -16,10 +16,6 @@ public class GameMoverBullet : GameWeaponBase {
     private int initialLifeTime = 5;
 
     private void Start() {        
-        
-        GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
-        rigbody = this.rigbody;
-        hasRigidBody = rigbody ? true : false;
 
         initialSpeed = Speed;
         initialSpeedMax = SpeedMax;
@@ -27,14 +23,22 @@ public class GameMoverBullet : GameWeaponBase {
         initialLifeTime = Lifetime;
 
         Reset();
+                
+        GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
+        rigbody = this.rigbody;
+        hasRigidBody = rigbody ? true : false;
     }
     
     public void Reset() {
+
+        gameObject.ResetRigidBodiesVelocity();
+        //gameObject.ResetLocalPosition();
+        //gameObject.ResetLocalRotation();
+
         Speed = initialSpeed;
         SpeedMax = initialSpeedMax;
         SpeedMult = initialSpeedMult;
         Lifetime = initialLifeTime;
-
     }
 
     private void FixedUpdate() {

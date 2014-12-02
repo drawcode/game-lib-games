@@ -1487,16 +1487,16 @@ public class GameDraggableEditor : GameObjectBehavior {
 			Instance.loadLevelItems();
 		}
 	}
+
+    public void loadLevelItems() {
+        loadLevelItems(GameLevelItems.Current);
+    }
 	
-	public void loadLevelItems() {
-		loadLevelItemsCo();
+    public void loadLevelItems(GameLevelItem gameLevelItem ) {
+        loadLevelItemsCo(gameLevelItem);
 	}
 	
-	public void loadLevelItemsCo() {
-
-		GameLevelItem gameLevelItem = GameLevelItems.Current;
-
-        //LogUtil.Log(">>>>> loadLevelItemsCo:" + gameLevelItem.code);
+    public void loadLevelItemsCo(GameLevelItem gameLevelItem) {
 
 		List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 

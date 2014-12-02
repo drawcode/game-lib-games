@@ -3434,7 +3434,8 @@ public class BaseUIController : GameObjectBehavior {
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
             GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameArcade);
-            GameUIController.ShowGameModeArcade();
+            //GameUIController.ShowGameModeArcade();
+            GameUIController.ShowGameWorlds();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameChallenge);

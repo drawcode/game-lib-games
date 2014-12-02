@@ -28,7 +28,6 @@ public class GameMoverMissile : GameWeaponBase {
     private float initialLifeTime = 5.0f;
     private bool initiallocked;
     private int initialtimetorock;
-    private float initialtimeCount = 0;
 
     private void Start() {
         
@@ -49,6 +48,11 @@ public class GameMoverMissile : GameWeaponBase {
     }
 
     public void Reset() {
+        
+        gameObject.ResetRigidBodiesVelocity();
+        //gameObject.ResetLocalPosition();
+        //gameObject.ResetLocalRotation();
+
         Damping = initialDamping;
         Speed = initialSpeed;
         SpeedMax = initialSpeedMax;

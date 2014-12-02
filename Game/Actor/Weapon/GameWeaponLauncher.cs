@@ -419,7 +419,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                     }
                 
                     GameObject shell = GameObjectHelper.CreateGameObject(
-						Shell, shelloutpos.position, Random.rotation, false);
+                        Shell, shelloutpos.position, Random.rotation, true);
 					GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
 
                     if (shell.rigidbody) {

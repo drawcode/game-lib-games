@@ -3080,6 +3080,7 @@ public class BaseGamePlayerController : GameActor {
         
         currentControllerData.gamePlayerControllerAnimation.Die();
                 
+        currentControllerData.impact = Vector3.zero;
 
         currentControllerData.dying = true;
 
@@ -3534,6 +3535,10 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
+        if(controllerData.dying) {
+            return; 
+        }
+
         //bool allowTackle = false;
 
         if (currentControllerData.lastTackle + 1f < Time.time) {
@@ -3555,7 +3560,7 @@ public class BaseGamePlayerController : GameActor {
 
         //Attack();
      
-        AddImpact(currentControllerData.positionTackler - currentControllerData.positionPlayer, power, true);
+        AddImpact(currentControllerData.positionTackler - currentControllerData.positionPlayer, power, false);
      
     }
 
@@ -3587,6 +3592,11 @@ public class BaseGamePlayerController : GameActor {
  
     // call this function to add an currentControllerData.impact force:
     public virtual void AddImpact(Vector3 dir, float force, bool damage, bool allowY = false) {
+
+        if(currentControllerData.dying) {
+            currentControllerData.impact = Vector3.zero;
+            return;
+        }
 
         dir.Normalize();
      
@@ -4652,7 +4662,7 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
          
-            if (runtimeData.hitCount > 10) {
+            if (runtimeData.hitCount > runtimeData.hitLimit) {
                 Die();
             }
          
