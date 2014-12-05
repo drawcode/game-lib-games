@@ -237,6 +237,7 @@ public class GameLevelGridData {
     public bool centeredX = GameLevels.centeredX;
     public bool centeredY = GameLevels.centeredY;
     public bool centeredZ = GameLevels.centeredZ;
+    public List<string> presets = new List<string>();
     public List<AppContentAsset> assets;
     public string[,,] assetMap;
 
@@ -248,6 +249,7 @@ public class GameLevelGridData {
         ResetGrid((int)gridHeight, (int)gridWidth, (int)gridDepth);
         ClearAssets();
         ClearMap();
+        ClearPresets();
     }
 
     public void ResetGrid(int height, int width, int depth) {
@@ -343,6 +345,10 @@ public class GameLevelGridData {
 
     public void ClearMap() {
         assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
+    }
+    
+    public void ClearPresets() {
+        presets = new List<string>();
     }
 
     public void SetAssets(string code, int count) {
