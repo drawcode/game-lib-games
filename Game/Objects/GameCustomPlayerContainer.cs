@@ -6,7 +6,7 @@ using Engine.Events;
 
 public class GameCustomPlayerContainer : MonoBehaviour {
             
-    public GameCustomCharacterData customCharacterData = new GameCustomCharacterData();
+    public GameCustomCharacterData customCharacterData; //  = new GameCustomCharacterData();
     public GameObject containerRotator;
     public GameObject containerPlayerDisplay;
     public bool allowRotator = false;
@@ -116,9 +116,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         go.transform.localRotation = Quaternion.identity;//.Euler(Vector3.zero.WithY(133));
         
         //GameController.CurrentGamePlayerController.LoadCharacter(gameCharacter.data.GetModel().code);
-        
-        GameCustomController.BroadcastCustomSync();
-                
+                        
         go.SetLayerRecursively(gameObject.layer);
 
         // LOAD UP PASSED IN VALUES
@@ -128,6 +126,8 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (customPlayerObject != null) {
             customPlayerObject.Change(customCharacterData);
         }
+        
+        GameCustomController.BroadcastCustomSync();
                 
         if (containerRotator != null) {
             containerRotator.ResetObject();
