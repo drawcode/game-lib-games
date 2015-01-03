@@ -8,7 +8,7 @@ public class GameCustomPlayerContainerLoader : MonoBehaviour {
     
     public GameObject containerPlayerDisplay;
     public UnityEngine.Object prefabPlayerDisplay;
-    public GameCustomCharacterData customCharacteData = new GameCustomCharacterData();
+    public GameCustomCharacterData customCharacterData; // = new GameCustomCharacterData();
 
     public bool allowRotator = false;
     public bool zoomAdjust = false;
@@ -36,7 +36,7 @@ public class GameCustomPlayerContainerLoader : MonoBehaviour {
             playerContainer.zoomAdjust = zoomAdjust;
             playerContainer.zoomAdjustAmount = zoomAdjustAmount;
 
-            playerContainer.LoadPlayer(customCharacteData);
+            playerContainer.LoadPlayer(customCharacterData);
         }
     }
 

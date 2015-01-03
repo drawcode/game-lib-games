@@ -293,80 +293,82 @@ public class BaseUIController : GameObjectBehavior {
                  
     public virtual void Awake() {
      
-    }    
- 
-    /*
-    void OnEnable() {
-     Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-     //Messenger<string, string, bool>.AddListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
-     //Messenger<string, string>.AddListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);
-     
-     //Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
-     
-     //Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
-             
-     Messenger<GameObject>.AddListener(
-         GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
-     
-     
-      Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnTap, 
-         FingerGestures_OnTap);
-     
-      Messenger<DragGesture>.AddListener(FingerGesturesMessages.OnDrag, 
-         FingerGestures_OnDragMove);
-     
-      Messenger<SwipeGesture>.AddListener(FingerGesturesMessages.OnSwipe, 
-         FingerGestures_OnSwipe);
-     
-      Messenger<PinchGesture>.AddListener(FingerGesturesMessages.OnPinch, 
-         FingerGestures_OnPinchMove);
-     
-      Messenger<TwistGesture>.AddListener(FingerGesturesMessages.OnTwist, 
-         FingerGestures_OnRotationMove);
-     
-      Messenger<LongPressGesture>.AddListener(FingerGesturesMessages.OnLongPress, 
-         FingerGestures_OnLongPress);
-     
-      Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnDoubleTap, 
-         FingerGestures_OnDoubleTap);
     }
-    
-    void OnDisable() {
-     Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-     //Messenger<string, string, bool>.RemoveListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
-     //Messenger<string, string>.RemoveListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);
-     
-     //Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
-     
-     //Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
-     
-     Messenger<GameObject>.RemoveListener(
-         GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
 
+    public virtual void OnEnable() {
+
+        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        
+        Messenger<GameObject>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
+
+        //Messenger<string, string, bool>.AddListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
+        //Messenger<string, string>.AddListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);
      
-      Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
+        //Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
+     
+        //Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
+             
+        //Messenger<GameObject>.AddListener(
+        // GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
+          
+        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnTap, 
          FingerGestures_OnTap);
      
-      Messenger<DragGesture>.RemoveListener(FingerGesturesMessages.OnDrag, 
+        Messenger<DragGesture>.AddListener(FingerGesturesMessages.OnDrag, 
          FingerGestures_OnDragMove);
      
-      Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe, 
+        Messenger<SwipeGesture>.AddListener(FingerGesturesMessages.OnSwipe, 
          FingerGestures_OnSwipe);
      
-      Messenger<PinchGesture>.RemoveListener(FingerGesturesMessages.OnPinch, 
+        Messenger<PinchGesture>.AddListener(FingerGesturesMessages.OnPinch, 
          FingerGestures_OnPinchMove);
      
-      Messenger<TwistGesture>.RemoveListener(FingerGesturesMessages.OnTwist, 
+        Messenger<TwistGesture>.AddListener(FingerGesturesMessages.OnTwist, 
          FingerGestures_OnRotationMove);
      
-      Messenger<LongPressGesture>.RemoveListener(FingerGesturesMessages.OnLongPress, 
+        Messenger<LongPressGesture>.AddListener(FingerGesturesMessages.OnLongPress, 
          FingerGestures_OnLongPress);
      
-      Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap, 
+        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnDoubleTap, 
          FingerGestures_OnDoubleTap);
     }
-    */
     
+    public virtual void OnDisable() {
+    
+        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        
+        Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
+
+        //Messenger<string, string, bool>.RemoveListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
+        //Messenger<string, string>.RemoveListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);     
+        //Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);     
+        //Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
+     
+        //Messenger<GameObject>.RemoveListener(
+        // GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
+             
+        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
+         FingerGestures_OnTap);
+     
+        Messenger<DragGesture>.RemoveListener(FingerGesturesMessages.OnDrag, 
+         FingerGestures_OnDragMove);
+     
+        Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe, 
+         FingerGestures_OnSwipe);
+     
+        Messenger<PinchGesture>.RemoveListener(FingerGesturesMessages.OnPinch, 
+         FingerGestures_OnPinchMove);
+     
+        Messenger<TwistGesture>.RemoveListener(FingerGesturesMessages.OnTwist, 
+         FingerGestures_OnRotationMove);
+     
+        Messenger<LongPressGesture>.RemoveListener(FingerGesturesMessages.OnLongPress, 
+         FingerGestures_OnLongPress);
+     
+        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap, 
+         FingerGestures_OnDoubleTap);
+    }
+        
     public virtual void Start() {
         LoadData();
         //ShowContainerByName(BaseUIButtonNames.buttonContent);
@@ -3433,36 +3435,36 @@ public class BaseUIController : GameObjectBehavior {
         // Game Modes
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameArcade);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             //GameUIController.ShowGameModeArcade();
             GameUIController.ShowGameWorlds();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameChallenge);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayerCoop);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerCoop);
             GameUIController.ShowGameModeMultiplayerCoop();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerMatchup, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayerMatchup);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerMatchup);
             GameUIController.ShowGameModeMultiplayerMatchup();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayer, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMultiplayer);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayer);
             GameUIController.ShowGameModeMultiplayer();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameCoop);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameCoop);
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameMissions);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
-            GameController.ChangeGameStates(AppContentStateMeta.app_content_stateGameTraining);
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
         }
 

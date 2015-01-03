@@ -6,6 +6,7 @@ using UnityEngine;
 using Engine.Events;
 
 public class GameCustomActorTypes {
+    public static string displayType = "display"; // used for customizer, defualt to profile, then allow changes.
     public static string heroType = "hero"; // used for customizer, defualt to profile, then allow changes.
     public static string enemyType = "enemy"; // use profile
     public static string sidekickType = "sidekick"; // call out a preset set
@@ -25,10 +26,10 @@ public class GameCustomCharacterData {
     public string actorType = GameCustomActorTypes.heroType;
     public string teamCode = "default";
     public string presetType = "character";
-    public string presetColorCodeDefault = "game-default";
-    public string presetColorCode = GameCustomTypes.defaultType;
-    public string presetTextureCodeDefault = GameCustomTypes.defaultType;
-    public string presetTextureCode = GameCustomTypes.defaultType;
+    public string presetColorCodeDefault = ProfileConfigs.defaultGameCharacterColorPreset;
+    public string presetColorCode = ProfileConfigs.defaultGameCharacterColorPreset;
+    public string presetTextureCodeDefault = ProfileConfigs.defaultGameCharacterTexturePreset;
+    public string presetTextureCode = ProfileConfigs.defaultGameCharacterTexturePreset;
     public string characterCode = ProfileConfigs.defaultGameCharacterCode;
     public string characterDisplayName = ProfileConfigs.defaultGameCharacterDisplayName;
     public string characterDisplayCode = ProfileConfigs.defaultGameCharacterDisplayCode;
@@ -304,10 +305,11 @@ public class BaseGameCustom : GameObjectBehavior {
     }
 
     public virtual void Change(GameCustomCharacterData customCharacterDataTo) {
+                
+        customCharacterData = customCharacterDataTo; 
+        //customCharacterDataCurrent = customCharacterDataTo; 
         
-        CheckData();
-
-        customCharacterData = customCharacterDataTo;  
+        CheckData(); 
 
         if (gameCustomPlayerContainer != null) {
             gameCustomPlayerContainer.customCharacterData = customCharacterData;
@@ -405,6 +407,8 @@ public class BaseGameCustom : GameObjectBehavior {
     }
 
     public void SetCustom() {
+        
+        //Debug.Log("SetCustom");
                 
         CheckData();
 

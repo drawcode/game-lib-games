@@ -1471,7 +1471,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         LogUtil.Log("changeGameStates:app_content_state:AFTER:" + app_content_state);
 
-    }//AppContentStates.Instance.ChangeState(AppContentStateMeta.app_content_stateGameArcade);
+    }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
 
     public virtual void changeCharacterModel(string characterCode) {
         GameController.CurrentGamePlayerController.ChangeCharacter(characterCode);
