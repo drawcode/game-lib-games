@@ -41,7 +41,7 @@ public class BaseGamePlayerWeapon : GameActor {
     public override void Init() {
         
         if (gamePlayerController == null) {
-            gamePlayerController = gameObject.FindTypeAbove<GamePlayerController>();
+            gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
                 
         Load();

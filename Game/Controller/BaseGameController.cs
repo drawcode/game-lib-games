@@ -239,7 +239,9 @@ public class GameLevelGridData {
     public bool centeredZ = GameLevels.centeredZ;
     public List<string> presets = new List<string>();
     public List<AppContentAsset> assets;
-    public string[,,] assetMap;
+    //public string[,,] assetMap;
+
+    public Dictionary<string, GameLevelItemAssetData> assetLayoutData;
 
     public GameLevelGridData() {
         Reset();
@@ -335,8 +337,12 @@ public class GameLevelGridData {
         return data;
     }
 
-    public string[,,] GetAssetMap() {
-        return assetMap;
+    //public string[,,] GetAssetMap() {
+    //    return assetMap;
+    //}
+
+    public Dictionary<string, GameLevelItemAssetData> GetAssetLayoutData() {
+        return assetLayoutData;
     }
 
     public void ClearAssets() {
@@ -344,7 +350,8 @@ public class GameLevelGridData {
     }
 
     public void ClearMap() {
-        assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
+        //assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
+        assetLayoutData = new Dictionary<string, GameLevelItemAssetData>();
     }
     
     public void ClearPresets() {
@@ -360,27 +367,70 @@ public class GameLevelGridData {
     public void SetAsset(string code) {
         AppContentAsset asset = AppContentAssets.Instance.GetByCode(code);
         if (asset != null) {
+            //if(!HasAsset(asset.code)) {
             assets.Add(asset);
+            //}
         }
     }
 
-    public void SetAssetsInAssetMap(Vector3 pos, string code) {
+    public bool HasAsset(string code) {
+        foreach(AppContentAsset asset in assets) {
+            if(asset.code == code) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void SetAssetsInAssetMap(string code, Vector3 pos) {
+
+        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+
+        assetData.code = code;
+        assetData.start_position = pos;
+        assetData.range_scale = Vector3.zero.WithX(.7f).WithY(1.2f);
+        assetData.range_rotation = Vector3.zero.WithX(-180).WithY(180);
+
+        SetAssetsInAssetMap(assetData);
+    }
+
+    public void SetAssetsInAssetMap(GameLevelItemAssetData assetData) {
+
+        Vector3 pos = assetData.start_position;
+
         if (pos.x > gridWidth - 1) {
             pos.x = gridWidth - 1;
         }
+
         if (pos.y > gridHeight - 1) {
             pos.y = gridHeight - 1;
         }
+
         if (pos.z > gridDepth - 1) {
             pos.z = gridDepth - 1;
         }
 
-        assetMap[(int)pos.x, (int)pos.y, (int)pos.z] = code;
+        string keyLayout = 
+            string.Format(
+                "{0}-{1}-{2}", 
+                (int)pos.x, 
+                (int)pos.y, 
+                (int)pos.z);
+
+        assetData.start_position = pos;
+
+        if(!assetLayoutData.ContainsKey(keyLayout)) {
+            assetLayoutData.Set(keyLayout, assetData);
+        }
     }
 
+    // data.rangeScale = Vector3.zero.WithX(.7f).WithY(1.2f);
+    // data.range_rotation = Vector3.zero.WithX(-180).WithY(180); 
+
     public void RandomizeAssetsInAssetMap() {
+
         foreach (AppContentAsset asset in assets) {
-            string row = "";
 
             int x = 0;
             int y = 0;
@@ -388,26 +438,41 @@ public class GameLevelGridData {
             
             if (asset.code.Contains("terrain")) {
                 Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
-                SetAssetsInAssetMap(pos, asset.code);
+                SetAssetsInAssetMap(asset.code, pos);
             }
             else {
 
-                //LogUtil.Log("RandomizeAssetsInAssetMap:row" + row);
+                //for(int gridX = 0; gridX < (int)gridWidth - 1; gridX++) {
+                //    for(int gridY = 0; gridY < (int)gridHeight - 1; gridY++) {
+                //        for(int gridZ = 0; gridZ < (int)gridDepth - 1; gridZ++) {
+                //            
+                //        }   
+                //    }   
+                //}
 
-                while (string.IsNullOrEmpty(row)) {
+                x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
+                y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
+                z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
-                    x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
-                    y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
-                    z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
+                int midX = ((int)((gridWidth - 1) / 2));
+                int midY = ((int)((gridHeight - 1) / 2));
+                int midZ = ((int)((gridDepth - 1) / 2));
 
-                    if (string.IsNullOrEmpty(row)) {
-                        Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
-                        SetAssetsInAssetMap(pos, asset.code);
-                    }
+                // Dont' add if in the middle spawn area until player
+                // items grid out in level data.
+                // TODO switch to area around player to gid out items
+                // if spawns on level items
+          
+                if((x < (midX + 2)) && (x > (midX - 2))
+                   && (z < (midZ + 2)) && (z > (midZ - 2))) {
+                    continue;
+                }
 
-                    row = assetMap[x, y, z];
+                string keyLayout = string.Format("{0}-{1}-{2}", x, y, z);
 
-                    //LogUtil.Log("RandomizeAssetsInAssetMap:row:" + row);
+                if (!assetLayoutData.ContainsKey(keyLayout)) {
+                    Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+                    SetAssetsInAssetMap(asset.code, pos);
                 }
             }
         }
@@ -2945,7 +3010,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual GameLevelItemAsset getLevelItemAssetRandom(
         GameLevelItemAssetData data) {
 
-        data.startPosition = GameController.GetRandomVectorInGameBounds();
+        data.start_position = GameController.GetRandomVectorInGameBounds();
 
         return GameController.GetLevelItemAssetFull(data);
     }
@@ -2954,10 +3019,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
             //&& GameController.CheckBounds(gridPos)) {
 
-            if (data.asset_code.Contains("terrain")) {
+            if (data.code.Contains("terrain")) {
                 // TODO terrain rotation
-                data.rangeRotation = Vector2.zero;//.WithX(-0).WithY(0); 
-                data.rangeScale = Vector2.one;//.WithX(-0).WithY(0); 
+                data.range_rotation = Vector2.zero;//.WithX(-0).WithY(0); 
+                data.range_scale = Vector2.one;//.WithX(-0).WithY(0); 
             }
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
@@ -2972,30 +3037,31 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameLevelItemAssetData data) {
         
         GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-        step.position.FromVector3(data.startPosition);
+        step.position.FromVector3(data.start_position);
 
         step.scale.FromVector3(
             Vector3.one *
-            UnityEngine.Random.Range(data.rangeScale.x, data.rangeScale.y));
+            UnityEngine.Random.Range(data.range_scale.x, data.range_scale.y));
 
         //rangeScale, 1.2f));
 
         step.rotation.FromVector3(
             Vector3.zero
                 .WithY(
-                    UnityEngine.Random.Range(data.rangeRotation.x, data.rangeRotation.y)));
+                    UnityEngine.Random.Range(data.range_rotation.x, data.range_rotation.y)));
 
         //step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
 
         GameLevelItemAsset asset = new GameLevelItemAsset();
-        if (data.countLimit == 0) {
-            asset.asset_code = data.asset_code;
+
+        if (data.limit == 0) {
+            asset.code = data.code;
         }
         else {
-            asset.asset_code = data.asset_code + "-" + UnityEngine.Random.Range(1, data.countLimit).ToString();
+            asset.code = data.code + "-" + UnityEngine.Random.Range(1, (int)data.limit).ToString();
         }
 
-        asset.physics_type = data.physicsType;
+        asset.physics_type = data.physics_type;
         asset.destructable = data.destructable;
         asset.reactive = data.reactive;
         asset.kinematic = data.kinematic;
@@ -3010,14 +3076,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         for (int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
-            data.asset_code = "portal";
-            data.countLimit = 5;
+            data.code = "portal";
+            data.limit = 5;
             data.destructable = true;
             data.gravity = true;
             data.kinematic = true;
-            data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-            //data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-            //data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+            data.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
+            //data.range_rotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            //data.range_rotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
 
@@ -3028,14 +3094,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         for (int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
-            data.asset_code = "box";
-            data.countLimit = 3;
+            data.code = "box";
+            data.limit = 3;
             data.destructable = true;
             data.gravity = true;
             data.kinematic = true;
-            data.physicsType = GameLevelItemAssetPhysicsType.physicsStatic;
-            //data.rangeRotation = Vector2.zero.WithX(.7f).WithY(1.2f);
-            //data.rangeRotation = Vector2.zero.WithX(-.1f).WithY(.1f);
+            data.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
+            //data.range_rotation = Vector2.zero.WithX(.7f).WithY(1.2f);
+            //data.range_rotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
 

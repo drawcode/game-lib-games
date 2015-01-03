@@ -36,7 +36,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 		LoadData();
 		
 		if(gameLevelItemAsset != null) {
-			LoadSprite(gameLevelItemAsset.asset_code);
+			LoadSprite(gameLevelItemAsset.code);
 		}
 	}
 	
@@ -156,13 +156,13 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 	
 	public void LoadData() {
 		if(gameLevelItemAsset != null) {
-			LoadSprite(gameLevelItemAsset.asset_code);
+			LoadSprite(gameLevelItemAsset.code);
 			//StartCoroutine(LoadDataCo());			
 		}
 	}
 	
 	IEnumerator LoadDataCo() {
-		LoadSprite(gameLevelItemAsset.asset_code);
+        LoadSprite(gameLevelItemAsset.code);
 		yield break;		
 	}
 

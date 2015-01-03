@@ -29,7 +29,7 @@ public class GameWeaponLauncher : GameWeaponBase {
     public float AimDirection = 0.8f;
     public bool Seeker;
     public GameObject Shell;
-    public float ShellLifeTime = 4;
+    public float ShellLifeTime = 2;
     public Transform[] ShellOuter;
     public int ShellOutForce = 300;
     public GameObject Muzzle;
@@ -306,6 +306,11 @@ public class GameWeaponLauncher : GameWeaponBase {
     }
 
     public void NameEffect(GameObject bullet) {
+
+        if(gamePlayerController == null) {
+            gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
+        }
+
         if (bullet != null) {
             foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) { 
                 if (gamePlayerController == null) {
@@ -366,7 +371,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     muzzle.transform.parent = this.transform;
 
-					GameObjectHelper.DestroyGameObject(muzzle, MuzzleLifeTime);
+                    GameObjectHelper.DestroyGameObject(muzzle, MuzzleLifeTime);
 
                     if (MissileOuter.Length > 0) {
                         muzzle.transform.parent = MissileOuter[currentOuter].transform;
@@ -401,8 +406,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                         bullet.transform.forward = direction;
                         if (RigidbodyProjectile) {
                             if (bullet.rigidbody) {
-                                if (gamePlayerController != null && gamePlayerController.rigidbody) {
-                                    bullet.rigidbody.velocity = gamePlayerController.rigidbody.velocity;
+                                if (gamePlayerController != null && gamePlayerController.gameObject.GetRigidbody()) {
+                                    bullet.rigidbody.velocity = gamePlayerController.gameObject.GetRigidbody().velocity;
                                 }
                                 bullet.rigidbody.AddForce(direction * ForceShoot);  
                             }
@@ -420,7 +425,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                 
                     GameObject shell = GameObjectHelper.CreateGameObject(
                         Shell, shelloutpos.position, Random.rotation, true);
-					GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
+                    GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
 
                     if (shell.rigidbody) {
                         shell.rigidbody.AddForce(shelloutpos.forward * ShellOutForce);

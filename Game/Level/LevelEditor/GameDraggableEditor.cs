@@ -1075,7 +1075,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                         grabbed = gameDraggableLevelItem.transform;
                         GameDraggableLevelItem levelItem = gameDraggableLevelItem.GetComponent<GameDraggableLevelItem>();
                         if (levelItem != null && levelItem.gameLevelItemAsset != null) {
-                            assetCodeCreating = levelItem.gameLevelItemAsset.asset_code;
+                            assetCodeCreating = levelItem.gameLevelItemAsset.code;
                         }
                     }
                     if (lastGrabbed != grabbed) {
@@ -1261,15 +1261,14 @@ public class GameDraggableEditor : GameObjectBehavior {
             
             if (!string.IsNullOrEmpty(assetCodeCreating)) {
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
-                itemAsset.asset_code = assetCodeCreating;
+                itemAsset.code = assetCodeCreating;
                 GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
                 gameLevelItemStep.position.x = (Input.mousePosition.x - Screen.width) / 100;
                 gameLevelItemStep.position.y = (Input.mousePosition.y - Screen.height) / 100;
                 gameLevelItemStep.position.z = 0;
                 itemAsset.steps.Add(gameLevelItemStep);
                 GameDraggableEditor.LoadLevelItem(itemAsset);
-            }
-            
+            }            
         }
     }
     
@@ -1628,7 +1627,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                     // add a new level asset item
                     
                     GameLevelItemAsset newAsset = new GameLevelItemAsset();
-                    newAsset.asset_code = gameLevelItemAsset.asset_code;
+                    newAsset.code = gameLevelItemAsset.code;
                     newAsset.physics_type = gameLevelItemAsset.physics_type;
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         step.position.FromVector3(gameDraggableLevelItem.transform.position);
@@ -1698,7 +1697,7 @@ public class GameDraggableEditor : GameObjectBehavior {
         foreach (GameDraggableLevelItem item in
             go.GetComponentsInChildren<GameDraggableLevelItem>()) {
             GameLevelItemAsset gameLevelItemAsset = item.gameLevelItemAsset;    
-            if (gameLevelItemAsset.asset_code.ToLower().Contains(nameLike.ToLower())) {
+            if (gameLevelItemAsset.code.ToLower().Contains(nameLike.ToLower())) {
                 return false;
             }
         }

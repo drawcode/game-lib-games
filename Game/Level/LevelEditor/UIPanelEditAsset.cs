@@ -106,8 +106,8 @@ public class UIPanelEditAsset : UIAppPanel {
 		
 		if(itemAsset != null) {		
 			//UIUtil.SetLabelValue(labelAssetEdit, itemAsset.asset_code);
-			UIUtil.SetInputValue(inputSprite, itemAsset.asset_code);	
-			UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.asset_code));		
+			UIUtil.SetInputValue(inputSprite, itemAsset.code);	
+            UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.code));		
 			UIUtil.SetInputValue(inputSpriteEffect, itemAsset.destroy_effect_code);
 			UIUtil.SetLabelValue(labelGameEditAssetSpriteEffect, GetItemAssetDisplayName(itemAsset.destroy_effect_code));	
 						
@@ -116,7 +116,7 @@ public class UIPanelEditAsset : UIAppPanel {
 			UIUtil.SetCheckboxValue(checkboxEditAssetReactive, itemAsset.reactive);
 			UIUtil.SetCheckboxValue(checkboxEditAssetGravity, itemAsset.gravity);
 			
-			UpdateRotation((float)itemAsset.rotation_speed.z);
+			UpdateRotation((float)itemAsset.speed_rotation.z);
 		}
 		
 		UpdateDisplay();
@@ -163,7 +163,7 @@ public class UIPanelEditAsset : UIAppPanel {
                 posFrom = posFrom.WithY(-val);                
             }
 			
-            itemAsset.rotation_speed.FromVector3(posFrom);
+            itemAsset.speed_rotation.FromVector3(posFrom);
 		}
 	}
 	
@@ -196,14 +196,14 @@ public class UIPanelEditAsset : UIAppPanel {
 	
 	public void UpdateSprite(string assetCode) {
 		if(itemAsset != null) {
-			itemAsset.asset_code = assetCode;
-			UIUtil.SetInputValue(inputSprite, itemAsset.asset_code);	
-			UIUtil.SetLabelValue(labelAssetEdit, itemAsset.asset_code);
-			UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.asset_code));
+			itemAsset.code = assetCode;
+            UIUtil.SetInputValue(inputSprite, itemAsset.code);	
+            UIUtil.SetLabelValue(labelAssetEdit, itemAsset.code);
+            UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.code));
 			
 			GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
 			if(levelItem != null) {
-				levelItem.LoadSprite(itemAsset.asset_code);
+                levelItem.LoadSprite(itemAsset.code);
 			}
 		}
 	}
@@ -228,7 +228,7 @@ public class UIPanelEditAsset : UIAppPanel {
 		
 		if(itemAsset != null) {
 			itemAsset.destroy_effect_code = UIUtil.GetInputValue(inputSpriteEffect);
-			itemAsset.asset_code = UIUtil.GetInputValue(inputSprite);
+            itemAsset.code = UIUtil.GetInputValue(inputSprite);
 
             float rotationSpeed = -float.Parse(UIUtil.GetInputValue(inputRotationSpeed));
             Vector3 vectorSpeed = Vector3.zero;
@@ -240,7 +240,7 @@ public class UIPanelEditAsset : UIAppPanel {
                 vectorSpeed = Vector3.zero.WithY(rotationSpeed);
             }
             
-            itemAsset.rotation_speed.FromVector3(vectorSpeed);
+            itemAsset.speed_rotation.FromVector3(vectorSpeed);
 
 			itemAsset.destructable = UIUtil.GetCheckboxValue(checkboxEditAssetDestructable);
 			itemAsset.kinematic = UIUtil.GetCheckboxValue(checkboxEditAssetKinematic);
