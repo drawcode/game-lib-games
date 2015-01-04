@@ -111,14 +111,14 @@ public class UIPanelBase : UIAppPanel {
             
             if (panelContainer != null) {
                 if (_isVisible) {
-                    if (!panelContainer.GetActive()) {
+                    //if (!panelContainer.GetActive()) {
                         //_isVisible = false;
-                    }
+                    //}
                 }
                 else {  
-                    if (panelContainer.GetActive()) {
+                    //if (panelContainer.GetActive()) {
                         //_isVisible = true;
-                    }
+                    //}
                 }
             }
             return _isVisible; 
