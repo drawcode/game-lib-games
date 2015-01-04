@@ -1263,9 +1263,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
                 itemAsset.code = assetCodeCreating;
                 GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
-                gameLevelItemStep.position.x = (Input.mousePosition.x - Screen.width) / 100;
-                gameLevelItemStep.position.y = (Input.mousePosition.y - Screen.height) / 100;
-                gameLevelItemStep.position.z = 0;
+                gameLevelItemStep.position_data.x = (Input.mousePosition.x - Screen.width) / 100;
+                gameLevelItemStep.position_data.y = (Input.mousePosition.y - Screen.height) / 100;
+                gameLevelItemStep.position_data.z = 0;
                 itemAsset.steps.Add(gameLevelItemStep);
                 GameDraggableEditor.LoadLevelItem(itemAsset);
             }            
@@ -1554,16 +1554,16 @@ public class GameDraggableEditor : GameObjectBehavior {
                             if (dragLevelItem.gameLevelItemObject != null) {
                                 
                                 goLevelItem.transform.position = 
-                                    step.position.GetVector3();
+                                    step.position_data.GetVector3();
                                 
                                 dragLevelItem.gameLevelItemObject.transform.rotation = 
-                                    Quaternion.Euler(step.rotation.GetVector3());
+                                    Quaternion.Euler(step.rotation_data.GetVector3());
                                 
                                 dragLevelItem.gameLevelItemObject.transform.localScale = 
-                                    step.scale.GetVector3();// * .1f;
+                                    step.scale_data.GetVector3();// * .1f;
                                 
-                                goLevelItem.transform.position = 
-                                    goLevelItem.transform.position.WithY(goLevelItem.transform.position.y);
+                                //goLevelItem.transform.position = 
+                                //    goLevelItem.transform.position.WithY(goLevelItem.transform.position.y);
                             }
                         }
                     }
@@ -1599,9 +1599,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                 // Get the current GameLevelItem and update and readd to list
                 GameLevelItemAsset gameLevelItemAsset = gameDraggableLevelItem.gameLevelItemAsset;
                 foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
-                    step.position.FromVector3(gameDraggableLevelItem.transform.position);
-                    step.rotation.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
-                    step.scale.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
+                    step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
+                    step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
+                    step.scale_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
                     break;
                 }
                 
@@ -1615,9 +1615,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                         found = true;
                         
                         foreach (GameLevelItemAssetStep step in itemAsset.steps) {
-                            step.position.FromVector3(gameDraggableLevelItem.transform.position);
-                            step.rotation.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
-                            step.scale.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
+                            step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
+                            step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
+                            step.scale_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
                             break;
                         }
                     }
@@ -1630,9 +1630,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                     newAsset.code = gameLevelItemAsset.code;
                     newAsset.physics_type = gameLevelItemAsset.physics_type;
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
-                        step.position.FromVector3(gameDraggableLevelItem.transform.position);
-                        step.rotation.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
-                        step.scale.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
+                        step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
+                        step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
+                        step.scale_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
                         newAsset.steps.Add(step);
                     }
                     
@@ -1654,9 +1654,9 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public GameLevelItemAssetStep updateGameLevelItemStep(
         GameDraggableLevelItem gameDraggableLevelItem, GameLevelItemAssetStep step) {
-        step.position.FromVector3(gameDraggableLevelItem.transform.position);
-        step.rotation.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
-        step.scale.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
+        step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
+        step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
+        step.scale_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.localScale);
         return step;
     }
     

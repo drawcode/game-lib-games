@@ -6,7 +6,6 @@ using UnityEngine;
 
 using Engine.Events;
 
-
 public enum UIPanelBackgroundDisplayState {
     None,
     PanelBacker
@@ -106,6 +105,28 @@ public class UIPanelBase : UIAppPanel {
         topClosedY = 4500f;
     public int increment = 0;
     public List<string> panelTypes = new List<string>();//UIPanelBaseTypes.typeDefault;
+
+    public override bool isVisible {
+        get {
+            
+            if (panelContainer != null) {
+                if (_isVisible) {
+                    if (!panelContainer.GetActive()) {
+                        //_isVisible = false;
+                    }
+                }
+                else {  
+                    if (panelContainer.GetActive()) {
+                        //_isVisible = true;
+                    }
+                }
+            }
+            return _isVisible; 
+        }
+        set {
+            _isVisible = value;
+        }
+    }
 
     public virtual void OnEnable() {
 
@@ -524,6 +545,10 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateIn(float time, float delay) {
+                
+        if (isVisible) {
+            return;
+        }
         
         HandleShow();
                     
@@ -544,6 +569,8 @@ public class UIPanelBase : UIAppPanel {
         AnimateInRightTop(time, delay);
         AnimateInTop(time, delay);
         AnimateInBottom(time, delay);
+
+        isVisible = true;
     }
  
     public virtual void AnimateOut() {
@@ -563,6 +590,10 @@ public class UIPanelBase : UIAppPanel {
     }
  
     public virtual void AnimateOut(float time, float delay) {
+
+        if (!isVisible) {
+            return;
+        }
         
         HandleHide();
      
@@ -578,8 +609,6 @@ public class UIPanelBase : UIAppPanel {
         AnimateOutTop(time, delay);
         AnimateOutBottom(time, delay);   
 
-        isVisible = false;
-
         ListClear();
 
         if (panelContainer != null) {
@@ -590,32 +619,34 @@ public class UIPanelBase : UIAppPanel {
                 StartCoroutine(HidePanelCo(delay + .5f));
             }
         }
+        
+        isVisible = false;
     }
 
     public IEnumerator HidePanelCo(float delay) {
         yield return new WaitForSeconds(delay);
 
-        if (!isVisible) {
-            HidePanel();
-        }
+        HidePanel();
     }
  
     public virtual void HidePanel() {
 
         if (!isVisible) {
-
             if (panelContainer != null) {
+                //isVisible = false;
                 panelContainer.Hide();
             }
-
         }
     }
  
     public virtual void ShowPanel() {
 
-        isVisible = true;
+        if (isVisible) {
+            return;
+        }
 
         if (panelContainer != null) {
+            //isVisible = true;
             panelContainer.Show();       
         }        
     }
@@ -682,11 +713,13 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public void ListClear() {
-        ListClear(listGridRoot);
+        if (listGridRoot != null && isVisible) {
+            ListClear(listGridRoot);
+        }
     }
  
     public void ListClear(GameObject listObject) {
-        if (listObject != null) {
+        if (listObject != null && isVisible) {
             listObject.DestroyChildren();
         }
     }

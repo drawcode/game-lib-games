@@ -18,8 +18,17 @@ public class UIAppPanelMessages {
 public class UIAppPanel : GameObjectBehavior {
     
     public UIAppPanelMode panelMode = UIAppPanelMode.ModeMain;
-    public bool isVisible = false;
+    public bool _isVisible = false;
     public string className = "";
+
+    public virtual bool isVisible {
+        get {
+            return _isVisible; 
+        }
+        set {
+            _isVisible = value;
+        }
+    }
     
     public virtual void Start() {
         Init();
