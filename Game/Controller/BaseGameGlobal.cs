@@ -406,12 +406,19 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         if (Application.isEditor) {
             if (Input.GetKeyDown(KeyCode.Comma)) {
-                string filename = "../screenshots/" + GameUIController.Instance.currentPanel +
+
+                string sceneName = "Panel";
+
+                if(GameUIController.Instance != null) {
+                    sceneName = GameUIController.Instance.currentPanel;
+                }
+
+                string filename = "../screenshots/" + sceneName +
                     "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                     + "-" + (screenshotCount++).ToString() + ".png";
                 
                 if (GameController.IsGameRunning) {
-                    filename = "../screenshots/" + GameUIController.Instance.currentPanel + "-gameplay-" +
+                    filename = "../screenshots/" + sceneName + "-gameplay-" +
                         "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                         + "-" + (screenshotCount++).ToString() + ".png";
                 }
