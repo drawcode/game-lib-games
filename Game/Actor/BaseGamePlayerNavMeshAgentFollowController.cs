@@ -18,7 +18,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     public float targetLimitRange = 60f;
     public GamePlayerNavMeshAgentState agentState = GamePlayerNavMeshAgentState.PURSUE;
     public GamePlayerController gamePlayerController;
-    public GamePlayerFollowAgentType followType = GamePlayerFollowAgentType.RangedPursue;
+    public GamePlayerFollowAgentType followType = GamePlayerFollowAgentType.AlwaysPursue;
 
     // Use this for initialization
     public virtual void Start() {

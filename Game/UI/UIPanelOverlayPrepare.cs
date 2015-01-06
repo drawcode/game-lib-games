@@ -278,6 +278,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
         containerOverview.Show();
 
+        ShowCamera();
+
         // Update team display
 
         //LogUtil.Log("ShowOverview:");
@@ -330,6 +332,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         containerOverview.Hide();
 
         CancelInvoke("ShowOverviewTip");
+
+        HideCamera();
     }
 
     public void ShowCurrentState() {        
@@ -403,6 +407,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         //base.AnimateOut();
 
         //HideStates();
+        
+        //HideCamera();
     }
 
     public void Update() {

@@ -1513,9 +1513,17 @@ public class BaseGamePlayerController : GameActor {
                 
                 gameCustomPlayer = gameObjectLoad.Set<GameCustomPlayer>();
 
-                if (IsPlayerControlled) {                    
+                if (IsPlayerControlled) {    
 
+                    GameCustomCharacterData customInfo = gameCustomPlayer.customCharacterData;
+
+                    if(customInfo == null) {
+                        customInfo = new GameCustomCharacterData();
+                        customInfo.type = GameCustomTypes.defaultType;
+                    }
+                    
                     gameCustomPlayer.SetActorHero();
+                    gameCustomPlayer.Load(customInfo);
 
                     if (gamePlayerEffectsContainer != null) {
                         gamePlayerEffectsContainer.Show();

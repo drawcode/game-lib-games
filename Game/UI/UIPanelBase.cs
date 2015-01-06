@@ -550,6 +550,8 @@ public class UIPanelBase : UIAppPanel {
             return;
         }
         
+        //ShowCamera();
+        
         HandleShow();
                     
         HandleCharacterDisplay();
@@ -594,6 +596,8 @@ public class UIPanelBase : UIAppPanel {
         if (!isVisible) {
             return;
         }
+        
+        //HideCamera();
         
         HandleHide();
      
