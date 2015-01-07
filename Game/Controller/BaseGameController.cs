@@ -453,7 +453,8 @@ public class GameLevelGridData {
             z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
             int midX = ((int)((gridWidth - 1) / 2));
-            int midY = ((int)((gridHeight - 1) / 2));
+            // TODO 2d version
+            //int midY = ((int)((gridHeight - 1) / 2));
             int midZ = ((int)((gridDepth - 1) / 2));
 
             // Dont' add if in the middle spawn area until player
