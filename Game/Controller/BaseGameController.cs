@@ -388,7 +388,7 @@ public class GameLevelGridData {
         GameLevelItemAssetData assetData = new GameLevelItemAssetData();
 
         assetData.code = code;
-        assetData.start_position = pos;
+        assetData.start_position = new Vector3Data(pos);
         assetData.SetAssetScaleRange(.7f, 1.2f);
         assetData.SetAssetRotationRangeY(-180, 180);
 
@@ -400,16 +400,16 @@ public class GameLevelGridData {
         GameLevelItemAssetData assetData = new GameLevelItemAssetData();
         
         assetData.code = code;
-        assetData.start_position = pos;
-        assetData.asset_scale = scale;
-        assetData.asset_rotation = rotation;
+        assetData.start_position = new Vector3Data(pos);
+        assetData.asset_scale = new Vector3Data(scale);
+        assetData.asset_rotation = new Vector3Data(rotation);
         
         SetAssetsInAssetMap(assetData);
     }
 
     public void SetAssetsInAssetMap(GameLevelItemAssetData assetData) {
 
-        Vector3 pos = assetData.start_position;
+        Vector3 pos = assetData.start_position.GetVector3();
 
         if (pos.x > gridWidth - 1) {
             pos.x = gridWidth - 1;
@@ -430,7 +430,7 @@ public class GameLevelGridData {
                 (int)pos.y, 
                 (int)pos.z);
 
-        assetData.start_position = pos;
+        assetData.start_position.FromVector3(pos);
 
         if (!assetLayoutData.ContainsKey(keyLayout)) {
             assetLayoutData.Set(keyLayout, assetData);
@@ -453,7 +453,8 @@ public class GameLevelGridData {
             z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
 
             int midX = ((int)((gridWidth - 1) / 2));
-            int midY = ((int)((gridHeight - 1) / 2));
+            // TODO 2d version
+            //int midY = ((int)((gridHeight - 1) / 2));
             int midZ = ((int)((gridDepth - 1) / 2));
 
             // Dont' add if in the middle spawn area until player
@@ -2356,21 +2357,33 @@ public class BaseGameController : GameObjectTimerBehavior {
     
     public virtual IEnumerator showCamerasCo(List<Camera> cams) {
         
-        foreach (Camera cam in cams) {            
-            cam.gameObject.Show();
-            UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
+        foreach (Camera cam in cams) { 
+            if(cam != null) {
+                if(cam.gameObject != null) {
+                    cam.gameObject.Show();
+                    UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
+                }
+            }
         }
         yield return new WaitForSeconds(2f);       
     }
     
     public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
         foreach (Camera cam in cams) {
-            UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
+            if(cam != null) {
+                if(cam.gameObject != null) {
+                    UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
+                }
+            }
         }
         yield return new WaitForSeconds(2f);
         
         foreach (Camera cam in cams) {  
-            cam.gameObject.Hide();
+            if(cam != null) {
+                if(cam.gameObject != null) {
+                    cam.gameObject.Hide();
+                }
+            }
         }
     }
     
@@ -3007,7 +3020,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual GameLevelItemAsset getLevelItemAssetRandom(
         GameLevelItemAssetData data) {
 
-        data.start_position = GameController.GetRandomVectorInGameBounds();
+        data.start_position = new Vector3Data(GameController.GetRandomVectorInGameBounds());
 
         return GameController.GetLevelItemAssetFull(data);
     }
@@ -3028,16 +3041,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameLevelItemAssetData data) {
         
         GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-        step.position_data.FromVector3(data.start_position);
+        step.position_data = data.start_position;
 
-        step.scale_data.FromVector3(data.asset_scale);
+        step.scale_data = data.asset_scale;
         //step.scale.FromVector3(
         //    Vector3.one *
         //    UnityEngine.Random.Range(data.range_scale.x, data.range_scale.y));
 
         //rangeScale, 1.2f));
 
-        step.rotation_data.FromVector3(data.asset_rotation);//
+        step.rotation_data = data.asset_rotation;//
         //Vector3.zero
         //.WithX(data.range_rotation.x)
         //.WithY(data.range_rotation.y)

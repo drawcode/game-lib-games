@@ -235,8 +235,8 @@ public class BaseGameLevelSprite : MonoBehaviour {
             return;
         }
         
-        if (gameDraggableLevelItem.gameLevelItemAsset.rotation_speed.GetVector3() != Vector3.zero) {
-            transform.Rotate(gameDraggableLevelItem.gameLevelItemAsset.rotation_speed.GetVector3() * Time.deltaTime);
+        if (gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3() != Vector3.zero) {
+            transform.Rotate(gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3() * Time.deltaTime);
         }
     }
     

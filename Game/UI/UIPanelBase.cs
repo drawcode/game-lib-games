@@ -111,14 +111,14 @@ public class UIPanelBase : UIAppPanel {
             
             if (panelContainer != null) {
                 if (_isVisible) {
-                    if (!panelContainer.GetActive()) {
+                    //if (!panelContainer.GetActive()) {
                         //_isVisible = false;
-                    }
+                    //}
                 }
                 else {  
-                    if (panelContainer.GetActive()) {
+                    //if (panelContainer.GetActive()) {
                         //_isVisible = true;
-                    }
+                    //}
                 }
             }
             return _isVisible; 
@@ -550,6 +550,8 @@ public class UIPanelBase : UIAppPanel {
             return;
         }
         
+        //ShowCamera();
+        
         HandleShow();
                     
         HandleCharacterDisplay();
@@ -594,6 +596,8 @@ public class UIPanelBase : UIAppPanel {
         if (!isVisible) {
             return;
         }
+        
+        //HideCamera();
         
         HandleHide();
      

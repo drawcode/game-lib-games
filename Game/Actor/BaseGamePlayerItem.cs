@@ -58,7 +58,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //type = GamePlayerItemType.Generic;
         positionEnd = Vector3.zero;
         //floaty = true;
-        collectRange = 3f;
+        //collectRange = 8f;
 
         if (cameraTransform == null) {
             if (Camera.main != null) {

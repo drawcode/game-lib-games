@@ -64,17 +64,19 @@ public class UISettingsAudio : GameObjectBehavior {
         float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
         
         if (sliderMusicVolume != null) {
-            sliderMusicVolume.sliderValue = musicVolume;
-            sliderMusicVolume.ForceUpdate();
             
             GameAudio.SetProfileAmbienceVolume(musicVolume);
+
+            sliderMusicVolume.sliderValue = musicVolume;
+            sliderMusicVolume.ForceUpdate();
         }
         
         if (sliderEffectsVolume != null) {
-            sliderEffectsVolume.sliderValue = effectsVolume;
-            sliderEffectsVolume.ForceUpdate();
             
             GameAudio.SetProfileEffectsVolume(effectsVolume);
+
+            sliderEffectsVolume.sliderValue = effectsVolume;
+            sliderEffectsVolume.ForceUpdate();
         }
     }
     

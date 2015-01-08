@@ -1,3 +1,4 @@
+#pragma warning disable 1717
 using UnityEngine;
 using System.Collections;
 

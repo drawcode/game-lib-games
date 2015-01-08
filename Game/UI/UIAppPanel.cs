@@ -21,6 +21,8 @@ public class UIAppPanel : GameObjectBehavior {
     public bool _isVisible = false;
     public string className = "";
 
+    public Camera panelCamera;
+
     public virtual bool isVisible {
         get {
             return _isVisible; 
@@ -77,5 +79,20 @@ public class UIAppPanel : GameObjectBehavior {
         className = item.GetType().Name;
         //LogUtil.Log("CLASS NAME:" + className);
         return className;
-    }   
+    }
+
+    public void ShowCamera() {
+
+        if(panelCamera != null) {
+            panelCamera.ShowCameraFadeIn();
+        }
+    }
+
+    public void HideCamera() {
+        
+        if(panelCamera != null) {
+            panelCamera.HideCameraFadeOut();
+        }
+    }
+
 }
