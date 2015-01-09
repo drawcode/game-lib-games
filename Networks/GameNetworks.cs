@@ -1353,9 +1353,9 @@ public class GameNetworks : GameObjectBehavior {
         
         if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER        
-            GameCenterManager.playerAuthenticated += playerAuthenticated;
-            GameCenterManager.achievementsLoaded += achievementsLoaded;
-            GameCenterManager.achievementMetadataLoaded += achievementMetadataLoaded;
+            GameCenterManager.playerAuthenticatedEvent += playerAuthenticated;
+            GameCenterManager.achievementsLoadedEvent += achievementsLoaded;
+            GameCenterManager.achievementMetadataLoadedEvent += achievementMetadataLoaded;
 #endif
         }
         else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
@@ -1458,9 +1458,9 @@ public class GameNetworks : GameObjectBehavior {
 
         if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER    
-            GameCenterManager.playerAuthenticated -= playerAuthenticated;
-            GameCenterManager.achievementsLoaded -= achievementsLoaded;
-            GameCenterManager.achievementMetadataLoaded -= achievementMetadataLoaded;
+            GameCenterManager.playerAuthenticatedEvent -= playerAuthenticated;
+            GameCenterManager.achievementsLoadedEvent -= achievementsLoaded;
+            GameCenterManager.achievementMetadataLoadedEvent -= achievementMetadataLoaded;
 #endif
         }
         else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
