@@ -371,9 +371,9 @@ public class BaseGamePlayerControllerAnimationData {
             }
         }
         else {
-            Debug.LogWarning("FindAnimatedActor:WARNING:" + 
-                " actor IS NULL" + 
-                gamePlayerController.uniqueId); 
+            //Debug.LogWarning("FindAnimatedActor:WARNING:" + 
+            //    " actor IS NULL" + 
+            //    gamePlayerController.uniqueId); 
         }
     }
 
@@ -458,9 +458,9 @@ public class BaseGamePlayerControllerAnimationData {
         }
         else {
             
-            Debug.LogWarning("GetAnimationData:WARNING:" + 
-                " GamePlayerAnimationDataItem not found" + " key:" + key + " uid:" + 
-                gamePlayerController.uniqueId);
+            //Debug.LogWarning("GetAnimationData:WARNING:" + 
+            //    " GamePlayerAnimationDataItem not found" + " key:" + key + " uid:" + 
+            //    gamePlayerController.uniqueId);
         }
 
         return null;
@@ -488,9 +488,9 @@ public class BaseGamePlayerControllerAnimationData {
         }
         else {
             
-            Debug.LogWarning("GetAnimation:WARNING:" + 
-                " aniType not found" + " type:" + type + " uid:" + 
-                gamePlayerController.uniqueId); 
+            //Debug.LogWarning("GetAnimation:WARNING:" + 
+            //    " aniType not found" + " type:" + type + " uid:" + 
+            //    gamePlayerController.uniqueId); 
         }
 
         return code;

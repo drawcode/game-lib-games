@@ -19,7 +19,9 @@ public class GameObjectData : GameObjectBehavior {
     public List<GameObjectDataItem> data = new List<GameObjectDataItem>();
         
     void Start() {
-
+        if(data == null) {
+            data = new List<GameObjectDataItem>();
+        }
     }
 
     public void Set(string key, object val) {

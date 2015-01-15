@@ -548,17 +548,7 @@ public class BaseGameAudioRecorder {
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.PlayEffect(audioEffectName, volume);
 	}
-	
-	public static void PlayUIMainLoop(string soundName, float volume) {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.PlayUIMainLoop(soundName, volume);
-	}
-	
-	public static void PlayGameMainLoop(string soundName, float volume) {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.PlayGameMainLoop(soundName, volume);
-	}
-	
+
 	public static void SetAmbienceVolume(double volume) {
 		if(AudioSystem.Instance != null)
 			AudioSystem.Instance.SetAmbienceVolume(volume);

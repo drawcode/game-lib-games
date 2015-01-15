@@ -284,16 +284,6 @@ public class BaseGameAudio {
 			AudioSystem.Instance.PlayEffect(audioEffectName, volume);
 	}
 	
-	public static void PlayUIMainLoop(string soundName, float volume) {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.PlayUIMainLoop(soundName, volume);
-	}
-	
-	public static void PlayGameMainLoop(string soundName, float volume) {
-		if(AudioSystem.Instance != null)
-			AudioSystem.Instance.PlayGameMainLoop(soundName, volume);
-	}
-	
 	public static void SetProfileAmbienceVolume(double volume) {		
         GameProfiles.Current.SetAudioMusicVolume(volume);
 		GameAudio.SetAmbienceVolume(volume);
@@ -361,12 +351,12 @@ public class BaseGameAudio {
 		if(GameGlobal.Instance != null) {
 			if(inRace) {
 				AudioListener.volume = (float)(GameProfiles.Current.GetAudioEffectsVolume() * .9);
-				LogUtil.Log("AudioListener setting for race:" + AudioListener.volume);
+				//LogUtil.Log("AudioListener setting for race:" + AudioListener.volume);
 				
 			}
 			else {
 				AudioListener.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-				LogUtil.Log("AudioListener setting for UI:" + AudioListener.volume);
+				//LogUtil.Log("AudioListener setting for UI:" + AudioListener.volume);
 			}
 		}
 	}
@@ -399,13 +389,7 @@ public class BaseGameAudio {
 	
 	public static void PlayAudioClip(Vector3 pos, Transform parent, AudioClip clip, bool loop, int increment, float volume) {
 		if(AudioSystem.Instance) {
-			AudioSystem.Instance.PlayAudioClip( pos, parent, clip, loop, increment, volume);  
-		}
-	}
-	
-	public static void PlayAudioClip(Vector3 pos, Transform parent, AudioClip clip, bool loop, int increment, float volume, float panLevel) {
-		if(AudioSystem.Instance) {
-			AudioSystem.Instance.PlayAudioClip( pos, parent, clip, loop, increment, volume, panLevel);  
+			AudioSystem.Instance.PlayAudioClip(pos, parent, clip, loop, increment, volume);  
 		}
 	}
 	
