@@ -175,9 +175,11 @@ public static event Action interstitialAdLoaded;
         // ------------
         // iAd
 
-        AdManager.adViewDidChange += iadAdViewDidChange; // Action<bool> adViewDidChange
-        AdManager.interstitalAdFailed += iadInterstitalAdFailed; // Action<string> interstitalAdFailed
-        AdManager.interstitialAdLoaded += iadInterstitalAdLoaded; // Action interstitialAdLoaded;
+        AdManager.bannerViewDidChangeEvent += iadBannerViewDidChangeEvent; // Action<bool> bannerViewDidChangeEvent;
+        AdManager.interstitalAdFailedEvent += iadInterstitalAdFailedEvent; // Action<string> interstitalAdFailedEvent
+        AdManager.interstitialAdLoadedEvent += iadInterstitalAdLoadedEvent; // Action interstitialAdLoadedEvent;
+        AdManager.interstitialDidUnloadEvent += iadInterstitialDidUnloadEvent; // Action interstitialDidUnloadEvent;
+        AdManager.moviePlaybackCompletedEvent += iadMoviePlaybackCompletedEvent; // Action moviePlaybackCompletedEvent;
 #endif
 
         
@@ -245,11 +247,13 @@ public static event Action interstitialAdLoaded;
         
 #if AD_USE_IAD
         // ------------
-        // iAd
+        // iAd     
         
-        AdManager.adViewDidChange -= iadAdViewDidChange; // Action<bool> adViewDidChange
-        AdManager.interstitalAdFailed -= iadInterstitalAdFailed; // Action<string> interstitalAdFailed
-        AdManager.interstitialAdLoaded -= iadInterstitalAdLoaded; // Action interstitialAdLoaded;
+        AdManager.bannerViewDidChangeEvent -= iadBannerViewDidChangeEvent; // Action<bool> bannerViewDidChangeEvent;
+        AdManager.interstitalAdFailedEvent -= iadInterstitalAdFailedEvent; // Action<string> interstitalAdFailedEvent
+        AdManager.interstitialAdLoadedEvent -= iadInterstitalAdLoadedEvent; // Action interstitialAdLoadedEvent;
+        AdManager.interstitialDidUnloadEvent -= iadInterstitialDidUnloadEvent; // Action interstitialDidUnloadEvent;
+        AdManager.moviePlaybackCompletedEvent -= iadMoviePlaybackCompletedEvent; // Action moviePlaybackCompletedEvent;
 #endif
 
 
@@ -673,10 +677,12 @@ public static event Action interstitialAdLoaded;
         //LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobAndroid..." + 
         //            AppConfigs.publisherIdAdmobAndroid);
 
-        iadFireHideShowEvents(true);
+        //iadFireHideShowEvents(true);
+
+        iadPreparePrerollAds();
     }
 
-    public void iadAdViewDidChange(bool visible) {
+    public void iadBannerViewDidChangeEvent(bool visible) {
     
         if(visible) {
             // shown
@@ -686,45 +692,75 @@ public static event Action interstitialAdLoaded;
         }
     }
 
-    public void iadInterstitalAdFailed(string val) {
+    public void iadInterstitalAdFailedEvent(string val) {
         interstitialReady = false;
     }
 
-    public void iadInterstitalAdLoaded() {
+    public void iadInterstitalAdLoadedEvent() {
         interstitialReady = true;
+    }
+        
+    public void iadInterstitialDidUnloadEvent() {
+    
+    }
+
+    public void iadMoviePlaybackCompletedEvent() {
+    
     }
 
     // Starts up iAd either on the top or bottom of the screen
-    public static void iadCreateAdBanner( bool bannerOnBottom = true ) {
-        AdBinding.createAdBanner(bannerOnBottom);
+    //public static void iadCreateAdBanner( bool bannerOnBottom = true ) {
+    //    AdBinding.createAdBanner(bannerOnBottom);
+    //}
+
+    // Starts up iAd requests and ads the ad view
+    public static void iadCreateAdBanner( iAdBannerPosition position, iAdBannerType type = iAdBannerType.Banner ) {
+        AdBinding.createAdBanner(position, type);
     }
     
     // Destroys the ad banner and removes it from view
     public static void iadDestroyAdBanner() {
         AdBinding.destroyAdBanner();
     }
-        
-    // Sets whether or not adDidShow events should be fired or not
-    public static void iadFireHideShowEvents( bool shouldFire ) {
-        AdBinding.fireHideShowEvents(shouldFire);
+    
+    // Starts loading a new interstitial ad. Interstitials are available on all iPads and iPhones running iOS 7+.
+    public static void iadLoadInterstitial() {
+        AdBinding.loadInterstitial();
     }
-
-    // Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
-    public static bool iadInitializeInterstitial() {
-        return AdBinding.initializeInterstitial();
-    }
-
-    // Checks to see if an interstitial ad is loaded.
-    public static bool iAdIsInterstitalLoaded() {
+    
+    // Checks to see if an interstitial ad is loaded
+    public static bool iadIsInterstitalLoaded() {
         return AdBinding.isInterstitalLoaded();
     }
+        
+    //// Sets whether or not adDidShow events should be fired or not
+    //public static void iadFireHideShowEvents( bool shouldFire ) {
+    //    AdBinding.fireHideShowEvents(shouldFire);
+    //}
+
+    //// Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
+    //public static bool iadInitializeInterstitial() {
+    //    return AdBinding.initializeInterstitial();
+    //}
             
     // Shows an interstitial ad.  Will return false if it isn't loaded.
     public static bool iadShowInterstitial() {
 
         return AdBinding.showInterstitial();
-    }
+    }    
     
+    // Prepares iAd video preroll ads. This should be called at or near app launch time.
+    public static void iadPreparePrerollAds() {
+
+        AdBinding.preparePrerollAds();
+    }
+        
+    // Plays a video with a pre roll ad. Accepted strings are a URL to a video file, the filename of a video in the app bundle or
+    // a proper, absolutel path to a video file.
+    public static void iAdPlayMovieWithPrerollAd( string videoPathOrUrl ) {
+        AdBinding.playMovieWithPrerollAd(videoPathOrUrl);        
+    }
+
     #endif
 
     // HELPERS
@@ -745,8 +781,13 @@ public static event Action interstitialAdLoaded;
                || position == AdPosition.TopLeft) {
                 showOnBottom = false;
             }
-            
-            iadCreateAdBanner(showOnBottom);
+
+            if(showOnBottom) {
+                iadCreateAdBanner(iAdBannerPosition.Bottom, iAdBannerType.Banner);
+            } 
+            else {
+                iadCreateAdBanner(iAdBannerPosition.Top, iAdBannerType.Banner);
+            }
             
             hasAd = true;
         }
@@ -1532,6 +1573,26 @@ public static event Action<string> interstitalAdFailed;
 
 // Fired when an interstitial ad is loaded and ready to show
 public static event Action interstitialAdLoaded;
+
+
+// Fired when the adView is either shown or hidden. The bool indicates if it has been shown.
+public static event Action<bool> bannerViewDidChangeEvent;
+
+// Fired when an interstitial ad is loaded and ready to show
+public static event Action interstitialAdLoadedEvent;
+
+// Fired when an interstial ad fails to load or show
+public static event Action<string> interstitalAdFailedEvent;
+
+// Fired when an interstitial unloads. This can occur when it times out, expires or after it is done being displayed.
+public static event Action interstitialDidUnloadEvent;
+
+// Fired when movie playback completes
+public static event Action moviePlaybackCompletedEvent;
+
+
+
+
 
 */
 
