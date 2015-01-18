@@ -433,6 +433,9 @@ public class GameLevelGridData {
         assetData.start_position.FromVector3(pos);
 
         if (!assetLayoutData.ContainsKey(keyLayout)) {
+
+            Debug.Log("SetAssetsIntoMap:" + keyLayout);
+
             assetLayoutData.Set(keyLayout, assetData);
         }
     }
