@@ -258,6 +258,10 @@ public class BaseGamePlayerControllerData {
     // mounts
     public GamePlayerMountData mountData = new GamePlayerMountData();
 
+    // rpg  
+    
+    public GameDataItemRPG characterRPG = null;
+
 }
 
 public class BaseGamePlayerRuntimeRPGData {
@@ -2812,8 +2816,21 @@ public class BaseGamePlayerController : GameActor {
         else if (IsPlayerControlled) {
             power = power * 1;
         }
+
+        double powerCharacter = 1f;
+        
+        if (gameCharacter.data.HasRPGs()) {            
+            if(controllerData.characterRPG == null) {
+                controllerData.characterRPG = gameCharacter.data.GetRPG();
+            }
+            powerCharacter = 1/controllerData.characterRPG.power;
+        }
      
-        runtimeData.health -= power * .1f;
+        runtimeData.health -= power * (float)powerCharacter;
+
+        if(gamePlayerEffectHit != null) {
+            gamePlayerEffectHit.Play();
+        }
 
         AudioHit();
 

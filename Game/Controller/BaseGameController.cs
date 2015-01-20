@@ -434,7 +434,7 @@ public class GameLevelGridData {
 
         if (!assetLayoutData.ContainsKey(keyLayout)) {
 
-            Debug.Log("SetAssetsIntoMap:" + keyLayout);
+            //Debug.Log("SetAssetsIntoMap:" + keyLayout);
 
             assetLayoutData.Set(keyLayout, assetData);
         }
