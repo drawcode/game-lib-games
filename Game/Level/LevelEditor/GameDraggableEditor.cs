@@ -1527,6 +1527,14 @@ public class GameDraggableEditor : GameObjectBehavior {
         if (gameLevelItemAsset != null) {
 
             if (prefabGameLevelItemContainer != null) {
+
+                if (gameLevelItemAsset.code == BaseDataObjectKeys.empty) {
+                    
+                    //Debug.Log("loadLevelItem: EMPTY:" + " asset:" + gameLevelItemAsset.code);
+                    return;
+                }
+                
+                //Debug.Log("loadLevelItem: FILLED:" + " asset:" + gameLevelItemAsset.code);
                 
                 GameObject goLevelItem = GameObjectHelper.CreateGameObject(
                     prefabGameLevelItemContainer, Vector3.zero, Quaternion.identity, 
