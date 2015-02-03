@@ -249,7 +249,6 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         else if(flowState == AppModeTypeChoiceFlowState.AppModeTypeChoiceDisplayItem) {
 
             // Set question info and level info if not loaded
-            //GameController.LoadLevelAssets("1-1");
 
             if(chosen) {
                 ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResultItem);

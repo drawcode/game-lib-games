@@ -1178,6 +1178,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Clear items from LevelContainer
         GameController.Reset();
 
+        Debug.Log("loadLevelAssets:" + " code:" + code);
+
         // Change data codes
         GameLevels.Instance.ChangeCurrentAbsolute(code);
         GameLevelItems.Instance.ChangeCurrentAbsolute(code);
@@ -1506,7 +1508,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
     
     public virtual void loadStartLevel() {
-        GameController.LoadStartLevel("1-1");
+        GameController.LoadStartLevel(GameConfigs.defaultGameLevelCode);
     }
     
     public virtual void loadStartLevel(string levelCode) {
@@ -1902,6 +1904,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void prepareGame(string levelCode) {
 
         //GameController.Reset();
+
+        Debug.Log("prepareGame:" + " levelCode:" + levelCode);
         
         GameController.LoadLevelAssets(levelCode);
         
