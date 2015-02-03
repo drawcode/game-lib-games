@@ -3717,34 +3717,48 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
             
+            object dataType = null;
+            object dataCode = null;
+            
+            if (data.ContainsKey(BaseDataObjectKeys.type)) {
+                dataType = data.Get(BaseDataObjectKeys.type);
+            }
+            if (data.ContainsKey(BaseDataObjectKeys.code)) {
+                dataCode = data.Get(BaseDataObjectKeys.code);
+            }
+            
+            if (dataType != null) {
+                
+                if (dataType.ToString() == "mission") {
+                    
+                    string code = dataCode.ToString();
+                    
+                    if (!string.IsNullOrEmpty(code)) {
+                        
+                        AppContentCollects.ChangeCurrent(code);
+                        
+                        Debug.Log("ACTION:" + " mission:" + code);
+
+                        AppContentCollect appContentCollect = AppContentCollects.Instance.GetById(code);
+
+                        if(appContentCollect != null) {
+                            if(appContentCollect.data != null) {
+                                string levelTo = "2-1";
+                                int worldTo = GameWorlds.Current.data.world_num;
+                                levelTo = string.Format("{0}-{1}", worldTo, appContentCollect.GetLevelSuffixRandom());
+                                GameLevels.Instance.ChangeCurrent(levelTo);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //
+
             if (AppContentStates.Instance.isAppContentStateGameMissions) {
                 // setup current mission
                 // missions
 
-                object dataType = null;
-                object dataCode = null;
-
-                if (data.ContainsKey(BaseDataObjectKeys.type)) {
-                    dataType = data.Get(BaseDataObjectKeys.type);
-                }
-                if (data.ContainsKey(BaseDataObjectKeys.code)) {
-                    dataCode = data.Get(BaseDataObjectKeys.code);
-                }
-
-                if (dataType != null) {
-                    
-                    if (dataType.ToString() == "mission") {
-
-                        string code = dataCode.ToString();
-
-                        if (!string.IsNullOrEmpty(code)) {
-
-                            AppContentCollects.ChangeCurrent(code);
-                       
-                            Debug.Log("ACTION:" + " mission:" + code);
-                        }
-                    }
-                }
             }
             
             GameCommunity.HideGameCommunity();
