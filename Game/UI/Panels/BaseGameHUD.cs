@@ -100,20 +100,20 @@ public class BaseGameHUD : GameUIPanelBase {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
-        Messenger<string, object>.AddListener(GameMessages.item, OnGameItem);
+        Messenger<string, object>.AddListener(GameMessages.gameActionItem, OnGameItem);
         
-        Messenger<double>.AddListener(GameMessages.score, OnGameShooterScore);
-        Messenger<double>.AddListener(GameMessages.scores, OnGameShooterScores);
+        Messenger<double>.AddListener(GameMessages.gameActionScore, OnGameShooterScore);
+        Messenger<double>.AddListener(GameMessages.gameActionScores, OnGameShooterScores);
     }
     
     public override void OnDisable() {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         
-        Messenger<string, object>.RemoveListener(GameMessages.item, OnGameItem);
+        Messenger<string, object>.RemoveListener(GameMessages.gameActionItem, OnGameItem);
 
-        Messenger<double>.RemoveListener(GameMessages.score, OnGameShooterScore);
-        Messenger<double>.RemoveListener(GameMessages.scores, OnGameShooterScores);
+        Messenger<double>.RemoveListener(GameMessages.gameActionScore, OnGameShooterScore);
+        Messenger<double>.RemoveListener(GameMessages.gameActionScores, OnGameShooterScores);
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {

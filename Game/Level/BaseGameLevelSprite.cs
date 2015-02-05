@@ -200,7 +200,7 @@ public class BaseGameLevelSprite : MonoBehaviour {
                 hitsAllowed--;
                 
                 if (hitsAllowed == 0) { 
-                    Messenger<double>.Broadcast(GameMessages.score, 10);
+                    Messenger<double>.Broadcast(GameMessages.gameActionScore, 10);
                     exploding = true;
                     gameDraggableLevelItem.DestroyGameLevelItemSprite();
                     Invoke("DestroyMe", 2f);

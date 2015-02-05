@@ -80,14 +80,16 @@ public class GameActorDataItem {
 }
 
 public class BaseGameMessages {
-    public static string item = "game-action-item";
-    public static string scores = "game-action-scores";
-    public static string score = "game-action-score";
-    public static string ammo = "game-action-ammo";
-    public static string save = "game-action-save";
-    public static string shot = "game-action-shot";
-    public static string launch = "game-action-launch";
-    public static string state = "game-action-state";
+    //
+    public static string gameActionItem = "game-action-item";
+    public static string gameActionScores = "game-action-scores";
+    public static string gameActionScore = "game-action-score";
+    public static string gameActionAmmo = "game-action-ammo";
+    public static string gameActionSave = "game-action-save";
+    public static string gameActionShot = "game-action-shot";
+    public static string gameActionLaunch = "game-action-launch";
+    public static string gameActionState = "game-action-state";
+    //
     public static string gameInitLevelStart = "game-init-level-start";
     public static string gameInitLevelEnd = "game-init-level-end";
     public static string gameLevelStart = "game-level-start";
@@ -2270,7 +2272,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
         gameState = gameStateTo;
     
-        Messenger<GameStateGlobal>.Broadcast(GameMessages.state, gameState);
+        Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
     
         if (gameState == GameStateGlobal.GameStarted) {
             GameController.OnGameStarted();

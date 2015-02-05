@@ -66,6 +66,7 @@ public class BaseGamePlayerRuntimeData {
     public double saves = 0;
     public double savesLaunched = 0;
     public double goalFly = 0;
+    public double kills = 0f;
 
     public virtual float totalScoreValue {
         get {
@@ -789,7 +790,7 @@ public class BaseGamePlayerController : GameActor {
                 }
                 
                 if (broadcastEvent) {        
-                    Messenger<string, object>.Broadcast(GameMessages.item, item.code, broadcastVal);
+                    Messenger<string, object>.Broadcast(GameMessages.gameActionItem, item.code, broadcastVal);
                 }
                 
             }
@@ -3113,6 +3114,11 @@ public class BaseGamePlayerController : GameActor {
             GamePlayerProgress.SetStatDeaths(1f);
         }
         else {
+
+            // update players kill runtime value
+
+            GameController.CurrentGamePlayerController.runtimeData.kills += 1;
+
             GamePlayerProgress.SetStatKills(1f);
         }
      
@@ -3382,8 +3388,8 @@ public class BaseGamePlayerController : GameActor {
         //GameController.ProcessStatShot();
         
         runtimeData.savesLaunched += number;
-        Messenger<double>.Broadcast(GameMessages.launch, number);
-        Messenger<double>.Broadcast(GameMessages.ammo, -number);
+        Messenger<double>.Broadcast(GameMessages.gameActionLaunch, number);
+        Messenger<double>.Broadcast(GameMessages.gameActionAmmo, -number);
     }
         
     public virtual void FindGamePlayerCamera() {
@@ -3508,7 +3514,7 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.scores += val;
 
-        Messenger<double>.Broadcast(GameMessages.scores, val);
+        Messenger<double>.Broadcast(GameMessages.gameActionScores, val);
 
         GamePlayerProgress.SetStatScores(val);
     }
@@ -3521,7 +3527,7 @@ public class BaseGamePlayerController : GameActor {
      
         runtimeData.score += val;
         
-        Messenger<double>.Broadcast(GameMessages.score, val);
+        Messenger<double>.Broadcast(GameMessages.gameActionScore, val);
         
         GamePlayerProgress.SetStatScore(val);
     }
@@ -3535,7 +3541,7 @@ public class BaseGamePlayerController : GameActor {
         runtimeData.ammo += val;
         runtimeData.collectedAmmo += val;
 
-        Messenger<double>.Broadcast(GameMessages.ammo, val);
+        Messenger<double>.Broadcast(GameMessages.gameActionAmmo, val);
 
         GamePlayerProgress.SetStatAmmo(val);
     }
@@ -3547,7 +3553,7 @@ public class BaseGamePlayerController : GameActor {
         }
         
         runtimeData.saves += valAdd;
-        Messenger<double>.Broadcast(GameMessages.save, valAdd);
+        Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
     }
  
     public virtual void Tackle(GamePlayerController gamePlayerControllerTo) {

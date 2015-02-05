@@ -20,19 +20,26 @@ public class GameWorldsMessages {
 public class BaseGameUIPanelWorlds : GameUIPanelBase {
     
     public static GameUIPanelWorlds Instance;
+    //
     public GameObject listItemPrefab;
+    //
     public GameWorldsState gameWorldsState = GameWorldsState.selection;
+    //
     public UIImageButton buttonGamePlay;
     public UIImageButton buttonClose;
     public UIImageButton buttonWorldNext;
     public UIImageButton buttonWorldPrevious;
+    //
     public UILabel labelWorldTitle;
     public UILabel labelWorldDescription;
+    //
     public GameObject containerMissions;
     public GameObject containerButtons;
     public GameObject containerButtonNext;
     public GameObject containerButtonPrevious;
-    
+    //
+    public GameObject containerWorlds;
+
     public static bool isInst {
         get {
             if (Instance != null) {
@@ -74,6 +81,9 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
         
+        Messenger.AddListener(UIControllerMessages.uiShow, OnUIControllerShowHandler);
+        Messenger.AddListener(UIControllerMessages.uiHide, OnUIControllerHideHandler);
+        
         Messenger.AddListener(GameWorldsMessages.gameWorldNext, OnGameWorldNext);
         Messenger.AddListener(GameWorldsMessages.gameWorldPrevious, OnGameWorldPrevious);
         Messenger.AddListener(GameWorldsMessages.gameWorldSelect, OnGameWorldSelect);
@@ -95,10 +105,24 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
         
+        Messenger.RemoveListener(UIControllerMessages.uiShow, OnUIControllerShowHandler);
+        Messenger.RemoveListener(UIControllerMessages.uiHide, OnUIControllerHideHandler);
+        
         Messenger.RemoveListener(GameWorldsMessages.gameWorldNext, OnGameWorldNext);
         Messenger.RemoveListener(GameWorldsMessages.gameWorldPrevious, OnGameWorldPrevious);
         Messenger.RemoveListener(GameWorldsMessages.gameWorldSelect, OnGameWorldSelect);
-
+    }
+    
+    public void OnUIControllerShowHandler() {
+        if(GameUIPanelSettings.isInst) {
+            GameUIPanelWorlds.Instance.ShowWorldsContainer();
+        }
+    }
+    
+    public void OnUIControllerHideHandler() {
+        if(GameUIPanelSettings.isInst) {
+            GameUIPanelWorlds.Instance.HideWorldsContainer();
+        }
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
@@ -153,6 +177,16 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             ShowSelect();
             HideButtons();
         }
+    }
+
+    public virtual void ShowWorldsContainer() {
+        containerWorlds.Show();
+        ShowPanelBottom(containerWorlds);    
+    }
+    
+    public virtual void HideWorldsContainer() {  
+        HidePanelBottom(containerWorlds);
+        containerWorlds.HideObjectDelayed(.5f);
     }
 
     public virtual void ShowSelect() {

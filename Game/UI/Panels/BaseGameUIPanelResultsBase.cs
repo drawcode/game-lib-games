@@ -12,7 +12,8 @@ public class BaseGameUIPanelResultsBase : MonoBehaviour {
 	public UILabel totalScoreSmarts;
 	public UILabel totalScores;
 	public UILabel totalCoins;
-	public UILabel totalTime;
+    public UILabel totalTime;
+    public UILabel totalKills;
 
     public virtual void OnEnable() {
 
@@ -44,7 +45,8 @@ public class BaseGameUIPanelResultsBase : MonoBehaviour {
 		UIUtil.SetLabelValue(totalCoins, runtimeData.coins.ToString("N0"));
 		UIUtil.SetLabelValue(totalScores, runtimeData.scores.ToString("N0"));
 		UIUtil.SetLabelValue(totalScoreSmarts, runtimeData.score.ToString("N0"));
-		UIUtil.SetLabelValue(totalScore, totalScoreValue.ToString("N0"));
+        UIUtil.SetLabelValue(totalScore, totalScoreValue.ToString("N0"));
+        UIUtil.SetLabelValue(totalKills, runtimeData.kills.ToString("N0"));
 	}
 	
 	public virtual void loadData() {

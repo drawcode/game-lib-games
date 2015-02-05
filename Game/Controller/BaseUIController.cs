@@ -22,6 +22,9 @@ public class BaseUIControllerMessages {
     public static string uiPanelAnimateOutClassType = "ui-panel-animate-out-class-type";
     public static string uiPanelAnimateType = "ui-panel-animate-type";
     public static string uiUpdateTouchLaunch = "ui-update-touch-launch";
+
+    public static string uiShow = "ui-show";
+    public static string uiHide = "ui-hide";
 }
 
 public class UIControllerAnimateTypes {
@@ -2037,6 +2040,8 @@ public class BaseUIController : GameObjectBehavior {
         HandleInGameAudio();
         
         GameController.HandleCamerasInGame();
+        
+        Messenger.Broadcast(UIControllerMessages.uiHide);
             
     }
     
@@ -2054,7 +2059,9 @@ public class BaseUIController : GameObjectBehavior {
         
         GameController.HandleCamerasInUI();
         
-        GameUIPanelBackgrounds.Instance.AnimateIn();   
+        GameUIPanelBackgrounds.Instance.AnimateIn(); 
+
+        Messenger.Broadcast(UIControllerMessages.uiShow);
     }   
      
     // ------------------------------------------------------------
