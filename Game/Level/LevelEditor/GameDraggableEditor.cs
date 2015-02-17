@@ -1528,6 +1528,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 
             if (prefabGameLevelItemContainer != null) {
 
+                // If level item should be empty just skip
                 if (gameLevelItemAsset.code == BaseDataObjectKeys.empty) {
                     
                     //Debug.Log("loadLevelItem: EMPTY:" + " asset:" + gameLevelItemAsset.code);
