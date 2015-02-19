@@ -1472,9 +1472,13 @@ public class BaseGamePlayerController : GameActor {
             yield break;
         }
 
+        Debug.Log("LoadCharacterCo:" + " code:" + gameCharacter.code);
+
         currentControllerData.loadingCharacter = true;
 
         string prefabCode = gameCharacter.data.GetModel().code;
+                
+        Debug.Log("LoadCharacterCo:" + " prefabCode:" + prefabCode);
 
         //LogUtil.Log("LoadCharacter:path:" + path);
         if (!string.IsNullOrEmpty(prefabCode)) {
@@ -1573,6 +1577,9 @@ public class BaseGamePlayerController : GameActor {
                 gameObjectLoad.transform.localRotation = gamePlayerHolder.transform.localRotation;
                                 
                 initialScale = transform.localScale;
+
+                
+                Debug.Log("LoadCharacterCo:" + " gameObjectLoad:" + gameObjectLoad.name);
 
                 // load items
 

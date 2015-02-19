@@ -20,17 +20,20 @@ public class GameItemDirectorMessages {
     public static string gameItemDirectorSpawnItem = "game-item-director-spawn-item";
 }
 
-public class GameItemDirectorData {
-    public string code = "item-coin";
-    public double currentSpawnAmount = 1;
+public class GameItemData : GameDataObject {
 
-    public GameItemDirectorData() {
+    public GameItemData() {
         Reset();
     }
 
-    public void Reset() {
+    public override void Reset() {
+        base.Reset();
         code = "item-coin";
-        currentSpawnAmount = 1;
+        type = BaseDataObjectKeys.item;
+        data_type = GameSpawnType.zonedType;
+        position_data = new Vector3Data(0, 0, 0);
+        scale_data = new Vector3Data(1, 1, 1);
+        rotation_data = new Vector3Data(0, 0, 0);
     }
 }
 
@@ -103,7 +106,7 @@ public class BaseItemController : GameObjectBehavior {
         
         foreach (GamePresetItem item in presetItems) {
             
-            for(int i = 0; i < item.limit / 3; i++) {
+            for (int i = 0; i < item.limit / 3; i++) {
                 yield return new WaitForEndOfFrame();
                 
                 GameAIController.Load(item.code);
@@ -130,7 +133,7 @@ public class BaseItemController : GameObjectBehavior {
         //attack = UnityEngine.Random.Range(.3f, .4f);
         //scale = UnityEngine.Random.Range(.8f, 1.6f);
         
-        GameItemDirectorData itemData = new GameItemDirectorData();
+        GameItemData itemData = new GameItemData();
         itemData.code = code;
         //itemData.type = GameActorType.enemy;
         //itemData.speed = speed;
@@ -323,22 +326,22 @@ public class BaseItemController : GameObjectBehavior {
  
     //public virtual void spawnItem(GamePlayerItemType type) {
           
-        // Position
+    // Position
      
-        // Get boundaries
+    // Get boundaries
      
-        //Vector3
-        //
+    //Vector3
+    //
      
     //}
 
     // MESSAGING
 
-    public virtual void broadcastItemMessage(GameItemDirectorData item) {
-        Messenger<GameItemDirectorData>.Broadcast(GameItemDirectorMessages.gameItemDirectorSpawnItem, item);
+    public virtual void broadcastItemMessage(GameItemData item) {
+        Messenger<GameItemData>.Broadcast(GameItemDirectorMessages.gameItemDirectorSpawnItem, item);
     }
 
-    public virtual void loadItem(GameItemDirectorData item) {
+    public virtual void loadItem(GameItemData item) {
         GameItemController.BroadcastItemMessage(item);
     }
 

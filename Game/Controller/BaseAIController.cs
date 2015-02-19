@@ -183,6 +183,24 @@ public class BaseAIController : GameObjectBehavior {
         GameAIController.LoadCharacter(itemData);
     }
 
+    public virtual void load(
+        string code, 
+        string type, 
+        float speed, 
+        float attack, 
+        float scale) {
+        // Load by character code
+
+        GameAIDirectorData itemData = new GameAIDirectorData();
+        itemData.code = code;
+        itemData.type = type;
+        itemData.speed = speed;
+        itemData.attack = attack;
+        itemData.scale = scale;
+        
+        GameAIController.LoadCharacter(itemData);
+    }
+
     // RUNNER/STOPPER
 
     public virtual void run(bool run) {

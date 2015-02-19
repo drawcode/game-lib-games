@@ -1534,7 +1534,44 @@ public class GameDraggableEditor : GameObjectBehavior {
                     //Debug.Log("loadLevelItem: EMPTY:" + " asset:" + gameLevelItemAsset.code);
                     return;
                 }
+
+                // If the item is a player or item handle them
+
+                if (gameLevelItemAsset.type == BaseDataObjectKeys.item) {
+                    // Handle item
+                    foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {                                                   
+                        gameLevelItemAsset.position_data = step.position_data;// * .1f;
+                        gameLevelItemAsset.rotation_data = step.rotation_data;// * .1f;
+                        gameLevelItemAsset.scale_data = step.scale_data;// * .1f;
+                    }
+                    
+                    GameController.LoadItem(
+                        gameLevelItemAsset.code, 
+                        gameLevelItemAsset.type, 
+                        gameLevelItemAsset.data_type, 
+                        gameLevelItemAsset.position_data.GetVector3());
+
+                    return;
+                }
                 
+                if (gameLevelItemAsset.type == BaseDataObjectKeys.character) {
+                    // Handle player
+                    foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {                                                   
+                        gameLevelItemAsset.position_data = step.position_data;// * .1f;
+                        gameLevelItemAsset.rotation_data = step.rotation_data;// * .1f;
+                        gameLevelItemAsset.scale_data = step.scale_data;// * .1f;
+                    }
+
+                    Debug.Log("loadLevelItem: actor:" + " gameLevelItemAsset:" + gameLevelItemAsset.ToJson());
+
+                    GameController.LoadActor(
+                        gameLevelItemAsset.code, 
+                        gameLevelItemAsset.type, 
+                        gameLevelItemAsset.data_type, 
+                        gameLevelItemAsset.display_type, 
+                        gameLevelItemAsset.position_data.GetVector3());
+                }
+
                 //Debug.Log("loadLevelItem: FILLED:" + " asset:" + gameLevelItemAsset.code);
                 
                 GameObject goLevelItem = GameObjectHelper.CreateGameObject(
