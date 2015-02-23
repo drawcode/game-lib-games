@@ -1480,6 +1480,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         //LogUtil.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
         
+        //Debug.Log("loadLevelItemsCo:gameLevelItemAssets:" + gameLevelItemAssets.ToJson());
+        
         if (gameLevelItemAssets != null) {
 
             foreach (GameLevelItemAsset item in gameLevelItemAssets) {
@@ -1535,6 +1537,18 @@ public class GameDraggableEditor : GameObjectBehavior {
                     return;
                 }
 
+                if(gameLevelItemAsset.local_position_data == null) {
+                    gameLevelItemAsset.local_position_data = new Vector3Data();
+                }
+                
+                if(gameLevelItemAsset.local_rotation_data == null) {
+                    gameLevelItemAsset.local_rotation_data = new Vector3Data();
+                }
+                
+                if(gameLevelItemAsset.scale_data == null) {
+                    gameLevelItemAsset.scale_data = new Vector3Data(1, 1, 1);
+                }
+
                 // If the item is a player or item handle them
 
                 if (gameLevelItemAsset.type == BaseDataObjectKeys.item) {
@@ -1549,7 +1563,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                         gameLevelItemAsset.code, 
                         gameLevelItemAsset.type, 
                         gameLevelItemAsset.data_type, 
-                        gameLevelItemAsset.position_data.GetVector3());
+                        gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3());
 
                     return;
                 }
@@ -1562,14 +1576,12 @@ public class GameDraggableEditor : GameObjectBehavior {
                         gameLevelItemAsset.scale_data = step.scale_data;// * .1f;
                     }
 
-                    Debug.Log("loadLevelItem: actor:" + " gameLevelItemAsset:" + gameLevelItemAsset.ToJson());
-
                     GameController.LoadActor(
                         gameLevelItemAsset.code, 
                         gameLevelItemAsset.type, 
                         gameLevelItemAsset.data_type, 
                         gameLevelItemAsset.display_type, 
-                        gameLevelItemAsset.position_data.GetVector3());
+                        gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3());
                 }
 
                 //Debug.Log("loadLevelItem: FILLED:" + " asset:" + gameLevelItemAsset.code);
@@ -1595,18 +1607,30 @@ public class GameDraggableEditor : GameObjectBehavior {
                         goLevelItem.transform.localPosition = Vector3.zero;
                         goLevelItem.transform.rotation = Quaternion.identity;
                         goLevelItem.transform.localRotation = Quaternion.identity;
+
+                        //if(gameLevelItemAsset.code == "wall-1") {
+                        //    Debug.Log("loadLevelItem: level:" + " gameLevelItemAsset:" + gameLevelItemAsset.ToJson());                            
+                        //}
                         
                         foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                             if (dragLevelItem.gameLevelItemObject != null) {
-                                
+
                                 goLevelItem.transform.position = 
-                                    step.position_data.GetVector3();
+                                    step.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3();
                                 
-                                dragLevelItem.gameLevelItemObject.transform.rotation = 
+                               // goLevelItem.transform.localPosition = gameLevelItemAsset.local_position_data.GetVector3();
+                                
+                                //goLevelItem.transform.position = 
+                                //    step.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3();
+                                
+                                goLevelItem.transform.rotation = 
                                     Quaternion.Euler(step.rotation_data.GetVector3());
                                 
-                                dragLevelItem.gameLevelItemObject.transform.localScale = 
-                                    step.scale_data.GetVector3();// * .1f;
+                                //dragLevelItem.gameLevelItemObject.transform.localRotation = 
+                                //    Quaternion.Euler(gameLevelItemAsset.local_rotation_data.GetVector3());
+                                
+                                goLevelItem.transform.localScale = 
+                                    step.scale_data.GetVector3();// * gameLevelItemAsset.scale_data.GetVector3();
                                 
                                 //goLevelItem.transform.position = 
                                 //    goLevelItem.transform.position.WithY(goLevelItem.transform.position.y);

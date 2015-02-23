@@ -448,6 +448,24 @@ public class GameLevelGridData {
         SetAssetsInAssetMap(assetData);
     }
 
+    public void SetAssetsInAssetMap(
+        string code, string type, string dataType, string displayType, 
+        Vector3 pos, Vector3 scale, Vector3 rotation, Vector3 localPosition) {
+        
+        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+        
+        assetData.code = code;
+        assetData.type = type;
+        assetData.data_type = dataType;
+        assetData.display_type = displayType;
+        assetData.position_data = new Vector3Data(pos);
+        assetData.scale_data = new Vector3Data(scale);
+        assetData.rotation_data = new Vector3Data(rotation);
+        assetData.local_position_data = new Vector3Data(localPosition);
+        
+        SetAssetsInAssetMap(assetData);
+    }
+
     public void SetAssetsInAssetMap(GameLevelItemAssetData assetData) {
 
         Vector3 pos = assetData.position_data.GetVector3();
@@ -1680,9 +1698,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Vector3 spawnLocation = data.position_data.GetVector3();
                 
-        Debug.Log("loadActorCo:" + " data.json:" + data.ToJson());
-        Debug.Log("loadActorCo:" + " modelPath:" + modelPath);
-        Debug.Log("loadActorCo:" + " gameCharacter:" + gameCharacter.code);
+        //Debug.Log("loadActorCo:" + " data.json:" + data.ToJson());
+        //Debug.Log("loadActorCo:" + " modelPath:" + modelPath);
+        //Debug.Log("loadActorCo:" + " gameCharacter:" + gameCharacter.code);
 
         if (data.data_type == GameSpawnType.zonedType) {
             // get left/right spawn location
@@ -1738,7 +1756,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
 
         
-        Debug.Log("loadActorCo:" + " characterObject:" + characterObject.name);
+        //Debug.Log("loadActorCo:" + " characterObject:" + characterObject.name);
 
 
         if (characterObject != null) {
@@ -1796,7 +1814,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameItem item = GameItems.Instance.GetById(data.code);     
         
         if (item == null) {
-            Debug.Log("loadItemCo:" + "Item not found" + " code:" + data.code);
+            //Debug.Log("loadItemCo:" + "Item not found" + " code:" + data.code);
             yield break;
         }
 
@@ -1804,7 +1822,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
         Vector3 spawnLocation = Vector3.zero;
 
-        Debug.Log("loadItemCo:" + " data.json:" + data.ToJson());
+        //Debug.Log("loadItemCo:" + " data.json:" + data.ToJson());
 
         if (data.data_type == GameSpawnType.zonedType) {
 
@@ -3062,6 +3080,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void clearGameLevelItems() {
+
+        Debug.Log("clearGameLevelItems:");
+
         GameController.CheckGameLevelItems();
 
         if (levelItems != null) {
@@ -3070,6 +3091,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void clearGameLevelGrid() {
+
+        Debug.Log("clearGameLevelGrid:");
+
         GameController.CheckGameLevelGrid();
 
         if (levelGrid != null) {
@@ -3153,6 +3177,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             //&& GameController.CheckBounds(gridPos)) {
 
             GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
+
+            asset.local_position_data = new Vector3Data();
+            asset.local_position_data = data.local_position_data;
+            
+            asset.local_rotation_data = new Vector3Data();
+            asset.local_rotation_data = data.local_rotation_data;
+            
+            asset.scale_data = new Vector3Data();
+            asset.scale_data = data.scale_data;
 
             levelItems.Add(asset);
 
