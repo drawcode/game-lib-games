@@ -1582,6 +1582,8 @@ public class GameDraggableEditor : GameObjectBehavior {
                         gameLevelItemAsset.data_type, 
                         gameLevelItemAsset.display_type, 
                         gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3());
+                    
+                    return;
                 }
 
                 //Debug.Log("loadLevelItem: FILLED:" + " asset:" + gameLevelItemAsset.code);

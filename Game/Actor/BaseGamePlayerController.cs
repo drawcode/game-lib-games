@@ -1439,11 +1439,17 @@ public class BaseGamePlayerController : GameActor {
      
     public virtual void LoadCharacter(string characterCodeTo) {
 
+        Debug.Log("LoadCharacter:1:" + " characterCodeTo:" + characterCodeTo);
+        Debug.Log("LoadCharacter:1:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
+
         if (currentControllerData.loadingCharacter) {
             return;
         }
 
         characterCode = characterCodeTo;
+        
+        Debug.Log("LoadCharacter:2:" + " characterCodeTo:" + characterCodeTo);
+        Debug.Log("LoadCharacter:2:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
 
         ResetScale();
         ResetPosition();
@@ -1549,6 +1555,7 @@ public class BaseGamePlayerController : GameActor {
                                 
                 if (!IsPlayerControlled 
                     && GameAIController.generateType == GameAICharacterGenerateType.team) {
+                    //&& contextState == GamePlayerContextState.) {
                     // apply team colors and textures
 
                     GameTeam team = GameTeams.Current;

@@ -12,11 +12,16 @@ public class GameDamage : GameDamageBase {
 
     private void Start() {
 
+        timetemp = Time.time;
+
         if (!gamePlayerController || !gamePlayerController.collider)
             return;
+
+        if(!collider.enabled || !gamePlayerController.collider.enabled) {
+            return;
+        }
+
         Physics.IgnoreCollision(collider, gamePlayerController.collider);
-        
-        timetemp = Time.time;
     }
 
     private void Update() {
