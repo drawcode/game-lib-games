@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Engine.Animation;
+
 using UnityEngine;
 
 public class BaseGamePlayerInventory : GameActor {

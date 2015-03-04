@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using UnityEngine;
-using Engine.Animation;
+
 using Engine.Events;
 
 public class BaseGameLevelSprite : MonoBehaviour {

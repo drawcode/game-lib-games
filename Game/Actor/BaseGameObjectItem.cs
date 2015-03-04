@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using Engine.Animation;
+
 using Engine.Events;
 using Engine.Utility;
 
