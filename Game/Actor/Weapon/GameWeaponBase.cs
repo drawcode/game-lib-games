@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class GameDamageBase : MonoBehaviour {
+public class GameDamageBase : GameObjectBehavior {
 
 	public GameObject Effect;
 	[HideInInspector]

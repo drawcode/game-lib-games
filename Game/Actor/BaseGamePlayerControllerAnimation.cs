@@ -411,11 +411,15 @@ public class BaseGamePlayerControllerAnimationData {
             // LEGACY TYPE   
             if (isLegacy) {
 
-                actor.animation.Stop();
+                Animation actorAnimation = actor.GetComponent<Animation>();
 
-                foreach (GamePlayerAnimationDataItem aniItem in items.Values) {
+                if(actorAnimation != null) {
 
-                    //if (aniItem.animation_state == null) { // || aniItem.animator == null) {
+                    actorAnimation.Stop();
+
+                    foreach (GamePlayerAnimationDataItem aniItem in items.Values) {
+
+                        //if (aniItem.animation_state == null) { // || aniItem.animator == null) {
 
                         if (animationType == GamePlayerControllerAnimationType.mecanim) {                            
                             aniItem.animation_type = animationType;
@@ -423,10 +427,10 @@ public class BaseGamePlayerControllerAnimationData {
                         }
                         else {                                          
 
-                            if (actor.animation[aniItem.code] != null) {
+                            if (actorAnimation[aniItem.code] != null) {
 
                                 //aniItem.animation = actor.animation;
-                                aniItem.animation_state = actor.animation[aniItem.code];
+                                aniItem.animation_state = actorAnimation[aniItem.code];
                                 aniItem.animation_state.layer = aniItem.layer;
                                 aniItem.animation_type = animationType;
 
@@ -438,8 +442,9 @@ public class BaseGamePlayerControllerAnimationData {
                                 }
                             }
                         }
-                    }                
-                //}
+                    }     
+                    //}
+                }
             }            
         }
 
@@ -560,12 +565,14 @@ public class BaseGamePlayerControllerAnimationData {
             if (actor == null) {
                 return;
             }
+
+            Animation actorAnimation = actor.GetComponent<Animation>();
             
-            if (actor.animation == null) {
+            if (actorAnimation == null) {
                 return;
             }
             
-            if (actor.animation[currentAnimation] == null) {
+            if (actorAnimation[currentAnimation] == null) {
                 return;
             }
             
@@ -573,8 +580,8 @@ public class BaseGamePlayerControllerAnimationData {
                 return;
             }
             
-            actor.animation[currentAnimation].blendMode = blendMode;
-            actor.animation.Blend(currentAnimation, weight, time);
+            actorAnimation[currentAnimation].blendMode = blendMode;
+            actorAnimation.Blend(currentAnimation, weight, time);
             
         }
     }
@@ -592,11 +599,13 @@ public class BaseGamePlayerControllerAnimationData {
                 return;
             }
             
-            if (actor.animation == null) {
+            Animation actorAnimation = actor.GetComponent<Animation>();
+            
+            if (actorAnimation == null) {
                 return;
             }
             
-            if (actor.animation[currentAnimation] == null) {
+            if (actorAnimation[currentAnimation] == null) {
                 return;
             }
             
@@ -604,7 +613,7 @@ public class BaseGamePlayerControllerAnimationData {
                 return;
             }
                         
-            actor.animation.CrossFade(currentAnimation, time, playMode);
+            actorAnimation.CrossFade(currentAnimation, time, playMode);
 
         }
     }
@@ -626,15 +635,17 @@ public class BaseGamePlayerControllerAnimationData {
                 return;
             }
             
-            if (actor.animation == null) {
+            Animation actorAnimation = actor.GetComponent<Animation>();
+            
+            if (actorAnimation == null) {
                 return;
             }
 
-            if (actor.animation[currentAnimation] == null) {
+            if (actorAnimation[currentAnimation] == null) {
                 return;
             }
                     
-            actor.animation.Play(currentAnimation, playMode);                    
+            actorAnimation.Play(currentAnimation, playMode);                    
         }
     }
 
@@ -1350,10 +1361,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         // We are turning the character controller 180 degrees around when doing a wall jump so the animation accounts for that.
         // But we really have to make sure that the animation is in full control so 
         // that we don't do weird blends between 180 degree apart rotations
+
+        Animation actorAnimation = animationData.actor.GetComponent<Animation>();
         
-        if (animationData.actor.animation != null) {
-            if (animationData.actor.animation["walljump"] != null) {
-                animationData.actor.animation.Play("walljump");
+        if (actorAnimation != null) {
+            if (actorAnimation["walljump"] != null) {
+                actorAnimation.Play("walljump");
                 SendMessage("SyncAnimation", GameDataActionKeys.walljump);
             }
         }
@@ -1361,6 +1374,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
     
     // --------------
     // GAME TICK / UPDATE  
+
+    Animation actorAnimation;
     
     public virtual void Update() {
         
@@ -1424,7 +1439,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 //LogUtil.Log("currentSpeed:" + thirdPersonController.walkSpeed);
             }
             
-            if (animationData.actor == null || (animationData.actor.animation == null && animationData.animator == null)) {
+            if (animationData.actor == null) {
+                Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
+                return;
+            }
+
+            actorAnimation = animationData.actor.GetComponent<Animation>();
+            
+            if ((actorAnimation == null && animationData.animator == null)) {
                 Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
                 return;
             }
@@ -1436,12 +1458,12 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             
             if (isLegacy) {
                 if (animationData.actor != null) {
-                    if (animationData.actor.animation != null) {
-                        if (animationData.actor.animation[currentAnimationRun] != null) {
-                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+                    if (actorAnimation != null) {
+                        if (actorAnimation[currentAnimationRun] != null) {
+                            actorAnimation[currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
                         }
-                        if (animationData.actor.animation[currentAnimationWalk] != null) {
-                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                        if (actorAnimation[currentAnimationWalk] != null) {
+                            actorAnimation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                         }
                     }
                 }
@@ -1452,17 +1474,17 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 
                 if (isLegacy) {
                     if (animationData.actor != null) {
-                        if (animationData.actor.animation != null) {
-                            if (animationData.actor.animation[currentAnimationRun] != null) {
-                                if (animationData.actor.animation[currentAnimationRun] != null) {
+                        if (actorAnimation != null) {
+                            if (actorAnimation[currentAnimationRun] != null) {
+                                if (actorAnimation[currentAnimationRun] != null) {
                                     
-                                    animationData.actor.animation[currentAnimationRun].blendMode = AnimationBlendMode.Blend;
+                                    actorAnimation[currentAnimationRun].blendMode = AnimationBlendMode.Blend;
                                     
                                     if (animationData.thirdPersonController == null) {                      
-                                        animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                        actorAnimation[currentAnimationRun].normalizedSpeed = 
                                             animationData.runSpeedScale;
                                         //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actor.animation.CrossFade(currentAnimationRun, .5f);   
+                                        actorAnimation.CrossFade(currentAnimationRun, .5f);   
                                     }
                                     else {                       
                                         
@@ -1475,22 +1497,22 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                                 animationData.thirdPersonController.aimingDirection);
                                             
                                             if (angleTo > 120 && angleTo < 240) {
-                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                                actorAnimation[currentAnimationRun].normalizedSpeed = 
                                                     -animationData.runSpeedScale * .9f;                               
                                             }
                                             else {   
-                                                animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                                actorAnimation[currentAnimationRun].normalizedSpeed = 
                                                     animationData.runSpeedScale;
                                             }
                                             
                                             //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
-                                            animationData.actor.animation.Blend(currentAnimationRun);    
+                                            actorAnimation.Blend(currentAnimationRun);    
                                         }
                                         else {
-                                            animationData.actor.animation[currentAnimationRun].normalizedSpeed = 
+                                            actorAnimation[currentAnimationRun].normalizedSpeed = 
                                                 animationData.runSpeedScale;
                                             //animationData.actor.animation["run"].time = 0f;
-                                            animationData.actor.animation.CrossFade(currentAnimationRun, .5f);                       
+                                            actorAnimation.CrossFade(currentAnimationRun, .5f);                       
                                         }
                                     }
                                 }
@@ -1498,8 +1520,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                         }
                     }
                     // We fade out jumpland quick otherwise we get sliding feet
-                    if (animationData.actor.animation[currentAnimationJump] != null) {
-                        animationData.actor.animation.CrossFade(currentAnimationJump, 0);
+                    if (actorAnimation[currentAnimationJump] != null) {
+                        actorAnimation.CrossFade(currentAnimationJump, 0);
                     }
                 }
                 else if (isMecanim) {
@@ -1513,18 +1535,18 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 
                 if (isLegacy) {
                     if (animationData.actor != null) {
-                        if (animationData.actor.animation != null) {
-                            if (animationData.actor.animation[currentAnimationJump] != null) {
-                                if (animationData.actor.animation[currentAnimationJump] != null) {
-                                    animationData.actor.animation.CrossFade(currentAnimationJump);
+                        if (actorAnimation != null) {
+                            if (actorAnimation[currentAnimationJump] != null) {
+                                if (actorAnimation[currentAnimationJump] != null) {
+                                    actorAnimation.CrossFade(currentAnimationJump);
                                 }
                                 // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actor.animation.Blend(currentAnimationJump, 0);
+                                actorAnimation.Blend(currentAnimationJump, 0);
                             }
-                            if (animationData.actor.animation[currentAnimationWalk] != null) {
+                            if (actorAnimation[currentAnimationWalk] != null) {
 
-                                if (animationData.actor.animation[currentAnimationWalk] != null) {
-                                    animationData.actor.animation[currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
+                                if (actorAnimation[currentAnimationWalk] != null) {
+                                    actorAnimation[currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
 
                                     if (animationData.thirdPersonController.verticalInput2 != 0f 
                                         || animationData.thirdPersonController.horizontalInput2 != 0f) {
@@ -1534,17 +1556,17 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                             animationData.thirdPersonController.aimingDirection);
                                         
                                         if (angleTo > 120 && angleTo < 240) {
-                                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;                             
+                                            actorAnimation[currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;                             
                                         }
                                         else {   
-                                            animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                                            actorAnimation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                                         }
-                                        animationData.actor.animation.Blend(currentAnimationWalk);   
+                                        actorAnimation.Blend(currentAnimationWalk);   
                                     }
                                     else {
-                                        animationData.actor.animation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                                        actorAnimation[currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
                                         //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actor.animation.CrossFade(currentAnimationWalk, .5f);                      
+                                        actorAnimation.CrossFade(currentAnimationWalk, .5f);                      
                                     }
                                     
                                     

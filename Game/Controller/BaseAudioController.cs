@@ -116,22 +116,25 @@ public class BaseAudioController : GameObjectBehavior {
     
     public virtual void setVolumeGame(double volume) {
         if(currentGameLoop != null) {
-            if(currentGameLoop.audio != null) {
-                currentGameLoop.audio.volume = (float)volume;
+            AudioSource audioSource = currentGameLoop.GetComponent<AudioSource>();
+            if(audioSource != null) {
+                audioSource.volume = (float)volume;
             }
         }
     }
 
     public virtual void setVolumeUI(double volume) {
         if(currentUILoop != null) {
-            if(currentUILoop.audio != null) {
-                currentUILoop.audio.volume = (float)volume;
+            AudioSource audioSource = currentUILoop.GetComponent<AudioSource>();
+            if(audioSource != null) {
+                audioSource.volume = (float)volume;
             }
         }
         
         if(currentUIIntro != null) {
-            if(currentUIIntro.audio != null) {
-                currentUIIntro.audio.volume = (float)volume;
+            AudioSource audioSource = currentUIIntro.GetComponent<AudioSource>();
+            if(audioSource != null) {
+                audioSource.volume = (float)volume;
             }
         }
     }
@@ -203,13 +206,13 @@ public class BaseAudioController : GameObjectBehavior {
     public virtual void stopUIMusicIntro() {
         if(currentUIIntro.IsAudioSourcePlaying()) {
             currentUIIntro.StopSounds();
-            currentUIIntro.audio.FadeOut(1.5f);
+            currentUIIntro.GetComponent<AudioSource>().FadeOut(1.5f);
         }
     }
 
     public virtual void stopUIMusicLoop() {
         if(currentUILoop.IsAudioSourcePlaying()) {
-            currentUILoop.audio.FadeOut(1.5f);
+            currentUILoop.GetComponent<AudioSource>().FadeOut(1.5f);
         }
     }
 
@@ -256,7 +259,7 @@ public class BaseAudioController : GameObjectBehavior {
     
     public virtual void stopGameMusicLoop() {
         if(currentGameLoop.IsAudioSourcePlaying()) {
-            currentGameLoop.audio.FadeOut(1.3f);
+            currentGameLoop.GetComponent<AudioSource>().FadeOut(1.3f);
         }
     }
 
@@ -293,7 +296,7 @@ public class BaseAudioController : GameObjectBehavior {
         }
         
         if (currentUIIntro != null) {
-            currentUIIntro.audio.FadeIn(
+            currentUIIntro.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
     }
@@ -331,7 +334,7 @@ public class BaseAudioController : GameObjectBehavior {
         }
         
         if (currentUILoop != null) {
-            currentUILoop.audio.FadeIn(
+            currentUILoop.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 1.7f);
         }
     }
@@ -361,7 +364,7 @@ public class BaseAudioController : GameObjectBehavior {
         }
         
         if (currentGameLoop != null) {
-            currentGameLoop.audio.FadeIn(
+            currentGameLoop.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
     }

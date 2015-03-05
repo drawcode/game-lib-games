@@ -22,9 +22,10 @@ public class GamePlayerObstacle : GameObjectBehavior {
 	
 	public void ResetPosition() {
 		if(obstacleBouncyObject.transform.position != positionPlaceholder) {
-			if(obstacleBouncyObject.rigidbody != null) {
-				obstacleBouncyObject.rigidbody.velocity = Vector3.zero;
-				obstacleBouncyObject.rigidbody.angularVelocity = Vector3.zero;
+			if(obstacleBouncyObject.Has<Rigidbody>()) {
+                Rigidbody rigid = obstacleBouncyObject.Get<Rigidbody>();
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
 			}
 			obstacleBouncyObject.transform.position = positionPlaceholder;
 		}

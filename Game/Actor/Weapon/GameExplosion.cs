@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class GameExplosion : MonoBehaviour {
+public class GameExplosion : GameObjectBehavior {
     public int Force;
     public int Radius;
     public AudioClip[] Sounds;
@@ -14,8 +14,8 @@ public class GameExplosion : MonoBehaviour {
                                         (float)GameProfiles.Current.GetAudioEffectsVolume());
         }
         foreach (Collider hit in colliders) {
-            if (hit.rigidbody) {
-                hit.rigidbody.AddExplosionForce(Force, explosionPos, Radius, 3.0f);
+            if (hit.gameObject.Has<Rigidbody>()) {
+                hit.gameObject.Get<Rigidbody>().AddExplosionForce(Force, explosionPos, Radius, 3.0f);
             }
         }
     }

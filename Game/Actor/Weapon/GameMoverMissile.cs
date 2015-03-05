@@ -69,10 +69,21 @@ public class GameMoverMissile : GameWeaponBase {
         timeCount = Time.time;
         GameObjectHelper.DestroyGameObject(gameObject, LifeTime);
     }
+
+    Rigidbody rigid;
     
     private void FixedUpdate() {
-        rigidbody.velocity = new Vector3(transform.forward.x * Speed * Time.fixedDeltaTime, transform.forward.y * Speed * Time.fixedDeltaTime, transform.forward.z * Speed * Time.fixedDeltaTime);
-        rigidbody.velocity += new Vector3(Random.Range(-Noise.x, Noise.x), Random.Range(-Noise.y, Noise.y), Random.Range(-Noise.z, Noise.z));
+
+        if(rigid == null) {
+            rigid = gameObject.Get<Rigidbody>();        
+        }
+
+        if(rigid == null) {
+            return;
+        }
+
+        rigid.velocity = new Vector3(transform.forward.x * Speed * Time.fixedDeltaTime, transform.forward.y * Speed * Time.fixedDeltaTime, transform.forward.z * Speed * Time.fixedDeltaTime);
+        rigid.velocity += new Vector3(Random.Range(-Noise.x, Noise.x), Random.Range(-Noise.y, Noise.y), Random.Range(-Noise.z, Noise.z));
         
         if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;

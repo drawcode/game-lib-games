@@ -18,15 +18,15 @@ public class OffsetTextureAnimate : GameObjectBehavior {
     
         float offset2Y = Time.time * scrollSpeedYMaterial2;
     
-        transform.renderer.material.SetTextureOffset("_BumpMap", new Vector2(offsetX, offsetY));
+        renderer.material.SetTextureOffset("_BumpMap", new Vector2(offsetX, offsetY));
     
-        transform.renderer.material.SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
+        renderer.material.SetTextureOffset("_MainTex", new Vector2(offsetX, offsetY));
     
-        if (transform.renderer.materials.Length > 0) {
+        if (renderer.materials.Length > 0) {
         
-            transform.renderer.materials[1].SetTextureOffset("_MainTex", new Vector2(offset2X, offset2Y));
+            renderer.materials[1].SetTextureOffset("_MainTex", new Vector2(offset2X, offset2Y));
     
-            transform.renderer.materials[1].SetTextureOffset("_BumpMap", new Vector2(offset2X, offset2Y));
+            renderer.materials[1].SetTextureOffset("_BumpMap", new Vector2(offset2X, offset2Y));
         }
     
     }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class BaseGameLevelSprite : MonoBehaviour {
+public class BaseGameLevelSprite : GameObjectBehavior {
     
     BoxCollider boxCollider;
     public GameDraggableLevelItem gameDraggableLevelItem;

@@ -30,9 +30,9 @@ public class GameExplosionObject : MonoBehaviour {
 
                 if (scale > 0)
                     obj.transform.localScale = new Vector3(scale, scale, scale);
-                if (obj.rigidbody) {
+                if (obj.Has<Rigidbody>()) {
                     Vector3 force = new Vector3(Random.Range(-Force.x, Force.x), Random.Range(-Force.y, Force.y), Random.Range(-Force.z, Force.z));
-                    obj.rigidbody.AddForce(force);
+                    obj.Get<Rigidbody>().AddForce(force);
                 }
             }
         }

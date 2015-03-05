@@ -405,11 +405,14 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         bullet.transform.forward = direction;
                         if (RigidbodyProjectile) {
-                            if (bullet.rigidbody) {
-                                if (gamePlayerController != null && gamePlayerController.gameObject.GetRigidbody()) {
-                                    bullet.rigidbody.velocity = gamePlayerController.gameObject.GetRigidbody().velocity;
+                            if (bullet.Has<Rigidbody>()) {
+                                Rigidbody rigid = bullet.Get<Rigidbody>();
+                                if(rigid != null) {
+                                    if (gamePlayerController != null && gamePlayerController.gameObject.GetRigidbody()) {
+                                        rigid.velocity = gamePlayerController.gameObject.GetRigidbody().velocity;
+                                    }
+                                    rigid.AddForce(direction * ForceShoot);  
                                 }
-                                bullet.rigidbody.AddForce(direction * ForceShoot);  
                             }
                         }
                     
@@ -427,8 +430,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                         Shell, shelloutpos.position, Random.rotation, true);
                     GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
 
-                    if (shell.rigidbody) {
-                        shell.rigidbody.AddForce(shelloutpos.forward * ShellOutForce);
+                    if (shell.Has<Rigidbody>()) {
+                        shell.Get<Rigidbody>().AddForce(shelloutpos.forward * ShellOutForce);
                     }
                 }
                 

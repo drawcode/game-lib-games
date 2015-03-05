@@ -620,25 +620,28 @@ public class BaseUIController : GameObjectBehavior {
         if (go != null) {
          
             deferTap = true;
+
+            Rigidbody rb = go.GetComponent<Rigidbody>();
          
-            if (go.rigidbody == null) {
+            if (rb == null) {
                 go.AddComponent<Rigidbody>();
-                go.rigidbody.constraints =
+                rb = go.GetComponent<Rigidbody>();
+                rb.constraints =
                     RigidbodyConstraints.FreezePosition
                     | RigidbodyConstraints.FreezeRotationX
                     | RigidbodyConstraints.FreezeRotationZ;
-                go.rigidbody.useGravity = false;
-                go.rigidbody.angularDrag = 3f;
+                rb.useGravity = false;
+                rb.angularDrag = 3f;
             }
          
             go.transform.localRotation = 
                 Quaternion.Euler(go.transform.localRotation.eulerAngles.WithY(-delta.x));
 
             if (Math.Abs(delta.x) > .05f) {
-                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 50, 0));                
+                rb.angularVelocity = (new Vector3(0, -delta.x / 50, 0));                
             }
             else {
-                go.rigidbody.angularVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
 
             //GamePlayerProgress.Instance.ProcessProgressSpins();
@@ -678,8 +681,11 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void LongPressObject(GameObject go, Vector2 pos) {
         if (go != null) {
-            if (go.rigidbody != null) {
-                go.rigidbody.angularVelocity = Vector3.zero;
+
+            Rigidbody rb = go.GetComponent<Rigidbody>();
+
+            if (rb != null) {
+                rb.angularVelocity = Vector3.zero;
             }
             deferTap = true;
 
@@ -751,8 +757,13 @@ public class BaseUIController : GameObjectBehavior {
  
     public virtual void DoubleTapObject(GameObject go, Vector2 pos) {
         if (go != null) {
-            go.rigidbody.angularVelocity = Vector3.zero;
-            deferTap = true;
+            
+            Rigidbody rb = go.GetComponent<Rigidbody>();
+            
+            if (rb != null) {
+                rb.angularVelocity = Vector3.zero;
+                deferTap = true;
+            }
 
             //ResetObject(go);
         }
@@ -1752,9 +1763,13 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void ResetCurrentObject(Vector2 pos) {        
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
      
-        if (go != null) {                  
-            if (go.rigidbody != null) {
-                go.rigidbody.angularVelocity = Vector3.zero;
+        if (go != null) {         
+            Rigidbody rb = go.GetComponent<Rigidbody>();
+            
+            if (rb != null) {         
+                if (rb != null) {
+                    rb.angularVelocity = Vector3.zero;
+                }
             }
             GameObjectHelper.deferTap = true;
          

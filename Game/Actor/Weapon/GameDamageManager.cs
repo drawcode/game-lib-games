@@ -87,7 +87,7 @@ public class GameDamageManager : MonoBehaviour {
         
             if (HitSound.Length > 0) {
                 
-                audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+                GetComponent<AudioSource>().volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 
                 //GameAudio.Play
                 AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,

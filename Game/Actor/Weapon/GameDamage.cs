@@ -61,8 +61,8 @@ public class GameDamage : GameDamageBase {
 
             HandleApplyDamage(hit.gameObject);
 
-            if (hit.rigidbody)
-                hit.rigidbody.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 3.0f);
+            if (hit.gameObject.Has<Rigidbody>())
+                hit.gameObject.Get<Rigidbody>().AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 3.0f);
         }
 
     }

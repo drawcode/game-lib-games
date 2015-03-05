@@ -1366,13 +1366,16 @@ public class BaseGamePlayerController : GameActor {
             }
 
             currentControllerData.audioObjectFootsteps = GameAudio.PlayEffectObject(transform, soundFootsteps, true);
-            
+
             if (currentControllerData.audioObjectFootsteps != null) {
-                if (currentControllerData.audioObjectFootsteps.audio != null) {
-                    currentControllerData.audioObjectFootstepsSource = currentControllerData.audioObjectFootsteps.audio;
+
+                AudioSource audioObject = currentControllerData.audioObjectFootsteps.GetComponent<AudioSource>();
+
+                if (audioObject != null) {
+                    currentControllerData.audioObjectFootstepsSource = audioObject;
 
                     if (currentControllerData.audioObjectFootstepsClip == null && currentControllerData.audioObjectFootstepsSource.clip != null) {
-                        currentControllerData.audioObjectFootstepsClip = currentControllerData.audioObjectFootsteps.audio.clip;
+                        currentControllerData.audioObjectFootstepsClip = audioObject.clip;
                     }
                 }
             }

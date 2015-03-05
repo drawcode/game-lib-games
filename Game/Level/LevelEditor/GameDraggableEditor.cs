@@ -375,22 +375,24 @@ public class GameDraggableEditor : GameObjectBehavior {
         if (go != null) {
             
             deferTap = true;
+
+            Rigidbody rigid = go.Get<Rigidbody>();
             
-            if (go.rigidbody == null) {
-                go.AddComponent<Rigidbody>();
-                go.rigidbody.constraints =
+            if (rigid == null) {
+                rigid = go.AddComponent<Rigidbody>();
+                rigid.constraints =
                     RigidbodyConstraints.FreezePosition
                     | RigidbodyConstraints.FreezeRotationX
                     | RigidbodyConstraints.FreezeRotationZ;
-                go.rigidbody.useGravity = false;
-                go.rigidbody.angularDrag = 2f;
+                rigid.useGravity = false;
+                rigid.angularDrag = 2f;
             }
             
             if (Math.Abs(delta.x) > .8f) {
-                go.rigidbody.angularVelocity = (new Vector3(0, -delta.x / 4, 0));               
+                rigid.angularVelocity = (new Vector3(0, -delta.x / 4, 0));               
             }
             else {
-                go.rigidbody.angularVelocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
             }
         }
     }
@@ -456,7 +458,10 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public void LongPressObject(GameObject go, Vector2 pos) {
         if (go != null) {
-            go.rigidbody.angularVelocity = Vector3.zero;
+            Rigidbody rigid = go.Get<Rigidbody>();
+            if(rigid == null) {
+                rigid.angularVelocity = Vector3.zero;
+            }
             deferTap = true;
 
             //ResetObject(go);
@@ -543,7 +548,11 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void DoubleTapObject(GameObject go, Vector2 pos) {
         if (go != null) {
-            go.rigidbody.angularVelocity = Vector3.zero;
+            
+            Rigidbody rigid = go.Get<Rigidbody>();
+            if(rigid == null) {
+                rigid.angularVelocity = Vector3.zero;
+            }
             deferTap = true;
 
             //ResetObject(go);
@@ -668,10 +677,13 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void ResetCurrentObject(Vector2 pos) {       
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
         
-        if (go != null) {                  
-            if (go.rigidbody != null) {
-                go.rigidbody.angularVelocity = Vector3.zero;
+        if (go != null) {
+                        
+            Rigidbody rigid = go.Get<Rigidbody>();
+            if(rigid == null) {
+                rigid.angularVelocity = Vector3.zero;
             }
+
             GameObjectHelper.deferTap = true;
             
             GameObjectHelper.ResetObject(go);
