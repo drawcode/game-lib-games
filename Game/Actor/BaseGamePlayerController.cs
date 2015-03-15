@@ -47,6 +47,9 @@ public class BaseGamePlayerSlots {
 }
 
 public class BaseGamePlayerRuntimeData {
+
+    public GamePlayerController currentController = null;
+
     public double health = 1f;
     public double energy = 1f;
     public double speed = 1f;
@@ -68,6 +71,10 @@ public class BaseGamePlayerRuntimeData {
     public double goalFly = 0;
     public double kills = 0f;
 
+    public void SetController(GamePlayerController controller) {
+        currentController = controller;
+    }
+
     public virtual float totalScoreValue {
         get {
             return (float)(score + (coins * 50) + (scores * 500));
@@ -78,6 +85,27 @@ public class BaseGamePlayerRuntimeData {
         get {
             return hitCount > 0 ? ((hitLimit - hitCount) / hitLimit) : 1;
         }
+    }
+        
+    public bool IsCompletedCollections() {
+        return IsCompletedCollections(AppContentCollects.Current);
+    }
+
+    public bool IsCompletedCollections(AppContentCollect appContentCollect) {
+
+        if(appContentCollect != null) {
+
+            if(currentController == null) {
+                if(GameController.CurrentGamePlayerController != null) {
+                    currentController = GameController.CurrentGamePlayerController;
+                }
+            }
+            if(currentController != null) {
+                return appContentCollect.IsCompleted(currentController.runtimeData);
+            }
+        }
+
+        return false;
     }
 }
 
@@ -177,7 +205,7 @@ public class BaseGamePlayerControllerData {
     public GamePlayerRuntimeRPGData runtimeRPGData = new GamePlayerRuntimeRPGData();
     
     // LAUNCHING
-    public Vectrosity.VectorLine lineAim = null;
+    //public Vectrosity.VectorLine lineAim = null;
     public Vector3 positionStart = Vector3.zero;
     public Vector3 positionRelease = Vector3.zero;
     public Vector3 positionLastTouch = Vector3.zero;
