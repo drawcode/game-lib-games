@@ -3139,21 +3139,30 @@ public class BaseGamePlayerController : GameActor {
         }
         else {
             return;
-        }
-                     
-        if (isDead && currentControllerData.dying) {
+        }        
+        
+        if (isDead) {
             return;
         }
-                
-        if (currentControllerData.thirdPersonController != null) {
-            currentControllerData.thirdPersonController.controllerData.removing = true;
-        }
-        
-        currentControllerData.gamePlayerControllerAnimation.Die();
-                
-        currentControllerData.impact = Vector3.zero;
 
-        currentControllerData.dying = true;
+        if(currentControllerData != null) {
+
+            if (currentControllerData.dying) {
+                return;
+            }
+            
+            if (currentControllerData.thirdPersonController != null) {
+                currentControllerData.thirdPersonController.controllerData.removing = true;
+            }
+            
+            if(currentControllerData.gamePlayerControllerAnimation != null) {
+                currentControllerData.gamePlayerControllerAnimation.Die();
+            }
+            
+            currentControllerData.impact = Vector3.zero;
+            
+            currentControllerData.dying = true;
+        }
 
         if (IsPlayerControlled) {
             GamePlayerProgress.SetStatDeaths(1f);

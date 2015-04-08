@@ -58,6 +58,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     
     public virtual void Awake() {
         Init();
+
+        Application.targetFrameRate = 60;
     }
     
     public virtual void OnEnable() {

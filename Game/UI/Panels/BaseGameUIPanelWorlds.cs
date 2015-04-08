@@ -114,13 +114,13 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
     
     public void OnUIControllerShowHandler() {
-        if(GameUIPanelSettings.isInst) {
+        if (GameUIPanelSettings.isInst) {
             GameUIPanelWorlds.Instance.ShowWorldsContainer();
         }
     }
     
     public void OnUIControllerHideHandler() {
-        if(GameUIPanelSettings.isInst) {
+        if (GameUIPanelSettings.isInst) {
             GameUIPanelWorlds.Instance.HideWorldsContainer();
         }
     }
@@ -244,11 +244,12 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         
         int i = 0;
         
-        //int totalPoints = 0;
-
+        double scoreTotal = 0;
 
         foreach (AppContentCollect mission in 
                 AppContentCollects.GetMissionsByWorld(GameWorlds.Current.code)) {
+
+            double scoreMission = 0;
             
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "MissionItem" + i;
@@ -259,9 +260,9 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             // Update button action
                         
             Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
-            if(buttonObject != null) {
+            if (buttonObject != null) {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
-                if(button != null) {
+                if (button != null) {
                     
                     string actionType = "mission";
                     string appContentState = AppContentStates.Current.code;
@@ -270,11 +271,11 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
                     GameObjectData objData = button.gameObject.Get<GameObjectData>();
 
-                    if(objData == null) {
+                    if (objData == null) {
                         objData = button.gameObject.AddComponent<GameObjectData>();
                     }
 
-                    if(objData != null) {
+                    if (objData != null) {
                         objData.Set(BaseDataObjectKeys.type, actionType);
                         objData.Set(BaseDataObjectKeys.app_content_state, appContentState);
                         objData.Set(BaseDataObjectKeys.app_state, appState);
@@ -286,92 +287,150 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                 }
             }
 
+            // hide actions
+
             string currentType = "action";
             
-            foreach (GameObjectInactive obj in item.GetComponentsInChildren<GameObjectInactive>(true)) {
+            foreach (GameObjectInactive obj in 
+                     item.GetComponentsInChildren<GameObjectInactive>(true)) {
                 if (obj.type == currentType) {
                     obj.gameObject.Hide();
                 }
             }
+
+            // fill in action content and stars
             
             int j = 0;
 
             foreach (AppContentCollectItem action in mission.GetItemsData()) {
                             
-                foreach (GameObjectInactive obj in item.GetComponentsInChildren<GameObjectInactive>(true)) {
+                foreach (GameObjectInactive obj in 
+                         item.GetComponentsInChildren<GameObjectInactive>(true)) {
 
                     if (obj.type == currentType) {
 
-                        string currentActionItem = currentType + "-" + (j + 1).ToString();
+                        string index = (j + 1).ToString();
+
+                        string currentActionItem = currentType + "-" + index;
 
                         if (obj.code == currentActionItem) {
                             
-                            Debug.Log("action.data.display_name:" + action.data.display_name);
+                            //Debug.Log("action.data.display_name:" + action.data.display_name);
 
                             obj.gameObject.Show();
                                                         
                             UIUtil.UpdateLabelObject(
                                 obj.gameObject, "LabelDescription", action.data.display_name);
+
+                            bool isCompleted = false;
+                            double score = 0;
+
+                            // CHECK ACTION COMPLETE/SCORE STATE
+                            
+                            GameProfileContentCollectItem collectData = 
+                                GameProfileModes.Current.GetContentCollectItem(
+                                    BaseDataObjectKeys.mission,
+                                    GameProfileModes.GetAppContentCollectItemKey(mission.code, action.uid));
+                            
+                            if(collectData != null) {
+                                isCompleted = collectData.complete;
+                                score = collectData.points;
+                            }
+
+                            if(isCompleted) {                                
+                                // figure score                                
+                                scoreMission += score;
+                            }
+
+                            // STARS LIST
+                                                        
+                            SetStars(obj.gameObject, isCompleted);
+
+                            // STARS STAR CONTAINER
+
+                            GameObject starObject = null;
+                            
+                            foreach (GameObjectInactive starItem in 
+                                     item.GetComponentsInChildren<GameObjectInactive>(true)) {
+                                if(starItem.code == "stars-star-" + index.ToString()) {
+                                    starObject = starItem.gameObject;
+
+                                    //Debug.Log("Worlds:loadDataMissions::StarObject Found");
+                                }
+                            }
+
+                            SetStars(starObject, isCompleted);
                         }
                     }
                 }                
                 
                 j++;
-            
-                //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;  
-                //UISprite iconSprite = iconObject.GetComponent<UISprite>();            
-            
-                //bool completed = false;
-            
-                //bool hasValue = GameProfileAchievements.Current.CheckIfAttributeExists(achievement.code);
-            
-                //if(hasValue) {
-                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code);
-                //}
-            
-                //if(!hasValue) {
-                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code + "_" + achievement.pack_code);
-                //}
-            
-                /*
-            string points = "";
-            
-            if(completed) {
-                int currentPoints = achievement.points;
-                totalPoints += currentPoints;               
+            }                
                 
-                if(GameConfigs.useCoinRewardsForAchievements) {
-                    currentPoints *= (int)GameConfigs.coinRewardAchievementPoint;  
-                }
+            // fill score
                 
-                points = "+" + currentPoints.ToString();
-                
-                if(iconSprite != null) {
-                    iconSprite.alpha = 1f;
-                }
-                //item.transform.FindChild("Container/ContainerComplete").gameObject.Show(); 
-            }   
-            else {
-                if(iconSprite != null) {
-                    iconSprite.alpha = .33f;
-                }
-                //item.transform.FindChild("Container/ContainerComplete").gameObject.Hide(); 
+            scoreTotal += scoreMission;
+            
+            Transform scoreObject = item.transform.FindChild("Container/Stars");
+            if(scoreObject != null) {
+                UIUtil.UpdateLabelObject(
+                    scoreObject.gameObject, "LabelScore", scoreMission.ToString("N0"));
             }
-            */
             
-                //item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = points;                
-            
-                // Get trophy icon
-            
-                i++;
-            }
+            i++;
+        }
+                
+        //Transform scoreTotalObject = item.transform.FindChild("Container/ScoreTotal");
+        //if(scoreObject != null) {
+        //    UIUtil.UpdateLabelObject(
+        //        scoreObject.gameObject, "LabelScoreTotal", scoreTotal.ToString("N0"));
+        //}
+
+    }
+
+    public void SetStars(GameObject starObject, bool isCompleted) {
+
+        if(starObject == null) {
+            return;
         }
         
-        //if(labelPoints != null) {
-        //  labelPoints.text = totalPoints.ToString("N0");
-        //}
+        if(starObject != null) {
+            // find start complete and incomplete
+            GameObject starCompleteObject = null;
+            GameObject starIncompleteObject = null;
+            
+            foreach(GameObjectInactive objStarState 
+                    in starObject.GetComponentsInChildren<GameObjectInactive>(true)) {
+                
+                if(objStarState.code == BaseDataObjectKeys.complete) {
+                    starCompleteObject = objStarState.gameObject;
+                    //Debug.Log("Worlds:loadDataMissions::starCompleteObject Found");
+                }
+                else if(objStarState.code == BaseDataObjectKeys.incomplete) {
+                    starIncompleteObject = objStarState.gameObject;
+                    //Debug.Log("Worlds:loadDataMissions::starIncompleteObject Found");
+                }
+            }
+            
+            if(starCompleteObject != null
+               && starIncompleteObject != null) {
+                
+                if(isCompleted) {
+                    starCompleteObject.Show();
+                    starIncompleteObject.Hide();
+                                        
+                    //Debug.Log("Worlds:loadDataMissions::Set Completed");
+                }
+                else {
+                    starCompleteObject.Hide();
+                    starIncompleteObject.Show();   
+                    
+                    //Debug.Log("Worlds:loadDataMissions::Set Incompleted");
+                }                                
+            }
+        }
     }
-    
+
     public virtual void ClearList() {
         if (listGridRoot != null) {
             listGridRoot.DestroyChildren();

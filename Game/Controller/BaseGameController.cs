@@ -2888,14 +2888,30 @@ public class BaseGameController : GameObjectTimerBehavior {
     
                 if (AppModes.Instance.isAppModeGameArcade) {
                     if (currentGamePlayerController.runtimeData.health <= 0f
-                        || runtimeData.timeExpired) {
+                        || runtimeData.timeExpired) { 
                         gameOverMode = true;
+                        
+                        AppContentCollects.Current.ScoreCompleted(
+                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameChallenge) {
                     if (currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired) {
                         gameOverMode = true;
+                        
+                        AppContentCollects.Current.ScoreCompleted(
+                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
+                    }
+                }
+                else if (AppModes.Instance.isAppModeGameMission) {
+                    if (currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired) {
+                        gameOverMode = true;
+
+                        AppContentCollects.Current.ScoreCompleted(
+                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
+
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameTraining) {

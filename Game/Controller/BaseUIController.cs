@@ -3750,20 +3750,23 @@ public class BaseUIController : GameObjectBehavior {
             }
             
             if (dataType != null) {
+
+                // COLLECTION LOAD - MISSION
                 
-                if (dataType.ToString() == "mission") {
+                if (dataType.ToString() == BaseDataObjectKeys.mission) {
                     
                     string code = dataCode.ToString();
                     
                     if (!string.IsNullOrEmpty(code)) {
-                        
-                        AppContentCollects.ChangeCurrent(code);
-                        
-                        Debug.Log("ACTION:" + " mission:" + code);
 
                         AppContentCollect appContentCollect = AppContentCollects.Instance.GetById(code);
 
                         if(appContentCollect != null) {
+                            
+                            AppContentCollects.ChangeCurrent(code);
+                            
+                            Debug.Log("ACTION:" + " mission:" + code);
+
                             if(appContentCollect.data != null) {
                                 string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
@@ -3773,14 +3776,6 @@ public class BaseUIController : GameObjectBehavior {
                         }
                     }
                 }
-            }
-
-            //
-
-            if (AppContentStates.Instance.isAppContentStateGameMissions) {
-                // setup current mission
-                // missions
-
             }
             
             GameCommunity.HideGameCommunity();
