@@ -9,12 +9,14 @@ public class RotateObject : GameObjectBehavior {
 
     void Update() {
                 
-        GameUIController.Instance.currentDraggableUIGameObject = gameObject;
-
         // Slowly rotate the object around its axis at 1 degree/second * variable.
         if (transform == null) 
             return;     
         
+        if(GameUIController.Instance != null) {
+            GameUIController.Instance.currentDraggableUIGameObject = gameObject;
+        }
+
         transform.Rotate(Vector3.up * Time.deltaTime * RotateSpeedAlongY);
         transform.Rotate(Vector3.forward * Time.deltaTime * RotateSpeedAlongZ);
         transform.Rotate(Vector3.right * Time.deltaTime * RotateSpeedAlongX);

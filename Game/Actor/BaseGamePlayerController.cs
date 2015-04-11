@@ -3230,7 +3230,7 @@ public class BaseGamePlayerController : GameActor {
 
         if (currentControllerData.navMeshAgent != null) {
             if (currentControllerData.navMeshAgent.enabled) {
-                currentControllerData.navMeshAgent.Stop(true);
+                currentControllerData.navMeshAgent.Stop();
                 currentControllerData.navMeshAgent.enabled = false;
             }
         }
@@ -4806,7 +4806,7 @@ public class BaseGamePlayerController : GameActor {
             if (currentControllerData.thirdPersonController.IsJumping()) {
                 if (currentControllerData.navMeshAgent != null) {
                     if (currentControllerData.navMeshAgent.enabled) {
-                        currentControllerData.navMeshAgent.Stop(true);
+                        currentControllerData.navMeshAgent.Stop();
                     }
                 }
                 

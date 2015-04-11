@@ -264,7 +264,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
                 if (button != null) {
                     
-                    string actionType = "mission";
+                    string actionType = BaseDataObjectKeys.mission;
                     string appContentState = AppContentStates.Current.code;
                     string appState = AppStates.Current.code;
                     string missionCode = mission.code;
@@ -289,7 +289,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
             // hide actions
 
-            string currentType = "action";
+            string currentType = BaseDataObjectKeys.action;
             
             foreach (GameObjectInactive obj in 
                      item.GetComponentsInChildren<GameObjectInactive>(true)) {

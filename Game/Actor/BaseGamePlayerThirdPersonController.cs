@@ -376,7 +376,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
         if(navMeshAgent != null) {
             if(navMeshAgent.enabled) {
-                navMeshAgent.Stop(true);
+                navMeshAgent.Stop();
             }
         }
         

@@ -26,7 +26,7 @@ public class BaseGamePlayerNavMeshAgentController : GameObjectBehavior {
         if(agent != null) {
             agentState = GamePlayerNavMeshAgentState.STOP;
             agent.destination = gameObject.transform.position;
-            agent.Stop(true);
+            agent.Stop();
 		}
 	}
 	

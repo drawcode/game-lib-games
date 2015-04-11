@@ -455,9 +455,11 @@ public class UIPanelTips : UIAppPanelBaseList {
     void Update() {
         currentChangeDelay -= Time.deltaTime;
         if(currentChangeDelay <= 0) {
-            if(GameUIController.Instance.uiVisible
-               && tipsMode == TipsMode.Loading) {
-                //ShowTipsRandomNext();
+            if(GameUIController.Instance != null) {
+                if(GameUIController.Instance.uiVisible
+                   && tipsMode == TipsMode.Loading) {
+                    //ShowTipsRandomNext();
+                }
             }
         }
         

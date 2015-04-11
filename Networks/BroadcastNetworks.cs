@@ -1078,53 +1078,19 @@ Everyplay.SetMetadata("score", score)
         
         #endif
     }
-    
-    //
-    
-    public static void FaceCamSetTargetTextureHeight(int val) {
-        if (Instance != null) {
-            Instance.faceCamSetTargetTextureHeight(val);
-        }
-    }
-    
-    public void faceCamSetTargetTextureHeight(int val) {
-        
-        #if BROADCAST_USE_EVERYPLAY
-        Everyplay.FaceCamSetTargetTextureHeight(val);
-        #else
-        
-        #endif
-    }
 
     //
     
-    public static void FaceCamSetTargetTextureId(int val) {
+    public static void FaceCamSetTargetTexture(Texture2D val) {
         if (Instance != null) {
-            Instance.faceCamSetTargetTextureId(val);
+            Instance.faceCamSetTargetTexture(val);
         }
     }
     
-    public void faceCamSetTargetTextureId(int val) {
-        
+    public void faceCamSetTargetTexture(Texture2D val) {
+
         #if BROADCAST_USE_EVERYPLAY
-        Everyplay.FaceCamSetTargetTextureId(val);
-        #else
-        
-        #endif
-    }
-    
-    //
-    
-    public static void FaceCamSetTargetTextureWidth(int val) {
-        if (Instance != null) {
-            Instance.faceCamSetTargetTextureWidth(val);
-        }
-    }
-    
-    public void faceCamSetTargetTextureWidth(int val) {
-        
-        #if BROADCAST_USE_EVERYPLAY
-        Everyplay.FaceCamSetTargetTextureWidth(val);
+        Everyplay.FaceCamSetTargetTexture(val);
         #else
         
         #endif

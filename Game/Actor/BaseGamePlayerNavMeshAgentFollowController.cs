@@ -38,7 +38,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
         if (agent != null && agentState != GamePlayerNavMeshAgentState.STOP) {
             if (agent.enabled) {
                 agent.destination = gameObject.transform.position;
-                agent.Stop(true);
+                agent.Stop();
                 agentState = GamePlayerNavMeshAgentState.STOP;
             }
         }

@@ -127,7 +127,7 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 				
 		int i = 0;
 		
-		int totalPoints = 0;
+		double totalPoints = 0;
 		
         foreach(GameAchievement achievement in achievements) {
 			
@@ -155,7 +155,7 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 			string points = "";
 			
 			if(completed) {
-				int currentPoints = achievement.data.points;
+                double currentPoints = achievement.data.points;
 				totalPoints += currentPoints;				
                 
                 if(GameConfigs.useCoinRewardsForAchievements) {
