@@ -2748,6 +2748,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual IEnumerator processLevelStatsCo() {
+
+        // END OF LEVEL PROCESSING WHILE SETTING UP RESULTS
          
         yield return new WaitForSeconds(.5f);
 
@@ -2791,12 +2793,22 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameUIPanelResults.Instance.UpdateDisplay(currentGamePlayerController.runtimeData, 0f);
 
         yield return new WaitForEndOfFrame();
+
+        // STOP ALL STAT COUNTS / TIMERS
              
         GameController.EndLevelStats();
     
         yield return new WaitForEndOfFrame();
     
         GamePlayerProgress.Instance.ProcessProgressRuntimeAchievements();
+        
+        yield return new WaitForEndOfFrame();
+
+        // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
+        // COLLECTION
+
+        GameController.ProcessProgressCollections(
+            runtimeData, currentGamePlayerController.runtimeData);
                 
         yield return new WaitForEndOfFrame();
     
@@ -2811,6 +2823,30 @@ public class BaseGameController : GameObjectTimerBehavior {
         //GC.Collect();
         //GC.WaitForPendingFinalizers();
         //yield return new WaitForSeconds(8f);
+    }
+
+    public static void ProcessProgressCollections(
+        GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
+        if(GameController.isInst) {
+            GameController.Instance.processProgressCollections(runtimeData, playerRuntimeData);
+        }
+    }
+
+    public virtual void processProgressCollections(
+        GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
+        // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
+        // COLLECTION
+        
+        if (AppModes.Instance.isAppModeGameArcade
+            || AppModes.Instance.isAppModeGameChallenge
+            || AppModes.Instance.isAppModeGameMission) {  
+
+            double collectScore = AppContentCollects.Current.ScoreCompleted(
+                BaseDataObjectKeys.mission, playerRuntimeData);
+                        
+            // CHECK ON ADDING BY ALREADY COMPLETED...
+            GameProfileRPGs.Current.AddCurrency(collectScore);
+        }
     }
     
     public virtual void advanceToResults() {
@@ -2890,27 +2926,18 @@ public class BaseGameController : GameObjectTimerBehavior {
                     if (currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired) { 
                         gameOverMode = true;
-                        
-                        AppContentCollects.Current.ScoreCompleted(
-                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameChallenge) {
                     if (currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired) {
                         gameOverMode = true;
-                        
-                        AppContentCollects.Current.ScoreCompleted(
-                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameMission) {
                     if (currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired) {
                         gameOverMode = true;
-
-                        AppContentCollects.Current.ScoreCompleted(
-                            BaseDataObjectKeys.mission, currentGamePlayerController.runtimeData);
 
                     }
                 }

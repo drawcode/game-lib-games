@@ -86,6 +86,12 @@ public class BaseGamePlayerRuntimeData {
             return hitCount > 0 ? ((hitLimit - hitCount) / hitLimit) : 1;
         }
     }
+    
+    public bool IsAlive {
+        get {
+            return hitHealthRemaining > 0;
+        }
+    }
         
     public bool IsCompletedCollections() {
         return IsCompletedCollections(AppContentCollects.Current);
