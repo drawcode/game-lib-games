@@ -2833,7 +2833,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void processProgressCollections(
-        GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
+        GameGameRuntimeData gameRuntimeData, GamePlayerRuntimeData playerRuntimeData) {
         // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
         // COLLECTION
         
@@ -2842,7 +2842,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             || AppModes.Instance.isAppModeGameMission) {  
 
             double collectScore = AppContentCollects.Current.ScoreCompleted(
-                BaseDataObjectKeys.mission, playerRuntimeData);
+                BaseDataObjectKeys.mission, gameRuntimeData, playerRuntimeData);
                         
             // CHECK ON ADDING BY ALREADY COMPLETED...
             GameProfileRPGs.Current.AddCurrency(collectScore);

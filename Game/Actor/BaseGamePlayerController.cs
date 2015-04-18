@@ -107,7 +107,11 @@ public class BaseGamePlayerRuntimeData {
                 }
             }
             if(currentController != null) {
-                return appContentCollect.IsCompleted(currentController.runtimeData);
+                if(GameController.isInst) {
+                    return appContentCollect.IsCompleted(
+                        GameController.Instance.runtimeData,
+                        currentController.runtimeData);
+                }
             }
         }
 

@@ -158,6 +158,9 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
 
     public virtual void UpdateMeta() {
+
+        loadData();
+
         UIUtil.SetLabelValue(labelWorldTitle, GameWorlds.Current.display_name);
         UIUtil.SetLabelValue(labelWorldDescription, GameWorlds.Current.description);
     }
@@ -246,8 +249,10 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         
         double scoreTotal = 0;
 
+        string worldCode = GameWorlds.Current.code;
+
         foreach (AppContentCollect mission in 
-                AppContentCollects.GetMissionsByWorld(GameWorlds.Current.code)) {
+                 AppContentCollects.GetMissionsByWorld(worldCode)) {
 
             double scoreMission = 0;
             
@@ -256,18 +261,19 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelName", mission.display_name);
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelDescription", mission.description);
-            
+                        
+            string actionType = BaseDataObjectKeys.mission;
+            string appContentState = AppContentStates.Current.code;
+            string appState = AppStates.Current.code;
+            string missionCode = mission.code;
+
             // Update button action
                         
             Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
             if (buttonObject != null) {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
                 if (button != null) {
-                    
-                    string actionType = BaseDataObjectKeys.mission;
-                    string appContentState = AppContentStates.Current.code;
-                    string appState = AppStates.Current.code;
-                    string missionCode = mission.code;
+
 
                     GameObjectData objData = button.gameObject.Get<GameObjectData>();
 
@@ -322,29 +328,38 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                             UIUtil.UpdateLabelObject(
                                 obj.gameObject, "LabelDescription", action.data.display_name);
 
-                            bool isCompleted = false;
-                            double score = 0;
-
                             // CHECK ACTION COMPLETE/SCORE STATE
+
+                            string collectType = BaseDataObjectKeys.mission;
+
+                            string collectKey = 
+                                GameProfileModes.GetAppContentCollectItemKey(
+                                    appState,
+                                    appContentState,
+                                    worldCode,
+                                    BaseDataObjectKeys.all,
+                                   mission.code, action.uid);
                             
-                            GameProfileContentCollectItem collectData = 
-                                GameProfileModes.Current.GetContentCollectItem(
-                                    BaseDataObjectKeys.mission,
-                                    GameProfileModes.GetAppContentCollectItemKey(mission.code, action.uid));
-                            
-                            if(collectData != null) {
-                                isCompleted = collectData.complete;
-                                score = collectData.points;
+                            bool complete = GameProfileModes.Current.GetContentCollectValue<bool>(
+                                collectType, collectKey, BaseDataObjectKeys.complete);
+                                                        
+                            double points = GameProfileModes.Current.GetContentCollectValue<double>(
+                                collectType, collectKey, BaseDataObjectKeys.points);
+
+                            if(points == 0) {                                
+                                points = GameProfileModes.Current.GetContentCollectValue<int>(
+                                    collectType, collectKey, BaseDataObjectKeys.points);
                             }
 
-                            if(isCompleted) {                                
+
+                            if(complete) {                                
                                 // figure score                                
-                                scoreMission += score;
+                                scoreMission += points;
                             }
 
                             // STARS LIST
                                                         
-                            SetStars(obj.gameObject, isCompleted);
+                            SetStars(obj.gameObject, complete);
 
                             // STARS STAR CONTAINER
 
@@ -359,7 +374,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                                 }
                             }
 
-                            SetStars(starObject, isCompleted);
+                            SetStars(starObject, complete);
                         }
                     }
                 }                
