@@ -9,6 +9,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+using Prime31;
+
 public class SocialNetworksMessages {
     public static string socialLoaded = "social-loaded";
     public static string socialLoggedIn = "social-loggedin-success";

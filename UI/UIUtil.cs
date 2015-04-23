@@ -8,20 +8,19 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
 #if USE_UI_NGUI_2_7
 #endif
 #if USE_UI_NGUI_3
 
 public class UIDraggablePanel : UIDragScrollView {
-	
-	public void ResetPosition() {
-		base.scrollView.ResetPosition();
-	}
+    
+    public void ResetPosition() {
+        base.scrollView.ResetPosition();
+    }
 }
 
 public class UICheckbox : UIToggle {
-	
+    
 }
 
 #endif
@@ -153,21 +152,21 @@ public class UIButtonMeta {
 #endif
         
     public void SetTapDelegate(string key, UIButtonEventTap tapEvent) {
-        if(buttons.ContainsKey(key)) {  
+        if (buttons.ContainsKey(key)) {  
             //buttons[key].buttonEventTap = tapEvent;
             //SetInputDelegateDefault(key);
         }
     }
         
     public void EventButtonTap(string key) {
-        if(buttons.ContainsKey(key)) {  
+        if (buttons.ContainsKey(key)) {  
             UIButtonMetaItem item = buttons[key];                   
             item.button.transform.localPosition = item.buttonPosition;
         }
     }
         
     public void EventButtonPress(string key) {
-        if(buttons.ContainsKey(key)) {  
+        if (buttons.ContainsKey(key)) {  
             //UIButtonMetaItem item = buttons[key];
             //if(item.button.UILabel) {
             //      Vector3 temp = item.button.UILabel.gameObject.transform.localPosition;
@@ -178,7 +177,7 @@ public class UIButtonMeta {
     }
         
     public void EventButtonRelease(string key) {
-        if(buttons.ContainsKey(key)) {  
+        if (buttons.ContainsKey(key)) {  
             //UIButtonMetaItem item = buttons[key];
             /*
                         if(item.button.UILabel) {
@@ -192,7 +191,7 @@ public class UIButtonMeta {
     }
         
     public void SetButtonEnable(string key, bool enable) {
-        if(buttons.ContainsKey(key)) {                  
+        if (buttons.ContainsKey(key)) {                  
             currentButton = buttons[key];                   
             SetButtonEnable(currentButton.button, enable);
         }
@@ -207,7 +206,7 @@ public class UIButtonMeta {
 #endif
 
     public void SetButtonsDialogState() {
-        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
             SetButtonDialogState(buttonItem.Key);   
         }
     }
@@ -222,42 +221,44 @@ public class UIButtonMeta {
     }
         
     public void SetButtonsAlertState() {
-        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
             SetButtonAlertState(buttonItem.Key);    
         }
     }
         
     public void SetButtonAlertState(string key) {
-        if(!IsEventReady) {
+        if (!IsEventReady) {
             SetButtonEnable(key, false);
-        } else {
+        }
+        else {
             SetButtonEnable(key, true);
         }
     }
         
     public void SetButtonStoreState(string key) {
-        if(!IsEventReady) {
+        if (!IsEventReady) {
             SetButtonEnable(key, false);
-        } else {
+        }
+        else {
             SetButtonEnable(key, true);
         }
     }
         
     public void ResetButtons() {
-        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
             ResetButton(buttonItem.Key);    
         }
     }
         
     public void ResetButton(string key) {
-        if(buttons.ContainsKey(key)) {                  
+        if (buttons.ContainsKey(key)) {                  
             currentButton = buttons[key];                   
             ResetButton(currentButton);
         }
     }
         
     public void ResetButton(UIButtonMetaItem buttonItem) {
-        if(buttonItem.button) {
+        if (buttonItem.button) {
             buttonItem.button.transform.localPosition = buttonItem.buttonPosition;
         }
     }
@@ -288,7 +289,7 @@ public class UIUtil {
 #endif
 
     public static void ShowInput(InputField obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Show();
         }
     }
@@ -302,7 +303,7 @@ public class UIUtil {
     #endif
     
     public static void HideInput(InputField obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Hide();
         }
     }
@@ -318,7 +319,7 @@ public class UIUtil {
     #endif
 
     public static void ShowButton(Button obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Show();
         }
     }
@@ -334,7 +335,7 @@ public class UIUtil {
     #endif
         
     public static void HideButton(Image obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Hide();
         }
     }
@@ -356,13 +357,13 @@ public class UIUtil {
     #endif
 
     public static void ShowText(Text obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Show();
         }
     }
     
     public static void ShowLabel(Text obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Show();
         }
     }
@@ -408,7 +409,7 @@ public class UIUtil {
     #endif
 
     public static void ShowSlider(Slider obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Show();
         }
     }
@@ -424,7 +425,7 @@ public class UIUtil {
     #endif
     
     public static void HideSlider(Slider obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Hide();
         }
     }
@@ -495,13 +496,13 @@ public class UIUtil {
     #endif
 
     public static void HideToggle(Toggle obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Hide();
         }
     }
 
     public static void HideCheckbox(Toggle obj) {
-        if(obj != null) {
+        if (obj != null) {
             obj.gameObject.Hide();
         }
     }
@@ -535,7 +536,7 @@ public class UIUtil {
         
         foreach (Text label in labelsNative) {
             
-            if(label.gameObject.name.Contains(code)) {
+            if (label.gameObject.name.Contains(code)) {
                 UIUtil.SetLabelValue(label, val);
             }
         }
@@ -543,7 +544,7 @@ public class UIUtil {
         InputField[] inputsNative = go.GetComponentsInChildren<InputField>();
         
         foreach (InputField input in inputsNative) {
-            if(input.gameObject.name.Contains(code)) {
+            if (input.gameObject.name.Contains(code)) {
                 UIUtil.SetInputValue(input, val);
             }
         }
@@ -579,7 +580,7 @@ public class UIUtil {
         
         foreach (Text label in labelsNative) {
             
-            if(label.gameObject.name.Contains(code)) {
+            if (label.gameObject.name.Contains(code)) {
                 SetSpriteColor(label.gameObject, color);
             }
         }
@@ -587,7 +588,7 @@ public class UIUtil {
         InputField[] inputsNative = go.GetComponentsInChildren<InputField>();
         
         foreach (InputField input in inputsNative) {
-            if(input.gameObject.name.Contains(code)) {
+            if (input.gameObject.name.Contains(code)) {
                 SetSpriteColor(input.gameObject, color);
             }
         }
@@ -602,7 +603,7 @@ public class UIUtil {
  
     public static void UpdateLabelObject(Transform parentTransform, string key, string val) {
         Transform labelObject = parentTransform.FindChild(key);
-        if(labelObject != null) {
+        if (labelObject != null) {
             
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             UILabel label = labelObject.GetComponent<UILabel>();
@@ -612,7 +613,7 @@ public class UIUtil {
             SetLabelValue(txt, val);
         }
         else {
-            foreach(Transform t in parentTransform) {
+            foreach (Transform t in parentTransform) {
                 UpdateLabelObject(t.gameObject, key, val);
             }
         }
@@ -629,7 +630,7 @@ public class UIUtil {
 #endif
                 
     public static void SetLabelValue(Text obj, string val) {
-        if(obj != null) {
+        if (obj != null) {
             obj.text = val;
         }
     }
@@ -646,7 +647,7 @@ public class UIUtil {
 #endif
     
     public static string GetLabelValue(Text obj) {
-        if(obj != null) {
+        if (obj != null) {
             return obj.text;
         }
         return "";
@@ -661,7 +662,7 @@ public class UIUtil {
 #endif
     
     public static void SetInputValue(InputField obj, string val) {
-        if(obj != null) {
+        if (obj != null) {
             obj.text = val;
         }
     }
@@ -676,7 +677,7 @@ public class UIUtil {
 #endif
 
     public static string GetInputValue(InputField obj) {
-        if(obj != null) {
+        if (obj != null) {
             return obj.text;
         }
         return "";
@@ -692,7 +693,7 @@ public class UIUtil {
 #endif
 
     public static void SetSliderValue(Slider obj, double val) {
-        if(obj != null) {
+        if (obj != null) {
             obj.value = (float)val;
         }
     }
@@ -707,7 +708,7 @@ public class UIUtil {
 #endif
 
     public static void SetSliderValue(Slider obj, float val) {
-        if(obj != null) {
+        if (obj != null) {
             obj.value = val;
         }
     }
@@ -722,7 +723,7 @@ public class UIUtil {
 #endif
 
     public static float GetSliderValue(Slider obj) {
-        if(obj != null) {
+        if (obj != null) {
             return obj.value;
         }
         return 0f;
@@ -757,13 +758,13 @@ public class UIUtil {
 #endif
     
     public static void SetToggleValue(Toggle obj, bool selected) {
-        if(obj != null) {
+        if (obj != null) {
             obj.isOn = selected;
         }
     }
 
     public static void SetCheckboxValue(Toggle obj, bool selected) {
-        if(obj != null) {
+        if (obj != null) {
             obj.isOn = selected;
         }
     }
@@ -804,21 +805,21 @@ public class UIUtil {
 #endif
     
     public static bool GetToggleValue(Toggle obj) {
-        if(obj != null) {
+        if (obj != null) {
             return obj.isOn;
         }
         return false;
     }
 
     public static bool GetCheckboxValue(Toggle obj) {
-        if(obj != null) {
+        if (obj != null) {
             return obj.isOn;
         }
         return false;
     }
 
     public static bool IsButton(GameObject go) {
-        if(go == null)
+        if (go == null)
             return false;
         
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -828,7 +829,7 @@ public class UIUtil {
         }
 #endif
                 
-        if(go.Has<Button>()) {
+        if (go.Has<Button>()) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
@@ -851,22 +852,21 @@ public class UIUtil {
  #endif
 
     public static bool IsButtonClicked(Button button, string buttonClickedName) {
-        if(button == null)
+        if (button == null)
             return false;
         
-        if(buttonClickedName == button.name) {
+        if (buttonClickedName == button.name) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
         return false;
     }
 
-
     public static bool IsButtonClicked(string button, string buttonClickedName) {
-        if(button == null)
+        if (button == null)
             return false;
         
-        if(buttonClickedName == button) {
+        if (buttonClickedName == button) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
@@ -874,10 +874,10 @@ public class UIUtil {
     }
 
     public static bool IsButtonClickedLike(string button, string buttonClickedName) {
-        if(button == null)
+        if (button == null)
             return false;
         
-        if(buttonClickedName.Contains(button)) {
+        if (buttonClickedName.Contains(button)) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
@@ -924,10 +924,10 @@ public class UIUtil {
     }
         
     public static bool IsCheckboxChecked(Toggle toggle, string toggleName) {
-        if(toggle == null)
+        if (toggle == null)
             return false;
         
-        if(toggleName == toggle.name) {
+        if (toggleName == toggle.name) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
@@ -948,10 +948,10 @@ public class UIUtil {
 #endif
     
     public static bool IsButtonClicked(Image button, string buttonClickedName) {         
-        if(button == null)
+        if (button == null)
             return false;
         
-        if(buttonClickedName.ToString() == button.name.ToString()) {
+        if (buttonClickedName.ToString() == button.name.ToString()) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
             return true;
         }
@@ -959,10 +959,10 @@ public class UIUtil {
     }
 
     public static void SetSpriteColor(GameObject go, Color colorTo) {
-        if(go == null)
+        if (go == null)
             return;
 
-        if(go != null) {
+        if (go != null) {
             UITweenerUtil.ColorTo(go,
                  UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
         }
@@ -979,7 +979,7 @@ public class UIUtil {
 #endif
         
     public static void SetLabelColor(Text labelTo, Color colorTo) {            
-        if(labelTo == null)
+        if (labelTo == null)
             return;
         
         UITweenerUtil.ColorTo(labelTo.gameObject, 
@@ -997,7 +997,7 @@ public class UIUtil {
 #endif
     
     public static void SetButtonColor(Button buttonTo, Color colorTo) {            
-        if(buttonTo == null)
+        if (buttonTo == null)
             return;
         
         UITweenerUtil.ColorTo(buttonTo.gameObject, 
@@ -1015,7 +1015,7 @@ public class UIUtil {
 #endif
     
     public static void SetButtonColor(Image buttonTo, Color colorTo) {           
-        if(buttonTo == null)
+        if (buttonTo == null)
             return;
         
         UITweenerUtil.ColorTo(buttonTo.gameObject, 
@@ -1052,7 +1052,7 @@ public class UIUtil {
 #endif 
     
     public static void UIButtonEnable(Button buttonObject, bool enabled) {
-        if(buttonObject) {
+        if (buttonObject) {
             //buttonObject.controlIsEnabled = enabled;
             //if(!enabled) {
             //      buttonObject.SetControlState(UIButton.CONTROL_STATE.DISABLED);

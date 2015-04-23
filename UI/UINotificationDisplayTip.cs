@@ -37,7 +37,6 @@ public class UINotificationDisplayTip
     : GameObjectBehavior {
     
     public static UINotificationDisplayTip Instance;
-
     public GameObject notificationPanel;
     public GameObject notificationContainerAchievement;
     public GameObject notificationContainerPoint;
@@ -74,11 +73,9 @@ public class UINotificationDisplayTip
     public UILabel tipDescription;
     public UILabel tipScore;
     public UIImageButton tipContinue;
-
     float positionYOpenInGame = 0;
     float positionYClosedInGame = -900;
     UINotificationTipItem currentItem;
-
     UINotificationTipState notificationState = UINotificationTipState.Hidden;
     public bool paused = false;
     Queue<UINotificationTipItem> notificationQueue = new Queue<UINotificationTipItem>();
@@ -195,7 +192,7 @@ public class UINotificationDisplayTip
                     
         );  
 
-        if(notificationItem.immediate) {
+        if (notificationItem.immediate) {
             HideDialog();
         }
 
