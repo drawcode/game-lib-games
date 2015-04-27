@@ -160,7 +160,9 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void UpdateMeta() {
 
         loadData();
+    }
 
+    public virtual void UpdateMetaLabels() {        
         UIUtil.SetLabelValue(labelWorldTitle, GameWorlds.Current.display_name);
         UIUtil.SetLabelValue(labelWorldDescription, GameWorlds.Current.description);
     }
@@ -250,6 +252,8 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         double scoreTotal = 0;
 
         string worldCode = GameWorlds.Current.code;
+
+        UpdateMetaLabels();
 
         foreach (AppContentCollect mission in 
                  AppContentCollects.GetMissionsByWorld(worldCode)) {
