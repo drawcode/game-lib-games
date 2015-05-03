@@ -26,13 +26,13 @@ public class BaseGamePlayerNavMeshAgentController : GameObjectBehavior {
         if(agent != null) {
             agentState = GamePlayerNavMeshAgentState.STOP;
             agent.destination = gameObject.transform.position;
-            agent.Stop();
+            agent.StopAgent();
 		}
 	}
 	
 	public virtual void StartAgent() {
 		if(agent != null) {
-            agent.Resume();
+            agent.StartAgent();
 			agentState = GamePlayerNavMeshAgentState.PURSUE;
 			NavigateToDestination();
 		}

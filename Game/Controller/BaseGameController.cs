@@ -3439,6 +3439,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         bool mousePressed = InputSystem.isMousePressed;
+        //bool mouseSecondaryPressed = InputSystem.isMouseSecondaryPressed;
         bool touchPressed = InputSystem.isTouchPressed;
         bool handled = false;
     
@@ -3470,6 +3471,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 //}
             }
         }
+
         //}
 
         touchHandled = handled;

@@ -3160,7 +3160,7 @@ public class BaseGamePlayerController : GameActor {
             if (currentControllerData.dying) {
                 return;
             }
-            
+
             if (currentControllerData.thirdPersonController != null) {
                 currentControllerData.thirdPersonController.controllerData.removing = true;
             }
@@ -3224,8 +3224,7 @@ public class BaseGamePlayerController : GameActor {
         
         if (!IsPlayerControlled || gameObject.Has<CharacterController>()) {
             if (currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.enabled = true;
-                currentControllerData.navMeshAgent.Resume();
+                currentControllerData.navMeshAgent.StartAgent();
             }
             if (currentControllerData.navMeshAgentController != null) {
                 currentControllerData.navMeshAgentController.StartAgent();
@@ -3239,10 +3238,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual void StopNavAgent() {
 
         if (currentControllerData.navMeshAgent != null) {
-            if (currentControllerData.navMeshAgent.enabled) {
-                currentControllerData.navMeshAgent.Stop();
-                currentControllerData.navMeshAgent.enabled = false;
-            }
+            currentControllerData.navMeshAgent.StopAgent();
         }
         if (currentControllerData.navMeshAgentController != null) {
             currentControllerData.navMeshAgentController.StopAgent();
@@ -4679,6 +4675,10 @@ public class BaseGamePlayerController : GameActor {
         }
         
         currentFPS = FPSDisplay.GetCurrentFPS();
+
+        if(InputSystem.isMouseSecondaryPressed) {
+            Jump();
+        }
              
         if (Application.isEditor) {
             if (Input.GetKeyDown(KeyCode.M)) {

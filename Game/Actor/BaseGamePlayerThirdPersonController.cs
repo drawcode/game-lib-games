@@ -374,11 +374,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
         }
 
-        if(navMeshAgent != null) {
-            if(navMeshAgent.enabled) {
-                navMeshAgent.Stop();
-            }
-        }
+        // off while we jump
+        navMeshAgent.StopAgent();
         
         jumping = true;
         jumpingReachedApex = false;
@@ -468,6 +465,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         if(IsGrounded()) {
             lastGroundedTime = Time.time;
             inAirVelocity = Vector3.zero;
+
+            // turn on agent now we are on the mesh
+            navMeshAgent.StartAgent();
+
             if(jumping) {
                 jumping = false;
                 SendMessage("Land", SendMessageOptions.DontRequireReceiver);
