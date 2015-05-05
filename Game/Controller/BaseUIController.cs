@@ -79,6 +79,7 @@ public class BaseUIButtonNames {
     public static string buttonGameProducts = "ButtonGameProducts";
     public static string buttonGameProductsCharacter = "ButtonGameProductsCharacter";
     public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";
+    public static string buttonGameProductsWeapon = "ButtonGameProductsWeapon";
     public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";
     public static string buttonGameProductsFeature = "ButtonGameProductsFeature";
     public static string buttonGameProductsPickup = "ButtonGameProductsPickup";
@@ -3492,6 +3493,9 @@ public class BaseUIController : GameObjectBehavior {
 
         // PRODUCTS
         
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsWeapon, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.weapon);
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCharacterSkin, buttonName)) {
             GameUIController.ShowProducts(GameProductType.characterSkin);
         }

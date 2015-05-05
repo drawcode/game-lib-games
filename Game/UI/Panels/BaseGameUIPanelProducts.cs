@@ -146,6 +146,9 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 		if (listGridRoot != null) {
 			//listGridRoot.DestroyChildren();
             ClearList();
+                        
+            Vector3 gridPosition = listGridRoot.transform.parent.transform.localPosition;
+            listGridRoot.transform.parent.transform.localPosition = gridPosition.WithY(0);
 			
 	        yield return new WaitForEndOfFrame();
 					
@@ -257,7 +260,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public override void HandleShow() {
         base.HandleShow();
         
-        buttonDisplayState = UIPanelButtonsDisplayState.CharacterCustomize;
+        buttonDisplayState = UIPanelButtonsDisplayState.ProductsSections;
         characterDisplayState = UIPanelCharacterDisplayState.Character;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
         adDisplayState = UIPanelAdDisplayState.BannerBottom;

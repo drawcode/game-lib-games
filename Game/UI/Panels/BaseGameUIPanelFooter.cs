@@ -17,6 +17,11 @@ public class GameUIPanelFooterButtons {
     public static string achievements = "achievements";
     public static string progression = "progression";
     public static string customize = "customize";
+    public static string products = "products";
+}
+
+public class GameUIPanelFooterButtonsSections {
+    public static string productSections = "product-sections";
 }
 
 public class BaseGameUIPanelFooter : GameUIPanelBase {
@@ -36,6 +41,8 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     public GameObject containerButtonsProgression;    
     public GameObject containerButtonsCharacterHelp; 
     public GameObject containerButtonsCharacterCustomize;
+
+    public GameObject containerButtonsProducts;
     
     public GameObject containerButtonsProgressionAchievements;
     public GameObject containerButtonsProgressionStatistics;  
@@ -216,8 +223,9 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
 
     // HIDE/SHOW
-        
-    // BUTTON SETTINGS
+    
+    // ------------------------------------------------------
+    // BUTTONS SETTINGS
 
     public virtual void showButtonSettings() {
 
@@ -228,8 +236,9 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         
         AnimateOutLeftBottom(containerButtonsSettings);
     }
-
-    // BUTTON CUSTOMIZE
+    
+    // ------------------------------------------------------
+    // BUTTONS CUSTOMIZE
         
     public virtual void showButtonCustomize() {
                 
@@ -240,8 +249,9 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
                 
         AnimateOutRightBottom(containerButtonsCustomize);
     }
-
-    // BUTTON GAME NETWORKS
+        
+    // ------------------------------------------------------
+    // BUTTONS GAME NETWORKS
 
     public static void ShowButtonGameNetworks() {
         if(isInst) {
@@ -314,9 +324,10 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
                 item.gameObject.Hide();
             }
         }
-    }
-
-    //
+    }    
+    
+    // ------------------------------------------------------
+    // BUTTONS CHARACTERS
           
     public static void ShowButtonsCharacterCustomize() {
         if(isInst) {
@@ -375,7 +386,10 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     public virtual void showButtonsCharacterHelp() {
         ShowButtons(GameUIPanelFooterButtons.characterHelp);
     }
-    
+
+    // ------------------------------------------------------
+    // BUTTONS PROGRESSION
+
     public static void ShowButtonsProgression() {
         if(isInst) {
             Instance.showButtonsProgression();
@@ -404,6 +418,70 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     
     public virtual void showButtonsAchievements() {        
         ShowButtons(GameUIPanelFooterButtons.achievements);
+    }
+        
+    // ------------------------------------------------------
+    // BUTTONS PRODUCTS
+    
+    public static void ShowButtonProducts() {
+        if(isInst) {
+            Instance.showButtonProducts();
+        }
+    }
+    
+    public virtual void showButtonProducts() {
+        
+        AnimateIn();
+
+        // Just show products sections for now
+        ShowButtonsProducts();
+    }
+    
+    public virtual void hideButtonProducts() {
+        
+        AnimateOutRightBottom(containerButtonsProducts);
+    }
+
+    public static void ShowButtonsProductsSections() {
+        if(isInst) {
+            Instance.showButtonsProductsSections();
+        }
+    }
+    
+    public virtual void showButtonsProductsSections() {                
+        ShowButtonsProducts(GameUIPanelFooterButtonsSections.productSections);
+    }        
+    
+    // BUTTONS
+    
+    public virtual void ShowButtonsProducts() {
+        ShowButtons(GameUIPanelFooterButtons.products);
+    }
+    
+    public virtual void ShowButtonsProducts(string productTypeTo) {
+        if(containerButtonsProducts != null) {
+            
+            ShowButtonsProducts();
+            
+            foreach(GameObjectInactive item in 
+                    containerButtonsProducts.GetComponentsInChildren<GameObjectInactive>(true)) {
+                if(item.name == productTypeTo || item.code == productTypeTo) {
+                    item.gameObject.Show();
+                }
+                else {
+                    item.gameObject.Hide();
+                }
+            }
+        }
+    }
+    
+    public virtual void HideButtonsProducts() {
+        if(containerButtonsProducts != null) {
+            foreach(GameObjectInactive item in 
+                    containerButtonsProducts.GetComponentsInChildren<GameObjectInactive>(true)) {
+                item.gameObject.Hide();
+            }
+        }
     }
 
     //

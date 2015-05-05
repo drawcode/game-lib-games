@@ -25,7 +25,8 @@ public enum UIPanelButtonsDisplayState {
     CharacterCustomize,
     Statistics,
     Achievements,
-    GameNetworks
+    GameNetworks,
+    ProductsSections
 }
 
 public enum UIPanelAdDisplayState {
@@ -1106,6 +1107,10 @@ public class UIPanelBase : UIAppPanel {
         else if (buttonDisplayState == UIPanelButtonsDisplayState.GameNetworks) {
             
             GameUIPanelFooter.ShowButtonGameNetworks();
+        }        
+        else if (buttonDisplayState == UIPanelButtonsDisplayState.ProductsSections) {
+            
+            GameUIPanelFooter.ShowButtonsProductsSections();
         }
     }
     
