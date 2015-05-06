@@ -28,6 +28,9 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     public double rotationMax = 360.0;
     public bool zoomAdjust = false;
     public double zoomAdjustAmount = 10f;
+    public GameProfileCharacterItem gameProfileCharacterItem;
+
+    bool initialized = false;
 
     public void Awake() {
     }
@@ -64,12 +67,19 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     }
     
     public void OnCustomCharacterPlayerChangedHandler(string characterCode) {
-        LoadPlayer(characterCode);
+        LoadPlayer(characterCode, true);
     }
-    
-    public void LoadPlayer(string characterCodeTo) {
+
+    public void LoadPlayer(string characterCodeTo, bool isProfileCharacter = false) {
+
+        isProfileCharacterCode = isProfileCharacter;
         
         if (string.IsNullOrEmpty(characterCodeTo)) {
+            return;
+        }
+
+        if(customCharacterData.characterCode == characterCodeTo
+           && initialized) {
             return;
         }
 
@@ -82,8 +92,11 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         string gameCharacterCode = customCharacterData.characterCode;
 
         if (isProfileCharacterCode) {
+
+            // If this is a profile code or profile uuid character code
+            // look it up in teh profile and get the model name there.
         
-            GameProfileCharacterItem gameProfileCharacterItem = 
+            gameProfileCharacterItem = 
                 GameProfileCharacters.Current.GetCharacter(
                     customCharacterData.characterCode);
             
@@ -91,7 +104,14 @@ public class GameCustomPlayerContainer : MonoBehaviour {
                 return;
             }
 
-            gameCharacterCode = gameProfileCharacterItem.characterCode;
+            // TODO REMOVE and make sure initial sets correctly.
+
+            if(gameProfileCharacterItem.code == BaseDataObjectKeys.defaultKey) {
+                gameCharacterCode = ProfileConfigs.defaultProfileCharacterCode;
+            }
+            else {
+                gameCharacterCode = gameProfileCharacterItem.characterCode;
+            }
         }
         
         GameCharacter gameCharacter = 
@@ -132,6 +152,8 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         if (containerRotator != null) {
             containerRotator.ResetObject();
         }
+
+        initialized = true;
     }
 
     public void UpdateScale() {
@@ -178,7 +200,6 @@ public class GameCustomPlayerContainer : MonoBehaviour {
                 }
 
                 containerRotator.transform.localPosition = Vector3.zero.WithY(zoomAdjustY);
-                ;
             }
         }
     }

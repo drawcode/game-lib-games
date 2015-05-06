@@ -11,16 +11,18 @@ using Engine.Events;
 // messages
 
 public class BaseCustomMessages {
-    
+
+    // events for current model color/texture custom
     public static string customColorsChanged = "custom-colors-changed";
     public static string customColorChanged = "custom-color-changed";
-    public static string customCharacterModelChanged = "custom-character-model-changed";
-    public static string customCharacterPlayerChanged = "custom-character-player-changed";
     public static string customColorsPlayerChanged = "custom-colors-player-changed";
     public static string customColorsEnemyChanged = "custom-colors-enemy-changed";
     public static string customColorPresetChanged = "custom-color-preset-changed";
     public static string customTexturePresetChanged = "custom-texture-preset-changed";
-    
+    // events for character changing
+    public static string customCharacterModelChanged = "custom-character-model-changed";
+    public static string customCharacterPlayerChanged = "custom-character-player-changed";
+    // character meta
     public static string customCharacterDisplayNameChanged = "custom-character-display-name-changed";
     public static string customCharacterDisplayCodeChanged = "custom-character-display-code-changed";
     public static string customCharacterDisplayChanged = "custom-character-display-changed";
@@ -111,6 +113,10 @@ public class BaseGameCustomController : GameObjectBehavior {
 
         if (preset == null) {
             return null;    
+        }
+
+        if(profileCustomItem.current_texture_preset == preset.code) {
+            return profileCustomItem;
         }
 
         //if (saveProfile)
@@ -213,6 +219,10 @@ public class BaseGameCustomController : GameObjectBehavior {
         GameProfileCustomItem profileCustomItem, GameObject go, string type, Dictionary<string, Color> colors) {
         
         if (colors == null) {
+            return profileCustomItem;
+        }
+        
+        if(profileCustomItem.current_color_preset == type) {
             return profileCustomItem;
         }
         

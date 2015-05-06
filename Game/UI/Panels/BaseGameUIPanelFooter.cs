@@ -198,7 +198,9 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 
     //
 
-    public virtual void ShowButtons(string code) {
+    string currentButtonCode = "";
+
+    public virtual void ShowButtons(string code, bool hideCurrent = true) {
         
         AnimateIn();
                 
@@ -206,11 +208,18 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
 
             if(item.code == code) {
-                HideAllButtons();
+                if(hideCurrent) {
+                    HideAllButtons();
+                }
                 ShowPanelBottom(item.gameObject);
                 item.gameObject.ShowObjectDelayed(.7f);
+                currentButtonCode = code;
             }
         }
+    }
+    
+    public virtual void ShowButtonsCurrent() {
+        ShowButtons(currentButtonCode, false);
     }
 
     public virtual void HideAllButtons() {        
@@ -220,6 +229,20 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             HidePanelBottom(item.gameObject);
             item.gameObject.HideObjectDelayed(.5f);
         }
+    }
+
+    public virtual void HideAndShowButtonsWithDelay(float delay) {
+    
+        StartCoroutine(HideAndShowButtonsWithDelayCo(delay));
+    }
+
+    IEnumerator HideAndShowButtonsWithDelayCo(float delay) {
+        
+        HideAllButtons();
+
+        yield return new WaitForSeconds(delay);
+        
+        ShowButtonsCurrent();
     }
 
     // HIDE/SHOW

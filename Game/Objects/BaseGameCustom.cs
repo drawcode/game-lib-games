@@ -423,6 +423,11 @@ public class BaseGameCustom : GameObjectBehavior {
         
         CheckData();
 
+        if (customCharacterDataCurrent.lastCustomColorCode 
+            == customCharacterData.presetColorCode) {
+            //return;
+        }
+
         //LogUtil.Log("SetCustomColors"  
         //          + " type:" + characterData.type
         //          + " presetType:" + characterData.presetType
@@ -480,6 +485,9 @@ public class BaseGameCustom : GameObjectBehavior {
 
             }//GameCustomController.BroadcastCustomColorsChanged
         }
+        
+        customCharacterDataCurrent.lastCustomColorCode = 
+            customCharacterData.presetColorCode;
     }
     
     public void SetCustomTextures() {
@@ -487,39 +495,49 @@ public class BaseGameCustom : GameObjectBehavior {
         
         CheckData();
 
-        if (customCharacterData.isCustomType 
-            || customCharacterData.isTeamType 
-            || customCharacterData.isExplicitType) {
-            return;
+        if (customCharacterDataCurrent.lastCustomTextureCode 
+            == customCharacterData.presetTextureCode) {
+
+            //return;
         }
-        else if (customCharacterData.isDefaultType) {
-            
-            if (customCharacterData.actorType == GameCustomActorTypes.heroType) {
+
+            if (customCharacterData.isCustomType 
+                || customCharacterData.isTeamType 
+                || customCharacterData.isExplicitType) {
+                return;
+            }
+            else if (customCharacterData.isDefaultType) {
                 
-                GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-                
-                if (customItem != null) {
-                 
-                    GameCustomController.UpdateTexturePresetObject(
-                        customItem, 
-                        gameObject, 
-                        customCharacterData.presetType);
+                if (customCharacterData.actorType == GameCustomActorTypes.heroType) {
+                    
+                    GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
+                    
+                    if (customItem != null) {
+                     
+                        GameCustomController.UpdateTexturePresetObject(
+                            customItem, 
+                            gameObject, 
+                            customCharacterData.presetType);
+                    }
+                    else {                
+                        
+                        GameCustomController.UpdateTexturePresetObject(
+                            gameObject, 
+                            AppContentAssetTexturePresets.Instance.GetByCode(
+                            customCharacterData.presetTextureCodeDefault));
+                    }//GameCustomController.BroadcastCustomColorsChanged
                 }
                 else {                
-                    
                     GameCustomController.UpdateTexturePresetObject(
                         gameObject, 
                         AppContentAssetTexturePresets.Instance.GetByCode(
                         customCharacterData.presetTextureCodeDefault));
-                }//GameCustomController.BroadcastCustomColorsChanged
+                }
             }
-            else {                
-                GameCustomController.UpdateTexturePresetObject(
-                    gameObject, 
-                    AppContentAssetTexturePresets.Instance.GetByCode(
-                    customCharacterData.presetTextureCodeDefault));
-            }
-        }
+
+            customCharacterDataCurrent.lastCustomTextureCode = 
+                customCharacterData.presetTextureCode;
+
     }
 
     public void SetCustomDisplayValues() {

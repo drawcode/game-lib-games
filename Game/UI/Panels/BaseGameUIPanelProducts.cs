@@ -9,18 +9,15 @@ using Engine.Events;
 public class BaseGameUIPanelProducts : GameUIPanelBase {
     
     public static GameUIPanelProducts Instance;
-	
     public GameObject listItemItemPrefab;
-	
     public string currentProductType;
-    
     public string productCodeUse = "";
     public string productTypeUse = "";
     public string productCharacterUse = "";
-        
+      
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -30,14 +27,14 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public virtual void Awake() {
         
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-	}
+    
+    public override void Start() {
+        Init();
+    }
+    
+    public override void Init() {
+        base.Init();   
+    }
 
     public override void OnEnable() {
 
@@ -74,20 +71,20 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if(className == classNameTo) {
+        if (className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if(className == classNameTo) {
-           //
+        if (className == classNameTo) {
+            //
         }
     }
 
@@ -110,7 +107,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
  */
 
     public static void LoadData() {
-        if(GameUIPanelProducts.Instance != null) {
+        if (GameUIPanelProducts.Instance != null) {
             GameUIPanelProducts.Instance.loadData();
         }
     }
@@ -118,68 +115,88 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public virtual void loadData() {
         loadData(currentProductType);
     }
-	
 
     public static void LoadData(string productType) {
-        if(GameUIPanelProducts.Instance != null) {
+        if (GameUIPanelProducts.Instance != null) {
             GameUIPanelProducts.Instance.loadData(productType);
-		}
-	}
-	
+        }
+    }
+    
     public virtual void loadData(string productType) {
 
-        //if(currentProductType == productType) {
+        //if(currentProductType == productType
+        //   && !string.IsNullOrEmpty(currentProductType)) {
         //    return;
         //}
 
-		StartCoroutine(loadDataCo(productType));
-	}
+        StartCoroutine(loadDataCo(productType));
+    }
 
+    bool loading = false;
     string lastProductType = "";
-    	
-	IEnumerator loadDataCo(string productType) {
-		
-		LogUtil.Log("LoadDataCo");
         
+    IEnumerator loadDataCo(string productType) {
+
+        //if (loading) {
+        //    yield break;
+        //}
+         
+        //loading = true;
+                
+        LogUtil.Log("LoadDataCo");
+
         currentProductType = productType;
-		
-		if (listGridRoot != null) {
-			//listGridRoot.DestroyChildren();
+
+        if (listGridRoot != null) {
+            //listGridRoot.DestroyChildren();
             ClearList();
-                        
-            Vector3 gridPosition = listGridRoot.transform.parent.transform.localPosition;
-            listGridRoot.transform.parent.transform.localPosition = gridPosition.WithY(0);
-			
-	        yield return new WaitForEndOfFrame();
-					
-			loadDataProducts(productType);
-			
-	        yield return new WaitForEndOfFrame();
-	        listGridRoot.GetComponent<UIGrid>().Reposition();
-	        yield return new WaitForEndOfFrame();				
+                
+            yield return new WaitForSeconds(1f);
+                
+            yield return new WaitForEndOfFrame();
+                
+            loadDataProducts(productType);
+                
+            yield return new WaitForEndOfFrame();
+            listGridRoot.GetComponent<UIGrid>().Reposition();
+            yield return new WaitForEndOfFrame();               
         }
-        
+
+        listGridRoot.GetComponent<UIGrid>().Reposition();  
+            
+        // Reposition scroll for items with less products
+        // but keep in place in case user is buying many of one thing 
+        // i.e. upgrades etc.
+
         if(lastProductType != currentProductType) {
             lastProductType = currentProductType;
-            listGridRoot.GetComponent<UIGrid>().Reposition();            
+
+            RepositionListScroll(0);
         }
-	}
+
+        //loading = false;
+    }
 
     public virtual void loadDataRPGUpgrades() {
-        loadDataProducts(GameProductType.rpgUpgrade);
+        loadData(GameProductType.rpgUpgrade);
     }
-	
-    public virtual void loadDataPowerups() {		
-		loadDataProducts(GameProductType.powerup);
-	}
-	
+    
+    public virtual void loadDataPowerups() {        
+        loadData(GameProductType.powerup);
+    }
+    
     public virtual void loadDataProducts(string type) {
+            
+        loadDataProductsItems(type);
+    }
 
-		LogUtil.Log("Load loadDataProducts:type:" + type);
-				
-		List<GameProduct> products = null;
+    public virtual void loadDataProductsItems(string type) {
 
-        if(!string.IsNullOrEmpty(type)) {
+        LogUtil.Log("Load loadDataProducts:type:" + type);
+                
+        List<GameProduct> products = null;
+
+        if (!string.IsNullOrEmpty(type)) {
             products = GameProducts.Instance.GetListByType(type);
         }
         else {
@@ -187,75 +204,75 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
         }
 
         LogUtil.Log("Load products: products.Count: " + products.Count);
-		
-		int i = 0;
-		
-        foreach(GameProduct product in products) {
-			
+        
+        int i = 0;
+        
+        foreach (GameProduct product in products) {
+            
             GameObject item = NGUITools.AddChild(listGridRoot, listItemItemPrefab);
             item.name = "WeaponItem" + i;
 
             GameProductInfo info = product.GetDefaultProductInfoByLocale();
 
-            UIUtil.UpdateLabelObject(item.transform,"LabelName",info.display_name);
-            UIUtil.UpdateLabelObject(item.transform,"LabelDescription",info.description);
-            UIUtil.UpdateLabelObject(item.transform,"LabelCost",info.cost);
+            UIUtil.UpdateLabelObject(item.transform, "LabelName", info.display_name);
+            UIUtil.UpdateLabelObject(item.transform, "LabelDescription", info.description);
+            UIUtil.UpdateLabelObject(item.transform, "LabelCost", info.cost);
 
             Transform inventoryItem = item.transform.FindChild("Container/Inventory");
-            if(inventoryItem != null) {
+            if (inventoryItem != null) {
 
                 double currentValue = 0;
 
-                if(product.type == GameProductType.rpgUpgrade) {
+                if (product.type == GameProductType.rpgUpgrade) {
                     currentValue = GameProfileRPGs.Current.GetUpgrades();
-                    UIUtil.UpdateLabelObject(inventoryItem,"LabelCurrentValue", currentValue.ToString("N0"));
+                    UIUtil.UpdateLabelObject(inventoryItem, "LabelCurrentValue", currentValue.ToString("N0"));
                 }
                 else {
                     inventoryItem.gameObject.Hide();
                 }
             }
-			
-			Transform iconTransform = item.transform.FindChild("Container/Icon");
-			if(iconTransform != null) {
-				GameObject iconObject = iconTransform.gameObject;	
-				UISprite iconSprite = iconObject.GetComponent<UISprite>();			
-	
-				if(iconSprite != null) {
-					iconSprite.alpha = 1f;
-					
-					// TODO change out image...
-				}
-			}
-			
-			// Update button action
-			
-			
-			Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
-			if(buttonObject != null) {
-				UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
-				if(button != null) {
-					
-					// TODO change to get from character skin
-					string productType = product.type;
-					string productCode = product.code;
-					string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
-					
-					//productCode = productCode.Replace(productType + "-", "");
-										
-					button.name = BaseUIButtonNames.buttonGameActionItemBuyUse + 
+            
+            Transform iconTransform = item.transform.FindChild("Container/Icon");
+            if (iconTransform != null) {
+                GameObject iconObject = iconTransform.gameObject;   
+                UISprite iconSprite = iconObject.GetComponent<UISprite>();          
+    
+                if (iconSprite != null) {
+                    iconSprite.alpha = 1f;
+                    
+                    // TODO change out image...
+                }
+            }
+            
+            // Update button action
+            
+            
+            Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
+            if (buttonObject != null) {
+                UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
+                if (button != null) {
+                    
+                    // TODO change to get from character skin
+                    string productType = product.type;
+                    string productCode = product.code;
+                    string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
+                    
+                    //productCode = productCode.Replace(productType + "-", "");
+                                        
+                    button.name = BaseUIButtonNames.buttonGameActionItemBuyUse + 
                         "$" + productType + "$" + productCode + "$" + productCharacter;
-				}
-			}
-			
-			i++;
+                }
+            }
+            
+            i++;
         }
-	}
-	
+    }
+    
     public virtual void ClearList() {
-		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
-		}
-    }  
+        if (listGridRoot != null) {
+            listGridRoot.DestroyChildren();
+        }
+    }
     
     public override void HandleShow() {
         base.HandleShow();
@@ -265,20 +282,20 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
         adDisplayState = UIPanelAdDisplayState.BannerBottom;
     }
-		
-	public override void AnimateIn() {
-		
-		base.AnimateIn();
-		
-		LoadData(currentProductType);
-	}
+        
+    public override void AnimateIn() {
+        
+        base.AnimateIn();
+        
+        LoadData(currentProductType);
+    }
 
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-		
-		ClearList();
-	}
-	
-	
+    public override void AnimateOut() {
+        
+        base.AnimateOut();
+        
+        ClearList();
+    }
+    
+    
 }

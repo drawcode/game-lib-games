@@ -58,6 +58,9 @@ public class UIPanelBase : UIAppPanel {
     public GameObject listGridRoot;
     public UIGrid listGrid;
     public UIPanel panelClipped;
+    public UIDraggablePanel draggablePanel;
+    public UIScrollBar draggablePanelScrollbar;
+
     public GameObject panelLeftObject;
     public GameObject panelLeftBottomObject;
     public GameObject panelLeftTopObject;
@@ -757,6 +760,15 @@ public class UIPanelBase : UIAppPanel {
                     }
                 }
             }           
+        }
+    }
+    
+    public void RepositionListScroll(float scrollValue) {
+        if(draggablePanelScrollbar != null) {
+            draggablePanelScrollbar.scrollValue = 0;
+        }
+        else if(draggablePanel != null) {
+            draggablePanel.ResetPosition();
         }
     }
 
