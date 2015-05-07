@@ -233,6 +233,8 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
                     gameProfileCharacterItems.items[currentIndex];
 
                 //GameCustomController.SaveCustomItem(currentProfileCustomItem);
+
+                GameProfileCharacters.Current.SetCurrentCharacterProfileCode(profileCharacterItem.code);
                                 
                 Messenger<string>.Broadcast(
                     GameCustomMessages.customCharacterPlayerChanged, profileCharacterItem.code);

@@ -401,6 +401,22 @@ public class BaseGameCustomController : GameObjectBehavior {
         
         //LogUtil.Log("broadcastCustomColorsSync");
     }
+
+    public virtual void broadcastCustomCharacterProfileCodeSync(
+        GameProfileCharacterItem profileCharacterItem = null) {
+
+        if(profileCharacterItem == null) {
+            profileCharacterItem = 
+                GameProfileCharacters.Current.GetCurrentCharacter();        
+        }
+        
+        if(profileCharacterItem != null) {
+            
+            Messenger<string>.Broadcast(
+                GameCustomMessages.customCharacterPlayerChanged, 
+                profileCharacterItem.code);
+        }
+    }
     
     public virtual void broadcastCustomCharacterDisplayCodeChanged() {
         Messenger.Broadcast(GameCustomMessages.customCharacterDisplayCodeChanged);

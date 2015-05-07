@@ -658,6 +658,18 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameController.LoadCharacterTypes();
         GameDraggableEditor.LoadDraggableContainerObject();
 
+        initCustomProfileCharacters();
+    }
+        
+    public virtual void initCustomProfileCharacters() {       
+        
+        StartCoroutine(initCustomProfileCharactersCo());
+    }
+
+    public virtual IEnumerator initCustomProfileCharactersCo() {
+        yield return new WaitForEndOfFrame();
+        
+        GameCustomController.BroadcastCustomCharacterProfileCodeSync();
         GameCustomController.BroadcastCustomSync();
     }
 
