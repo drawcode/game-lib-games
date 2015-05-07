@@ -22,7 +22,8 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
     public UIImageButton buttonSaveRPG;
     public UIImageButton buttonBuyUpgrades;
     GameProfileRPGItem profileGameDataItemRPG;
-    string currentCharacterCode = "default";
+    GameProfileCharacterItem profileCharacterItem;
+
     public static UICustomizeCharacterRPG Instance;
     public GameObject listItemPrefab;
     public double upgradesAvailable = 0;
@@ -118,7 +119,9 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
 
         LogUtil.Log("profileGameDataItemRPG:attack:" + profileGameDataItemRPG.GetAttack());
 
-        GameProfileCharacters.Current.SetCharacterRPG(currentCharacterCode, profileGameDataItemRPG);
+        GameProfileCharacters.Current.SetCharacterRPG(
+            profileCharacterItem.code, profileGameDataItemRPG);
+
         GameProfileRPGs.Current.SetUpgrades(upgradesAvailable);
 
         GameState.SaveProfile();
@@ -180,30 +183,38 @@ public class UICustomizeCharacterRPG: UIAppPanelBaseList {
      
         SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
      
-        profileGameDataItemRPG = GameProfileCharacters.Current.GetCharacterRPG(currentCharacterCode);
+        profileCharacterItem = GameProfileCharacters.Current.GetCurrentCharacter();
 
-        LogUtil.Log("profileGameDataItemRPG:attack2:" + profileGameDataItemRPG.GetAttack());
+        if(profileCharacterItem != null) {
 
-        List<string> rpgItems = new List<string>();
-     
-        rpgItems.Add(GameDataItemRPGAttributes.speed);
-        rpgItems.Add(GameDataItemRPGAttributes.health);      
-        rpgItems.Add(GameDataItemRPGAttributes.energy);      
-        rpgItems.Add(GameDataItemRPGAttributes.attack);          
-        //rpgItems.Add(GameDataItemRPGAttributes.defense);           
-     
-        foreach (string rpgItem in rpgItems) {
+            profileGameDataItemRPG = profileCharacterItem.profileRPGItem;
+
+            LogUtil.Log("profileGameDataItemRPG:attack2:" + 
+                        profileGameDataItemRPG.GetAttack());
+
+            List<string> rpgItems = new List<string>();
          
-            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-            item.name = "AItem" + i;
+            rpgItems.Add(GameDataItemRPGAttributes.speed);
+            rpgItems.Add(GameDataItemRPGAttributes.health);      
+            rpgItems.Add(GameDataItemRPGAttributes.energy);      
+            rpgItems.Add(GameDataItemRPGAttributes.attack);          
+            //rpgItems.Add(GameDataItemRPGAttributes.defense);           
          
-            UICustomizeCharacterRPGItem rpg = item.transform.GetComponent<UICustomizeCharacterRPGItem>();
-         
-            if (rpg != null) {
-                rpg.Load(rpgItem);
-            }                
-                         
-            i++;
+            foreach (string rpgItem in rpgItems) {
+             
+                GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+                item.name = "AItem" + i;
+             
+                UICustomizeCharacterRPGItem rpg = 
+                    item.transform.GetComponent<UICustomizeCharacterRPGItem>();
+             
+                if (rpg != null) {
+                    rpg.Load(rpgItem);
+                }                
+                             
+                i++;
+            }
+                
         }
     }
 
