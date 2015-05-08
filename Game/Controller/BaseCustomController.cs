@@ -223,7 +223,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         }
         
         if(profileCustomItem.current_color_preset == type) {
-            return profileCustomItem;
+            //return profileCustomItem;
         }
         
         profileCustomItem.SetCustomColorPreset(type);

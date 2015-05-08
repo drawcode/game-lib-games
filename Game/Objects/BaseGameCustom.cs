@@ -572,7 +572,7 @@ public class BaseGameCustom : GameObjectBehavior {
 
         if (customCharacterData.isCustomType 
             || customCharacterData.isDefaultType) {
-            return;
+            //return;
         }
         else if (customCharacterDataCurrent.lastCustomTextureCode 
             != customCharacterData.presetTextureCode) {
@@ -611,7 +611,7 @@ public class BaseGameCustom : GameObjectBehavior {
         
         if (customCharacterData.isCustomType 
             || customCharacterData.isDefaultType) {
-            return;
+            //return;
         }
         else if (customCharacterDataCurrent.lastCustomColorCode 
             != customCharacterData.presetColorCode) {
