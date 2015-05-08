@@ -432,7 +432,7 @@ public class BaseGamePlayerController : GameActor {
     //
 
     //public string uuid = "";
-    public string characterCode = "character-bot-1";
+    public string characterCode = ProfileConfigs.defaultGameCharacterCode;
     public Transform currentTarget;
 
     // data
@@ -555,31 +555,51 @@ public class BaseGamePlayerController : GameActor {
         //MessengerObject<InputTouchInfo>.AddListener(MessengerObjectMessageType.OnEventInputDown, OnInputDown);
         //MessengerObject<InputTouchInfo>.AddListener(MessengerObjectMessageType.OnEventInputUp, OnInputUp);
           
-        Messenger<string, Vector3>.AddListener("input-axis", OnInputAxis);//"input-axis-" + axisName, axisInput);
+        Messenger<string, Vector3>.AddListener(
+            InputSystemEvents.inputAxis, OnInputAxis);//"input-axis-" + axisName, axisInput);
      
-        Messenger<string, string>.AddListener(GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
+        Messenger<string, string>.AddListener(
+            GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
      
-        Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
-        Gameverses.GameMessenger<string, float>.AddListener(Gameverses.GameNetworkPlayerMessages.PlayerInputAxisHorizontal, OnNetworkPlayerInputAxisHorizontal);
-        Gameverses.GameMessenger<string, float>.AddListener(Gameverses.GameNetworkPlayerMessages.PlayerInputAxisVertical, OnNetworkPlayerInputAxisVertical);
-        Gameverses.GameMessenger<string, float>.AddListener(Gameverses.GameNetworkPlayerMessages.PlayerSpeed, OnNetworkPlayerSpeed);
+        Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
+
+        Gameverses.GameMessenger<string, float>.AddListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerInputAxisHorizontal, OnNetworkPlayerInputAxisHorizontal);
+
+        Gameverses.GameMessenger<string, float>.AddListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerInputAxisVertical, OnNetworkPlayerInputAxisVertical);
+
+        Gameverses.GameMessenger<string, float>.AddListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerSpeed, OnNetworkPlayerSpeed);
      
-        Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
+        Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(
+            Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
     }
  
     public override void OnDisable() {
         //MessengerObject<InputTouchInfo>.RemoveListener(MessengerObjectMessageType.OnEventInputDown, OnInputDown);
         //MessengerObject<InputTouchInfo>.RemoveListener(MessengerObjectMessageType.OnEventInputUp, OnInputUp);
-        Messenger<string, string>.RemoveListener(GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
+        Messenger<string, Vector3>.RemoveListener(
+            InputSystemEvents.inputAxis, OnInputAxis);//"input-axis-" + axisName, axisInput); 
+
+        Messenger<string, string>.RemoveListener(
+            GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
+
+        Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
+
+        Gameverses.GameMessenger<string, float>.RemoveListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerInputAxisHorizontal, OnNetworkPlayerInputAxisHorizontal);
+
+        Gameverses.GameMessenger<string, float>.RemoveListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerInputAxisVertical, OnNetworkPlayerInputAxisVertical);
+
+        Gameverses.GameMessenger<string, float>.RemoveListener(
+            Gameverses.GameNetworkPlayerMessages.PlayerSpeed, OnNetworkPlayerSpeed);
      
-        Messenger<string, Vector3>.RemoveListener("input-axis", OnInputAxis);//"input-axis-" + axisName, axisInput); 
-     
-        Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
-        Gameverses.GameMessenger<string, float>.RemoveListener(Gameverses.GameNetworkPlayerMessages.PlayerInputAxisHorizontal, OnNetworkPlayerInputAxisHorizontal);
-        Gameverses.GameMessenger<string, float>.RemoveListener(Gameverses.GameNetworkPlayerMessages.PlayerInputAxisVertical, OnNetworkPlayerInputAxisVertical);
-        Gameverses.GameMessenger<string, float>.RemoveListener(Gameverses.GameNetworkPlayerMessages.PlayerSpeed, OnNetworkPlayerSpeed);
-     
-        Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
+        Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(
+            Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
  
     }
 
@@ -3152,14 +3172,18 @@ public class BaseGamePlayerController : GameActor {
         }        
         
         if (isDead) {
-            return;
+            //return;
         }
 
         if(currentControllerData != null) {
 
             if (currentControllerData.dying) {
                 return;
-            }
+            }            
+            
+            StopNavAgent();
+            
+            ResetPositionAir(0f);
 
             if (currentControllerData.thirdPersonController != null) {
                 currentControllerData.thirdPersonController.controllerData.removing = true;
@@ -3199,10 +3223,6 @@ public class BaseGamePlayerController : GameActor {
         runtimeData.health = 0;
      
         AudioDie();
-        
-        StopNavAgent();
-        
-        ResetPositionAir(0f);
      
         // TODO FADE OUT CLEANLY
         /*
