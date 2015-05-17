@@ -23,6 +23,10 @@ public class UIGameKeyCodes {
     public static KeyCode keyRPGLevelSubtract = KeyCode.P;
 
     
+    public static KeyCode keyProfileSync = KeyCode.KeypadMultiply;
+    public static KeyCode keyProfileSave = KeyCode.KeypadDivide;
+
+    
     public static KeyCode keyRPGPlayerHitAdd = KeyCode.KeypadPlus;
     public static KeyCode keyRPGPlayerHitSubtract = KeyCode.KeypadMinus;
 
@@ -36,6 +40,19 @@ public class UIGameKeyCodes {
             (Input.GetKey(KeyCode.LeftControl)
             || Input.GetKey(KeyCode.RightControl))
             && Input.GetKeyDown(keyCode));
+    }
+
+    
+    public static bool isActionProfileSync {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyProfileSync);
+        }
+    }       
+    
+    public static bool isActionProfileSave {
+        get {
+            return UIGameKeyCodes.KeyActionControl(UIGameKeyCodes.keyProfileSave);
+        }
     }
 
     public static bool isActionCurrencyAdd {

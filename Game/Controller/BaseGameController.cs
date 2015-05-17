@@ -2828,6 +2828,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameController.AdvanceToResults();
         }
         
+        GameState.SyncProfile();
+
         yield return new WaitForEndOfFrame();
         
         GamePlayerProgress.Instance.ProcessProgressLeaderboards();
@@ -3445,6 +3447,17 @@ public class BaseGameController : GameObjectTimerBehavior {
     
     // Update is called once per frame
     public virtual void Update() {
+
+        // TOOLS
+        
+        if (UIGameKeyCodes.isActionProfileSave) {
+            GameState.SaveProfile();
+        }
+        else if (UIGameKeyCodes.isActionProfileSync) {
+            GameState.SyncProfile();
+        }
+
+        // UPDATE
 
         if (!isGameRunning) {
             return;
