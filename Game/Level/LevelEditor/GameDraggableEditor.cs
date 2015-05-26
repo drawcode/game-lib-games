@@ -680,7 +680,7 @@ public class GameDraggableEditor : GameObjectBehavior {
         if (go != null) {
                         
             Rigidbody rigid = go.Get<Rigidbody>();
-            if(rigid == null) {
+            if(rigid != null) {
                 rigid.angularVelocity = Vector3.zero;
             }
 
@@ -1067,6 +1067,11 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
         else {
             RaycastHit hit;
+
+            if(Camera.main == null) {
+                return;
+            }
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit)) {          
                 grabbed = hit.transform;                
