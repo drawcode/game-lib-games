@@ -132,7 +132,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
         StartCoroutine(loadDataCo(productType));
     }
 
-    bool loading = false;
+    //bool loading = false;
     string lastProductType = "";
         
     IEnumerator loadDataCo(string productType) {
