@@ -29,6 +29,7 @@ public class GameCardTypes {
 
 public class GameCard : GameDataObject {
     public GameCard() {
+        uid = UniqueUtil.Instance.CreateUUID4();
         type = GameCardTypes.cardNormal;
         val = "";
     }
@@ -41,7 +42,6 @@ public class GameCardDeck {
 
     // deck type i.e. special cards, regular etc per game config
     public string type = "default";
-
     public List<GameCard> cards;
     public Queue cardQueue;
 
@@ -76,7 +76,7 @@ public class GameCardDeck {
         
     public GameCard DealCard() {
 
-        if(cardQueue.Count == 0) {
+        if (cardQueue.Count == 0) {
             return null;
         }
 
@@ -103,23 +103,20 @@ public class GameCardDeck {
         
         Shuffle();   
 
-        foreach(GameCard gameCard in cards) {
+        foreach (GameCard gameCard in cards) {
             cardQueue.Enqueue(gameCard);
         }
-
-        Debug.Log("GameCards:PrepareCards: cardCount:" + cardQueue.Count);
-
     }
 }
 
 public class GameCardsGenerator {
         
-    static List<string> gameCardTypes;    
+    static List<string> gameCardTypes;
     static List<string> gameCardValues;
     
     public static List<string> GetStandardCardTypes() {
         
-        if(gameCardTypes == null) {
+        if (gameCardTypes == null) {
             gameCardTypes = new List<string>();    
             
             gameCardTypes.Add("spade");
@@ -133,14 +130,14 @@ public class GameCardsGenerator {
     
     public static List<string> GetStandardCardValues() {
 
-        if(gameCardValues == null) {
+        if (gameCardValues == null) {
             gameCardValues = new List<string>();    
         }
 
         gameCardValues.Clear();
 
-        for(int i = 0; i < 9; i++) {
-            gameCardValues.Add((i+1).ToString());            
+        for (int i = 0; i < 9; i++) {
+            gameCardValues.Add((i + 1).ToString());            
         }
         
         gameCardValues.Add("ace");
@@ -163,9 +160,9 @@ public class GameCardsGenerator {
 
         List<GameCard> cards = new List<GameCard>();
 
-        foreach(string cardType in GetStandardCardTypes()) {
+        foreach (string cardType in GetStandardCardTypes()) {
             
-            foreach(string cardVal in GetStandardCardValues()) {
+            foreach (string cardVal in GetStandardCardValues()) {
                 
                 cards.Add(CreateCard(cardType, cardVal));
             }
@@ -189,7 +186,6 @@ public class GameCardSet {
 
     public List<GameCardDeck> decks;
     public GameCard currentCard = null;
-
     public Queue cardQueue;
 
     public GameCardSet() {
@@ -211,7 +207,7 @@ public class GameCardSet {
     
     public void Shuffle() {
 
-        foreach(GameCardDeck deck in decks) {
+        foreach (GameCardDeck deck in decks) {
             deck.Shuffle();
         }
     }
@@ -220,20 +216,20 @@ public class GameCardSet {
 
         cardQueue.Clear();
         
-        foreach(GameCardDeck deck in decks) {
+        foreach (GameCardDeck deck in decks) {
             deck.ClearCards();
         }
-    }    
+    }
 
     public void PrepareCards() {        
 
-        foreach(GameCardDeck deck in decks) {
+        foreach (GameCardDeck deck in decks) {
             deck.PrepareCards();
         }
 
-        foreach(GameCardDeck deck in decks) {
+        foreach (GameCardDeck deck in decks) {
 
-            foreach(GameCard card in deck.GetCards()) {
+            foreach (GameCard card in deck.GetCards()) {
                 cardQueue.Enqueue(card);
             }
         }
@@ -247,7 +243,7 @@ public class GameCardSet {
         
     public GameCard DealCard() {
 
-        if(cardQueue.Count == 0) {
+        if (cardQueue.Count == 0) {
             return null;
         }
 
@@ -261,7 +257,6 @@ public class GameCards {
     
     private static volatile GameCards instance;
     private static System.Object syncRoot = new System.Object();
-
     public GameCardSet cardSet;
     public GameCard currentCard;
     
@@ -285,7 +280,7 @@ public class GameCards {
     public void LoadCards(string type = "default", int deckCount = 3) {
         currentCard = null;
         cardSet.Reset();
-        for(int i = 0; i < deckCount; i++) {
+        for (int i = 0; i < deckCount; i++) {
             cardSet.LoadDeck(GameCardsGenerator.GetStandardCardDeck());
         }
         cardSet.PrepareCards();
@@ -296,7 +291,36 @@ public class GameCards {
         currentCard = cardSet.DealCard();
 
         Debug.Log("GameCard:DealCard:" + currentCard.ToJson());
+        
+        Debug.Log("GameCard:CardQueue:" + cardSet.cardQueue.ToJson());
 
         return currentCard;
+    }
+}
+
+// GAME CARD TYPE OBJECTS
+
+
+public class GameCardHand {
+    
+    public List<GameCard> cards;
+    
+    public GameCardHand() {
+        cards = new List<GameCard>();
+    }
+    
+}
+
+public class GameCardPlayer : GameDataObject {
+    
+    public List<List<GameCard>> cardHands;
+    
+    public GameCardPlayer() {
+        uid = UniqueUtil.Instance.CreateUUID4();
+        ClearCardHands();
+    }
+    
+    public void ClearCardHands() {        
+        cardHands = new List<List<GameCard>>();
     }
 }
