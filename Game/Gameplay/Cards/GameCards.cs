@@ -277,7 +277,10 @@ public class GameCards {
         LoadCards();
     }
 
-    public void LoadCards(string type = "default", int deckCount = 3) {
+    int deckCount = 1;
+    string type = "default";
+
+    public void LoadCards(string type = "default", int deckCount = 1) {
         currentCard = null;
         cardSet.Reset();
         for (int i = 0; i < deckCount; i++) {
@@ -289,10 +292,16 @@ public class GameCards {
     public GameCard DealCard() {
     
         currentCard = cardSet.DealCard();
+        
+        if (currentCard == null) {
+            LoadCards(type, deckCount);
+            Debug.Log("DealCard:reloading cards"); 
+            currentCard = cardSet.DealCard();
+        }
 
         Debug.Log("GameCard:DealCard:" + currentCard.ToJson());
         
-        Debug.Log("GameCard:CardQueue:" + cardSet.cardQueue.ToJson());
+        Debug.Log("GameCard:CardQueue:" + cardSet.cardQueue.Count);
 
         return currentCard;
     }
