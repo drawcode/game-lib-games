@@ -6,24 +6,22 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class GameCardsGameObject : GameObjectBehavior {
+public class GameCardsBlackjackGameObject : GameObjectBehavior {
 
-    GameCards gameCards;
+    GameCardBlackJack gameCards;
 
     public void Start() {
-        gameCards = new GameCards();
+        gameCards = new GameCardBlackJack();
     }
 
     public void DealCard() {
-        GameCard gameCard = gameCards.DealCard();
         
         //Debug.Log("DealCard:" + gameCard.ToJson());
     }
 
     public void LoadCards() {
-        gameCards.LoadCards();
         
-        //Debug.Log("LoadCards:" + gameCards.cardSet.cardQueue.Count);
+
     }
 
     public void HandleInput() {
