@@ -389,6 +389,12 @@ public class GameCardPlayerType {
     public static string dealer = "dealer";
 }
 
+public class GameCardPlayerKeys {
+    public static string uid = "uid";
+    public static string playerUid = "player-uid";
+    public static string dealerUid = "dealer-uid";
+}
+
 public class GameCardPlayer {
 
     public string uid = "";
@@ -407,6 +413,14 @@ public class GameCardPlayer {
     
     public void ClearCardHands() {        
         cardHands = new List<GameCardHand>();
+
+        InitCardHands();
+    }
+
+    public void InitCardHands() {
+        
+        GameCardHand hand = new GameCardHand();
+        cardHands.Add(hand);
     }
 
     public int CardCountByHand(int idx = 0) {
@@ -425,7 +439,13 @@ public class GameCardPlayer {
     public void ReceiveCard(GameCard gameCard, int handIndex = 0) {
 
         if(cardHands.Count <= handIndex) {
-            return;
+
+            if(handIndex > 0) {
+                return;
+            }
+            else {
+                InitCardHands();
+            }
         }
 
         cardHands[handIndex].SetCard(gameCard);
@@ -460,7 +480,33 @@ public class GameCardBase {
         players = new List<GameCardPlayer>();
     }
 
+    // DISPLAY
+
+    public virtual void DisplayCards() {
+
+        foreach(GameCardPlayer player in players) {
+            
+            string cards = "";
+            cards += " -> " + player.name + " \r\n"; 
+
+            foreach(GameCardHand hand in player.cardHands) {
+
+                foreach(GameCard card in hand.cards) {
+                    cards += " | " + card.val + " - " + 
+                             " " + card.type + " ";
+                }
+
+            }
+            
+            Debug.Log(cards);
+        }
+    }
+
     // GET
+
+    public List<GameCardPlayer> GetPlayers() {
+        return players;
+    }
 
     public GameCardPlayer GetPlayer(string uid) {
         for(int i = 0; i < players.Count; i++ ){
@@ -490,7 +536,7 @@ public class GameCardBase {
 
         GameCardPlayer gamePlayer = new GameCardPlayer();
         gamePlayer.uid = uid;
-        gamePlayer.type = uid;
+        gamePlayer.type = type;
         gamePlayer.name = name;
 
         SetPlayer(gamePlayer);
@@ -553,7 +599,7 @@ public class GameCardBase {
 
     public void DealPlayerCard(int index) {
         GameCardPlayer gamePlayer = GetPlayer(index);
-        
+
         if(gamePlayer == null) {
             return;
         }
@@ -561,12 +607,137 @@ public class GameCardBase {
         GameCard gameCard = gameCards.DealCard(); 
         DealPlayerCard(gamePlayer, gameCard);
     }
+
+    // DEFAULT PLAYER
+
+    public string GetPlayerId() {
+
+        string uidMe = SystemPrefUtil.GetLocalSettingString(GameCardPlayerKeys.playerUid);
+        
+        if(string.IsNullOrEmpty(uidMe)) {
+            SystemPrefUtil.SetLocalSettingString(GameCardPlayerKeys.playerUid, System.Guid.NewGuid().ToString());
+            
+            uidMe = SystemPrefUtil.GetLocalSettingString(GameCardPlayerKeys.playerUid);
+        }
+
+        return uidMe;
+    }
 }
 
 public class GameCardBlackJack : GameCardBase {
 
     public GameCardBlackJack() {
 
+    }
+
+    public string uidDealer = "11111111-1111-1111-1111-111111111111";
+
+    public void LoadPlayers() {
+           
+        string uidMe = GetPlayerId();
+        
+        SetPlayer(uidDealer, GameCardPlayerType.dealer, "dealer");
+        SetPlayer(uidMe, GameCardPlayerType.player, "me");
+        
+        Debug.Log("players:" + GetPlayers().ToJson());
+         
+    }
+
+    public void DealCards(int handRoundLimit) {
+
+        List<GameCardPlayer> playerList = GetPlayers();
+
+        for(int i = 0; i < handRoundLimit; i++) {
+            for(int j = 0; j < playerList.Count; j++ ){
+                if(playerList[j].CardCountByHand(0) <= i) {
+                    DealPlayerCard(playerList[j].uid);
+                }
+            }
+        }
+
+        DisplayCards();
+
+    }
+
+    public void HitDealer() {
+        HitPlayer(uidDealer);        
+    }
+
+    public void HitMe() {
+        HitPlayer(GetPlayerId());
+    }
+
+    public void HitPlayer(string uid) {
+       DealPlayerCard(uid);
+
+       DisplayCards();
+    }
+
+    // DISPLAY
+
+    public int GetCardsValue(List<GameCard> cards) {
+
+        int score = 0;
+
+        foreach(GameCard card in cards) {
+
+            if(card.val =="jack"
+               || card.val =="queen"
+               || card.val =="king") {
+
+                score += 10;            
+            }
+            else if(card.val == "ace"){
+                // Handle later for multiple values
+            }
+            else {
+                int cardVal = 0;
+                int.TryParse(card.val, out cardVal);
+
+                score += cardVal;
+            }
+        }
+                
+        foreach(GameCard card in cards) {
+
+            if(card.val == "ace"){
+
+                if(score > 21) {
+                    score += 1;
+                }
+                else {
+                    score += 11;
+                }
+            }
+        }
+
+        return score;
+    }
+    
+    public override void DisplayCards() {
+        
+        foreach(GameCardPlayer player in GetPlayers()) {
+            
+            string cards = "";
+            cards += " -> " + player.name + " \r\n"; 
+            
+            foreach(GameCardHand hand in player.cardHands) {
+                                                
+                foreach(GameCard card in hand.cards) {
+                    cards += " | " + card.val + " - " + 
+                        " " + card.type + " ";
+                }
+                int score = GetCardsValue(hand.cards);
+                cards += " | score: " + score;
+
+                if(score > 21) {
+                    cards += " | bust ";
+                }
+                
+            }
+            
+            Debug.Log(cards);
+        }
     }
 
 }

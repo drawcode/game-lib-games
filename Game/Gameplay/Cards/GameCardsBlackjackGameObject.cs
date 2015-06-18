@@ -14,25 +14,25 @@ public class GameCardsBlackjackGameObject : GameObjectBehavior {
         gameCards = new GameCardBlackJack();
     }
 
-    public void DealCard() {
-        
-        //Debug.Log("DealCard:" + gameCard.ToJson());
-    }
-
-    public void LoadCards() {
-        
-
-    }
-
     public void HandleInput() {
-        
-        if(Input.GetKeyDown(KeyCode.P)) {
-            LoadCards();
+
+        if(Input.GetKeyDown(KeyCode.L)) {
+            gameCards.LoadPlayers();
         }
 
-        if(Input.GetKeyDown(KeyCode.U)) {
-            DealCard();
+        if(Input.GetKeyDown(KeyCode.D)) {
+            gameCards.DealCards(2);
         }
+
+        if(Input.GetKeyDown(KeyCode.Alpha1)) {
+            gameCards.HitDealer();
+        }
+        
+        if(Input.GetKeyDown(KeyCode.Alpha2)) {
+            gameCards.HitMe();
+        }
+
+
     }
 
     public void Update() {
