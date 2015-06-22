@@ -8,10 +8,10 @@ using Engine.Utility;
 
 public class GameCardsBlackjackGameObject : GameObjectBehavior {
 
-    GameCardBlackJack gameCards;
+    GameCardBlackjack gameCards;
 
     public void Start() {
-        gameCards = new GameCardBlackJack();
+        gameCards = new GameCardBlackjack();
     }
 
     public void HandleInput() {
@@ -30,6 +30,15 @@ public class GameCardsBlackjackGameObject : GameObjectBehavior {
         
         if(Input.GetKeyDown(KeyCode.Alpha2)) {
             gameCards.HitMe();
+        }
+
+        
+        if(Input.GetKeyDown(KeyCode.S)) {
+            gameCards.GameStart();
+        }
+        
+        if(Input.GetKeyDown(KeyCode.E)) {
+            gameCards.GameEnd();
         }
 
 
