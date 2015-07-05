@@ -207,6 +207,7 @@ public class BaseUIPanel {
     public static string panelGameModeCareer = "PanelGameModeCareer";
     public static string panelGameModeChallenge = "PanelGameModeChallenge";
     public static string panelGameModeTraining = "PanelGameModeTraining";
+    public static string panelGameModeCustomize = "PanelGameModeCustomize";
     public static string panelGameModeTrainingMode = "PanelGameModeTrainingMode";
     public static string panelGameModeTrainingModeChoice = "PanelGameModeTrainingModeChoice";
     public static string panelGameModeTrainingModeCollection = "PanelGameModeTrainingModeChoice";
