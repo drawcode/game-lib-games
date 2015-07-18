@@ -97,7 +97,7 @@ public class BaseUIButtonNames {
     // 
         
     public static string buttonGameModeArcade = "ButtonGameModeArcade";
-    public static string buttonGameModeChallenges = "ButtonGameModeChallenges";
+    public static string buttonGameModeChallenge = "ButtonGameModeChallenge";
     public static string buttonGameModeCoop = "ButtonGameModeCoop";
     public static string buttonGameModeMultiplayerCoop = "ButtonGameModeMultiplayerCoop";
     public static string buttonGameModeMultiplayerMatchup = "ButtonGameModeMultiplayerMatchup";
@@ -228,6 +228,8 @@ public class BaseUIPanel {
     public static string panelProductCurrency = "PanelProductCurrency";
     public static string panelProductCurrencyEarn = "PanelProductCurrencyEarn";
     public static string panelCustomize = "PanelCustomize";
+    public static string panelCustomizeLevels = "PanelCustomizeLevels";
+    public static string panelCustomizeWorlds = "PanelCustomizeWorlds";
     public static string panelCustomizeCharacter = "PanelCustomizeCharacter";
     public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
     public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
@@ -1875,7 +1877,9 @@ public class BaseUIController : GameObjectBehavior {
                 }
                 else if (isUIPanel(GameUIPanel.panelCustomizeCharacterRPG)
                     || isUIPanel(GameUIPanel.panelCustomizeCharacterColors)
-                    || isUIPanel(GameUIPanel.panelCustomizeCharacter)
+                         || isUIPanel(GameUIPanel.panelCustomizeCharacter)
+                         || isUIPanel(GameUIPanel.panelCustomizeLevels)
+                         || isUIPanel(GameUIPanel.panelCustomizeWorlds)
                     || isUIPanel(GameUIPanel.panelCustomizeAudio)) {
                     
                     GameUIController.ShowCustomize();
@@ -1883,6 +1887,7 @@ public class BaseUIController : GameObjectBehavior {
                     
                 }
                 else if (isUIPanel(GameUIPanel.panelGameModeArcade)
+                    || isUIPanel(GameUIPanel.panelGameModeCustomize)
                     || isUIPanel(GameUIPanel.panelGameModeCareer)
                     || isUIPanel(GameUIPanel.panelGameModeChallenge)
                     || isUIPanel(GameUIPanel.panelGameModeCoop)
@@ -2457,7 +2462,35 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeArcade));
     }
- 
+
+    
+    // ------------------------------------------------------------
+    // GAME MODE - CUSTOMIZE
+    
+    //public static virtual void ShowGameModeCustomize() {
+    //   if(isInst) {
+    //       Instance.showGameModeCustomize();
+    //   }
+    //}
+    
+    public virtual void showGameModeCustomize() {
+        showUIPanel(
+            typeof(GameUIPanelGameModeCustomize),
+            GameUIPanel.panelGameModeCustomize,
+            "CUSTOMIZE");
+    } 
+    
+    //public static virtual void HideGameModeCustomize() {
+    //   if(isInst) {
+    //       Instance.hideGameModeCustomize();
+    //   }
+    //}
+    
+    public virtual void hideGameModeCustomize() {
+        hideUIPanel(
+            typeof(GameUIPanelGameModeCustomize));
+    }
+     
     /*
  // ------------------------------------------------------------
  // EQUIPMENT - MAIN
@@ -3463,7 +3496,7 @@ public class BaseUIController : GameObjectBehavior {
             //GameUIController.ShowGameModeArcade();
             GameUIController.ShowGameWorlds();
         }
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenges, buttonName)) {            
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenge, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
         }
