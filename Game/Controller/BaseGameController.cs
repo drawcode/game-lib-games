@@ -493,7 +493,14 @@ public class GameLevelGridData {
 
         if (!assetLayoutData.ContainsKey(keyLayout)) {
 
-            //Debug.Log("SetAssetsIntoMap:" + keyLayout);
+            if(assetData.code != BaseDataObjectKeys.empty) {
+
+                if(assetData.type == BaseDataObjectKeys.character) {
+
+                    Debug.Log("SetAssetsIntoMap:keyLayout:" + keyLayout);
+                    Debug.Log("SetAssetsIntoMap:assetData:" + assetData.ToJson());
+                }
+            }
 
             assetLayoutData.Set(keyLayout, assetData);
         }

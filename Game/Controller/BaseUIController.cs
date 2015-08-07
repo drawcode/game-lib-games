@@ -91,6 +91,7 @@ public class BaseUIButtonNames {
     public static string buttonGameCustomizeCharacter = "ButtonGameCustomizeCharacter";
     public static string buttonGameCustomizeCharacterColors = "ButtonGameCustomizeCharacterColors";
     public static string buttonGameCustomizeCharacterRPG = "ButtonGameCustomizeCharacterRPG";   
+    public static string buttonProfileGameversesSync = "ButtonProfileGameversesSync";
 
     //ButtonCustomizeCharacterRPGBuyUpgrades
 
@@ -3441,6 +3442,13 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettings, buttonName)) {
             GameUIController.ShowSettings();
+        }
+
+        // PROFILE SYNC
+
+        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProfileGameversesSync, buttonName)) {
+            GameState.SyncProfile();
         }
 
         // rating/community

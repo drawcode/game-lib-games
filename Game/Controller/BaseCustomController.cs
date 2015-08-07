@@ -116,7 +116,7 @@ public class BaseGameCustomController : GameObjectBehavior {
         }
 
         if(profileCustomItem.current_texture_preset == preset.code) {
-            return profileCustomItem;
+            //return profileCustomItem;
         }
 
         //if (saveProfile)
