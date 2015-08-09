@@ -128,7 +128,7 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 	
 	IEnumerator loadDataCo() {
 		
-		ChangeUsername(GameProfiles.Current.username);
+		//ChangeUsername(GameProfiles.Current.username);
 		
 		yield return new WaitForSeconds(1f);
 	}

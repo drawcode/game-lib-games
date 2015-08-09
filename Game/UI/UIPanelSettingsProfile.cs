@@ -95,7 +95,7 @@ public class UIPanelSettingsProfile : UIPanelBase {
 				
 		yield return new WaitForSeconds(1f);
 		
-		ChangeUsername(GameProfiles.Current.username);
+		//ChangeUsername(GameProfiles.Current.username);
 	}
 	
 }
