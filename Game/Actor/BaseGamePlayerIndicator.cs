@@ -23,6 +23,7 @@ public class GamePlayerIndicatorType {
     public static string zombie = "zombie";
     public static string bot1 = "bot1";
     public static string bot2 = "bot2";
+    public static string sidekick = "sidekick";
 }
 
 public class BaseGamePlayerIndicator : GameObjectBehavior {

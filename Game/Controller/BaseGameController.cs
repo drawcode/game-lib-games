@@ -76,7 +76,19 @@ public class GameSpawnType {
     public static string randomType = "random";
 }
 
+public class GameObjectQueueItem {
+    public string type = "";
+    public string code = "";
+    public string data_type = "";
+    public string display_type = "";
+    public Vector3 pos = Vector3.zero;
+    public Quaternion rot = Quaternion.identity;
+}
+
 public class GameActorDataItem : GameDataObject {
+
+    public bool overrideLoading = false;
+
 
     // RPG
     
@@ -601,16 +613,22 @@ public class BaseGameController : GameObjectTimerBehavior {
     public GameObject boundaryBottomRight;
     public GameObject boundaryTopCeiling;
     public GameObject boundaryBottomAbyss;
-    public GameObject gameEndZoneLeft;
-    public GameObject gameEndZoneRight;
+    //
+    public GameObject gameZoneEndLeft;
+    public GameObject gameZoneEndRight;
+    //
     public GameGameRuntimeData runtimeData;
+    //
     public Camera cameraGame;
     public Camera cameraGameGround;
+    //
     public GameCameraView cameraView = GameCameraView.ViewSide;
     public GameRunningState gameRunningState = GameRunningState.STOPPED;
     public GameControllerType gameControllerType = GameControllerType.Iso3D;
+    //
     float currentTimeBlockBase = 0.0f;
     float actionIntervalBase = 1.3f;
+    //
     public float defaultLevelTime = 90;
     public string contentDisplayCode = "default";
     public bool isGameOver = false;
@@ -618,7 +636,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     
     // CUSTOM
     
-    public GameZones currentGameZone = GameZones.right;    
+    public string currentGameZone = GameZoneKeys.goal_right;    
     
     // CAMERAS
     
@@ -629,6 +647,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     public GameObject cameraContainersUI;
     public GameObject cameraContainersAlwaysOn;
     public float runDirectorsDelay = 10f;
+
+    // QUEUES
+
+    public List<GameObjectQueueItem> queueGameObjectItems;
 
     // ----------------------------------------------------------------------
 
@@ -1160,39 +1182,39 @@ public class BaseGameController : GameObjectTimerBehavior {
         return null;
     }
 
-    public virtual GameGoalZone getGoalZone(GameObject go) {
+    public virtual GameZoneGoal getGoalZone(GameObject go) {
         if (go != null) {
-            return go.GetComponent<GameGoalZone>();
+            return go.GetComponent<GameZoneGoal>();
         }
         return null;
     }
 
-    public virtual GameBadZone getBadZone(GameObject go) {
+    public virtual GameZoneBad getBadZone(GameObject go) {
         if (go != null) {
-            return go.GetComponent<GameBadZone>();
+            return go.GetComponent<GameZoneBad>();
         }
         return null;
     }
 
-    public virtual void changeGameZone(GameZones zones) {
+    public virtual void changeGameZone(string zone) {
 
-        if (gameEndZoneLeft == null) {
-            Transform gameEndZoneLeftTransform
+        if (gameZoneEndLeft == null) {
+            Transform gameZoneEndLeftTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneLeft");
-            if (gameEndZoneLeftTransform != null) {
-                gameEndZoneLeft = gameEndZoneLeftTransform.gameObject;
+            if (gameZoneEndLeftTransform != null) {
+                gameZoneEndLeft = gameZoneEndLeftTransform.gameObject;
             }
         }
 
-        if (gameEndZoneLeft == null) {
-            Transform gameEndZoneRightTransform
+        if (gameZoneEndRight == null) {
+            Transform gameZoneEndRightTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneRight");
-            if (gameEndZoneRightTransform != null) {
-                gameEndZoneRight = gameEndZoneRightTransform.gameObject;
+            if (gameZoneEndRightTransform != null) {
+                gameZoneEndRight = gameZoneEndRightTransform.gameObject;
             }
         }
 
-        GameController.GoalZoneChange(zones);
+        GameController.GoalZoneChange(zone);
     }
 
     // ---------------------------------------------------------------------
@@ -1594,7 +1616,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         //}
     }
 
-    public virtual void loadActor(string characterCode, string characterType, string spawnType, string displayType, Vector3 pos) {
+    public virtual void loadActor(
+        string characterCode, 
+        string characterType, 
+        string spawnType, 
+        string displayType, 
+        Vector3 pos, 
+        Quaternion rot, 
+        bool overrideLoading = false) {
         
         GameActorDataItem actorDataItem = new GameActorDataItem();
         actorDataItem.code = characterCode;
@@ -1602,6 +1631,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         actorDataItem.data_type = spawnType;
         actorDataItem.display_type = displayType;
         actorDataItem.position_data.FromVector3(pos);
+        actorDataItem.rotation_data.FromVector3(rot.eulerAngles);
+        actorDataItem.overrideLoading = overrideLoading;
         
         //for (int i = 0; i < actor.currentSpawnAmount; i++) {
         GameController.LoadActor(actorDataItem);
@@ -1726,10 +1757,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             string leftMiddle = "left-middle";
             string rightMiddle = "right-middle";
             string spawnCode = rightMiddle;
-            if (currentGameZone == GameZones.right) {
+            if (currentGameZone == GameZoneKeys.goal_right) {
                 spawnCode = rightMiddle;
             }
-            else if (currentGameZone == GameZones.left) {
+            else if (currentGameZone == GameZoneKeys.goal_left) {
                 spawnCode = leftMiddle;
             }
 
@@ -1742,10 +1773,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             else {
 
                 // get random
-                if (currentGameZone == GameZones.right) {
+                if (currentGameZone == GameZoneKeys.goal_right) {
                     spawnLocation = Vector3.zero.WithX(80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
-                else if (currentGameZone == GameZones.left) {
+                else if (currentGameZone == GameZoneKeys.goal_left) {
                     spawnLocation = Vector3.zero.WithX(-80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
             }
@@ -1793,13 +1824,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 if (data.display_type == GameActorType.player) {
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerPlayer, GamePlayerContextState.ContextInput);
+                        GamePlayerControllerState.ControllerPlayer, 
+                        GamePlayerContextState.ContextInput, 
+                        data.overrideLoading);
                     
                     characterGamePlayerController.attackRange = 12f;
                 }
                 else if (data.display_type == GameActorType.sidekick) {
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerAgent, GamePlayerContextState.ContextFollowAgent);
+                        GamePlayerControllerState.ControllerSidekick, 
+                        GamePlayerContextState.ContextFollowAgent,
+                        data.overrideLoading);
                     
                     characterGamePlayerController.attackRange = 12f;
                 }
@@ -1808,7 +1843,9 @@ public class BaseGameController : GameObjectTimerBehavior {
                     //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
                     //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerAgent, GamePlayerContextState.ContextFollowAgentAttack);
+                        GamePlayerControllerState.ControllerAgent, 
+                        GamePlayerContextState.ContextFollowAgentAttack, 
+                        data.overrideLoading);
                     
                     characterGamePlayerController.attackRange = 12f;
                 }
@@ -1849,10 +1886,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             //string leftMiddle = "left-middle";
             //string rightMiddle = "right-middle";
             //string spawnCode = rightMiddle;
-            if (currentGameZone == GameZones.right) {
+            if (currentGameZone == GameZoneKeys.goal_right) {
                 //spawnCode = rightMiddle;
             }
-            else if (currentGameZone == GameZones.left) {
+            else if (currentGameZone == GameZoneKeys.goal_left) {
                 //spawnCode = leftMiddle;
             }
             
@@ -1865,7 +1902,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //else {
             
             // get random
-            if (currentGameZone == GameZones.right) {
+            if (currentGameZone == GameZoneKeys.goal_right) {
                 
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
@@ -1875,7 +1912,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                             boundaryBottomLeft.transform.position.z,
                             boundaryTopLeft.transform.position.z));
             }
-            else if (currentGameZone == GameZones.left) {
+            else if (currentGameZone == GameZoneKeys.goal_left) {
                 
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
@@ -1916,6 +1953,64 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
+    // ---------------------------------------------------------------------
+    // GAME OBJECT LEVEL START LOAD
+        
+    public virtual void queueGameObjectTypeData(
+        string type, string code, string data_type, string display_type, Vector3 pos, Quaternion rot) {
+
+        GameObjectQueueItem queueItem = new GameObjectQueueItem();
+        queueItem.type = type;
+        queueItem.code = code;
+        queueItem.data_type = data_type;
+        queueItem.display_type = display_type;
+        queueItem.pos = pos;
+        queueItem.rot = rot;
+
+        queueGameObjectTypeData(queueItem);
+    }
+
+    public virtual void checkQueueGameObjectTypeData() {
+        
+        if(queueGameObjectItems == null) {
+            queueGameObjectItems = new List<GameObjectQueueItem>();
+        }
+    }
+
+    public virtual void queueGameObjectTypeData(GameObjectQueueItem queueItem) {
+
+        checkQueueGameObjectTypeData();
+
+        queueGameObjectItems.Add(queueItem);         
+    }
+
+    public virtual void clearQueueGameObjectTypeData() {
+
+        checkQueueGameObjectTypeData();
+        
+        queueGameObjectItems.Clear(); 
+    }
+
+
+    public virtual void processQueueGameObjectTypeData() {
+
+        foreach(GameObjectQueueItem queueItem in queueGameObjectItems) {            
+
+            if (queueItem.type == BaseDataObjectKeys.character) {                
+
+                GameController.LoadActor(
+                    queueItem.code, 
+                    queueItem.type, 
+                    queueItem.data_type, 
+                    queueItem.display_type, 
+                    queueItem.pos,
+                    queueItem.rot,
+                    true);
+            }
+        }
+
+        clearQueueGameObjectTypeData();
+    }
 
     // ---------------------------------------------------------------------
     // RESETS
@@ -2348,6 +2443,19 @@ public class BaseGameController : GameObjectTimerBehavior {
         AnalyticsNetworks.LogEventLevelStart(GameLevels.Current.code, GameLevels.Current.display_name);
     
         GameController.RunDirectorsDelayed(runDirectorsDelay);
+
+        processQueues();
+    }
+
+    public virtual void processQueues() {
+    
+        StartCoroutine(processQueuesCo());
+    }
+
+    public IEnumerator processQueuesCo() {
+        yield return new WaitForSeconds(2);
+
+        GameController.ProcessQueueGameObjectTypeData();
     }
 
     public virtual void onGameQuit() {
@@ -2686,24 +2794,24 @@ public class BaseGameController : GameObjectTimerBehavior {
     // GAME PLAYER GOAL ZONE
 
     public virtual void goalZoneChange() {
-        if (currentGameZone == GameZones.left) {
-            GameController.GoalZoneChange(GameZones.right);
+        if (currentGameZone == GameZoneKeys.goal_left) {
+            GameController.GoalZoneChange(GameZoneKeys.goal_right);
         }
-        else if (currentGameZone == GameZones.right) {
-            GameController.GoalZoneChange(GameZones.left);
+        else if (currentGameZone == GameZoneKeys.goal_right) {
+            GameController.GoalZoneChange(GameZoneKeys.goal_left);
         }
     }
 
-    public virtual void goalZoneChange(GameZones goalZone) {
+    public virtual void goalZoneChange(string zone) {
         //if(currentGameZone == goalZone) {
         //    return;
         //}
 
-        if (goalZone == GameZones.left) {
-            currentGameZone = goalZone;
+        if (zone == GameZoneKeys.goal_left) {
+            currentGameZone = zone;
         }
-        else if (goalZone == GameZones.right) {
-            currentGameZone = goalZone;
+        else if (zone == GameZoneKeys.goal_right) {
+            currentGameZone = zone;
         }
 
         GameController.HandleGoalZoneChange();
@@ -2714,10 +2822,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     // HANDLE GOAL ZONE CHANGE
 
     public virtual void handleGoalZoneChange() {
-        if (currentGameZone == GameZones.left) {
+        if (currentGameZone == GameZoneKeys.goal_left) {
             // move goal markers
         }
-        else if (currentGameZone == GameZones.right) {
+        else if (currentGameZone == GameZoneKeys.goal_right) {
             // move goal markers
         }
     }

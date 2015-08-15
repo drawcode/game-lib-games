@@ -1593,12 +1593,26 @@ public class GameDraggableEditor : GameObjectBehavior {
                         gameLevelItemAsset.scale_data = step.scale_data;// * .1f;
                     }
 
-                    GameController.LoadActor(
-                        gameLevelItemAsset.code, 
-                        gameLevelItemAsset.type, 
-                        gameLevelItemAsset.data_type, 
-                        gameLevelItemAsset.display_type, 
-                        gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3());
+
+                    // Add into queue for loading on start to prevent character loading in process
+
+                    GameController.QueueGameObjectTypeData(
+                        gameLevelItemAsset.type,
+                        gameLevelItemAsset.code,
+                        gameLevelItemAsset.data_type,
+                        gameLevelItemAsset.display_type,
+                        gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3(),
+                        Quaternion.Euler(gameLevelItemAsset.rotation_data.GetVector3())
+                        );
+
+
+
+                    //GameController.LoadActor(
+                    //    gameLevelItemAsset.code, 
+                    //    gameLevelItemAsset.type, 
+                    //    gameLevelItemAsset.data_type, 
+                    //    gameLevelItemAsset.display_type, 
+                    //    gameLevelItemAsset.position_data.GetVector3() + gameLevelItemAsset.local_position_data.GetVector3());
                     
                     return;
                 }

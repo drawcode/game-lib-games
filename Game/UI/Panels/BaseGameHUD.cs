@@ -180,7 +180,7 @@ public class BaseGameHUD : GameUIPanelBase {
             containerOffscreenIndicators.DestroyChildren();
         }
 
-        GameGoalZoneMarker marker = GameGoalZoneMarker.GetMarker();
+        GameZoneGoalMarker marker = GameZoneGoalMarker.GetMarker();
         marker.UpdateIndicator();
     }
     
