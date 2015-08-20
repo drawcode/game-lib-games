@@ -1,5 +1,6 @@
-#define ANALYTICS_GAMEANALYTICS
+//#define ANALYTICS_GAMEANALYTICS
 //#define ANALYTICS_GOOGLE
+#define ANALYTICS_UNITY
 
 using System;
 using System.Collections;
@@ -11,6 +12,10 @@ using UnityEngine;
 using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
+
+#if ANALYTICS_GAMEANALYTICS
+using GameAnalyticsSDK;
+#endif
 
 public enum AnalyticsNetworkType {
     GameAnalytics,
@@ -35,7 +40,7 @@ public class AnalyticsNetworksMessages {
 public class AnalyticsNetworks : GameObjectBehavior {
 
     #if ANALYTICS_GAMEANALYTICS
-    public GA_SystemTracker analyticsGameAnalytics;
+    public GameAnalytics analyticsGameAnalytics;
     #endif
     
     public static bool analyticsNetworksEnabled = AppConfigs.analyticsNetworkEnabled;
@@ -88,8 +93,9 @@ public class AnalyticsNetworks : GameObjectBehavior {
         #if ANALYTICS_GAMEANALYTICS
         // ------------
         // GAME ANALYTICS
-
-        GA.SettingsGA.AllowRoaming = true;
+        
+        // TODO Analytics update version
+        //GA.SettingsGA.AllowRoaming = true;
 
         //Everyplay.SharedInstance.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
         //Everyplay.SharedInstance.RecordingStarted -= everyplayRecordingStartedDelegate;
@@ -114,11 +120,11 @@ public class AnalyticsNetworks : GameObjectBehavior {
         
         if(analyticsGameAnalytics == null) {
             
-            analyticsGameAnalytics = FindObjectOfType(typeof(GA_SystemTracker)) as GA_SystemTracker;
+            analyticsGameAnalytics = FindObjectOfType(typeof(GameAnalytics)) as GameAnalytics;
             
             if (!analyticsGameAnalytics) {
                 var obj = new GameObject("_analyticsGameAnalytics");
-                analyticsGameAnalytics = obj.AddComponent<GA_SystemTracker>();
+                analyticsGameAnalytics = obj.AddComponent<GameAnalytics>();
                 DontDestroyOnLoad(analyticsGameAnalytics);
             }
         }
@@ -171,7 +177,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void changeArea(string areaName) {
         
         #if ANALYTICS_GAMEANALYTICS
-        GA.SettingsGA.SetCustomArea(areaName);
+        // TODO Analytics update version
+        //GA.SettingsGA.SetCustomArea(areaName);
         #endif
     }
 
@@ -187,7 +194,9 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void log(object data) {
         
         #if ANALYTICS_GAMEANALYTICS
-        GA.Log(data);
+        // TODO Analytics update version
+        //GA.Log(data);
+        //analyticsGameAnalytics.
         #endif
     }
     
@@ -202,7 +211,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void changeUser(string userId) {
         
         #if ANALYTICS_GAMEANALYTICS
-        GA.SettingsGA.SetCustomUserID(userId);
+        // TODO Analytics update version
+        //GA.SettingsGA.SetCustomUserID(userId);
         #endif
     }
 
@@ -228,7 +238,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
             sb.Append(" :: ");
         }
 
-        GA.API.Design.NewEvent(sb.ToString(), 1);
+        // TODO Analytics update version
+        //GA.API.Design.NewEvent(sb.ToString(), 1);
         #endif
     }
 
@@ -313,6 +324,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void send() {
         
         #if ANALYTICS_GAMEANALYTICS
+        // TODO Analytics update version
         ////GA.GA_Queue.ForceSubmit();
         #endif
     }    

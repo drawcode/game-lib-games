@@ -24,7 +24,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     public virtual void Start() {
         
         agent = GetComponent<NavMeshAgent>();
-        
+
         NavigateToDestination();
     }
 
@@ -54,7 +54,15 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     
     public virtual void NavigateToDestination() {   
         
-        if (agent != null) {
+        if (agent == null) {
+            return;
+        }
+        else {
+
+            if(!agent.isActiveAndEnabled) {
+                return;
+            }
+
             if (agentState == GamePlayerNavMeshAgentState.STOP) {
                 agent.destination = gameObject.transform.position;
                 return;

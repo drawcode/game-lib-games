@@ -132,6 +132,9 @@ public class BaseGamePlayerControllerData {
     public float lastDie = 0f;
     public string lastCharacterCode = null;
 
+    public bool exitingUp = false;
+    public bool enteringDown = false;
+
     // controller
     
     public GamePlayerController gamePlayerController;
@@ -1326,7 +1329,16 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual bool isAlive {
         get {
-            return runtimeData.health > 0f ? true : false;
+
+            bool hasHealth = runtimeData.health > 0f; 
+
+            bool notDying = true;
+
+            if (currentControllerData != null) {
+                notDying = !currentControllerData.dying;
+            }
+
+            return  hasHealth && notDying ? true : false;
         }
     }
   
@@ -2287,12 +2299,12 @@ public class BaseGamePlayerController : GameActor {
     public virtual bool AllowControllerInteraction(
         GamePlayerController otherGamePlayer) {
 
-        if(controllerData == null) {
+        if (controllerData == null) {
             return false;
         }
         
-        if(controllerData.gamePlayerController == null
-           || otherGamePlayer == null) {
+        if (controllerData.gamePlayerController == null
+            || otherGamePlayer == null) {
             return false;
         }
 
@@ -2303,7 +2315,7 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerController currentGamePlayer, 
         GamePlayerController otherGamePlayer) {
     
-        if(currentGamePlayer == null || otherGamePlayer == null) {
+        if (currentGamePlayer == null || otherGamePlayer == null) {
             return false;
         }
 
@@ -2313,6 +2325,10 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (currentGamePlayer.IsSidekickControlled && otherGamePlayer.IsSidekickControlled) {
+            return false;
+        }
+
+        if (currentGamePlayer.isDead || otherGamePlayer.isDead) {
             return false;
         }
 
@@ -2548,6 +2564,87 @@ public class BaseGamePlayerController : GameActor {
             }
             */
     }
+
+    public virtual void HandleActions(GameObject go) {
+        
+        HandleActionPlayer(go);
+
+        HandleActionSidekick(go);
+    }
+    
+    public virtual void HandleActionPlayer(GameObject go) {
+        
+        if (go == null) {
+            return;
+        }
+        
+        string goName = go.name;
+        
+        if (IsPlayerControlled) {
+                        
+            if (goName.Contains("GameGoalZone")) {
+                LogUtil.Log("GameGoalZone: " + goName);
+                GameController.GamePlayerGoalZone(go);
+            }
+            else if (goName.Contains("GameBadZone")) {
+                LogUtil.Log("GameBadZone: " + goName);
+                GameController.GamePlayerOutOfBounds();
+            }
+            else if (goName.Contains("GameZone")) {
+                LogUtil.Log("GameZone: " + goName);
+                GameController.GamePlayerGoalZoneCountdown(go);
+            }
+            else if (goName.Contains("GameBoundaryZone")) {
+                LogUtil.Log("GameBoundaryZone: " + goName);
+                // Nothing it is a wall...
+            }
+            
+            // GameZoneActionSave
+        }
+    }
+
+    public virtual void HandleActionSidekick(GameObject go) {
+
+        if (go == null) {
+            return;
+        }
+
+        string goName = go.name;
+        
+        if (IsSidekickControlled) {
+                        
+            if (goName.Contains("GameZoneActionSave")) {
+                Debug.Log("GameZoneActionSave: " + goName);
+                
+                if (IsPlayerControlled || IsSidekickControlled) {
+                    
+                    GameZoneActionSave actionItem = 
+                        go.transform.GetComponentInParent<GameZoneActionSave>();
+
+                    if(actionItem != null) {
+                        
+                        string actionCode = actionItem.actionCode;
+                        
+                        Debug.Log("GameZoneActionSave: actionCode:" + actionCode);
+                        
+                        AppContentCollect appContentCollect = 
+                            AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
+                        
+                        if (appContentCollect != null) {
+                            
+                            Debug.Log("GameZoneActionSave: appContentCollect:" + appContentCollect.code);  
+
+                            AddImpact(Vector3.zero.WithY(1), 100, false, true);
+
+                            GameController.CurrentGamePlayerController.Save(1);
+                            GameController.CurrentGamePlayerController.Scores(1);
+                            GameController.CurrentGamePlayerController.Score(1 * 10);
+                        }
+                    }
+                }
+            }
+        }
+    }
      
     public virtual void OnTriggerEnter(Collider collider) {
         
@@ -2555,28 +2652,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (IsPlayerControlled) {
-     
-            string colliderName = collider.name;
-         
-            if (colliderName.Contains("GameGoalZone")) {
-                LogUtil.Log("GameGoalZone: " + colliderName);
-                GameController.GamePlayerGoalZone(collider.transform.gameObject);
-            }
-            else if (colliderName.Contains("GameBadZone")) {
-                LogUtil.Log("GameBadZone: " + colliderName);
-                GameController.GamePlayerOutOfBounds();
-            }
-            else if (colliderName.Contains("GameZone")) {
-                LogUtil.Log("GameZone: " + colliderName);
-                GameController.GamePlayerGoalZoneCountdown(collider.transform.gameObject);
-            }
-            
-            else if (colliderName.Contains("GameBoundaryZone")) {
-                LogUtil.Log("GameBoundaryZone: " + colliderName);
-                // Nothing it is a wall...
-            }
-        }
+        HandleActions(collider.gameObject);
 
         // TODO ADD SIDEKICK COLLECTION POINT ACTION FLOW
         
@@ -3748,7 +3824,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (controllerData.dying) {
+        if (isDead) {
             return; 
         }
 
@@ -3810,7 +3886,7 @@ public class BaseGamePlayerController : GameActor {
     // call this function to add an currentControllerData.impact force:
     public virtual void AddImpact(Vector3 dir, float force, bool damage, bool allowY = false) {
 
-        if (currentControllerData.dying) {
+        if (isDead) {
             currentControllerData.impact = Vector3.zero;
             return;
         }
@@ -4590,6 +4666,15 @@ public class BaseGamePlayerController : GameActor {
                     currentControllerData.navMeshAgent.angularSpeed = 
                         120 + UnityEngine.Random.Range(1, 5);
 
+                    if (IsSidekickControlled) {
+                        // Speed up sidekicks to take cover better behind you.
+                        float adjust = 2.0f;
+                        currentControllerData.navMeshAgent.speed *= adjust;
+                        currentControllerData.navMeshAgent.acceleration *= adjust;
+                        currentControllerData.navMeshAgent.angularSpeed *= adjust;
+
+                    }
+
                 }
             }
          
@@ -4608,7 +4693,7 @@ public class BaseGamePlayerController : GameActor {
                 currentControllerData.navMeshAgentFollowController.agent = currentControllerData.navMeshAgent;
 
 
-                if(IsSidekickControlled) {
+                if (IsSidekickControlled) {
                     currentControllerData.navMeshAgentFollowController.targetFollow = 
                         GameController.CurrentGamePlayerController.gamePlayerSidekickTarget.transform;                
                 }
@@ -5066,7 +5151,7 @@ public class BaseGamePlayerController : GameActor {
                         if (IsAgentControlled) {
 
                             if (gamePlayerControllerHit != null
-                                && !gamePlayerControllerHit.currentControllerData.dying) {
+                                && !gamePlayerControllerHit.isDead) {
 
                                 if (AllowControllerInteraction(gamePlayerControllerHit)) {
 
@@ -5153,7 +5238,7 @@ public class BaseGamePlayerController : GameActor {
             // allows player to protect rescue bots/sidekicks/co-bot that are on auto.
 
             Vector3 posBack = Vector3.zero;
-            posBack.z = Mathf.Clamp(-currentSpeed / 3, -1.3f, -3.5f);
+            posBack.z = -Mathf.Clamp(currentSpeed / 3, 1.3f, 4.5f);
          
             if (gamePlayerEnemyTarget != null) {
                 gamePlayerEnemyTarget.transform.localPosition = pos;
