@@ -208,7 +208,7 @@ public class BaseAIController : GameObjectBehavior {
     }
 
     public virtual void run() {
-        runDirector = true;
+        run(true);
     }
     
     public virtual void stop() {
@@ -259,6 +259,10 @@ public class BaseAIController : GameObjectBehavior {
     }
 
     public virtual void directAI() {
+
+        if(!runDirector) {
+            return;
+        }
 
         currentFPS = FPSDisplay.GetCurrentFPS();    
         

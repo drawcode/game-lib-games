@@ -2220,8 +2220,29 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void updateDirectors(bool run) {
-        GameController.UpdateDirectorAI(run);
-        GameController.UpdateDirectorItem(run);
+
+        bool runAI = run;
+        bool runItem = run;
+
+        if(run) {
+            
+            List<GameDataDirector> directors = GameLevels.Current.data.directors;
+            
+            if(directors != null) {
+                foreach(GameDataDirector director in directors) {
+                    if(director.code == GameDataDirectorType.ai) {
+                        runAI = director.run;
+                    }
+                    else if(director.code == GameDataDirectorType.item) {
+                        runItem = director.run;
+                    }
+                }
+            }
+        }
+
+        GameController.UpdateDirectorAI(runAI);
+
+        GameController.UpdateDirectorItem(runItem);
     }
 
     public virtual void updateDirectorAI(bool run) {
@@ -2441,7 +2462,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameUIController.ShowGameCanvas();
         
         AnalyticsNetworks.LogEventLevelStart(GameLevels.Current.code, GameLevels.Current.display_name);
-    
+
         GameController.RunDirectorsDelayed(runDirectorsDelay);
 
         processQueues();
