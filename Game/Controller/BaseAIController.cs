@@ -25,7 +25,6 @@ public class GameAIDirectorData {
     public string code = "";
     public string type = "";
     public double currentSpawnAmount = 1;
-
     public float speed = .3f;
     public float attack = .3f;
     public float scale = .3f;
@@ -64,7 +63,6 @@ public class BaseAIController : GameObjectBehavior {
     public bool stopDirector = false;
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
     public Dictionary<string, GamePlayerSpawn> spawns;
-
     public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
 
     // ----------------------------------------------------------------------
@@ -95,7 +93,7 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void init() {
         GameAIController.CheckSpawns();
-    }    
+    }
 
     public virtual void checkSpawns() {
         if (spawns == null) {
@@ -146,7 +144,7 @@ public class BaseAIController : GameObjectBehavior {
 
         foreach (GamePresetItem item in presetItems) {
 
-            for(int i = 0; i < item.limit / 3; i++) {
+            for (int i = 0; i < item.limit / 3; i++) {
                 yield return new WaitForEndOfFrame();
 
                 GameAIController.Load(item.code);
@@ -260,14 +258,14 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void directAI() {
 
-        if(!runDirector) {
+        if (!runDirector) {
             return;
         }
 
         currentFPS = FPSDisplay.GetCurrentFPS();    
         
         if ((currentActorCount < currentCharacterLimit
-             && currentFPS > 20f) || currentActorCount < currentCharacterMin) {
+            && currentFPS > 20f) || currentActorCount < currentCharacterMin) {
             
             // do some spawning
             

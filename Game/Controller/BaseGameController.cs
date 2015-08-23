@@ -505,9 +505,9 @@ public class GameLevelGridData {
 
         if (!assetLayoutData.ContainsKey(keyLayout)) {
 
-            if(assetData.code != BaseDataObjectKeys.empty) {
+            if (assetData.code != BaseDataObjectKeys.empty) {
 
-                if(assetData.type == BaseDataObjectKeys.character) {
+                if (assetData.type == BaseDataObjectKeys.character) {
 
                     Debug.Log("SetAssetsIntoMap:keyLayout:" + keyLayout);
                     Debug.Log("SetAssetsIntoMap:assetData:" + assetData.ToJson());
@@ -1757,6 +1757,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             string leftMiddle = "left-middle";
             string rightMiddle = "right-middle";
             string spawnCode = rightMiddle;
+
             if (currentGameZone == GameZoneKeys.goal_right) {
                 spawnCode = rightMiddle;
             }
@@ -1767,6 +1768,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //LogUtil.Log("spawnCode:" + spawnCode);
 
             GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
+
             if (spawn != null) {
                 spawnLocation = spawn.gameObject.transform.position;
             }
@@ -1781,6 +1783,9 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
 
+            if(spawnLocation == Vector3.zero) {
+                spawnLocation = GameController.GetRandomSpawnLocation();
+            }
         }
         else if (data.data_type == GameSpawnType.randomType) {
             // get random
@@ -1972,7 +1977,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void checkQueueGameObjectTypeData() {
         
-        if(queueGameObjectItems == null) {
+        if (queueGameObjectItems == null) {
             queueGameObjectItems = new List<GameObjectQueueItem>();
         }
     }
@@ -1991,10 +1996,9 @@ public class BaseGameController : GameObjectTimerBehavior {
         queueGameObjectItems.Clear(); 
     }
 
-
     public virtual void processQueueGameObjectTypeData() {
 
-        foreach(GameObjectQueueItem queueItem in queueGameObjectItems) {            
+        foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {            
 
             if (queueItem.type == BaseDataObjectKeys.character) {                
 
@@ -2209,6 +2213,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual IEnumerator runDirectorsDelayedCo(float delay) {
         yield return new WaitForSeconds(delay);
         GameController.RunDirectors();
+        
+        GameController.CurrentGamePlayerController.GamePlayerModelHolderEaseIn();
+        GameController.CurrentGamePlayerController.PlayerEffectWarpFadeOut();
     }
     
     public virtual void runDirectors() {
@@ -2224,16 +2231,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         bool runAI = run;
         bool runItem = run;
 
-        if(run) {
+        if (run) {
             
             List<GameDataDirector> directors = GameLevels.Current.data.directors;
             
-            if(directors != null) {
-                foreach(GameDataDirector director in directors) {
-                    if(director.code == GameDataDirectorType.ai) {
+            if (directors != null) {
+                foreach (GameDataDirector director in directors) {
+                    if (director.code == GameDataDirectorType.ai) {
                         runAI = director.run;
                     }
-                    else if(director.code == GameDataDirectorType.item) {
+                    else if (director.code == GameDataDirectorType.item) {
                         runItem = director.run;
                     }
                 }
@@ -2977,7 +2984,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public static void ProcessProgressCollections(
         GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
-        if(GameController.isInst) {
+        if (GameController.isInst) {
             GameController.Instance.processProgressCollections(runtimeData, playerRuntimeData);
         }
     }

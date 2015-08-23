@@ -132,7 +132,6 @@ public class BaseGamePlayerControllerData {
     public float lastDie = 0f;
     public float lastExit = 0f;
     public string lastCharacterCode = null;
-
     public bool actorExiting = false;
     public bool actorEntering = false;
 
@@ -169,6 +168,13 @@ public class BaseGamePlayerControllerData {
     public Vector3 positionTackler;
     public float lastTackle = 0f;
     public float incrementScore = 1f;
+
+    // easing
+        
+    public bool easeModelHolderEnabled = false;
+    public Vector3 easeModelHolderStart = Vector3.zero;
+    public Vector3 easeModelHolderEnd = Vector3.zero.WithY(200);
+    public Vector3 easeModelHolderCurrent = Vector3.zero;
     
     // effects
     
@@ -1136,6 +1142,51 @@ public class BaseGamePlayerController : GameActor {
         }
     } 
 
+    
+    // ACTOR EXITING
+    
+    public virtual void GamePlayerModelHolderEaseIn() {
+        GamePlayerModelHolderEase(Vector3.zero.WithY(10), Vector3.zero);
+    }
+    
+    public virtual void GamePlayerModelHolderEaseOut() {
+        GamePlayerModelHolderEase(Vector3.zero, Vector3.zero.WithY(10));
+    }
+    
+    public virtual void GamePlayerModelHolderEase(Vector3 posFrom, Vector3 posTo) {
+        currentControllerData.easeModelHolderStart = posFrom;
+        currentControllerData.easeModelHolderCurrent = posFrom;
+        currentControllerData.easeModelHolderEnd = posTo;
+        currentControllerData.easeModelHolderEnabled = true;
+    }
+    
+    public virtual void HandleGamePlayerModelHolderEaseTick() {
+
+        if (currentControllerData.easeModelHolderEnabled && currentControllerData.visible) {
+
+            float fadeSpeed = 500f;
+
+            if (currentControllerData.easeModelHolderCurrent.y < currentControllerData.easeModelHolderEnd.y && currentControllerData.easeModelHolderCurrent.y > 5) {
+                currentControllerData.easeModelHolderCurrent.y += (Time.deltaTime * fadeSpeed);
+
+                gamePlayerModelHolder.transform.localPosition = 
+                    currentControllerData.easeModelHolderCurrent;
+            }
+            else if (currentControllerData.easeModelHolderCurrent.y > currentControllerData.easeModelHolderEnd.y && currentControllerData.easeModelHolderCurrent.y > 5) {
+                currentControllerData.easeModelHolderCurrent.y -= (Time.deltaTime * fadeSpeed);
+
+                gamePlayerModelHolder.transform.localPosition = 
+                    currentControllerData.easeModelHolderCurrent;
+            }
+            else {
+                currentControllerData.easeModelHolderCurrent = currentControllerData.easeModelHolderEnd;
+                currentControllerData.easeModelHolderEnabled = false;
+                gamePlayerModelHolder.transform.localPosition = 
+                    currentControllerData.easeModelHolderCurrent;
+            }
+        }
+    }
+
     // WARP
      
     public virtual void PlayerEffectWarpFadeOut() {
@@ -1777,7 +1828,9 @@ public class BaseGamePlayerController : GameActor {
                 
         currentControllerData.initialized = true;
         
-        HidePlayerEffectWarp();
+        //HidePlayerEffectWarp();
+        PlayerEffectWarpFadeOut();
+        //GamePlayerModelHolderEaseIn();
         
         if (IsPlayerControlled) {
             GetPlayerProgress();
@@ -2174,6 +2227,53 @@ public class BaseGamePlayerController : GameActor {
         LogUtil.Log("OnInputDown GameActor");        
      
     }
+
+    // --------------------------------------------------------------------
+    // OBJECTS IN SPHERE
+    
+    public virtual T FindNearest<T>(string codeLike, float distanceRange = 10f) where T : Component {
+
+        T nearest = default(T);
+        bool found = false;
+        float shortestDistance = distanceRange * 2;
+        
+        foreach (Collider collide in Physics.OverlapSphere(transform.position, distanceRange)) {
+            
+            Transform t = collide.transform;
+            
+            if (t != null) {
+                
+                if (t.name.ToLower().Contains(codeLike)) {
+
+                    if (!t.gameObject.Has<T>()) {
+                        continue;
+                    }
+                    
+                    T nearObject = t.gameObject.Get<T>();
+                    
+                    if (nearObject != null) {
+                        
+                        float currentDistance = Vector3.Distance(
+                            transform.position,
+                            nearObject.transform.position);
+                        
+                        if (currentDistance < shortestDistance) {
+                            found = true;
+                            shortestDistance = currentDistance; 
+                            nearest = nearObject;
+                        }
+                    }                   
+                }
+            }
+        }
+        
+        if (found && nearest != null) {
+            return nearest;
+        }
+
+        return default(T);
+    }
+
     
     // --------------------------------------------------------------------
     // MOUNT VEHICLE
@@ -2600,6 +2700,17 @@ public class BaseGamePlayerController : GameActor {
             */
     }
 
+    public class GameActionKeys {
+        public static string GameGoalZone = "GameGoalZone";
+        public static string GameBadZone = "GameBadZone";
+        public static string GameZone = "GameZone";
+        public static string GameBoundaryZone = "GameBoundaryZone";
+        //
+        public static string GameZoneActionTrigger = "GameZoneActionTrigger";
+        public static string GameZoneActionSave = "GameZoneActionSave";
+        //
+    }
+
     public virtual void HandleActions(GameObject go) {
         
         HandleActionPlayer(go);
@@ -2617,21 +2728,21 @@ public class BaseGamePlayerController : GameActor {
         
         if (IsPlayerControlled) {
                         
-            if (goName.Contains("GameGoalZone")) {
-                LogUtil.Log("GameGoalZone: " + goName);
+            if (goName.Contains(GameActionKeys.GameGoalZone)) {
+                LogUtil.Log(GameActionKeys.GameGoalZone + ":" + goName);
                 GameController.GamePlayerGoalZone(go);
             }
-            else if (goName.Contains("GameBadZone")) {
-                LogUtil.Log("GameBadZone: " + goName);
+            else if (goName.Contains(GameActionKeys.GameBadZone)) {
+                LogUtil.Log(GameActionKeys.GameBadZone + ":" + goName);
                 GameController.GamePlayerOutOfBounds();
             }
-            else if (goName.Contains("GameZone")) {
-                LogUtil.Log("GameZone: " + goName);
-                GameController.GamePlayerGoalZoneCountdown(go);
-            }
-            else if (goName.Contains("GameBoundaryZone")) {
-                LogUtil.Log("GameBoundaryZone: " + goName);
+            else if (goName.Contains(GameActionKeys.GameBoundaryZone)) {
+                LogUtil.Log(GameActionKeys.GameBoundaryZone + ":" + goName);
                 // Nothing it is a wall...
+            }
+            else if (goName.Contains(GameActionKeys.GameZone)) {
+                LogUtil.Log(GameActionKeys.GameZone + ":" + goName);
+                GameController.GamePlayerGoalZoneCountdown(go);
             }
             
             // GameZoneActionSave
@@ -2648,34 +2759,43 @@ public class BaseGamePlayerController : GameActor {
         
         if (IsSidekickControlled) {
                         
-            if (goName.Contains("GameZoneActionSave")) {
-                Debug.Log("GameZoneActionSave: " + goName);
-                
-                if (IsPlayerControlled || IsSidekickControlled) {
-                    
-                    GameZoneActionSave actionItem = 
+            // IF WITHIN SAVE RANGE TRIGGER - aim towards rescue point
+            
+            if (goName.Contains(GameActionKeys.GameZoneActionTrigger)) {
+                LogUtil.Log(GameActionKeys.GameZoneActionTrigger + ":" + goName);
+
+                SetNavAgentDestination(go);
+            }
+
+
+            // IF WITHIN SAVE TRIGGER - score and lift off
+            
+            if (goName.Contains(GameActionKeys.GameZoneActionSave)) {
+                LogUtil.Log(GameActionKeys.GameZoneActionSave + ":" + goName);
+
+                GameZoneActionSave actionItem = 
                         go.transform.GetComponentInParent<GameZoneActionSave>();
 
-                    if(actionItem != null) {
+                if (actionItem != null) {
                         
-                        string actionCode = actionItem.actionCode;
+                    string actionCode = actionItem.actionCode;
                         
-                        Debug.Log("GameZoneActionSave: actionCode:" + actionCode);
+                    Debug.Log(GameActionKeys.GameZoneActionSave + ":" + "actionCode:" + actionCode);
                         
-                        AppContentCollect appContentCollect = 
+                    AppContentCollect appContentCollect = 
                             AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
                         
-                        if (appContentCollect != null) {
+                    if (appContentCollect != null) {
                             
-                            Debug.Log("GameZoneActionSave: appContentCollect:" + appContentCollect.code);  
-                                                        
-                            ExitPlayer(Vector3.zero.WithY(1000), 1000);
+                        Debug.Log(GameActionKeys.GameZoneActionSave + ":" + "appContentCollect:" + appContentCollect.code);  
+                              
+                        //SetNavAgentDestination(go);
 
-                            ShowPlayerEffectWarp();
+                        ExitPlayer(Vector3.zero.WithY(1000), 1000);
 
-                        }
                     }
                 }
+
             }
         }
     }
@@ -3490,6 +3610,7 @@ public class BaseGamePlayerController : GameActor {
             AudioAttack();
             
             PlayerEffectWarpFadeIn(); 
+            GamePlayerModelHolderEaseOut();
 
             //Jump(50);
                         
@@ -3539,6 +3660,25 @@ public class BaseGamePlayerController : GameActor {
         if (currentControllerData.navMeshAgentFollowController != null) {
             currentControllerData.navMeshAgentFollowController.StopAgent();
         }
+    }
+
+    public virtual void SetNavAgentDestination(GameObject go) {
+
+        currentTarget = go.transform;
+
+        //StopNavAgent();
+        
+        //if (currentControllerData.navMeshAgent != null) {
+        //    currentControllerData.navMeshAgent.destination = currentTarget.position;
+        //}
+        if (currentControllerData.navMeshAgentController != null) {
+            currentControllerData.navMeshAgentController.nextDestination = currentTarget.position;
+        }
+        if (currentControllerData.navMeshAgentFollowController != null) {
+            currentControllerData.navMeshAgentFollowController.targetFollow = currentTarget;
+        }
+
+        //StartNavAgent();
     }
  
     public virtual void AttackAlt() {    
@@ -4794,6 +4934,9 @@ public class BaseGamePlayerController : GameActor {
 
 
                 if (IsSidekickControlled) {
+                    currentControllerData.navMeshAgentFollowController.agentDistance = 10;
+                    currentControllerData.navMeshAgentFollowController.targetAttractRange = 20;
+                    currentControllerData.navMeshAgentFollowController.targetLimitRange = 40;
                     currentControllerData.navMeshAgentFollowController.targetFollow = 
                         GameController.CurrentGamePlayerController.gamePlayerSidekickTarget.transform;                
                 }
@@ -4995,7 +5138,7 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void UpdateCommonState() {
 
-        if (!controllerReady || isExiting) {
+        if (!controllerReady) {
             return;
         }
         
@@ -5005,12 +5148,18 @@ public class BaseGamePlayerController : GameActor {
             Jump();
         }
              
-        if (Application.isEditor) {
+        if (Application.isEditor && IsPlayerControlled) {
             if (Input.GetKeyDown(KeyCode.M)) {
                 PlayerEffectWarpFadeIn();
             }
             else if (Input.GetKeyDown(KeyCode.N)) {
                 PlayerEffectWarpFadeOut();
+            }
+            else if (Input.GetKeyDown(KeyCode.K)) {
+                GamePlayerModelHolderEaseIn();
+            }
+            else if (Input.GetKeyDown(KeyCode.L)) {
+                GamePlayerModelHolderEaseOut();
             }
         }
 
@@ -5020,6 +5169,7 @@ public class BaseGamePlayerController : GameActor {
         // fast stuff    
         HandlePlayerAliveState();
         HandlePlayerEffectWarpAnimateTick();
+        HandleGamePlayerModelHolderEaseTick();
      
         if (IsAgentState()) {         
          
