@@ -12,6 +12,19 @@ using Engine.Game.Actor;
 using Engine.Game.Controllers;
 using Engine.Utility;
 
+public class GameActionKeys {
+    public static string GameGoalZone = "GameGoalZone";
+    public static string GameBadZone = "GameBadZone";
+    public static string GameZone = "GameZone";
+    public static string GameBoundaryZone = "GameBoundaryZone";
+    //
+    public static string GameZoneActionTrigger = "GameZoneActionTrigger";
+    public static string GameZoneAction = "GameZoneAction";
+    public static string GameZoneActionArea = "GameZoneActionArea";
+    public static string GameZoneActionCollider = "GameZoneActionCollider";
+    //
+}
+
 public enum GamePlayerControllerState {
     ControllerAgent = 0,
     ControllerPlayer = 1,
@@ -1146,16 +1159,29 @@ public class BaseGamePlayerController : GameActor {
     // ACTOR EXITING
     
     public virtual void GamePlayerModelHolderEaseIn() {
-        GamePlayerModelHolderEase(Vector3.zero.WithY(10), Vector3.zero);
+        
+        PlayerEffectWarpFadeOut();
+
+        //GamePlayerModelHolderEase(Vector3.zero.WithY(5), Vector3.zero);
+        LeanTween.cancel(gamePlayerModelHolder);
+        LeanTween
+            .moveLocalY(gamePlayerModelHolder, 0, 1.7f)
+                .setEase(LeanTweenType.easeInOutQuad);
     }
     
     public virtual void GamePlayerModelHolderEaseOut() {
-        GamePlayerModelHolderEase(Vector3.zero, Vector3.zero.WithY(10));
+        //GamePlayerModelHolderEase(Vector3.zero, Vector3.zero.WithY(5));
+
+        PlayerEffectWarpFadeIn();
+
+        LeanTween.cancel(gamePlayerModelHolder);
+        LeanTween
+            .moveLocalY(gamePlayerModelHolder, 10, 2.7f)
+                .setEase(LeanTweenType.easeInOutQuad);
     }
-    
+    /*
     public virtual void GamePlayerModelHolderEase(Vector3 posFrom, Vector3 posTo) {
         currentControllerData.easeModelHolderStart = posFrom;
-        currentControllerData.easeModelHolderCurrent = posFrom;
         currentControllerData.easeModelHolderEnd = posTo;
         currentControllerData.easeModelHolderEnabled = true;
     }
@@ -1164,7 +1190,7 @@ public class BaseGamePlayerController : GameActor {
 
         if (currentControllerData.easeModelHolderEnabled && currentControllerData.visible) {
 
-            float fadeSpeed = 500f;
+            float fadeSpeed = .5f;
 
             if (currentControllerData.easeModelHolderCurrent.y < currentControllerData.easeModelHolderEnd.y && currentControllerData.easeModelHolderCurrent.y > 5) {
                 currentControllerData.easeModelHolderCurrent.y += (Time.deltaTime * fadeSpeed);
@@ -1186,6 +1212,7 @@ public class BaseGamePlayerController : GameActor {
             }
         }
     }
+    */
 
     // WARP
      
@@ -1829,8 +1856,8 @@ public class BaseGamePlayerController : GameActor {
         currentControllerData.initialized = true;
         
         //HidePlayerEffectWarp();
-        PlayerEffectWarpFadeOut();
-        //GamePlayerModelHolderEaseIn();
+        //PlayerEffectWarpFadeOut();
+        GamePlayerModelHolderEaseIn();
         
         if (IsPlayerControlled) {
             GetPlayerProgress();
@@ -2700,17 +2727,6 @@ public class BaseGamePlayerController : GameActor {
             */
     }
 
-    public class GameActionKeys {
-        public static string GameGoalZone = "GameGoalZone";
-        public static string GameBadZone = "GameBadZone";
-        public static string GameZone = "GameZone";
-        public static string GameBoundaryZone = "GameBoundaryZone";
-        //
-        public static string GameZoneActionTrigger = "GameZoneActionTrigger";
-        public static string GameZoneActionSave = "GameZoneActionSave";
-        //
-    }
-
     public virtual void HandleActions(GameObject go) {
         
         HandleActionPlayer(go);
@@ -2770,29 +2786,32 @@ public class BaseGamePlayerController : GameActor {
 
             // IF WITHIN SAVE TRIGGER - score and lift off
             
-            if (goName.Contains(GameActionKeys.GameZoneActionSave)) {
-                LogUtil.Log(GameActionKeys.GameZoneActionSave + ":" + goName);
+            if (goName.Contains(GameActionKeys.GameZoneActionArea)) {
+                LogUtil.Log(GameActionKeys.GameZoneActionArea + ":" + goName);
 
-                GameZoneActionSave actionItem = 
-                        go.transform.GetComponentInParent<GameZoneActionSave>();
+                GameZoneAction actionItem = 
+                        go.transform.GetComponentInParent<GameZoneAction>();
 
                 if (actionItem != null) {
                         
                     string actionCode = actionItem.actionCode;
                         
-                    Debug.Log(GameActionKeys.GameZoneActionSave + ":" + "actionCode:" + actionCode);
+                    Debug.Log(GameActionKeys.GameZoneActionArea + ":" + "actionCode:" + actionCode);
                         
-                    AppContentCollect appContentCollect = 
-                            AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
-                        
-                    if (appContentCollect != null) {
+                    if(actionCode == GameZoneActions.action_save) {
+
+                        AppContentCollect appContentCollect = 
+                                AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
                             
-                        Debug.Log(GameActionKeys.GameZoneActionSave + ":" + "appContentCollect:" + appContentCollect.code);  
-                              
-                        //SetNavAgentDestination(go);
+                        if (appContentCollect != null) {
+                                
+                            Debug.Log(GameActionKeys.GameZoneActionArea + ":" + "appContentCollect:" + appContentCollect.code);  
+                                  
+                            //SetNavAgentDestination(go);
 
-                        ExitPlayer(Vector3.zero.WithY(1000), 1000);
+                            ExitPlayer();
 
+                        }
                     }
                 }
 
@@ -3543,7 +3562,7 @@ public class BaseGamePlayerController : GameActor {
         */
      
         if (IsPlayerControlled) {
-            PlayerEffectWarpFadeIn();
+            GamePlayerModelHolderEaseOut();
         }
                 
         runtimeData.health = 0;
@@ -3566,7 +3585,7 @@ public class BaseGamePlayerController : GameActor {
 
     }
         
-    public virtual void ExitPlayer(Vector3 dir, float power) {
+    public virtual void ExitPlayer() {
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -3608,13 +3627,12 @@ public class BaseGamePlayerController : GameActor {
             runtimeData.health = 10;
             
             AudioAttack();
-            
-            PlayerEffectWarpFadeIn(); 
+
             GamePlayerModelHolderEaseOut();
 
             //Jump(50);
                         
-            ResetPositionAir(500);
+            //ResetPositionAir(10);
 
             // TODO FADE OUT CLEANLY
             /*
@@ -3628,7 +3646,7 @@ public class BaseGamePlayerController : GameActor {
             }
             */
             
-            Invoke("Remove", 3);
+            Invoke("Remove", 2);
 
         }
         
@@ -5169,7 +5187,7 @@ public class BaseGamePlayerController : GameActor {
         // fast stuff    
         HandlePlayerAliveState();
         HandlePlayerEffectWarpAnimateTick();
-        HandleGamePlayerModelHolderEaseTick();
+        //HandleGamePlayerModelHolderEaseTick();
      
         if (IsAgentState()) {         
          
