@@ -585,6 +585,8 @@ public class BaseGamePlayerController : GameActor {
      
         Messenger<string, string>.AddListener(
             GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
+        
+        Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
      
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
@@ -600,6 +602,7 @@ public class BaseGamePlayerController : GameActor {
      
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
+
     }
  
     public override void OnDisable() {
@@ -610,6 +613,8 @@ public class BaseGamePlayerController : GameActor {
 
         Messenger<string, string>.RemoveListener(
             GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
+        
+        Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
 
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
@@ -626,6 +631,14 @@ public class BaseGamePlayerController : GameActor {
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
  
+    }
+
+    public virtual void OnGameLevelStart(string levelCode) {
+        // Button pressed to run game after load
+
+        if(IsPlayerControlled) {
+            GamePlayerModelHolderEaseIn();
+        }
     }
 
     public virtual void SetRuntimeData(GamePlayerRuntimeData data) {
@@ -1158,27 +1171,26 @@ public class BaseGamePlayerController : GameActor {
     
     // ACTOR EXITING
     
-    public virtual void GamePlayerModelHolderEaseIn() {
+    public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = 3f, float delay = 0) {
         
         PlayerEffectWarpFadeOut();
-
-        //GamePlayerModelHolderEase(Vector3.zero.WithY(5), Vector3.zero);
-        LeanTween.cancel(gamePlayerModelHolder);
-        LeanTween
-            .moveLocalY(gamePlayerModelHolder, 0, 1.7f)
-                .setEase(LeanTweenType.easeInOutQuad);
+        GamePlayerModelHolderEase(height, time);
     }
     
-    public virtual void GamePlayerModelHolderEaseOut() {
-        //GamePlayerModelHolderEase(Vector3.zero, Vector3.zero.WithY(5));
-
+    public virtual void GamePlayerModelHolderEaseOut(float height = 10, float time = 3f, float delay = 0) {
         PlayerEffectWarpFadeIn();
+        GamePlayerModelHolderEase(height, time);
+    }
+
+    public virtual void GamePlayerModelHolderEase(float height = 0, float time = 3f, float delay = 0) {
 
         LeanTween.cancel(gamePlayerModelHolder);
         LeanTween
-            .moveLocalY(gamePlayerModelHolder, 10, 2.7f)
-                .setEase(LeanTweenType.easeInOutQuad);
+            .moveLocalY(gamePlayerModelHolder, height, time)
+                .setEase(LeanTweenType.easeInOutQuad)
+                    .setDelay(delay);
     }
+
     /*
     public virtual void GamePlayerModelHolderEase(Vector3 posFrom, Vector3 posTo) {
         currentControllerData.easeModelHolderStart = posFrom;
@@ -1854,15 +1866,20 @@ public class BaseGamePlayerController : GameActor {
         ResetPosition();       
                 
         currentControllerData.initialized = true;
-        
-        //HidePlayerEffectWarp();
-        //PlayerEffectWarpFadeOut();
-        GamePlayerModelHolderEaseIn();
-        
+
         if (IsPlayerControlled) {
             GetPlayerProgress();
             currentControllerData.lastPlayerEffectsTrailUpdate = 0;
             HandlePlayerEffectsTick();
+        }
+
+        LoadEnterExitState();
+    }
+
+    public virtual void LoadEnterExitState() {
+        GamePlayerModelHolderEaseOut(10, .1f, 0);
+        if (!IsPlayerControlled) {        
+            GamePlayerModelHolderEaseIn(0, 3.1f, .2f);
         }
     }
 
@@ -2798,7 +2815,7 @@ public class BaseGamePlayerController : GameActor {
                         
                     Debug.Log(GameActionKeys.GameZoneActionArea + ":" + "actionCode:" + actionCode);
                         
-                    if(actionCode == GameZoneActions.action_save) {
+                    if (actionCode == GameZoneActions.action_save) {
 
                         AppContentCollect appContentCollect = 
                                 AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
