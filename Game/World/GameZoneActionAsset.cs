@@ -4,14 +4,6 @@ using System.Collections.Generic;
 
 using Engine.Events;
 
-public enum GameZoneActionAssetState {
-    none,
-    creating,
-    destroying,
-    created,
-    destroyed
-}
-
 public class GameZoneActionAsset : GameZoneAction {
 
     float lastCreateProgress = 0;
@@ -20,17 +12,22 @@ public class GameZoneActionAsset : GameZoneAction {
     public GameZoneActionAssetState actionGoalState = GameZoneActionAssetState.none;
     public bool actionCompleted = false;
     public bool actionStarted = false;
+    public bool loadOnStart = true;
 
     public override void Start() {
         base.Start();
-        gameZoneType = GameZoneKeys.action_build;
-        actionCode = GameZoneActions.action_build;
 
+        if(string.IsNullOrEmpty(gameZoneType)) {
+            gameZoneType = GameZoneKeys.action_build;
+        }
 
+        if(string.IsNullOrEmpty(actionCode)) {
+            actionCode = GameZoneActions.action_build;
+        }
 
-
-
-
+        if(loadOnStart) {
+            Load();
+        }
     }
     
     public override void OnEnable() {
@@ -47,6 +44,21 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetAnimationPlayNormalized(float time) {
         containerAssets.StepAnimationFrame(assetAnimationNamePlay, time);
+    }
+
+    public void Load(string gameZoneTypeTo, string actionCodeTo, string assetCodeTo, string assetPlatformCodeTo) {
+    
+        gameZoneType = gameZoneTypeTo;
+        actionCode = actionCodeTo;
+        assetCode = assetCodeTo;
+        assetPlatformCode = assetPlatformCodeTo;
+        Load();
+    }
+
+    public void Load() {
+        if(assetCode != lastAssetCode) {
+            lastAssetCode = assetCode;
+        }
     }
 
     public void Update() {

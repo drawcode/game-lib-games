@@ -14,7 +14,6 @@ public class GameZoneKeys {
     public static string bad = "game-zone-bad";
     public static string bad_score = "game-zone-bad-score";
     public static string bad_out_of_bounds = "game-zone-bad-out-of-bounds";
-    
     public static string action_none = "game-zone-action-none";
     public static string action_attack = "game-zone-action-attack";
     public static string action_defend = "game-zone-action-defend";
@@ -33,35 +32,60 @@ public class GameZoneActions {
     public static string action_save = "action-save";
 }
 
+public enum GameZoneActionAssetState {
+    none,
+    creating,
+    destroying,
+    created,
+    destroyed
+}
+
 public class GameZone : GameObjectBehavior {
 
     public string gameZoneType = GameZoneKeys.none;
-    
+    //
     public GameObject containerAssets;
+    public GameObject containerAssetsPlatforms;
+    //
     public GameObject containerEffects;
     public GameObject containerEffectsScore;
     public GameObject containerEffectsIndicator;
-
+    //
     public string assetCode = "";
+    internal string lastAssetCode = "";
+    public string assetPlatformCode = "";
+    internal string lastAssetPlatformCode = "";
+    //
     public string assetColorCode = "";
+    internal string lastAssetColorCode = "";
+    //
     public string actionCode = "";
-    
+    public string lastActionCode = "";
+    //
     public string assetAnimationNamePlay = "start";
     public string assetAnimationNameIdle = "idle";
     
+    public enum GameZoneActionAssetState {
+        none,
+        creating,
+        destroying,
+        created,
+        destroyed
+    }
+    
     // ------------------------------------------------------------
-	
-	public virtual void Start() {
-		
-	}
-	
-	public virtual void OnEnable() {
-		
-	}
-	
-	public virtual void OnDisable() {
-		
-	}
+    
+    public virtual void Start() {
+        
+    }
+    
+    public virtual void OnEnable() {
+        
+    }
+    
+    public virtual void OnDisable() {
+        
+    }
 
     // 
 
@@ -122,18 +146,18 @@ public class GameZone : GameObjectBehavior {
 
     public virtual void PlayEffects() {
 
-        if(FPSDisplay.isUnder25FPS) {
+        if (FPSDisplay.isUnder25FPS) {
             return;
         }
 
-        if(containerEffects != null) {
+        if (containerEffects != null) {
             containerEffects.Show();
             containerEffects.PlayParticleSystem(true);
         }
     }
 
     public virtual void StopEffects() {
-        if(containerEffects != null) {
+        if (containerEffects != null) {
             containerEffects.StopParticleSystem(true);
         }
     }
@@ -143,13 +167,13 @@ public class GameZone : GameObjectBehavior {
 
     public virtual void PlayEffectsScore() {
 
-        if(FPSDisplay.isUnder25FPS) {
+        if (FPSDisplay.isUnder25FPS) {
             return;
         }
 
         Color colorTo = GameCustomController.GetRandomizedColorFromContextEffects();
 
-        if(containerEffectsScore != null) {
+        if (containerEffectsScore != null) {
             containerEffectsScore.Show();
             containerEffectsScore.SetParticleSystemStartColor(colorTo, true);
             containerEffectsScore.PlayParticleSystem(true);
@@ -157,7 +181,7 @@ public class GameZone : GameObjectBehavior {
     }
 
     public virtual void StopEffectsScore() {
-        if(containerEffectsScore != null) {
+        if (containerEffectsScore != null) {
             containerEffectsScore.StopParticleSystem(true);
         }
     }
@@ -167,18 +191,18 @@ public class GameZone : GameObjectBehavior {
 
     public virtual void PlayEffectsIndicator() {
         
-        if(FPSDisplay.isUnder25FPS) {
+        if (FPSDisplay.isUnder25FPS) {
             return;
         }
 
-        if(containerEffectsIndicator != null) {
+        if (containerEffectsIndicator != null) {
             containerEffectsIndicator.Show();
             containerEffectsIndicator.PlayParticleSystem(true);
         }
     }
 
     public virtual void StopEffectsIndicator() {
-        if(containerEffectsIndicator != null) {
+        if (containerEffectsIndicator != null) {
             containerEffectsIndicator.StopParticleSystem(true);
         }
     }
@@ -191,11 +215,11 @@ public class GameZone : GameObjectBehavior {
     }
 
     public virtual void LoadAsset(string assetCodeTo, Vector3 pos) {
-        if(string.IsNullOrEmpty(assetCodeTo)) {
+        if (string.IsNullOrEmpty(assetCodeTo)) {
             return;
         }
         
-        if(containerAssets == null) {
+        if (containerAssets == null) {
             return;
         }
 
@@ -207,5 +231,5 @@ public class GameZone : GameObjectBehavior {
         
         
     }
-	
+    
 }
