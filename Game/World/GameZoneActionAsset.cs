@@ -56,8 +56,39 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void Load() {
+
+        LoadAsset();
+
+        LoadAssetPlatform();
+    }
+
+    public void LoadAsset() {
+        
         if(assetCode != lastAssetCode) {
             lastAssetCode = assetCode;
+            
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(assetCode);
+            
+            if(go != null) {
+                containerAssets.DestroyChildren();
+                go.transform.parent = containerAssets.transform;
+                go.TrackObject(containerAssets);
+            }
+        }
+    }
+
+    public void LoadAssetPlatform() {        
+        
+        if(assetPlatformCode != lastAssetPlatformCode) {
+            lastAssetPlatformCode = assetPlatformCode;
+            
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(assetPlatformCode);
+            
+            if(go != null) {
+                containerAssetsPlatforms.DestroyChildren();
+                go.transform.parent = containerAssetsPlatforms.transform;
+                go.TrackObject(containerAssetsPlatforms);
+            }
         }
     }
 

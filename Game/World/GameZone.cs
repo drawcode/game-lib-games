@@ -52,15 +52,15 @@ public class GameZone : GameObjectBehavior {
     public GameObject containerEffectsIndicator;
     //
     public string assetCode = "";
-    internal string lastAssetCode = "";
+    internal string lastAssetCode = "default";
     public string assetPlatformCode = "";
-    internal string lastAssetPlatformCode = "";
+    internal string lastAssetPlatformCode = "default";
     //
     public string assetColorCode = "";
-    internal string lastAssetColorCode = "";
+    internal string lastAssetColorCode = "default";
     //
     public string actionCode = "";
-    public string lastActionCode = "";
+    internal string lastActionCode = "default";
     //
     public string assetAnimationNamePlay = "start";
     public string assetAnimationNameIdle = "idle";
