@@ -997,7 +997,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void gamePlayerScores(double val) {
         if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.Scores(val);
+            GameController.CurrentGamePlayerController.ProgressScores(val);
         }
     }
  

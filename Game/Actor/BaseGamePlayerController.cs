@@ -54,6 +54,13 @@ public enum GamePlayerContextState {
     ContextNotSet
 }
 
+public enum GameActionTriggerState {
+    TriggerEnter,
+    TriggerExit,
+    ActionTriggerEnter,
+    ActionTriggerExit
+}
+
 public class BaseGamePlayerSlots {
     public static string slotPrimary = "primary";
     public static string slotSecondary = "secondary";
@@ -83,6 +90,11 @@ public class BaseGamePlayerRuntimeData {
     public double savesLaunched = 0;
     public double goalFly = 0;
     public double kills = 0f;
+        
+    public double assetBuilds = 0f;
+    public double assetAttacks = 0f;
+    public double assetRepairs = 0f;
+    public double assetDefends = 0f;
 
     public void SetController(GamePlayerController controller) {
         currentController = controller;
@@ -636,7 +648,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual void OnGameLevelStart(string levelCode) {
         // Button pressed to run game after load
 
-        if(IsPlayerControlled) {
+        if (IsPlayerControlled) {
             GamePlayerModelHolderEaseIn();
         }
     }
@@ -2578,7 +2590,7 @@ public class BaseGamePlayerController : GameActor {
                     if (isObstacle || isLevelObject) {
                         if (IsPlayerControlled) {
                             AudioAttack();
-                            Score(1);
+                            ProgressScore(1);
                             GamePlayerProgress.SetStatHitsObstacles(1f);
                         }
                     }
@@ -2673,6 +2685,9 @@ public class BaseGamePlayerController : GameActor {
     // }
     //private ParticleSystem.CollisionEvent[] collisionEvents = new ParticleSystem.CollisionEvent[16];
     
+    // --------------------------------------------------------------------
+    // TRIGGERS PARTICLES
+    
     public virtual void OnParticleCollision(GameObject other) {
 
         if (!controllerReady) {
@@ -2743,24 +2758,77 @@ public class BaseGamePlayerController : GameActor {
             }
             */
     }
-
-    public virtual void HandleActions(GameObject go) {
+    
+    // --------------------------------------------------------------------
+    // TRIGGERS OBJECTS
+     
+    public virtual void OnTriggerEnter(Collider collider) {
         
-        HandleActionPlayer(go);
+        if (!controllerReady) {
+            return;
+        }
+     
+        HandleZones(
+            GameActionTriggerState.TriggerEnter, collider.gameObject);    
+    }
 
-        HandleActionSidekick(go);
+    public virtual void OnTriggerExit(Collider collider) {
+                
+        if (!controllerReady) {
+            return;
+        }
+                
+        HandleZones(
+            GameActionTriggerState.TriggerExit, collider.gameObject);                
     }
     
-    public virtual void HandleActionPlayer(GameObject go) {
+    // --------------------------------------------------------------------
+    // ZONES HANDLING
+        
+    public virtual void HandleZones(
+        GameActionTriggerState triggerState, GameObject go) {
         
         if (go == null) {
             return;
         }
         
         string goName = go.name;
+                
+        // IF WITHIN ACTION RANGE TRIGGER
         
-        if (IsPlayerControlled) {
+        if (goName.Contains(GameActionKeys.GameZoneActionTrigger)) {
+            Debug.Log(GameActionKeys.GameZoneActionTrigger + ":" + goName);
+                            
+            HandleZonesActionsController(triggerState, go, goName);
+        }
+        else if (goName.Contains(GameActionKeys.GameZoneActionArea)) {
+            Debug.Log(GameActionKeys.GameZoneActionArea + ":" + goName);
                         
+            if (triggerState == GameActionTriggerState.TriggerExit) {
+                triggerState = GameActionTriggerState.ActionTriggerExit;
+            }
+            else {
+                triggerState = GameActionTriggerState.ActionTriggerEnter;
+            }
+
+            HandleZonesActionsController(triggerState, go, goName);
+        }
+        else {
+            HandleZonesController(triggerState, go, goName);
+        }
+    }
+
+    // GOALS
+
+    public virtual void HandleZonesController(
+        GameActionTriggerState triggerState, GameObject go, string goName) {
+
+        // GENERIC OR GOAL ZONES separate from actions
+
+        if (IsPlayerControlled) {
+            
+            // GOALS
+            
             if (goName.Contains(GameActionKeys.GameGoalZone)) {
                 LogUtil.Log(GameActionKeys.GameGoalZone + ":" + goName);
                 GameController.GamePlayerGoalZone(go);
@@ -2776,92 +2844,104 @@ public class BaseGamePlayerController : GameActor {
             else if (goName.Contains(GameActionKeys.GameZone)) {
                 LogUtil.Log(GameActionKeys.GameZone + ":" + goName);
                 GameController.GamePlayerGoalZoneCountdown(go);
-            }
-            
-            // GameZoneActionSave
+            }            
         }
     }
 
-    public virtual void HandleActionSidekick(GameObject go) {
+    // ACTIONS
 
-        if (go == null) {
+    public virtual void HandleZonesActionsController(
+        GameActionTriggerState triggerState, GameObject go, string goName) {
+        
+        GameZoneAction actionItem = 
+            go.transform.GetComponentInParent<GameZoneAction>();
+
+        if (actionItem == null) {
             return;
         }
 
-        string goName = go.name;
-        
-        if (IsSidekickControlled) {
-                        
-            // IF WITHIN SAVE RANGE TRIGGER - aim towards rescue point
-            
-            if (goName.Contains(GameActionKeys.GameZoneActionTrigger)) {
-                LogUtil.Log(GameActionKeys.GameZoneActionTrigger + ":" + goName);
+        Debug.Log("HandleZonesActionsController: actionCode:" + actionItem.actionCode);
 
-                SetNavAgentDestination(go);
+        // CHECK action type
+
+        string actionCode = actionItem.actionCode;
+
+        // GET ACTION CODE
+                
+        if (IsPlayerControlled) {
+                        
+            // ACTIONS
+            
+            // SAVE
+            
+            // BUILD
+            
+            
+            if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
+                
+                if (actionItem.isActionCodeBuild) {                    
+                    
+                    GameZoneActionBuild actionTypeItem = 
+                        go.transform.GetComponentInParent<GameZoneActionBuild>();
+                }
+            }
+            
+            // REPAIR
+            
+            // ATTACK
+            
+            // DEFEND
+            
+        }
+
+        if (IsSidekickControlled) {
+
+            // TRIGGER
+                                    
+            if (triggerState == GameActionTriggerState.TriggerEnter) {                   
+                
+                if (actionItem.isActionCodeSave) {
+                    SetNavAgentDestination(go);                    
+                }
+            }
+            else if (triggerState == GameActionTriggerState.TriggerExit) {                 
+                
+                if (actionItem.isActionCodeSave) {
+                    SetNavAgentDestination(
+                        GameController.CurrentGamePlayerController.gameObject);
+                }
             }
 
-
-            // IF WITHIN SAVE TRIGGER - score and lift off
+            // ACTION TRIGGER
             
-            if (goName.Contains(GameActionKeys.GameZoneActionArea)) {
-                LogUtil.Log(GameActionKeys.GameZoneActionArea + ":" + goName);
+            if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
+                
+                if (actionItem.isActionCodeSave) {
 
-                GameZoneAction actionItem = 
-                        go.transform.GetComponentInParent<GameZoneAction>();
+                    GameZoneActionSave actionTypeItem = 
+                        go.transform.GetComponentInParent<GameZoneActionSave>();
 
-                if (actionItem != null) {
+                    AppContentCollect appContentCollect = 
+                        AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
+                    
+                    if (appContentCollect != null) {
                         
-                    string actionCode = actionItem.actionCode;
-                        
-                    Debug.Log(GameActionKeys.GameZoneActionArea + ":" + "actionCode:" + actionCode);
-                        
-                    if (actionCode == GameZoneActions.action_save) {
+                        Debug.Log(GameActionKeys.GameZoneActionArea + ":" + 
+                                  "appContentCollect:" + 
+                                  appContentCollect.code);  
 
-                        AppContentCollect appContentCollect = 
-                                AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);
-                            
-                        if (appContentCollect != null) {
-                                
-                            Debug.Log(GameActionKeys.GameZoneActionArea + ":" + "appContentCollect:" + appContentCollect.code);  
-                                  
-                            //SetNavAgentDestination(go);
-
-                            ExitPlayer();
-
-                        }
+                        ExitPlayer();
                     }
                 }
-
             }
         }
-    }
-     
-    public virtual void OnTriggerEnter(Collider collider) {
-        
-        if (!controllerReady) {
-            return;
-        }
-     
-        HandleActions(collider.gameObject);
 
-        // TODO ADD SIDEKICK COLLECTION POINT ACTION FLOW
+        if (IsAgentControlled) {
         
-        //GameObject target = collider.gameObject;
-     
-        //LogUtil.Log("hit object:" + target);
-        
-        //if(target != null) {
-        //    GamePlayerController gamePlayerController = target.GetComponent<GamePlayerController>();
-         
-        //   if(gamePlayerController != null) {
-             
-        //DeviceUtil.Vibrate();
-        //       LogUtil.Log("hit another game player");
-        //   }
-        //}
-    
+        }
+
     }
- 
+
     // --------------------------------------------------------------------
     // ANIMATION
 
@@ -3228,7 +3308,7 @@ public class BaseGamePlayerController : GameActor {
      
         if (IsPlayerControlled) {          
             GameHUD.Instance.ShowHitOne((float)(1.5 - runtimeData.health));
-            Score(2 * power);
+            ProgressScore(2 * power);
             DeviceUtil.Vibrate();
         }
         else {
@@ -3242,7 +3322,7 @@ public class BaseGamePlayerController : GameActor {
                 return;
             }
 
-            Score(-1);
+            ProgressScore(-1);
         }
      
         //GameUIPanelOverlays.Instance.ShowOverlayWhiteFlash();
@@ -3637,9 +3717,9 @@ public class BaseGamePlayerController : GameActor {
 
             currentControllerData.actorExiting = true;                
             
-            GameController.CurrentGamePlayerController.Save(1);
-            GameController.CurrentGamePlayerController.Scores(1);
-            GameController.CurrentGamePlayerController.Score(1 * 10);
+            GameController.CurrentGamePlayerController.ProgressSave(1);
+            GameController.CurrentGamePlayerController.ProgressScores(1);
+            GameController.CurrentGamePlayerController.ProgressScore(1 * 10);
             
             runtimeData.health = 10;
             
@@ -4039,7 +4119,7 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
-    public virtual void Scores(double val) {
+    public virtual void ProgressScores(double val) {
 
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4052,7 +4132,7 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerProgress.SetStatScores(val);
     }
  
-    public virtual void Score(double val) {
+    public virtual void ProgressScore(double val) {
              
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4065,7 +4145,7 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerProgress.SetStatScore(val);
     }
         
-    public virtual void Ammo(double val) {
+    public virtual void ProgressAmmo(double val) {
              
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4079,8 +4159,18 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerProgress.SetStatAmmo(val);
     }
     
-    public virtual void Save(double valAdd) {
+    public virtual void ProgressSave(double valAdd) {
              
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        runtimeData.saves += valAdd;
+        Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
+    }
+
+    public virtual void Attack(double valAdd) {
+        
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -5304,7 +5394,7 @@ public class BaseGamePlayerController : GameActor {
             runUpdate = true;
 
             if (IsPlayerControlled) {
-                Score(2 * 1);
+                ProgressScore(2 * 1);
             }
         }
      
