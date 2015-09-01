@@ -8,7 +8,6 @@ public class GameZoneAction : GameZone {
 
     public override void Start() {
         base.Start();
-        gameZoneType = GameZoneKeys.action_save;
     }
     
     public override void OnEnable() {

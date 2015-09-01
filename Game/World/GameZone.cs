@@ -51,16 +51,16 @@ public class GameZone : GameObjectBehavior {
     public GameObject containerEffectsScore;
     public GameObject containerEffectsIndicator;
     //
-    public string assetCode = "";
-    internal string lastAssetCode = "default";
-    public string assetPlatformCode = "";
-    internal string lastAssetPlatformCode = "default";
+    public string assetCode = BaseDataObjectKeys.none;
+    internal string lastAssetCode = BaseDataObjectKeys.none;
+    public string assetPlatformCode = BaseDataObjectKeys.none;
+    internal string lastAssetPlatformCode = BaseDataObjectKeys.none;
     //
-    public string assetColorCode = "";
-    internal string lastAssetColorCode = "default";
+    public string assetColorCode = BaseDataObjectKeys.none;
+    internal string lastAssetColorCode = BaseDataObjectKeys.none;
     //
-    public string actionCode = "";
-    internal string lastActionCode = "default";
+    public string actionCode = BaseDataObjectKeys.none;
+    internal string lastActionCode = BaseDataObjectKeys.none;
     //
     public string assetAnimationNamePlay = "start";
     public string assetAnimationNameIdle = "idle";

@@ -64,7 +64,9 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAsset() {
         
-        if(assetCode != lastAssetCode) {
+        if(assetCode != lastAssetCode 
+           && assetCode != BaseDataObjectKeys.none) {
+
             lastAssetCode = assetCode;
             
             GameObject go = AppContentAssets.LoadAssetLevelAssets(assetCode);
@@ -73,13 +75,17 @@ public class GameZoneActionAsset : GameZoneAction {
                 containerAssets.DestroyChildren();
                 go.transform.parent = containerAssets.transform;
                 go.TrackObject(containerAssets);
+
+                AssetAnimationPlayNormalized(currentCreateProgress);
             }
         }
     }
 
     public void LoadAssetPlatform() {        
         
-        if(assetPlatformCode != lastAssetPlatformCode) {
+        if(assetPlatformCode != lastAssetPlatformCode 
+           && assetCode != BaseDataObjectKeys.none) {
+
             lastAssetPlatformCode = assetPlatformCode;
             
             GameObject go = AppContentAssets.LoadAssetLevelAssets(assetPlatformCode);
