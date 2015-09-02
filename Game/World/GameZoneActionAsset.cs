@@ -14,6 +14,8 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool actionStarted = false;
     public bool loadOnStart = true;
 
+    public GameCharacter gameCharacter;
+
     public override void Start() {
         base.Start();
 
@@ -57,6 +59,8 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void Load() {
 
+        gameCharacter = GameCharacters.Instance.GetById(assetCode);
+
         LoadAsset();
 
         LoadAssetPlatform();
@@ -68,8 +72,19 @@ public class GameZoneActionAsset : GameZoneAction {
            && assetCode != BaseDataObjectKeys.none) {
 
             lastAssetCode = assetCode;
+
+            if(gameCharacter == null) {
+                return;
+            }
+
+            assetAnimationNameIdle = 
+                gameCharacter.data.GetAnimationsByTypeIdle().code;
+
+            assetAnimationNamePlay = 
+                gameCharacter.data.GetAnimationsByTypeStart().code;
             
-            GameObject go = AppContentAssets.LoadAssetLevelAssets(assetCode);
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(
+                gameCharacter.data.GetModel().code);
             
             if(go != null) {
                 containerAssets.DestroyChildren();
@@ -124,6 +139,8 @@ public class GameZoneActionAsset : GameZoneAction {
                 if (currentCreateProgress >= 1) {
                     actionCompleted = true;
 
+                    AssetAnimationIdle();
+
                     GameController.CurrentGamePlayerController.ProgressScores(1);
                 }
             }
@@ -138,7 +155,9 @@ public class GameZoneActionAsset : GameZoneAction {
             if (currentCreateProgress != lastCreateProgress) {
                 lastCreateProgress = currentCreateProgress;
                         
-                AssetAnimationPlayNormalized(currentCreateProgress);
+                if(!actionCompleted) {
+                    AssetAnimationPlayNormalized(currentCreateProgress);
+                }
             }   
         }
 
