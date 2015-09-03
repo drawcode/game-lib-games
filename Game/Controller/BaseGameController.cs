@@ -132,6 +132,13 @@ public class BaseGameMessages {
     public static string gameActionLaunch = "game-action-launch";
     public static string gameActionState = "game-action-state";
     //
+    
+    public static string gameActionAssetAttack = "game-action-asset-attack";
+    public static string gameActionAssetSave = "game-action-asset-save";
+    public static string gameActionAssetBuild = "game-action-asset-build";
+    public static string gameActionAssetRepair = "game-action-asset-repair";
+    public static string gameActionAssetDefend = "game-action-asset-defend";
+    //
     public static string gameInitLevelStart = "game-init-level-start";
     public static string gameInitLevelEnd = "game-init-level-end";
     public static string gameLevelStart = "game-level-start";
@@ -1998,6 +2005,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void processQueueGameObjectTypeData() {
 
+        if(queueGameObjectItems != null) {
+
         foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {            
 
             if (queueItem.type == BaseDataObjectKeys.character) {                
@@ -2011,6 +2020,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                     queueItem.rot,
                     true);
             }
+            }
+            
         }
 
         clearQueueGameObjectTypeData();

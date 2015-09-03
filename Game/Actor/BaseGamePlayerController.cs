@@ -32,6 +32,7 @@ public enum GamePlayerControllerState {
     ControllerNetwork = 3,
     ControllerNotSet = 4,
     ControllerSidekick = 5,
+    ControllerAsset = 6,
 }
 
 public enum GamePlayerActorState {
@@ -90,7 +91,6 @@ public class BaseGamePlayerRuntimeData {
     public double savesLaunched = 0;
     public double goalFly = 0;
     public double kills = 0f;
-        
     public double assetBuilds = 0f;
     public double assetAttacks = 0f;
     public double assetRepairs = 0f;
@@ -1489,6 +1489,12 @@ public class BaseGamePlayerController : GameActor {
             return IsSidekickState();
         }
     }
+    
+    public virtual bool IsAssetControlled {
+        get {
+            return IsAssetState();
+        }
+    }
 
     public virtual bool IsAgentControlled {
         get {
@@ -1502,7 +1508,14 @@ public class BaseGamePlayerController : GameActor {
         }
         return false;
     }
- 
+
+    public virtual bool IsAssetState() {
+        if (controllerState == GamePlayerControllerState.ControllerAsset) {
+            return true;
+        }
+        return false;
+    }
+     
     public virtual bool IsAgentState() {
         if (controllerState == GamePlayerControllerState.ControllerAgent) {
             return true;
@@ -2687,6 +2700,8 @@ public class BaseGamePlayerController : GameActor {
     
     // --------------------------------------------------------------------
     // TRIGGERS PARTICLES
+
+    GameDamageManager gameDamageManager;
     
     public virtual void OnParticleCollision(GameObject other) {
 
@@ -2702,24 +2717,16 @@ public class BaseGamePlayerController : GameActor {
         }
                 
         if (other.name.Contains("projectile-")) {
-            
-            LogUtil.Log("OnParticleCollision:" + other.name);
-            
-            // todo lookup projectile and power to subtract.
-            
-            float projectilePower = 1;
-            float power = projectilePower / 10f;
-            
-            if (IsPlayerControlled || IsSidekickControlled) {
-                // 1/20th power for friendly fire
-                power = power / 20f;
+
+            if(gameDamageManager == null) {
+                gameDamageManager = GetComponent<GameDamageManager>();
             }
             
-            runtimeData.health -= power;
-            
-            //contact.normal.magnitude
-            
-            Hit(power);
+            if(gameDamageManager != null) {                    
+                // todo lookup projectile and power to subtract.                    
+                float projectilePower = 3;
+                gameDamageManager.ApplyDamage(projectilePower);
+            }
         }
             
         /*
@@ -2927,8 +2934,8 @@ public class BaseGamePlayerController : GameActor {
                     if (appContentCollect != null) {
                         
                         Debug.Log(GameActionKeys.GameZoneActionArea + ":" + 
-                                  "appContentCollect:" + 
-                                  appContentCollect.code);  
+                            "appContentCollect:" + 
+                            appContentCollect.code);  
 
                         ExitPlayer();
                     }
@@ -4167,6 +4174,46 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.saves += valAdd;
         Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
+    }
+    
+    public virtual void ProgressAssetAttack(double valAdd) {
+        
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        runtimeData.assetAttacks += valAdd;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetAttack, valAdd);
+    }
+
+    public virtual void ProgressAssetDefend(double valAdd) {
+        
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        runtimeData.assetDefends += valAdd;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetDefend, valAdd);
+    }
+
+    public virtual void ProgressAssetRepair(double valAdd) {
+        
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        runtimeData.assetRepairs += valAdd;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetRepair, valAdd);
+    }
+
+    public virtual void ProgressAssetBuild(double valAdd) {
+        
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+        
+        runtimeData.assetBuilds += valAdd;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetBuild, valAdd);
     }
 
     public virtual void Attack(double valAdd) {

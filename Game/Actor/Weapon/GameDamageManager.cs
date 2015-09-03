@@ -60,7 +60,7 @@ public class GameDamageDirector {
 public class GameDamageManager : MonoBehaviour {
     public AudioClip[] HitSound;
     public GameObject Effect;
-    public int HP = 100;
+    public float HP = 100f;
     public GamePlayerController gamePlayerController;
 
     private void Start() {
@@ -69,13 +69,21 @@ public class GameDamageManager : MonoBehaviour {
         }
     }
 
-    public void ApplyDamage(int damage) {
+    public void ApplyDamage(float damage) {
 
         if (!GameConfigs.isGameRunning) {
             return;
         }
 
         if (gamePlayerController != null) {
+
+            
+            if (gamePlayerController.IsPlayerControlled || gamePlayerController.IsSidekickControlled) {
+                // 1/10th power for friendly fire
+                damage = damage / 10f;
+            }
+
+
             if (!gamePlayerController.isDead 
                 && !gamePlayerController.IsPlayerControlled) {
                 gamePlayerController.Hit(damage / 10);

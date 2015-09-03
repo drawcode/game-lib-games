@@ -135,13 +135,25 @@ public class GameZoneActionAsset : GameZoneAction {
 
         if (!actionCompleted) {
 
-            if (isActionCodeBuild || isActionCodeRepair) {
+            if (isActionCodeBuild || isActionCodeRepair || isActionCodeDefend) {
                 if (currentCreateProgress >= 1) {
                     actionCompleted = true;
 
                     AssetAnimationIdle();
 
                     GameController.CurrentGamePlayerController.ProgressScores(1);
+
+                    if(isActionCodeBuild) {                        
+                        GameController.CurrentGamePlayerController.ProgressAssetBuild(1);
+                    }
+                    
+                    if(isActionCodeRepair) {                        
+                        GameController.CurrentGamePlayerController.ProgressAssetRepair(1);
+                    }
+                    
+                    if(isActionCodeDefend) {                        
+                        GameController.CurrentGamePlayerController.ProgressAssetDefend(1);
+                    }
                 }
             }
             else if (isActionCodeAttack) {
@@ -149,6 +161,9 @@ public class GameZoneActionAsset : GameZoneAction {
                     actionCompleted = true;
                     
                     GameController.CurrentGamePlayerController.ProgressScores(1);
+                    GameController.CurrentGamePlayerController.ProgressAssetAttack(1);
+
+                    RemoveMe();
                 }
             }
 
