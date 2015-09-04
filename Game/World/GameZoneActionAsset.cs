@@ -118,6 +118,10 @@ public class GameZoneActionAsset : GameZoneAction {
         }
     }
 
+    public void ChangeStateNone() {
+        ChangeState(GameZoneActionAssetState.none);
+    }
+
     public void ChangeStateCreating() {
         if (currentCreateState != GameZoneActionAssetState.creating
             && (currentCreateState != GameZoneActionAssetState.created

@@ -2885,31 +2885,52 @@ public class BaseGamePlayerController : GameActor {
         if (IsPlayerControlled) {
                         
             // ACTIONS
+            // TRIGGER ACTION ENTER
+
+            // TRIGGER ENTER
             
-            // SAVE
-            
-            // BUILD
-            
-            
-            if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
+            if (triggerState == GameActionTriggerState.TriggerEnter) {
+
+                // SAVE
                 
+                // BUILD
+
                 if (actionTypeItem.isActionCodeBuild) {
                     actionTypeItem.ChangeStateCreating();
                 }
-            }
-            
-            // REPAIR
-
-            if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
                 
+                // REPAIR
+
                 if (actionTypeItem.isActionCodeRepair) {
                     actionTypeItem.ChangeStateCreating();
                 }
+                                
+                // ATTACK
+                
+                // DEFEND
             }
-            
-            // ATTACK
-            
-            // DEFEND
+
+            // TRIGGER EXIT
+
+            if (triggerState == GameActionTriggerState.TriggerExit) {
+                
+                // SAVE
+                
+                // BUILD
+                
+                if (actionTypeItem.isActionCodeBuild) {
+                    actionTypeItem.ChangeStateNone();
+                }
+                
+                // REPAIR
+                
+                if (actionTypeItem.isActionCodeRepair) {
+                    actionTypeItem.ChangeStateNone();
+                }
+                
+                // ATTACK
+
+            }
             
         }
 
