@@ -2718,11 +2718,11 @@ public class BaseGamePlayerController : GameActor {
                 
         if (other.name.Contains("projectile-")) {
 
-            if(gameDamageManager == null) {
+            if (gameDamageManager == null) {
                 gameDamageManager = GetComponent<GameDamageManager>();
             }
-            
-            if(gameDamageManager != null) {                    
+
+            if (gameDamageManager != null) {                    
                 // todo lookup projectile and power to subtract.                    
                 float projectilePower = 3;
                 gameDamageManager.ApplyDamage(projectilePower);
@@ -2868,6 +2868,13 @@ public class BaseGamePlayerController : GameActor {
         }
 
         Debug.Log("HandleZonesActionsController: actionCode:" + actionItem.actionCode);
+                
+        GameZoneActionAsset actionTypeItem = 
+            go.transform.GetComponentInParent<GameZoneActionAsset>();
+        
+        if (actionTypeItem == null) {
+            return;
+        }
 
         // CHECK action type
 
@@ -2886,14 +2893,19 @@ public class BaseGamePlayerController : GameActor {
             
             if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
                 
-                if (actionItem.isActionCodeBuild) {                    
-                    
-                    GameZoneActionBuild actionTypeItem = 
-                        go.transform.GetComponentInParent<GameZoneActionBuild>();
+                if (actionTypeItem.isActionCodeBuild) {
+                    actionTypeItem.ChangeStateCreating();
                 }
             }
             
             // REPAIR
+
+            if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
+                
+                if (actionTypeItem.isActionCodeRepair) {
+                    actionTypeItem.ChangeStateCreating();
+                }
+            }
             
             // ATTACK
             
@@ -2907,13 +2919,13 @@ public class BaseGamePlayerController : GameActor {
                                     
             if (triggerState == GameActionTriggerState.TriggerEnter) {                   
                 
-                if (actionItem.isActionCodeSave) {
+                if (actionTypeItem.isActionCodeSave) {
                     SetNavAgentDestination(go);                    
                 }
             }
             else if (triggerState == GameActionTriggerState.TriggerExit) {                 
                 
-                if (actionItem.isActionCodeSave) {
+                if (actionTypeItem.isActionCodeSave) {
                     SetNavAgentDestination(
                         GameController.CurrentGamePlayerController.gameObject);
                 }
@@ -2923,10 +2935,7 @@ public class BaseGamePlayerController : GameActor {
             
             if (triggerState == GameActionTriggerState.ActionTriggerEnter) {
                 
-                if (actionItem.isActionCodeSave) {
-
-                    GameZoneActionSave actionTypeItem = 
-                        go.transform.GetComponentInParent<GameZoneActionSave>();
+                if (actionTypeItem.isActionCodeSave) {
 
                     AppContentCollect appContentCollect = 
                         AppContentCollects.GetByTypeAndCode(BaseDataObjectKeys.action, actionCode);

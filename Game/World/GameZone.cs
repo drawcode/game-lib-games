@@ -50,6 +50,7 @@ public class GameZone : GameObjectBehavior {
     public GameObject containerEffects;
     public GameObject containerEffectsScore;
     public GameObject containerEffectsIndicator;
+    public GameObject containerEffectsDamage;
     //
     public string assetCode = BaseDataObjectKeys.none;
     internal string lastAssetCode = BaseDataObjectKeys.none;

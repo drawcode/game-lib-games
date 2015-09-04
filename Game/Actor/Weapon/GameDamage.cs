@@ -41,7 +41,8 @@ public class GameDamage : GameDamageBase {
 		}
 
 		if (Effect) {
-            GameObject obj = GameObjectHelper.CreateGameObject(Effect, transform.position, transform.rotation, true);
+            GameObject obj = GameObjectHelper.CreateGameObject(
+                Effect, transform.position, transform.rotation, true);
             GameObjectHelper.DestroyGameObject(obj, 3, true);
         }
 
@@ -62,14 +63,15 @@ public class GameDamage : GameDamageBase {
             HandleApplyDamage(hit.gameObject);
 
             if (hit.gameObject.Has<Rigidbody>())
-                hit.gameObject.Get<Rigidbody>().AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, 3.0f);
+                hit.gameObject.Get<Rigidbody>().AddExplosionForce(
+                    ExplosionForce, transform.position, ExplosionRadius, 3.0f);
         }
 
     }
 
-    private void NormalDamage(Collision collision) {
+    private void NormalDamage(GameObject other) {
         
-        HandleApplyDamage(collision.gameObject);
+        HandleApplyDamage(other);
     }
 
     
@@ -89,46 +91,55 @@ public class GameDamage : GameDamageBase {
         }
     }
 
-    private void OnCollisionEnter(Collision collision) {
+    private void HandleCollisions(GameObject other) {
+        
+        if (!HitedActive) {
+            return;
+        }
 
-		if (HitedActive) {
-
-            bool doDamage = false;
-            
-            if (collision.transform.name == "GamePlayerCollider") {
-                GamePlayerCollision gamePlayerCollision = 
-                    collision.transform.gameObject.Get<GamePlayerCollision>();
-                if (gamePlayerCollision != null) {
-
-                    if (gamePlayerController == null) {
-                        return;
-                    }
-                    
-                    if (gamePlayerCollision.gamePlayerController == null) {
-                        return;
-                    }
-
-                    if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
-                        return;
-                    }
-                    else {
-                        doDamage = true;
-                    }
+        bool doDamage = false;
+        
+        if (other.transform.name == "GamePlayerCollider") {
+            GamePlayerCollision gamePlayerCollision = 
+                other.Get<GamePlayerCollision>();
+            if (gamePlayerCollision != null) {
+                
+                if (gamePlayerController == null) {
+                    return;
                 }
-            }
-
-            if (collision.gameObject.tag != "Particle" && collision.gameObject.tag != "Player" 
-                && collision.gameObject.tag != this.gameObject.tag) {
-
-                doDamage = true;
-            }
-
-            if (doDamage) {                
-                if (!Explosive) {
-                    NormalDamage(collision);
+                
+                if (gamePlayerCollision.gamePlayerController == null) {
+                    return;
                 }
-                Active();
+                
+                if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                    return;
+                }
+                else {
+                    doDamage = true;
+                }
             }
         }
+        
+        if (other.tag != "Particle" && other.tag != "Player" 
+            && other.tag != this.gameObject.tag) {
+            
+            doDamage = true;
+        }
+        
+        if (doDamage) {                
+            if (!Explosive) {
+                NormalDamage(other);
+            }
+            Active();
+        }
+    }
+
+    private void OnTriggerEnter(Collider collider) {
+        HandleCollisions(collider.gameObject);
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        HandleCollisions(collider.gameObject);
     }
 }
