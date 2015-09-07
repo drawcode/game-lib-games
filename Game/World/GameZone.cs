@@ -46,6 +46,8 @@ public class GameZone : GameObjectBehavior {
     //
     public GameObject containerAssets;
     public GameObject containerAssetsPlatforms;
+    //    
+    public GameObject containerIcons;
     //
     public GameObject containerEffects;
     public GameObject containerEffectsScore;
@@ -53,12 +55,12 @@ public class GameZone : GameObjectBehavior {
     public GameObject containerEffectsDamage;
     //
     public string assetCode = BaseDataObjectKeys.none;
-    internal string lastAssetCode = BaseDataObjectKeys.none;
+    internal string lastAssetCode = null;
     public string assetPlatformCode = BaseDataObjectKeys.none;
-    internal string lastAssetPlatformCode = BaseDataObjectKeys.none;
+    internal string lastAssetPlatformCode = null;
     //
     public string assetColorCode = BaseDataObjectKeys.none;
-    internal string lastAssetColorCode = BaseDataObjectKeys.none;
+    internal string lastAssetColorCode = null;
     //
     public string actionCode = BaseDataObjectKeys.none;
     internal string lastActionCode = BaseDataObjectKeys.none;

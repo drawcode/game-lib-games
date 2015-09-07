@@ -15,9 +15,6 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool loadOnStart = true;
     public GameCharacter gameCharacter;
 
-    public UISprite spriteIconStar;
-    public UISprite spriteIcon;
-
     public override void Start() {
         base.Start();
 
@@ -67,12 +64,16 @@ public class GameZoneActionAsset : GameZoneAction {
 
         LoadAssetPlatform();
 
-        LoadIcon();
+        LoadIcons();
     }
 
-    public void LoadIcon() {
-        if(spriteIcon != null) {
-            //
+    public void LoadIcons() {
+
+        // TODO icon from data
+
+        foreach(UISprite spriteIcon in 
+                containerIcons.GetList<UISprite>("Icon")) {
+        
             if(isActionCodeSave) {
                 spriteIcon.spriteName = "icon-arrow-64";
             }
@@ -89,8 +90,13 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void LoadAsset() {
+
+        if(isActionCodeSave) {
+            return;
+        }
         
-        if (assetCode != BaseDataObjectKeys.none) {
+        if (assetCode != BaseDataObjectKeys.none
+            && lastAssetCode != assetCode) {
 
             lastAssetCode = assetCode;
 
@@ -119,7 +125,8 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAssetPlatform() {        
         
-        if (assetCode != BaseDataObjectKeys.none) {
+        if (assetPlatformCode != BaseDataObjectKeys.none
+            && lastAssetPlatformCode != assetPlatformCode) {
 
             lastAssetPlatformCode = assetPlatformCode;
             
