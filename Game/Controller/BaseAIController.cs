@@ -46,22 +46,36 @@ public enum GameAICharacterGenerateType {
 public class BaseAIController : GameObjectBehavior {
 
     public static BaseAIController BaseInstance;
+    //
     public bool runDirector = false;
+    public bool stopDirector = false;
+    //
     public float currentDifficultyLevel = .1f;
+    //
     public float difficultyLevelEasy = .1f;
     public float difficultyLevelNormal = .5f;
     public float difficultyLevelHard = .9f;
     public float difficultyLevelEpic = .99f;
-    public float currentSpawnAmount = 1;
-    public float currentCharacterMin = 5;
+    //
     public float currentCharacterTypeCount = 2; // TODO change to characters data
-    public float currentCharacterLimit = 11;
+    //
+    public double spawnAmount = 1;
+    public double spawnMin = 5;
+    public double spawnLimit = 11;
+    public double spawnEnemyCount = 0;
+    //
     public float currentFPS = 0;
+    //
     public int roundsCompleted = 0;
+    //
     public float lastPeriodicSeconds = 0f;
-    public float currentActorCount = 0;
-    public bool stopDirector = false;
+    //
+    public float spawnTimeRangeMin = 3.2f;
+    public float spawnTimeRangeLimit = 9.3f;
+    //
+    //
     public GameAIDifficulty difficultyLevelEnum = GameAIDifficulty.EASY;
+    //
     public Dictionary<string, GamePlayerSpawn> spawns;
     public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
 
@@ -264,13 +278,13 @@ public class BaseAIController : GameObjectBehavior {
 
         currentFPS = FPSDisplay.GetCurrentFPS();    
         
-        if ((currentActorCount < currentCharacterLimit
-            && currentFPS > 20f) || currentActorCount < currentCharacterMin) {
+        if ((spawnEnemyCount < spawnLimit
+            && currentFPS > 20f) || spawnEnemyCount < spawnMin) {
             
             // do some spawning
             
-            if (currentActorCount < currentCharacterMin * 2) {
-                currentSpawnAmount = 1;
+            if (spawnEnemyCount < spawnMin * 2) {
+                spawnAmount = 1;
             }
 
             GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
@@ -334,7 +348,24 @@ public class BaseAIController : GameObjectBehavior {
     }
 
     // DATA
-    
+
+    public virtual void updateDirector(GameDataDirector director) {
+
+        if (director != null) {
+            
+            if (director.code == GameDataDirectorType.ai) {
+
+                if (director.min > 0) {
+                    spawnMin = director.min;                        
+                }
+                
+                if (director.max > 0) {
+                    spawnLimit = director.max;                        
+                }
+            }
+        }
+    }
+
     public virtual void incrementRoundsCompleted() {
         roundsCompleted += 1;
     }
@@ -343,7 +374,7 @@ public class BaseAIController : GameObjectBehavior {
 
     public virtual void handlePeriodic() {
 
-        if (lastPeriodicSeconds > UnityEngine.Random.Range(3, 10)) {
+        if (lastPeriodicSeconds > UnityEngine.Random.Range(spawnTimeRangeMin, spawnTimeRangeLimit)) {
             lastPeriodicSeconds = 0f;
             GameAIController.DirectAI();
         }
@@ -354,7 +385,7 @@ public class BaseAIController : GameObjectBehavior {
     public virtual void handleUpdate() {
         // do on update always
     
-        currentActorCount = GameController.Instance.characterActorsCount;
+        spawnEnemyCount = GameController.Instance.characterActorEnemyCount;
     }
     
     public virtual void Update() {

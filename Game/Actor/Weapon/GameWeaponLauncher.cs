@@ -307,7 +307,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
     public void NameEffect(GameObject bullet) {
 
-        if(gamePlayerController == null) {
+        if (gamePlayerController == null) {
             gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
 
@@ -382,7 +382,11 @@ public class GameWeaponLauncher : GameWeaponBase {
                 
                     if (Missile) {
                     
-                        Vector3 spread = new Vector3(Random.Range(-Spread, Spread), Random.Range(-Spread, Spread), Random.Range(-Spread, Spread)) / 100;
+                        Vector3 spread = new Vector3(
+                            Random.Range(-Spread, Spread), 
+                            Random.Range(-Spread, Spread), 
+                            Random.Range(-Spread, Spread)) / 100;
+
                         Vector3 direction = this.transform.forward + spread;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
@@ -390,25 +394,34 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         NameEffect(bullet);
 
-                        GameDamageBase damangeBase = bullet.GetComponent<GameDamageBase>();
-                        if (damangeBase) {
-                            damangeBase.gamePlayerController = gamePlayerController;
-                            damangeBase.TargetTag = TargetTag;
+                        GameDamageBase damageBase = bullet.GetComponent<GameDamageBase>();
+
+                        if (damageBase) {
+                            damageBase.gamePlayerController = gamePlayerController;
+                            damageBase.TargetTag = TargetTag;
                         }
+
                         GameWeaponBase weaponBase = bullet.GetComponent<GameWeaponBase>();
+
                         if (weaponBase) {
                             weaponBase.gamePlayerController = gamePlayerController;
                             weaponBase.Target = target;
                             weaponBase.TargetTag = TargetTag;
                         }
 
-
                         bullet.transform.forward = direction;
+
                         if (RigidbodyProjectile) {
+
                             if (bullet.Has<Rigidbody>()) {
+
                                 Rigidbody rigid = bullet.Get<Rigidbody>();
-                                if(rigid != null) {
-                                    if (gamePlayerController != null && gamePlayerController.gameObject.GetRigidbody()) {
+
+                                if (rigid != null) {
+
+                                    if (gamePlayerController != null 
+                                        && gamePlayerController.gameObject.GetRigidbody()) {
+
                                         rigid.velocity = gamePlayerController.gameObject.GetRigidbody().velocity;
                                     }
                                     rigid.AddForce(direction * ForceShoot);  
@@ -421,13 +434,16 @@ public class GameWeaponLauncher : GameWeaponBase {
 
 
                 if (!FPSDisplay.isUnder25FPS && Shell) {
+
                     Transform shelloutpos = this.transform;
+
                     if (ShellOuter.Length > 0) {
                         shelloutpos = ShellOuter[currentOuter];
                     }
                 
                     GameObject shell = GameObjectHelper.CreateGameObject(
                         Shell, shelloutpos.position, Random.rotation, true);
+
                     GameObjectHelper.DestroyGameObject(shell.gameObject, ShellLifeTime);
 
                     if (shell.Has<Rigidbody>()) {

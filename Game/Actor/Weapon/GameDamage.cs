@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GameDamage : GameDamageBase {
 
-	public bool Explosive;
+    public bool Explosive;
     public float ExplosionRadius = 3;
     public float ExplosionForce = 300;
     public bool HitedActive = true;
@@ -17,7 +17,7 @@ public class GameDamage : GameDamageBase {
         if (!gamePlayerController || !gamePlayerController.collider)
             return;
 
-        if(!collider.enabled || !gamePlayerController.collider.enabled) {
+        if (!collider.enabled || !gamePlayerController.collider.enabled) {
             return;
         }
 
@@ -34,19 +34,19 @@ public class GameDamage : GameDamageBase {
     }
 
     public void Active() {
-				
-		if(!GameDamageDirector.AllowExplosion) {			
-			GameObjectHelper.DestroyGameObject(gameObject);
-			return;
-		}
+                
+        if (!GameDamageDirector.AllowExplosion) {           
+            GameObjectHelper.DestroyGameObject(gameObject);
+            return;
+        }
 
-		if (Effect) {
+        if (Effect) {
             GameObject obj = GameObjectHelper.CreateGameObject(
                 Effect, transform.position, transform.rotation, true);
             GameObjectHelper.DestroyGameObject(obj, 3, true);
         }
 
-		if (Explosive)
+        if (Explosive)
             ExplosionDamage();
 
         GameObjectHelper.DestroyGameObject(gameObject, 3, true);
@@ -73,12 +73,11 @@ public class GameDamage : GameDamageBase {
         
         HandleApplyDamage(other);
     }
-
     
     GameDamageManager damageManage = null;
 
     public void HandleApplyDamage(GameObject go) {
-        if(damageManage == null) {
+        if (damageManage == null) {
             damageManage = go.GetComponent<GameDamageManager>();        
         }
         if (damageManage != null) {

@@ -15,6 +15,9 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool loadOnStart = true;
     public GameCharacter gameCharacter;
 
+    public UISprite spriteIconStar;
+    public UISprite spriteIcon;
+
     public override void Start() {
         base.Start();
 
@@ -63,12 +66,31 @@ public class GameZoneActionAsset : GameZoneAction {
         LoadAsset();
 
         LoadAssetPlatform();
+
+        LoadIcon();
+    }
+
+    public void LoadIcon() {
+        if(spriteIcon != null) {
+            //
+            if(isActionCodeSave) {
+                spriteIcon.spriteName = "icon-arrow-64";
+            }
+            else if(isActionCodeRepair) {
+                spriteIcon.spriteName = "icon-wrench-064";
+            }
+            else if(isActionCodeBuild) {
+                spriteIcon.spriteName = "icon-magic-64";
+            }
+            else if(isActionCodeAttack) {
+                spriteIcon.spriteName = "icon-weapon-64";
+            }
+        }
     }
 
     public void LoadAsset() {
         
-        if (assetCode != lastAssetCode 
-            && assetCode != BaseDataObjectKeys.none) {
+        if (assetCode != BaseDataObjectKeys.none) {
 
             lastAssetCode = assetCode;
 
@@ -97,8 +119,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAssetPlatform() {        
         
-        if (assetPlatformCode != lastAssetPlatformCode 
-            && assetCode != BaseDataObjectKeys.none) {
+        if (assetCode != BaseDataObjectKeys.none) {
 
             lastAssetPlatformCode = assetPlatformCode;
             

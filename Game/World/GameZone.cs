@@ -65,6 +65,10 @@ public class GameZone : GameObjectBehavior {
     //
     public string assetAnimationNamePlay = "start";
     public string assetAnimationNameIdle = "idle";
+
+    // 
+    public double totalNeeded = 1.0;
+    public double totalCompleted = 0.0;
     
     public enum GameZoneActionAssetState {
         none,

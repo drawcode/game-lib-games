@@ -15,7 +15,6 @@ public class GameMoverMissile : GameWeaponBase {
     private bool locked;
     private int timetorock;
     private float timeCount = 0;
-
     private float initialDamping = 3;
     private float initialSpeed = 80;
     private float initialSpeedMax = 80;
@@ -74,16 +73,23 @@ public class GameMoverMissile : GameWeaponBase {
     
     private void FixedUpdate() {
 
-        if(rigid == null) {
+        if (rigid == null) {
             rigid = gameObject.Get<Rigidbody>();        
         }
 
-        if(rigid == null) {
+        if (rigid == null) {
             return;
         }
 
-        rigid.velocity = new Vector3(transform.forward.x * Speed * Time.fixedDeltaTime, transform.forward.y * Speed * Time.fixedDeltaTime, transform.forward.z * Speed * Time.fixedDeltaTime);
-        rigid.velocity += new Vector3(Random.Range(-Noise.x, Noise.x), Random.Range(-Noise.y, Noise.y), Random.Range(-Noise.z, Noise.z));
+        rigid.velocity = new Vector3(
+            transform.forward.x * Speed * Time.fixedDeltaTime, 
+            transform.forward.y * Speed * Time.fixedDeltaTime,
+            transform.forward.z * Speed * Time.fixedDeltaTime);
+
+        rigid.velocity += new Vector3(
+            Random.Range(-Noise.x, Noise.x), 
+            Random.Range(-Noise.y, Noise.y), 
+            Random.Range(-Noise.z, Noise.z));
         
         if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;
@@ -94,7 +100,7 @@ public class GameMoverMissile : GameWeaponBase {
 
     private void Update() {
         if (Time.time >= (timeCount + LifeTime) - 0.5f) {
-            if(gameDamageObject == null) {
+            if (gameDamageObject == null) {
                 gameDamageObject = GetComponent<GameDamage>();
             }
             if (gameDamageObject != null) {

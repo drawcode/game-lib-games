@@ -10,7 +10,6 @@ public class GameMoverBullet : GameWeaponBase {
     public float SpeedMult = 1;
     private bool hasRigidBody = false;
     private Rigidbody rigbody;
-
     private float initialSpeed = 80;
     private float initialSpeedMax = 80;
     private float initialSpeedMult = 1;
@@ -26,6 +25,7 @@ public class GameMoverBullet : GameWeaponBase {
         Reset();
                 
         GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
+
         rigbody = this.rigbody;
         hasRigidBody = rigbody ? true : false;
     }
@@ -54,7 +54,7 @@ public class GameMoverBullet : GameWeaponBase {
                 this.transform.forward = rigbody.velocity.normalized;    
         }
         
-		if (Speed < SpeedMax) {
+        if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;
         }
     }

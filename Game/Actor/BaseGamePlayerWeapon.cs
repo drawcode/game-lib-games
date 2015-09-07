@@ -26,7 +26,6 @@ public class BaseGamePlayerWeapon : GameActor {
     public ParticleSystem particleSystemAttackProjectile2;
     public GamePlayerController gamePlayerController;
     public GameWeapon gameWeaponData;
-
     public bool hasGameWeaponLauncher = false;
     public GameWeaponLauncher gameWeaponLauncher;
 
@@ -64,7 +63,7 @@ public class BaseGamePlayerWeapon : GameActor {
     public virtual void Load() {
 
 
-        foreach(GameWeaponLauncher launch in GetComponentsInChildren<GameWeaponLauncher>(true)) {
+        foreach (GameWeaponLauncher launch in GetComponentsInChildren<GameWeaponLauncher>(true)) {
             launch.gamePlayerController = gamePlayerController;
             gameWeaponLauncher = launch;
         }
@@ -104,7 +103,7 @@ public class BaseGamePlayerWeapon : GameActor {
         
     public virtual void Attack() {
 
-       if(gameWeaponLauncher != null) {
+        if (gameWeaponLauncher != null) {
             gameWeaponLauncher.Shoot();
         }
         else {
@@ -129,7 +128,7 @@ public class BaseGamePlayerWeapon : GameActor {
                     AppContentAssets.LoadAssetPrefab("weapon", projectile.code);
 
                 GameObject projectileExplosionPrefab = 
-                    AppContentAssets.LoadAssetPrefab("weapon","projectile-explosion-star-1");
+                    AppContentAssets.LoadAssetPrefab("weapon", "projectile-explosion-star-1");
 
                 if (projectilePrefab != null) {
 
@@ -144,24 +143,24 @@ public class BaseGamePlayerWeapon : GameActor {
                     // add components
 
                     DetachToWorld detachToWorld = projectileObject.Get<DetachToWorld>();
-                    if(detachToWorld == null) {
+                    if (detachToWorld == null) {
                         detachToWorld = projectileObject.AddComponent<DetachToWorld>();
                     }
                                         
                     DestroyObjectTimed destroyObjectTimed = projectileObject.Get<DestroyObjectTimed>();
-                    if(destroyObjectTimed == null) {
+                    if (destroyObjectTimed == null) {
                         destroyObjectTimed = projectileObject.AddComponent<DestroyObjectTimed>();
                     }
                     destroyObjectTimed.delay = 5f;
                     
                     SpawnOnContact spawnOnContact = projectileObject.Get<SpawnOnContact>();
-                    if(spawnOnContact == null) {
+                    if (spawnOnContact == null) {
                         spawnOnContact = projectileObject.AddComponent<SpawnOnContact>();
                     }
                     spawnOnContact.objectToCreate = projectileExplosionPrefab;
                     
                     GameObjectMove gameObjectMove = projectileObject.Get<GameObjectMove>();
-                    if(gameObjectMove == null) {
+                    if (gameObjectMove == null) {
                         gameObjectMove = projectileObject.AddComponent<GameObjectMove>();
                     }
                     gameObjectMove.translationSpeedX = 0f;
@@ -170,12 +169,12 @@ public class BaseGamePlayerWeapon : GameActor {
                     gameObjectMove.local = true;
                     
                     BoxCollider projectileCollider = projectileObject.Get<BoxCollider>();
-                    if(projectileCollider == null) {
+                    if (projectileCollider == null) {
                         projectileCollider = projectileObject.AddComponent<BoxCollider>();
                     }
                     
                     Rigidbody projectileBody = projectileObject.Get<Rigidbody>();
-                    if(projectileBody == null) {
+                    if (projectileBody == null) {
                         projectileBody = projectileObject.AddComponent<Rigidbody>();
                     }
                     projectileBody.mass = .001f;
@@ -205,53 +204,53 @@ public class BaseGamePlayerWeapon : GameActor {
     
     public virtual void AttackPrimary() {
         
-        if(gameWeaponLauncher != null) {
+        if (gameWeaponLauncher != null) {
             gameWeaponLauncher.Shoot();
         }
         else {
 
-        if (!useGameObjectProjectile) {
+            if (!useGameObjectProjectile) {
         
-        }
-        else {
+            }
+            else {
             
             
-            if (currentItems != null) {
+                if (currentItems != null) {
                 
-                LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItems:" + currentItems);
+                    LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItems:" + currentItems);
                 
-                if (currentItems.Count > 0) {
-                    // TODO work in other shoot buttons         
+                    if (currentItems.Count > 0) {
+                        // TODO work in other shoot buttons         
                 
-                    GameObject currentItem = currentItems[0];
+                        GameObject currentItem = currentItems[0];
                     
-                    LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItem:" + currentItem);
+                        LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItem:" + currentItem);
                     
-                    Vector3 projectileStartPosition = transform.position;
-                    projectileStartPosition.x = projectileStartPosition.x + 2f;
+                        Vector3 projectileStartPosition = transform.position;
+                        projectileStartPosition.x = projectileStartPosition.x + 2f;
 
-                    GamePlayerProjectile projectile =
+                        GamePlayerProjectile projectile =
                         GameObjectHelper.CreateGameObject(
                             currentItem.gameObject,
                             projectileStartPosition,
                             Quaternion.identity,
                             GameConfigs.usePooledProjectiles
-                    ).GetComponent<GamePlayerProjectile>();
-                    ;
+                        ).GetComponent<GamePlayerProjectile>();
+                        ;
 
-                    GameObject gameObject = currentItem;
-                    if (projectile != null) {
+                        GameObject gameObject = currentItem;
+                        if (projectile != null) {
                         
-                        projectile.transform.parent = null;
+                            projectile.transform.parent = null;
                         
                         
-                        //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation.eulerAngles:" + gameObject.transform.localRotation.eulerAngles);
-                        //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation:" + gameObject.transform.localRotation);
+                            //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation.eulerAngles:" + gameObject.transform.localRotation.eulerAngles);
+                            //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation:" + gameObject.transform.localRotation);
                         
-                        //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation.eulerAngles:" + gameObject.transform.rotation.eulerAngles);
-                        //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation:" + gameObject.transform.rotation);
+                            //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation.eulerAngles:" + gameObject.transform.rotation.eulerAngles);
+                            //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation:" + gameObject.transform.rotation);
                         
-                        /*
+                            /*
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform:" + gameObject.transform);
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.name:" + gameObject.name);
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.position:" + gameObject.transform.position);
@@ -272,20 +271,20 @@ public class BaseGamePlayerWeapon : GameActor {
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.parent.transform.localEulerAngles:" + gameObject.transform.parent.gameObject.transform.localEulerAngles);
                         */
                         
-                        projectile.gameObject.transform.position = gameObject.transform.position;
-                        projectile.speed = 1f;//currentAcceleration * .1f;
+                            projectile.gameObject.transform.position = gameObject.transform.position;
+                            projectile.speed = 1f;//currentAcceleration * .1f;
                         
-                        if (InputSystem.Instance != null) {
-                            //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gInputSystem.Instance.lastTargetDirection:" + InputSystem.Instance.lastTargetDirection);
-                            //projectile.direction = InputSystem.Instance.lastTargetDirection;
-                            projectile.transform.position = transform.parent.position;
-                            projectile.direction = transform.parent.position;
+                            if (InputSystem.Instance != null) {
+                                //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gInputSystem.Instance.lastTargetDirection:" + InputSystem.Instance.lastTargetDirection);
+                                //projectile.direction = InputSystem.Instance.lastTargetDirection;
+                                projectile.transform.position = transform.parent.position;
+                                projectile.direction = transform.parent.position;
+                            }
+                        
+                            projectile.projectileObject = currentItem;
+                            projectile.Launch();
                         }
-                        
-                        projectile.projectileObject = currentItem;
-                        projectile.Launch();
                     }
-                }
                 }
             }
 

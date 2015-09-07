@@ -42,18 +42,24 @@ public class BaseItemController : GameObjectBehavior {
     public static BaseItemController BaseInstance;
     public bool runDirector = false;
     public bool stopDirector = false;
+    //
     public float currentDifficultyLevel = .1f;
+    //
     public float difficultyLevelEasy = .1f;
     public float difficultyLevelNormal = .5f;
     public float difficultyLevelHard = .9f;
     public float difficultyLevelEpic = .99f;
-    public float currentSpawnAmount = 1;
-    public float currentItemMin = 3;
-    public float currentItemLimit = 9;
-    public float currentFPS = 0;
+    //
+    public double spawnAmount = 1;
+    public double spawnMin = 3;
+    public double spawnLimit = 9;
+    public double currentFPS = 0;
+    //
     public int roundsCompleted = 0;
+    //
     float lastPeriodicSeconds = 0f;
     float currentItemCount = 0;
+    //
     public GameItemDifficulty difficultyLevelEnum = GameItemDifficulty.EASY;
 
     public static bool isBaseInst {
@@ -209,13 +215,13 @@ public class BaseItemController : GameObjectBehavior {
      
         currentFPS = FPSDisplay.GetCurrentFPS();    
      
-        if ((currentItemCount < currentItemLimit
-            && currentFPS > 20f) || currentItemCount < currentItemMin) {
+        if ((currentItemCount < spawnLimit
+            && currentFPS > 20f) || currentItemCount < spawnMin) {
      
             // do some spawning
          
-            if (currentItemCount < currentItemMin * 2) {
-                currentSpawnAmount = 1;
+            if (currentItemCount < spawnMin * 2) {
+                spawnAmount = 1;
             }
 
             GamePreset preset = GamePresets.Instance.GetCurrentPresetDataItem();
@@ -346,6 +352,22 @@ public class BaseItemController : GameObjectBehavior {
     }
 
     // DATA
+    
+    public virtual void updateDirector(GameDataDirector director) {
+        
+        if(director != null) {
+            
+            if (director.code == GameDataDirectorType.item) {
+                if(director.min > 0) {
+                    spawnMin = director.min;                        
+                }
+                
+                if(director.max > 0) {
+                    spawnLimit = director.max;                        
+                }
+            }
+        }
+    }
     
     public virtual void incrementRoundsCompleted() {
         roundsCompleted += 1;

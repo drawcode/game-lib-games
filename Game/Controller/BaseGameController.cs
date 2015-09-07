@@ -751,6 +751,40 @@ public class BaseGameController : GameObjectTimerBehavior {
             return levelActorsContainerObject.transform.childCount;
         }
     }
+
+    public int characterActorEnemyCount {
+        get {           
+
+            int countEnemies = 0;
+
+            foreach(GamePlayerController gamePlayerController in 
+                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+            
+                if(gamePlayerController.IsAgentControlled) {
+                    countEnemies += 1;
+                }
+            }
+
+            return countEnemies;
+        }
+    }
+
+    public int characterActorSidekickCount {
+        get {           
+            
+            int countEnemies = 0;
+            
+            foreach(GamePlayerController gamePlayerController in 
+                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+                
+                if(gamePlayerController.IsSidekickControlled) {
+                    countEnemies += 1;
+                }
+            }
+            
+            return countEnemies;
+        }
+    }
     
     public int collectableItemsCount {
         get {
@@ -2250,16 +2284,17 @@ public class BaseGameController : GameObjectTimerBehavior {
                 foreach (GameDataDirector director in directors) {
                     if (director.code == GameDataDirectorType.ai) {
                         runAI = director.run;
+                        GameAIController.UpdateDirector(director);
                     }
                     else if (director.code == GameDataDirectorType.item) {
                         runItem = director.run;
+                        GameItemController.UpdateDirector(director);
                     }
                 }
             }
         }
 
         GameController.UpdateDirectorAI(runAI);
-
         GameController.UpdateDirectorItem(runItem);
     }
 

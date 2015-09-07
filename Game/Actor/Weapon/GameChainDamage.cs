@@ -6,14 +6,13 @@ public class GameChainDamage : GameDamageBase {
     public int NumberChain = 3;
     public int Distance = 100;
     public float Direction = 0.5f;
-
     
     void Start() {
 
-		if(!GameDamageDirector.AllowChain) {
-			//GameObjectHelper.DestroyGameObject(gameObject);
-			//return;
-		}
+        if (!GameDamageDirector.AllowChain) {
+            //GameObjectHelper.DestroyGameObject(gameObject);
+            //return;
+        }
 
         int count = 0;
 
@@ -41,9 +40,13 @@ public class GameChainDamage : GameDamageBase {
                                 
                                     if (count <= NumberChain) {
                                     
-                                        GameObject chain = GameObjectHelper.CreateGameObject(ChainObject, this.transform.position, this.transform.rotation, true);
+                                        GameObject chain = GameObjectHelper.CreateGameObject(
+                                            ChainObject, this.transform.position, this.transform.rotation, true);
 
-                                        Quaternion targetlook = Quaternion.LookRotation(objs[i].transform.position - chain.transform.position);
+                                        Quaternion targetlook = 
+                                            Quaternion.LookRotation(
+                                                objs[i].transform.position - chain.transform.position);
+
                                         chain.transform.rotation = targetlook;
                                         count += 1;
                                     }
