@@ -281,13 +281,13 @@ public class GameLevelTemplate {
 }
 
 public class GameLevelGridData {
-    public float gridHeight = GameLevels.gridHeight;
-    public float gridWidth = GameLevels.gridWidth;
-    public float gridDepth = GameLevels.gridDepth;
-    public float gridBoxSize = GameLevels.gridBoxSize;
-    public bool centeredX = GameLevels.centeredX;
-    public bool centeredY = GameLevels.centeredY;
-    public bool centeredZ = GameLevels.centeredZ;
+    public float gridHeight = (float)GameLevels.currentLevelData.grid_height;
+    public float gridWidth = (float)GameLevels.currentLevelData.grid_width;
+    public float gridDepth = (float)GameLevels.currentLevelData.grid_depth;
+    public float gridBoxSize = (float)GameLevels.currentLevelData.grid_box_size;
+    public bool centeredX = GameLevels.currentLevelData.grid_centered_x;
+    public bool centeredY = GameLevels.currentLevelData.grid_centered_y;
+    public bool centeredZ = GameLevels.currentLevelData.grid_centered_z;
     public List<string> presets = new List<string>();
     public List<AppContentAsset> assets;
     //public string[,,] assetMap;
@@ -757,10 +757,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             int countEnemies = 0;
 
-            foreach(GamePlayerController gamePlayerController in 
+            foreach (GamePlayerController gamePlayerController in 
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
             
-                if(gamePlayerController.IsAgentControlled) {
+                if (gamePlayerController.IsAgentControlled) {
                     countEnemies += 1;
                 }
             }
@@ -774,10 +774,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             
             int countEnemies = 0;
             
-            foreach(GamePlayerController gamePlayerController in 
+            foreach (GamePlayerController gamePlayerController in 
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
                 
-                if(gamePlayerController.IsSidekickControlled) {
+                if (gamePlayerController.IsSidekickControlled) {
                     countEnemies += 1;
                 }
             }
@@ -1316,6 +1316,31 @@ public class BaseGameController : GameObjectTimerBehavior {
     
         // Load in the level assets
         GameDraggableEditor.LoadLevelItems();
+                
+        // Find actions and make them current actions or none
+
+        //List<AppContentCollectItem> actionItemsAsset = new List<AppContentCollectItem>();
+
+        //foreach(AppContentCollectItem collectItem in 
+        //        AppContentCollects.Current.GetItemsData()) {
+        //    if(collectItem.IsCodeActionAssetAttack()) {
+        //        actionCodes.Add(collectItem);
+        //    }
+        //}
+
+        foreach(GameZoneActionAsset gameZoneActionAsset in 
+                levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
+
+            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
+                // Make it a type of needed action or none.
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_attack, 
+                    GameZoneActions.action_attack,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+            }
+        }
     
     }
 
@@ -1824,7 +1849,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
 
-            if(spawnLocation == Vector3.zero) {
+            if (spawnLocation == Vector3.zero) {
                 spawnLocation = GameController.GetRandomSpawnLocation();
             }
         }
@@ -2039,13 +2064,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void processQueueGameObjectTypeData() {
 
-        if(queueGameObjectItems != null) {
+        if (queueGameObjectItems != null) {
 
-        foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {            
+            foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {            
 
-            if (queueItem.type == BaseDataObjectKeys.character) {                
+                if (queueItem.type == BaseDataObjectKeys.character) {                
 
-                GameController.LoadActor(
+                    GameController.LoadActor(
                     queueItem.code, 
                     queueItem.type, 
                     queueItem.data_type, 
@@ -2053,7 +2078,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     queueItem.pos,
                     queueItem.rot,
                     true);
-            }
+                }
             }
             
         }

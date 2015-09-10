@@ -13,18 +13,11 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool actionCompleted = false;
     public bool actionStarted = false;
     public bool loadOnStart = true;
+    public bool loaded = false;
     public GameCharacter gameCharacter;
 
     public override void Start() {
         base.Start();
-
-        if (string.IsNullOrEmpty(gameZoneType)) {
-            gameZoneType = GameZoneKeys.action_build;
-        }
-
-        if (string.IsNullOrEmpty(actionCode)) {
-            actionCode = GameZoneActions.action_build;
-        }
 
         if (loadOnStart) {
             Load();
@@ -48,23 +41,52 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void Load(string gameZoneTypeTo, string actionCodeTo, string assetCodeTo, string assetPlatformCodeTo) {
-    
-        gameZoneType = gameZoneTypeTo;
-        actionCode = actionCodeTo;
+
+        loaded = false;
+
         assetCode = assetCodeTo;
         assetPlatformCode = assetPlatformCodeTo;
+        gameZoneType = gameZoneTypeTo;
+        actionCode = actionCodeTo;
+
         Load();
     }
 
     public void Load() {
 
+        loaded = false;
+
+        container.Hide();
+
+        //containerAssets.Hide();
+        //containerAssetsPlatforms.Hide();
+        //containerIcons.Hide();
+        //containerEffects.Hide();
+        //containerEffectsDamage.Hide();
+
+        if(gameZoneType == GameZoneKeys.action_none) {
+            return;
+        }
+
         gameCharacter = GameCharacters.Instance.GetById(assetCode);
+        
+        
+        //containerAssets.Show();
+        //containerAssetsPlatforms.Show();
+        //containerIcons.Show();
+        //containerEffects.Show();
+        //containerEffectsDamage.Show();
+
+        container.Show();
 
         LoadAsset();
 
         LoadAssetPlatform();
 
         LoadIcons();
+
+        loaded = true;
+
     }
 
     public void LoadIcons() {
@@ -237,6 +259,10 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void Update() {
 
+        if(!loaded) {
+            return;
+        }
+
         float power = .1f;
 
         if (Application.isEditor) {
@@ -251,7 +277,12 @@ public class GameZoneActionAsset : GameZoneAction {
                     currentCreateProgress -= power * Time.deltaTime;
                 }
             }
-        }       
+        }      
+
+        if(isActionCodeNone) {
+
+            return;
+        }
 
         HandleUpdateState(power, Time.deltaTime);
 

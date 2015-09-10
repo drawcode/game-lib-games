@@ -14,6 +14,7 @@ public class GameZoneKeys {
     public static string bad = "game-zone-bad";
     public static string bad_score = "game-zone-bad-score";
     public static string bad_out_of_bounds = "game-zone-bad-out-of-bounds";
+    //
     public static string action_none = "game-zone-action-none";
     public static string action_attack = "game-zone-action-attack";
     public static string action_defend = "game-zone-action-defend";
@@ -29,6 +30,7 @@ public class GameZoneActions {
     public static string action_defend = "action-defend";
     public static string action_repair = "action-repair";
     public static string action_build = "action-build";
+    public static string action_none = "action-none";
     public static string action_save = "action-save";
 }
 
@@ -44,6 +46,7 @@ public class GameZone : GameObjectBehavior {
 
     public string gameZoneType = GameZoneKeys.none;
     //
+    public GameObject container;
     public GameObject containerAssets;
     public GameObject containerAssetsPlatforms;
     //    
@@ -125,6 +128,13 @@ public class GameZone : GameObjectBehavior {
             return IsActionCode(GameZoneActions.action_build);
         }
     }
+
+    public bool isActionCodeNone {
+        get {
+            return IsActionCode(GameZoneActions.action_none);
+        }
+    }
+
 
     // COLLECT + SAVE
     

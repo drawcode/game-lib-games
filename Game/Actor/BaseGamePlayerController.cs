@@ -4274,11 +4274,9 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        //bool allowTackle = false;
 
         if (currentControllerData.lastTackle + 1f < Time.time) {
             currentControllerData.lastTackle = Time.time;
-            //allowTackle = true;
         }
         else {
             return;
@@ -4286,9 +4284,13 @@ public class BaseGamePlayerController : GameActor {
 
         transform.LookAt(gamePlayerControllerTo.transform);
         
-        Jump();
+        //Jump();
 
-        currentControllerData.positionPlayer = transform.position.WithY(10);
+        StopNavAgent();
+
+        //Jump();
+
+        currentControllerData.positionPlayer = transform.position;//.WithY(10);
         currentControllerData.positionTackler = gamePlayerControllerTo.transform.position;
      
         currentControllerData.gamePlayerControllerAnimation.Attack();
@@ -4297,6 +4299,7 @@ public class BaseGamePlayerController : GameActor {
      
         AddImpact(currentControllerData.positionTackler - currentControllerData.positionPlayer, power, false);
      
+        StartNavAgent();
     }
 
     public virtual void AddForce(Vector3 dir, float force) {
@@ -4337,6 +4340,9 @@ public class BaseGamePlayerController : GameActor {
      
         if (dir.y < 0 && allowY) {
             dir.y = 0;//-dir.y; // reflect down force on the ground
+        }
+        else if (!allowY) {
+            dir.y = 0;
         }
 
         if (damage) {
@@ -5603,22 +5609,25 @@ public class BaseGamePlayerController : GameActor {
                         if (IsAgentControlled) {
 
                             if (gamePlayerControllerHit != null
-                                && !gamePlayerControllerHit.isDead) {
+                                && !gamePlayerControllerHit.isDead
+                                && !currentControllerData.gamePlayerController.isDead) {
 
                                 if (AllowControllerInteraction(gamePlayerControllerHit)) {
 
                                     float power = 0;
 
-                                    if (currentControllerData.distanceToPlayerControlledGamePlayer < attackRange / 3.5f) {
+                                    if (currentControllerData.distanceToPlayerControlledGamePlayer < attackRange / 2f) {
                                         // LEAP AT THEM within three
-                                        power = Mathf.Clamp(100f - currentControllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 50f);
+                                        power = Mathf.Clamp(150f - currentControllerData.distanceToPlayerControlledGamePlayer / 2, 0f, 80f);
                                     }
-                                    else {
+                                    else if (currentControllerData.distanceToPlayerControlledGamePlayer < attackRange * 2) {
                                         // PURSUE FASTER
-                                        power = Mathf.Clamp(3.5f + currentControllerData.distanceToPlayerControlledGamePlayer / 2, 1f, 50f);
+                                        //power = Mathf.Clamp(3.5f + currentControllerData.distanceToPlayerControlledGamePlayer / 2, 0f, 40f);
                                     }
 
-                                    Tackle(gamePlayerControllerHit, power);
+                                    if(power > 0) {
+                                        Tackle(gamePlayerControllerHit, power);
+                                    }
                                 }
                             }
                         }
