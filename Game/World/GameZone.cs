@@ -96,6 +96,21 @@ public class GameZone : GameObjectBehavior {
     public virtual void OnDisable() {
         
     }
+    
+    public virtual void Reset() {
+        gameZoneType = GameZoneKeys.none;
+        assetCode = BaseDataObjectKeys.none;
+        lastAssetCode = null;
+        assetPlatformCode = BaseDataObjectKeys.none;
+        lastAssetPlatformCode = null;
+        assetColorCode = BaseDataObjectKeys.none;
+        lastAssetColorCode = null;
+        actionCode = BaseDataObjectKeys.none;
+        lastActionCode = BaseDataObjectKeys.none;
+        totalNeeded = 1.0;
+        totalCompleted = 0.0;
+
+    }
 
     // 
 

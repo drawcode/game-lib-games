@@ -32,6 +32,18 @@ public class GameZoneActionAsset : GameZoneAction {
         base.OnDisable();
     }
 
+    public override void Reset() {
+        base.Reset();
+
+        actionCompleted = false;
+        actionStarted = false;
+        lastCreateProgress = 0;
+        currentCreateProgress = 0;
+        currentCreateState = GameZoneActionAssetState.none;
+        actionGoalState = GameZoneActionAssetState.none;
+        gameCharacter = null;
+    }
+
     public void AssetAnimationIdle() {
         containerAssets.PlayAnimation(assetAnimationNameIdle);
     }
@@ -40,10 +52,18 @@ public class GameZoneActionAsset : GameZoneAction {
         containerAssets.StepAnimationFrame(assetAnimationNamePlay, time);
     }
 
+    public void AssetAnimationReset() {
+        currentCreateProgress = 0;
+        AssetAnimationPlayNormalized(currentCreateProgress);
+    }
+
     public void Load(string gameZoneTypeTo, string actionCodeTo, string assetCodeTo, string assetPlatformCodeTo) {
 
         loaded = false;
+        
+        Reset();
 
+        currentCreateState = GameZoneActionAssetState.none;
         assetCode = assetCodeTo;
         assetPlatformCode = assetPlatformCodeTo;
         gameZoneType = gameZoneTypeTo;
@@ -64,7 +84,7 @@ public class GameZoneActionAsset : GameZoneAction {
         //containerEffects.Hide();
         //containerEffectsDamage.Hide();
 
-        if(gameZoneType == GameZoneKeys.action_none) {
+        if (gameZoneType == GameZoneKeys.action_none) {
             return;
         }
 
@@ -78,12 +98,13 @@ public class GameZoneActionAsset : GameZoneAction {
         //containerEffectsDamage.Show();
 
         container.Show();
-
         LoadAsset();
 
         LoadAssetPlatform();
 
         LoadIcons();
+
+        HandleActionInit();
 
         loaded = true;
 
@@ -93,19 +114,19 @@ public class GameZoneActionAsset : GameZoneAction {
 
         // TODO icon from data
 
-        foreach(UISprite spriteIcon in 
+        foreach (UISprite spriteIcon in 
                 containerIcons.GetList<UISprite>("Icon")) {
         
-            if(isActionCodeSave) {
+            if (isActionCodeSave) {
                 spriteIcon.spriteName = "icon-arrow-64";
             }
-            else if(isActionCodeRepair) {
-                spriteIcon.spriteName = "icon-wrench-064";
+            else if (isActionCodeRepair) {
+                spriteIcon.spriteName = "icon-wrench-64";
             }
-            else if(isActionCodeBuild) {
+            else if (isActionCodeBuild) {
                 spriteIcon.spriteName = "icon-magic-64";
             }
-            else if(isActionCodeAttack) {
+            else if (isActionCodeAttack) {
                 spriteIcon.spriteName = "icon-weapon-64";
             }
         }
@@ -113,7 +134,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAsset() {
 
-        if(isActionCodeSave) {
+        if (isActionCodeSave) {
             return;
         }
         
@@ -140,7 +161,7 @@ public class GameZoneActionAsset : GameZoneAction {
                 go.transform.parent = containerAssets.transform;
                 go.TrackObject(containerAssets);
 
-                AssetAnimationPlayNormalized(currentCreateProgress);
+                AssetAnimationReset();
             }
         }
     }
@@ -204,6 +225,18 @@ public class GameZoneActionAsset : GameZoneAction {
         }
     }
 
+    public void HandleActionInit() {
+        if(isActionCodeAttack) {
+            currentCreateProgress = 1f;
+        }
+        else if(isActionCodeRepair) {
+            currentCreateProgress = UnityEngine.Random.Range(0.1f,0.5f);
+        }
+        else if(isActionCodeBuild || isActionCodeDefend) {
+            currentCreateProgress = 0;
+        }
+    }
+
     public void HandleUpdateAction() {
         
         Mathf.Clamp(currentCreateProgress, 0f, 1f);
@@ -259,7 +292,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void Update() {
 
-        if(!loaded) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -276,10 +309,24 @@ public class GameZoneActionAsset : GameZoneAction {
 
                     currentCreateProgress -= power * Time.deltaTime;
                 }
-            }
-        }      
 
-        if(isActionCodeNone) {
+                
+                if (Input.GetKeyDown(KeyCode.Slash)) {
+                    Load(
+                        GameZoneKeys.action_attack, 
+                        GameZoneActions.action_attack,
+                        "level-building-1",// + UnityEngine.Random.Range(1, 10),
+                        "platform-large-1");
+                }
+            }
+        }
+        
+        if (!loaded) {
+            return;
+        }
+
+
+        if (isActionCodeNone) {
 
             return;
         }
