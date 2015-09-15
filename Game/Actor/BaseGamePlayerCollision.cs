@@ -5,26 +5,27 @@ using System.Collections.Generic;
 public class BaseGamePlayerCollision : GameObjectBehavior {
     
     public GamePlayerController gamePlayerController;
-    private GameObject gamePlayerControllerObject;
-
+    private GameDamageManager gameDamageManager;
     public string type = "default";
-
     float lastCollision = 0f;
     float intervalCollision = .042f;
     
     public virtual void Start() {
-        //InvokeRepeating("FindPlayerCollisionParent", 1f, 1f);
+
     }
-    
-    public virtual void FindPlayerCollisionParent() {
-        if (gamePlayerControllerObject == null) {
-            gamePlayerControllerObject = gameObject.FindTypeAboveObject<GamePlayerController>();
+
+    public void UpdateGameObjects() {
+        
+        gamePlayerController = null;
+        gameDamageManager = null;
+                
+        if (gamePlayerController == null) {
+            gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }           
         
-        if (gamePlayerController == null 
-            && gamePlayerControllerObject != null) {
-            gamePlayerController = gamePlayerControllerObject.GetComponent<GamePlayerController>();
-            CancelInvoke("FindPlayerCollisionParent");
+        if (gameDamageManager == null) {
+            gameDamageManager = gameObject.GetOrSet<GameDamageManager>();
+            gameDamageManager.UpdateGameObjects();
         }
     }
 
@@ -40,13 +41,13 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
             lastCollision = Time.time;
         }
         else {
-             return;
+            //return;
         }
         
         if (gamePlayerController != null) {
             
-            if(!gamePlayerController.controllerReady) {
-                return;
+            if (!gamePlayerController.controllerReady) {
+                //return;
             }
 
             /*

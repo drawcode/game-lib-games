@@ -1757,29 +1757,6 @@ public class BaseGamePlayerController : GameActor {
 
             if (gameObjectLoad != null) {  
 
-                // Wire up collision object
-
-                GamePlayerCollision gamePlayerCollision;
-                
-                if (gameObjectLoad.Has<GamePlayerCollision>()) {
-                    gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
-
-                    gamePlayerCollision.gamePlayerController = gameObject.Get<GamePlayerController>();
-                    
-                    if (IsPlayerControlled) {     
-                        gamePlayerCollision.tag = "Player";
-                        tag = "Player";
-                    }
-                    else if (IsSidekickControlled) {     
-                        gamePlayerCollision.tag = "Sidekick";
-                        tag = "Sidekick";
-                    }
-                    else {
-                        gamePlayerCollision.tag = "Enemy";
-                        tag = "Enemy";
-                    }
-                }
-
                 // Wire up custom objects
                 
                 gameCustomPlayer = gameObjectLoad.Set<GameCustomPlayer>();
@@ -1841,7 +1818,29 @@ public class BaseGamePlayerController : GameActor {
                                 
                 initialScale = transform.localScale;
 
+                // Wire up collision object
                 
+                GamePlayerCollision gamePlayerCollision;
+                
+                if (gameObjectLoad.Has<GamePlayerCollision>()) {
+                    gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
+                    
+                    if (IsPlayerControlled) {     
+                        gamePlayerCollision.tag = "Player";
+                        tag = "Player";
+                    }
+                    else if (IsSidekickControlled) {     
+                        gamePlayerCollision.tag = "Sidekick";
+                        tag = "Sidekick";
+                    }
+                    else {
+                        gamePlayerCollision.tag = "Enemy";
+                        tag = "Enemy";
+                    }
+                    
+                    gamePlayerCollision.UpdateGameObjects();                
+                }
+                                
                 Debug.Log("LoadCharacterCo:" + " gameObjectLoad:" + gameObjectLoad.name);
 
                 // load items
@@ -2548,13 +2547,6 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (currentControllerData.lastCollision + currentControllerData.intervalCollision < Time.time) {
-            currentControllerData.lastCollision = Time.time;
-        }
-        else {
-            return;
-        }
-
         if (collision.contacts.Length > 0) {
             foreach (ContactPoint contact in collision.contacts) {
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
@@ -2587,6 +2579,20 @@ public class BaseGamePlayerController : GameActor {
                         t.name.Contains("GamePlayerCollider");
                     //|| t.name.Contains("GamePlayerObject");
 
+                    if (!isObstacle && !isLevelObject && !isPlayerObject) {
+                        Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
+                    }
+                    else {
+                        int i = 0;
+                        
+                        if (currentControllerData.lastCollision + currentControllerData.intervalCollision < Time.time) {
+                            currentControllerData.lastCollision = Time.time;
+                        }
+                        else {
+                            return;
+                        }
+                    }
+
                     if (isLevelObject) {
                         GameLevelSprite sprite = t.gameObject.FindTypeAboveRecursive<GameLevelSprite>();
                         if (sprite == null) {
@@ -2608,6 +2614,12 @@ public class BaseGamePlayerController : GameActor {
                         }
                     }
                     else if (isPlayerObject) {
+                        
+                        if (IsAgentControlled) {
+                            Debug.Log("HandleCollision:Agent");
+                        }
+                        else {
+                        }
 
                         // handle stat
 
@@ -2665,7 +2677,7 @@ public class BaseGamePlayerController : GameActor {
                         }
                     }
                 }
-                break;
+                //break;
             }
         }
      
@@ -2708,18 +2720,18 @@ public class BaseGamePlayerController : GameActor {
         if (!controllerReady) {
             return;
         }
-        
-        if (lastCollision + intervalCollision < Time.time) {
-            lastCollision = Time.time;
-        }
-        else {
-            return;
-        }
                 
-        if (other.name.Contains("projectile-")) {
+        if (other.name.Contains("projectile-")) {            
+            
+            if (lastCollision + intervalCollision < Time.time) {
+                lastCollision = Time.time;
+            }
+            else {
+                return;
+            }
 
             if (gameDamageManager == null) {
-                gameDamageManager = GetComponent<GameDamageManager>();
+                gameDamageManager = GetComponentInChildren<GameDamageManager>();
             }
 
             if (gameDamageManager != null) {                    
@@ -3133,11 +3145,6 @@ public class BaseGamePlayerController : GameActor {
         }
 
         ResetPosition();
-
-        //SetControllerData(new GamePlayerControllerData());
-        //SetRuntimeData(new GamePlayerRuntimeData());
-        
-        LoadCharacter(characterCode);
     }
  
     public virtual void Remove() {
@@ -5625,7 +5632,9 @@ public class BaseGamePlayerController : GameActor {
                                         //power = Mathf.Clamp(3.5f + currentControllerData.distanceToPlayerControlledGamePlayer / 2, 0f, 40f);
                                     }
 
-                                    if(power > 0) {
+                                    power = 5f;
+
+                                    if (power > 0) {
                                         Tackle(gamePlayerControllerHit, power);
                                     }
                                 }

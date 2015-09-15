@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GameDamage : GameDamageBase {
 
-    public bool Explosive;
+    public bool Explosive = false;
     public float ExplosionRadius = 3;
     public float ExplosionForce = 300;
     public bool HitedActive = true;
@@ -139,6 +139,6 @@ public class GameDamage : GameDamageBase {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        HandleCollisions(collider.gameObject);
+        HandleCollisions(collision.gameObject);
     }
 }

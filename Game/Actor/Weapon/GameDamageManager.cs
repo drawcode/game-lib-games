@@ -60,21 +60,24 @@ public class GameDamageManager : MonoBehaviour {
     public float HP = 100f;
     public GamePlayerController gamePlayerController;
     public GameZoneActionAsset gameZoneActionAsset;
-
     public bool enableObjectRemove = true;
 
     private void Start() {
+        UpdateGameObjects();
+    }
+
+    public void UpdateGameObjects() {
+
+        gamePlayerController = null;
+        gameZoneActionAsset = null;
+
         if (gamePlayerController == null) {
-            gamePlayerController = GetComponent<GamePlayerController>();
-        }
-        if (gamePlayerController == null) {
-            gamePlayerController = GetComponentInParent<GamePlayerController>();
+            gamePlayerController = 
+                gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
         if (gameZoneActionAsset == null) {
-            gameZoneActionAsset = GetComponent<GameZoneActionAsset>();
-        }
-        if (gameZoneActionAsset == null) {
-            gameZoneActionAsset = GetComponentInParent<GameZoneActionAsset>();
+            gameZoneActionAsset = 
+                gameObject.FindTypeAboveRecursive<GameZoneActionAsset>();
         }
     }
 
@@ -85,13 +88,12 @@ public class GameDamageManager : MonoBehaviour {
         }
 
         if (gamePlayerController != null) {
-
-            
-            if (gamePlayerController.IsPlayerControlled || gamePlayerController.IsSidekickControlled) {
+                        
+            if (gamePlayerController.IsPlayerControlled 
+                || gamePlayerController.IsSidekickControlled) {
                 // 1/10th power for friendly fire
                 damage = damage / 10f;
             }
-
 
             if (!gamePlayerController.isDead 
                 && !gamePlayerController.IsPlayerControlled) {
@@ -101,15 +103,19 @@ public class GameDamageManager : MonoBehaviour {
         else {
             if (HP < 0)
                 return;
-        
-            if (HitSound.Length > 0) {
-                
-                GetComponent<AudioSource>().volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
 
-                //GameAudio.Play
-                AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,
-                                            (float)GameProfiles.Current.GetAudioEffectsVolume());
+            if (HitSound != null) {
+            
+                if (HitSound.Length > 0) {
+                    
+                    GetComponent<AudioSource>().volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+
+                    //GameAudio.Play
+                    AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,
+                                                (float)GameProfiles.Current.GetAudioEffectsVolume());
+                }
             }
+
             HP -= damage;
             if (HP <= 0) {
                 Dead();
@@ -129,7 +135,7 @@ public class GameDamageManager : MonoBehaviour {
             gameZoneActionAsset.AssetAnimationPlayNormalized(.1f);
         }
         else {
-            if(enableObjectRemove) {
+            if (enableObjectRemove) {
                 GameObjectHelper.DestroyGameObject(this.gameObject, true);
             }
         }
