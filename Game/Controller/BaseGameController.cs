@@ -710,6 +710,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void OnEnable() {
+
         Gameverses.GameMessenger<string>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
@@ -723,6 +724,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             OnGameItemDirectorData);
 
         Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
+
+        Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
     }
     
     public virtual void OnDisable() {
@@ -739,8 +742,9 @@ public class BaseGameController : GameObjectTimerBehavior {
             OnGameItemDirectorData);
 
         Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
-    }
 
+        Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
+    }
 
     // ---------------------------------------------------------------------
     
@@ -811,6 +815,23 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void OnProfileShouldBeSavedEventHandler() {
         if (!GameConfigs.isGameRunning) {
             GameState.SaveProfile();
+        }
+    }
+
+    public void OnGameLevelItemsLoaded() {
+        
+        foreach(GameZoneActionAsset gameZoneActionAsset in 
+                levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
+            
+            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
+                // Make it a type of needed action or none.
+                
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_attack, 
+                    GameZoneActions.action_attack,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+            }
         }
     }
     
@@ -1328,6 +1349,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //    }
         //}
 
+        /*
         foreach(GameZoneActionAsset gameZoneActionAsset in 
                 levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
 
@@ -1341,6 +1363,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     "platform-large-1");
             }
         }
+        */
     
     }
 
