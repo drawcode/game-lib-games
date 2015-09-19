@@ -79,19 +79,19 @@ public class SocialNetworks : GameObjectBehavior {
         FacebookManager.preLoginSucceededEvent += facebookPreLoginSucceededEvent;
         FacebookManager.loginFailedEvent += facebookLoginFailed;
 
-        FacebookManager.dialogCompletedWithUrlEvent += facebookDialogCompletedWithUrlEvent;
-        FacebookManager.dialogFailedEvent += facebookDialogFailedEvent;
+        //FacebookManager.dialogCompletedWithUrlEvent += facebookDialogCompletedWithUrlEvent;
+        //FacebookManager.dialogFailedEvent += facebookDialogFailedEvent;
                 
         FacebookManager.graphRequestCompletedEvent += facebookGraphRequestCompletedEvent;
         FacebookManager.graphRequestFailedEvent += facebookGraphRequestFailedEvent;
 
         FacebookManager.facebookComposerCompletedEvent += facebookComposerCompletedEvent;
         
-        FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
-        FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
+        //FacebookManager.reauthorizationFailedEvent += facebookReauthorizationFailedEvent;
+        //FacebookManager.reauthorizationSucceededEvent += facebookReauthorizationSucceededEvent;
         
-        FacebookManager.shareDialogFailedEvent += facebookShareDialogFailedEvent;
-        FacebookManager.shareDialogSucceededEvent += facebookShareDialogSucceededEvent;
+        //FacebookManager.shareDialogFailedEvent += facebookShareDialogFailedEvent;
+        //FacebookManager.shareDialogSucceededEvent += facebookShareDialogSucceededEvent;
 #endif
         
         // -------------------------------------------------------------------
@@ -119,19 +119,19 @@ public class SocialNetworks : GameObjectBehavior {
         FacebookManager.preLoginSucceededEvent -= facebookPreLoginSucceededEvent;
         FacebookManager.loginFailedEvent -= facebookLoginFailed;
         
-        FacebookManager.dialogCompletedWithUrlEvent -= facebookDialogCompletedWithUrlEvent;
-        FacebookManager.dialogFailedEvent -= facebookDialogFailedEvent;
+        //FacebookManager.dialogCompletedWithUrlEvent -= facebookDialogCompletedWithUrlEvent;
+        //FacebookManager.dialogFailedEvent -= facebookDialogFailedEvent;
         
         FacebookManager.graphRequestCompletedEvent -= facebookGraphRequestCompletedEvent;
         FacebookManager.graphRequestFailedEvent -= facebookGraphRequestFailedEvent;
         
         FacebookManager.facebookComposerCompletedEvent -= facebookComposerCompletedEvent;
         
-        FacebookManager.reauthorizationFailedEvent -= facebookReauthorizationFailedEvent;
-        FacebookManager.reauthorizationSucceededEvent -= facebookReauthorizationSucceededEvent;
+        //FacebookManager.reauthorizationFailedEvent -= facebookReauthorizationFailedEvent;
+        //FacebookManager.reauthorizationSucceededEvent -= facebookReauthorizationSucceededEvent;
         
-        FacebookManager.shareDialogFailedEvent -= facebookShareDialogFailedEvent;
-        FacebookManager.shareDialogSucceededEvent -= facebookShareDialogSucceededEvent;
+        //FacebookManager.shareDialogFailedEvent -= facebookShareDialogFailedEvent;
+        //FacebookManager.shareDialogSucceededEvent -= facebookShareDialogSucceededEvent;
 #endif
 
         // -------------------------------------------------------------------
@@ -462,11 +462,11 @@ public class SocialNetworks : GameObjectBehavior {
             
         if(!SystemHelper.CanOpenUrl("fb://profile")) {
             Debug.Log("Facebook App is NOT installed, forcing Facebook WEB flow");
-            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.ForcingWebView);
+            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.Web);
         }
         else {
             Debug.Log("Facebook App is installed, loading Facebook APP flow, actually web view for now. Still a problem pulling auth creds from ios6.");      
-            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.ForcingWebView);    
+            FacebookBinding.setSessionLoginBehavior(FacebookSessionLoginBehavior.Web);    
         }           
         
         /*
@@ -486,7 +486,7 @@ public class SocialNetworks : GameObjectBehavior {
         Debug.Log("Logging in facebook: urlscheme:" + AppConfigs.appUrlScheme);
         
         if(!string.IsNullOrEmpty(AppConfigs.appUrlScheme)) {
-            FacebookBinding.loginWithReadPermissions(permissions, AppConfigs.appUrlScheme);
+            FacebookBinding.loginWithReadPermissions(permissions);//, AppConfigs.appUrlScheme);
         }
         else {
             FacebookBinding.loginWithReadPermissions(permissions);
@@ -559,9 +559,10 @@ public class SocialNetworks : GameObjectBehavior {
                 //);
                 
 #if UNITY_IPHONE
-                FacebookBinding.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);        
+                FacebookBinding.loginWithPublishPermissions(permissions);//, FacebookSessionDefaultAudience.Everyone);        
 #elif UNITY_ANDROID
-                FacebookAndroid.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);    
+                FacebookAndroid.loginWithPublishPermissions(permissions);
+                //FacebookAndroid.reauthorizeWithPublishPermissions(permissions, FacebookSessionDefaultAudience.Everyone);    
 #else
 #endif
                 reAuthAttempts++;

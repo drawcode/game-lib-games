@@ -15,6 +15,8 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
+using Prime31;
+
 #if PROMO_USE_CHARTBOOST
 using ChartboostSDK;
 #endif
