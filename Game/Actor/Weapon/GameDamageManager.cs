@@ -55,18 +55,25 @@ public class GameDamageDirector {
 }
 
 public class GameDamageManager : MonoBehaviour {
-    public AudioClip[] HitSound;
-    public GameObject Effect;
+    public string effectDestroy;
+    public string audioHit;
     public float HP = 100f;
+    public bool enableObjectRemove = true;
     public GamePlayerController gamePlayerController;
     public GameZoneActionAsset gameZoneActionAsset;
-    public bool enableObjectRemove = true;
 
     private void Start() {
         UpdateGameObjects();
     }
 
     public void UpdateGameObjects() {
+        
+        if (!string.IsNullOrEmpty(effectDestroy)) {
+            effectDestroy = "effect-explosion";
+        }
+        if (!string.IsNullOrEmpty(audioHit)) {
+            audioHit = "attack-hit-1";
+        }
 
         gamePlayerController = null;
         gameZoneActionAsset = null;
@@ -104,16 +111,8 @@ public class GameDamageManager : MonoBehaviour {
             if (HP < 0)
                 return;
 
-            if (HitSound != null) {
-            
-                if (HitSound.Length > 0) {
-                    
-                    GetComponent<AudioSource>().volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-
-                    //GameAudio.Play
-                    AudioSource.PlayClipAtPoint(HitSound[Random.Range(0, HitSound.Length)], transform.position,
-                                                (float)GameProfiles.Current.GetAudioEffectsVolume());
-                }
+            if (!string.IsNullOrEmpty(audioHit)) {            
+                GameAudio.PlayEffect(audioHit);
             }
 
             HP -= damage;
@@ -124,8 +123,11 @@ public class GameDamageManager : MonoBehaviour {
     }
 
     private void Dead() {
-        if (Effect) {
-            GameObjectHelper.CreateGameObject(Effect, transform.position, transform.rotation, true);
+        
+        
+        if (!string.IsNullOrEmpty(effectDestroy)) {         
+            AppContentAssets.LoadAssetWeapon(
+                effectDestroy, transform.position, transform.rotation);
         }
 
         if (gamePlayerController != null) {

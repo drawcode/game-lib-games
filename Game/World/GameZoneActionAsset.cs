@@ -161,6 +161,23 @@ public class GameZoneActionAsset : GameZoneAction {
                 go.transform.parent = containerAssets.transform;
                 go.TrackObject(containerAssets);
 
+                // Add game damage
+
+                Collider goCollider = go.GetOrSet<Collider>();
+
+                if(goCollider != null) {
+                    
+                    GameDamageManager gameDamageManager = 
+                        goCollider.gameObject.GetOrSet<GameDamageManager>();
+                    gameDamageManager.audioHit = "attack-hit-1";
+                    gameDamageManager.effectDestroy = "effect-explosion";
+                    gameDamageManager.enableObjectRemove = true;
+                    gameDamageManager.HP = 1000;
+                    
+                    gameDamageManager.UpdateGameObjects();
+                    
+                }
+
                 AssetAnimationReset();
             }
         }

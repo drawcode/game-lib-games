@@ -819,20 +819,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public void OnGameLevelItemsLoaded() {
-        
-        foreach(GameZoneActionAsset gameZoneActionAsset in 
-                levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
-            
-            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
-                // Make it a type of needed action or none.
-                
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_attack, 
-                    GameZoneActions.action_attack,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-            }
-        }
+
+        loadLevelActions(1f);
     }
     
     public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
@@ -1310,6 +1298,31 @@ public class BaseGameController : GameObjectTimerBehavior {
     // ---------------------------------------------------------------------
 
     // LEVELS
+
+    public virtual void loadLevelActions(float delay) {
+        StartCoroutine(loadLevelActionsCo(delay));
+    }
+
+    IEnumerator loadLevelActionsCo(float delay) {
+        yield return new WaitForSeconds(delay);
+        loadLevelActions();
+    }
+
+    public virtual void loadLevelActions() {
+        foreach(GameZoneActionAsset gameZoneActionAsset in 
+                levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
+            
+            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
+                // Make it a type of needed action or none.
+                
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_attack, 
+                    GameZoneActions.action_attack,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+            }
+        }
+    }
 
     public virtual void loadLevelAssets() {
         GameController.LoadLevelAssets(GameLevels.Current.code);
