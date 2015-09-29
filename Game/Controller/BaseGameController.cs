@@ -1911,10 +1911,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameObject characterObject = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
-
         
         //Debug.Log("loadActorCo:" + " characterObject:" + characterObject.name);
-
 
         if (characterObject != null) {
     
@@ -1925,7 +1923,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             characterObject.transform.position = spawnLocation;
         
             GamePlayerController characterGamePlayerController
-                = characterObject.GetComponentInChildren<GamePlayerController>();
+                = characterObject.Get<GamePlayerController>();
 
             if (characterGamePlayerController != null) {
 

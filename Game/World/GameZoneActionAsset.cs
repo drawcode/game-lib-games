@@ -15,6 +15,7 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool loadOnStart = true;
     public bool loaded = false;
     public GameCharacter gameCharacter;
+    public GamePlayerIndicator gamePlayerIndicator;
 
     public override void Start() {
         base.Start();
@@ -105,6 +106,10 @@ public class GameZoneActionAsset : GameZoneAction {
         LoadIcons();
 
         HandleActionInit();
+                
+        if(gamePlayerIndicator == null) {
+            gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
+        }
 
         loaded = true;
 
@@ -252,6 +257,11 @@ public class GameZoneActionAsset : GameZoneAction {
         else if(isActionCodeBuild || isActionCodeDefend) {
             currentCreateProgress = 0;
         }
+
+
+        
+        //GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
+        //                                 t.gameObject, "bot1");
     }
 
     public void HandleUpdateAction() {
