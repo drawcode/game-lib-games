@@ -10,7 +10,32 @@ public class GameDamage : GameDamageBase {
     public float TimeActive = 0;
     private float timetemp = 0;
 
+    private bool initialExplosive = false;
+    private float initialExplosiveRadius = 3;
+    private float initialExplosiveForce = 300;
+    private bool initialHitedActive = true;
+    private float initialTimeActive = 0;
+
+    void Awake() {
+        initialExplosive = Explosive;
+        initialExplosiveRadius = ExplosionRadius;
+        initialExplosiveForce = ExplosionForce;
+        initialHitedActive = HitedActive;
+        initialTimeActive = TimeActive;
+    }
+
+    private void Reset() {        
+        Explosive = initialExplosive;
+        ExplosionRadius = initialExplosiveRadius;
+        ExplosionForce = initialExplosiveForce;
+        HitedActive = initialHitedActive;
+        TimeActive = initialTimeActive;
+        Explosive = initialExplosive;
+    }
+
     private void Start() {
+
+        Reset();
 
         timetemp = Time.time;
 

@@ -15,12 +15,14 @@ public class GameMoverBullet : GameWeaponBase {
     private float initialSpeedMult = 1;
     private int initialLifeTime = 5;
 
-    private void Start() {        
-
+    private void Awake() {        
         initialSpeed = Speed;
         initialSpeedMax = SpeedMax;
         initialSpeedMult = SpeedMult;
         initialLifeTime = Lifetime;
+    }
+
+    private void Start() {        
 
         Reset();
                 
@@ -33,8 +35,6 @@ public class GameMoverBullet : GameWeaponBase {
     public void Reset() {
 
         gameObject.ResetRigidBodiesVelocity();
-        //gameObject.ResetLocalPosition();
-        //gameObject.ResetLocalRotation();
 
         Speed = initialSpeed;
         SpeedMax = initialSpeedMax;

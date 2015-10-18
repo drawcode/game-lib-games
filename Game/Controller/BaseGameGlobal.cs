@@ -16,7 +16,6 @@ public enum AppRunState {
     LIVE
 }
 
-
 public class BaseGameGlobal : GameObjectBehavior {    
     public GameNetworks gameNetworks;
     public GameState state;
@@ -42,13 +41,12 @@ public class BaseGameGlobal : GameObjectBehavior {
     public AudioSystem audioSystem;
     public GameNetworking networking;
     public GameversesGameObject gameversesGameObject;
-    public AudioRecordObject audioRecorder; 
-
-	public GameCommunityController platformController;
-	public GameCommunityService platformService;
-	public GameCommunityUIController platformAppViewerUIController;
-	public GameCommunitySocialController platformSocialController;
-	public GameCommunityTrackingController platformTrackingController;
+    public AudioRecordObject audioRecorder;
+    public GameCommunityController platformController;
+    public GameCommunityService platformService;
+    public GameCommunityUIController platformAppViewerUIController;
+    public GameCommunitySocialController platformSocialController;
+    public GameCommunityTrackingController platformTrackingController;
     
     //public Gameverses.GameversesAPI gameversesAPI;
     
@@ -268,7 +266,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 
     public virtual void InitAudio() {    
 
-        if(audioSystem == null) {
+        if (audioSystem == null) {
             audioSystem = gameObject.AddComponent<AudioSystem>();   
 
             audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
@@ -291,17 +289,16 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         LogUtil.Log("GameGlobal InitAudio init...");
     }
-
-	
-	public void InitCommunity() {		
-		platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
-		platformController = gameObject.AddComponent<GameCommunityController>();
-		platformAppViewerUIController = gameObject.AddComponent<GameCommunityUIController>();
-		platformSocialController = gameObject.AddComponent<GameCommunitySocialController>();
-		platformTrackingController = gameObject.AddComponent<GameCommunityTrackingController>();
-		
-		Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);		
-	}
+    
+    public void InitCommunity() {       
+        platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
+        platformController = gameObject.AddComponent<GameCommunityController>();
+        platformAppViewerUIController = gameObject.AddComponent<GameCommunityUIController>();
+        platformSocialController = gameObject.AddComponent<GameCommunitySocialController>();
+        platformTrackingController = gameObject.AddComponent<GameCommunityTrackingController>();
+        
+        Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);      
+    }
     
     public virtual void InitSocial() {
         socialNetworks = gameObject.AddComponent<SocialNetworks>();
@@ -406,7 +403,20 @@ public class BaseGameGlobal : GameObjectBehavior {
         }
         #endif
         
+        #if UNITY_EDITOR
         if (Application.isEditor) {
+
+            if ((Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Space))
+                || Input.GetKeyDown(KeyCode.P)) {
+                    
+                    // Toggle paused
+                    //UnityEditor.EditorApplication.isPaused = 
+                    //    !UnityEditor.EditorApplication.isPaused ? true : false;
+
+                    UnityEditor.EditorApplication.isPaused = true;
+
+            }
+
             if (Input.GetKeyDown(KeyCode.Comma)) {
 
                 string sceneName = "Panel";
@@ -427,5 +437,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                 Application.CaptureScreenshot(filename);
             }
         }
+        #endif
+
     }
 }

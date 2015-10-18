@@ -3650,7 +3650,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
      
-        if (currentControllerData.lastDie + 3f < Time.time) {
+        if (currentControllerData.lastDie + .8f < Time.time) {
             currentControllerData.lastDie = Time.time;
         }
         else {

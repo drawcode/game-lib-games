@@ -377,7 +377,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                         muzzle.transform.parent = MissileOuter[currentOuter].transform;
                     }
                 }
-            
+                            
                 for (int i = 0; i < NumBullet; i++) {
                 
                     if (Missile) {
@@ -390,7 +390,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                         Vector3 direction = this.transform.forward + spread;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
-                            Missile, missileposition, missilerotate, true);
+                            Missile, missileposition, missilerotate, true); 
 
                         NameEffect(bullet);
 
@@ -427,11 +427,9 @@ public class GameWeaponLauncher : GameWeaponBase {
                                     rigid.AddForce(direction * ForceShoot);  
                                 }
                             }
-                        }
-                    
+                        }                    
                     }
                 }
-
 
                 if (!FPSDisplay.isUnder25FPS && Shell) {
 
