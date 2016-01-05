@@ -82,7 +82,7 @@ public class BroadcastNetworks : GameObjectBehavior {
         
         Everyplay.RecordingStarted += everyplayRecordingStartedDelegate;
         Everyplay.RecordingStopped += everyplayRecordingStoppedDelegate;
-        Everyplay.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
+        //Everyplay.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
         
         Everyplay.ReadyForRecording += everyplayReadyForRecordingDelegate;
         Everyplay.UploadDidComplete += everyplayUploadDidCompleteDelegate;
@@ -105,7 +105,7 @@ public class BroadcastNetworks : GameObjectBehavior {
 
         Everyplay.RecordingStarted -= everyplayRecordingStartedDelegate;
         Everyplay.RecordingStopped -= everyplayRecordingStoppedDelegate;
-        Everyplay.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
+        //Everyplay.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
         
         Everyplay.ReadyForRecording -= everyplayReadyForRecordingDelegate;
         Everyplay.UploadDidComplete -= everyplayUploadDidCompleteDelegate;
@@ -643,7 +643,7 @@ public class BroadcastNetworks : GameObjectBehavior {
 
     // THUMBNAIL
     
-    #if BROADCAST_USE_EVERYPLAY
+    #if BROADCAST_USE_EVERYPLAY_2
     public static void LoadThumbnailFromFilePath(
         string path, 
         Everyplay.ThumbnailLoadReadyDelegate thumbnailLoadReadyDelegate, 
@@ -687,7 +687,7 @@ public class BroadcastNetworks : GameObjectBehavior {
             return;
         }
         
-        #if BROADCAST_USE_EVERYPLAY
+        #if BROADCAST_USE_EVERYPLAY2
         Everyplay.SetThumbnailWidth(thumbnailWidth);
         #else
         #endif
@@ -717,7 +717,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     public void recordingShowThumbnailToTheUserInTheUI() {
         #if BROADCAST_USE_EVERYPLAY
         // Load the thumbnail, using our delegates as parameter
-        LoadThumbnailFromFilePath(recordingThumbnailPath, recordingThumbnailSuccess, recordingThumbnailError);
+        //LoadThumbnailFromFilePath(recordingThumbnailPath, recordingThumbnailSuccess, recordingThumbnailError);
 #endif
     }
 

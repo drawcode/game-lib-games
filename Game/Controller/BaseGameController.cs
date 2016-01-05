@@ -1900,7 +1900,12 @@ public class BaseGameController : GameObjectTimerBehavior {
         else if (data.data_type == GameSpawnType.pointsType) {
             // FIND spawn location
         }
-        else if (data.data_type == GameSpawnType.centeredType) {
+
+        if(spawnLocation == Vector3.zero) {
+            spawnLocation = GameController.GetRandomSpawnLocation();
+        }
+
+        if (data.data_type == GameSpawnType.centeredType) {
             spawnLocation = Vector3.zero;
         }
 
@@ -2042,6 +2047,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
         else {//if (data.data_type == GameSpawnType.randomType) {
             // get random
+            spawnLocation = GameController.GetRandomSpawnLocation();
+        }
+        
+        if(spawnLocation == Vector3.zero) {
             spawnLocation = GameController.GetRandomSpawnLocation();
         }
 

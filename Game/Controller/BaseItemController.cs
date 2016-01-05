@@ -30,7 +30,7 @@ public class GameItemData : GameDataObject {
         base.Reset();
         code = "item-coin";
         type = BaseDataObjectKeys.item;
-        data_type = GameSpawnType.zonedType;
+        data_type = GameSpawnType.randomType;
         position_data = new Vector3Data(0, 0, 0);
         scale_data = new Vector3Data(1, 1, 1);
         rotation_data = new Vector3Data(0, 0, 0);
