@@ -4986,7 +4986,7 @@ public class BaseGamePlayerController : GameActor {
             float baseTrotSpeed = 12f;
             float baseRunSpeed = 24f;
 
-            float modifiedRunSpeed = Mathf.Clamp(baseRunSpeed * modifiedPower, 14, 34) * modifiedItem;            
+            float modifiedRunSpeed = Mathf.Clamp(baseRunSpeed * modifiedPower, 14, 24) * modifiedItem;            
             float modifiedTrotSpeed = Mathf.Clamp(baseTrotSpeed * modifiedPower, 9, 14) * modifiedItem;            
             float modifiedWalkSpeed = Mathf.Clamp(baseWalkSpeed * modifiedPower, 4, 8) * modifiedItem;
     
