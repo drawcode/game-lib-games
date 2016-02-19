@@ -27,10 +27,15 @@ public class GameZoneActionAsset : GameZoneAction {
     
     public override void OnEnable() {
         base.OnEnable();
+                
+        // Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
+        Messenger<string>.AddListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
     }
     
     public override void OnDisable() {
         base.OnDisable();
+        
+        Messenger<string>.RemoveListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
     }
 
     public override void Reset() {
@@ -43,6 +48,13 @@ public class GameZoneActionAsset : GameZoneAction {
         currentCreateState = GameZoneActionAssetState.none;
         actionGoalState = GameZoneActionAssetState.none;
         gameCharacter = null;
+    }
+
+    private void OnGameInitLevelStart(string levelCode) {
+     
+        // Add indicator after level loaded and player is ready
+
+        LoadPlayerIndicator();
     }
 
     public void AssetAnimationIdle() {
@@ -77,7 +89,9 @@ public class GameZoneActionAsset : GameZoneAction {
 
         loaded = false;
 
+        //if(!alwaysVisible) {
         container.Hide();
+        //}
 
         //containerAssets.Hide();
         //containerAssetsPlatforms.Hide();
@@ -90,8 +104,7 @@ public class GameZoneActionAsset : GameZoneAction {
         }
 
         gameCharacter = GameCharacters.Instance.GetById(assetCode);
-        
-        
+                
         //containerAssets.Show();
         //containerAssetsPlatforms.Show();
         //containerIcons.Show();
@@ -99,6 +112,7 @@ public class GameZoneActionAsset : GameZoneAction {
         //containerEffectsDamage.Show();
 
         container.Show();
+
         LoadAsset();
 
         LoadAssetPlatform();
@@ -107,12 +121,18 @@ public class GameZoneActionAsset : GameZoneAction {
 
         HandleActionInit();
                 
-        if(gamePlayerIndicator == null) {
-            gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
-        }
+        //if(gamePlayerIndicator == null) {
+        //    gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
+        //}
 
         loaded = true;
+    }
 
+    public void LoadPlayerIndicator() {
+        if(gamePlayerIndicator == null) {
+            gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
+            gamePlayerIndicator.alwaysVisible = true;
+        }
     }
 
     public void LoadIcons() {

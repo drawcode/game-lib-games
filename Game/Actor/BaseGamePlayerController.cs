@@ -599,6 +599,8 @@ public class BaseGamePlayerController : GameActor {
             GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
         
         Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
+
+        Messenger<string>.AddListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
      
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
@@ -627,6 +629,8 @@ public class BaseGamePlayerController : GameActor {
             GamePlayerMessages.PlayerAnimation, OnPlayerAnimation);
         
         Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
+        
+        Messenger<string>.RemoveListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
 
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
@@ -648,6 +652,14 @@ public class BaseGamePlayerController : GameActor {
     public virtual void OnGameLevelStart(string levelCode) {
         // Button pressed to run game after load
 
+        if (IsPlayerControlled) {
+            GamePlayerModelHolderEaseOut();
+        }
+    }
+
+    public virtual void OnGameInitLevelStart(string levelCode) {
+        // Button pressed to run game after load
+        
         if (IsPlayerControlled) {
             GamePlayerModelHolderEaseIn();
         }

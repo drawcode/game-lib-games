@@ -49,6 +49,8 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     public int targetNotFoundCycles = 0;
     public Color currentColor;
     public bool initialized = false;
+    
+    public bool alwaysVisible = false;
   
     public virtual void Start() {
         SetCamera(Camera.main);
@@ -328,8 +330,10 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
     public virtual void HideIndicator(bool destroy) {
         if(visible) {
-            visible = false;
-            indicatorObject.Hide();
+            if(!alwaysVisible) {
+                visible = false;
+                indicatorObject.Hide();
+            }
             //LogUtil.Log("HideIndicator:visible:" + visible);
             if(destroy) {
                 DestroyMe();

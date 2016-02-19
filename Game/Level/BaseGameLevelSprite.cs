@@ -44,6 +44,15 @@ public class BaseGameLevelSprite : GameObjectBehavior {
     
     public virtual void Init() {
         HandleColliderInit();
+
+        if(gameDraggableLevelItem == null) {
+            return;
+        }
+
+        if(gameDraggableLevelItem.gameLevelItemAsset == null) {
+            return;
+        }
+
         if (gameDraggableLevelItem.gameLevelItemAsset.physics_type != GameLevelItemAssetPhysicsType.physicsOnStart) {
             HandlePhysicsInit();
         }
