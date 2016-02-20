@@ -192,6 +192,7 @@ public class BaseGamePlayerControllerData {
     public Vector3 positionPlayer;
     public Vector3 positionTackler;
     public float lastTackle = 0f;
+    public bool shouldTackle = false;
     public float incrementScore = 1f;
 
     // easing
@@ -601,7 +602,9 @@ public class BaseGamePlayerController : GameActor {
         Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
 
         Messenger<string>.AddListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
-     
+                
+        Messenger.AddListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
+
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
 
@@ -632,6 +635,8 @@ public class BaseGamePlayerController : GameActor {
         
         Messenger<string>.RemoveListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
 
+        Messenger.RemoveListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
+
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
 
@@ -653,7 +658,8 @@ public class BaseGamePlayerController : GameActor {
         // Button pressed to run game after load
 
         if (IsPlayerControlled) {
-            GamePlayerModelHolderEaseOut();
+            //GamePlayerModelHolderEaseOut(5, .1f, 0);
+            //GamePlayerModelHolderEaseIn(0, 1, .2f);
         }
     }
 
@@ -661,7 +667,17 @@ public class BaseGamePlayerController : GameActor {
         // Button pressed to run game after load
         
         if (IsPlayerControlled) {
-            GamePlayerModelHolderEaseIn();
+            //GamePlayerModelHolderEaseIn(0, 1, 1);
+            
+            GamePlayerModelHolderEaseOut(5, .1f, 0);
+            //GamePlayerModelHolderEaseIn();
+        }
+    }
+        
+    public virtual void OnGameLevelPlayerReady() {
+        
+        if (IsPlayerControlled) {
+            LoadPlayerReadyState();
         }
     }
 
@@ -1191,24 +1207,24 @@ public class BaseGamePlayerController : GameActor {
                                           .3f);
         }
     } 
-
     
     // ACTOR EXITING
     
-    public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = 3f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = 1f, float delay = .1f) {
         
         PlayerEffectWarpFadeOut();
-        GamePlayerModelHolderEase(height, time);
+        GamePlayerModelHolderEase(height, time, delay);
     }
     
-    public virtual void GamePlayerModelHolderEaseOut(float height = 10, float time = 3f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEaseOut(float height = 5, float time = 2f, float delay = 0) {
         PlayerEffectWarpFadeIn();
-        GamePlayerModelHolderEase(height, time);
+        GamePlayerModelHolderEase(height, time, delay);
     }
 
-    public virtual void GamePlayerModelHolderEase(float height = 0, float time = 3f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEase(float height = 0, float time = 1f, float delay = 0) {
 
-        LeanTween.cancel(gamePlayerModelHolder);
+        //LeanTween.cancel(gamePlayerModelHolder);
+
         LeanTween
             .moveLocalY(gamePlayerModelHolder, height, time)
                 .setEase(LeanTweenType.easeInOutQuad)
@@ -1267,19 +1283,25 @@ public class BaseGamePlayerController : GameActor {
     }
  
     public virtual void HandlePlayerEffectWarpAnimateTick() {
-        if (currentControllerData.effectWarpEnabled && currentControllerData.visible) {
-            float fadeSpeed = 200f;
+
+        if (!IsPlayerControlled) {
+            //currentControllerData.visible
+        }
+
+        if (currentControllerData.effectWarpEnabled) {
+            float fadeSpeed = 70f;
             if (currentControllerData.effectWarpCurrent < currentControllerData.effectWarpEnd) {
                 currentControllerData.effectWarpCurrent += (Time.deltaTime * fadeSpeed);
                 SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
-            else if (currentControllerData.effectWarpCurrent > currentControllerData.effectWarpEnd) {
+            else if (currentControllerData.effectWarpCurrent >= currentControllerData.effectWarpEnd) {
                 currentControllerData.effectWarpCurrent -= (Time.deltaTime * fadeSpeed);
                 SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
             else {
                 currentControllerData.effectWarpEnabled = false;
                 currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
+                SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
         }
     }
@@ -1913,9 +1935,16 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LoadEnterExitState() {
-        GamePlayerModelHolderEaseOut(10, .1f, 0);
+        GamePlayerModelHolderEaseOut(5f, .1f, 0f);
         if (!IsPlayerControlled) {        
-            GamePlayerModelHolderEaseIn(0, 3.1f, .2f);
+            GamePlayerModelHolderEaseIn(0, 3.1f, .5f);
+        }
+    }
+
+    public virtual void LoadPlayerReadyState() {
+        if (IsPlayerControlled) {    
+            //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
+            GamePlayerModelHolderEaseIn(0, 3.1f, .5f);
         }
     }
 
@@ -5395,7 +5424,7 @@ public class BaseGamePlayerController : GameActor {
      
         // fast stuff    
         HandlePlayerAliveState();
-        HandlePlayerEffectWarpAnimateTick();
+        //HandlePlayerEffectWarpAnimateTick();
         //HandleGamePlayerModelHolderEaseTick();
      
         if (IsAgentState()) {         
@@ -5615,7 +5644,8 @@ public class BaseGamePlayerController : GameActor {
 
                     // CHECK ATTACK/LUNGE/TACKLE/MELEE RANGE
 
-                    if (currentControllerData.distanceToPlayerControlledGamePlayer <= attackRange) {
+                    if (currentControllerData.distanceToPlayerControlledGamePlayer <= attackRange
+                        && currentControllerData.shouldTackle) {
                         //foreach(Collider collide in Physics.OverlapSphere(transform.position, attackRange)) {
 
                         // Turn towards player and attack!
@@ -5646,7 +5676,7 @@ public class BaseGamePlayerController : GameActor {
 
                                     power = 5f;
 
-                                    if (power > 0) {
+                                    if (power > 0 && currentControllerData.shouldTackle) {
                                         Tackle(gamePlayerControllerHit, power);
                                     }
                                 }
@@ -5915,7 +5945,13 @@ public class BaseGamePlayerController : GameActor {
             GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
             return;
         }
-        
+
+        // Run outside game state as well
+
+        HandlePlayerEffectWarpAnimateTick();
+
+        // Run only in game state
+
         if (!controllerReady) {
             return;
         }

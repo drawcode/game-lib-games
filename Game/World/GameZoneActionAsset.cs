@@ -131,7 +131,7 @@ public class GameZoneActionAsset : GameZoneAction {
     public void LoadPlayerIndicator() {
         if(gamePlayerIndicator == null) {
             gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
-            gamePlayerIndicator.alwaysVisible = true;
+            //gamePlayerIndicator.alwaysVisible = true;
         }
     }
 

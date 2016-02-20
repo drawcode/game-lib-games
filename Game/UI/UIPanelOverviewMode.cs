@@ -141,6 +141,9 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public void Ready() {
+
+        Messenger.Broadcast(GameMessages.gameLevelPlayerReady);
+
         HideAll();
     }
 

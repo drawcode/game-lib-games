@@ -141,6 +141,7 @@ public class BaseGameMessages {
     //
     public static string gameInitLevelStart = "game-init-level-start";
     public static string gameInitLevelEnd = "game-init-level-end";
+    public static string gameLevelPlayerReady = "game-level-player-ready";
     public static string gameLevelStart = "game-level-start";
     public static string gameLevelEnd = "game-level-end";
     public static string gameLevelQuit = "game-level-quit";
@@ -2327,8 +2328,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         yield return new WaitForSeconds(delay);
         GameController.RunDirectors();
         
-        GameController.CurrentGamePlayerController.GamePlayerModelHolderEaseIn();
-        GameController.CurrentGamePlayerController.PlayerEffectWarpFadeOut();
+        //GameController.CurrentGamePlayerController.GamePlayerModelHolderEaseIn();
+        //GameController.CurrentGamePlayerController.PlayerEffectWarpFadeOut();
     }
     
     public virtual void runDirectors() {

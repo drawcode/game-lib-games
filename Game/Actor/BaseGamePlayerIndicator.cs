@@ -51,6 +51,11 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     public bool initialized = false;
     
     public bool alwaysVisible = false;
+
+    public float currentDistance = 0;
+    public float currentRange = 2f;
+    
+    float currentLateTickTime = .3f;
   
     public virtual void Start() {
         SetCamera(Camera.main);
@@ -291,20 +296,20 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
      
         if(target != null) {
 
-            if(type == "player") {
-                gamePlayerController = target.gameObject.Get<GamePlayerController>();
-                if(gamePlayerController != null) {
-                    //..
-                }
-            }
-            else if(type == GamePlayerIndicatorType.item) {
-                if(gamePlayerItem == null) {
-                    gamePlayerItem = target.gameObject.Get<GamePlayerItem>();
-                    if(gamePlayerItem != null) {
-                        //..
-                    }
-                }
-            }
+            //if(type == "player") {
+            //    gamePlayerController = target.gameObject.Get<GamePlayerController>();
+            //    if(gamePlayerController != null) {
+            //        //..
+            //    }
+            //}
+            //else if(type == GamePlayerIndicatorType.item) {
+            //    if(gamePlayerItem == null) {
+            //        gamePlayerItem = target.gameObject.Get<GamePlayerItem>();
+            //        if(gamePlayerItem != null) {
+            //            //..
+            //        }
+            //    }
+            //}
         }
     }
 
@@ -388,8 +393,6 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             //UITweenerUtil.MoveTo(indicatorObject, UITweener.Method.Linear, UITweener.Style.Once, .1f, 0f, indicateTemp);
         }
     }
-    
-    float currentLateTickTime = .3f;
 
     public virtual void LateUpdate() {
 
@@ -477,8 +480,11 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 if(target != null) {
                     // Hide/show off screen indicator
                     if(target.gameObject != null && GameController.CurrentGamePlayerController != null) {
+
+                        currentDistance = Vector3.Distance(target.position, GameController.CurrentGamePlayerController.transform.position);
+
                         if(target.gameObject.IsRenderersVisibleByCamera()
-                            || Vector3.Distance(target.position, GameController.CurrentGamePlayerController.transform.position) < 20f) {
+                           || currentDistance < currentRange)  {
                             HideIndicator();
                             return;
                         }
@@ -506,7 +512,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         if(target == null) {
             targetNotFoundCycles++;
 
-            if(targetNotFoundCycles > 10000) {
+            if(targetNotFoundCycles > 100) {
                 DestroyMe();
             }
 
