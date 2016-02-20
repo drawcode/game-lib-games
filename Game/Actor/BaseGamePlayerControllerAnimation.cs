@@ -303,7 +303,8 @@ public class BaseGamePlayerControllerAnimationData {
     }
     
     public void Reset() {
-
+        isDead = false;
+        isRunning = true;
     }
 
     // LOADING/FIND CHARACTER

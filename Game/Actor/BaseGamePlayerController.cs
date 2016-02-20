@@ -210,6 +210,7 @@ public class BaseGamePlayerControllerData {
     public float effectWarpStart = 0f;
     public float effectWarpEnd = 200f;
     public float effectWarpCurrent = 0f;
+    public float effectWarpFadeSpeed = 70f;
     
     // effects - lines
     
@@ -1289,7 +1290,12 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (currentControllerData.effectWarpEnabled) {
-            float fadeSpeed = 70f;
+            float fadeSpeed = currentControllerData.effectWarpFadeSpeed;
+
+            if(!IsPlayerControlled){
+                fadeSpeed = currentControllerData.effectWarpFadeSpeed * 3f;
+            }
+
             if (currentControllerData.effectWarpCurrent < currentControllerData.effectWarpEnd) {
                 currentControllerData.effectWarpCurrent += (Time.deltaTime * fadeSpeed);
                 SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
@@ -1308,6 +1314,20 @@ public class BaseGamePlayerController : GameActor {
  
     public virtual void SetPlayerEffectWarp(float rate) {
         if (gamePlayerEffectWarp != null) {
+
+            if(gamePlayerEffectWarp.emissionRate == rate) {
+                return;
+            }
+
+            if(rate > 0
+               && !gamePlayerEffectWarp.isPlaying) {
+                gamePlayerEffectWarp.Play();
+            }            
+            else if(rate <= 0
+               && gamePlayerEffectWarp.isPlaying) {
+                gamePlayerEffectWarp.Stop();
+            }
+
             gamePlayerEffectWarp.emissionRate = rate;
         }
     }
@@ -1737,11 +1757,7 @@ public class BaseGamePlayerController : GameActor {
         Debug.Log("LoadCharacter:2:" + " characterCodeTo:" + characterCodeTo);
         Debug.Log("LoadCharacter:2:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
 
-        ResetScale();
-        ResetPosition();
-
-        SetControllerData(new GamePlayerControllerData());
-        SetRuntimeData(new GamePlayerRuntimeData());
+        UpdateCharacterStates();
 
         //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
         //if (currentControllerData.lastCharacterCode != characterCode 
@@ -1753,6 +1769,32 @@ public class BaseGamePlayerController : GameActor {
         StartCoroutine(LoadCharacterCo());
         //}
         //}
+    }
+
+    public virtual void UpdateCharacterStates() {
+
+        UpdateCharacterRuntimeState();
+
+        SetControllerData(new GamePlayerControllerData());
+    }
+
+    public virtual void UpdateCharacterRuntimeState() {
+
+        ResetScale();
+        ResetPosition();
+
+        SetRuntimeData(new GamePlayerRuntimeData());
+
+        currentControllerData.dying = false;
+        currentControllerData.actorExiting = false;
+
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.Reset();//.controllerData.removing = false;
+        }
+        
+        if (currentControllerData.gamePlayerControllerAnimation != null) {
+            currentControllerData.gamePlayerControllerAnimation.Reset();
+        }
     }
  
     public virtual IEnumerator LoadCharacterCo() {
@@ -1937,14 +1979,18 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadEnterExitState() {
         GamePlayerModelHolderEaseOut(5f, .1f, 0f);
         if (!IsPlayerControlled) {        
-            GamePlayerModelHolderEaseIn(0, 3.1f, .5f);
+            GamePlayerModelHolderEaseIn(0, 1f, .5f);
         }
     }
 
     public virtual void LoadPlayerReadyState() {
-        if (IsPlayerControlled) {    
+        if (IsPlayerControlled) { 
+
+            UpdateCharacterRuntimeState();
+
             //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
-            GamePlayerModelHolderEaseIn(0, 3.1f, .5f);
+
+            GamePlayerModelHolderEaseIn(0, 3f, .5f);
         }
     }
 
