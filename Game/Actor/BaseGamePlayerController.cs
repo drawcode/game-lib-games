@@ -210,7 +210,7 @@ public class BaseGamePlayerControllerData {
     public float effectWarpStart = 0f;
     public float effectWarpEnd = 200f;
     public float effectWarpCurrent = 0f;
-    public float effectWarpFadeSpeed = 70f;
+    public float effectWarpFadeSpeed = 50f;
     
     // effects - lines
     
@@ -1293,7 +1293,7 @@ public class BaseGamePlayerController : GameActor {
             float fadeSpeed = currentControllerData.effectWarpFadeSpeed;
 
             if(!IsPlayerControlled){
-                fadeSpeed = currentControllerData.effectWarpFadeSpeed * 3f;
+                fadeSpeed = currentControllerData.effectWarpFadeSpeed * 1.5f;
             }
 
             if (currentControllerData.effectWarpCurrent < currentControllerData.effectWarpEnd) {
@@ -1979,7 +1979,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual void LoadEnterExitState() {
         GamePlayerModelHolderEaseOut(5f, .1f, 0f);
         if (!IsPlayerControlled) {        
-            GamePlayerModelHolderEaseIn(0, 1f, .5f);
+            GamePlayerModelHolderEaseIn(0, .5f, .5f);
         }
     }
 
