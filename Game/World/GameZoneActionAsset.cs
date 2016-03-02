@@ -154,6 +154,9 @@ public class GameZoneActionAsset : GameZoneAction {
             else if (isActionCodeAttack) {
                 spriteIcon.spriteName = "icon-weapon-64";
             }
+            else if (isActionCodeDefend) {
+                spriteIcon.spriteName = "icon-shield-64";
+            }
         }
     }
 
@@ -295,21 +298,25 @@ public class GameZoneActionAsset : GameZoneAction {
                     actionCompleted = true;
                     
                     AssetAnimationIdle();
-                    
-                    GameController.CurrentGamePlayerController.ProgressScores(1);
-                    
+
                     currentCreateState = GameZoneActionAssetState.created;
                     
                     if (isActionCodeBuild) {                        
-                        GameController.CurrentGamePlayerController.ProgressAssetBuild(1);
+                        GameController.CurrentGamePlayerController.ProgressScore(1);
+                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                        GameController.CurrentGamePlayerController.ProgressBuild(1);
                     }
                     
                     if (isActionCodeRepair) {                        
-                        GameController.CurrentGamePlayerController.ProgressAssetRepair(1);
+                        GameController.CurrentGamePlayerController.ProgressScore(1);
+                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                        GameController.CurrentGamePlayerController.ProgressRepair(1);
                     }
                     
                     if (isActionCodeDefend) {                        
-                        GameController.CurrentGamePlayerController.ProgressAssetDefend(1);
+                        GameController.CurrentGamePlayerController.ProgressScore(1);
+                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                        GameController.CurrentGamePlayerController.ProgressDefend(1);
                     }
                 }
             }
@@ -318,9 +325,10 @@ public class GameZoneActionAsset : GameZoneAction {
                     actionCompleted = true;
 
                     ChangeStateDestroying();
-
+                    
+                    GameController.CurrentGamePlayerController.ProgressScore(1);
                     GameController.CurrentGamePlayerController.ProgressScores(1);
-                    GameController.CurrentGamePlayerController.ProgressAssetAttack(1);
+                    GameController.CurrentGamePlayerController.ProgressAttack(1);
                     
                     //RemoveMe();
                     //AssetAnimationPlayNormalized(currentCreateProgress);

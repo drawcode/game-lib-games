@@ -2250,7 +2250,7 @@ public class BaseGamePlayerProgress {
             SetStatTotal(GameStatCodes.kills, val);
         }
     }
-    
+   
     
     // ammo
     
@@ -2270,6 +2270,92 @@ public class BaseGamePlayerProgress {
         if (lastAmmoTime + .05f < Time.time) {
             lastAmmoTime = Time.time;
             SetStatTotal(GameStatCodes.ammo, val);
+        }
+    }
+
+    // assets
+
+    // asset attacks
+    
+    public static void SetStatAttacks(double val) {
+        SetStatAttacks((float)val);
+    }
+    
+    public static void SetStatAttacks(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatAttacks(val);
+        }
+    }
+    
+    float lastAttackTime = 0;
+    
+    public virtual void setStatAttacks(float val) {
+        if (lastAttackTime + .05f < Time.time) {
+            lastAttackTime = Time.time;
+            SetStatTotal(GameStatCodes.attacks, val);
+        }
+    }
+
+    // asset defends
+    
+    public static void SetStatDefends(double val) {
+        SetStatDefends((float)val);
+    }
+    
+    public static void SetStatDefends(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatDefends(val);
+        }
+    }
+    
+    float lastDefendsTime = 0;
+    
+    public virtual void setStatDefends(float val) {
+        if (lastDefendsTime + .05f < Time.time) {
+            lastDefendsTime = Time.time;
+            SetStatTotal(GameStatCodes.defends, val);
+        }
+    }
+
+    // asset builds
+    
+    public static void SetStatBuilds(double val) {
+        SetStatBuilds((float)val);
+    }
+    
+    public static void SetStatBuilds(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatBuilds(val);
+        }
+    }
+    
+    float lastBuildsTime = 0;
+    
+    public virtual void setStatBuilds(float val) {
+        if (lastBuildsTime + .05f < Time.time) {
+            lastBuildsTime = Time.time;
+            SetStatTotal(GameStatCodes.builds, val);
+        }
+    }
+    
+    // asset builds
+    
+    public static void SetStatRepairs(double val) {
+        SetStatRepairs((float)val);
+    }
+    
+    public static void SetStatRepairs(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatRepairs(val);
+        }
+    }
+    
+    float lastRepairsTime = 0;
+    
+    public virtual void setStatRepairs(float val) {
+        if (lastRepairsTime + .05f < Time.time) {
+            lastRepairsTime = Time.time;
+            SetStatTotal(GameStatCodes.repairs, val);
         }
     }
     
@@ -2545,52 +2631,7 @@ public class BaseGamePlayerProgress {
             SetStatTotal(code, val);
         }
     }    
-    
-    // attacks
-    
-    public static void SetStatAttack(double val) {
-        SetStatAttack((float)val);
-    }
-    
-    public static void SetStatAttack(float val) {
-        if (GamePlayerProgress.Instance != null) {
-            GamePlayerProgress.Instance.setStatAttack(val);
-        }
-    }
-    
-    float lastAttackTime = 0;
-    
-    public virtual void setStatAttack(float val) {
-        if (lastAttackTime + .05f < Time.time) {
-            lastAttackTime = Time.time;
-            SetStatTotal(GameStatCodes.attacks, val);
-        }
-    }
-    
-    // defends
-    
-    public static void SetStatDefend(double val) {
-        SetStatDefend((float)val);
-    }
-    
-    public static void SetStatDefend(float val) {
-        if (GamePlayerProgress.Instance != null) {
-            GamePlayerProgress.Instance.setStatDefend(val);
-        }
-    }
-    
-    float lastDefendTime = 0;
-    
-    public virtual void setStatDefend(float val) {
-        if (lastDefendTime + 1f < Time.time) {
-            lastDefendTime = Time.time;
-            SetStatTotal(GameStatCodes.defends, val);
-        }
-    }
-    
-    
-    
-    
+        
     // highXP
     
     public static void SetStatHighXP(double val) {

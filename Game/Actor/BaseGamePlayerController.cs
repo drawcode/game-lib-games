@@ -4300,7 +4300,7 @@ public class BaseGamePlayerController : GameActor {
         Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
     }
     
-    public virtual void ProgressAssetAttack(double valAdd) {
+    public virtual void ProgressAttack(double valAdd) {
         
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4308,9 +4308,11 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.assetAttacks += valAdd;
         Messenger<double>.Broadcast(GameMessages.gameActionAssetAttack, valAdd);
+        
+        GamePlayerProgress.SetStatAttacks(valAdd);
     }
 
-    public virtual void ProgressAssetDefend(double valAdd) {
+    public virtual void ProgressDefend(double valAdd) {
         
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4318,9 +4320,11 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.assetDefends += valAdd;
         Messenger<double>.Broadcast(GameMessages.gameActionAssetDefend, valAdd);
+        
+        GamePlayerProgress.SetStatDefends(valAdd);
     }
 
-    public virtual void ProgressAssetRepair(double valAdd) {
+    public virtual void ProgressRepair(double valAdd) {
         
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4328,9 +4332,11 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.assetRepairs += valAdd;
         Messenger<double>.Broadcast(GameMessages.gameActionAssetRepair, valAdd);
+        
+        GamePlayerProgress.SetStatRepairs(valAdd);
     }
 
-    public virtual void ProgressAssetBuild(double valAdd) {
+    public virtual void ProgressBuild(double valAdd) {
         
         if (!GameConfigs.isGameRunning) {
             return;
@@ -4338,16 +4344,8 @@ public class BaseGamePlayerController : GameActor {
         
         runtimeData.assetBuilds += valAdd;
         Messenger<double>.Broadcast(GameMessages.gameActionAssetBuild, valAdd);
-    }
-
-    public virtual void Attack(double valAdd) {
         
-        if (!GameConfigs.isGameRunning) {
-            return;
-        }
-        
-        runtimeData.saves += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
+        GamePlayerProgress.SetStatBuilds(valAdd);
     }
  
     public virtual void Tackle(GamePlayerController gamePlayerControllerTo) {

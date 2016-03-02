@@ -179,6 +179,8 @@ public class BaseGameStatCodes {
     public static string ammo = "ammo";
     public static string attacks = "attacks";//
     public static string defends = "defends";//
+    public static string repairs = "repairs";//
+    public static string builds = "builds";//
 
     public static string cuts = "cuts";//
     public static string cutsLeft = "cuts-left";//
