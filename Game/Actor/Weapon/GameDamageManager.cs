@@ -68,10 +68,10 @@ public class GameDamageManager : MonoBehaviour {
 
     public void UpdateGameObjects() {
         
-        if (!string.IsNullOrEmpty(effectDestroy)) {
+        if (string.IsNullOrEmpty(effectDestroy)) {
             effectDestroy = "effect-explosion";
         }
-        if (!string.IsNullOrEmpty(audioHit)) {
+        if (string.IsNullOrEmpty(audioHit)) {
             audioHit = "attack-hit-1";
         }
 

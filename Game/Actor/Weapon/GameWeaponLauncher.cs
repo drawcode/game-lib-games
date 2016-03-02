@@ -43,6 +43,8 @@ public class GameWeaponLauncher : GameWeaponBase {
     private Vector3 torqueTemp;
     private float reloadTimeTemp;
     private AudioSource audio;
+    //
+    //
     [HideInInspector]
     public bool
         Reloading;

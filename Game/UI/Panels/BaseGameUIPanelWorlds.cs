@@ -154,7 +154,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void OnGameWorldSelect() {
         ChangeState(GameWorldsState.missions); 
 
-        UpdateMeta();
+        //UpdateMeta();
     }
 
     public virtual void UpdateMeta() {

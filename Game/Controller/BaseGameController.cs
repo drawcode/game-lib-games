@@ -1314,13 +1314,63 @@ public class BaseGameController : GameObjectTimerBehavior {
                 levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
             
             if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
-                // Make it a type of needed action or none.
+                // Make it a type of needed action or none. 
+                // Update placeholder actions to actual actions of default
+
+                /*
+
+                AppContentCollect appContentCollect = AppContentCollects.Current;
+
+                List<AppContentCollectItem> appContentCollectItems = appContentCollect.GetItemsData();
+
+                // --------------
+                // SAVE
                 
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_save, 
+                    GameZoneActions.action_save,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // ATTACK
+
                 gameZoneActionAsset.Load(
                     GameZoneKeys.action_attack, 
                     GameZoneActions.action_attack,
                     "level-building-" + UnityEngine.Random.Range(1,10),
                     "platform-large-1");
+                    
+                // --------------
+                // BUILD
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_build, 
+                    GameZoneActions.action_build,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // REPAIR
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_repair, 
+                    GameZoneActions.action_repair,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // DEFEND
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_defend, 
+                    GameZoneActions.action_defend,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+
+
+                */
+
             }
         }
     }
