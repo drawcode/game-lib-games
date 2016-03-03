@@ -275,7 +275,7 @@ public class GameZoneActionAsset : GameZoneAction {
             currentCreateProgress = 1f;
         }
         else if(isActionCodeRepair) {
-            currentCreateProgress = UnityEngine.Random.Range(0.1f,0.5f);
+            currentCreateProgress = UnityEngine.Random.Range(0.1f,0.2f);
         }
         else if(isActionCodeBuild || isActionCodeDefend) {
             currentCreateProgress = 0;

@@ -69,10 +69,10 @@ public class GameDamageManager : MonoBehaviour {
     public void UpdateGameObjects() {
         
         if (string.IsNullOrEmpty(effectDestroy)) {
-            effectDestroy = "effect-explosion";
+            //effectDestroy = "effect-explosion";
         }
         if (string.IsNullOrEmpty(audioHit)) {
-            audioHit = "attack-hit-1";
+            //audioHit = "attack-hit-1";
         }
 
         gamePlayerController = null;
@@ -123,10 +123,9 @@ public class GameDamageManager : MonoBehaviour {
     }
 
     private void Dead() {
-        
-        
+                
         if (!string.IsNullOrEmpty(effectDestroy)) {         
-            AppContentAssets.LoadAssetWeapon(
+            AppContentAssets.LoadAssetEffects(
                 effectDestroy, transform.position, transform.rotation);
         }
 
@@ -134,7 +133,7 @@ public class GameDamageManager : MonoBehaviour {
             gamePlayerController.Die();
         }
         else if (gameZoneActionAsset != null) {
-            gameZoneActionAsset.AssetAnimationPlayNormalized(.1f);
+            gameZoneActionAsset.AssetAnimationPlayNormalized(0f);
         }
         else {
             if (enableObjectRemove) {
