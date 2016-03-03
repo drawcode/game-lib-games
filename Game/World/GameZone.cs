@@ -55,12 +55,18 @@ public class GameZone : GameObjectBehavior {
     public GameObject containerEffects;
     public GameObject containerEffectsScore;
     public GameObject containerEffectsIndicator;
-    public GameObject containerEffectsDamage;
+    public GameObject containerEffectsRepair;
+    public GameObject containerEffectsBuild;
     //
     public string assetCode = BaseDataObjectKeys.none;
     internal string lastAssetCode = null;
     public string assetPlatformCode = BaseDataObjectKeys.none;
     internal string lastAssetPlatformCode = null;
+    //
+    public string assetEffectProgressRepairCode = BaseDataObjectKeys.none;
+    internal string lastAssetEffectProgressRepairCode = null;
+    public string assetEffectProgressBuildCode = BaseDataObjectKeys.none;
+    internal string lastAssetEffectProgressBuildCode = null;
     //
     public string assetColorCode = BaseDataObjectKeys.none;
     internal string lastAssetColorCode = null;

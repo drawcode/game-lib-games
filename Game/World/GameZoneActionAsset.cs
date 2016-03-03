@@ -56,12 +56,72 @@ public class GameZoneActionAsset : GameZoneAction {
 
         LoadPlayerIndicator();
     }
+    
+    // -----------------------------------------------------------
+    // ASSET EFFECTS
+
+    // ASSET EFFECTS REPAIR
+
+    public void AssetEffectRepairPlayNormalized(float val) {
+
+        if(containerEffectsRepair == null) {
+            return;
+        }
+
+        float rate = (val/1f) * 200f;
+
+        containerEffectsRepair.SetParticleSystemEmission(true, true);
+        containerEffectsRepair.SetParticleSystemEmissionRate(rate, true);
+    }
+        
+    public void AssetEffectRepairPlay() {        
+        
+        if(containerEffectsRepair == null) {
+            return;
+        }
+
+        containerEffectsRepair.PlayParticleSystem(true);
+    }
+    
+    public void AssetEffectBuildPlayNormalized(float val) {
+        
+        if(containerEffectsBuild == null) {
+            return;
+        }
+
+        float rate = (val/1f) * 200f;
+
+        containerEffectsBuild.SetParticleSystemEmission(true, true);
+        containerEffectsBuild.SetParticleSystemEmissionRate(rate, true);
+    }
+    
+    public void AssetEffectBuildPlay() { 
+        
+        if(containerEffectsBuild == null) {
+            return;
+        }
+
+        containerEffectsBuild.PlayParticleSystem(true);
+    }
+
+    // -----------------------------------------------------------
+    // ASSET ANIMATION
 
     public void AssetAnimationIdle() {
+        
+        if(containerAssets == null) {
+            return;
+        }
+
         containerAssets.PlayAnimation(assetAnimationNameIdle);
     }
 
     public void AssetAnimationPlayNormalized(float time) {
+        
+        if(containerAssets == null) {
+            return;
+        }
+
         containerAssets.StepAnimationFrame(assetAnimationNamePlay, time);
     }
 
@@ -136,6 +196,10 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void LoadIcons() {
+        
+        if(containerIcons == null) {
+            return;
+        }
 
         // TODO icon from data
 
@@ -161,6 +225,10 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void LoadAsset() {
+        
+        if(containerAssets == null) {
+            return;
+        }
 
         if (isActionCodeSave) {
             return;
@@ -189,21 +257,25 @@ public class GameZoneActionAsset : GameZoneAction {
                 go.transform.parent = containerAssets.transform;
                 go.TrackObject(containerAssets);
 
-                // Add game damage
 
-                Collider goCollider = go.GetOrSet<Collider>();
+                if(isActionCodeAttack || isActionCodeDefend) {
 
-                if(goCollider != null) {
-                    
-                    GameDamageManager gameDamageManager = 
-                        goCollider.gameObject.GetOrSet<GameDamageManager>();
-                    gameDamageManager.audioHit = "attack-hit-1";
-                    gameDamageManager.effectDestroy = "effect-explosion";
-                    gameDamageManager.enableObjectRemove = true;
-                    gameDamageManager.HP = 1000;
-                    
-                    gameDamageManager.UpdateGameObjects();
-                    
+                    // Add game damage
+
+                    Collider goCollider = go.GetOrSet<Collider>();
+
+                    if(goCollider != null) {
+                        
+                        GameDamageManager gameDamageManager = 
+                            goCollider.gameObject.GetOrSet<GameDamageManager>();
+                        gameDamageManager.audioHit = "attack-hit-1";
+                        gameDamageManager.effectDestroy = "effect-explosion";
+                        gameDamageManager.enableObjectRemove = true;
+                        gameDamageManager.HP = 1000;
+                        
+                        gameDamageManager.UpdateGameObjects();
+                        
+                    }
                 }
 
                 AssetAnimationReset();
@@ -211,7 +283,11 @@ public class GameZoneActionAsset : GameZoneAction {
         }
     }
 
-    public void LoadAssetPlatform() {        
+    public void LoadAssetPlatform() {   
+        
+        if(containerAssetsPlatforms == null) {
+            return;
+        }
         
         if (assetPlatformCode != BaseDataObjectKeys.none
             && lastAssetPlatformCode != assetPlatformCode) {
@@ -224,6 +300,48 @@ public class GameZoneActionAsset : GameZoneAction {
                 containerAssetsPlatforms.DestroyChildren();
                 go.transform.parent = containerAssetsPlatforms.transform;
                 go.TrackObject(containerAssetsPlatforms);
+            }
+        }
+    }
+
+    public void LoadAssetEffectProgressRepair() {  
+        
+        if(containerEffectsRepair == null) {
+            return;
+        }
+        
+        if (assetEffectProgressRepairCode != BaseDataObjectKeys.none
+            && lastAssetEffectProgressRepairCode != assetEffectProgressRepairCode) {
+            
+            lastAssetEffectProgressRepairCode = assetEffectProgressRepairCode;
+            
+            GameObject go = AppContentAssets.LoadAssetEffects(assetEffectProgressRepairCode);
+            
+            if (go != null) {
+                containerEffectsRepair.DestroyChildren();
+                go.transform.parent = containerEffectsRepair.transform;
+                go.TrackObject(containerEffectsRepair);
+            }
+        }
+    }
+        
+    public void LoadAssetEffectProgressBuild() {     
+        
+        if(containerEffectsBuild == null) {
+            return;
+        }
+        
+        if (assetEffectProgressBuildCode != BaseDataObjectKeys.none
+            && lastAssetEffectProgressBuildCode != assetEffectProgressBuildCode) {
+            
+            lastAssetEffectProgressBuildCode = assetEffectProgressBuildCode;
+                        
+            GameObject go = AppContentAssets.LoadAssetEffects(assetEffectProgressBuildCode);
+            
+            if (go != null) {
+                containerEffectsBuild.DestroyChildren();
+                go.transform.parent = containerEffectsBuild.transform;
+                go.TrackObject(containerEffectsBuild);
             }
         }
     }
@@ -276,12 +394,15 @@ public class GameZoneActionAsset : GameZoneAction {
         }
         else if(isActionCodeRepair) {
             currentCreateProgress = UnityEngine.Random.Range(0.1f,0.2f);
+            assetEffectProgressRepairCode = "effect-fire-smoke-2";
+
+            if(!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
+                LoadAssetEffectProgressRepair();
+            }
         }
         else if(isActionCodeBuild || isActionCodeDefend) {
             currentCreateProgress = 0;
         }
-
-
         
         //GamePlayerIndicator.AddIndicator(GameHUD.Instance.containerOffscreenIndicators, 
         //                                 t.gameObject, "bot1");
@@ -340,6 +461,10 @@ public class GameZoneActionAsset : GameZoneAction {
                 
                 if (!actionCompleted) {
                     AssetAnimationPlayNormalized(currentCreateProgress);
+
+                    if(isActionCodeRepair) {
+                        AssetEffectRepairPlayNormalized(currentCreateProgress);
+                    }
                 }
             }   
         }
@@ -364,14 +489,13 @@ public class GameZoneActionAsset : GameZoneAction {
 
                     currentCreateProgress -= power * Time.deltaTime;
                 }
-
                 
                 if (Input.GetKeyDown(KeyCode.Slash)) {
-                    Load(
-                        GameZoneKeys.action_attack, 
-                        GameZoneActions.action_attack,
-                        "level-building-1",// + UnityEngine.Random.Range(1, 10),
-                        "platform-large-1");
+                    //Load(
+                    //    GameZoneKeys.action_attack, 
+                    //    GameZoneActions.action_attack,
+                    //    "level-building-1",// + UnityEngine.Random.Range(1, 10),
+                    //    "platform-large-1");
                 }
             }
         }
