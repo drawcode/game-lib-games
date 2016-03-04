@@ -2250,7 +2250,27 @@ public class BaseGamePlayerProgress {
             SetStatTotal(GameStatCodes.kills, val);
         }
     }
-   
+    
+    // save
+    
+    public static void SetStatSaves(double val) {
+        SetStatAmmo((float)val);
+    }
+    
+    public static void SetStatSaves(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatSaves(val);
+        }
+    }
+    
+    float lastSavesTime = 0;
+    
+    public virtual void setStatSaves(float val) {
+        if (lastSavesTime + .05f < Time.time) {
+            lastSavesTime = Time.time;
+            SetStatTotal(GameStatCodes.saves, val);
+        }
+    }
     
     // ammo
     

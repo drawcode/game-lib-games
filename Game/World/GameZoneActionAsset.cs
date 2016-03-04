@@ -16,6 +16,8 @@ public class GameZoneActionAsset : GameZoneAction {
     public bool loaded = false;
     public GameCharacter gameCharacter;
     public GamePlayerIndicator gamePlayerIndicator;
+    public GameDamageManager gameDamageManager;
+    public float hitPoints = 5000f;
 
     public override void Start() {
         base.Start();
@@ -80,6 +82,8 @@ public class GameZoneActionAsset : GameZoneAction {
 
         containerEffectsRepair.PlayParticleSystem(true);
     }
+
+    //
     
     public void AssetEffectBuildPlayNormalizedFlipped(float val) {
         
@@ -262,12 +266,12 @@ public class GameZoneActionAsset : GameZoneAction {
 
                     if(goCollider != null) {
                         
-                        GameDamageManager gameDamageManager = 
+                        gameDamageManager = 
                             goCollider.gameObject.GetOrSet<GameDamageManager>();
                         gameDamageManager.audioHit = "attack-hit-1";
                         gameDamageManager.effectDestroy = "effect-explosion";
-                        gameDamageManager.enableObjectRemove = true;
-                        gameDamageManager.HP = 1000;
+                        gameDamageManager.enableObjectRemove = false;
+                        gameDamageManager.HP = hitPoints;
                         
                         gameDamageManager.UpdateGameObjects();
                         
@@ -277,6 +281,15 @@ public class GameZoneActionAsset : GameZoneAction {
                 AssetAnimationReset();
             }
         }
+    }
+
+    public float GetDamageValue() {
+
+        if(gameDamageManager != null) {
+            return gameDamageManager.HP;
+        }
+
+        return 0;
     }
 
     public void LoadAssetPlatform() {   
@@ -386,6 +399,11 @@ public class GameZoneActionAsset : GameZoneAction {
     public void HandleActionInit() {
         if(isActionCodeAttack) {
             currentCreateProgress = 1f;
+            assetEffectProgressRepairCode = "effect-fire-smoke-2";
+
+            if(!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
+                LoadAssetEffectProgressRepair();
+            }
         }
         else if(isActionCodeRepair) {
             currentCreateProgress = UnityEngine.Random.Range(0.1f,0.2f);
@@ -408,62 +426,85 @@ public class GameZoneActionAsset : GameZoneAction {
         Mathf.Clamp(currentCreateProgress, 0f, 1f);
         
         if (!actionCompleted) {
-            
-            if (isActionCodeBuild || isActionCodeRepair || isActionCodeDefend) {
+
+            bool scoreIt = false;
+
+            if (isActionCodeBuild 
+                || isActionCodeRepair 
+                || isActionCodeDefend) {
+
                 if (currentCreateProgress >= 1) {
+
                     actionCompleted = true;
                     
                     AssetAnimationIdle();
 
                     currentCreateState = GameZoneActionAssetState.created;
-                    
-                    if (isActionCodeBuild) {                        
-                        GameController.CurrentGamePlayerController.ProgressScore(1);
-                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                                        
+                    if (isActionCodeBuild) {
+                        
+                        scoreIt = true;
+
                         GameController.CurrentGamePlayerController.ProgressBuild(1);
                     }
                     
-                    if (isActionCodeRepair) {                        
+                    else if (isActionCodeRepair) {
+                        
+                        scoreIt = true;
                                                 
-                        if(isActionCodeRepair) {
-                            AssetEffectRepairPlayNormalizedFlipped(1f);
-                        }
-
-                        GameController.CurrentGamePlayerController.ProgressScore(1);
-                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                        AssetEffectRepairPlayNormalizedFlipped(1f);
+                        
                         GameController.CurrentGamePlayerController.ProgressRepair(1);
                     }
                     
-                    if (isActionCodeDefend) {                        
-                        GameController.CurrentGamePlayerController.ProgressScore(1);
-                        GameController.CurrentGamePlayerController.ProgressScores(1);
+                    else if (isActionCodeDefend) { 
+
+                        scoreIt = true;
+
                         GameController.CurrentGamePlayerController.ProgressDefend(1);
                     }
                 }
             }
             else if (isActionCodeAttack) {
-                if (currentCreateProgress <= 0) {
+
+                float normalizedValue = GetDamageValue()/hitPoints;
+                currentCreateProgress = Mathf.Clamp(normalizedValue, .2f, 1f);
+
+                AssetAnimationPlayNormalized(currentCreateProgress);
+                AssetEffectRepairPlayNormalizedFlipped(normalizedValue);
+
+                if (currentCreateProgress <= 0 || normalizedValue == 0) {
+
+                    currentCreateProgress = 0f;
+
                     actionCompleted = true;
 
                     ChangeStateDestroying();
-                    
-                    GameController.CurrentGamePlayerController.ProgressScore(1);
-                    GameController.CurrentGamePlayerController.ProgressScores(1);
+
+                    scoreIt = true;
+
                     GameController.CurrentGamePlayerController.ProgressAttack(1);
-                    
-                    //RemoveMe();
-                    //AssetAnimationPlayNormalized(currentCreateProgress);
                 }
+            }
+
+            if(scoreIt) {                
+                GameController.CurrentGamePlayerController.ProgressScore(1);
+                GameController.CurrentGamePlayerController.ProgressScores(1);
             }
             
             if (currentCreateProgress != lastCreateProgress) {
+
                 lastCreateProgress = currentCreateProgress;
                 
                 if (!actionCompleted) {
+
                     AssetAnimationPlayNormalized(currentCreateProgress);
 
                     if(isActionCodeRepair) {
                         AssetEffectRepairPlayNormalizedFlipped(currentCreateProgress);
+                    }
+                    else if(isActionCodeAttack) {
+                        AssetEffectRepairPlayNormalizedFlipped(currentCreateProgress);                    
                     }
                 }
             }   

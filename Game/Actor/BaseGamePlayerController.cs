@@ -77,6 +77,8 @@ public class BaseGamePlayerRuntimeData {
     public double scale = 1f;
     public double attack = 1f;
     public double defense = 1f;
+    //
+    //
     public double scores = 0;
     public double score = 0;
     public double coins = 0;
@@ -91,10 +93,10 @@ public class BaseGamePlayerRuntimeData {
     public double savesLaunched = 0;
     public double goalFly = 0;
     public double kills = 0f;
-    public double assetBuilds = 0f;
-    public double assetAttacks = 0f;
-    public double assetRepairs = 0f;
-    public double assetDefends = 0f;
+    public double builds = 0f;
+    public double attacks = 0f;
+    public double repairs = 0f;
+    public double defends = 0f;
 
     public void SetController(GamePlayerController controller) {
         currentController = controller;
@@ -4290,62 +4292,64 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerProgress.SetStatAmmo(val);
     }
     
-    public virtual void ProgressSave(double valAdd) {
+    public virtual void ProgressSave(double val) {
              
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.saves += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionSave, valAdd);
+        runtimeData.saves += val;
+        Messenger<double>.Broadcast(GameMessages.gameActionSave, val);
+        
+        GamePlayerProgress.SetStatSaves(val);
     }
     
-    public virtual void ProgressAttack(double valAdd) {
+    public virtual void ProgressAttack(double val) {
         
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.assetAttacks += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionAssetAttack, valAdd);
+        runtimeData.attacks += val;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetAttack, val);
         
-        GamePlayerProgress.SetStatAttacks(valAdd);
+        GamePlayerProgress.SetStatAttacks(val);
     }
 
-    public virtual void ProgressDefend(double valAdd) {
+    public virtual void ProgressDefend(double val) {
         
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.assetDefends += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionAssetDefend, valAdd);
+        runtimeData.defends += val;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetDefend, val);
         
-        GamePlayerProgress.SetStatDefends(valAdd);
+        GamePlayerProgress.SetStatDefends(val);
     }
 
-    public virtual void ProgressRepair(double valAdd) {
+    public virtual void ProgressRepair(double val) {
         
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.assetRepairs += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionAssetRepair, valAdd);
+        runtimeData.repairs += val;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetRepair, val);
         
-        GamePlayerProgress.SetStatRepairs(valAdd);
+        GamePlayerProgress.SetStatRepairs(val);
     }
 
-    public virtual void ProgressBuild(double valAdd) {
+    public virtual void ProgressBuild(double val) {
         
         if (!GameConfigs.isGameRunning) {
             return;
         }
         
-        runtimeData.assetBuilds += valAdd;
-        Messenger<double>.Broadcast(GameMessages.gameActionAssetBuild, valAdd);
+        runtimeData.builds += val;
+        Messenger<double>.Broadcast(GameMessages.gameActionAssetBuild, val);
         
-        GamePlayerProgress.SetStatBuilds(valAdd);
+        GamePlayerProgress.SetStatBuilds(val);
     }
  
     public virtual void Tackle(GamePlayerController gamePlayerControllerTo) {
