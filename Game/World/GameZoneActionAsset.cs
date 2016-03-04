@@ -62,16 +62,14 @@ public class GameZoneActionAsset : GameZoneAction {
 
     // ASSET EFFECTS REPAIR
 
-    public void AssetEffectRepairPlayNormalized(float val) {
+    public void AssetEffectRepairPlayNormalizedFlipped(float val) {
 
         if(containerEffectsRepair == null) {
             return;
         }
 
-        float rate = (val/1f) * 200f;
-
         containerEffectsRepair.SetParticleSystemEmission(true, true);
-        containerEffectsRepair.SetParticleSystemEmissionRate(rate, true);
+        containerEffectsRepair.SetParticleSystemEmissionRateNormalizedFlipped(val, true);
     }
         
     public void AssetEffectRepairPlay() {        
@@ -83,16 +81,14 @@ public class GameZoneActionAsset : GameZoneAction {
         containerEffectsRepair.PlayParticleSystem(true);
     }
     
-    public void AssetEffectBuildPlayNormalized(float val) {
+    public void AssetEffectBuildPlayNormalizedFlipped(float val) {
         
         if(containerEffectsBuild == null) {
             return;
         }
 
-        float rate = (val/1f) * 200f;
-
         containerEffectsBuild.SetParticleSystemEmission(true, true);
-        containerEffectsBuild.SetParticleSystemEmissionRate(rate, true);
+        containerEffectsBuild.SetParticleSystemEmissionRateNormalizedFlipped(val, true);
     }
     
     public void AssetEffectBuildPlay() { 
@@ -372,8 +368,7 @@ public class GameZoneActionAsset : GameZoneAction {
         }
     }
 
-    public void HandleUpdateState(float power, float time = 1f) {
-        
+    public void HandleUpdateState(float power, float time = 1f) {        
         
         if (currentCreateState != GameZoneActionAssetState.created) {
             if (currentCreateState == GameZoneActionAssetState.creating) {            
@@ -429,6 +424,11 @@ public class GameZoneActionAsset : GameZoneAction {
                     }
                     
                     if (isActionCodeRepair) {                        
+                                                
+                        if(isActionCodeRepair) {
+                            AssetEffectRepairPlayNormalizedFlipped(1f);
+                        }
+
                         GameController.CurrentGamePlayerController.ProgressScore(1);
                         GameController.CurrentGamePlayerController.ProgressScores(1);
                         GameController.CurrentGamePlayerController.ProgressRepair(1);
@@ -463,7 +463,7 @@ public class GameZoneActionAsset : GameZoneAction {
                     AssetAnimationPlayNormalized(currentCreateProgress);
 
                     if(isActionCodeRepair) {
-                        AssetEffectRepairPlayNormalized(currentCreateProgress);
+                        AssetEffectRepairPlayNormalizedFlipped(currentCreateProgress);
                     }
                 }
             }   

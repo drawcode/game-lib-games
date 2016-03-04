@@ -57,6 +57,68 @@ public class GameObjectData : GameObjectBehavior {
         return null;
     }
 
+    public string GetString(string key) {
+        
+        foreach(GameObjectDataItem item in data) {
+            if(item.key == key) {
+                return item.val;
+            }
+        }
+        
+        return null;
+    }
+
+    public float GetFloat(string key) {
+
+        float valTo = 0f;
+        
+        foreach(GameObjectDataItem item in data) {
+            if(item.key == key) {
+
+                if(!string.IsNullOrEmpty(item.val)) {
+                    float.TryParse(item.val, out valTo);
+                    return valTo;
+                }
+            }
+        }
+        
+        return valTo;
+    }
+    
+    public int GetInt(string key) {
+
+        int valTo = 0;
+        
+        foreach(GameObjectDataItem item in data) {
+            if(item.key == key) {
+                
+                if(!string.IsNullOrEmpty(item.val)) {
+                    int.TryParse(item.val, out valTo);
+                    return valTo;
+                }
+            }
+        }
+        
+        return valTo;
+    }
+
+    public double GetDouble(string key) {
+
+        double valTo = 0;
+        
+        foreach(GameObjectDataItem item in data) {
+            if(item.key == key) {
+                
+                if(!string.IsNullOrEmpty(item.val)) {
+                    double.TryParse(item.val, out valTo);
+                    return valTo;
+                }
+            }
+        }
+        
+        return valTo;
+    }
+
     public Dictionary<string,object> ToDictionary() {
         Dictionary<string,object> dict = new Dictionary<string, object>();
 
