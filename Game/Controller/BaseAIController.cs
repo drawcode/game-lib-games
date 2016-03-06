@@ -59,10 +59,16 @@ public class BaseAIController : GameObjectBehavior {
     //
     public float currentCharacterTypeCount = 2; // TODO change to characters data
     //
-    public double spawnAmount = 1;
-    public double spawnMin = 5;
-    public double spawnLimit = 11;
+    public double spawnEnemyAmount = 1;
+    public double spawnEnemyMin = 5;
+    public double spawnEnemyLimit = 11;
     public double spawnEnemyCount = 0;
+    //
+    public double spawnSidekickAmount = 1;
+    public double spawnSidekickMin = 3;
+    public double spawnSidekickLimit = 11;
+    public double spawnSidekickCount = 0;
+
     //
     public float currentFPS = 0;
     //
@@ -174,7 +180,8 @@ public class BaseAIController : GameObjectBehavior {
         yield return new WaitForEndOfFrame();
     }
 
-    public virtual void load(string code) {
+    public virtual void load(string code, string type = "enemy") {
+
         // Load by character code
         
         float speed = .3f;
@@ -184,15 +191,8 @@ public class BaseAIController : GameObjectBehavior {
         speed = UnityEngine.Random.Range(.8f, 1.6f);
         attack = UnityEngine.Random.Range(.3f, .4f);
         scale = UnityEngine.Random.Range(.8f, 1.6f);
-
-        GameAIDirectorData itemData = new GameAIDirectorData();
-        itemData.code = code;
-        itemData.type = GameActorType.enemy;
-        itemData.speed = speed;
-        itemData.attack = attack;
-        itemData.scale = scale;
-        
-        GameAIController.LoadCharacter(itemData);
+                
+        GameAIController.Load(code, type, speed, attack, scale);
     }
 
     public virtual void load(
@@ -276,32 +276,84 @@ public class BaseAIController : GameObjectBehavior {
             return;
         }
 
-        currentFPS = FPSDisplay.GetCurrentFPS();    
+        directAIEnemies();
+
+        directAISidekicks();
+    }
+    
+    List<GameDataCharacterPreset> characters = null;
+    List<GamePresetItem> presetItemsAppend = null;
+    List<float> probs = null;
+
+    public virtual void directAICharacters(
+        string actorType, 
+        double spawnCount, 
+        double spawnMin,  
+        double spawnLimit,
+        bool limitFps = true) {
         
-        if ((spawnEnemyCount < spawnLimit
-            && currentFPS > 20f) || spawnEnemyCount < spawnMin) {
+        currentFPS = FPSDisplay.GetCurrentFPS();  
+                
+        // DIRECT ENEMIES
+        
+        if ((spawnCount < spawnLimit
+            && (currentFPS > 20f || !limitFps)) 
+            || spawnCount < spawnMin) {
             
             // do some spawning
             
-            if (spawnEnemyCount < spawnMin * 2) {
-                spawnAmount = 1;
-            }
-
-            GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
-
-            if (preset == null) {
-                return;
+            if (spawnCount < spawnMin * 2) {
+                //spawnAmount = 1;
             }
             
-            List<GamePresetItem> presetItems = preset.data.items;
-            
-            List<float> probs = new List<float>();
-            foreach (GamePresetItem item in presetItems) {
-                probs.Add((float)item.probability);
+            if(characters == null) {
+                characters = new List<GameDataCharacterPreset>();
+            }
+            else {
+                characters.Clear();
             }
 
+            if (GameLevels.Current.data != null && GameLevels.Current.data.HasCharacterPresets()) {
+                characters.AddRange(GameLevels.Current.data.character_presets);
+            }            
+            else if (GameWorlds.Current.data != null && GameWorlds.Current.data.HasCharacterPresets()) {
+                characters.AddRange(GameWorlds.Current.data.character_presets);
+            }
+
+            if(presetItemsAppend == null) {
+                presetItemsAppend = new List<GamePresetItem>();
+            }
+            else {
+                presetItemsAppend.Clear();
+            }
+
+            if(probs == null) {
+                probs = new List<float>();
+            }
+            else {
+                probs.Clear();
+            }
+
+            foreach (GameDataCharacterPreset characterPreset in characters) {
+                
+                GamePreset preset = GamePresets.Get(characterPreset.code);
+                //GamePresets.Instance.GetCurrentPresetDataCharacter();
+                
+                if (preset == null) {
+                    return;
+                }
+                
+                List<GamePresetItem> presetItems = preset.data.items;
+
+                foreach (GamePresetItem item in presetItems) {
+                    if (item.type == actorType) {
+                        probs.Add((float)item.probability);
+                    }
+                }
+            }
+            
             //string characterCode = "";            
-
+            
             /*
             if (!IsPlayerControlled) {
                 // apply team 
@@ -325,16 +377,34 @@ public class BaseAIController : GameObjectBehavior {
             */
             
             GamePresetItem selectByProbabilityItem = 
-                MathUtil.ChooseProbability<GamePresetItem>(presetItems, probs); 
+                MathUtil.ChooseProbability<GamePresetItem>(presetItemsAppend, probs); 
             
             if (selectByProbabilityItem == null) {
                 return;
             }
             
             string code = selectByProbabilityItem.code;
-
-            GameAIController.Load(code);
+            
+            GameAIController.Load(code, actorType);
         }
+    }
+
+    public virtual void directAIEnemies() {
+
+        directAICharacters(
+            GameActorType.enemy, 
+            spawnEnemyCount, 
+            spawnEnemyMin, 
+            spawnEnemyLimit, true);
+    }
+        
+    public virtual void directAISidekicks() {
+        
+        directAICharacters(
+            GameActorType.sidekick, 
+            spawnSidekickCount, 
+            spawnSidekickMin, 
+            spawnSidekickLimit, false);
     }
 
     // MESSAGING
@@ -356,11 +426,11 @@ public class BaseAIController : GameObjectBehavior {
             if (director.code == GameDataDirectorType.ai) {
 
                 if (director.min > 0) {
-                    spawnMin = director.min;                        
+                    spawnEnemyMin = director.min;                        
                 }
                 
                 if (director.max > 0) {
-                    spawnLimit = director.max;                        
+                    spawnEnemyLimit = director.max;                        
                 }
             }
         }
