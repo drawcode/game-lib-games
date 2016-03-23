@@ -2404,7 +2404,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             
             if (directors != null) {
                 foreach (GameDataDirector director in directors) {
-                    if (director.code == GameDataDirectorType.ai) {
+                    if (director.code == GameDataDirectorType.enemy
+                        || director.code == GameDataDirectorType.sidekick) {
                         runAI = director.run;
                         GameAIController.UpdateDirector(director);
                     }

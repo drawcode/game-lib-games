@@ -48,7 +48,10 @@ public class BaseAIController : GameObjectBehavior {
     public static BaseAIController BaseInstance;
     //
     public bool runDirector = false;
-    public bool stopDirector = false;
+    //
+    public bool runDirectorSidekicks = false;
+    //
+    public bool runDirectorEnemies = false;
     //
     public float currentDifficultyLevel = .1f;
     //
@@ -84,6 +87,10 @@ public class BaseAIController : GameObjectBehavior {
     //
     public Dictionary<string, GamePlayerSpawn> spawns;
     public static GameAICharacterGenerateType generateType = GameAICharacterGenerateType.probabalistic;
+        
+    public List<GameDataCharacterPreset> characters = null;
+    public List<GamePresetItem> presetItemsAppend = null;
+    public List<float> probs = null;
 
     // ----------------------------------------------------------------------
 
@@ -213,7 +220,11 @@ public class BaseAIController : GameObjectBehavior {
         GameAIController.LoadCharacter(itemData);
     }
 
+    // -------------------------------------------------
+
     // RUNNER/STOPPER
+
+    // ALL
 
     public virtual void run(bool run) {
         runDirector = run;
@@ -226,6 +237,38 @@ public class BaseAIController : GameObjectBehavior {
     public virtual void stop() {
         runDirector = false;
     }
+
+    // RUN SIDEKICKS
+    
+    public virtual void runSidekicks(bool run) {
+        runDirectorSidekicks = run;
+    }
+    
+    public virtual void runSidekicks() {
+        runSidekicks(true);
+    }
+    
+    public virtual void stopSidekicks() {
+        runDirectorSidekicks = false;
+    }
+
+    // RUN ENEMIES
+
+    public virtual void runEnemies(bool run) {
+        runDirectorEnemies = run;
+    }
+    
+    public virtual void runEnemies() {
+        runEnemies(true);
+    }
+    
+    public virtual void stopEnemies() {
+        runDirectorEnemies = false;
+    }
+    
+    // -------------------------------------------------
+    
+    // LEVELS
     
     public virtual void setDifficultyLevel(GameAIDifficulty difficultyTo) {
         difficultyLevelEnum = difficultyTo;
@@ -276,14 +319,14 @@ public class BaseAIController : GameObjectBehavior {
             return;
         }
 
-        directAIEnemies();
-
-        directAISidekicks();
+        if(runDirectorSidekicks) {        
+            directAISidekicks();
+        }
+        
+        if(runDirectorEnemies) {        
+            directAIEnemies();
+        }
     }
-    
-    List<GameDataCharacterPreset> characters = null;
-    List<GamePresetItem> presetItemsAppend = null;
-    List<float> probs = null;
 
     public virtual void directAICharacters(
         string actorType, 
@@ -313,12 +356,29 @@ public class BaseAIController : GameObjectBehavior {
                 characters.Clear();
             }
 
-            if (GameLevels.Current.data != null && GameLevels.Current.data.HasCharacterPresets()) {
-                characters.AddRange(GameLevels.Current.data.character_presets);
+            if (GameLevels.Current.data != null 
+                && GameLevels.Current.data.HasCharacterPresets()) {
+            
+                foreach(GameDataCharacterPreset characterPreset 
+                        in GameLevels.Current.data.character_presets) {
+                    if(characterPreset.type == actorType) {
+                        characters.Add(characterPreset);
+                    }
+                }
             }            
-            else if (GameWorlds.Current.data != null && GameWorlds.Current.data.HasCharacterPresets()) {
-                characters.AddRange(GameWorlds.Current.data.character_presets);
+            else if (GameWorlds.Current.data != null 
+                     && GameWorlds.Current.data.HasCharacterPresets()) {
+                
+                foreach(GameDataCharacterPreset characterPreset 
+                        in GameWorlds.Current.data.character_presets) {
+                    if(characterPreset.type == actorType) {
+                        characters.Add(characterPreset);
+                    }
+                }
             }
+
+            // IF SIDEKICKS, SELECT FROM SIDEKICKS NOT ENEMIES
+
 
             if(presetItemsAppend == null) {
                 presetItemsAppend = new List<GamePresetItem>();
@@ -348,6 +408,7 @@ public class BaseAIController : GameObjectBehavior {
                 foreach (GamePresetItem item in presetItems) {
                     if (item.type == actorType) {
                         probs.Add((float)item.probability);
+                        presetItemsAppend.Add(item);
                     }
                 }
             }
@@ -423,7 +484,11 @@ public class BaseAIController : GameObjectBehavior {
 
         if (director != null) {
             
-            if (director.code == GameDataDirectorType.ai) {
+            if(!runDirector) {
+                runDirector = true;
+            }
+
+            if (director.code == GameDataDirectorType.enemy) {
 
                 if (director.min > 0) {
                     spawnEnemyMin = director.min;                        
@@ -432,6 +497,20 @@ public class BaseAIController : GameObjectBehavior {
                 if (director.max > 0) {
                     spawnEnemyLimit = director.max;                        
                 }
+
+                runDirectorEnemies = director.run;
+            }
+            else if (director.code == GameDataDirectorType.sidekick) {
+                
+                if (director.min > 0) {
+                    spawnSidekickMin = director.min;                        
+                }
+                
+                if (director.max > 0) {
+                    spawnSidekickLimit = director.max;                        
+                }
+                
+                runDirectorSidekicks = director.run;
             }
         }
     }
@@ -456,6 +535,7 @@ public class BaseAIController : GameObjectBehavior {
         // do on update always
     
         spawnEnemyCount = GameController.Instance.characterActorEnemyCount;
+        spawnSidekickCount = GameController.Instance.characterActorSidekickCount;
     }
     
     public virtual void Update() {
@@ -477,12 +557,8 @@ public class BaseAIController : GameObjectBehavior {
                 GameController.Instance.levelActorsContainerObject.DestroyChildren();
             }
         }
-
-        if (stopDirector) {
-            return;
-        }
-    
-        if (!runDirector || stopDirector
+            
+        if (!runDirector
             || GameDraggableEditor.isEditing) {
             return;
         }
