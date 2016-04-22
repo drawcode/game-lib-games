@@ -794,9 +794,35 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
     
-    public int collectableItemsCount {
+    public int itemsCount {
         get {
-            return itemContainerObject.transform.childCount;
+            int countItems = 0;
+
+            //foreach (GamePlayerController gamePlayerController in 
+            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+
+            //    if (gamePlayerController.IsSidekickControlled) {
+            //        countItems += 1;
+            //    }
+            //}
+
+            return countItems;
+        }
+    }
+
+    public int itemWeaponsCount {
+        get {
+            int countWeapons = 0;
+
+            //foreach (GamePlayerController gamePlayerController in 
+            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+            //
+            //    if (gamePlayerController.IsSidekickControlled) {
+            //        countItems += 1;
+            //    }
+            //}
+
+            return countWeapons;
         }
     }
 
@@ -2038,7 +2064,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             yield break;
         }
 
-        string path = Path.Combine(ContentPaths.appCacheVersionSharedPrefabLevelItems, item.data.GetModel().code);
+        string path = Path.Combine(
+            ContentPaths.appCacheVersionSharedPrefabLevelItems, 
+            item.data.GetModel().code);
+        
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
         Vector3 spawnLocation = Vector3.zero;
 
@@ -2113,7 +2142,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         GameObject spawnObj = GameObjectHelper.CreateGameObject(
-            prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledItems) as GameObject;
+            prefabObject, spawnLocation, Quaternion.identity, 
+            GameConfigs.usePooledItems) as GameObject;
 
         if (spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;

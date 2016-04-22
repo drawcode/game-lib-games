@@ -39,6 +39,9 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public bool allowCollect = false;
     public bool isCollecting = false;
     public float collectRange = 8f;
+    //
+    string gamePlayerItemCode = "";
+    GameItem gameItem = null;
                
     public virtual void Awake() {
         bobSpeed = Mathf.Clamp(bobSpeed, 0, 100);
@@ -75,6 +78,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
         ResetContent();
         RevealCollect(UnityEngine.Random.Range(0f, .01f));
+
+        InitItem();
     }
         
     public virtual void RevealCollect(float delay) {
@@ -102,20 +107,32 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //FadeInObject(particleSystemPostObject, 2f);
         PlayParticleSystem(particleSystemPostObject);
     }
+
+    public virtual void InitItem() {
+
+        if(string.IsNullOrEmpty(gamePlayerItemCode)) {
+            gamePlayerItemCode = transform.name.Replace(" (Clone)", "");
+            gamePlayerItemCode = gamePlayerItemCode.Replace("(Clone)", "");
+        }
+
+        Debug.Log("CollectContent:" + " gamePlayerItemCode:" + gamePlayerItemCode);
+
+        if(gameItem == null) {
+            gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
+        }
+    }
+
+    public virtual GameItem GetGameItem() {
+        return gameItem;
+    }
                 
     public virtual void CollectContent() {
                 
         if (!isCollecting) {
+            
             LogUtil.Log("CollectContent:Collect", true);
                         
             isCollecting = true;         
-
-            string gamePlayerItemCode = transform.name.Replace(" (Clone)", "");
-            gamePlayerItemCode = gamePlayerItemCode.Replace("(Clone)", "");
-
-            Debug.Log("CollectContent:" + " gamePlayerItemCode:" + gamePlayerItemCode);
-
-            GameItem gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
 
             if (gameItem == null) {
                 return;
