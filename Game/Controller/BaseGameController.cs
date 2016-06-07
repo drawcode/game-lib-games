@@ -2430,8 +2430,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if (run) {
             
-            List<GameDataDirector> directors = GameLevels.Current.data.directors;
-            
+            List<GameDataDirector> directorsLevels = GameLevels.Current.data.directors;
+            List<GameDataDirector> directors = GameWorlds.Current.data.directors;
+
+            if(directors == null) {
+                directors = new List<GameDataDirector>();
+            }
+
+            if(directorsLevels != null && directors.Count > 0) {
+                directors.AddRange(directorsLevels);
+            }
+
             if (directors != null) {
                 foreach (GameDataDirector director in directors) {
                     if (director.code == GameDataDirectorType.enemy
@@ -2439,7 +2448,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                         runAI = director.run;
                         GameAIController.UpdateDirector(director);
                     }
-                    else if (director.code == GameDataDirectorType.item) {
+                    else if (director.code == GameDataDirectorType.item
+                        || director.code == GameDataDirectorType.weapon) {
                         runItem = director.run;
                         GameItemController.UpdateDirector(director);
                     }

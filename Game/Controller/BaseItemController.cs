@@ -413,6 +413,16 @@ public class BaseItemController : GameObjectBehavior {
                 }
             }
 
+            if(presetItemsAppend != null 
+                || presetItemProbabilities != null) {
+                return;
+            }
+
+            if(presetItemsAppend.Count == 0 
+                || presetItemProbabilities.Count == 0) {
+                return;
+            }
+
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(
                     presetItemsAppend, presetItemProbabilities); 
@@ -475,7 +485,7 @@ public class BaseItemController : GameObjectBehavior {
                 }
             }
             else if (GameWorlds.Current.data != null
-                     && GameWorlds.Current.data.HasCharacterPresets()) {
+                && GameWorlds.Current.data.HasWeaponPresets()) {
 
                 foreach (GameDataWeaponPreset weaponPreset 
                     in GameWorlds.Current.data.weapon_presets) {
@@ -484,7 +494,6 @@ public class BaseItemController : GameObjectBehavior {
                     }
                 }
             }
-
 
             if (presetWeaponsAppend == null) {
                 presetWeaponsAppend = new List<GamePresetItem>();
@@ -519,6 +528,16 @@ public class BaseItemController : GameObjectBehavior {
                 }
             }
 
+            if(presetWeaponsAppend != null 
+                || presetWeaponProbabilities != null) {
+                return;
+            }
+
+            if(presetWeaponsAppend.Count == 0 
+                || presetWeaponProbabilities.Count == 0) {
+                return;
+            }
+                   
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(
                     presetWeaponsAppend, presetWeaponProbabilities); 
@@ -535,7 +554,7 @@ public class BaseItemController : GameObjectBehavior {
 
     public virtual void directWeapons() {
 
-        directItems(
+        directWeapons(
             GameItemType.weapon, 
             spawnWeaponCount, 
             spawnWeaponMin, 
@@ -658,6 +677,8 @@ public class BaseItemController : GameObjectBehavior {
                 if (director.max > 0) {
                     spawnItemLimit = director.max;                        
                 }
+
+                runDirectorItems = director.run;
             }
             else if (director.code == GameDataDirectorType.weapon) {
                 if (director.min > 0) {
@@ -667,6 +688,8 @@ public class BaseItemController : GameObjectBehavior {
                 if (director.max > 0) {
                     spawnWeaponLimit = director.max;                        
                 }
+
+                runDirectorWeapons = director.run;
             }
         }
     }

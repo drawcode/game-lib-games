@@ -436,6 +436,16 @@ public class BaseAIController : GameObjectBehavior {
                 }            
             }
             */
+
+            if(presetItemsAppend != null 
+                || probs != null) {
+                return;
+            }
+
+            if(presetItemsAppend.Count == 0 
+                || probs.Count == 0) {
+                return;
+            }
             
             GamePresetItem selectByProbabilityItem = 
                 MathUtil.ChooseProbability<GamePresetItem>(presetItemsAppend, probs); 
