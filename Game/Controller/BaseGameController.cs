@@ -2130,11 +2130,11 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
         else {//if (data.data_type == GameSpawnType.randomType) {
             // get random
-            spawnLocation = GameController.GetRandomSpawnLocation();
+            spawnLocation = GameController.GetRandomSpawnLocation().WithY(50f);
         }
         
         if(spawnLocation == Vector3.zero) {
-            spawnLocation = GameController.GetRandomSpawnLocation();
+            spawnLocation = GameController.GetRandomSpawnLocation().WithY(50f);
         }
 
         if (prefabObject == null) {

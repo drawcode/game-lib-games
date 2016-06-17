@@ -115,7 +115,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
             gamePlayerItemCode = gamePlayerItemCode.Replace("(Clone)", "");
         }
 
-        Debug.Log("CollectContent:" + " gamePlayerItemCode:" + gamePlayerItemCode);
+        Debug.Log("InitItem:" + " gamePlayerItemCode:" + gamePlayerItemCode);
 
         if(gameItem == null) {
             gameItem = GameItems.Instance.GetById(gamePlayerItemCode);

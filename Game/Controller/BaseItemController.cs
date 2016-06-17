@@ -413,8 +413,8 @@ public class BaseItemController : GameObjectBehavior {
                 }
             }
 
-            if(presetItemsAppend != null 
-                || presetItemProbabilities != null) {
+            if(presetItemsAppend == null 
+                || presetItemProbabilities == null) {
                 return;
             }
 
@@ -474,8 +474,12 @@ public class BaseItemController : GameObjectBehavior {
                 presetWeapons.Clear();
             }
 
+            Debug.Log("directWeapons"); 
+
             if (GameLevels.Current.data != null
                 && GameLevels.Current.data.HasWeaponPresets()) {
+
+                Debug.Log("directWeapons:HasWeaponPresets:level"); 
 
                 foreach (GameDataWeaponPreset weaponPreset 
                     in GameLevels.Current.data.weapon_presets) {
@@ -486,6 +490,8 @@ public class BaseItemController : GameObjectBehavior {
             }
             else if (GameWorlds.Current.data != null
                 && GameWorlds.Current.data.HasWeaponPresets()) {
+
+                Debug.Log("directWeapons:HasWeaponPresets:world"); 
 
                 foreach (GameDataWeaponPreset weaponPreset 
                     in GameWorlds.Current.data.weapon_presets) {
@@ -510,6 +516,8 @@ public class BaseItemController : GameObjectBehavior {
             }
 
             foreach (GameDataWeaponPreset itemPreset in presetWeapons) {
+                
+                Debug.Log("directWeapons:GameDataWeaponPreset: " + itemPreset.code); 
 
                 GamePreset preset = GamePresets.Get(itemPreset.code);
                 //GamePresets.Instance.GetCurrentPresetDataCharacter();
@@ -518,23 +526,38 @@ public class BaseItemController : GameObjectBehavior {
                     return;
                 }
 
+                Debug.Log("directWeapons:GamePreset:code: " + preset.code); 
+                Debug.Log("directWeapons:GamePreset:type: " + preset.type);
+                Debug.Log("directWeapons:GamePreset:data: " + preset.ToJson());  
+
                 List<GamePresetItem> presetItemsData = preset.data.items;
 
                 foreach (GamePresetItem item in presetItemsData) {
-                    if (item.type == itemType) {
+                    
+                    Debug.Log("directWeapons:GamePresetItem:code: " + item.code); 
+                    Debug.Log("directWeapons:GamePresetItem:type: " + item.type); 
+                    Debug.Log("directWeapons:GamePresetItem:data: " + item.ToJson()); 
+
+                    if (itemPreset.type == itemType) {
                         presetWeaponProbabilities.Add((float)item.probability);
                         presetWeaponsAppend.Add(item);
+
+                        Debug.Log("directWeapons:GamePresetItem: " + item.code); 
                     }
                 }
             }
 
-            if(presetWeaponsAppend != null 
-                || presetWeaponProbabilities != null) {
+            if(presetWeaponsAppend == null 
+                || presetWeaponProbabilities == null) {
+
+                Debug.Log("directWeapons:presetWeaponProbabilities:null ");
                 return;
             }
 
             if(presetWeaponsAppend.Count == 0 
                 || presetWeaponProbabilities.Count == 0) {
+
+                Debug.Log("directWeapons:presetWeaponProbabilities:empty ");
                 return;
             }
                    
@@ -543,10 +566,15 @@ public class BaseItemController : GameObjectBehavior {
                     presetWeaponsAppend, presetWeaponProbabilities); 
 
             if (selectByProbabilityItem == null) {
+
+                Debug.Log("directWeapons:selectByProbabilityItem:null ");
                 return;
             }
 
             string code = selectByProbabilityItem.code;
+
+            Debug.Log("directWeapons:selectByProbabilityItem:code: " + 
+                code); 
 
             GameItemController.Load(code);//, itemType);
         }
