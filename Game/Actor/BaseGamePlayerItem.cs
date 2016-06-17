@@ -142,7 +142,9 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
             GamePlayerProgress.SetStatItems(gameItem.code, 1);
 
-            GameController.CurrentGamePlayerController.HandleItemUse(gameItem);                  
+            GameController.CurrentGamePlayerController.HandleItemUse(gameItem); 
+
+            Debug.Log("CollectContent:" + gameItem.ToJson());
                                 
             //UINotificationDisplay.Instance.QueuePoint(title, description, pointValue);
             //}

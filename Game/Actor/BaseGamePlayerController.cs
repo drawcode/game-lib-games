@@ -895,7 +895,7 @@ public class BaseGamePlayerController : GameActor {
                     continue;
                 }
                 
-                if (item.code == GameDataItemReward.xp) {
+                if (item.type == GameDataItemReward.xp) {
 
                     double val = item.valDouble * modifier;   
                     
@@ -906,7 +906,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.code == GameDataItemReward.currency) {
+                else if (item.type == GameDataItemReward.currency) {
                     
                     double val = item.valDouble * modifier;   
                     
@@ -918,19 +918,33 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.code == GameDataItemReward.health) {
+                else if (item.type == GameDataItemReward.health) {
                     
                     double val = item.valDouble * modifier;  
-                    
+
                     HandleItemStateHealth(val);
 
                     GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergy(val); // refill
                     GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(val); // refill                        
-                    
+
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.code == GameDataItemReward.goalFly) {
+                else if (item.type == GameDataItemReward.weapon) {
+
+                    double val = item.valDouble * modifier;   
+
+                    //GamePlayerProgress.SetStatCoins(val);
+                    //GamePlayerProgress.SetStatCoinsPickup(val);     
+
+                    //HandleItemStateCurrency(val);
+
+                    GameController.CurrentGamePlayerController.LoadWeapon(item.code);//.LoadWeaponNext();
+
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+                else if (item.type == GameDataItemReward.goalFly) {
                     
                     double val = item.valDouble * modifier;  
                     
@@ -944,7 +958,7 @@ public class BaseGamePlayerController : GameActor {
                 }
                 
                 if (broadcastEvent) {        
-                    Messenger<string, object>.Broadcast(GameMessages.gameActionItem, item.code, broadcastVal);
+                    Messenger<string, object>.Broadcast(GameMessages.gameActionItem, item.type, broadcastVal);
                 }
                 
             }
