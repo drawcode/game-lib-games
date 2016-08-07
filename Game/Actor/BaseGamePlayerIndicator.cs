@@ -345,6 +345,16 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             }
         }
     }
+
+    Vector3 currentScale;
+
+    public void ScaleIndicator(float distance) {
+
+        if(currentScale == null) {
+            currentScale = gameObject.transform.localScale;
+        }
+
+    }
  
     public virtual void SetIndicatorPlacementType(GamePlayerIndicatorPlacementType indicatorTypeTo) {
         indicatorType = indicatorTypeTo;

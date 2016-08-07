@@ -437,8 +437,8 @@ public class BaseAIController : GameObjectBehavior {
             }
             */
 
-            if(presetItemsAppend != null 
-                || probs != null) {
+            if(presetItemsAppend == null 
+                || probs == null) {
                 return;
             }
 
