@@ -16,14 +16,14 @@ public enum AppRunState {
     LIVE
 }
 
-public class BaseGameGlobal : GameObjectBehavior {    
+public class BaseGameGlobal : GameObjectBehavior {
     public GameNetworks gameNetworks;
     public GameState state;
     public Contents contents;
     
     #if DEV
     public static AppRunState appRunState = AppRunState.DEV;
-    #else 
+    #else
     public static AppRunState appRunState = AppRunState.LIVE;
     #endif
     
@@ -53,30 +53,35 @@ public class BaseGameGlobal : GameObjectBehavior {
     public bool ENABLE_PRODUCT_UNLOCKS = true;
     public string currentLevel = "Level1";
     public string masterserverPrefix = "drawlabs_";
-    
+
+
+    public double currentVolumeEffects = 1;
+    public double currentVolumeMusic = 1;
+    public double currentVolumeInc = .1;
+
     public virtual void Awake() {
         Init();
 
         Application.targetFrameRate = 60;
     }
-    
+
     public virtual void OnEnable() {
         //Messenger<object>.AddListener(ContentMessages.ContentSyncShipContentSuccess, OnContentSyncShipContentSuccess);
     }
-    
+
     public virtual void OnDisable() {
         //Messenger<object>.RemoveListener(ContentMessages.ContentSyncShipContentSuccess, OnContentSyncShipContentSuccess);
     }
-    
+
     public virtual void OnContentSyncShipContentSuccess(object obj) {
         //InitContentSystemPost();
     }
-    
+
     public virtual void Init() {        
         gameObject.AddComponent<InputSystem>();
 
     }
-    
+
     public virtual void InitContentSystemPost() {
 
         /*
@@ -120,11 +125,11 @@ public class BaseGameGlobal : GameObjectBehavior {
         }*/
         //LoadLevel();
     }
-    
+
     public virtual void Start() {
         
     }
-    
+
     public virtual void PrepareData() {
 
         /*
@@ -150,16 +155,16 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         //LogUtil.Log(JsonMapper.ToJson(world));
     }
-    
+
     public virtual void InitNetwork() { 
         gameObject.AddComponent<WebRequests>(); 
     }
-    
+
     public virtual void InitContext() { 
         //gameScreenScaler = gameObject.AddComponent<GameScreenScaler>();   
         
     }
-    
+
     public virtual IEnumerator InitContentCo() {
         /*
         LogUtil.Log("Starting Contents");
@@ -178,16 +183,16 @@ public class BaseGameGlobal : GameObjectBehavior {
 
         yield return new WaitForEndOfFrame();
     }
-    
+
     public virtual void InitTracking() {
         //TestFlight.TakeOff("e5f209d3e74acce80d1a2907cafcbc41_NDgyNDIyMDExLTEyLTE2IDE4OjI4OjUzLjY4NTc5Nw");
     }
-    
+
     public virtual void InitUIFlow() {      
         //uiFlow = gameObject.AddComponent<GameUIFlow>();   
         //uiFlow.InitUIFlow();
     }
-    
+
     public virtual void InitRecorders() {       
         // TODO wire up to turn off and on on PC and mobile
         //raceRecorders = Recorders.Instance;
@@ -198,12 +203,12 @@ public class BaseGameGlobal : GameObjectBehavior {
     public virtual void InitAds() {
         adNetworks = gameObject.AddComponent<AdNetworks>();   
     }
-    
+
     public virtual void InitGameverses() {
         gameversesGameObject = gameObject.AddComponent<GameversesGameObject>();   
         networking = gameversesGameObject.gameNetworking;
     }
-    
+
     public virtual void InitMatchupSettings() { 
         //MatchupServerSettings.IP = "matchup.drawlabs.com";
         //MatchupServerSettings.players = 4;
@@ -222,14 +227,14 @@ public class BaseGameGlobal : GameObjectBehavior {
         Debug.Log("InitLocalization:" + " appDisplayName:" + appDisplayName);
 
     }
-    
+
     public virtual void InitPurchase() {  
         ProductPurchase.Init();
 
         productPurchase = ProductPurchase.instance;//gameObject.AddComponent<ProductPurchase>();   
         productPurchase.EnableProductUnlocks = ENABLE_PRODUCT_UNLOCKS;
     }
-    
+
     public virtual void InitState() {
         
         try {
@@ -243,7 +248,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             LogUtil.Log("GameGlobal could not be initialized..." + e.Message + e.StackTrace);
         }
     }
-    
+
     public virtual void InitPlayerProgress() {
         gameNetworks = gameObject.AddComponent<GameNetworks>();  
         if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
@@ -253,7 +258,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
         }
     }
-    
+
     public virtual void InitMovie() {
         #if UNITY_EDITOR        
         #elif UNITY_IPHONE
@@ -264,32 +269,40 @@ public class BaseGameGlobal : GameObjectBehavior {
         #endif
     }
 
+        public virtual void UpdateAudio(double volumeMusic, double volumeEffects) {
+
+        GameProfiles.Current.SetAudioMusicVolume(volumeMusic);
+        GameProfiles.Current.SetAudioEffectsVolume(volumeEffects);          
+        audioSystem.SetAmbienceVolume(volumeMusic);
+        audioSystem.SetEffectsVolume(volumeEffects);
+        GameAudio.SetEffectsVolume(volumeEffects);
+        GameAudio.SetAmbienceVolume(volumeMusic);
+
+        AudioListener.volume = (float)volumeEffects;
+    }
+
     public virtual void InitAudio() {    
 
         if (audioSystem == null) {
             audioSystem = gameObject.AddComponent<AudioSystem>();   
+
+            currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
+            currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
 
             audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
 
             #if DEV
             if (Application.isEditor) {
-
-                GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditorMusic);
-                GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditorEffects);          
-                audioSystem.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-                audioSystem.SetEffectsVolume(GameGlobal.volumeEditorEffects);
-                GameAudio.SetEffectsVolume(GameGlobal.volumeEditorEffects);
-                GameAudio.SetAmbienceVolume(GameGlobal.volumeEditorMusic);
-
-                AudioListener.volume = GameGlobal.volumeEditorEffects;
+                UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
+                        
             }
             #endif
         }
         
         LogUtil.Log("GameGlobal InitAudio init...");
     }
-    
+
     public void InitCommunity() {       
         platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
         platformController = gameObject.AddComponent<GameCommunityController>();
@@ -299,7 +312,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);      
     }
-    
+
     public virtual void InitSocial() {
         socialNetworks = gameObject.AddComponent<SocialNetworks>();
         socialNetworks.loadSocialLibs();
@@ -382,13 +395,13 @@ public class BaseGameGlobal : GameObjectBehavior {
             }           
         }
     }
-    
+
     public virtual void QuitGame() {
         Application.Quit(); 
     }
-    
+
     int screenshotCount = 1;
-    
+
     public virtual void Update() {
 
         AdNetworks.HandleAdUpdate();
@@ -402,42 +415,78 @@ public class BaseGameGlobal : GameObjectBehavior {
 
         }
         #endif
-        
-        #if UNITY_EDITOR
+
         if (Application.isEditor) {
 
-            if ((Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Space))
-                || Input.GetKeyDown(KeyCode.P)) {
-                    
+            if ((Input.GetKey(KeyCode.LeftControl)
+                || Input.GetKey(KeyCode.RightControl))) {
+
+                if (Input.GetKeyDown(KeyCode.P)) {
+                        
                     // Toggle paused
                     //UnityEditor.EditorApplication.isPaused = 
                     //    !UnityEditor.EditorApplication.isPaused ? true : false;
 
-                    UnityEditor.EditorApplication.isPaused = true;
+                    UnityEditor.EditorApplication.isPaused = 
+                        !UnityEditor.EditorApplication.isPaused;
 
+                }
+                else if (Input.GetKeyDown(KeyCode.E)
+                         && (Input.GetKeyDown(KeyCode.Plus)
+                         || Input.GetKeyDown(KeyCode.KeypadPlus))) {
+
+                    // volume up for effects
+                    currentVolumeEffects += currentVolumeInc;
+                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);
+                }
+                else if (Input.GetKeyDown(KeyCode.E)
+                         && (Input.GetKeyDown(KeyCode.Minus)
+                         || Input.GetKeyDown(KeyCode.KeypadMinus))) {
+
+                    // volume up for effects
+                    currentVolumeEffects -= currentVolumeInc;
+                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);
+                    
+                }
+                else if (Input.GetKeyDown(KeyCode.M)
+                         && (Input.GetKeyDown(KeyCode.Plus)
+                         || Input.GetKeyDown(KeyCode.KeypadPlus))) {
+
+                    // volume up for music
+                    currentVolumeMusic += currentVolumeInc;
+                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);
+                    
+                }
+                else if (Input.GetKeyDown(KeyCode.M)
+                         && (Input.GetKeyDown(KeyCode.Minus)
+                         || Input.GetKeyDown(KeyCode.KeypadMinus))) {
+
+                    // volume up for music
+                    currentVolumeMusic -= currentVolumeInc;   
+                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);                 
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.Comma)) {
 
                 string sceneName = "Panel";
 
-                if(GameUIController.Instance != null) {
+                if (GameUIController.Instance != null) {
                     sceneName = GameUIController.Instance.currentPanel;
                 }
 
                 string filename = "../screenshots/" + sceneName +
-                    "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
-                    + "-" + (screenshotCount++).ToString() + ".png";
+                                  "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
+                                  + "-" + (screenshotCount++).ToString() + ".png";
                 
                 if (GameController.IsGameRunning) {
                     filename = "../screenshots/" + sceneName + "-gameplay-" +
-                        "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
-                        + "-" + (screenshotCount++).ToString() + ".png";
+                    "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
+                    + "-" + (screenshotCount++).ToString() + ".png";
                 }
                 Application.CaptureScreenshot(filename);
             }
         }
-        #endif
 
     }
 }
