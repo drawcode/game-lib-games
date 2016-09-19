@@ -363,24 +363,20 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         currentScale = gameObject.transform.localScale.y;
 
-        Debug.Log("ScaleIndicator:distance:" + distance);
-
+        //Debug.Log("ScaleIndicator:distance:" + distance);
 
         if (currentDistance >= currentRangeMin
             && currentDistance <= currentRangeMax) {
-            // 10 / 20
 
             float currentDistanceSnapshot = Mathf.Clamp(currentDistance, 0, currentRangeMax);
 
-            Debug.Log("ScaleIndicator:currentDistanceSnapshot:" + currentDistanceSnapshot);
-
-            // 20 / (1/20)
+            //Debug.Log("ScaleIndicator:currentDistanceSnapshot:" + currentDistanceSnapshot);
 
             float scaleTo = (((currentRangeMax - currentDistanceSnapshot)) / currentRangeMax) * 2f;
 
             scaleTo = Mathf.Clamp(scaleTo, .6f, 4f);
 
-            Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
+            //Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
 
             LeanTween.scale(indicatorObject, indicatorObject.transform.localScale
                 .WithX(scaleTo)
