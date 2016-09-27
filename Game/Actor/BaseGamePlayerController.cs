@@ -194,7 +194,7 @@ public class BaseGamePlayerControllerData {
     public Vector3 positionPlayer;
     public Vector3 positionTackler;
     public float lastTackle = 0f;
-    public bool shouldTackle = false;
+    public bool shouldTackle = true;
     public float incrementScore = 1f;
 
     // easing
@@ -578,6 +578,8 @@ public class BaseGamePlayerController : GameActor {
     // quality settings
         
     public float currentFPS = 60f;
+
+    GameDamageManager gameDamageManager;
 
     // --------------------------------------------------------------------
     // INIT
@@ -1227,11 +1229,23 @@ public class BaseGamePlayerController : GameActor {
     }
     
     // ACTOR EXITING
+
+    void GamePlayerModelActorEnteringSet(float delay, bool val) {
+        StartCoroutine(GamePlayerModelActorEnteringSetCo(delay, val));
+    }
+
+    IEnumerator GamePlayerModelActorEnteringSetCo(float delay, bool val) {
+        yield return new WaitForSeconds(delay);
+
+        currentControllerData.actorEntering = val;
+    }
     
     public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = 1f, float delay = .1f) {
         
         PlayerEffectWarpFadeOut();
         GamePlayerModelHolderEase(height, time, delay);
+
+        GamePlayerModelActorEnteringSet(delay, false);
     }
 
     public virtual void GamePlayerModelHolderEaseOut(float height = 5, float time = 2f, float delay = 0) {
@@ -2188,6 +2202,11 @@ public class BaseGamePlayerController : GameActor {
         if (controllerData == null) {
             return;
         }
+
+        float distance = Math.Abs(currentControllerData.effectWarpEnd - currentControllerData.effectWarpCurrent);
+
+        bool effectWarpOn = distance < 5 ? false : true;
+
      
         // main
      
@@ -2196,6 +2215,10 @@ public class BaseGamePlayerController : GameActor {
         if (name == GameTouchInputAxis.inputAxisMove) {
          
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
+
+            //if(isEntering || isExiting || effectWarpOn) { // || currentControllerData.effectWarpEnabled) {
+            //    return;
+            //}
          
             if (currentControllerData.thirdPersonController != null) {
              
@@ -2816,8 +2839,6 @@ public class BaseGamePlayerController : GameActor {
     
     // --------------------------------------------------------------------
     // TRIGGERS PARTICLES
-
-    GameDamageManager gameDamageManager;
 
     public virtual void OnParticleCollision(GameObject other) {
 
@@ -3899,7 +3920,9 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void StartNavAgent() {
         
-        if (!IsPlayerControlled || gameObject.Has<CharacterController>() && !isExiting) {
+        if (!IsPlayerControlled && !isExiting) {
+            //&& gameObject.Has<CharacterController>() && !isExiting) {
+
             if (currentControllerData.navMeshAgent != null) {
                 currentControllerData.navMeshAgent.StartAgent();
             }
@@ -3909,6 +3932,8 @@ public class BaseGamePlayerController : GameActor {
             if (currentControllerData.navMeshAgentFollowController != null) {
                 currentControllerData.navMeshAgentFollowController.StartAgent();
             }
+
+            currentControllerData.navAgentRunning = true;
         }
     }
 
@@ -3923,6 +3948,8 @@ public class BaseGamePlayerController : GameActor {
         if (currentControllerData.navMeshAgentFollowController != null) {
             currentControllerData.navMeshAgentFollowController.StopAgent();
         }
+
+        currentControllerData.navAgentRunning = false;
     }
 
     public virtual void SetNavAgentDestination(GameObject go) {
@@ -5439,7 +5466,7 @@ public class BaseGamePlayerController : GameActor {
          }
          */
             if (isDead) {
-                currentControllerData.navAgentRunning = true;
+                currentControllerData.navAgentRunning = false;
             }
         }
         else if (IsPlayerState()) {
