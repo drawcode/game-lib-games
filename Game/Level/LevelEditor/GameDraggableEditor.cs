@@ -1429,7 +1429,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 
-                go.AddComponent<GameLevelSpriteEffect>();
+                //go.AddComponent<GameLevelSpriteEffect>();
 
                 //LogUtil.Log("LoadSpriteEffect:resourcePath:" + resourcePath);
             }

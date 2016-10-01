@@ -122,10 +122,10 @@ public class GameDraggableLevelItem : GameObjectBehavior {
                 Vector3.one.WithX(3).WithY(3).WithZ(3) * .1f);
 
 			if(go != null) {
-				PackedSprite sprite = go.GetComponent<PackedSprite>();
-				if(sprite != null) {
-					sprite.PlayAnim(0);
-				}
+				//PackedSprite sprite = go.GetComponent<PackedSprite>();
+				//if(sprite != null) {
+				//	sprite.PlayAnim(0);
+				//}
 				go.transform.parent = gameLevelItemObject.transform;
 			}
 		}

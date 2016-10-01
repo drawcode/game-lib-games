@@ -119,7 +119,7 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 				float maxSize = .8f;
 				
 				if(go != null) {
-					PackedSprite sprite = go.GetComponent<PackedSprite>();
+					/*PackedSprite sprite = go.GetComponent<PackedSprite>();
 					if(sprite != null) {
 						
 						float adjust = 1;
@@ -138,7 +138,7 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
 					}
 					else {
-						
+						*/
 						float adjust = 1;
 						
 						Collider col = go.GetComponent<Collider>();
@@ -158,7 +158,7 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 						}
 						adjust = adjust/2;
 						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
-					}
+					//}
 					
 				}
 				

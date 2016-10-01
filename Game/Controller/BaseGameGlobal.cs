@@ -37,7 +37,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     public string appDisplayCode;
     public string appDisplayName;
     //public GameMatchup matchup;
-    public GameSocialGame socialGame;
+    //public GameSocialGame socialGame;
     public AudioSystem audioSystem;
     public GameNetworking networking;
     public GameversesGameObject gameversesGameObject;
@@ -52,7 +52,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     
     public bool ENABLE_PRODUCT_UNLOCKS = true;
     public string currentLevel = "Level1";
-    public string masterserverPrefix = "drawlabs_";
+    public string masterserverPrefix = "game_";
 
 
     public double currentVolumeEffects = 1;
@@ -170,9 +170,9 @@ public class BaseGameGlobal : GameObjectBehavior {
         LogUtil.Log("Starting Contents");
         contents = gameObject.AddComponent<Contents>();
         
-        ContentsConfig.contentRootFolder = "drawlabs";
-        ContentsConfig.contentAppFolder = "game-drawlabs-brainball";
-        ContentsConfig.contentDefaultPackFolder = "game-drawlabs-brainball-1";
+        ContentsConfig.contentRootFolder = "test";
+        ContentsConfig.contentAppFolder = "game-test";
+        ContentsConfig.contentDefaultPackFolder = "game-test-1";
         ContentsConfig.contentVersion = "1.0";
         ContentsConfig.contentIncrement = 2;
 
@@ -210,7 +210,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitMatchupSettings() { 
-        //MatchupServerSettings.IP = "matchup.drawlabs.com";
+        //MatchupServerSettings.IP = "matchup.test.com";
         //MatchupServerSettings.players = 4;
         //MatchupServerSettings.port = 25010;
         //MatchupServerSettings.
