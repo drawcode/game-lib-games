@@ -225,7 +225,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
         if (!GameConfigs.isGameRunning) {
             return;
         }
- 
+
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
      
