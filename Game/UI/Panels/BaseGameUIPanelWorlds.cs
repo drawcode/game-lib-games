@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -20,10 +24,8 @@ public class GameWorldsMessages {
 public class BaseGameUIPanelWorlds : GameUIPanelBase {
     
     public static GameUIPanelWorlds Instance;
-    //
-    public GameObject listItemPrefab;
-    //
-    public GameWorldsState gameWorldsState = GameWorldsState.selection;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     //
     public UIImageButton buttonGamePlay;
     public UIImageButton buttonClose;
@@ -32,6 +34,21 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     //
     public UILabel labelWorldTitle;
     public UILabel labelWorldDescription;
+#else
+    //
+    public Button buttonGamePlay;
+    public Button buttonClose;
+    public Button buttonWorldNext;
+    public Button buttonWorldPrevious;
+    //
+    public Text labelWorldTitle;
+    public Text labelWorldDescription;
+#endif
+    //
+    public GameObject listItemPrefab;
+    //
+    public GameWorldsState gameWorldsState = GameWorldsState.selection;
+
     //
     public GameObject containerMissions;
     public GameObject containerButtons;

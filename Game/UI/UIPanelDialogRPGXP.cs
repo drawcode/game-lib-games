@@ -5,22 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
   
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelDialogRPGXP : UIPanelBase {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelTitle;
 
- public static UIPanelDialogRPGXP Instance;
+    public UIImageButton buttonBuyRecharge;
+    public UIImageButton buttonEarn;
+#else
+    public Text labelTitle;
+
+    public Button buttonBuyRecharge;
+    public Button buttonEarn;
+#endif
+
+    public static UIPanelDialogRPGXP Instance;
 
     public GameObject prefabListItem;
     public GameObject prefabLevelItem;
 
     public GameObject containerContent;
-
-    public UILabel labelTitle;
-
-    public UIImageButton buttonBuyRecharge;
-    public UIImageButton buttonEarn;
 
  public void Awake() {
      

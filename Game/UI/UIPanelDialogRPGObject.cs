@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelDialogRPGObject : UIPanelBase {
-
-    public GameObject containerContent;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 
     public UIImageButton buttonBuyRecharge;
     public UIImageButton buttonEarn;
@@ -22,6 +25,21 @@ public class UIPanelDialogRPGObject : UIPanelBase {
     public UILabel labelScore;
 
     public UISlider sliderValue;
+#else
+
+    public Button buttonBuyRecharge;
+    public Button buttonEarn;
+    public Button buttonResume;
+
+    public Text labelTip;
+    public Text labelTitle;
+    public Text labelAbout;
+    public Text labelScore;
+
+    public Slider sliderValue;
+#endif
+
+    public GameObject containerContent;
 
     public virtual void Awake() {        
 

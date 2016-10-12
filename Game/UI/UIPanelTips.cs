@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -16,21 +20,24 @@ public class UIPanelTipsMessages {
 }
 
 public class UIPanelTips : UIAppPanelBaseList {
-        
-    public GameObject containerObject;
-    
-    public GameObject containerTipControlsDefault;
-    public GameObject containerTipControlsLoad;
-    
-    public GameObject prefabDefault;
-    
-    public GameObject panelDefault;
-    
-    public GameObject panelHelp;
-    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIButton buttonBack;
     public UIButton buttonNext;
     public UIButton buttonClose;
+    public UILabel labelCurrentTipStatus;
+#else
+    public Button buttonBack;
+    public Button buttonNext;
+    public Button buttonClose;
+    public Text labelCurrentTipStatus;
+#endif
+
+    public GameObject containerObject;    
+    public GameObject containerTipControlsDefault;
+    public GameObject containerTipControlsLoad;    
+    public GameObject prefabDefault;    
+    public GameObject panelDefault;    
+    public GameObject panelHelp;    
     
     public int tipsTotal = 2;
     public int currentTipIndex = 0;
@@ -46,8 +53,6 @@ public class UIPanelTips : UIAppPanelBaseList {
     public GameObject tipsBottomRightContainer;
     public GameObject tipsRightContainer;
     public GameObject tipsLeftContainer;
-
-    public UILabel labelCurrentTipStatus;
     
     public TipsMode tipsMode = TipsMode.Internal;
 

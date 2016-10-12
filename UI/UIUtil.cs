@@ -193,13 +193,19 @@ public class UIButtonMeta {
     public void SetButtonEnable(string key, bool enable) {
         if (buttons.ContainsKey(key)) {                  
             currentButton = buttons[key];                   
-            SetButtonEnable(currentButton.button, enable);
+            //SetButtonEnable(currentButton.button, enable);
         }
     }
 
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3  
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public void SetButtonEnable(UIButton button, bool enable) {
         if(button != null) {
+            UIUtil.UIButtonEnable(button, enable);
+        }
+    }
+#else
+    public void SetButtonEnable(Button button, bool enable) {
+        if (button != null) {
             UIUtil.UIButtonEnable(button, enable);
         }
     }
@@ -340,9 +346,15 @@ public class UIUtil {
         }
     }
 
+    public static void HideButton(Button obj) {
+        if (obj != null) {
+            obj.gameObject.Hide();
+        }
+    }
+
     //
-    
-    #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static void ShowText(UILabel obj) {
         if(obj != null) {
             obj.gameObject.Show();
@@ -354,7 +366,7 @@ public class UIUtil {
             obj.gameObject.Show();
         }
     }
-    #endif
+#endif
 
     public static void ShowText(Text obj) {
         if (obj != null) {
@@ -369,8 +381,8 @@ public class UIUtil {
     }
 
     //
-    
-    #if USE_UI_NGUI_2_7  
+
+#if USE_UI_NGUI_2_7
     public static void HideText(UILabel obj) {
         if(obj != null) {
             obj.gameObject.Hide();
@@ -382,9 +394,9 @@ public class UIUtil {
             obj.gameObject.Hide();
         }
     }
-    #endif
-    
-    #if USE_UI_NGUI_3  
+#endif
+
+#if USE_UI_NGUI_3
     public static void HideText(UIToggle obj) {
         if(obj != null) {
             obj.gameObject.Hide();
@@ -396,17 +408,23 @@ public class UIUtil {
             obj.gameObject.Hide();
         }
     }
-    #endif
+#endif
+
+    public static void HideLabel(Text obj) {
+        if (obj != null) {
+            obj.gameObject.Hide();
+        }
+    }
 
     //
-    
-    #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static void ShowSlider(UISlider obj) {
         if(obj != null) {
             obj.gameObject.Show();
         }
     }
-    #endif
+#endif
 
     public static void ShowSlider(Slider obj) {
         if (obj != null) {
@@ -836,7 +854,7 @@ public class UIUtil {
 
         return false;
     }
-    
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static bool IsButtonClicked(UIButton button, string buttonClickedName) {
         if(button == null)
@@ -849,7 +867,7 @@ public class UIUtil {
         return false;
     }
     
- #endif
+#endif
 
     public static bool IsButtonClicked(Button button, string buttonClickedName) {
         if (button == null)
@@ -899,6 +917,16 @@ public class UIUtil {
         }
         return false;
     }
+
+    public static bool IsCheckboxChecked(UICheckbox toggle) {
+        if (toggle == null)
+            return false;
+
+        if (toggle.isChecked) {
+            return true;
+        }
+        return false;
+    }
 #endif
 
 #if USE_UI_NGUI_3
@@ -915,9 +943,19 @@ public class UIUtil {
             return true;
         }
         return false;
+    }    
+
+    public static bool IsCheckboxChecked(UIToggle toggle) {
+        if (toggle == null)
+            return false;
+
+        if (toggle.isOn) {
+            return true;
+        }
+        return false;
     }
 #endif
-    
+
     public static bool IsToggleOn(Toggle toggle, string toggleName) {
 
         return IsCheckboxChecked(toggle, toggleName);
@@ -929,11 +967,23 @@ public class UIUtil {
         
         if (toggleName == toggle.name) {
             //LogUtil.Log("IsButtonClicked: " + buttonClickedName);
+            if (toggle.isOn) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool IsCheckboxChecked(Toggle toggle) {
+        if (toggle == null)
+            return false;
+
+        if (toggle.isOn) {
             return true;
         }
         return false;
     }
-    
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static bool IsButtonClicked(UIImageButton button, string buttonClickedName) {         
         if(button == null)
@@ -946,7 +996,7 @@ public class UIUtil {
         return false;
     }
 #endif
-    
+
     public static bool IsButtonClicked(Image button, string buttonClickedName) {         
         if (button == null)
             return false;

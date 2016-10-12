@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -14,16 +18,7 @@ public enum TutorialFlowState {
 }
 
 public class UIPanelTutorial : UIPanelBase {
-
-    public static UIPanelTutorial Instance;
-
-    public GameObject containerOverview;
-    public GameObject containerOverviewGameplayTips;
-    public GameObject containerTutorial;
-    
-    public GameObject containerTips;
-    public GameObject containerTipsMode;
-    public GameObject containerTipsGameplay;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 
     // OVERVIEW
 
@@ -35,6 +30,29 @@ public class UIPanelTutorial : UIPanelBase {
     public UIImageButton buttonOverviewTutorial;
     public UIImageButton buttonOverviewTips;
     public UIImageButton buttonOverviewMode;
+#else
+
+    // OVERVIEW
+
+    public Text labelOverviewTip;
+    public Text labelOverviewType;
+    public Text labelOverviewStatus;
+
+    public Button buttonOverviewReady;
+    public Button buttonOverviewTutorial;
+    public Button buttonOverviewTips;
+    public Button buttonOverviewMode;
+#endif
+
+    public static UIPanelTutorial Instance;
+
+    public GameObject containerOverview;
+    public GameObject containerOverviewGameplayTips;
+    public GameObject containerTutorial;
+    
+    public GameObject containerTips;
+    public GameObject containerTipsMode;
+    public GameObject containerTipsGameplay;
 
     //public UIPanelTips tips
 

@@ -3,19 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
 public class UICustomizeProfileCharacters : UICustomizeSelectObject {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIInput inputCurrentDisplayCode;
+    public UIImageButton buttonSave;
+#else
+    public InputField inputCurrentDisplayCode;
+    public Button buttonSave;
+#endif
 
     public string type = "character";
-    public UIInput inputCurrentDisplayCode;
 
     GameProfileCharacterItem profileCharacterItem;
-
-    public UIImageButton buttonSave;
 
     public override void OnEnable() {
         base.OnEnable();
@@ -34,7 +42,6 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     void OnInputChanged(string controlName, string data) {
 
         Debug.Log("OnInputChanged:" + " controlName:" + controlName + " data:" + data);
-
         
         if(inputCurrentDisplayName != null 
            && controlName == inputCurrentDisplayName.name) {

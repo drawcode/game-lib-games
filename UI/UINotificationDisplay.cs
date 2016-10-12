@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -34,13 +38,9 @@ public class UINotificationItem {
 
 public class UINotificationDisplay
     : GameObjectBehavior {
-    public GameObject notificationPanel;
-    public GameObject notificationContainerAchievement;
-    public GameObject notificationContainerPoint;
-    public GameObject notificationContainerInfo;
-    public GameObject notificationContainerTip;
-    public GameObject notificationContainerError;
-    
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
     // Achievement
     public UILabel achievementTitle;
     public UILabel achievementDescription;
@@ -70,6 +70,46 @@ public class UINotificationDisplay
     public UILabel tipDescription;
     public UILabel tipScore;
     public UIImageButton tipContinue;
+#else
+
+    // Achievement
+    public Text achievementTitle;
+    public Text achievementDescription;
+    public Text achievementScore;
+    public Button achievementIcon;
+
+    // Point
+    public Text pointTitle;
+    public Text pointDescription;
+    public Text pointScore;
+    public Button pointContinue;
+
+    // Error
+    public Text errorTitle;
+    public Text errorDescription;
+    public Text errorScore;
+    public Button errorContinue;
+
+    // Info
+    public Text infoTitle;
+    public Text infoDescription;
+    public Text infoScore;
+    public Button infoContinue;
+
+    // Tip
+    public Text tipTitle;
+    public Text tipDescription;
+    public Text tipScore;
+    public Button tipContinue;
+#endif
+
+    public GameObject notificationPanel;
+    public GameObject notificationContainerAchievement;
+    public GameObject notificationContainerPoint;
+    public GameObject notificationContainerInfo;
+    public GameObject notificationContainerTip;
+    public GameObject notificationContainerError;
+    
     UINotificationItem notificationItem;
     float positionYOpenInGame = 0;
     float positionYClosedInGame = 900;

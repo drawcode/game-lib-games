@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
+
 using Engine.Events;
 using Engine.UI;
 using Engine.Utility;
@@ -15,12 +20,39 @@ public class BaseGameHUD : GameUIPanelBase {
     public AsyncOperation asyncLevelLoad = null;
     public bool levelLoadInProgress = false;
     public bool lastLevelLoadInProgress = false;
+
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelScores;
+    public UILabel labelScore;
+    public UILabel labelCoins;
+    public UILabel labelLevel;
+    public UILabel labelTime;
     public UIImageButton buttonCamera;
     public UIImageButton buttonGameSafety;
     public UIImageButton buttonGameSmarts;
     public UIImageButton buttonGameTutorial;
     public UIImageButton buttonGameTips;
     public UIImageButton buttonGameOverview;
+    public UISlider sliderHealth;
+    public UISlider sliderEnergy;
+#else
+    public Text labelScores;
+    public Text labelScore;
+    public Text labelCoins;
+    public Text labelLevel;
+    public Text labelTime;
+    public Button buttonCamera;
+    public Button buttonGameSafety;
+    public Button buttonGameSmarts;
+    public Button buttonGameTutorial;
+    public Button buttonGameTips;
+    public Button buttonGameOverview;
+    public Slider sliderHealth;
+    public Slider sliderEnergy;
+#endif
+
+
     public GameObject containerUseObject;
     public GameObject containerSmartsObject;
     public GameObject containerSafetyObject;
@@ -32,11 +64,6 @@ public class BaseGameHUD : GameUIPanelBase {
     public GameObject containerTimeObject;
     public GameObject containerOverviewObject;
     public bool initialized = false;
-    public UILabel labelScores;
-    public UILabel labelScore;
-    public UILabel labelCoins;
-    public UILabel labelLevel;
-    public UILabel labelTime;
     public GameObject overlayFogObject;
     public GameObject overlayRedObject;
     public GameObject overlayMagicObject;
@@ -51,8 +78,6 @@ public class BaseGameHUD : GameUIPanelBase {
     public GameObject containerCamera;
     public GameObject containerHealth;
     public GameObject containerEnergy;
-    public UISlider sliderHealth;
-    public UISlider sliderEnergy;
     public GameObject containerOffscreenIndicators;
     public static GameHUD Instance;
         

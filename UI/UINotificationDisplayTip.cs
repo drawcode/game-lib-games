@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -35,7 +39,71 @@ public class UINotificationTipItem {
 
 public class UINotificationDisplayTip
     : GameObjectBehavior {
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+    // Achievement
+    public UILabel achievementTitle;
+    public UILabel achievementDescription;
+    public UILabel achievementScore;
+    public UIImageButton achievementIcon;
     
+    // Point
+    public UILabel pointTitle;
+    public UILabel pointDescription;
+    public UILabel pointScore;
+    public UIImageButton pointContinue;
+    
+    // Error
+    public UILabel errorTitle;
+    public UILabel errorDescription;
+    public UILabel errorScore;
+    public UIImageButton errorContinue;
+    
+    // Info
+    public UILabel infoTitle;
+    public UILabel infoDescription;
+    public UILabel infoScore;
+    public UIImageButton infoContinue;
+    
+    // Tip
+    public UILabel tipTitle;
+    public UILabel tipDescription;
+    public UILabel tipScore;
+    public UIImageButton tipContinue;
+#else
+
+    // Achievement
+    public Text achievementTitle;
+    public Text achievementDescription;
+    public Text achievementScore;
+    public Button achievementIcon;
+
+    // Point
+    public Text pointTitle;
+    public Text pointDescription;
+    public Text pointScore;
+    public Button pointContinue;
+
+    // Error
+    public Text errorTitle;
+    public Text errorDescription;
+    public Text errorScore;
+    public Button errorContinue;
+
+    // Info
+    public Text infoTitle;
+    public Text infoDescription;
+    public Text infoScore;
+    public Button infoContinue;
+
+    // Tip
+    public Text tipTitle;
+    public Text tipDescription;
+    public Text tipScore;
+    public Button tipContinue;
+#endif
+
     public static UINotificationDisplayTip Instance;
     public GameObject notificationPanel;
     public GameObject notificationContainerAchievement;
@@ -43,36 +111,7 @@ public class UINotificationDisplayTip
     public GameObject notificationContainerInfo;
     public GameObject notificationContainerTip;
     public GameObject notificationContainerError;
-    
-    // Achievement
-    public UILabel achievementTitle;
-    public UILabel achievementDescription;
-    public UILabel achievementScore;
-    public UIButton achievementContinue;
-    
-    // Point
-    public UILabel pointTitle;
-    public UILabel pointDescription;
-    public UILabel pointScore;
-    public UIButton pointContinue;
-    
-    // Error
-    public UILabel errorTitle;
-    public UILabel errorDescription;
-    public UILabel errorScore;
-    public UIButton errorContinue;
-    
-    // Info
-    public UILabel infoTitle;
-    public UILabel infoDescription;
-    public UILabel infoScore;
-    public UIButton infoContinue;       
-    
-    // Tip
-    public UILabel tipTitle;
-    public UILabel tipDescription;
-    public UILabel tipScore;
-    public UIImageButton tipContinue;
+
     float positionYOpenInGame = 0;
     float positionYClosedInGame = -900;
     UINotificationTipItem currentItem;

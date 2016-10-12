@@ -5,10 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UICheckbox toggleRecordReplaysLevel;
+#else
+    public Toggle toggleRecordReplaysLevel;
+#endif
 
     public static UIPanelCommunityBroadcast Instance;
     public GameObject panelBroadcastButton;
@@ -22,7 +31,6 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public GameObject buttonBroadcastOpen;
     public GameObject containerSupported;
     public GameObject containerNotSupported;
-    public UICheckbox toggleRecordReplaysLevel;
     bool isEnabled = false;
     bool isSupported = false;
     bool isRecordingSupported = false;
@@ -431,7 +439,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         }
 
         if (toggleRecordReplaysLevel != null) {
-            toggleRecordReplaysLevel.isChecked = GameProfiles.Current.GetBroadcastRecordLevels();
+            UIUtil.SetCheckboxValue(toggleRecordReplaysLevel, GameProfiles.Current.GetBroadcastRecordLevels());
         }
     }
 

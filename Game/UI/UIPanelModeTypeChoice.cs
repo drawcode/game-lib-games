@@ -5,21 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelModeTypeChoice : UIPanelBase {
-
-	public static UIPanelModeTypeChoice Instance;
-
-    public GameObject prefabListItem;
-    public GameObject prefabLevelItem;
-
-    public GameObject containerChoiceOverview;
-    public GameObject containerChoiceDisplayItem;
-    public GameObject containerChoiceResultItem;
-    public GameObject containerChoiceResults;
-
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3    
     // OVERVIEW
 
     public UILabel labelOverviewTip;
@@ -76,6 +70,74 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     public UIImageButton buttonResultsAdvance;
     public UIImageButton buttonResultsReplay;
     public UIImageButton buttonResultsModes;
+#else
+    // OVERVIEW
+
+    public Text labelOverviewTip;
+    public Text labelOverviewType;
+    public Text labelOverviewStatus;
+
+    public Text labelOverviewTitle;
+    public Text labelOverviewBlurb;
+    public Text labelOverviewBlurb2;
+    public Text labelOverviewNextSteps;
+
+    public Button buttonOverviewAdvance;
+
+    // DISPLAY ITEM
+
+    public Text labelDisplayItemTip;
+    public Text labelDisplayItemType;
+    public Text labelDisplayItemStatus;
+
+    public Text labelDisplayItemTitle;
+    public Text labelDisplayItemAnswers;
+    public Text labelDisplayItemNote;
+    public Text labelDisplayItemQuestion;
+
+    public Button buttonDisplayItemAdvance;
+
+    // RESULT ITEM
+
+    public Text labelResultItemTip;
+    public Text labelResultItemType;
+    public Text labelResultItemStatus;
+
+    public Text labelResultItemChoiceDescription;
+    public Text labelResultItemChoiceResultValue;
+    public Text labelResultItemChoiceResultType;
+    public Text labelResultItemChoiceDisplayName;
+    public Text labelResultItemNextSteps;
+
+    public Button buttonResultItemAdvance;
+
+    // RESULTS
+
+    public Text labelResultsTip;
+    public Text labelResultsType;
+    public Text labelResultsStatus;
+
+    public Text labelResultsTitle;
+    public Text labelResultsCoinsValue;
+    public Text labelResultsScorePercentageValue;
+    public Text labelResultsScoreFractionValue;
+
+    public Slider sliderScore;
+
+    public Button buttonResultsAdvance;
+    public Button buttonResultsReplay;
+    public Button buttonResultsModes;
+#endif
+
+    public static UIPanelModeTypeChoice Instance;
+
+    public GameObject prefabListItem;
+    public GameObject prefabLevelItem;
+
+    public GameObject containerChoiceOverview;
+    public GameObject containerChoiceDisplayItem;
+    public GameObject containerChoiceResultItem;
+    public GameObject containerChoiceResults;
 
     // GLOBAL
 

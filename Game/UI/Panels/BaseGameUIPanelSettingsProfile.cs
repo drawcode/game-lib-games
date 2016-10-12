@@ -3,20 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {	
     
     public static GameUIPanelSettingsProfile Instance;
-	
-    public GameObject listItemPrefab;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 	
 	public UIImageButton buttonProfileFacebook;	
 	public UIImageButton buttonProfileTwitter;	
 	public UIImageButton buttonProfileGameNetwork;	
 	
     public UIInput inputProfileName;
+#else
+
+    public Button buttonProfileFacebook;
+    public Button buttonProfileTwitter;
+    public Button buttonProfileGameNetwork;
+
+    public InputField inputProfileName;
+#endif
+
+    public GameObject listItemPrefab;
     
     public static bool isInst {
         get {

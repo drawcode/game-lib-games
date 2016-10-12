@@ -4,17 +4,26 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
+
 using Engine.Events;
 
 public class BaseGameUIPanelResults : GameUIPanelBase {
     
     public static GameUIPanelResults Instance;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelContentStateDisplayName;
+#else
+    public Text labelContentStateDisplayName;
+#endif
+
     public GameObject listItemPrefab;
 	
     public GameObject containerModes;
-
-    public UILabel labelContentStateDisplayName;
     
     public virtual void Awake() {
         

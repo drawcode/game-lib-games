@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -19,7 +23,20 @@ public class UIPanelGameActionMessages {
 }
 
 public class UIPanelGameAction : UIAppPanelBaseList {
-        
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIButton buttonBack;
+    public UIButton buttonNext;
+    public UIButton buttonClose;
+
+    public UILabel labelCurrentActionStatus;
+#else
+    public Button buttonBack;
+    public Button buttonNext;
+    public Button buttonClose;
+
+    public Text labelCurrentActionStatus;
+#endif
+
     public GameObject containerObject;
     
     public GameObject containerActionControlsDefault;
@@ -28,9 +45,6 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     
     public GameObject panelDefault;
 
-    public UIButton buttonBack;
-    public UIButton buttonNext;
-    public UIButton buttonClose;
     
     public int actionsTotal = 2;
     public int currentActionIndex = 0;
@@ -46,8 +60,6 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     public GameObject actionsBottomRightContainer;
     public GameObject actionsRightContainer;
     public GameObject actionsLeftContainer;
-
-    public UILabel labelCurrentActionStatus;
     
     public GameActionsMode actionsMode = GameActionsMode.Internal;
 

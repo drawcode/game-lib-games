@@ -3,17 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelResultsBase : MonoBehaviour {
 
-	public UILabel totalScore;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel totalScore;
 	public UILabel totalScoreSmarts;
 	public UILabel totalScores;
 	public UILabel totalCoins;
     public UILabel totalTime;
     public UILabel totalKills;
+#else
+    public Text totalScore;
+    public Text totalScoreSmarts;
+    public Text totalScores;
+    public Text totalCoins;
+    public Text totalTime;
+    public Text totalKills;
+#endif
 
     public virtual void OnEnable() {
 

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
@@ -25,12 +29,18 @@ public class GameObjectChoiceData {
 
 public class GameObjectChoice : BaseGameObjectLevel {
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelResponse;
+    public UILabel labelResponseShadow;
+#else
+    public Text labelResponse;
+    public Text labelResponseShadow;
+#endif
+
     public AppContentChoice appContentChoice;
     public AppContentChoiceItem appContentChoiceItem;
     public GameObjectChoiceData choiceData;
     public GameObject containerLabel;
-    public UILabel labelResponse;
-    public UILabel labelResponseShadow;
     public GameObject containerEffects;
     public GameObject containerEffectsAlwaysOn;
     public GameObject containerEffectsCorrect;

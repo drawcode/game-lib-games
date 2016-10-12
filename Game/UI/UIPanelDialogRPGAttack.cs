@@ -5,16 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelDialogRPGAttack : UIPanelBase {
-
-    public static UIPanelDialogRPGAttack Instance;
-    public GameObject containerContent;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelTitle;
     public UIImageButton buttonBuyRecharge;
     public UIImageButton buttonEarn;
+#else
+    public Text labelTitle;
+    public Button buttonBuyRecharge;
+    public Button buttonEarn;
+#endif
+
+    public static UIPanelDialogRPGAttack Instance;
+    public GameObject containerContent;
 
     public void Awake() {
 

@@ -3,12 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelMain : GameUIPanelBase {
 
     public static GameUIPanelMain Instance;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIButton buttonPlayerDefaultObject;
+    public UIButton buttonPlayerUCFObject;
+    public UIButton buttonPlayerBUObject;
+#else
+    public Button buttonPlayerDefaultObject;
+    public Button buttonPlayerUCFObject;
+    public Button buttonPlayerBUObject;
+#endif
+    
     public GameObject listItemPrefab;
     public GameObject listItemSetPrefab;
     public GameObject containerObject;
@@ -17,9 +31,6 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public GameObject containerPlayerObjectUCF;
     public GameObject containerPlayerObjectBU;
     public GameObject containerAppRate;
-    public UIButton buttonPlayerDefaultObject;
-    public UIButton buttonPlayerUCFObject;
-    public UIButton buttonPlayerBUObject;
     public GameObject containerStartObject;
     
     public static bool isInst {

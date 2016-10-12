@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
+
 using Engine.Events;
 
 public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
@@ -14,11 +19,15 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
 	
 	public GameObject helmetObject;
 	public GameObject helmetObjectRotator;
-	
-	public UIImageButton buttonClose;
-	
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIImageButton buttonClose;	
     public UILabel labelPlaySmartScore;
-    
+#else
+    public Button buttonClose;	
+    public Text labelPlaySmartScore;
+#endif
+
     public static bool isInst {
         get {
             if(Instance != null) {
