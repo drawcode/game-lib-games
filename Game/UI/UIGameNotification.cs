@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 
 using Engine.Data.Json;
@@ -39,13 +43,22 @@ public class GameNotificationItem {
 
 public class UIGameNotification
     : GameObjectBehavior {
-    public GameObject notificationPanel;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelTitle;
     public UILabel labelDisplayName;
     public UILabel labelDescription;
     public UILabel labelScore;
-    public GameObject iconObject;
     public UIButton icon;
+#else
+    public Text labelTitle;
+    public Text labelDisplayName;
+    public Text labelDescription;
+    public Text labelScore;
+    public Button icon;
+#endif
+
+    public GameObject notificationPanel;
+    public GameObject iconObject;
     float positionYOpenInGame = 0f;
     float positionYClosedInGame = 333f;
     public static UIGameNotification Instance;

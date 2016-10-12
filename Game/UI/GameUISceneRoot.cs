@@ -1,17 +1,30 @@
 using System;
 using System.Collections;
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class GameUISceneRoot : GameObjectBehavior {
-    
-    public LoadSceneAsync loadAsync;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelProgressTitle = null;
     public UILabel labelProgressMessage = null;
     public UILabel labelProgressPercentage = null;
     public UISlider sliderProgress = null;
     public UISlider sliderProgressItem = null;
+#else
+    public Text labelProgressTitle = null;
+    public Text labelProgressMessage = null;
+    public Text labelProgressPercentage = null;
+    public Slider sliderProgress = null;
+    public Slider sliderProgressItem = null;
+#endif
+
+    public LoadSceneAsync loadAsync;
     public float currentItemProgress = 0.0f;
     public float currentEasingProgress = 0.0f;
     public float currentProgressItem = 0.0f;

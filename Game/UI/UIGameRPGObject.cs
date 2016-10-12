@@ -2,21 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
 public class UIGameRPGObject : GameObjectBehavior {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UISlider sliderProgress;
+    public UILabel labelProgress;
+    public UILabel labelValue;
+#else
+    public Slider sliderProgress;
+    public Text labelProgress;
+    public Text labelValue;
+#endif
 
     public double profileValue = 0;
     public double lastValue = 0;
     public double incrementValue = .01;
     public bool useGlobal = false;
     public float lastTime = 0f;
-    public UISlider sliderProgress;
-    public UILabel labelProgress;
-    public UILabel labelValue;
 
     public virtual void Start() {
         UpdateValue();

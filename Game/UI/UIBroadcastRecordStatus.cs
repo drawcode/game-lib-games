@@ -3,14 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIBroadcastRecordStatus : GameObjectBehavior {
 
-    public GameObject objectRecordStatusLight;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelStatus;
     public UILabel labelStatusAction;
+#else
+    public Text labelStatus;
+    public Text labelStatusAction;
+#endif
+
+    public GameObject objectRecordStatusLight;
 
     public void Awake() {
         

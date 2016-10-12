@@ -3,19 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelEquipment : GameUIPanelBase {
     
     public static GameUIPanelEquipment Instance;
-		
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 	public UIImageButton buttonEquipmentPowerups;
 	public UIImageButton buttonStatistics;
 	public UIImageButton buttonAchievements;
-	public UIImageButton buttonCustomize;
-	
+	public UIImageButton buttonCustomize;	
     public UIImageButton buttonClose;
+#else
+    public Button buttonEquipmentPowerups;
+    public Button buttonStatistics;
+    public Button buttonAchievements;
+    public Button buttonCustomize;
+    public Button buttonClose;
+#endif
     
     public static bool isInst {
         get {

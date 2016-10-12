@@ -5,19 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelOverviewMode : UIPanelBase {
-
-    public static UIPanelOverviewMode Instance;
-    public GameObject containerOverview;
-    public GameObject containerOverviewGameplayTips;
-    public GameObject containerTutorial;
-    public GameObject containerTips;
-    public GameObject containerTipsMode;
-    public GameObject containerTipsGameplay;
-
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     // OVERVIEW
 
     public UILabel labelOverviewTip;
@@ -28,7 +24,27 @@ public class UIPanelOverviewMode : UIPanelBase {
     public UIImageButton buttonOverviewTips;
     public UIImageButton buttonOverviewMode;
     public UILabel labelOverviewTeamEnemy;
+#else
+    // OVERVIEW
 
+    public Text labelOverviewTip;
+    public Text labelOverviewType;
+    public Text labelOverviewStatus;
+    public Button buttonOverviewReady;
+    public Button buttonOverviewTutorial;
+    public Button buttonOverviewTips;
+    public Button buttonOverviewMode;
+    public Text labelOverviewTeamEnemy;
+#endif
+
+    public static UIPanelOverviewMode Instance;
+    public GameObject containerOverview;
+    public GameObject containerOverviewGameplayTips;
+    public GameObject containerTutorial;
+    public GameObject containerTips;
+    public GameObject containerTipsMode;
+    public GameObject containerTipsGameplay;
+    
     //public UIPanelTips tips
 
     // GLOBAL

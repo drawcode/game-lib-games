@@ -3,21 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UICustomizeCharacterRPGItem : GameObjectBehavior {
- 
-    public string rpgCode = "energy"; // attack, defense, energy, health, skill, power
-    public string characterCode = "default";
-    public double currentValue = 0.1;
-    public double profileValue = 0.1;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UISlider sliderProfileValue;
     public UISlider sliderCurrentValue;
     public UIImageButton buttonRPGItemUp;
     public UIImageButton buttonRPGItemDown;
     public UILabel labelName;
     public UILabel labelValue;
+#else
+    public Slider sliderProfileValue;
+    public Slider sliderCurrentValue;
+    public Button buttonRPGItemUp;
+    public Button buttonRPGItemDown;
+    public Text labelName;
+    public Text labelValue;
+#endif
+
+    public string rpgCode = "energy"; // attack, defense, energy, health, skill, power
+    public string characterCode = "default";
+    public double currentValue = 0.1;
+    public double profileValue = 0.1;
     public string displayName = "";
     public string displayValue = "";
 

@@ -5,23 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelOverlayPrepare : UIPanelBase {
-
-    public static UIPanelOverlayPrepare Instance;
-
-    public GameObject containerOverview;
-    public GameObject containerOverviewGameplayTips;
-    public GameObject containerOverviewGeneralTips;
-    public GameObject containerTutorial;
-    
-    public GameObject containerTips;
-    public GameObject containerTipsMode;
-    public GameObject containerTipsGameplay;
-    public GameObject containerTipsGeneral;
-
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     // OVERVIEW
 
     public UILabel labelOverviewTip;
@@ -35,7 +27,34 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public UIImageButton buttonReady;
     
     public UIImageButton buttonTipNext;
+#else
+    // OVERVIEW
 
+    public Text labelOverviewTip;
+    public Text labelOverviewType;
+    public Text labelOverviewStatus;
+
+    public Text labelTipTitle;
+    public Text labelTipDescription;
+    public Text labelTipType;
+
+    public Button buttonReady;
+
+    public Button buttonTipNext;
+#endif
+
+    public static UIPanelOverlayPrepare Instance;
+
+    public GameObject containerOverview;
+    public GameObject containerOverviewGameplayTips;
+    public GameObject containerOverviewGeneralTips;
+    public GameObject containerTutorial;
+    
+    public GameObject containerTips;
+    public GameObject containerTipsMode;
+    public GameObject containerTipsGameplay;
+    public GameObject containerTipsGeneral;
+    
     public string loadingLevelDisplay = "Loading Level...";
         
     //public UIPanelTips tips

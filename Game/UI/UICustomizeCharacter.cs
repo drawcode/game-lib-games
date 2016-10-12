@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -15,12 +19,20 @@ public class UICustomizeCharacterItemMessages {
 //Messenger<string, double>.RemoveListener(UIRPGItemMessages.rpgItemCodeUp, OnRPGItemCodeDown);
 //Messenger<string, double>.Broadcast(UIRPGItemMessages.rpgItemCodeUp, rpgCode, 1);
 
-public class UICustomizeCharacter: UIAppPanelBaseList {
+public class UICustomizeCharacter : UIAppPanelBaseList {
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelUpgradesAvailable;
     public UIImageButton buttonResetRPG;
     public UIImageButton buttonSaveRPG;
     public UIImageButton buttonBuyUpgrades;
+#else
+    public Text labelUpgradesAvailable;
+    public Button buttonResetRPG;
+    public Button buttonSaveRPG;
+    public Button buttonBuyUpgrades;
+#endif
+
     GameProfileRPGItem profileGameDataItemRPG;
     string currentCharacterCode = "default";
     public static UICustomizeCharacter Instance;
@@ -38,7 +50,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
 
         Instance = this;
     }
-     
+
     public static bool isInst {
         get {
             if (Instance != null) {
@@ -51,10 +63,10 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
     public override void Start() {
         Init();
     }
- 
+
     public override void Init() {
         base.Init();
-     
+
         loadData();
     }
 
@@ -144,7 +156,7 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
             labelUpgradesAvailable.text = upgradesAvailableTo.ToString("N0");
         }
     }
- 
+
     public static void LoadData() {
         if (Instance != null) {
             Instance.loadData();
@@ -154,55 +166,55 @@ public class UICustomizeCharacter: UIAppPanelBaseList {
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
- 
-    IEnumerator loadDataCo() {       
-     
+
+    IEnumerator loadDataCo() {
+
         LogUtil.Log("LoadDataCo");
-     
+
         if (listGridRoot != null) {
             listGridRoot.DestroyChildren();
-         
+
             yield return new WaitForEndOfFrame();
-                 
+
             loadDataRPG();
-         
+
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
-            yield return new WaitForEndOfFrame();                
+            yield return new WaitForEndOfFrame();
         }
     }
-     
+
     public void loadDataRPG() {
-     
+
         LogUtil.Log("Load RPGs:");
 
         int i = 0;
-     
+
         SetUpgradesAvailable(GameProfileRPGs.Current.GetUpgrades());
-     
+
         profileGameDataItemRPG = GameProfileCharacters.Current.GetCharacterRPG(currentCharacterCode);
 
         LogUtil.Log("profileGameDataItemRPG:attack2:" + profileGameDataItemRPG.GetAttack());
 
         List<string> rpgItems = new List<string>();
-     
+
         rpgItems.Add(GameDataItemRPGAttributes.speed);
-        rpgItems.Add(GameDataItemRPGAttributes.health);      
-        rpgItems.Add(GameDataItemRPGAttributes.energy);      
-        rpgItems.Add(GameDataItemRPGAttributes.attack);          
+        rpgItems.Add(GameDataItemRPGAttributes.health);
+        rpgItems.Add(GameDataItemRPGAttributes.energy);
+        rpgItems.Add(GameDataItemRPGAttributes.attack);
         //rpgItems.Add(GameDataItemRPGAttributes.defense);           
-     
+
         foreach (string rpgItem in rpgItems) {
-         
+
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "AItem" + i;
-         
+
             UICustomizeCharacterRPGItem rpg = item.transform.GetComponent<UICustomizeCharacterRPGItem>();
-         
+
             if (rpg != null) {
                 rpg.Load(rpgItem);
-            }                
-                         
+            }
+
             i++;
         }
     }

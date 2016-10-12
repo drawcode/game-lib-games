@@ -4,18 +4,31 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class UIPanelDialogDisplay : UIPanelBase {
-
-    public static UIPanelDialogDisplay Instance;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelTitle;
     public UILabel labelDescription;
     public UIImageButton buttonDialogOk;
     public UIImageButton buttonDialogCancel;
     public UIImageButton buttonDialogGo;
     public UIImageButton buttonDialogNext;
+#else
+    public Text labelTitle;
+    public Text labelDescription;
+    public Button buttonDialogOk;
+    public Button buttonDialogCancel;
+    public Button buttonDialogGo;
+    public Button buttonDialogNext;
+#endif
+
+    public static UIPanelDialogDisplay Instance;
 
     public void Awake() {
         
@@ -144,35 +157,35 @@ public class UIPanelDialogDisplay : UIPanelBase {
     }
 
     public void showButtonOk() {
-        showButton(buttonDialogOk);
+        UIUtil.ShowButton(buttonDialogOk);
     }
 
     public void showButtonCancel() {
-        showButton(buttonDialogCancel);
+        UIUtil.ShowButton(buttonDialogCancel);
     }
 
     public void showButtonGo() {
-        showButton(buttonDialogGo);
+        UIUtil.ShowButton(buttonDialogGo);
     }
 
     public void showButtonNext() {
-        showButton(buttonDialogNext);
+        UIUtil.ShowButton(buttonDialogNext);
     }
 
     public void hideButtonOk() {
-        hideButton(buttonDialogOk);
+        UIUtil.HideButton(buttonDialogOk);
     }
 
     public void hideButtonCancel() {
-        hideButton(buttonDialogCancel);
+        UIUtil.HideButton(buttonDialogCancel);
     }
 
     public void hideButtonGo() {
-        hideButton(buttonDialogGo);
+        UIUtil.HideButton(buttonDialogGo);
     }
 
     public void hideButtonNext() {
-        hideButton(buttonDialogNext);
+        UIUtil.HideButton(buttonDialogNext);
     }
 
     public void hideAllButtons() {
@@ -181,31 +194,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
         HideButtonGo();
         HideButtonCancel();
     }
-
-    public static void ShowButton(UIImageButton button) {
-        if (isInst) {
-            Instance.showButton(button);
-        }
-    }
-
-    public static void HideButton(UIImageButton button) {
-        if (isInst) {
-            Instance.hideButton(button);
-        }
-    }
-
-    public void showButton(UIImageButton button) {
-        if (button != null) {
-            button.gameObject.Show();
-        }
-    }
-
-    public void hideButton(UIImageButton button) {
-        if (button != null) {
-            button.gameObject.Hide();
-        }
-    }
-
+    
     public static void SetTitle(string titleTo) {
         if (isInst) {
             Instance.setTitle(titleTo);

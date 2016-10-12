@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
@@ -10,6 +14,7 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
     
     public static GameUIPanelProductCurrency Instance;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIImageButton buttonGameBuyProducts;
 
     public UIImageButton buttonGameBuyCurrency;
@@ -29,7 +34,28 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
 
     public UIImageButton buttonHelp;
     public UIImageButton buttonPlay;
-    
+#else
+    public Button buttonGameBuyProducts;
+
+    public Button buttonGameBuyCurrency;
+    public Button buttonGameBuyCurrencyFeature1;
+    public Button buttonGameBuyCurrencyFeature2;
+
+    public Button buttonGameBuyCurrencyTier1;
+    public Button buttonGameBuyCurrencyTier2;
+    public Button buttonGameBuyCurrencyTier3;
+    public Button buttonGameBuyCurrencyTier5;
+    public Button buttonGameBuyCurrencyTier10;
+    public Button buttonGameBuyCurrencyTier20;
+    public Button buttonGameBuyCurrencyTier50;
+
+    public Button buttonGameEarnCurrency;
+    public Button buttonGameBuyModifier;
+
+    public Button buttonHelp;
+    public Button buttonPlay;
+#endif
+
     public static bool isInst {
         get {
             if(Instance != null) {

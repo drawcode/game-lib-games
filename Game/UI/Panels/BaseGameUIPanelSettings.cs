@@ -3,21 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelSettings : GameUIPanelBase {	
     
     public static GameUIPanelSettings Instance;
-	
-    public GameObject listItemPrefab;
-	
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIImageButton buttonSettingsAudio;
     public UIImageButton buttonSettingsControls;
     public UIImageButton buttonSettingsProfile;
     public UIImageButton buttonSettingsHelp;
     public UIImageButton buttonSettingsCredits;
-    
+#else
+    public Button buttonSettingsAudio;
+    public Button buttonSettingsControls;
+    public Button buttonSettingsProfile;
+    public Button buttonSettingsHelp;
+    public Button buttonSettingsCredits;
+#endif
+
+    public GameObject listItemPrefab;
+	
     public static bool isInst {
         get {
             if(Instance != null) {

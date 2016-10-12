@@ -3,13 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
 
 using Engine.Events;
 
 public class BaseGameUIPanelHeader : GameUIPanelBase {
 
     public static GameUIPanelHeader Instance;
-        
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIImageButton buttonCoins;
+    public UIImageButton buttonBack;
+    public UILabel labelSection;
+#else
+    public Button buttonCoins;
+    public Button buttonBack;
+    public Text labelSection;
+#endif
+
+
     /*
     easeInQuad
     easeOutQuad
@@ -45,7 +60,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     easeInOutElastic
     
     */
-    
+
     public GameObject coinObject;
     public GameObject backObject;
     public GameObject backerObject;
@@ -55,9 +70,6 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public GameObject containerCharacterLarge;
     public GameCustomPlayerContainer containerCustomCharacterSmall;
     public GameCustomPlayerContainer containerCustomCharacterLarge;
-    public UIImageButton buttonCoins;
-    public UIImageButton buttonBack;
-    public UILabel labelSection;
     
     public static bool isInst {
         get {

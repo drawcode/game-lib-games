@@ -52,12 +52,16 @@ public class GameUI : GameObjectBehavior {
     
     void InitEvents() {
         LogUtil.Log("InitEvents:");
-        
+
+        #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
         buttonMeta.SetButton("buttonUIToggle", ref buttonUIToggle, delegate () {
             ToggleGameUI();
             //Application.LoadLevel("GameSceneDynamic");
             LogUtil.Log("buttonUIToggle:");
         });
+
+        #endif
         
         /*
         buttonMeta.SetButton("buttonUICharacter", ref buttonUICharacter, delegate () {

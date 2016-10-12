@@ -1,7 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+#else
+using UnityEngine.UI;
+#endif
+
 using Engine.Events;
 
 public class LoadSceneMessages {
@@ -25,10 +32,16 @@ public class LoadSceneAsync : GameObjectBehavior {
     public string levelLoadingName = "";
 	
 	public bool running = false;
-    
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UISlider progressBarUI;
     public UILabel progressBarTextUI;
-    
+#else
+    public Slider progressBarUI;
+    public Text progressBarTextUI;
+#endif
+
+
     public void Start() {
 		if(running) {
 	        if(!string.IsNullOrEmpty(levelLoadingName)) {
@@ -86,9 +99,9 @@ public class LoadSceneAsync : GameObjectBehavior {
         ChangeState(LoadSceneState.LevelLoadProgress);
         
         asyncLevelLoad = Application.LoadLevelAsync(levelLoadingName);
-        
-        progressBarUI.sliderValue = 1f;
-        progressBarTextUI.text = "100%";
+
+        UIUtil.SetSliderValue(progressBarUI, 1f);
+        UIUtil.SetLabelValue(progressBarTextUI, "100%");
 
         yield return asyncLevelLoad;
 		
@@ -105,16 +118,16 @@ public class LoadSceneAsync : GameObjectBehavior {
     void Update() {
             
 		if(running) {
-	        if(asyncLevelLoad.isDone){
-	            progressBarUI.sliderValue = 1f;
-	            progressBarTextUI.text = "100%";
-	        }
+	        if(asyncLevelLoad.isDone) {
+                UIUtil.SetSliderValue(progressBarUI, 1f);
+                UIUtil.SetLabelValue(progressBarTextUI, "100%");
+            }
 	        else {
 	        
-	            progressBarUI.sliderValue = currentLoadedBytes;
-	            progressBarTextUI.text = currentLoadedBytes.ToString("P0");
-	            
-	            if(levelLoadState != LoadSceneState.LevelNotStarted) {
+                UIUtil.SetSliderValue(progressBarUI, currentLoadedBytes);
+                UIUtil.SetLabelValue(progressBarTextUI, currentLoadedBytes.ToString("P0"));
+
+                if (levelLoadState != LoadSceneState.LevelNotStarted) {
 	                if(asyncLevelLoad != null) {
 	                    currentLoadedBytes = asyncLevelLoad.progress; // 0 to 1 float when 1.0 it is complete use for progress
 	                    Messenger<float>.Broadcast(LoadSceneMessages.LevelLoadProgress, currentLoadedBytes);
