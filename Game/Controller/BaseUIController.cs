@@ -2104,12 +2104,16 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelMain),
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
+        
+        GameUIPanelBackgrounds.Instance.AnimateIn();
 
-        GameUIPanelBackgrounds.Instance.AnimateIn();        
-        
-        GameUIPanelHeader.Instance.AnimateInMain();
-        
-        GameUIPanelFooter.Instance.AnimateInMain();
+        if (GameUIPanelHeader.Instance != null) {
+            GameUIPanelHeader.Instance.AnimateInMain();
+        }
+
+        if (GameUIPanelFooter.Instance != null) {
+            GameUIPanelFooter.Instance.AnimateInMain();
+        }
           
         GameUIPanelMain.Instance.AnimateIn();
 
