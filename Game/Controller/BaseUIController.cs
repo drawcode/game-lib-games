@@ -2114,8 +2114,10 @@ public class BaseUIController : GameObjectBehavior {
         if (GameUIPanelFooter.Instance != null) {
             GameUIPanelFooter.Instance.AnimateInMain();
         }
-          
-        GameUIPanelMain.Instance.AnimateIn();
+
+        if (GameUIPanelFooter.Instance != null) {
+            GameUIPanelMain.Instance.AnimateIn();
+        }
 
     }
     
