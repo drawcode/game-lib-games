@@ -3379,6 +3379,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void OnButtonClickObjectEventHandler(
         GameObject buttonObject) {
+
+        Debug.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
     
         Dictionary<string,object> data = new Dictionary<string, object>();
 
