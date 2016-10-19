@@ -422,13 +422,15 @@ public class BaseGameGlobal : GameObjectBehavior {
                 || Input.GetKey(KeyCode.RightControl))) {
 
                 if (Input.GetKeyDown(KeyCode.P)) {
-                        
+
+#if UNITY_EDITOR
                     // Toggle paused
                     //UnityEditor.EditorApplication.isPaused = 
                     //    !UnityEditor.EditorApplication.isPaused ? true : false;
 
                     UnityEditor.EditorApplication.isPaused = 
                         !UnityEditor.EditorApplication.isPaused;
+#endif
 
                 }
                 else if (Input.GetKeyDown(KeyCode.E)
