@@ -174,11 +174,14 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-        
-        if (buttonName == buttonCoins.name) {
-            GameCommunity.HideGameCommunity();
-            GameUIController.ShowProductCurrency();
-        }
+
+        if (buttonCoins != null) {
+
+            if (buttonName == buttonCoins.name) {
+                GameCommunity.HideGameCommunity();
+                GameUIController.ShowProductCurrency();
+            }
+        }        
     }
     
     public override void AnimateIn() {

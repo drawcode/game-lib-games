@@ -222,9 +222,13 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         ShowButtons(currentButtonCode, false);
     }
 
-    public virtual void HideAllButtons() {        
-        
-        foreach(GameObjectShowItem item in 
+    public virtual void HideAllButtons() {
+
+        if (containerButtons == null) {
+            return;
+        }
+
+        foreach (GameObjectShowItem item in
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
             HidePanelBottom(item.gameObject);
             item.gameObject.HideObjectDelayed(.5f);
