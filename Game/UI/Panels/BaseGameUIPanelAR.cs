@@ -1,3 +1,4 @@
+#if ENABLE_FEATURE_AR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,16 @@ using Engine.Events;
 public class BaseGameUIPanelAR : GameUIPanelBase {
 
     public static GameUIPanelAR Instance;
+
+    public static bool isInst {
+        get {
+            if (Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIButton buttonPlayerDefaultObject;
 #else
@@ -26,15 +37,7 @@ public class BaseGameUIPanelAR : GameUIPanelBase {
     public GameObject containerPlayerObject;
     public GameObject containerAppRate;
     public GameObject containerStartObject;
-    
-    public static bool isInst {
-        get {
-            if (Instance != null) {
-                return true;
-            }
-            return false;
-        }
-    }
+
     
     public virtual void Awake() {
         
@@ -183,3 +186,4 @@ public class BaseGameUIPanelAR : GameUIPanelBase {
         }
     }
 }
+#endif

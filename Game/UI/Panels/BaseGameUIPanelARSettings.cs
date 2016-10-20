@@ -1,3 +1,4 @@
+#if ENABLE_FEATURE_AR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -183,3 +184,5 @@ public class BaseGameUIPanelARSettings : GameUIPanelBase {
         }
     }
 }
+
+#endif
