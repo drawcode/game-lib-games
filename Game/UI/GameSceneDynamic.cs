@@ -26,7 +26,7 @@ public class GameSceneDynamic : GameUIScene {
         Instance = this;
         
         if (GameGlobal.Instance == null) {
-            Application.LoadLevel("GameUISceneRoot");
+            Context.Current.ApplicationLoadLevelByName("GameUISceneRoot");
         }
                 
     }

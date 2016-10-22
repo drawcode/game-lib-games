@@ -332,8 +332,8 @@ public class GameVehicleDrive : GameObjectBehavior {
         Vector3 relativePos;
         Quaternion rotationToLastSkidmark;
         
-        ParticleEmitter particleEmitterL = DustL.GetComponent<ParticleEmitter>();
-        ParticleEmitter particleEmitterR = DustR.GetComponent<ParticleEmitter>(); 
+        ParticleSystem particleEmitterL = DustL.GetComponent<ParticleSystem>();
+        ParticleSystem particleEmitterR = DustR.GetComponent<ParticleSystem>(); 
 
         if (PlayEffects == true) {
 
@@ -341,7 +341,7 @@ public class GameVehicleDrive : GameObjectBehavior {
             
             if (rlWheelCollider.GetGroundHit(out hit)) {
              
-                particleEmitterL.emit = true;
+                particleEmitterL.EnableEmission(true);
                 isGrounding = true;
                 //Skidmarks
                 skidmarkPos = hit.point;
@@ -357,13 +357,13 @@ public class GameVehicleDrive : GameObjectBehavior {
             }
             else {
                     
-                particleEmitterL.emit = false; 
+                particleEmitterL.EnableEmission(false); 
                 lastSkidmarkPosL = Vector3.zero;            
             }
                     
             if (rrWheelCollider.GetGroundHit(out hit)) {
                
-                particleEmitterR.emit = true;
+                particleEmitterR.EnableEmission(true);
                 isGrounding = true;
                 //Skidmarks
                 skidmarkPos = hit.point;
@@ -378,7 +378,7 @@ public class GameVehicleDrive : GameObjectBehavior {
             }
             else {
                         
-                particleEmitterR.emit = false; 
+                particleEmitterR.EnableEmission(false); 
                 lastSkidmarkPosR = Vector3.zero;            
             }
                     
@@ -396,8 +396,8 @@ public class GameVehicleDrive : GameObjectBehavior {
             isPlayingSound = false;
             brakeAudioSource.Stop();
 
-            particleEmitterL.emit = false; 
-            particleEmitterR.emit = false; 
+            particleEmitterL.EnableEmission(false);
+            particleEmitterR.EnableEmission(false);
             lastSkidmarkPosL = Vector3.zero;    
             lastSkidmarkPosR = Vector3.zero;    
         }        

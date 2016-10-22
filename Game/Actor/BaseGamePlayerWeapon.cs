@@ -86,7 +86,7 @@ public class BaseGamePlayerWeapon : GameActor {
         if (particles != null) {
             //if(!particles.isPlaying) {
             particles.Play(true);
-            particles.enableEmission = true;
+            particles.EnableEmission(true);
             //}
         }
     }

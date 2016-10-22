@@ -41,7 +41,7 @@ public class GrapplingHook : MonoBehaviour {
     void Update() {
         
         RaycastHit hit;
-        RaycastHit lastSight;
+        //RaycastHit lastSight;
         
         //Check to make sure we actually hit something that can be grappled.
         //The Raycast distance can be change to another value to set a certain distance a player can grapple to.
@@ -66,7 +66,7 @@ public class GrapplingHook : MonoBehaviour {
                 Vector3 v = transform.position - hookAnchor.position;
                 float distance = v.magnitude;
                 newVel = v;
-                Vector3 myUp = (transform.position - hookAnchor.position).normalized;
+                //Vector3 myUp = (transform.position - hookAnchor.position).normalized;
                 //Draws an imaginary sphere around the player, simulating the rope length.
                 //If the player is past the maximum distance of the rope, we move it back in
                 //This allows the player to move toward the anchor point, but keeps him from going further out.

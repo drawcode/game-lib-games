@@ -38,7 +38,7 @@ public class UIAppPanel : GameObjectBehavior {
     
     public virtual void Init() {
         if (GameGlobal.Instance == null) {
-            Application.LoadLevel("GameUISceneRoot");
+            Context.Current.ApplicationLoadLevelByName("GameUISceneRoot");
         }
         else {
             GetClassName(this);

@@ -1346,7 +1346,7 @@ public class BaseGamePlayerController : GameActor {
     public virtual void SetPlayerEffectWarp(float rate) {
         if (gamePlayerEffectWarp != null) {
 
-            if (gamePlayerEffectWarp.emissionRate == rate) {
+            if (gamePlayerEffectWarp.GetEmissionRate() == rate) {
                 return;
             }
 
@@ -1359,7 +1359,7 @@ public class BaseGamePlayerController : GameActor {
                 gamePlayerEffectWarp.Stop();
             }
 
-            gamePlayerEffectWarp.emissionRate = rate;
+            gamePlayerEffectWarp.SetEmissionRate(rate);
         }
     }
 
@@ -2203,9 +2203,9 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        float distance = Math.Abs(currentControllerData.effectWarpEnd - currentControllerData.effectWarpCurrent);
+        //float distance = Math.Abs(currentControllerData.effectWarpEnd - currentControllerData.effectWarpCurrent);
 
-        bool effectWarpOn = distance < 5 ? false : true;
+        //bool effectWarpOn = distance < 5 ? false : true;
 
      
         // main
@@ -2710,7 +2710,6 @@ public class BaseGamePlayerController : GameActor {
                         Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
                     }
                     else {
-                        int i = 0;
                         
                         if (currentControllerData.lastCollision + currentControllerData.intervalCollision < Time.time) {
                             currentControllerData.lastCollision = Time.time;
@@ -4224,8 +4223,8 @@ public class BaseGamePlayerController : GameActor {
             float amount = Mathf.Abs(dist);
             
             if (currentControllerData.gamePlayerEffectAim != null) {
-                currentControllerData.gamePlayerEffectAim.enableEmission = true;
-                currentControllerData.gamePlayerEffectAim.emissionRate = amount * 2;
+                currentControllerData.gamePlayerEffectAim.EnableEmission(true);
+                currentControllerData.gamePlayerEffectAim.SetEmissionRate(amount * 2);
                 currentControllerData.gamePlayerEffectAim.startLifetime = amount / 400f;
                 currentControllerData.gamePlayerEffectAim.startSpeed = amount;
                 currentControllerData.gamePlayerEffectAim.Play();
@@ -4262,8 +4261,8 @@ public class BaseGamePlayerController : GameActor {
             //model.transform.LookAt(gamePlayerModelHolder.transform.position);
             
             if (currentControllerData.gamePlayerEffectAim != null) {
-                currentControllerData.gamePlayerEffectAim.enableEmission = false;
-                currentControllerData.gamePlayerEffectAim.emissionRate = 1;
+                currentControllerData.gamePlayerEffectAim.EnableEmission(false);
+                currentControllerData.gamePlayerEffectAim.SetEmissionRate(1);
                 currentControllerData.gamePlayerEffectAim.Stop();
             }
             
@@ -5398,7 +5397,7 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
-    public virtual void RemoveMe() {
+    public override void RemoveMe() {
         gamePlayerModelHolderModel.DestroyChildren(GameConfigs.usePooledGamePlayers);
         gameObject.DestroyGameObject(3f, GameConfigs.usePooledGamePlayers);
     }

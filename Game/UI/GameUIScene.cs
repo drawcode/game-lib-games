@@ -17,7 +17,7 @@ public class GameUIScene : GameObjectBehavior {
     
     public virtual void Init() {
         if (GameGlobal.Instance == null) {
-            Application.LoadLevel("GameUISceneRoot");
+            Context.Current.ApplicationLoadLevelByName("GameUISceneRoot");
         }
         
         Reset();

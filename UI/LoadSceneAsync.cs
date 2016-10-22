@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #else
@@ -98,7 +99,7 @@ public class LoadSceneAsync : GameObjectBehavior {
                         
         ChangeState(LoadSceneState.LevelLoadProgress);
         
-        asyncLevelLoad = Application.LoadLevelAsync(levelLoadingName);
+        asyncLevelLoad = SceneManager.LoadSceneAsync(levelLoadingName);
 
         UIUtil.SetSliderValue(progressBarUI, 1f);
         UIUtil.SetLabelValue(progressBarTextUI, "100%");
