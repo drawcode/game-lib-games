@@ -1,5 +1,11 @@
-#define SOCIAL_USE_FACEBOOK
-#define SOCIAL_USE_TWITTER
+//#define SOCIAL_USE_FACEBOOK
+//#define SOCIAL_USE_TWITTER
+
+//#define SOCIAL_USE_FACEBOOK_PRIME31
+//#define SOCIAL_USE_TWITTER_PRIME31
+//#define SOCIAL_USE_FACEBOOK_UNITY
+//#define SOCIAL_USE_TWITTER_UNITY
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,6 +81,8 @@ public class SocialNetworks : GameObjectBehavior {
         // FACEBOOK
 
 #if UNITY_ANDROID || UNITY_IPHONE
+
+#if SOCIAL_USE_FACEBOOK_PRIME31
         FacebookManager.sessionOpenedEvent += facebookSessionOpenedEvent;
         FacebookManager.preLoginSucceededEvent += facebookPreLoginSucceededEvent;
         FacebookManager.loginFailedEvent += facebookLoginFailed;
@@ -93,27 +101,31 @@ public class SocialNetworks : GameObjectBehavior {
         //FacebookManager.shareDialogFailedEvent += facebookShareDialogFailedEvent;
         //FacebookManager.shareDialogSucceededEvent += facebookShareDialogSucceededEvent;
 #endif
-        
+#endif
+
         // -------------------------------------------------------------------
         // TWITTER
-        
-        #if UNITY_ANDROID || UNITY_IPHONE
+
+#if UNITY_ANDROID || UNITY_IPHONE
+#if SOCIAL_USE_TWITTER_PRIME31
         TwitterManager.loginSucceededEvent += twitterLoginSucceededEvent;
         TwitterManager.loginFailedEvent += twitterLoginFailedEvent;
         TwitterManager.requestDidFinishEvent += twitterRequestDidFinishEvent;
         
         TwitterManager.requestDidFailEvent += twitterRequestDidFailEvent;
         TwitterManager.tweetSheetCompletedEvent += twitterTweetSheetCompletedEvent;
-        #endif
+#endif
+#endif
 
     }
 
     void OnDisable() {
-        
+
         // -------------------------------------------------------------------
         // FACEBOOK
 
 #if UNITY_ANDROID || UNITY_IPHONE
+#if SOCIAL_USE_FACEBOOK_PRIME31
         // Remove all the event handlers when disabled
         FacebookManager.sessionOpenedEvent -= facebookSessionOpenedEvent;
         FacebookManager.preLoginSucceededEvent -= facebookPreLoginSucceededEvent;
@@ -133,23 +145,27 @@ public class SocialNetworks : GameObjectBehavior {
         //FacebookManager.shareDialogFailedEvent -= facebookShareDialogFailedEvent;
         //FacebookManager.shareDialogSucceededEvent -= facebookShareDialogSucceededEvent;
 #endif
+#endif
 
         // -------------------------------------------------------------------
         // TWITTER
-        
-        #if UNITY_ANDROID || UNITY_IPHONE
+
+#if UNITY_ANDROID || UNITY_IPHONE
+#if SOCIAL_USE_TWITTER_PRIME31
         TwitterManager.loginSucceededEvent -= twitterLoginSucceededEvent;
         TwitterManager.loginFailedEvent -= twitterLoginFailedEvent;
         TwitterManager.requestDidFinishEvent -= twitterRequestDidFinishEvent;
         
         TwitterManager.requestDidFailEvent -= twitterRequestDidFailEvent;
         TwitterManager.tweetSheetCompletedEvent -= twitterTweetSheetCompletedEvent;
-        #endif
+#endif
+#endif
     }
-    
+
+    #if SOCIAL_USE_FACEBOOK_PRIME31
     // -------------------------------------------------------------------
     // FACEBOOK - EVENTS
-    
+
     // Fired after a successful login attempt was made
     void facebookSessionOpenedEvent() {
 
@@ -243,7 +259,9 @@ public class SocialNetworks : GameObjectBehavior {
         Debug.Log("SocialNetworks:facebookShareDialogFailedEvent" + " val:" + val.ToJson());
         
     }
-    
+#endif
+
+#if SOCIAL_USE_TWITTER_PRIME31
     // -------------------------------------------------------------------
     // TWITTER - EVENTS
         
@@ -287,6 +305,7 @@ public class SocialNetworks : GameObjectBehavior {
         Debug.Log("SocialNetworks:twitterTweetSheetCompletedEvent" + " val:" + val.ToJson());
     
     }
+#endif
         
     // -------------------------------------------------------------------
     // COMMON
@@ -371,46 +390,53 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void initFacebook() {
-        
+
+#if SOCIAL_USE_FACEBOOK_PRIME31
         // optionally enable logging of all requests that go through the Facebook class
         Facebook.instance.debugRequests = true;
+#endif
         
         Debug.Log("LoadSocialLibs FACEBOOK_APP_ID..." + FACEBOOK_APP_ID);
                 
         // Social Network Prime31       
 #if UNITY_ANDROID
         
-        Debug.Log("LoadSocialLibs RuntimePlatform.Android..." + Application.platform);    
-        
+        Debug.Log("LoadSocialLibs RuntimePlatform.Android..." + Application.platform);
+#if SOCIAL_USE_FACEBOOK_PRIME31
         socialNetworkFacebookAndroid = new GameObject("SocialNetworkingManager");
         socialNetworkFacebookAndroid.AddComponent<FacebookManager>();
         socialNetworkFacebookAndroid.AddComponent<FacebookEventListener>();
 
         //FacebookAndroid.init(FACEBOOK_APP_ID);
         FacebookAndroid.init(); 
+#endif
         
         Debug.Log("LoadSocialLibs Facebook init..." + FACEBOOK_APP_ID);
-        
-#elif UNITY_IPHONE
+#endif
+
+#if UNITY_IPHONE
         
         socialNetworkiOS = new GameObject("SocialNetworkingManager");
+#if SOCIAL_USE_FACEBOOK_PRIME31
         socialNetworkiOS.AddComponent<FacebookManager>();
         socialNetworkiOS.AddComponent<FacebookEventListener>();
         
         FacebookBinding.init();     
-        
-        Debug.Log("LoadSocialLibs Facebook init..." + FACEBOOK_APP_ID);
     
         // iOS 6 only for system prefs
-        //FacebookBinding.renewCredentialsForAllFacebookAccounts();     
-#elif UNITY_WEBPLAYER
+        //FacebookBinding.renewCredentialsForAllFacebookAccounts(); 
+        Facebook.instance.getAppAccessToken(FACEBOOK_APP_ID, FACEBOOK_SECRET, onFacebookAppAccessToken);
+#endif
+        
+        Debug.Log("LoadSocialLibs Facebook init..." + FACEBOOK_APP_ID);    
+#endif
+
+#if UNITY_WEBPLAYER
             
         Application.ExternalCall("if(window.console) window.console.log","web facebook init");
-#endif  
-        
-        Facebook.instance.getAppAccessToken(FACEBOOK_APP_ID, FACEBOOK_SECRET, onFacebookAppAccessToken);
+#endif
     }
-    
+
     public static bool IsLoggedInFacebook() {
         if (Instance != null) {
             return Instance.isLoggedInFacebook();
@@ -419,9 +445,9 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public bool isLoggedInFacebook() {
-#if UNITY_ANDROID   
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         return FacebookAndroid.isSessionValid();
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         return FacebookBinding.isSessionValid();
 #elif UNITY_WEBPLAYER
         return true;//Application.ExternalEval(true);
@@ -453,12 +479,11 @@ public class SocialNetworks : GameObjectBehavior {
         var permissions = AppConfigs.socialFacebookPermissionsRead;
         
         dumpPermissionsToLog(permissions);
-        
-#if UNITY_ANDROID
-        
+
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31        
         Debug.Log("Logging in facebook");
         FacebookAndroid.loginWithReadPermissions(permissions);
-#elif UNITY_IPHONE  
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
             
         if(!SystemHelper.CanOpenUrl("fb://profile")) {
             Debug.Log("Facebook App is NOT installed, forcing Facebook WEB flow");
@@ -497,7 +522,7 @@ public class SocialNetworks : GameObjectBehavior {
         //Application.ExternalCall("postFacebookMessage", title, caption, message, url, caption);
 #endif
     }
-    
+
     public static List<object> GetSessionPermissionsFacebook() {
         if (Instance != null) {
             return Instance.getSessionPermissionsFacebook();
@@ -507,11 +532,11 @@ public class SocialNetworks : GameObjectBehavior {
         
     public List<object> getSessionPermissionsFacebook() {
         var currentPermissions = new List<object>();
-#if UNITY_IPHONE
+#if UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         currentPermissions = FacebookBinding.getSessionPermissions();
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         currentPermissions = FacebookAndroid.getSessionPermissions();
-#endif          
+#endif
         return currentPermissions;
     }
     
@@ -527,7 +552,8 @@ public class SocialNetworks : GameObjectBehavior {
     public void getProfileDataFacebook() { 
         
         Debug.Log("SocialNetworks:getProfileDataFacebook");
-    
+
+#if SOCIAL_USE_FACEBOOK_PRIME31
         Facebook.instance.graphRequest("me", Prime31.HTTPVerb.GET, ( error, obj ) => {
             // if we have an error we dont proceed any further
             if (error != null)
@@ -580,8 +606,9 @@ public class SocialNetworks : GameObjectBehavior {
                 SocialNetworkTypes.facebook, 
                 SocialNetworkDataTypes.profile, obj);
         });
+#endif
     }
-    
+
     void ResetReAuthAttempts() {
         reAuthAttempts = 0;
     }
@@ -602,9 +629,9 @@ public class SocialNetworks : GameObjectBehavior {
     
     public List<object> getPermissionsFacebook() {
         List<object> permissions = null;
-#if UNITY_ANDROID
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         permissions = FacebookAndroid.getSessionPermissions();
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         permissions = FacebookBinding.getSessionPermissions();
 #else
 #endif
@@ -669,9 +696,9 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public string getAccessTokenUserFacebook() {
-#if UNITY_IPHONE
+#if UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         return FacebookBinding.getAccessToken();
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         return FacebookAndroid.getAccessToken();
 #else
         return "";
@@ -757,22 +784,22 @@ public class SocialNetworks : GameObjectBehavior {
     public void postMessageFacebook(
         string message, 
         Action<string, object> completionHandler) {
-        
-        #if UNITY_ANDROID || UNITY_IPHONE
-        
+
+#if (UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
+
         Facebook.instance.postMessage(
             message,
             completionHandler); 
         
-        #elif UNITY_WEBPLAYER
+#elif UNITY_WEBPLAYER
         //Application.ExternalCall("postMessageFacebook", message, bytes);            
         //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
         
-        #endif
+#endif
     }
 
     // MESSAGE POST - WITH IMAGE
-        
+
     public static void PostMessageFacebook(
         string message, 
         byte[] bytesImage, 
@@ -788,7 +815,7 @@ public class SocialNetworks : GameObjectBehavior {
         byte[] bytesImage, 
         Action<string, object> completionHandler) {
 
-#if UNITY_ANDROID || UNITY_IPHONE
+#if (UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
 
         Facebook.instance.postImage(
             bytesImage, 
@@ -801,12 +828,12 @@ public class SocialNetworks : GameObjectBehavior {
 
 #endif
     }
-    
+
     // POST MESSAGE - FULL
-    
+
     // Shows the Facebook share dialog. Valid dictionary keys 
     // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
-    
+
     public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
         if (Instance != null) {
             Instance.postMessageFacebook(message, url, title, linkToImage, caption);
@@ -821,21 +848,21 @@ public class SocialNetworks : GameObjectBehavior {
             + " title:" + title
             + " linkToImage:" + linkToImage
             + " caption:" + caption);
-        
-        #if UNITY_ANDROID       
+
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
         //FacebookAndroid.postMessage("feed", url, title, linkToImage, caption);
-        #elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         Facebook.instance.postMessageWithLinkAndLinkToImage(message, url, title, linkToImage, caption, completionHandler);
-        #elif UNITY_WEBPLAYER
+#elif UNITY_WEBPLAYER
         Application.ExternalCall("postFacebookMessage", title, caption, message, url, caption, linkToImage);            
         Debug.Log(String.Format("Facebook posting for web: title:{0} caption:{0} message:{0} url:{0} caption:{0}", title, caption, message, url, caption) );
-        #endif      
+#endif
     }
 
 
     // POST SCORE
-    
+
     public static void PostScoreFacebook(int score) {
         if (Instance != null) {
             Instance.postScoreFacebook(score);
@@ -890,14 +917,15 @@ public class SocialNetworks : GameObjectBehavior {
             + " linkToImage:" + linkToImage
             + " caption:" + caption);
 #if UNITY_ANDROID
-        var parameters = new Dictionary<string,string>
-        {
-            { "link", url},
-            { "name", title },
-            { "picture", linkToImage },
-            { "caption", caption }
-        };
-        FacebookAndroid.showDialog( "stream.publish", parameters );
+        //var parameters = new Dictionary<string,string>
+        //{
+        //    { "link", url},
+        //    { "name", title },
+        //    { "picture", linkToImage },
+        //    { "caption", caption }
+        //};
+        // TODO SOCIAL
+        ////FacebookAndroid.showDialog( "stream.publish", parameters );
 #elif UNITY_IPHONE
         FacebookBinding.showFacebookComposer(title, linkToImage, url);
 #elif UNITY_WEBPLAYER
@@ -909,13 +937,13 @@ public class SocialNetworks : GameObjectBehavior {
     public bool canUseComposer(string networkType) {
 
         if (networkType == SocialNetworkTypes.facebook) {
-            #if UNITY_ANDROID
+#if UNITY_ANDROID
             return true;
-            #elif UNITY_IPHONE
+#elif UNITY_IPHONE
             return FacebookBinding.canUserUseFacebookComposer();
-            #elif UNITY_WEBPLAYER
+#elif UNITY_WEBPLAYER
             return true;
-            #endif
+#endif
         }
         else {
             return true;
@@ -1002,16 +1030,16 @@ public class SocialNetworks : GameObjectBehavior {
     
     public void initTwitter() {
         
-        Debug.Log("LoadSocialLibs RuntimePlatform: " + Application.platform);   
+        Debug.Log("LoadSocialLibs RuntimePlatform: " + Application.platform);
 
         // Social Network Prime31
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
 
         TwitterAndroid.init(TWITTER_KEY, TWITTER_SECRET);
         Debug.Log("Twitter init..." + TWITTER_KEY);
 
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
 
         TwitterBinding.init(TWITTER_KEY, TWITTER_SECRET);   
         Debug.Log("Twitter init..." + TWITTER_KEY);
@@ -1047,9 +1075,9 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public bool isLoggedInTwitter() {
-#if UNITY_ANDROID   
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
             return TwitterAndroid.isLoggedIn();
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
             return TwitterBinding.isLoggedIn();
 #elif UNITY_WEBPLAYER
             return true;//Application.ExternalEval("true");
@@ -1065,18 +1093,18 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void showLoginTwitter() {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
             TwitterAndroid.showLoginDialog();
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
             TwitterBinding.showLoginDialog();
 #elif UNITY_WEBPLAYER
             Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
 #endif
     }
-    
+
     // ----------------------------------------------------------------
     // POST MESSAGE
-    
+
     public static void PostMessageTwitter(string message) {
         if (Instance != null) {
             Instance.postMessageTwitter(message);
@@ -1084,18 +1112,18 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void postMessageTwitter(string message) {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         TwitterAndroid.postStatusUpdate(message);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         TwitterBinding.postStatusUpdate(message);
 #elif UNITY_WEBPLAYER
         Application.ExternalCall("postMessageTwitter", message);            
         Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
 #endif
     }
-    
+
     // POST MESSAGE - IMAGE PATH
-    
+
     public static void PostMessageTwitter(string message, string pathToImage) {
         if (Instance != null) {
             Instance.postMessageTwitter(message, pathToImage);
@@ -1103,9 +1131,9 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void postMessageTwitter(string message, string pathToImage) {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         TwitterAndroid.postStatusUpdate(message);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         TwitterBinding.postStatusUpdate(message, pathToImage);
 #elif UNITY_WEBPLAYER
         Application.ExternalCall("postMessageTwitter", message);            
@@ -1122,19 +1150,19 @@ public class SocialNetworks : GameObjectBehavior {
     }
     
     public void postMessageTwitter(string message, byte[] bytesImage) {
-        #if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         TwitterAndroid.postStatusUpdate(message, bytesImage);
-        #elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         //TwitterBinding.postStatusUpdate(message, pathToImage);
-        #elif UNITY_WEBPLAYER
+#elif UNITY_WEBPLAYER
         //Application.ExternalCall("postMessageTwitter", message);            
         //Debug.Log(String.Format("Twitter posting for web: message:{0}", message));
-        #endif
+#endif
     }
 
     // ----------------------------------------------------------------
     // COMPOSER
-        
+
     public static void ShowComposerTwitter(string message) {
         if (Instance != null) {
             Instance.showComposerTwitter(message);
@@ -1142,10 +1170,10 @@ public class SocialNetworks : GameObjectBehavior {
     }
         
     public void showComposerTwitter(string message) {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         // TODO, link, image path
         //TwitterAndroid.postUpdate(message);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         TwitterBinding.showTweetComposer(message);
 #elif UNITY_WEBPLAYER
         //Application.ExternalCall("postMessageTwitter", message, pathToImage, link);
@@ -1154,7 +1182,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     //
-    
+
     public static void ShowComposerTwitter(string message, string pathToImage) {
         if (Instance != null) {
             Instance.showComposerTwitter(message, pathToImage);
@@ -1162,10 +1190,10 @@ public class SocialNetworks : GameObjectBehavior {
     }
         
     public void showComposerTwitter(string message, string pathToImage) {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         // TODO, link, image path
         //TwitterAndroid.postUpdate(message);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         TwitterBinding.showTweetComposer(message, pathToImage);
 #elif UNITY_WEBPLAYER
         //Application.ExternalCall("postMessageTwitter", message, pathToImage, link);
@@ -1174,7 +1202,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     //
-    
+
     public static void ShowComposerTwitter(string message, string pathToImage, string link) {
         if (Instance != null) {
             Instance.showComposerTwitter(message, pathToImage, link);
@@ -1182,10 +1210,10 @@ public class SocialNetworks : GameObjectBehavior {
     }
         
     public void showComposerTwitter(string message, string pathToImage, string link) {
-#if UNITY_ANDROID               
+#if UNITY_ANDROID && SOCIAL_USE_TWITTER_PRIME31
         // TODO, link, image path
         //TwitterAndroid.postUpdate(message);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_TWITTER_PRIME31
         TwitterBinding.showTweetComposer(message, pathToImage, link);
 #elif UNITY_WEBPLAYER
         Application.ExternalCall("postMessageTwitter", message, pathToImage, link);         
@@ -1194,7 +1222,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     // LOGIN - MESSAGE
-    
+
     public static void ShowLoginOrPostMessageTwitter(string message) {
         if (Instance != null) {
             Instance.showLoginOrPostMessageTwitter(message);
