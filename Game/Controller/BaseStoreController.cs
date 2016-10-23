@@ -71,7 +71,7 @@ public class GameStorePurchaseRecord : DataObjectItem {
 
 public class GameStorePurchaseDataItem {
 
-    public string gameStorePurchaseType = ProductPurchaseType.typeLocal;
+    public string gameStorePurchaseType = ProductNetworkType.typeLocal;
     public GameProduct product;
     public double quantity;
 }
@@ -97,7 +97,7 @@ public class GameStorePurchaseData {
     public static GameStorePurchaseData PurchaseData(string productCode, double quantity) {
         GameStorePurchaseData data = new GameStorePurchaseData();
         GameStorePurchaseDataItem dataItem = new GameStorePurchaseDataItem();
-        dataItem.gameStorePurchaseType = ProductPurchaseType.typeLocal;
+        dataItem.gameStorePurchaseType = ProductNetworkType.typeLocal;
         dataItem.product = GameProducts.Instance.GetById(productCode);
         dataItem.quantity = quantity;
         data.Add(dataItem);
@@ -124,14 +124,14 @@ public class BaseStoreController : GameObjectBehavior {
 
     public virtual void OnEnable() {
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseSuccess, onProductPurchaseSuccess);
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseFailed, onProductPurchaseFailed);
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
         Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
@@ -144,14 +144,14 @@ public class BaseStoreController : GameObjectBehavior {
 
     public virtual void OnDisable() {
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseSuccess, onProductPurchaseSuccess);
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseFailed, onProductPurchaseFailed);
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
         Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
         Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
@@ -201,7 +201,7 @@ public class BaseStoreController : GameObjectBehavior {
 
     // PRODUCT PURCHASE EVENTS
 
-    public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
+    public void onProductPurchaseSuccess(ProductNetworkRecord record) {
         
         LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
@@ -240,7 +240,7 @@ public class BaseStoreController : GameObjectBehavior {
         }
     }
 
-    public void onProductPurchaseFailed(ProductPurchaseRecord record) {
+    public void onProductPurchaseFailed(ProductNetworkRecord record) {
 
         LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
@@ -279,7 +279,7 @@ public class BaseStoreController : GameObjectBehavior {
         }
     }
 
-    public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
+    public void onProductPurchaseCancelled(ProductNetworkRecord record) {
         
         LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
@@ -510,7 +510,7 @@ public class BaseStoreController : GameObjectBehavior {
     }
 
     public virtual void purchaseThirdParty(GameProduct gameProduct, double quantity) {
-        ProductPurchase.PurchaseProduct(
+        ProductNetworks.PurchaseProduct(
             gameProduct.GetPlatformProductCode(), (int)quantity);
     }
 

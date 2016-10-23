@@ -32,7 +32,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     
     public AdNetworks adNetworks;
     public SocialNetworks socialNetworks;
-    public ProductPurchase productPurchase;
+    public ProductNetworks productPurchase;
     public GameScreenScaler gameScreenScaler;
     public string appDisplayCode;
     public string appDisplayName;
@@ -229,9 +229,9 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitPurchase() {  
-        ProductPurchase.Init();
+        ProductNetworks.Init();
 
-        productPurchase = ProductPurchase.instance;//gameObject.AddComponent<ProductPurchase>();   
+        productPurchase = ProductNetworks.instance;//gameObject.AddComponent<ProductPurchase>();   
         productPurchase.EnableProductUnlocks = ENABLE_PRODUCT_UNLOCKS;
     }
 

@@ -2,12 +2,14 @@
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used. 
 
+// TODO wire in UNITY native social/game networks
+
 #if UNITY_IPHONE
 #define GAMENETWORK_IOS_APPLE_GAMECENTER
 #endif
 
 #if UNITY_ANDROID
-#define GAMENETWORK_ANDROID_GOOGLE_PLAY
+//#define GAMENETWORK_ANDROID_GOOGLE_PLAY
 //#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
 //#define GAMENETWORK_ANDROID_SAMSUNG
 #endif

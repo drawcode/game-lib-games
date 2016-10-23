@@ -1,3 +1,5 @@
+// TODO wire in UNITY native product purchas networks
+
 #if UNITY_IPHONE
 //#define PURCHASE_USE_APPLE_ITUNES
 #endif
@@ -18,13 +20,13 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
 
-public class ProductPurchaseType {
+public class ProductNetworkType {
     public static string typeLocal = "local";
     public static string typeServer = "server";
     public static string typeThirdParty = "third-party";
 }
 
-public class ProductStoreType {
+public class ProductNetworkStoreType {
     public static string typeGameverses = "gameverses";
     public static string typeGoogle = "external-google";
     public static string typeApple = "external-apple";
@@ -32,16 +34,16 @@ public class ProductStoreType {
     public static string typeSamsung = "external-samsung";
 }
 
-public class ProductPurchaseMessages {
-    public static string productPurchaseSuccess = "product-purchase-success";
-    public static string productPurchaseFailed = "product-purchase-failed";
-    public static string productPurchaseCancelled = "product-purchase-cancelled";
-    public static string productPurchaseProgress = "product-purchase-progress";
-    public static string productPurchaseProgressStarted = "product-purchase-progress-started";
-    public static string productPurchaseProgressCompleted = "product-purchase-progress-completed";
+public class ProductNetworkMessages {
+    public static string productPurchaseSuccess = "product-network-success";
+    public static string productPurchaseFailed = "product-network-failed";
+    public static string productPurchaseCancelled = "product-network-cancelled";
+    public static string productPurchaseProgress = "product-network-progress";
+    public static string productPurchaseProgressStarted = "product-network-progress-started";
+    public static string productPurchaseProgressCompleted = "product-network-progress-completed";
 }
 
-public class ProductPurchaseRecord : DataObjectItem {
+public class ProductNetworkRecord : DataObjectItem {
     public bool success = false;
     public object data;
     public string receipt = "";
@@ -49,12 +51,12 @@ public class ProductPurchaseRecord : DataObjectItem {
     public string code = "";
     public string displayName = "";
     public string description = "";
-    public string productPurchaseType = ProductPurchaseType.typeLocal;
-    public string productStoreType = ProductStoreType.typeApple;
+    public string productPurchaseType = ProductNetworkType.typeLocal;
+    public string productStoreType = ProductNetworkStoreType.typeApple;
     public string productId = "";
     public int quantity = 1;
 
-    public ProductPurchaseRecord() {
+    public ProductNetworkRecord() {
         Reset();
     }
 
@@ -69,11 +71,11 @@ public class ProductPurchaseRecord : DataObjectItem {
         description = "";
         productId = "";
         quantity = 1;
-        productPurchaseType = ProductPurchaseType.typeLocal;
-        productStoreType = ProductStoreType.typeApple;
+        productPurchaseType = ProductNetworkType.typeLocal;
+        productStoreType = ProductNetworkStoreType.typeApple;
     }
 
-    public static ProductPurchaseRecord Create(
+    public static ProductNetworkRecord Create(
         string code,
         string displayName,
         string description,
@@ -85,7 +87,7 @@ public class ProductPurchaseRecord : DataObjectItem {
         string productPurchaseType,
         string productStoreType) {
 
-        ProductPurchaseRecord record = new ProductPurchaseRecord();
+        ProductNetworkRecord record = new ProductNetworkRecord();
         record.success = success;
         record.data = data;
         record.receipt = receipt;
@@ -102,7 +104,7 @@ public class ProductPurchaseRecord : DataObjectItem {
     }
 }
 
-public class ProductPurchase : GameObjectBehavior {
+public class ProductNetworks : GameObjectBehavior {
 
     public static string PRODUCT_GAME_PURCHASE = "all";
     public static string statusPurchaseSuccessful = "status_purchase_successful";
@@ -132,20 +134,20 @@ public class ProductPurchase : GameObjectBehavior {
 #else
 #endif
 
-    // Only one ProductPurchase can exist. We use a singleton pattern to enforce this.
-    private static ProductPurchase _instance = null;
+    // Only one ProductNetworks can exist. We use a singleton pattern to enforce this.
+    private static ProductNetworks _instance = null;
 
-    public static ProductPurchase instance {
+    public static ProductNetworks instance {
         get {
             if (!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
-                _instance = FindObjectOfType(typeof(ProductPurchase)) as ProductPurchase;
+                _instance = FindObjectOfType(typeof(ProductNetworks)) as ProductNetworks;
 
                 // nope, create a new one
                 if (!_instance) {
-                    var obj = new GameObject("_ProductPurchase");
-                    _instance = obj.AddComponent<ProductPurchase>();
+                    var obj = new GameObject("_ProductNetworks");
+                    _instance = obj.AddComponent<ProductNetworks>();
                 }
             }
 
@@ -163,14 +165,14 @@ public class ProductPurchase : GameObjectBehavior {
 
     public virtual void OnEnable() {
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseSuccess, onProductNetworksSuccess);
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseFailed, onProductNetworksFailed);
 
-        Messenger<ProductPurchaseRecord>.AddListener(
-            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
+        Messenger<ProductNetworkRecord>.AddListener(
+            ProductNetworkMessages.productPurchaseCancelled, onProductNetworksCancelled);
 
 #if PURCHASE_USE_APPLE_ITUNES
         StoreKitManager.purchaseSuccessfulEvent += purchaseSuccessfulEvent;
@@ -200,14 +202,14 @@ public class ProductPurchase : GameObjectBehavior {
 
     public virtual void OnDisable() {
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseSuccess, onProductPurchaseSuccess);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseSuccess, onProductNetworksSuccess);
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseFailed, onProductPurchaseFailed);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseFailed, onProductNetworksFailed);
 
-        Messenger<ProductPurchaseRecord>.RemoveListener(
-            ProductPurchaseMessages.productPurchaseCancelled, onProductPurchaseCancelled);
+        Messenger<ProductNetworkRecord>.RemoveListener(
+            ProductNetworkMessages.productPurchaseCancelled, onProductNetworksCancelled);
 
 #if PURCHASE_USE_APPLE_ITUNES
         StoreKitManager.purchaseSuccessfulEvent -= purchaseSuccessfulEvent;
@@ -235,51 +237,51 @@ public class ProductPurchase : GameObjectBehavior {
 #endif
     }
 
-    public void onProductPurchaseSuccess(ProductPurchaseRecord record) {
-        //LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
+    public void onProductNetworksSuccess(ProductNetworkRecord record) {
+        //LogUtil.Log("onProductNetworksSuccess:" + " record:" + record.ToJson());
     }
 
-    public void onProductPurchaseFailed(ProductPurchaseRecord record) {
-        //LogUtil.Log("onProductPurchaseFailed:" + " record:" + record.ToJson());
+    public void onProductNetworksFailed(ProductNetworkRecord record) {
+        //LogUtil.Log("onProductNetworksFailed:" + " record:" + record.ToJson());
     }
 
-    public void onProductPurchaseCancelled(ProductPurchaseRecord record) {
-        //LogUtil.Log("onProductPurchaseCancelled:" + " record:" + record.ToJson());
+    public void onProductNetworksCancelled(ProductNetworkRecord record) {
+        //LogUtil.Log("onProductNetworksCancelled:" + " record:" + record.ToJson());
     }
 
     // MESSAGES
 
     // success
 
-    public static void BroadcastProductPurchaseSuccess(ProductPurchaseRecord record) {
-        instance.broadcastProductPurchaseSuccess(record);
+    public static void BroadcastProductNetworksSuccess(ProductNetworkRecord record) {
+        instance.broadcastProductNetworksSuccess(record);
     }
 
-    public void broadcastProductPurchaseSuccess(ProductPurchaseRecord record) {
-        Messenger<ProductPurchaseRecord>.Broadcast(
-            ProductPurchaseMessages.productPurchaseSuccess, record);
+    public void broadcastProductNetworksSuccess(ProductNetworkRecord record) {
+        Messenger<ProductNetworkRecord>.Broadcast(
+            ProductNetworkMessages.productPurchaseSuccess, record);
     }
 
     // failed
 
-    public static void BroadcastProductPurchaseFailed(ProductPurchaseRecord record) {
-        instance.broadcastProductPurchaseFailed(record);
+    public static void BroadcastProductNetworksFailed(ProductNetworkRecord record) {
+        instance.broadcastProductNetworksFailed(record);
     }
 
-    public void broadcastProductPurchaseFailed(ProductPurchaseRecord record) {
-        Messenger<ProductPurchaseRecord>.Broadcast(
-            ProductPurchaseMessages.productPurchaseFailed, record);
+    public void broadcastProductNetworksFailed(ProductNetworkRecord record) {
+        Messenger<ProductNetworkRecord>.Broadcast(
+            ProductNetworkMessages.productPurchaseFailed, record);
     }
 
     // cancelled
 
-    public static void BroadcastProductPurchaseCancelled(ProductPurchaseRecord record) {
-        instance.broadcastProductPurchaseCancelled(record);
+    public static void BroadcastProductNetworksCancelled(ProductNetworkRecord record) {
+        instance.broadcastProductNetworksCancelled(record);
     }
 
-    public void broadcastProductPurchaseCancelled(ProductPurchaseRecord record) {
-        Messenger<ProductPurchaseRecord>.Broadcast(
-            ProductPurchaseMessages.productPurchaseCancelled, record);
+    public void broadcastProductNetworksCancelled(ProductNetworkRecord record) {
+        Messenger<ProductNetworkRecord>.Broadcast(
+            ProductNetworkMessages.productPurchaseCancelled, record);
     }
 
     // INIT
@@ -296,25 +298,25 @@ public class ProductPurchase : GameObjectBehavior {
             productManager = gameObject.AddComponent<StoreKitManager>();
             productEventListener = gameObject.AddComponent<StoreKitEventListener>();
 
-            LogUtil.Log("ProductPurchase::InitPaymentSystem StoreKit/iOS added...");
+            LogUtil.Log("ProductNetworks::InitPaymentSystem StoreKit/iOS added...");
             
             GetProducts();
 #elif PURCHASE_USE_AMAZON
             productManager = gameObject.AddComponent<AmazonIAPManager>();
             productEventListener = gameObject.AddComponent<AmazonIAPEventListener>();
 
-            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Amazon IAP/Android added...");
+            LogUtil.LogProduct("ProductNetworks::InitPaymentSystem Amazon IAP/Android added...");
 #elif PURCHASE_USE_GOOGLE_PLAY
             productManager = gameObject.AddComponent<GoogleIABManager>();
             productEventListener = gameObject.AddComponent<GoogleIABEventListener>();
 
-            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem Google Play IAB/Android added...");
+            LogUtil.LogProduct("ProductNetworks::InitPaymentSystem Google Play IAB/Android added...");
 
             GoogleIAB.init(AppConfigs.productGoogleKey);
 #elif UNITY_WEBPLAYER
-            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
+            LogUtil.LogProduct("ProductNetworks::InitPaymentSystem none added...");
 #else
-            LogUtil.LogProduct("ProductPurchase::InitPaymentSystem none added...");
+            LogUtil.LogProduct("ProductNetworks::InitPaymentSystem none added...");
 #endif
 
             if (productManagerObject != null)
@@ -428,8 +430,8 @@ public class ProductPurchase : GameObjectBehavior {
         // Web/PC
         purchaseProcessCompleted = true;
         
-        ProductPurchaseRecord data = 
-            ProductPurchaseRecord.Create(
+        ProductNetworkRecord data = 
+            ProductNetworkRecord.Create(
                 code, 
                 "Product Purchase", 
                 "Product purchased:" + code,
@@ -438,10 +440,10 @@ public class ProductPurchase : GameObjectBehavior {
                 "TODO",
                 code,
                 1,
-                ProductPurchaseType.typeThirdParty, 
-                ProductStoreType.typeAmazon);
+                ProductNetworkType.typeThirdParty, 
+                ProductNetworkStoreType.typeAmazon);
         
-        BroadcastProductPurchaseSuccess(data);
+        BroadcastProductNetworksSuccess(data);
 #endif
     }
 
@@ -461,8 +463,8 @@ public class ProductPurchase : GameObjectBehavior {
                                              transaction.base64EncodedTransactionReceipt, transaction.quantity, true);
         purchaseProcessCompleted = true;
 
-        ProductPurchaseRecord data = 
-            ProductPurchaseRecord.Create(
+        ProductNetworksRecord data = 
+            ProductNetworksRecord.Create(
                 transaction.productIdentifier, 
                 "Product Purchase", 
                 "Product purchased:" + transaction.productIdentifier,
@@ -471,18 +473,18 @@ public class ProductPurchase : GameObjectBehavior {
                 transaction.base64EncodedTransactionReceipt,
                 transaction.productIdentifier,
                 transaction.quantity,
-                ProductPurchaseType.typeThirdParty, 
+                ProductNetworksType.typeThirdParty, 
                 ProductStoreType.typeApple);
 
-        BroadcastProductPurchaseSuccess(data);
+        BroadcastProductNetworksSuccess(data);
     }
 
     public void purchaseCancelledEvent(string error) {
         purchaseProcessCompleted = true;
         LogUtil.LogProduct( "purchase cancelled with error: " + error );
 
-        ProductPurchaseRecord data = 
-            ProductPurchaseRecord.Create(
+        ProductNetworksRecord data = 
+            ProductNetworksRecord.Create(
                 "cancel", 
                 "Product Purchase Cancelled", 
                 error,
@@ -491,18 +493,18 @@ public class ProductPurchase : GameObjectBehavior {
                 "",
                 "",
                 1,
-                ProductPurchaseType.typeThirdParty, 
+                ProductNetworksType.typeThirdParty, 
                 ProductStoreType.typeApple);
         
-        BroadcastProductPurchaseCancelled(data);
+        BroadcastProductNetworksCancelled(data);
     }
 
     public void purchaseFailedEvent(string error) {
         purchaseProcessCompleted = true;
         LogUtil.LogProduct( "purchase failed with error: " + error );
 
-        ProductPurchaseRecord data = 
-            ProductPurchaseRecord.Create(
+        ProductNetworksRecord data = 
+            ProductNetworksRecord.Create(
                 "error", 
                 "Product Purchase FAILED", 
                 error,
@@ -511,10 +513,10 @@ public class ProductPurchase : GameObjectBehavior {
                 "",
                 "",
                 1,
-                ProductPurchaseType.typeThirdParty, 
+                ProductNetworksType.typeThirdParty, 
                 ProductStoreType.typeApple);
         
-        BroadcastProductPurchaseFailed(data);
+        BroadcastProductNetworksFailed(data);
     }
 
     public void productPurchaseAwaitingConfirmationEvent(StoreKitTransaction transaction) {
