@@ -916,7 +916,7 @@ public class SocialNetworks : GameObjectBehavior {
             + " title:" + title
             + " linkToImage:" + linkToImage
             + " caption:" + caption);
-#if UNITY_ANDROID
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         //var parameters = new Dictionary<string,string>
         //{
         //    { "link", url},
@@ -926,7 +926,7 @@ public class SocialNetworks : GameObjectBehavior {
         //};
         // TODO SOCIAL
         ////FacebookAndroid.showDialog( "stream.publish", parameters );
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
         FacebookBinding.showFacebookComposer(title, linkToImage, url);
 #elif UNITY_WEBPLAYER
             Application.ExternalCall("postFacebookMessage", title, caption, message, url, caption, linkToImage);            
@@ -937,11 +937,13 @@ public class SocialNetworks : GameObjectBehavior {
     public bool canUseComposer(string networkType) {
 
         if (networkType == SocialNetworkTypes.facebook) {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
             return true;
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
             return FacebookBinding.canUserUseFacebookComposer();
 #elif UNITY_WEBPLAYER
+            return true;
+#else
             return true;
 #endif
         }
