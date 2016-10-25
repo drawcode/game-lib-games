@@ -20,7 +20,7 @@ public class AudioRecordObject : GameObjectBehavior
 #if AUDIO_RECORDER_USE_UNITY
 
 
-#elif
+#elif AUDIO_RECORDER_USE_PRIME31
 	
 #if UNITY_IPHONE
 
@@ -35,8 +35,8 @@ public class AudioRecordObject : GameObjectBehavior
 	public GameObject audioEventListener;
 #endif
 #endif
-	
-	public bool EnableAudioRecording {
+
+    public bool EnableAudioRecording {
 		get {
 			return enableAudioRecording;
 		}
@@ -70,12 +70,11 @@ public class AudioRecordObject : GameObjectBehavior
 			
 			audioSystem = new GameObject("AudioObjectSystem");
 			DontDestroyOnLoad(audioSystem);
-            
+
 #if AUDIO_RECORDER_USE_UNITY
-
-
-#elif
-#if UNITY_IPHONE							
+            
+#elif AUDIO_RECORDER_USE_PRIME31
+#if UNITY_IPHONE
 			audioManager = audioSystem.AddComponent<AudioRecorderManager>();				
 			audioEventListener = audioSystem.AddComponent<AudioRecorderEventListener>();		
 			
@@ -88,15 +87,15 @@ public class AudioRecordObject : GameObjectBehavior
 			LogUtil.Log("AudioObject::InitAudioSystem IAB/Android added...");	
 #elif UNITY_FLASH
 #elif UNITY_WEBPLAYER
-#else	
+#else
 			// Web/PC - storekit stub for now...
 			audioManager = audioSystem.AddComponent<AudioRecorderManager>();				
 			audioEventListener = audioSystem.AddComponent<AudioRecorderEventListener>();		
 			
 			LogUtil.Log("AudioObject::InitAudioSystem default added...");
-#endif		
-#endif      
-			if(audioManagerObject != null)
+#endif
+#endif
+            if (audioManagerObject != null)
 				DontDestroyOnLoad(audioManagerObject);	
 			
 			if(audioEventListenerObject != null)

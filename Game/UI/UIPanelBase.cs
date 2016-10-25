@@ -50,7 +50,7 @@ public class UIPanelBaseTypes {
 }
 
 public class UIPanelBase : UIAppPanel {
-    
+
     public UIPanelCharacterDisplayState characterDisplayState = UIPanelCharacterDisplayState.None;
     public UIPanelButtonsDisplayState buttonDisplayState = UIPanelButtonsDisplayState.None;
     public UIPanelBackgroundDisplayState backgroundDisplayState = UIPanelBackgroundDisplayState.None;
@@ -112,20 +112,20 @@ public class UIPanelBase : UIAppPanel {
 
     public override bool isVisible {
         get {
-            
+
             if (panelContainer != null) {
                 if (_isVisible) {
                     //if (!panelContainer.GetActive()) {
-                        //_isVisible = false;
+                    //_isVisible = false;
                     //}
                 }
-                else {  
+                else {
                     //if (panelContainer.GetActive()) {
-                        //_isVisible = true;
+                    //_isVisible = true;
                     //}
                 }
             }
-            return _isVisible; 
+            return _isVisible;
         }
         set {
             _isVisible = value;
@@ -138,10 +138,10 @@ public class UIPanelBase : UIAppPanel {
 
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
-        
+
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateInType, OnUIControllerPanelAnimateInType);
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOutType, OnUIControllerPanelAnimateOutType);
-        
+
         Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateInClassType, OnUIControllerPanelAnimateInClassType);
         Messenger<string, string>.AddListener(UIControllerMessages.uiPanelAnimateOutClassType, OnUIControllerPanelAnimateOutClassType);
 
@@ -150,19 +150,19 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void OnDisable() {
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
-        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);        
-        
+        Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
+
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateInType, OnUIControllerPanelAnimateInType);
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOutType, OnUIControllerPanelAnimateOutType);
-        
+
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateInClassType, OnUIControllerPanelAnimateInClassType);
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateOutClassType, OnUIControllerPanelAnimateOutClassType);
 
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
     }
-    
+
     public virtual void OnButtonClickEventHandler(string buttonName) {
-        
+
     }
 
     public virtual void OnUIControllerPanelAnimateIn(string classNameTo) {
@@ -186,19 +186,19 @@ public class UIPanelBase : UIAppPanel {
             AnimateIn();
         }
     }
-    
+
     public virtual void OnUIControllerPanelAnimateOutType(string panelTypeTo) {
         if (panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
         }
     }
-    
+
     public virtual void OnUIControllerPanelAnimateInClassType(string classNameTo, string panelTypeTo) {
         if (className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateIn();
         }
     }
-    
+
     public virtual void OnUIControllerPanelAnimateOutClassType(string classNameTo, string panelTypeTo) {
         if (className != classNameTo && panelTypes.Contains(panelTypeTo)) {
             AnimateOut();
@@ -212,7 +212,7 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void HandleUniquePanelTypes() {
-        
+
         if (panelTypes.Count > 1) {
             // if this is a special panel, hide the others like it such as dialogs...modals
             foreach (string panelType in panelTypes) {
@@ -221,22 +221,22 @@ public class UIPanelBase : UIAppPanel {
                     continue;
                 }
 
-                Messenger<string,string>.Broadcast(UIControllerMessages.uiPanelAnimateOutClassType, className, panelType);
+                Messenger<string, string>.Broadcast(UIControllerMessages.uiPanelAnimateOutClassType, className, panelType);
                 LogUtil.Log("OnUIControllerPanelAnimateIn:", " className:" + className + " panelType:" + panelType);
             }
         }
     }
 
     public override void Start() {
-        base.Start();        
+        base.Start();
     }
-    
+
     public void HideAllPanels() {
         foreach (UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
             baseItem.AnimateOut();
         }
     }
-    
+
     public void HideAllPanelsNow() {
         foreach (UIAppPanelBase baseItem in Resources.FindObjectsOfTypeAll(typeof(UIAppPanelBase))) {
             baseItem.AnimateOut(); // handle per panel actions
@@ -253,11 +253,16 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutCenter(GameObject go) {
         AnimateOutCenter(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInCenter(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
+
         }
     }
 
@@ -267,8 +272,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutCenter(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -285,11 +294,15 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeft(GameObject go) {
         AnimateOutLeft(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInLeft(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -299,8 +312,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutLeft(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -317,11 +334,15 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeftBottom(GameObject go) {
         AnimateOutLeftBottom(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInLeftBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -331,8 +352,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutLeftBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -349,22 +374,30 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutLeftTop(GameObject go) {
         AnimateOutLeftTop(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInLeftTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
     public virtual void AnimateInLeftTop(float time, float delay) {
         AnimateInLeftTop(panelLeftTopObject, time, delay);
     }
-    
+
     public virtual void AnimateOutLeftTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -381,22 +414,30 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRight(GameObject go) {
         AnimateOutRight(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInRight(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
     public virtual void AnimateInRight(float time, float delay) {
         AnimateInRight(panelRightObject, time, delay);
     }
-    
+
     public virtual void AnimateOutRight(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -413,22 +454,30 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRightBottom(GameObject go) {
         AnimateOutRightBottom(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInRightBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
     public virtual void AnimateInRightBottom(float time, float delay) {
         AnimateInRightBottom(panelRightBottomObject, time, delay);
     }
-    
+
     public virtual void AnimateOutRightBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -445,11 +494,15 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutRightTop(GameObject go) {
         AnimateOutRightTop(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInRightTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -459,8 +512,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutRightTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -480,8 +537,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateInTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
+            //UITweenerUtil.MoveTo(go,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(topOpenY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -491,11 +552,15 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutTop(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(topClosedY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
- 
+
     public virtual void AnimateOutTop(float time, float delay) {
         AnimateInTop(panelTopObject, time, delay);
     }
@@ -509,11 +574,15 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOutBottom(GameObject go) {
         AnimateOutBottom(go, durationHide, durationDelayHide);
     }
- 
+
     public virtual void AnimateInBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -523,8 +592,12 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateOutBottom(GameObject go, float time, float delay) {
         if (go != null) {
-            UITweenerUtil.MoveTo(go,
-            UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+            //UITweenerUtil.MoveTo(go,
+            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+
+            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
+                .setDelay(delay)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
 
@@ -533,39 +606,39 @@ public class UIPanelBase : UIAppPanel {
     }
 
     // ANIMATE
- 
+
     public virtual void AnimateIn() {
-     
+
         //AnimateOut(0f, 0f);
-                
+
         HandleUniquePanelTypes();
-     
+
         ShowPanel();
-     
+
         float time = durationShow;
         float delay = durationDelayShow;
-     
+
         AnimateIn(time, delay);
     }
- 
+
     public virtual void AnimateIn(float time, float delay) {
-                
+
         if (isVisible) {
             return;
         }
-        
+
         //ShowCamera();
-        
+
         HandleShow();
-                    
+
         HandleCharacterDisplay();
 
         HandleAdDisplay();
-            
+
         HandleButtonDisplay();
-            
+
         HandleBackgroundDisplay();
-             
+
         AnimateInCenter(time, delay);
         AnimateInLeft(time, delay);
         AnimateInLeftBottom(time, delay);
@@ -578,35 +651,35 @@ public class UIPanelBase : UIAppPanel {
 
         isVisible = true;
     }
- 
+
     public virtual void AnimateOut() {
-                             
+
         float time = durationHide;
         float delay = durationDelayHide;
-     
+
         AnimateOut(time, delay);
     }
- 
+
     public virtual void AnimateOutNow() {
-     
+
         float time = 0f;
         float delay = 0f;
-     
+
         AnimateOut(time, delay);
     }
- 
+
     public virtual void AnimateOut(float time, float delay) {
 
         if (!isVisible) {
             return;
         }
-        
+
         //HideCamera();
-        
+
         HandleHide();
-     
+
         AdNetworks.HideAd();
-     
+
         AnimateOutCenter(time, delay);
         AnimateOutLeft(time, delay);
         AnimateOutLeftBottom(time, delay);
@@ -615,7 +688,7 @@ public class UIPanelBase : UIAppPanel {
         AnimateOutRightBottom(time, delay);
         AnimateOutRightTop(time, delay);
         AnimateOutTop(time, delay);
-        AnimateOutBottom(time, delay);   
+        AnimateOutBottom(time, delay);
 
         ListClear();
 
@@ -627,7 +700,7 @@ public class UIPanelBase : UIAppPanel {
                 StartCoroutine(HidePanelCo(delay + .5f));
             }
         }
-        
+
         isVisible = false;
     }
 
@@ -636,7 +709,7 @@ public class UIPanelBase : UIAppPanel {
 
         HidePanel();
     }
- 
+
     public virtual void HidePanel() {
 
         if (!isVisible) {
@@ -646,7 +719,7 @@ public class UIPanelBase : UIAppPanel {
             }
         }
     }
- 
+
     public virtual void ShowPanel() {
 
         if (isVisible) {
@@ -655,12 +728,12 @@ public class UIPanelBase : UIAppPanel {
 
         if (panelContainer != null) {
             //isVisible = true;
-            panelContainer.Show();       
-        }        
+            panelContainer.Show();
+        }
     }
- 
+
     void Update() {
-     
+
     }
 
     //
@@ -671,34 +744,34 @@ public class UIPanelBase : UIAppPanel {
     public void ListContainerScale(GameObject listObject, float scaleTo) {
         if (listObject != null) {
             Vector3 currentScale = listObject.transform.localScale;
-         
+
             float screenWidth = 640;
             float screenHeight = 960;
-         
+
             scaleTo = Mathf.Clamp(scaleTo / (screenWidth / screenHeight), .5f, 2f);
-         
+
             currentScale = currentScale.WithX(scaleTo).WithY(scaleTo).WithZ(scaleTo);
-         
+
             listObject.transform.localScale = currentScale;
         }
     }
- 
+
     public void ListScale(GameObject listObject, float scaleTo) {
         if (listObject != null) {
             Vector3 currentScale = listObject.transform.localScale;
-         
+
             float screenWidth = 640;
             float screenHeight = 960;
-         
+
             scaleTo = Mathf.Clamp(scaleTo / (screenWidth / screenHeight), .5f, 2f);
-         
+
             currentScale = currentScale.WithX(scaleTo).WithY(scaleTo).WithZ(scaleTo);
-         
+
             listObject.transform.localScale = currentScale;
         }
     }
- 
-    public void PanelScale(UIPanel panel) {     
+
+    public void PanelScale(UIPanel panel) {
         if (panelClipped != null) {
             Vector4 range = panelClipped.clipRange;
             range.x = 0f;
@@ -709,14 +782,14 @@ public class UIPanelBase : UIAppPanel {
             panelClipped.clipRange = range;
         }
     }
- 
+
     public void ListScale(float scaleTo) {
         if (listGridRoot != null) {
             ListScale(listGridRoot, scaleTo);
         }
-     
+
         PanelScale(panelClipped);
-     
+
         ListReposition();
     }
 
@@ -725,255 +798,316 @@ public class UIPanelBase : UIAppPanel {
             ListClear(listGridRoot);
         }
     }
- 
+
     public void ListClear(GameObject listObject) {
         if (listObject != null && isVisible) {
             listObject.DestroyChildren();
         }
     }
 
-    public void ListReposition() {  
+    public void ListReposition() {
         increment = 0;
         if (listGrid != null) {
-            RepositionList(listGrid, listGridRoot);         
+            RepositionList(listGrid, listGridRoot);
         }
     }
- 
-    public void ListReposition(UIGrid grid, GameObject gridObject) {    
+
+    public void ListReposition(UIGrid grid, GameObject gridObject) {
         increment = 0;
         if (grid != null) {
-            RepositionList(grid, gridObject);           
+            RepositionList(grid, gridObject);
         }
     }
- 
+
     public void RepositionList(UIGrid grid, GameObject gridObject) {
         if (grid != null) {
-            grid.Reposition();          
+            grid.Reposition();
             if (gridObject.transform.parent != null) {
 
                 UIDraggablePanel[] dragPanels = gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
-                if (dragPanels != null) {                    
-                    foreach (UIDraggablePanel panel 
+                if (dragPanels != null) {
+                    foreach (UIDraggablePanel panel
                      in dragPanels) {
                         panel.ResetPosition();
                         break;
                     }
                 }
-            }           
+            }
         }
     }
-    
+
     public void RepositionListScroll(float scrollValue) {
-        if(draggablePanelScrollbar != null) {
+        if (draggablePanelScrollbar != null) {
             draggablePanelScrollbar.scrollValue = 0;
         }
-        else if(draggablePanel != null) {
+        else if (draggablePanel != null) {
             draggablePanel.ResetPosition();
         }
     }
 
     // top
-    
+
     public virtual void ShowPanelTop(GameObject panel) {
         ShowPanelTop(panel, true);
     }
-    
+
     public virtual void ShowPanelTop(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             //UITweenerUtil.MoveTo(panel, 
             //// UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftOpenX).WithY(topClosedY));   
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
+
+                LeanTween.alpha(panel, 1f, durationShow)
+                    .setDelay(durationDelayShow)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, 
-                                 Vector3.zero.WithY(topOpenY));  
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, 
+            //                     Vector3.zero.WithY(topOpenY));
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithY(topOpenY), durationShow)
+                .setDelay(durationDelayShow)
+                .setEase(LeanTweenType.easeInOutQuad);
+
         }
     }
-    
+
     public virtual void HidePanelTop(GameObject panel) {
         HidePanelTop(panel, true);
     }
-    
+
     public virtual void HidePanelTop(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+
+                LeanTween.alpha(panel, 0f, durationHide)
+                    .setDelay(durationDelayHide)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
-                                 Vector3.zero.WithY(topClosedY));    
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
+            //                     Vector3.zero.WithY(topClosedY));
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationHide * 2, 
             //   Vector3.zero.WithX(leftClosedX).WithY(topClosedY)); 
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithY(topClosedY), durationHide)
+                .setDelay(durationDelayHide)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
-    
+
     // bottom
-    
+
     public virtual void ShowPanelBottom(GameObject panel) {
         ShowPanelBottom(panel, true);
     }
-    
+
     public virtual void ShowPanelBottom(GameObject panel, bool fade) {
         if (panel != null) {
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, 0f, 0f, 
-                                 Vector3.zero.WithY(bottomOpenY));   
-            
+
+            UITweenerUtil.MoveTo(panel,
+                                 UITweener.Method.EaseInOut, UITweener.Style.Once, 0f, 0f,
+                                 Vector3.zero.WithY(bottomOpenY));
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
+
+                LeanTween.alpha(panel, 1f, durationShow)
+                    .setDelay(durationDelayShow)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
+
             // TODO look for -alpha-[number] to handle nested items to only fade to a certain amount.
             //foreach(Transform t in panel.transform) {
-            
+
             //}
-            
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, 
             //   Vector3.zero.WithY(bottomOpenY));   
-            
+
         }
     }
-    
+
     public virtual void HidePanelBottom(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
+
+
+                LeanTween.alpha(panel, 0f, durationHide)
+                    .setDelay(durationDelayHide)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
-                                 Vector3.zero.WithY(bottomClosedY)); 
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
+            //                     Vector3.zero.WithY(bottomClosedY));
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationHide * 2, 
-            //   Vector3.zero.WithX(leftClosedX).WithY(bottomClosedY));  
+            //   Vector3.zero.WithX(leftClosedX).WithY(bottomClosedY)); 
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithY(bottomClosedY), durationHide)
+                .setDelay(durationDelayHide)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
-    
+
     public virtual void HidePanelBottom(GameObject panel) {
         HidePanelBottom(panel, true);
     }
-    
+
     // left
-    
+
     public virtual void ShowPanelLeft(GameObject panel) {
         ShowPanelLeft(panel, true);
     }
-    
+
     public virtual void ShowPanelLeft(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftClosedX));   
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
+
+                LeanTween.alpha(panel, 1f, durationShow)
+                    .setDelay(durationDelayShow)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
-                                 Vector3.zero.WithX(leftOpenX)); 
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
+            //                     Vector3.zero.WithX(leftOpenX));
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithX(leftOpenX), durationShow)
+                .setDelay(durationDelayShow)
+                .setEase(LeanTweenType.easeInOutQuad);
+
         }
     }
-    
+
     public virtual void HidePanelLeft(GameObject panel) {
         HidePanelLeft(panel, true);
     }
-    
+
     public virtual void HidePanelLeft(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
+
+                LeanTween.alpha(panel, 0f, durationHide)
+                    .setDelay(durationDelayHide)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
-                                 Vector3.zero.WithX(leftClosedX));
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
+            //                     Vector3.zero.WithX(leftClosedX));
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, durationHide * 4, durationHide * 8, 
-            //   Vector3.zero.WithY(topClosedY));    
+            //   Vector3.zero.WithY(topClosedY));   
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithX(leftClosedX), durationHide)
+                .setDelay(durationDelayHide)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
-    
+
     // right
-    
+
     public virtual void ShowPanelRight(GameObject panel) {
         ShowPanelRight(panel, true);
     }
-    
+
     public virtual void ShowPanelRight(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(rightClosedX));  
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
+
+                LeanTween.alpha(panel, 1f, durationShow)
+                    .setDelay(durationDelayShow)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
-                                 Vector3.zero.WithX(rightOpenX));    
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
+            //                     Vector3.zero.WithX(rightOpenX));
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithX(rightOpenX), durationShow)
+                .setDelay(durationDelayShow)
+                .setEase(LeanTweenType.easeInOutQuad);
+
         }
     }
-    
+
     public virtual void HidePanelRight(GameObject panel) {
         HidePanelRight(panel, true);
     }
-    
+
     public virtual void HidePanelRight(GameObject panel, bool fade) {
         if (panel != null) {
-            
+
             if (fade) {
-                UITweenerUtil.FadeTo(panel, 
-                                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
+                //UITweenerUtil.FadeTo(panel, 
+                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
+
+                LeanTween.alpha(panel, 0f, durationHide)
+                    .setDelay(durationDelayHide)
+                    .setEase(LeanTweenType.easeInOutQuad);
             }
-            
-            UITweenerUtil.MoveTo(panel, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
-                                 Vector3.zero.WithX(rightClosedX));  
-            
+
+            //UITweenerUtil.MoveTo(panel, 
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
+            //                     Vector3.zero.WithX(rightClosedX));
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, durationHide * 4, durationHide * 8, 
-            //   Vector3.zero.WithX(rightClosedX).WithY(topClosedY));    
+            //   Vector3.zero.WithX(rightClosedX).WithY(topClosedY));
+
+            LeanTween.moveLocal(panel, Vector3.zero.WithX(rightClosedX), durationHide)
+                .setDelay(durationDelayHide)
+                .setEase(LeanTweenType.easeInOutQuad);
         }
     }
-    
+
     public virtual GameObject LoadObject(GameObject prefabObject, string itemName) {
         return LoadObject(listGridRoot, prefabObject, itemName);
     }
-    
-    public virtual GameObject LoadObject(GameObject prefabObject, string itemName, 
+
+    public virtual GameObject LoadObject(GameObject prefabObject, string itemName,
                                          string title, string description, string note, string type) {
         return LoadObject(listGridRoot, prefabObject, itemName, title, description, note, type);
     }
-    
+
     public virtual GameObject LoadObject(GameObject listObject, GameObject prefabObject, string itemName) {
         if (listObject == null) {
             return null;
@@ -985,58 +1119,58 @@ public class UIPanelBase : UIAppPanel {
         item.name = "_" + increment++ + "_" + itemName;
         return item;
     }
-    
-    public virtual GameObject LoadObject(GameObject listObject, GameObject prefabObject, string itemName, 
+
+    public virtual GameObject LoadObject(GameObject listObject, GameObject prefabObject, string itemName,
                                          string title, string description, string note, string type) {
-        
+
         if (listObject == null) {
             return null;
         }
-        
+
         if (prefabObject == null) {
             return null;
         }
-        
+
         GameObject item = LoadObject(listObject, prefabObject, itemName);
         SetItemLabel(item, "LabelName", title);
         SetItemLabel(item, "LabelDescription", description);
         SetItemLabel(item, "LabelNote", note);
-        
+
         // show type icon
-        
+
         Transform typeObjects = item.transform.FindChild("types");
-        
+
         if (typeObjects != null) {
             foreach (Transform t in typeObjects.gameObject.transform) {
                 t.gameObject.Hide(); // hide all 
             }
-            
+
             Transform typeObject = typeObjects.FindChild(type);
             if (typeObject != null) {
                 // show current
                 typeObject.gameObject.Show();
             }
         }
-        
+
         return item;
     }
-    
+
     public void SetItemLabel(GameObject item, string labelName, string val) {
         if (item == null) {
             return;
         }
-        
+
         UILabel label = GetItemLabel(item, labelName);
         if (label != null) {
             label.text = val;
         }
     }
-    
+
     public UILabel GetItemLabel(GameObject item, string labelName) {
         if (item == null) {
             return null;
         }
-        
+
         Transform t = item.transform.FindChild(labelName);
         if (t != null) {
             UILabel label = t.GetComponent<UILabel>();
@@ -1049,100 +1183,100 @@ public class UIPanelBase : UIAppPanel {
 
     // PANEL SECTIONS STATES
 
-    
+
     public void HandleCharacterDisplay() {
-        
+
         // handle character display
-        
-        if (characterDisplayState == 
+
+        if (characterDisplayState ==
             UIPanelCharacterDisplayState.Character) {
-            
+
             GameUIPanelHeader.ShowCharacter();
         }
-        else if (characterDisplayState == 
+        else if (characterDisplayState ==
             UIPanelCharacterDisplayState.CharacterLarge) {
-            
+
             GameUIPanelHeader.ShowCharacterLarge();
         }
     }
-    
+
     public void HandleAdDisplay() {
-        
+
         // handle character display
-        
-        if (adDisplayState == 
+
+        if (adDisplayState ==
             UIPanelAdDisplayState.BannerBottom
-            || adDisplayState == 
-            UIPanelAdDisplayState.BannerTop) {            
+            || adDisplayState ==
+            UIPanelAdDisplayState.BannerTop) {
 
             // TODO handle types...
             AdNetworks.ShowAd();
         }
         else {
-            
+
             AdNetworks.HideAd();
         }
     }
-    
+
     public void HandleButtonDisplay() {
-        
+
         // handle buttons
-        
-        if (buttonDisplayState == 
+
+        if (buttonDisplayState ==
             UIPanelButtonsDisplayState.CharacterCustomize) {
-            
+
             GameUIPanelFooter.ShowButtonsCharacterCustomize();
         }
-        else if (buttonDisplayState == 
+        else if (buttonDisplayState ==
             UIPanelButtonsDisplayState.Character) {
-            
+
             GameUIPanelFooter.ShowButtonsCharacter();
         }
-        else if (buttonDisplayState == 
+        else if (buttonDisplayState ==
             UIPanelButtonsDisplayState.CharacterLarge) {
-            
+
             GameUIPanelFooter.ShowButtonsCharacterLarge();
         }
-        else if (buttonDisplayState == 
+        else if (buttonDisplayState ==
             UIPanelButtonsDisplayState.CharacterTools) {
-            
+
             GameUIPanelFooter.ShowButtonsCharacterTools();
         }
         else if (buttonDisplayState == UIPanelButtonsDisplayState.Statistics) {
-            
+
             GameUIPanelFooter.ShowButtonsStatistics();
         }
         else if (buttonDisplayState == UIPanelButtonsDisplayState.Achievements) {
-            
+
             GameUIPanelFooter.ShowButtonsAchievements();
         }
         else if (buttonDisplayState == UIPanelButtonsDisplayState.GameNetworks) {
-            
+
             GameUIPanelFooter.ShowButtonGameNetworks();
-        }        
+        }
         else if (buttonDisplayState == UIPanelButtonsDisplayState.ProductsSections) {
-            
+
             GameUIPanelFooter.ShowButtonsProductsSections();
         }
     }
-    
+
     public void HandleBackgroundDisplay() {
-        
+
         // handle character display
-        
-        if (backgroundDisplayState == 
+
+        if (backgroundDisplayState ==
             UIPanelBackgroundDisplayState.PanelBacker) {
-            
+
             GameUIPanelBackgrounds.ShowUI();
         }
-        else if (backgroundDisplayState == 
+        else if (backgroundDisplayState ==
             UIPanelBackgroundDisplayState.None) {
             GameUIPanelBackgrounds.HideUI();
         }
-    }    
+    }
 
     //
-    
+
     public virtual void HandleShow() {
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.None;
@@ -1171,4 +1305,3 @@ public class UIPanelBase : UIAppPanel {
         AdNetworks.HideAd();
     }
 }
-
