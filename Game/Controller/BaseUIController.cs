@@ -3451,10 +3451,13 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettings, buttonName)) {
             GameUIController.ShowSettings();
         }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonMain, buttonName)) {
+            GameUIController.ShowMain();
+        }
 
         // PROFILE SYNC
 
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProfileGameversesSync, buttonName)) {
             GameState.SyncProfile();
         }
