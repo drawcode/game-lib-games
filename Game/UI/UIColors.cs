@@ -83,6 +83,36 @@ public class UIColors {
         }
     }
 
+    public static Color color1 {
+        get {
+            return AppColors.GetColor("color-1");
+        }
+    }
+
+    public static Color color2 {
+        get {
+            return AppColors.GetColor("color-2");
+        }
+    }
+
+    public static Color color3 {
+        get {
+            return AppColors.GetColor("color-3");
+        }
+    }
+
+    public static Color color4 {
+        get {
+            return AppColors.GetColor("color-4");
+        }
+    }
+
+    public static Color color5 {
+        get {
+            return AppColors.GetColor("color-5");
+        }
+    }
+
     public static void UpdateColors() {
         Messenger.Broadcast(UIColorsMessages.uiColorsUpdate);
     }

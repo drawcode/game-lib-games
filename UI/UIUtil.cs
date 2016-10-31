@@ -1017,7 +1017,16 @@ public class UIUtil {
                  UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
         }
     }
-    
+
+    public static void SetSpriteColor(Image go, Color colorTo) {
+        if (go == null)
+            return;
+
+        if (go != null) {
+            go.CrossFadeColor(colorTo, .5f, true, true);
+        }
+    }
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static void SetLabelColor(UILabel labelTo, Color colorTo) {            
         if(labelTo == null)
@@ -1027,7 +1036,7 @@ public class UIUtil {
                               UITweener.Method.Linear, UITweener.Style.Once, .5f, 0f, colorTo);
     }
 #endif
-        
+
     public static void SetLabelColor(Text labelTo, Color colorTo) {            
         if (labelTo == null)
             return;
