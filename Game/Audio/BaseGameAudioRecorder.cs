@@ -1,5 +1,7 @@
 //#define AUDIO_RECORDER_USE_PLUGIN
+#if !UNITY_WEBGL
 #define AUDIO_RECORDER_USE_UNITY
+#endif
 
 using System;
 using System.Collections;
@@ -58,7 +60,7 @@ public class BaseGameAudioRecorder {
 
     public IEnumerator RequestUserAuthorizationCo() {     
         yield return new WaitForEndOfFrame();
-        #if UNITY_WEBPLAYER  
+        #if UNITY_WEBGL  
         //yield return Application.RequestUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone);
         //if (Application.HasUserAuthorization(UserAuthorization.WebCam | UserAuthorization.Microphone)) {
             
@@ -81,7 +83,7 @@ public class BaseGameAudioRecorder {
 		AudioRecorderAndroidManager.startRecordingFailedEvent += startRecordingFailedEvent;
 		AudioRecorderAndroidManager.stopRecordingFinishedEvent += stopRecordingFinishedEvent;
 		AudioRecorderAndroidManager.stopRecordingFailedEvent += stopRecordingFailedEvent;
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
@@ -99,7 +101,7 @@ public class BaseGameAudioRecorder {
 		AudioRecorderAndroidManager.startRecordingFailedEvent -= startRecordingFailedEvent;
 		AudioRecorderAndroidManager.stopRecordingFinishedEvent -= stopRecordingFinishedEvent;
 		AudioRecorderAndroidManager.stopRecordingFailedEvent -= stopRecordingFailedEvent;
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
@@ -130,7 +132,7 @@ public class BaseGameAudioRecorder {
 		currentlyRecording = false;
 		lastRecordingSucceeded = false;
 	}
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 #elif UNITY_EDITOR
 #endif
@@ -165,7 +167,7 @@ public class BaseGameAudioRecorder {
 		//error = AudioRecorderAndroid.prepareToRecordFile( filename );
 		currentFileName = GetPersistentPath(filename);
 		error = "";
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 		error = AudioRecorderBinding.prepareToRecordFile( filename );
 #elif UNITY_EDITOR
@@ -217,7 +219,7 @@ public class BaseGameAudioRecorder {
 		exists = System.IO.File.Exists(file);
 #elif UNITY_ANDROID	
 		exists = System.IO.File.Exists(file);
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE		
 		exists = System.IO.File.Exists(file);
 #elif UNITY_EDITOR
@@ -362,7 +364,7 @@ public class BaseGameAudioRecorder {
 		if(CheckIfSoundExists(filePath)) {
 			CoroutineUtil.Start( loadAudioFileAtPathVehicles( file, vehicleSounds, onFailure, onSuccess ) );
 		}
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE		
 		if(CheckIfSoundExists(filePath)) {
 			CoroutineUtil.Start( loadAudioFileAtPathVehicles( file, vehicleSounds, onFailure, onSuccess ) );
@@ -388,7 +390,7 @@ public class BaseGameAudioRecorder {
 		LogUtil.Log( "Load: onSuccess: " + onSuccess );
 		LogUtil.Log( "Load: filePath: " + filename );
 
-#if !UNITY_WEBPLAYER
+#if !UNITY_WEBGL
 		var onFailure = new Action<string>( error => LogUtil.Log( error ) );
 #endif
 #if UNITY_STANDALONE_OSX
@@ -397,7 +399,7 @@ public class BaseGameAudioRecorder {
 		if(CheckIfSoundExists(filePath)) {
 			CoroutineUtil.Start( loadAudioFileAtPath( file, onFailure, onSuccess ) );
 		}
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE		
 		if(CheckIfSoundExists(filePath)) {
 			CoroutineUtil.Start( loadAudioFileAtPath( file, onFailure, onSuccess ) );
@@ -428,7 +430,7 @@ public class BaseGameAudioRecorder {
 		LogUtil.Log( "currentFileName pathAndroid: " + pathAndroid);
 		AudioRecorderAndroid.startRecording(pathAndroid);
 		didRecord = true;
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE
 		didRecord = AudioRecorderBinding.record();
 		currentlyRecording = false;
@@ -455,7 +457,7 @@ public class BaseGameAudioRecorder {
 		LogUtil.Log( "currentFileName pathAndroid: " + pathAndroid);
 		AudioRecorderAndroid.startRecording(pathAndroid);
 		didRecord = true;
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE
 		didRecord = AudioRecorderBinding.recordForDuration( duration );
 		currentlyRecording = false;
@@ -476,7 +478,7 @@ public class BaseGameAudioRecorder {
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID	
 		AudioRecorderAndroid.pause();
-#elif UNITY_WEBPLAYER	
+#elif UNITY_WEBGL	
 #elif UNITY_IPHONE
 		AudioRecorderBinding.pause();
 #elif UNITY_EDITOR
@@ -495,7 +497,7 @@ public class BaseGameAudioRecorder {
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID
 		AudioRecorderAndroid.stopRecording();
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 		AudioRecorderBinding.stop( finish );
 #elif UNITY_EDITOR
@@ -514,7 +516,7 @@ public class BaseGameAudioRecorder {
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID
 		isRecording = currentlyRecording;
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 		isRecording = AudioRecorderBinding.isRecording();
 #elif UNITY_EDITOR
@@ -534,7 +536,7 @@ public class BaseGameAudioRecorder {
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID
 		duration = 5.5f;
-#elif UNITY_WEBPLAYER
+#elif UNITY_WEBGL
 #elif UNITY_IPHONE
 		duration = AudioRecorderBinding.getCurrentTime();
 #elif UNITY_EDITOR

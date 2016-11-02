@@ -39,8 +39,10 @@ public class BaseGameGlobal : GameObjectBehavior {
     //public GameMatchup matchup;
     //public GameSocialGame socialGame;
     public AudioSystem audioSystem;
+#if ENABLE_FEATURE_NETWORKING
     public GameNetworking networking;
     public GameversesGameObject gameversesGameObject;
+#endif
     public AudioRecordObject audioRecorder;
     public GameCommunityController platformController;
     public GameCommunityService platformService;
@@ -205,8 +207,11 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitGameverses() {
-        gameversesGameObject = gameObject.AddComponent<GameversesGameObject>();   
+
+#if ENABLE_FEATURE_NETWORKING
+        gameversesGameObject = gameObject.AddComponent<GameversesGameObject>();
         networking = gameversesGameObject.gameNetworking;
+#endif
     }
 
     public virtual void InitMatchupSettings() { 
@@ -260,13 +265,13 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitMovie() {
-        #if UNITY_EDITOR        
-        #elif UNITY_IPHONE
+#if UNITY_EDITOR
+#elif UNITY_IPHONE
         //GameVideo.Play();
-        #elif UNITY_ANDROID
+#elif UNITY_ANDROID
         //GameVideo.Play();
-        #else
-        #endif
+#else
+#endif
     }
 
         public virtual void UpdateAudio(double volumeMusic, double volumeEffects) {
@@ -292,12 +297,12 @@ public class BaseGameGlobal : GameObjectBehavior {
             audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
             audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
 
-            #if DEV
+#if DEV
             if (Application.isEditor) {
                 UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
                         
             }
-            #endif
+#endif
         }
         
         LogUtil.Log("GameGlobal InitAudio init...");
@@ -406,7 +411,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 
         AdNetworks.HandleAdUpdate();
 
-        #if !UNITY_IPHONE       
+#if !UNITY_IPHONE
         if (Input.GetKeyDown(KeyCode.Escape)) { 
             QuitGame();
             //if(AlertDialog.Instance.IsReady()) {
@@ -414,7 +419,7 @@ public class BaseGameGlobal : GameObjectBehavior {
             //}
 
         }
-        #endif
+#endif
 
         if (Application.isEditor) {
 
