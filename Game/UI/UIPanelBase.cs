@@ -229,6 +229,8 @@ public class UIPanelBase : UIAppPanel {
 
     public override void Start() {
         base.Start();
+
+        AnimateOut();
     }
 
     public void HideAllPanels() {
@@ -671,7 +673,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateOut(float time, float delay) {
 
         if (!isVisible) {
-            return;
+            //return;
         }
 
         //HideCamera();

@@ -443,6 +443,12 @@ public class BaseUIController : GameObjectBehavior {
 
     public void showUIPanel(string objName, string panelCode, string title) {
 
+        if (currentPanel == panelCode) {
+            // Don't reload
+
+            return;
+        }
+
         currentPanel = panelCode;
 
         AnalyticsNetworks.LogEventSceneChange(panelCode, title);
