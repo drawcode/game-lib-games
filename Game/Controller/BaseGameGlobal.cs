@@ -1,4 +1,4 @@
-#define DEV
+//#define DEV
 using System;
 using System.IO;
 using System.Collections;
@@ -294,8 +294,8 @@ public class BaseGameGlobal : GameObjectBehavior {
             currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
             currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
 
-            audioSystem.SetAmbienceVolume(GameProfiles.Current.GetAudioMusicVolume());
-            audioSystem.SetEffectsVolume(GameProfiles.Current.GetAudioEffectsVolume());
+            audioSystem.SetAmbienceVolume(currentVolumeMusic);
+            audioSystem.SetEffectsVolume(currentVolumeEffects);
 
 #if DEV
             if (Application.isEditor) {
