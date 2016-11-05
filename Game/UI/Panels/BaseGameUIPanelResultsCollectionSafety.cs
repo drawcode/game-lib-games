@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_COLLECTION
+
 public class BaseGameUIPanelResultsCollectionSafety : GameUIPanelResultsBase {
     
     public static GameUIPanelResultsCollectionSafety Instance;
@@ -70,3 +72,5 @@ public class BaseGameUIPanelResultsCollectionSafety : GameUIPanelResultsBase {
 	}
 	
 }
+
+#endif

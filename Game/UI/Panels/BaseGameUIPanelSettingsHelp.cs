@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_SETTINGS_HELP
+
 public class BaseGameUIPanelSettingsHelp : GameUIPanelBase {
     
     public static GameUIPanelSettingsHelp Instance;
@@ -126,3 +128,5 @@ public class BaseGameUIPanelSettingsHelp : GameUIPanelBase {
     }
 
 }
+
+#endif

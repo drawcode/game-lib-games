@@ -175,6 +175,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
+#if ENABLE_FEATURE_PRODUCT_CURRENCY
         if (buttonCoins != null) {
 
             if (buttonName == buttonCoins.name) {
@@ -182,6 +183,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
                 GameUIController.ShowProductCurrency();
             }
         }        
+#endif
     }
     
     public override void AnimateIn() {

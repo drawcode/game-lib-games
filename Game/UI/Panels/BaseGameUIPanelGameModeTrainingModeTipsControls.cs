@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_TRAINING
+
 public class BaseGameUIPanelGameModeTrainingModeTipsControls : GameUIPanelBase {
     
     public static GameUIPanelGameModeTrainingModeTipsControls Instance;
@@ -127,3 +129,5 @@ public class BaseGameUIPanelGameModeTrainingModeTipsControls : GameUIPanelBase {
     }
 	
 }
+
+#endif

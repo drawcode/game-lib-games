@@ -1882,6 +1882,8 @@ public class BaseUIController : GameObjectBehavior {
                     handled = true;
                     
                 }
+
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
                 else if (isUIPanel(GameUIPanel.panelCustomizeCharacterRPG)
                     || isUIPanel(GameUIPanel.panelCustomizeCharacterColors)
                          || isUIPanel(GameUIPanel.panelCustomizeCharacter)
@@ -1893,6 +1895,7 @@ public class BaseUIController : GameObjectBehavior {
                     handled = true;
                     
                 }
+#endif
                 else if (isUIPanel(GameUIPanel.panelGameModeArcade)
                     || isUIPanel(GameUIPanel.panelGameModeCustomize)
                     || isUIPanel(GameUIPanel.panelGameModeCareer)
@@ -2168,6 +2171,8 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelGameMode));
     }
 
+
+#if ENABLE_FEATURE_MODE_COOP
     
     // ------------------------------------------------------------
     // GAME MODE - COOP
@@ -2195,7 +2200,11 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeCoop));
     }
-    
+
+#endif
+
+#if ENABLE_FEATURE_NETWORKING
+
     // ------------------------------------------------------------
     // GAME MODE MULTIPLAYER
 
@@ -2241,10 +2250,11 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeMultiplayerMatchup));
     }
-    
+#endif
+
     // ------------------------------------------------------------
     // GAME MODE - MISSION
-    
+
     public virtual void showGameModeMission() {
         
         showUIPanel(
@@ -2313,6 +2323,9 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelLevels));
     }
+
+
+#if ENABLE_FEATURE_TRAINING
 
     // ------------------------------------------------------------
     // GAME MODE - TRAINING
@@ -2421,7 +2434,11 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     */
- 
+
+#endif
+
+
+#if ENABLE_FEATURE_MODE_CHALLENGE
     // ------------------------------------------------------------
     // GAME MODE - CHALLENGE
  
@@ -2448,6 +2465,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeChallenge));
     }
+
+#endif
  
     // ------------------------------------------------------------
     // GAME MODE - ARCADE
@@ -2476,6 +2495,7 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelGameModeArcade));
     }
 
+#if ENABLE_FEATURE_MODE_CUSTOMIZE
     
     // ------------------------------------------------------------
     // GAME MODE - CUSTOMIZE
@@ -2503,6 +2523,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeCustomize));
     }
+
+#endif
      
     /*
  // ------------------------------------------------------------
@@ -2702,16 +2724,18 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelSettings));
     }
- 
+
+#if ENABLE_FEATURE_SETTINGS_AUDIO
+
     // ------------------------------------------------------------
     // SETTINGS - AUDIO
- 
+
     //public static virtual void ShowSettingsAudio() {
     //   if(isInst) {
     //       Instance.showSettingsAudio();
     //   }
     //}
- 
+
     public virtual void showSettingsAudio() {
         showUIPanel(
             typeof(GameUIPanelSettingsAudio),
@@ -2730,15 +2754,18 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelSettingsAudio));
     }
      
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_CONTROLS
     // ------------------------------------------------------------
     // SETTINGS - CONTROLS
- 
+
     //public static virtual void ShowSettingsControls() {
     //   if(isInst) {
     //       Instance.showSettingsControls();
     //   }
     //}
- 
+
     public virtual void showSettingsControls() {
         showUIPanel(
             typeof(GameUIPanelSettingsControls),
@@ -2756,16 +2783,20 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelSettingsControls));
     }
- 
+
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_PROFILE
+
     // ------------------------------------------------------------
     // SETTINGS - PROFILES
- 
+
     //public static virtual void ShowSettingsProfile() {
     //   if(isInst) {
     //       Instance.showSettingsProfile();
     //   }
     //}
- 
+
     public virtual void showSettingsProfile() {
         showUIPanel(
             typeof(GameUIPanelSettingsProfile),
@@ -2784,6 +2815,9 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelSettingsProfile));
     }
 
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_HELP
 
     // ------------------------------------------------------------
     // SETTINGS - HELP
@@ -2800,6 +2834,10 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelSettingsHelp));
     }
 
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_CREDITS
+
     // ------------------------------------------------------------
     // SETTINGS - CREDITS
 
@@ -2814,6 +2852,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelSettingsCredits));
     }
+
+#endif
 
     // ------------------------------------------------------------
     // RESULTS
@@ -2854,7 +2894,7 @@ public class BaseUIController : GameObjectBehavior {
     
     public virtual void hideResults() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeTrainingMode));
+            typeof(GameUIPanelResults));
     }
  
  
@@ -2913,6 +2953,8 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelStatistics));
     }
 
+#if ENABLE_FEATURE_PRODUCT_CURRENCY
+
     // ------------------------------------------------------------
     // PRODUCTS - CURRENCY
 
@@ -2942,6 +2984,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelProductCurrencyEarn));
     }
+
+#endif
      
     // ------------------------------------------------------------
     // EQUIPMENT - ACHIEVEMENTS
@@ -3003,8 +3047,10 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void hideProducts() {
         hideUIPanel(
             typeof(GameUIPanelProducts));
-    }    
-         
+    }
+    
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
     // ------------------------------------------------------------
     // EQUIPMENT - CUSTOMIZE
  
@@ -3147,48 +3193,48 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelCustomizeCharacterRPG));
     }
- 
+
+#endif
+
+    // ------------------------------------------------------------
     IEnumerator HideOverlay() {
         yield return new WaitForSeconds(0.4f);
      
         GameUIPanelOverlays.Instance.HideOverlayWhiteStatic();
     }
 
+    // ------------------------------------------------------------
     //   
- 
+
     //public static virtual void ShowHeader() {
     //   if(isInst) {
     //       Instance.showHeader();
     //   }
     //}
- 
+
     public virtual void showHeader() {
         GameUIPanelHeader.Instance.AnimateIn();
-    } 
- 
+    }
+
+    // ------------------------------------------------------------
     //public static virtual void HideHeader() {
     //   if(isInst) {
     //       Instance.hideHeader();
     //   }
     //}
-    
+
     public virtual void hideHeader() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeTrainingMode));
-    }    
-             
-    // HERE
-    
-    public virtual void CloseAllActions() {  
-     
+            typeof(GameUIPanelHeader));
     }
-     
+
+    // ------------------------------------------------------------
     //public static virtual void HideHUD() {
     //   if(isInst) {
     //       Instance.hideHUD();
     //   }
     //}
- 
+
     public virtual void hideHUD() {
         //LogUtil.Log("HideHUD");
      
@@ -3211,14 +3257,15 @@ public class BaseUIController : GameObjectBehavior {
              
         showUIPauseButton();
         GameHUD.Instance.AnimateIn();
-    }        
- 
+    }
+
+    // ------------------------------------------------------------
     //public static virtual void ShowUIPauseButton() {
     //   if(isInst) {
     //       Instance.showUIPauseButton();
     //   }
     //}
- 
+
     public virtual void showUIPauseButton() {
         if (gamePauseButtonObject != null) {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(0));
@@ -3236,14 +3283,15 @@ public class BaseUIController : GameObjectBehavior {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(650));
         }
     }
-     
+
+    // ------------------------------------------------------------
     //public static virtual bool SetDialogState(bool active) {   
     //   if(isInst) {
     //       return Instance.setDialogState(active);
     //   }
     //   return false;
     //}
- 
+
     public bool setDialogState(bool active) {        
         dialogActive = active;
         GameDraggableEditor.editingEnabled = !dialogActive;
@@ -3451,9 +3499,11 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameEquipment, buttonName)) {
             GameUIController.ShowEquipment();
         }
+#if ENABLE_FEATURE_SETTINGS_AUDIO
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettingsAudio, buttonName)) {
             GameUIController.ShowSettingsAudio();
         }
+#endif
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettings, buttonName)) {
             GameUIController.ShowSettings();
         }
@@ -3510,9 +3560,12 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowSettings();
         }   
         */
+#if ENABLE_FEATURE_PRODUCT_CURRENCY
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductCurrency, buttonName)) {    
             GameUIController.ShowProductCurrency();
         }   
+
+#endif
 
         // Game Modes
 
@@ -3521,10 +3574,19 @@ public class BaseUIController : GameObjectBehavior {
             //GameUIController.ShowGameModeArcade();
             GameUIController.ShowGameWorlds();
         }
+
+
+#if ENABLE_FEATURE_MODE_CHALLENGE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenge, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
         }
+
+#endif
+
+
+#if ENABLE_FEATURE_NETWORKING
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMultiplayerCoop, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayerCoop);
             GameUIController.ShowGameModeMultiplayerCoop();
@@ -3537,18 +3599,23 @@ public class BaseUIController : GameObjectBehavior {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMultiplayer);
             GameUIController.ShowGameModeMultiplayer();
         }
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCoop, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameCoop);
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
         }
+#endif
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
         }
+
+#if ENABLE_FEATURE_TRAINING
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTraining);
             GameUIController.ShowGameModeTrainingMode();
         }
+#endif
 
         // PRODUCTS
         
@@ -3607,6 +3674,8 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
         // CUSTOMIZE
         
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterColors, buttonName)) {
@@ -3621,6 +3690,7 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomize, buttonName)) {
             GameUIController.ShowCustomize();
         }
+#endif
 
         // COMMUNITY
                 
@@ -3786,16 +3856,18 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
         }
+#if ENABLE_FEATURE_PRODUCT_CURRENCY
 
-        
         // COIN / CURRENCY
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProductCurrency, buttonName)) {
             
             GameCommunity.HideGameCommunity();
             
             showProductCurrency();
         }  
+
+#endif
 
         // LAST 
 
@@ -3858,8 +3930,9 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
 
+#if ENABLE_FEATURE_NETWORKING
         GameUIController.HandleNetworkedButtons(buttonName);
-
+#endif
         GameUIController.HandleHUDButtons(buttonName);
      
         /*

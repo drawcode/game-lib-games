@@ -10,6 +10,8 @@ using UnityEngine.UI;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_PRODUCT_CURRENCY
+
 public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
     
     public static GameUIPanelProductCurrency Instance;
@@ -207,3 +209,5 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
 	
 	
 }
+
+#endif

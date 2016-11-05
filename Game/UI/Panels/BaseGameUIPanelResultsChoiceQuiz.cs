@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_QUIZ
+
 public class BaseGameUIPanelResultsChoiceQuiz : GameUIPanelResultsBase {
     
     public static GameUIPanelResultsChoiceQuiz Instance;
@@ -70,3 +72,5 @@ public class BaseGameUIPanelResultsChoiceQuiz : GameUIPanelResultsBase {
 	}
 	
 }
+
+#endif

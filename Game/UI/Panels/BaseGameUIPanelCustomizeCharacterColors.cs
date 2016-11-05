@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
 public class BaseGameUIPanelCustomizeCharacterColors : GameUIPanelBase {
     
     public static GameUIPanelCustomizeCharacterColors Instance;
@@ -149,3 +151,5 @@ public class BaseGameUIPanelCustomizeCharacterColors : GameUIPanelBase {
 	}	
 	
 }
+
+#endif

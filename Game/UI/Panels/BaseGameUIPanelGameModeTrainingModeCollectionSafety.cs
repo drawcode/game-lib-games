@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_TRAINING
+
 public class BaseGameUIPanelGameModeTrainingModeCollectionSafety : GameUIPanelBase {	
 
     public static GameUIPanelGameModeTrainingModeCollectionSafety Instance;
@@ -127,3 +129,5 @@ public class BaseGameUIPanelGameModeTrainingModeCollectionSafety : GameUIPanelBa
     }
 	
 }
+
+#endif

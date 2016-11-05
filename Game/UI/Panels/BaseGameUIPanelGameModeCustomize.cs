@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_CUSTOMIZE
+
 public class BaseGameUIPanelGameModeCustomize : GameUIPanelBase {
     
     public static GameUIPanelGameModeCustomize Instance;
@@ -122,3 +124,5 @@ public class BaseGameUIPanelGameModeCustomize : GameUIPanelBase {
 	}
 	
 }
+
+#endif

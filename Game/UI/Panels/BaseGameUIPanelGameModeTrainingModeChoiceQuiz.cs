@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_TRAINING
+
 public class BaseGameUIPanelGameModeTrainingModeChoiceQuiz : GameUIPanelBase {	
     
     public static GameUIPanelGameModeTrainingModeChoiceQuiz Instance;
@@ -131,3 +133,5 @@ public class BaseGameUIPanelGameModeTrainingModeChoiceQuiz : GameUIPanelBase {
     }
 	
 }
+
+#endif

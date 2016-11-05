@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_COOP
+
 public class BaseGameUIPanelGameModeCoop : GameUIPanelBase {
     
     public static GameUIPanelGameModeCoop Instance;
@@ -123,3 +125,5 @@ public class BaseGameUIPanelGameModeCoop : GameUIPanelBase {
 	}
 	
 }
+
+#endif

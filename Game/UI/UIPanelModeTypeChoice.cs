@@ -276,7 +276,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
         else if(UIUtil.IsButtonClicked(buttonResultsReplay, buttonName)) {
             Reset();
-            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
+            //GameUIController.ShowGameModeTrainingModeChoiceQuiz();
         }
         else if(UIUtil.IsButtonClicked(buttonResultsModes, buttonName)) {
             Reset();

@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
 public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
     
     public static GameUIPanelCustomizeCharacter Instance;
@@ -240,3 +242,5 @@ public class BaseGameUIPanelCustomizeCharacter : GameUIPanelBase {
     }   
     
 }
+
+#endif

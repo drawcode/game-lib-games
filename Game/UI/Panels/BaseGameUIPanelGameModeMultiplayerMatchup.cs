@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_NETWORKING
+
 public class BaseGameUIPanelGameModeMultiplayerMatchup : GameUIPanelBase {
     
     public static GameUIPanelGameModeMultiplayerMatchup Instance;
@@ -107,3 +109,5 @@ public class BaseGameUIPanelGameModeMultiplayerMatchup : GameUIPanelBase {
 	}
 	
 }
+
+#endif

@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_NETWORKING
+
 public class BaseGameUIPanelGameModeMultiplayer : GameUIPanelBase {
     
     public static GameUIPanelGameModeMultiplayer Instance;
@@ -107,3 +109,4 @@ public class BaseGameUIPanelGameModeMultiplayer : GameUIPanelBase {
 	}
 	
 }
+#endif

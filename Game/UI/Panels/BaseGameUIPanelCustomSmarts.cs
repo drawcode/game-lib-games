@@ -11,6 +11,8 @@ using UnityEngine.UI;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
 public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
     
     public static GameUIPanelCustomSmarts Instance;
@@ -177,3 +179,5 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
     }
 	
 }
+
+#endif

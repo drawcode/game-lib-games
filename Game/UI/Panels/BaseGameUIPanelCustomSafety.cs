@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
 public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
     
     public static GameUIPanelCustomSafety Instance;
@@ -158,3 +160,5 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
     }
 	
 }
+
+#endif

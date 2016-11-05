@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+
 public class BaseGameUIPanelCustomizeCharacterRPG : GameUIPanelBase {
     
     public static GameUIPanelCustomizeCharacterRPG Instance;
@@ -171,3 +173,5 @@ public class BaseGameUIPanelCustomizeCharacterRPG : GameUIPanelBase {
         }
     }
 }
+
+#endif

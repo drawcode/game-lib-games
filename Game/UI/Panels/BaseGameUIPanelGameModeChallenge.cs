@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_CHALLENGE
+
 public class BaseGameUIPanelGameModeChallenge : GameUIPanelBase {
     
     public static GameUIPanelGameModeChallenge Instance;
@@ -122,3 +124,5 @@ public class BaseGameUIPanelGameModeChallenge : GameUIPanelBase {
 	}
 	
 }
+
+#endif

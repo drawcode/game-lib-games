@@ -112,9 +112,12 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
 		else if(UIUtil.IsButtonClicked(buttonEquipmentPowerups, buttonName)) {
 			GameUIController.ShowProducts();
 		}
+
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 		else if(UIUtil.IsButtonClicked(buttonCustomize, buttonName)) {
 			GameUIController.ShowCustomize();
 		}		
+#endif
     }
     
     public override void HandleShow() {

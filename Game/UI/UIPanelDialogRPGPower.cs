@@ -83,14 +83,7 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (UIUtil.IsButtonClicked(buttonBuyRecharge, buttonName)) {
 
-            // buy recharge
-            LogUtil.Log("Recharge:");
-        }
-        else if (UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
-            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
-        }
     }
 
     public void ShowCurrentState() {

@@ -10,6 +10,8 @@ using UnityEngine.UI;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_SETTINGS_PROFILE
+
 public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {	
     
     public static GameUIPanelSettingsProfile Instance;
@@ -148,3 +150,5 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 	}
 	
 }
+
+#endif

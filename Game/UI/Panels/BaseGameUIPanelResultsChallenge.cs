@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_CHALLENGE
+
 public class BaseGameUIPanelResultsChallenge : GameUIPanelResultsBase {
     
     public static GameUIPanelResultsChallenge Instance;
@@ -69,3 +71,5 @@ public class BaseGameUIPanelResultsChallenge : GameUIPanelResultsBase {
 		yield return new WaitForSeconds(1f);
 	}	
 }
+
+#endif

@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_MODE_COLLECTION
+
 public class BaseGameUIPanelResultsCollectionSmarts : GameUIPanelResultsBase {
     
     public static GameUIPanelResultsCollectionSmarts Instance;
@@ -70,3 +72,5 @@ public class BaseGameUIPanelResultsCollectionSmarts : GameUIPanelResultsBase {
 	}
 	
 }
+
+#endif

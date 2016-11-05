@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_SETTINGS_AUDIO
+
 public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
     
     public static GameUIPanelSettingsCredits Instance;
@@ -115,3 +117,5 @@ public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
     }
 
 }
+
+#endif

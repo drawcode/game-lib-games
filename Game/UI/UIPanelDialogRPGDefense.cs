@@ -71,9 +71,6 @@ public class UIPanelDialogRPGDefense : UIPanelDialogRPGObject {
             LogUtil.Log("Recharge:");
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
-            GameUIController.ShowGameModeTrainingModeChoiceQuiz();
-        }
-        else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             HideAll();
         }
     }

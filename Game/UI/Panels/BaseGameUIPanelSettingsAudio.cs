@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_SETTINGS_AUDIO
+
 public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {	
     
     public static GameUIPanelSettingsAudio Instance;    
@@ -143,3 +145,5 @@ public class BaseGameUIPanelSettingsAudio : GameUIPanelBase {
 	}
 	
 }
+
+#endif

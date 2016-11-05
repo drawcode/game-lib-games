@@ -125,10 +125,15 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         UIUtil.SetLabelValue(labelContentStateDisplayName, AppContentStates.Current.display_name);
 
         if(AppContentStates.Instance.isAppContentStateGameChallenge) {
+
+#if ENABLE_FEATURE_MODE_CHALLENGE
             foreach(GameUIPanelResultsChallenge result in containerModes.GetComponentsInChildren<GameUIPanelResultsChallenge>(true)) {
                 result.UpdateDisplay(runtimeData, timeTotal);
             }
+#endif
         }
+
+#if ENABLE_FEATURE_MODE_TRAINING
         else if(AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
             //foreach(UIPanelResultsChoiceQuiz result in containerModes.GetComponentsInChildren<UIPanelResultsChoiceQuiz>(true)) {
             //    result.UpdateDisplay(runtimeData, timeTotal);
@@ -144,6 +149,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
             //    result.UpdateDisplay(runtimeData, timeTotal);
             //}
         }
+
+#endif
+
         else { // if(AppContentStates.Instance.isAppContentStateGameArcade) {
             foreach(GameUIPanelResultsArcade result in containerModes.GetComponentsInChildren<GameUIPanelResultsArcade>(true)) {
                 result.UpdateDisplay(runtimeData, timeTotal);

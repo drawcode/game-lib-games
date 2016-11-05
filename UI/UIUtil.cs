@@ -203,13 +203,12 @@ public class UIButtonMeta {
             UIUtil.UIButtonEnable(button, enable);
         }
     }
-#else
+#endif
     public void SetButtonEnable(Button button, bool enable) {
         if (button != null) {
             UIUtil.UIButtonEnable(button, enable);
         }
     }
-#endif
 
     public void SetButtonsDialogState() {
         foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
@@ -830,14 +829,14 @@ public class UIUtil {
             if (obj.Has<UISlider>()) {
                 return SetSliderValue(obj.Get<UISlider>(), val);
             }
-#else
+#endif
             if (obj.Has<Slider>()) {
                 SetSliderValue(obj.Get<Slider>(), val);
             }
             else if (obj.Has<Scrollbar>()) {
                 SetSliderValue(obj.Get<Scrollbar>(), val);
             }
-#endif
+
         }
     } 
 
@@ -857,14 +856,13 @@ public class UIUtil {
             if (obj.Has<UISlider>()) {
                 return GetSliderValue(obj.Get<UISlider>());
             }
-#else
+#endif
             if (obj.Has<Slider>()) {
                 return GetSliderValue(obj.Get<Slider>());
             }
             else if (obj.Has<Scrollbar>()) {
                 return GetSliderValue(obj.Get<Scrollbar>());
             }
-#endif
         }
 
         return 0f;
@@ -939,14 +937,13 @@ public class UIUtil {
             if (obj.Has<UIToggle>()) {
                 return SetToggleValue(obj.Get<UIToggle>(), selected);
             }
-#else
+#endif
             if (obj.Has<Slider>()) {
                 SetToggleValue(obj.Get<Slider>(), selected);
             }
             else if (obj.Has<Toggle>()) {
                 SetToggleValue(obj.Get<Toggle>(), selected);
             }
-#endif
         }
     }
 
@@ -1154,11 +1151,10 @@ public class UIUtil {
             if (obj.Has<UIToggle>()) {
                 return IsCheckboxChecked(obj.Get<UIToggle>(), toggleName);
             }
-#else
+#endif
             if (obj.Has<Toggle>()) {
                 return IsCheckboxChecked(obj.Get<Toggle>(), toggleName);
             }
-#endif
         }
 
         return false;
@@ -1194,11 +1190,10 @@ public class UIUtil {
             if (obj.Has<UIToggle>()) {
                 return IsCheckboxChecked(obj.Get<UIToggle>());
             }
-#else
+#endif
             if (obj.Has<Toggle>()) {
                 return IsCheckboxChecked(obj.Get<Toggle>());
             }
-#endif
         }
 
         return false;
@@ -1239,7 +1234,7 @@ public class UIUtil {
             if (obj.Has<UIImageButton>()) {
                 return IsButtonClicked(obj.Get<UIImageButton>(), buttonClickedName);
             }
-#else
+#endif
             if (obj.Has<Image>()) {
                 return IsButtonClicked(obj.Get<Image>(), buttonClickedName);
             }
@@ -1247,7 +1242,6 @@ public class UIUtil {
             if (obj.Has<Button>()) {
                 return IsButtonClicked(obj.Get<Button>(), buttonClickedName);
             }
-#endif
         }
 
         return false;
@@ -1298,11 +1292,10 @@ public class UIUtil {
             if (obj.Has<UILabel>()) {
                 SetLabelColor(obj.Get<UILabel>(), colorTo);
             }
-#else
+#endif
             if (obj.Has<Text>()) {
                 SetLabelColor(obj.Get<Text>(), colorTo);
             }
-#endif
         }
     }
 
@@ -1331,11 +1324,10 @@ public class UIUtil {
             if (obj.Has<UIButton>()) {
                 SetButtonColor(obj.Get<UIButton>(), colorTo);
             }
-#else
+#endif
             if (obj.Has<Button>()) {
                 SetButtonColor(obj.Get<Button>(), colorTo);
             }
-#endif
         }
     }
 

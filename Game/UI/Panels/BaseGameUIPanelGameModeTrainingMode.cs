@@ -6,7 +6,10 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_TRAINING
+
 public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
+
     public static GameUIPanelGameModeTrainingMode Instance;
 		
     public GameObject listItemPrefab;
@@ -135,3 +138,5 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
 	}
 	
 }
+
+#endif
