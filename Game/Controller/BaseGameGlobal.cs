@@ -20,16 +20,16 @@ public class BaseGameGlobal : GameObjectBehavior {
     public GameNetworks gameNetworks;
     public GameState state;
     public Contents contents;
-    
-    #if DEV
+
+#if DEV
     public static AppRunState appRunState = AppRunState.DEV;
-    #else
+#else
     public static AppRunState appRunState = AppRunState.LIVE;
-    #endif
-    
+#endif
+
     //public GameSettings gameSettings;
     //public Recorders raceRecorders;
-    
+
     public AdNetworks adNetworks;
     public SocialNetworks socialNetworks;
     public ProductNetworks productPurchase;
@@ -38,7 +38,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     public string appDisplayName;
     //public GameMatchup matchup;
     //public GameSocialGame socialGame;
-    public AudioSystem audioSystem;
+    //public AudioSystem audioSystem;
 #if ENABLE_FEATURE_NETWORKING
     public GameNetworking networking;
     public GameversesGameObject gameversesGameObject;
@@ -49,9 +49,9 @@ public class BaseGameGlobal : GameObjectBehavior {
     public GameCommunityUIController platformAppViewerUIController;
     public GameCommunitySocialController platformSocialController;
     public GameCommunityTrackingController platformTrackingController;
-    
+
     //public Gameverses.GameversesAPI gameversesAPI;
-    
+
     public bool ENABLE_PRODUCT_UNLOCKS = true;
     public string currentLevel = "Level1";
     public string masterserverPrefix = "game_";
@@ -79,7 +79,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         //InitContentSystemPost();
     }
 
-    public virtual void Init() {        
+    public virtual void Init() {
         gameObject.AddComponent<InputSystem>();
 
     }
@@ -115,7 +115,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         
         PrepareData();
         */
-        
+
         /*
         foreach(GameLoaderMeta meta in GameLoaderMetas.Instance.GetAll()) {
         //meta.tracker.stats.Add();
@@ -129,7 +129,7 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void Start() {
-        
+
     }
 
     public virtual void PrepareData() {
@@ -154,17 +154,17 @@ public class BaseGameGlobal : GameObjectBehavior {
         world.uuid = UniqueUtil.Instance.CreateUUID4();
         //world.
         */
-        
+
         //LogUtil.Log(JsonMapper.ToJson(world));
     }
 
-    public virtual void InitNetwork() { 
-        gameObject.AddComponent<WebRequests>(); 
+    public virtual void InitNetwork() {
+        gameObject.AddComponent<WebRequests>();
     }
 
-    public virtual void InitContext() { 
+    public virtual void InitContext() {
         //gameScreenScaler = gameObject.AddComponent<GameScreenScaler>();   
-        
+
     }
 
     public virtual IEnumerator InitContentCo() {
@@ -190,20 +190,20 @@ public class BaseGameGlobal : GameObjectBehavior {
         //TestFlight.TakeOff("e5f209d3e74acce80d1a2907cafcbc41_NDgyNDIyMDExLTEyLTE2IDE4OjI4OjUzLjY4NTc5Nw");
     }
 
-    public virtual void InitUIFlow() {      
+    public virtual void InitUIFlow() {
         //uiFlow = gameObject.AddComponent<GameUIFlow>();   
         //uiFlow.InitUIFlow();
     }
 
-    public virtual void InitRecorders() {       
+    public virtual void InitRecorders() {
         // TODO wire up to turn off and on on PC and mobile
         //raceRecorders = Recorders.Instance;
-        audioRecorder = gameObject.AddComponent<AudioRecordObject>();   
-        
+        audioRecorder = gameObject.AddComponent<AudioRecordObject>();
+
     }
 
     public virtual void InitAds() {
-        adNetworks = gameObject.AddComponent<AdNetworks>();   
+        adNetworks = gameObject.AddComponent<AdNetworks>();
     }
 
     public virtual void InitGameverses() {
@@ -214,7 +214,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 #endif
     }
 
-    public virtual void InitMatchupSettings() { 
+    public virtual void InitMatchupSettings() {
         //MatchupServerSettings.IP = "matchup.test.com";
         //MatchupServerSettings.players = 4;
         //MatchupServerSettings.port = 25010;
@@ -233,7 +233,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 
     }
 
-    public virtual void InitPurchase() {  
+    public virtual void InitPurchase() {
         ProductNetworks.Init();
 
         productPurchase = ProductNetworks.instance;//gameObject.AddComponent<ProductPurchase>();   
@@ -241,11 +241,11 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitState() {
-        
+
         try {
             state = GameState.Instance;
             LogUtil.Log("GameGlobal InitState init...");
-            
+
             //gameversesGameObject = gameObject.AddComponent<Gameverses.GameversesGameObject>();
             //socialGame = gameObject.AddComponent<GameSocialGame>();           
         }
@@ -255,11 +255,11 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitPlayerProgress() {
-        gameNetworks = gameObject.AddComponent<GameNetworks>();  
-        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {       
+        gameNetworks = gameObject.AddComponent<GameNetworks>();
+        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
         }
-        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {        
+        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
         }
     }
@@ -274,56 +274,58 @@ public class BaseGameGlobal : GameObjectBehavior {
 #endif
     }
 
-        public virtual void UpdateAudio(double volumeMusic, double volumeEffects) {
+    public virtual void UpdateAudio(double volumeMusic, double volumeEffects) {
 
         GameProfiles.Current.SetAudioMusicVolume(volumeMusic);
-        GameProfiles.Current.SetAudioEffectsVolume(volumeEffects);          
-        audioSystem.SetAmbienceVolume(volumeMusic);
-        audioSystem.SetEffectsVolume(volumeEffects);
-        GameAudio.SetEffectsVolume(volumeEffects);
-        GameAudio.SetAmbienceVolume(volumeMusic);
+        GameProfiles.Current.SetAudioEffectsVolume(volumeEffects);
 
+        GameAudio.SetAmbienceVolume(volumeMusic);
+        GameAudio.SetEffectsVolume(volumeEffects);
+        
         AudioListener.volume = (float)volumeEffects;
+        
+        AudioSystem.Instance.SetAmbienceVolume(volumeMusic);
+        AudioSystem.Instance.SetEffectsVolume(volumeEffects);
+
+        GameAudioController.SetVolumeGame(volumeMusic);
+        GameAudioController.SetVolumeUI(volumeMusic);
 
         GameState.SaveProfile();
     }
 
-    public virtual void InitAudio() {    
+    public virtual void InitAudio() {
 
-        if (audioSystem == null) {
-            audioSystem = gameObject.AddComponent<AudioSystem>();   
+        currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
+        currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
 
-            currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
-            currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
-
-            audioSystem.SetAmbienceVolume(currentVolumeMusic);
-            audioSystem.SetEffectsVolume(currentVolumeEffects);
-
-#if DEV
-            if (Application.isEditor) {
-                UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
-                        
-            }
-#endif
+        if (!Application.isEditor) {
+            UpdateAudio(currentVolumeEffects, currentVolumeMusic);
         }
         
+#if DEV
+        if (Application.isEditor) {
+            UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
+
+        }
+#endif
+
         LogUtil.Log("GameGlobal InitAudio init...");
     }
 
-    public void InitCommunity() {       
+    public void InitCommunity() {
         platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
         platformController = gameObject.AddComponent<GameCommunityController>();
         platformAppViewerUIController = gameObject.AddComponent<GameCommunityUIController>();
         platformSocialController = gameObject.AddComponent<GameCommunitySocialController>();
         platformTrackingController = gameObject.AddComponent<GameCommunityTrackingController>();
-        
-        Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);      
+
+        Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);
     }
 
     public virtual void InitSocial() {
         socialNetworks = gameObject.AddComponent<SocialNetworks>();
         socialNetworks.loadSocialLibs();
-        
+
         LogUtil.Log("GameGlobal InitSocial init...");
     }
     /*
@@ -383,28 +385,28 @@ public class BaseGameGlobal : GameObjectBehavior {
 #endif
     }
     */
-    
+
     //void OnEnable() {
     //Messenger<string>.AddListener(AlertDialogMessages.DIALOG_QUIT, OnQuitDialog);
     //}
-    
+
     //void OnDisable() {
     //Messenger<string>.RemoveListener(AlertDialogMessages.DIALOG_QUIT, OnQuitDialog);
     //}
-    
+
     public virtual void OnQuitDialog(string result) {
         if (result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
-            QuitGame(); 
+            QuitGame();
         }
-        else { 
+        else {
             if (AlertDialog.Instance.IsReady()) {
                 AlertDialog.Instance.HideAlert();
-            }           
+            }
         }
     }
 
     public virtual void QuitGame() {
-        Application.Quit(); 
+        Application.Quit();
     }
 
     int screenshotCount = 1;
@@ -435,7 +437,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     //UnityEditor.EditorApplication.isPaused = 
                     //    !UnityEditor.EditorApplication.isPaused ? true : false;
 
-                    UnityEditor.EditorApplication.isPaused = 
+                    UnityEditor.EditorApplication.isPaused =
                         !UnityEditor.EditorApplication.isPaused;
 #endif
 
@@ -455,7 +457,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     // volume up for effects
                     currentVolumeEffects -= currentVolumeInc;
                     UpdateAudio(currentVolumeMusic, currentVolumeEffects);
-                    
+
                 }
                 else if (Input.GetKeyDown(KeyCode.M)
                          && (Input.GetKeyDown(KeyCode.Plus)
@@ -464,15 +466,15 @@ public class BaseGameGlobal : GameObjectBehavior {
                     // volume up for music
                     currentVolumeMusic += currentVolumeInc;
                     UpdateAudio(currentVolumeMusic, currentVolumeEffects);
-                    
+
                 }
                 else if (Input.GetKeyDown(KeyCode.M)
                          && (Input.GetKeyDown(KeyCode.Minus)
                          || Input.GetKeyDown(KeyCode.KeypadMinus))) {
 
                     // volume up for music
-                    currentVolumeMusic -= currentVolumeInc;   
-                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);                 
+                    currentVolumeMusic -= currentVolumeInc;
+                    UpdateAudio(currentVolumeMusic, currentVolumeEffects);
                 }
             }
 
@@ -487,7 +489,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                 string filename = "../screenshots/" + sceneName +
                                   "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                                   + "-" + (screenshotCount++).ToString() + ".png";
-                
+
                 if (GameController.IsGameRunning) {
                     filename = "../screenshots/" + sceneName + "-gameplay-" +
                     "-" + Screen.width.ToString() + "x" + Screen.height.ToString()

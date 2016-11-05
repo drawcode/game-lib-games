@@ -14,33 +14,45 @@ public class GameAudioDataItem : GameDataObject {
     public GameAudioDataItem() {
         items = new List<GameDataSound>();
     }
-
 }
 
 public class BaseAudioController : GameObjectBehavior {
- 
-    public static BaseAudioController BaseInstance;
-    public Dictionary<string,GameAudioDataItem> items;
 
-    public static bool isBaseInst {
+    private static GameAudioController _instance = null;
+
+    public static GameAudioController Instance {
         get {
-            if (BaseInstance != null) {
+            if (!_instance) {
+
+                // check if an object is already available in the scene graph
+                _instance = FindObjectOfType(typeof(GameAudioController)) as GameAudioController;
+
+                // nope, create a new one
+                if (!_instance) {
+                    var obj = new GameObject("_GameAudioController");
+                    DontDestroyOnLoad(obj);
+                    _instance = obj.AddComponent<GameAudioController>();
+
+                }
+            }
+
+            return _instance;
+        }
+    }
+
+    public static bool isInst {
+        get {
+            if (Instance != null) {
                 return true;
             }
             return false;
         }
-    }
- 
+    }    
+
+    public Dictionary<string, GameAudioDataItem> items;
+
     void Awake() {
 
-        if (BaseInstance != null && this != BaseInstance) {
-            //There is already a copy of this script running
-            Destroy(this);
-            return;
-        }
-    
-        BaseInstance = this;
-    
         // Init();
     }
 
@@ -49,7 +61,12 @@ public class BaseAudioController : GameObjectBehavior {
     }
 
     public virtual void Init() {
+
         items = new Dictionary<string, GameAudioDataItem>();
+
+        //GameGlobal.Instance.UpdateAudio(
+        //    GameProfiles.Current.GetAudioMusicVolume(),
+        //    GameProfiles.Current.GetAudioEffectsVolume());
     }
 
     // MUSIC
