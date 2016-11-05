@@ -1,4 +1,4 @@
-//#define DEV
+#define DEV
 using System;
 using System.IO;
 using System.Collections;
@@ -284,6 +284,8 @@ public class BaseGameGlobal : GameObjectBehavior {
         GameAudio.SetAmbienceVolume(volumeMusic);
 
         AudioListener.volume = (float)volumeEffects;
+
+        GameState.SaveProfile();
     }
 
     public virtual void InitAudio() {    
