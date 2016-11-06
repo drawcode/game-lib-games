@@ -101,7 +101,7 @@ public class BaseGameUIPanelVRSettings : GameUIPanelBase {
         base.Init();
 
         //LoadData();
-        AnimateIn();
+        //AnimateIn();
 
         if (containerAppRate != null) {
             if (Context.Current.isWeb) {

@@ -98,7 +98,9 @@ public class LoadSceneAsync : GameObjectBehavior {
         currentLoadedBytes = 0f;
                         
         ChangeState(LoadSceneState.LevelLoadProgress);
-        
+
+        yield return new WaitForSeconds(2f);
+
         asyncLevelLoad = SceneManager.LoadSceneAsync(levelLoadingName);
 
         UIUtil.SetSliderValue(progressBarUI, 1f);

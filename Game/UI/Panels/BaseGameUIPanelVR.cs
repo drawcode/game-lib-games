@@ -104,7 +104,7 @@ public class BaseGameUIPanelVR : GameUIPanelBase {
         base.Init();    
         
         //LoadData();
-        AnimateIn();
+        //AnimateIn();
     }
     
     public void LoadData() {

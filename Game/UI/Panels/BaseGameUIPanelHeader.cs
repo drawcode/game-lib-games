@@ -94,7 +94,8 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
         InitCharacters();
         
-        base.AnimateIn();   
+        //base.AnimateIn();
+        AnimateIn();
     }
 
     public virtual void InitCharacters() {

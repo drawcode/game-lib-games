@@ -67,7 +67,7 @@ public class BaseGameUIPanelStore : GameUIPanelBase {
 		base.Init();	
 		loadData();
 		
-		base.AnimateIn();	
+		AnimateIn();	
 	}
 
     public override void OnEnable() {

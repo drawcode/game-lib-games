@@ -96,7 +96,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
 	
 	public override void Init() {
 		base.Init();
-        AnimateIn();
+        //AnimateIn();
         //AnimateInCenter(0,0);
 	}
 	

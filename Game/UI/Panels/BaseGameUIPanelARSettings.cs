@@ -101,7 +101,7 @@ public class BaseGameUIPanelARSettings : GameUIPanelBase {
         base.Init();
 
         //LoadData();
-        AnimateIn();
+        //AnimateIn();
 
         if (containerAppRate != null) {
             if (Context.Current.isWeb) {
