@@ -150,12 +150,15 @@ public class BaseUIButtonNames {
     public static string buttonGameBroadcastShow = "ButtonGameBroadcastShow";
 
     //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
-    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
-    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
-    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
-    //public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
+    
+    public static string buttonAR = "ButtonAR";
+    public static string buttonARSettings = "ButtonARSettings";
+    //
+    public static string buttonVR = "ButtonVR";
+    public static string buttonVRSettings = "ButtonVRSettings";
 
-
+    // 
+    public static string buttonActionUrl = "ButtonActionUrl";
 }
 
 public class BaseHUDButtonNames {
@@ -181,6 +184,7 @@ public class BaseHUDButtonNames {
 }
 
 public class BaseUIPanel {
+    //
     public static string panelBlank = "PanelBlank";
     public static string panelInGame = "PanelInGame";
     public static string panelHeader = "PanelHeader";
@@ -192,12 +196,14 @@ public class BaseUIPanel {
     public static string panelLevel = "PanelLevel";
     public static string panelGame = "PanelGame";
     public static string panelHUD = "PanelHUD";
+    //
     public static string panelSettings = "PanelSettings";
     public static string panelSettingsAudio = "PanelSettingsAudio";
     public static string panelSettingsControls = "PanelSettingsControls";
     public static string panelSettingsProfile = "PanelSettingsProfile";
     public static string panelSettingsHelp = "PanelSettingsHelp";
     public static string panelSettingsCredits = "PanelSettingsCredits";
+    //
     public static string panelGameMode = "PanelGameMode";
     public static string panelGameModeCoop = "PanelGameModeCoop";
     public static string panelGameModeMultiplayer = "PanelGameModeMultiplayer";
@@ -207,14 +213,17 @@ public class BaseUIPanel {
     public static string panelGameModeArcade = "PanelGameModeArcade";
     public static string panelGameModeCareer = "PanelGameModeCareer";
     public static string panelGameModeChallenge = "PanelGameModeChallenge";
-    public static string panelGameModeTraining = "PanelGameModeTraining";
+    //
     public static string panelGameModeCustomize = "PanelGameModeCustomize";
+    //
+    public static string panelGameModeTraining = "PanelGameModeTraining";
     public static string panelGameModeTrainingMode = "PanelGameModeTrainingMode";
     public static string panelGameModeTrainingModeChoice = "PanelGameModeTrainingModeChoice";
     public static string panelGameModeTrainingModeCollection = "PanelGameModeTrainingModeChoice";
     public static string panelGameModeTrainingModeContent = "PanelGameModeTrainingModeContent";
     public static string panelGameModeTrainingModeRPGHealth = "PanelGameModeTrainingModeRPGHealth";
     public static string panelGameModeTrainingModeRPGEnergy = "PanelGameModeTrainingModeRPGEnergy";
+    //
     public static string panelStore = "PanelStore";
     public static string panelCredits = "PanelCredits";
     public static string panelSocial = "PanelSocial";
@@ -226,8 +235,10 @@ public class BaseUIPanel {
     public static string panelStatistics = "PanelStatistics";
     public static string panelAchievements = "PanelAchievements";
     public static string panelProducts = "PanelProducts";
+    //
     public static string panelProductCurrency = "PanelProductCurrency";
     public static string panelProductCurrencyEarn = "PanelProductCurrencyEarn";
+    //
     public static string panelCustomize = "PanelCustomize";
     public static string panelCustomizeLevels = "PanelCustomizeLevels";
     public static string panelCustomizeWorlds = "PanelCustomizeWorlds";
@@ -237,13 +248,24 @@ public class BaseUIPanel {
     public static string panelCustomizeAudio = "PanelCustomizeAudio";
     public static string panelCustomSafety = "PanelCustomSafety";
     public static string panelCustomSmarts = "panelCustomSmarts";
+    //
     public static string panelCommunityCamera = "PanelCommunityCamera";
     public static string panelCommunityComment = "PanelCommunityComment";
-
+    //
+    //
+    public static string panelAR = "PanelAR";
+    public static string panelARSettings = "PanelARSettings";
+    public static string panelVR = "PanelVR";
+    public static string panelVRSettings = "PanelVRSettings";
+    //
+    //public static string panelVR = "PanelVR";
+    //public static string panelVRSettings = "PanelVRSettings";
+    //public static string panelGameModeVR = "PanelGameModeVR";
+    //public static string panelGameModeVRSettings = "PanelGameModeVRSettings";
 }
 
-public class BaseUIController : GameObjectBehavior { 
- 
+public class BaseUIController : GameObjectBehavior {
+
     public static BaseUIController BaseInstance;
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
@@ -298,85 +320,85 @@ public class BaseUIController : GameObjectBehavior {
     float lastPressUse = 0;
     float lastPressMount = 0;
     //float lastPressJump = 0;
-                 
+
     public virtual void Awake() {
-     
+
     }
 
     public virtual void OnEnable() {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         Messenger<GameObject>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
 
         //Messenger<string, string, bool>.AddListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
         //Messenger<string, string>.AddListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);
-     
+
         //Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
-     
+
         //Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
-             
+
         //Messenger<GameObject>.AddListener(
         // GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
-          
-        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnTap, 
+
+        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnTap,
          FingerGestures_OnTap);
-     
-        Messenger<DragGesture>.AddListener(FingerGesturesMessages.OnDrag, 
+
+        Messenger<DragGesture>.AddListener(FingerGesturesMessages.OnDrag,
          FingerGestures_OnDragMove);
-     
-        Messenger<SwipeGesture>.AddListener(FingerGesturesMessages.OnSwipe, 
+
+        Messenger<SwipeGesture>.AddListener(FingerGesturesMessages.OnSwipe,
          FingerGestures_OnSwipe);
-     
-        Messenger<PinchGesture>.AddListener(FingerGesturesMessages.OnPinch, 
+
+        Messenger<PinchGesture>.AddListener(FingerGesturesMessages.OnPinch,
          FingerGestures_OnPinchMove);
-     
-        Messenger<TwistGesture>.AddListener(FingerGesturesMessages.OnTwist, 
+
+        Messenger<TwistGesture>.AddListener(FingerGesturesMessages.OnTwist,
          FingerGestures_OnRotationMove);
-     
-        Messenger<LongPressGesture>.AddListener(FingerGesturesMessages.OnLongPress, 
+
+        Messenger<LongPressGesture>.AddListener(FingerGesturesMessages.OnLongPress,
          FingerGestures_OnLongPress);
-     
-        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnDoubleTap, 
+
+        Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnDoubleTap,
          FingerGestures_OnDoubleTap);
     }
-    
+
     public virtual void OnDisable() {
-    
+
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
 
         //Messenger<string, string, bool>.RemoveListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
         //Messenger<string, string>.RemoveListener(ListEvents.EVENT_ITEM_SELECT_CLICK, OnListItemSelectEventHandler);     
         //Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);     
         //Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnCheckboxChangeEventHandler);
-     
+
         //Messenger<GameObject>.RemoveListener(
         // GameDraggableEditorMessages.editorGrabbedObjectChanged, OnEditorGrabbedObjectChanged);
-             
-        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
+
+        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap,
          FingerGestures_OnTap);
-     
-        Messenger<DragGesture>.RemoveListener(FingerGesturesMessages.OnDrag, 
+
+        Messenger<DragGesture>.RemoveListener(FingerGesturesMessages.OnDrag,
          FingerGestures_OnDragMove);
-     
-        Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe, 
+
+        Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe,
          FingerGestures_OnSwipe);
-     
-        Messenger<PinchGesture>.RemoveListener(FingerGesturesMessages.OnPinch, 
+
+        Messenger<PinchGesture>.RemoveListener(FingerGesturesMessages.OnPinch,
          FingerGestures_OnPinchMove);
-     
-        Messenger<TwistGesture>.RemoveListener(FingerGesturesMessages.OnTwist, 
+
+        Messenger<TwistGesture>.RemoveListener(FingerGesturesMessages.OnTwist,
          FingerGestures_OnRotationMove);
-     
-        Messenger<LongPressGesture>.RemoveListener(FingerGesturesMessages.OnLongPress, 
+
+        Messenger<LongPressGesture>.RemoveListener(FingerGesturesMessages.OnLongPress,
          FingerGestures_OnLongPress);
-     
-        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap, 
+
+        Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap,
          FingerGestures_OnDoubleTap);
     }
-        
+
     public virtual void Start() {
         LoadData();
         //ShowContainerByName(BaseUIButtonNames.buttonContent);
@@ -415,11 +437,11 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public static bool IsUIPanelLike(string panelCodeCheck) {
-        
+
         if (GameUIController.isInst) {
             return GameUIController.Instance.isUIPanelLike(panelCodeCheck);
         }
-        
+
         return false;
     }
 
@@ -427,7 +449,7 @@ public class BaseUIController : GameObjectBehavior {
         if (currentPanel.Contains(panelCodeCheck)) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -495,55 +517,55 @@ public class BaseUIController : GameObjectBehavior {
     public void hideUIPanel(string objName) {
         broadcastUIMessageAnimateOut(objName); // animate out
     }
- 
+
     public virtual void HideAllPanels() {
         foreach (GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
             baseItem.AnimateOut();
         }
-     
+
         foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOut();
         }
     }
- 
+
     public virtual void HideAllPanelsNow() {
         foreach (GameUIPanelBase baseItem in FindObjectsOfType(typeof(GameUIPanelBase))) {
             baseItem.AnimateOutNow();
         }
-     
+
         foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOutNow();
         }
     }
- 
+
     public virtual void LoadData() {
-     
+
     }
-    
+
     public virtual void OnListItemClickEventHandler(
         string listName, string listIndex, bool selected) {
-        LogUtil.Log("OnListItemClickEventHandler: listName:" + 
+        LogUtil.Log("OnListItemClickEventHandler: listName:" +
             listName + " listIndex:" + listIndex.ToString() + " selected:" + selected.ToString());
     }
-    
+
     public virtual void OnListItemSelectEventHandler(
         string listName, string selectName) {
-        LogUtil.Log("OnListItemSelectEventHandler: listName:" + 
+        LogUtil.Log("OnListItemSelectEventHandler: listName:" +
             listName + " selectName:" + selectName);
     }
-    
+
     public virtual void OnSliderChangeEventHandler(
         string sliderName, float sliderValue) {
-        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + 
+        LogUtil.Log("OnSliderChangeEventHandler: sliderName:" +
             sliderName + " sliderValue:" + sliderValue);
     }
-    
+
     public virtual void OnCheckboxChangeEventHandler(
         string checkboxName, bool selected) {
-        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + 
+        LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" +
             checkboxName + " selected:" + selected);
     }
-    
+
     public virtual void OnApplicationQuit() {
         GameState.SaveProfile();
     }
@@ -552,27 +574,27 @@ public class BaseUIController : GameObjectBehavior {
 
 
     public virtual void showUITip(string title, string description) {
-        UINotificationDisplayTip.Instance.QueueTip(title, description);            
+        UINotificationDisplayTip.Instance.QueueTip(title, description);
     }
-    
+
     public virtual void ShowMainMenuDelayed() {
         if (!hasBeenClicked) {
             showMain();
         }
     }
-    
+
     public virtual void Update() {
 
         if (Application.isEditor) {
 
             if (Input.GetKey(KeyCode.LeftControl)) {
-                
+
                 if (Input.GetKey(KeyCode.Space)) {
 
                     if (Input.GetKeyDown(KeyCode.Period)) {
                         GameController.GamePlayerUse();
                     }
-                    
+
                     if (Input.GetKeyDown(KeyCode.C)) {
                         //UIPanelCommunityCamera.CaptureCameraPhotoState();
                     }
@@ -587,7 +609,7 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void FingerGestures_OnDragMove(DragGesture gesture) { //Vector2 fingerPos, Vector2 delta) {
         Vector2 fingerPos = gesture.Position;
         Vector2 delta = gesture.TotalMove;
-     
+
         if (!IsInputAllowed()) {
             return;
         }
@@ -605,35 +627,35 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public virtual void HandleRotators(Camera cam, Vector2 fingerPos, Vector2 delta) {
-        
+
         GameObject goRotator = GameObjectHelper.HitObject(
-            cam, 
+            cam,
             Vector3.zero
             .WithX(fingerPos.x)
-            .WithY(fingerPos.y), 
+            .WithY(fingerPos.y),
             "rotator");
-        
+
         //Debug.Log("goRotator:" + goRotator);
-        
-        if (goRotator != null) {            
+
+        if (goRotator != null) {
             //Debug.Log("goRotator:FOUND:" + goRotator);
-            
-            DragObject(goRotator, fingerPos, delta);        
+
+            DragObject(goRotator, fingerPos, delta);
         }
-        else {            
+        else {
             //Debug.Log("goRotator:NOTFOUND:" + goRotator);
         }
-        
-        Messenger<Vector2,Vector2>.Broadcast(InputSystem.EVENT_INPUT_DRAG_MOVE, fingerPos, delta);
+
+        Messenger<Vector2, Vector2>.Broadcast(InputSystem.EVENT_INPUT_DRAG_MOVE, fingerPos, delta);
     }
 
     public virtual void DragObject(GameObject go, Vector2 fingerPos, Vector2 delta) {
         if (go != null) {
-         
+
             deferTap = true;
 
             Rigidbody rb = go.GetComponent<Rigidbody>();
-         
+
             if (rb == null) {
                 go.AddComponent<Rigidbody>();
                 rb = go.GetComponent<Rigidbody>();
@@ -644,12 +666,12 @@ public class BaseUIController : GameObjectBehavior {
                 rb.useGravity = false;
                 rb.angularDrag = 3f;
             }
-         
-            go.transform.localRotation = 
+
+            go.transform.localRotation =
                 Quaternion.Euler(go.transform.localRotation.eulerAngles.WithY(-delta.x));
 
             if (Math.Abs(delta.x) > .05f) {
-                rb.angularVelocity = (new Vector3(0, -delta.x / 50, 0));                
+                rb.angularVelocity = (new Vector3(0, -delta.x / 50, 0));
             }
             else {
                 rb.angularVelocity = Vector3.zero;
@@ -663,7 +685,7 @@ public class BaseUIController : GameObjectBehavior {
         //Vector2 fingerPos1 = gesture.Fingers[0].Position;
         //Vector2 fingerPos2 = gesture.
         //float delta = gesture.Delta;
-        
+
         if (!IsInputAllowed()) {
             return;
         }
@@ -684,9 +706,9 @@ public class BaseUIController : GameObjectBehavior {
         if (!IsInputAllowed()) {
             return;
         }
-       
+
         if (currentDraggableGameObject != null) {
-            LongPressObject(currentDraggableGameObject, pos);                
+            LongPressObject(currentDraggableGameObject, pos);
         }
     }
 
@@ -710,9 +732,9 @@ public class BaseUIController : GameObjectBehavior {
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         //bool allowTap = true;
-        
+
         if (currentDraggableGameObject != null) {
             //TapObject(currentDraggableGameObject, fingerPos, allowTap);
         }
@@ -765,12 +787,12 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
     }
- 
+
     public virtual void DoubleTapObject(GameObject go, Vector2 pos) {
         if (go != null) {
-            
+
             Rigidbody rb = go.GetComponent<Rigidbody>();
-            
+
             if (rb != null) {
                 rb.angularVelocity = Vector3.zero;
                 deferTap = true;
@@ -783,15 +805,15 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void FingerGestures_OnDoubleTap(TapGesture gesture) {
         if (!IsInputAllowed()) {
             return;
-        }                
-     
+        }
+
         if (gesture.Taps == 2) {
-     
+
             if (currentDraggableGameObject != null) {
                 DoubleTapObject(currentDraggableGameObject, gesture.Position);
             }
         }
-     
+
         //var fwd = transform.TransformDirection(Vector3.forward);
         ////Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
         ////RaycastHit hit;
@@ -802,7 +824,7 @@ public class BaseUIController : GameObjectBehavior {
         //AppViewerAppController.Instance.ChangeActionNext();
     }
 
-    public virtual void FingerGestures_OnTwoFingerSwipe(Vector2 startPos, 
+    public virtual void FingerGestures_OnTwoFingerSwipe(Vector2 startPos,
      FingerGestures.SwipeDirection direction, float velocity) {
         if (!IsInputAllowed()) {
             return;
@@ -830,7 +852,7 @@ public class BaseUIController : GameObjectBehavior {
         //Vector2 startPos = gesture.StartPosition;
         FingerGestures.SwipeDirection direction = gesture.Direction;
         //float velocity = gesture.Velocity;
-     
+
         if (!IsInputAllowed()) {
             return;
         }
@@ -1138,7 +1160,7 @@ public class BaseUIController : GameObjectBehavior {
         //hasTouchesUp = checkIfTouchesUp();
         hasTouchesDownAllowed = checkIfTouchesDownAllowed();
         hasTouchesUpAllowed = checkIfTouchesUpAllowed();
-////
+        ////
 
         if (hasTouches) {
             //LogUtil.Log("hasTouches: " + hasTouches);
@@ -1158,7 +1180,7 @@ public class BaseUIController : GameObjectBehavior {
         if (!shouldTouch) {
             //return;
         }
-                
+
         if (((Input.GetMouseButtonDown(0) && !hasTouchesDownAllowed) || hasTouchesDownAllowed)
             && !inputAxisDown
             && !inputButtonDown) {
@@ -1170,7 +1192,7 @@ public class BaseUIController : GameObjectBehavior {
             && !inputButtonDown) {
             inputGestureUp = true;
         }
-                
+
         if (inputGestureDown
                         //&& (Input.mousePosition.x > Screen.width / 4 
                         //|| Input.mousePosition.y > Screen.height / 4)
@@ -1187,7 +1209,7 @@ public class BaseUIController : GameObjectBehavior {
                 //LogUtil.Log("GetMouseButtonDown:positionLastLaunch:" + positionLastLaunch);
             }
 
-                
+
             if (GameController.CurrentGamePlayerController != null) {
                 if (GameController.CurrentGamePlayerController.IsPlayerControlled) {
                     //Vector3 dir = positionStart - Input.mousePosition;
@@ -1214,9 +1236,9 @@ public class BaseUIController : GameObjectBehavior {
                 //LogUtil.Log("GetMouseButtonUp:positionEnd:" + positionEnd);
                 //LogUtil.Log("GetMouseButtonUp:positionStart:" + positionStart);
                 //LogUtil.Log("GetMouseButtonUp:positionLastLaunch:" + positionLastLaunch);
-                                
+
                 positionLastLaunchedNormalized = positionLastLaunch.normalized;
-                                
+
                 //LogUtil.Log("GetMouseButtonUp:posNormalized:" + posNormalized);
 
                 bool doAction = true;
@@ -1238,7 +1260,7 @@ public class BaseUIController : GameObjectBehavior {
                         //gamePlayerController.gamePlayerModelHolderModel.
                         //gamePlayerController.UpdateAim(-positionLastLaunchNormalized.x, -positionLastLaunchNormalized.y);
                         //Attack();
-                                                
+
                         //PhysicsUtil.PlotTrajectory(transform.position, positionLastLaunchNormalized, .1f, 4f);
 
 
@@ -1260,14 +1282,14 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
         else {
-                                
+
         }
-                
-        if (showPoints) {                
+
+        if (showPoints) {
             if (positionStart != Vector3.zero) {
                 //showStartPoint(positionStart);
             }
-                                        
+
             if (positionEnd != Vector3.zero) {
                 //showEndPoint(positionEnd);
             }
@@ -1276,46 +1298,46 @@ public class BaseUIController : GameObjectBehavior {
             //hidePoints();
         }
     }
-        
+
     public virtual void hidePoints() {
         hideStartPoint();
         hideEndPoint();
     }
-        
+
     public virtual void hideStartPoint() {
         if (pointStartObject != null) {
             pointStartObject.transform.position = Vector3.zero.WithY(3000);
         }
     }
-        
+
     public virtual void hideEndPoint() {
         if (pointEndObject != null) {
             pointEndObject.transform.position = Vector3.zero.WithY(3000);
         }
     }
-        
+
     public virtual void showStartPoint(Vector3 pos) {
         //
-                
+
         if (pointStartObject == null) {
-                
+
             if (!isCreatingStart) {
                 isCreatingStart = true;
                 if (prefabPointStart == null) {
                     prefabPointStart = Resources.Load(
                                                 ContentPaths.appCacheVersionSharedPrefabWeapons + "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
-                pointStartObject = Instantiate(prefabPointStart) as GameObject;         
+                pointStartObject = Instantiate(prefabPointStart) as GameObject;
             }
         }
-                
+
         if (pointStartObject != null) {
             pointStartObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
         }
     }
-        
+
     public virtual void showEndPoint(Vector3 pos) {
-                
+
         if (pointEndObject == null) {
             if (!isCreatingEnd) {
                 isCreatingEnd = true;
@@ -1324,10 +1346,10 @@ public class BaseUIController : GameObjectBehavior {
                         ContentPaths.appCacheVersionSharedPrefabWeapons +
                         "GamePlayerWeaponCharacterLaunchPoint") as UnityEngine.Object;
                 }
-                pointEndObject = Instantiate(prefabPointEnd) as GameObject;     
+                pointEndObject = Instantiate(prefabPointEnd) as GameObject;
             }
         }
-                
+
         if (pointEndObject != null) {
             pointEndObject.transform.position = Camera.main.ScreenToWorldPoint(pos);
         }
@@ -1368,21 +1390,21 @@ public class BaseUIController : GameObjectBehavior {
                     shouldTouch = false;
                     allowedTouch = false;
                 }
-    
+
                 if (hit.transform.gameObject.Has<GameTouchInputAxis>()) {
                     // not over axis controller
                     inputAxisDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
-    
+
                 if (hit.transform.gameObject.Has<UIButton>()) {
                     // not over button
                     inputButtonDown = true;
                     shouldTouch = false;
                     allowedTouch = false;
                 }
-    
+
                 if (hit.transform.gameObject.Has<UIImageButton>()) {
                     // not over button
                     inputButtonDown = true;
@@ -1448,7 +1470,7 @@ public class BaseUIController : GameObjectBehavior {
         }
         return false;
     }
-        
+
     public virtual bool checkIfTouchesUp() {
         foreach (Touch t in Input.touches) {
             if (t.phase == TouchPhase.Ended) {
@@ -1509,11 +1531,11 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void HandleFingerGesturesOnLongPress(Vector2 fingerPos) {
         //LogUtil.Log("HandleFingerGesturesOnLongPress: " 
         //   + " fingerPos:" + fingerPos);   
-     
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // Create asset at touch point (long press) if in game and editing       
         LongPress(fingerPos);
     }
@@ -1521,41 +1543,41 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void HandleFingerGesturesOnTap(Vector2 fingerPos) {
         //LogUtil.Log("HandleFingerGesturesOnTap: " 
         //   + " fingerPos:" + fingerPos);
-             
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // ...   
         Tap(fingerPos);
-     
+
     }
 
     public virtual void HandleFingerGesturesOnDoubleTap(Vector2 fingerPos) {
         //LogUtil.Log("HandleFingerGesturesOnDoubleTap: " 
         //   + " fingerPos:" + fingerPos);
-             
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // ...   
         DoubleTap(fingerPos);
-     
+
     }
- 
+
     public virtual void HandleFingerGesturesOnDragMove(Vector2 fingerPos, Vector2 delta) {
         //LogUtil.Log("HandleFingerGesturesOnDragMove: " 
         //   + " fingerPos:" + fingerPos 
         //   + " delta:" + delta);
-             
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // scale current selected object 
         DragMove(fingerPos, delta);
-     
+
     }
 
     public virtual void HandleFingerGesturesOnPinchMove(Vector2 fingerPos1, Vector2 fingerPos2, float delta) {
@@ -1563,14 +1585,14 @@ public class BaseUIController : GameObjectBehavior {
         //   + " fingerPos1:" + fingerPos1 
         //   + " fingerPos2:" + fingerPos2
         //   + " delta:" + delta);
-             
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // scale current selected object 
         PinchMove(fingerPos1, fingerPos2, delta);
-     
+
     }
 
     public virtual void HandleFingerGesturesOnRotationMove(Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {
@@ -1578,100 +1600,100 @@ public class BaseUIController : GameObjectBehavior {
         //   + " fingerPos1:" + fingerPos1 
         //   + " fingerPos2:" + fingerPos2
         //   + " rotationAngleDelta:" + rotationAngleDelta); 
-     
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // rotate current object if editing
         RotationMove(fingerPos1, fingerPos2, rotationAngleDelta);
-     
+
     }
- 
+
     public virtual void HandleFingerGesturesOnSwipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity) {
         //LogUtil.Log("HandleFingerGesturesOnSwipe: " 
         //   + " startPos:" + startPos 
         ///  + " direction:" + direction
         //   + " velocity:" + velocity); 
-     
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // ...
         Swipe(startPos, direction, velocity);
     }
- 
-    public virtual void HandleFingerGesturesOnTwoFingerSwipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity) {        
+
+    public virtual void HandleFingerGesturesOnTwoFingerSwipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity) {
         //LogUtil.Log("HandleFingerGesturesOnTwoFingerSwipe: " 
         //   + " startPos:" + startPos 
         //   + " direction:" + direction
         //   + " velocity:" + velocity); 
-     
+
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         // ...
         TwoFingerSwipe(startPos, direction, velocity);
     }
-     
-    public virtual void LongPress(Vector2 fingerPos) {       
+
+    public virtual void LongPress(Vector2 fingerPos) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
-             
-            ResetCurrentObject(fingerPos);   
+
+            ResetCurrentObject(fingerPos);
         }
     }
- 
-    public virtual void RotationMove(Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {     
+
+    public virtual void RotationMove(Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             RotateCurrentObject(rotationAngleDelta);
         }
     }
- 
-    public virtual void DragMove(Vector2 fingerPos, Vector2 delta) {     
-        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {         
+
+    public virtual void DragMove(Vector2 fingerPos, Vector2 delta) {
+        if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             //SpinCurrentObject(fingerPos, delta);
-         
+
             bool doScale = false;
             bool doRotation = false;
-         
+
             if (Input.GetKey(KeyCode.S)) {
                 doScale = true;
             }
-         
+
             if (Input.GetKey(KeyCode.R)) {
                 doRotation = true;
-            }            
-         
+            }
+
             if (doRotation) {
                 RotateCurrentObject(delta.x);
             }
-         
-            if (doScale) {                
+
+            if (doScale) {
                 ScaleCurrentObject(delta.y);
             }
-         
+
         }
     }
- 
-    public virtual void PinchMove(Vector2 fingerPos1, Vector2 fingerPos2, float delta) {     
+
+    public virtual void PinchMove(Vector2 fingerPos1, Vector2 fingerPos2, float delta) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             ScaleCurrentObject(delta);
         }
     }
- 
-    public virtual void Tap(Vector2 fingerPos) {     
+
+    public virtual void Tap(Vector2 fingerPos) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
-         
+
         }
     }
- 
-    public virtual void DoubleTap(Vector2 fingerPos) {       
+
+    public virtual void DoubleTap(Vector2 fingerPos) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
-         
+
             GameDraggableEditor.EditModeCreateAsset(fingerPos);
-         
+
             //var fwd = transform.TransformDirection(Vector3.forward);
             Ray ray = Camera.main.ScreenPointToRay(Vector3.zero);
             RaycastHit hit;
@@ -1679,23 +1701,23 @@ public class BaseUIController : GameObjectBehavior {
                 print("double tap hit an object:" + hit.transform.name);
             }
         }
-     
+
         //AppController.Instance.ChangeActionNext();
-     
+
         if (Application.isEditor) {
             GameController.CycleCharacterTypesNext();
         }
 
     }
-                
+
     public virtual void TwoFingerSwipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocity) {
 
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
-     
+
             if (direction == FingerGestures.SwipeDirection.All) {
                 // if swiped any direction
             }
-         
+
             if (direction == FingerGestures.SwipeDirection.Right
                 || direction == FingerGestures.SwipeDirection.Down) {
                 //AppController.Instance.ChangeActionPrevious();
@@ -1705,7 +1727,7 @@ public class BaseUIController : GameObjectBehavior {
                 //AppController.Instance.ChangeActionNext();
             }
         }
-     
+
         if (direction == FingerGestures.SwipeDirection.Right
             || direction == FingerGestures.SwipeDirection.Down) {
             GameController.CycleCharacterTypesPrevious();
@@ -1715,22 +1737,22 @@ public class BaseUIController : GameObjectBehavior {
             GameController.CycleCharacterTypesNext();
         }
     }
- 
-    public virtual void Swipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocitys) {      
+
+    public virtual void Swipe(Vector2 startPos, FingerGestures.SwipeDirection direction, float velocitys) {
         if (GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
-         
+
         }
-     
+
         //bool allowSwipe = true;
-         
+
         if (direction == FingerGestures.SwipeDirection.Right
             || direction == FingerGestures.SwipeDirection.Down) {
             //if(!UIController.Instance.uiVisible && allowSwipe) {
             // AppController.Instance.ChangeActionPrevious();
             GamePlayerProgress.Instance.ProcessProgressSwipes();
             //}
-         
-         
+
+
         }
         else if (direction == FingerGestures.SwipeDirection.Left
             || direction == FingerGestures.SwipeDirection.Up) {
@@ -1740,62 +1762,62 @@ public class BaseUIController : GameObjectBehavior {
             //}
         }
     }
- 
+
     public virtual bool IsInputAllowed() {
         return !dialogActive;
     }
- 
+
     public virtual void ScaleCurrentObject(float delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
-     
+
         if (go != null) {
             GameObjectHelper.ScaleObject(go, delta);
         }
     }
- 
+
     public virtual void RotateCurrentObject(float delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
-     
+
         if (go != null) {
             GameObjectHelper.RotateObjectZ(go, delta);
         }
     }
-        
+
     public virtual void SpinCurrentObject(Vector2 fingerPos, Vector2 delta) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
-         
+
         if (go != null) {
-            GameObjectHelper.SpinObject(go, fingerPos, delta);           
-            GameObjectHelper.deferTap = true;            
+            GameObjectHelper.SpinObject(go, fingerPos, delta);
+            GameObjectHelper.deferTap = true;
             GamePlayerProgress.Instance.ProcessProgressSpins();
         }
     }
-        
-    public virtual void ResetCurrentObject(Vector2 pos) {        
+
+    public virtual void ResetCurrentObject(Vector2 pos) {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
-     
-        if (go != null) {         
+
+        if (go != null) {
             Rigidbody rb = go.GetComponent<Rigidbody>();
-            
-            if (rb != null) {         
+
+            if (rb != null) {
                 if (rb != null) {
                     rb.angularVelocity = Vector3.zero;
                 }
             }
             GameObjectHelper.deferTap = true;
-         
+
             GameObjectHelper.ResetObject(go);
-        }    
+        }
     }
-        
-    public virtual void FingerGestures_OnTap(Vector2 fingerPos) {    
+
+    public virtual void FingerGestures_OnTap(Vector2 fingerPos) {
         if (!IsInputAllowed()) {
             return;
         }
-     
+
         TapObject(GameDraggableEditor.GetCurrentSpriteObject(), fingerPos, true);
     }
- 
+
     /*
  public virtual void TapObject(GameObject go, Vector2 fingerPos, bool allowTap) {
  
@@ -1834,12 +1856,12 @@ public class BaseUIController : GameObjectBehavior {
          }
      }
  }*/
- 
-            
+
+
     public virtual void ToggleUI() {
-                    
+
         LogUtil.Log("ToggleUI uiVisible: " + uiVisible);
-                        
+
         if (uiVisible) {
             LogUtil.Log("call HideUI");
             hideUI(false);
@@ -1847,11 +1869,11 @@ public class BaseUIController : GameObjectBehavior {
         else {
             LogUtil.Log("call ShowUI");
             showUI();
-        }            
+        }
     }
- 
-    public virtual bool NavigateBack(string buttonName) {    
- 
+
+    public virtual bool NavigateBack(string buttonName) {
+
         bool handled = false;
 
         if (buttonName == BaseUIButtonNames.buttonBack) {
@@ -1868,19 +1890,19 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelSettingsHelp)
                     || isUIPanel(GameUIPanel.panelSettingsCredits)
                     || isUIPanel(GameUIPanel.panelSettingsProfile)) {
-                    
-                    GameUIController.ShowSettings(); 
-                    handled = true;       
-                    
+
+                    GameUIController.ShowSettings();
+                    handled = true;
+
                 }
                 else if (isUIPanel(GameUIPanel.panelAchievements)
                     || isUIPanel(GameUIPanel.panelCustomize)
                     || isUIPanel(GameUIPanel.panelProducts)
                     || isUIPanel(GameUIPanel.panelStatistics)) {
-                    
-                    GameUIController.ShowEquipment();       
+
+                    GameUIController.ShowEquipment();
                     handled = true;
-                    
+
                 }
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
@@ -1907,27 +1929,27 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelGameModeMultiplayerMatchup)
                     || isUIPanel(GameUIPanel.panelGameModeTraining)
                     || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
-                    
+
                     GameUIController.ShowGameMode();
                     handled = true;
-                    
+
                 }
                 else if (isUIPanel(GameUIPanel.panelGameModeTrainingModeContent)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
-                    
+
                     //GameUIController.ShowGameModeTrainingMode();
                     GameUIController.ShowGameMode();
                     handled = true;
-                    
+
                 }
                 else {
-                    GameUIController.ShowMain(); 
-                    handled = true;                   
+                    GameUIController.ShowMain();
+                    handled = true;
                 }
             }
-        }   
-                
+        }
+
         return handled;
 
         /*
@@ -1968,20 +1990,20 @@ public class BaseUIController : GameObjectBehavior {
          }
      }   
      */
-    }    
- 
+    }
+
     // CURRENT
-    
+
     public virtual void HandleInGameAudio() {
         HandleInGameAudio(true);
     }
- 
+
     public virtual void HandleInGameAudio(bool playAudio) {
-     
-        if (!gameLoopsStarted) {          
+
+        if (!gameLoopsStarted) {
             GameAudio.StartGameLoops();
         }
-     
+
         GameAudio.StopAmbience();
 
         if (playAudio) {
@@ -1993,9 +2015,9 @@ public class BaseUIController : GameObjectBehavior {
         }
         inUIAudioPlaying = false;
     }
- 
+
     public virtual void HandleInUIAudio() {
-     
+
         if (!inUIAudioPlaying) {
             GameAudio.StartGameLoop(-1);
             GameAudio.StartAmbience();
@@ -2004,60 +2026,60 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public virtual void ToggleGameUI() {
-                 
+
         gameUIExpanded = gameUIExpanded ? false : true;
-         
+
         LogUtil.Log("toggling:" + gameUIExpanded);
-     
+
         if (gameUIExpanded) {
             //Vector3 temp = panelCover.transform.position;
             //temp.x = 55f;
             //Tweens.Instance.MoveToObject(panelCover, temp, 0f, 0f);
-         
+
             HandleInGameAudio();
         }
-        else {           
+        else {
             //Vector3 temp = panelCover.transform.position;
             //temp.x = 0f;
             //Tweens.Instance.MoveToObject(panelCover, temp, 0f, 0f);
-         
+
             HandleInUIAudio();
         }
-     
+
     }
- 
+
     // ------------------------------------------------------------
     // BACKGROUNDS
-     
+
     //public static virtual void ShowBackgrounds() {
     //   if(isInst) {
     //       Instance.showBackgrounds();
     //   }
     //}
- 
+
     public virtual void showBackgrounds() {
-     
+
     }
- 
+
     // ------------------------------------------------------------
     // UI
- 
+
     //public static virtual void HideUI() {
     //   if(isInst) {
     //       Instance.hideUI(false);
     //   }
     //}
- 
+
     //public static virtual void HideUI(bool now) {
     //   if(isInst) {
     //       Instance.hideUI(now);   
     //   }
     //}
- 
-    public virtual void hideUI(bool now) {   
-     
+
+    public virtual void hideUI(bool now) {
+
         //LogUtil.Log("HideUI");  
-     
+
         uiVisible = false;
 
         showGameCanvas();
@@ -2068,52 +2090,52 @@ public class BaseUIController : GameObjectBehavior {
         else {
             HideAllPanels();
         }
-     
+
         HandleInGameAudio();
-        
+
         GameController.HandleCamerasInGame();
-        
+
         Messenger.Broadcast(UIControllerMessages.uiHide);
-            
+
     }
-    
+
     //public static virtual void ShowUI() {
     //   if(isInst) {
     ////     Instance.showUI();
     //   }
     //}
- 
+
     public virtual void showUI() {
         //LogUtil.Log("ShowUI");
-        uiVisible = true;        
-        hideGameCanvas();        
+        uiVisible = true;
+        hideGameCanvas();
         HandleInUIAudio();
-        
+
         GameController.HandleCamerasInUI();
-        
-        GameUIPanelBackgrounds.Instance.AnimateIn(); 
+
+        GameUIPanelBackgrounds.Instance.AnimateIn();
 
         Messenger.Broadcast(UIControllerMessages.uiShow);
-    }   
-     
+    }
+
     // ------------------------------------------------------------
     // MAIN
- 
+
     //public static virtual void ShowMain() {
     //   if(isInst) {
     //       Instance.showMain();
     //   }
     //}
- 
+
     public virtual void showMain() {
-     
+
         showUI();
 
         showUIPanel(
             typeof(GameUIPanelMain),
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
-        
+
         GameUIPanelBackgrounds.Instance.AnimateIn();
 
         if (GameUIPanelHeader.Instance != null) {
@@ -2129,27 +2151,27 @@ public class BaseUIController : GameObjectBehavior {
         }
 
     }
-    
+
     //public static virtual void HideMain() {
     //   if(isInst) {
     //       Instance.hideMain();
     //   }
     //}
- 
+
     public virtual void hideMain() {
         hideUIPanel(
             typeof(GameUIPanelMain));
     }
- 
+
     // ------------------------------------------------------------
     // GAME MODES
- 
+
     //public static virtual void ShowGameMode() {
     //   if(isInst) {
     //       Instance.showGameMode();
     //   }
     //}
- 
+
     public virtual void showGameMode() {
 
         showUI();
@@ -2158,14 +2180,14 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelGameMode),
             BaseUIPanel.panelGameMode,
             "PLAY GAMEMODE");
-    } 
- 
+    }
+
     //public static virtual void HideGameMode() {
     //   if(isInst) {
     //       Instance.hideGameMode();
     //   }
     //}
-    
+
     public virtual void hideGameMode() {
         hideUIPanel(
             typeof(GameUIPanelGameMode));
@@ -2256,13 +2278,13 @@ public class BaseUIController : GameObjectBehavior {
     // GAME MODE - MISSION
 
     public virtual void showGameModeMission() {
-        
+
         showUIPanel(
             typeof(GameUIPanelGameModeMission),
             BaseUIPanel.panelGameModeMissions,
             "PLAY MISSION");
     }
-    
+
     public virtual void hideGameModeMission() {
         hideUIPanel(
             typeof(GameUIPanelGameModeMission));
@@ -2270,59 +2292,170 @@ public class BaseUIController : GameObjectBehavior {
 
     // ------------------------------------------------------------
     // GAME WORLDS
-    
+
     //public static virtual void ShowGameWorlds() {
     //   if(isInst) {
     //       Instance.showGameWorlds();
     //   }
     //}
-    
+
     public virtual void showGameWorlds() {
-        
+
         showUIPanel(
             typeof(GameUIPanelWorlds),
             BaseUIPanel.panelWorlds,
             "WORLDS");
-    } 
-    
+    }
+
     //public static virtual void HideGameWorlds() {
     //   if(isInst) {
     //       Instance.hideGameWorlds();
     //   }
     //}
-    
+
     public virtual void hideGameWorlds() {
         hideUIPanel(
             typeof(GameUIPanelWorlds));
-    }    
-    
+    }
+
     // ------------------------------------------------------------
     // GAME LEVELS
-    
+
     //public static virtual void ShowGameLevels() {
     //   if(isInst) {
     //       Instance.showGameLevels();
     //   }
     //}
-    
+
     public virtual void showGameLevels() {
-        
+
         showUIPanel(
             typeof(GameUIPanelLevels),
             BaseUIPanel.panelLevels,
             "LEVELS");
-    } 
-    
+    }
+
     //public static virtual void HideGameLevels() {
     //   if(isInst) {
     //       Instance.hideGameLevels();
     //   }
     //}
-    
+
     public virtual void hideGameLevels() {
         hideUIPanel(
             typeof(GameUIPanelLevels));
     }
+
+
+#if ENABLE_FEATURE_AR
+
+    // ------------------------------------------------------------
+    // AR
+
+    //public static virtual void ShowARSettings() {
+    //   if(isInst) {
+    //       Instance.showARSettings();
+    //   }
+    //}
+
+    public virtual void showARSettings() {
+
+        showUIPanel(
+            typeof(GameUIPanelARSettings),
+            BaseUIPanel.panelARSettings,
+            "AR");
+    }
+
+    //public static virtual void HideARSettings() {
+    //   if(isInst) {
+    //       Instance.hideARSettings();
+    //   }
+    //}
+
+    public virtual void hideARSettings() {
+        hideUIPanel(
+            typeof(GameUIPanelARSettings));
+    }
+
+    //public static virtual void ShowAR() {
+    //   if(isInst) {
+    //       Instance.showAR();
+    //   }
+    //}
+
+    public virtual void showAR() {
+
+        showUIPanel(
+            typeof(GameUIPanelAR),
+            BaseUIPanel.panelAR,
+            "AR");
+    }
+
+    //public static virtual void HideAR() {
+    //   if(isInst) {
+    //       Instance.hideAR();
+    //   }
+    //}
+
+    public virtual void hideAR() {
+        hideUIPanel(
+            typeof(GameUIPanelAR));
+    }
+
+    // ------------------------------------------------------------
+    // VR
+
+    //public static virtual void ShowVRSettings() {
+    //   if(isInst) {
+    //       Instance.showVRSettings();
+    //   }
+    //}
+
+    public virtual void showVRSettings() {
+
+        showUIPanel(
+            typeof(GameUIPanelVRSettings),
+            BaseUIPanel.panelVRSettings,
+            "VR");
+    }
+
+    //public static virtual void HideVRSettings() {
+    //   if(isInst) {
+    //       Instance.hideVRSettings();
+    //   }
+    //}
+
+    public virtual void hideVRSettings() {
+        hideUIPanel(
+            typeof(GameUIPanelVRSettings));
+    }
+
+    //public static virtual void ShowVR() {
+    //   if(isInst) {
+    //       Instance.showVR();
+    //   }
+    //}
+
+    public virtual void showVR() {
+
+        showUIPanel(
+            typeof(GameUIPanelVR),
+            BaseUIPanel.panelVR,
+            "VR");
+    }
+
+    //public static virtual void HideVR() {
+    //   if(isInst) {
+    //       Instance.hideVR();
+    //   }
+    //}
+
+    public virtual void hideVR() {
+        hideUIPanel(
+            typeof(GameUIPanelVR));
+    }
+
+#endif
 
 
 #if ENABLE_FEATURE_TRAINING
@@ -2467,29 +2600,29 @@ public class BaseUIController : GameObjectBehavior {
     }
 
 #endif
- 
+
     // ------------------------------------------------------------
     // GAME MODE - ARCADE
- 
+
     //public static virtual void ShowGameModeArcade() {
     //   if(isInst) {
     //       Instance.showGameModeArcade();
     //   }
     //}
- 
+
     public virtual void showGameModeArcade() {
         showUIPanel(
             typeof(GameUIPanelGameModeArcade),
             GameUIPanel.panelGameModeArcade,
             "PLAY ARCADE");
-    } 
- 
+    }
+
     //public static virtual void HideGameModeArcade() {
     //   if(isInst) {
     //       Instance.hideGameModeArcade();
     //   }
     //}
-    
+
     public virtual void hideGameModeArcade() {
         hideUIPanel(
             typeof(GameUIPanelGameModeArcade));
@@ -2525,7 +2658,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 
 #endif
-     
+
     /*
  // ------------------------------------------------------------
  // EQUIPMENT - MAIN
@@ -2697,29 +2830,29 @@ public class BaseUIController : GameObjectBehavior {
      GameUIPanelCustomize.Instance.AnimateOut();
     }
  */
- 
+
     // ------------------------------------------------------------
     // SETTINGS
- 
+
     //public static virtual void ShowSettings() {
     //   if(isInst) {
     //       Instance.showSettings();
     //   }
     //}
- 
+
     public virtual void showSettings() {
         showUIPanel(
             typeof(GameUIPanelSettings),
             GameUIPanel.panelSettings,
             "SETTINGS");
-    } 
- 
+    }
+
     //public static virtual void HideSettings() {
     //   if(isInst) {
     //       Instance.hideSettings();
     //   }
     //}
-    
+
     public virtual void hideSettings() {
         hideUIPanel(
             typeof(GameUIPanelSettings));
@@ -2859,21 +2992,21 @@ public class BaseUIController : GameObjectBehavior {
     // RESULTS
 
     //
- 
+
     //public static virtual void ShowUIPanelDialogResults() {
     //   if(isInst) {
     //       Instance.showResults();
     //   }
     //}
- 
+
     //public static virtual void ShowResults() {
     //   if(isInst) {
     //       Instance.showResults();
     //   }
     //}
- 
-    public virtual void showResults() {  
-     
+
+    public virtual void showResults() {
+
         showUI();
 
         showUIPanel(
@@ -2882,72 +3015,72 @@ public class BaseUIController : GameObjectBehavior {
             "RESULTS");
 
         //GameUIPanelFooter.ShowButtonCustomize();
-     
+
         StartCoroutine(HideOverlay());
     }
- 
+
     //public static virtual void HideResults() {
     //   if(isInst) {
     //       Instance.hideResults();
     //   }
     //}
-    
+
     public virtual void hideResults() {
         hideUIPanel(
             typeof(GameUIPanelResults));
     }
- 
- 
+
+
     // ------------------------------------------------------------
     // EQUIPMENT - MAIN
- 
+
     //public static void ShowEquipment() {
     //   if(isInst) {
     //       Instance.showEquipment();
     //   }
     //}
- 
+
     public virtual void showEquipment() {
         showUIPanel(
             typeof(GameUIPanelEquipment),
             GameUIPanel.panelEquipment,
             "PLAYER CUSTOMIZE + PROGRESS");
-    } 
- 
+    }
+
     //public static void HideEquipment() {
     //   if(isInst) {
     //       Instance.hideEquipment();
     //   }
     //}
-    
+
     public virtual void hideEquipment() {
         hideUIPanel(
             typeof(GameUIPanelEquipment));
     }
- 
- 
+
+
     // ------------------------------------------------------------
     // EQUIPMENT - STATISTICS
- 
+
     //public static void ShowStatistics() {
     //   if(isInst) {
     //       Instance.showStatistics();
     //   }
     //}
- 
+
     public virtual void showStatistics() {
         showUIPanel(
             typeof(GameUIPanelStatistics),
             GameUIPanel.panelStatistics,
             "STATISTICS");
-    } 
- 
+    }
+
     //public static void HideStatistics() {
     //   if(isInst) {
     //       Instance.hideStatistics();
     //   }
     //}
-    
+
     public virtual void hideStatistics() {
         hideUIPanel(
             typeof(GameUIPanelStatistics));
@@ -2986,37 +3119,37 @@ public class BaseUIController : GameObjectBehavior {
     }
 
 #endif
-     
+
     // ------------------------------------------------------------
     // EQUIPMENT - ACHIEVEMENTS
- 
+
     //public static void ShowAchievements() {
     //   if(isInst) {
     //       Instance.showAchievements();
     //   }
     //}
- 
+
     public virtual void showAchievements() {
         showUIPanel(
             typeof(GameUIPanelAchievements),
             GameUIPanel.panelAchievements,
             "ACHIEVEMENTS");
-    } 
- 
+    }
+
     //public static void HideAchievements() {
     //   if(isInst) {
     //       Instance.hideAchievements();
     //   }
     //}
-    
+
     public virtual void hideAchievements() {
         hideUIPanel(
             typeof(GameUIPanelAchievements));
     }
-     
+
     // ------------------------------------------------------------
     // EQUIPMENT - PRODUCTS
- 
+
     //public static void ShowProducts() {
     //   if(isInst) {
     //       Instance.showProducts();
@@ -3036,19 +3169,19 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelProducts),
             GameUIPanel.panelProducts,
             title);
-    } 
- 
+    }
+
     //public static void HideProducts() {
     //   if(isInst) {
     //       Instance.hideProducts();
     //   }
     //}
-    
+
     public virtual void hideProducts() {
         hideUIPanel(
             typeof(GameUIPanelProducts));
     }
-    
+
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
     // ------------------------------------------------------------
@@ -3199,7 +3332,7 @@ public class BaseUIController : GameObjectBehavior {
     // ------------------------------------------------------------
     IEnumerator HideOverlay() {
         yield return new WaitForSeconds(0.4f);
-     
+
         GameUIPanelOverlays.Instance.HideOverlayWhiteStatic();
     }
 
@@ -3237,24 +3370,24 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideHUD() {
         //LogUtil.Log("HideHUD");
-     
-        hudVisible = false;    
-     
+
+        hudVisible = false;
+
         hideUIPauseButton();
         GameHUD.Instance.AnimateOut();
     }
- 
+
     //public static virtual void ShowHUD() {
     //   if(isInst) {
     //       Instance.showHUD();
     //   }
     //}
- 
+
     public virtual void showHUD() {
         //LogUtil.Log("ShowHUD");
-     
-        hudVisible = true;    
-             
+
+        hudVisible = true;
+
         showUIPauseButton();
         GameHUD.Instance.AnimateIn();
     }
@@ -3270,14 +3403,14 @@ public class BaseUIController : GameObjectBehavior {
         if (gamePauseButtonObject != null) {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(0));
         }
-    }    
- 
+    }
+
     //public virtual void HideUIPauseButton() {
     //   if(isInst) {
     ////     Instance.hideUIPauseButton();
     //   }
     //}
-         
+
     public virtual void hideUIPauseButton() {
         if (gamePauseButtonObject != null) {
             TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(650));
@@ -3292,57 +3425,57 @@ public class BaseUIController : GameObjectBehavior {
     //   return false;
     //}
 
-    public bool setDialogState(bool active) {        
+    public bool setDialogState(bool active) {
         dialogActive = active;
         GameDraggableEditor.editingEnabled = !dialogActive;
         return dialogActive;
     }
-     
+
     // ------------------------------------------------------------------------
     // ALERT LAYERS
- 
+
     //public static virtual void HideAllAlertLayers() {
     //   if(isInst) {
     //       Instance.hideAllAlertLayers();
     //   }
     //}
- 
+
     public virtual void hideAllAlertLayers() {
         hideUIPanelAlertBackground();
         hideUIPanelPause();
         //hideUIPanelDialogResults();
     }
- 
+
     //public static virtual void ShowUIPanelAlertBackground() {
     //   if(isInst) {
     //       Instance.showUIPanelAlertBackground();
     //   }
     //}
- 
+
     public virtual void showUIPanelAlertBackground() {
         if (gamePauseDialogObject != null) {
-            gameBackgroundAlertObject.Show();    
+            gameBackgroundAlertObject.Show();
         }
     }
- 
+
     //public static virtual void HideUIPanelAlertBackground() {
     //   if(isInst) {
     //       Instance.hideUIPanelAlertBackground();
     //   }
     //}
- 
+
     public virtual void hideUIPanelAlertBackground() {
         if (gamePauseDialogObject != null) {
-            gameBackgroundAlertObject.Hide();    
+            gameBackgroundAlertObject.Hide();
         }
     }
- 
+
     //public static virtual void ShowUIPanelDialogPause() {
     //   if(isInst) {
     //       Instance.showUIPanelDialogPause();
     //   }
     //}
- 
+
     public virtual void showUIPanelPause() {
         //HideAllAlertLayers();
         showUIPanelAlertBackground();
@@ -3352,13 +3485,13 @@ public class BaseUIController : GameObjectBehavior {
         //    TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(0));
         //}
     }
- 
+
     //public static virtual void HideUIPanelDialogPause() {
     //   if(isInst) {
     //       Instance.hideUIPanelDialogPause();
     //   }       
     //}
- 
+
     public virtual void hideUIPanelPause() {
         hideUIPanelAlertBackground();
         UIPanelPause.Instance.AnimateOut();
@@ -3367,7 +3500,7 @@ public class BaseUIController : GameObjectBehavior {
         //    TweenPosition.Begin(gamePauseDialogObject, .3f, Vector3.zero.WithY(5000));
         // }
     }
- 
+
     /*
  public static virtual void ShowUIPanelDialogResults() {
      if(isInst) {
@@ -3383,22 +3516,22 @@ public class BaseUIController : GameObjectBehavior {
      }
  }
  */
- 
+
     //public virtual void HideUIPanelDialogResults() {
     //   if(isInst) {
     //       Instance.hideResults();
     //   }
     //}
- 
+
     // ------------------------------------------------------------------------
     // LEVEL/GAME UI LAYER
- 
+
     //public static virtual void ShowGameCanvas() {
     //   if(isInst) {
     //       Instance.showGameCanvas();
     //   }
     //}
- 
+
     public virtual void showGameCanvas() {
         if (gameContainerObject != null) {
             TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
@@ -3407,13 +3540,13 @@ public class BaseUIController : GameObjectBehavior {
         //gameContainerObject.Show();
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(0));
     }
- 
+
     //public static virtual void HideGameCanvas() {
     //   if(isInst) {
     //       Instance.hideGameCanvas();
     //   }
     //}
- 
+
     public virtual void hideGameCanvas() {
 
         if (gameContainerObject != null) {
@@ -3435,36 +3568,36 @@ public class BaseUIController : GameObjectBehavior {
         GameObject buttonObject) {
 
         Debug.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
-    
-        Dictionary<string,object> data = new Dictionary<string, object>();
+
+        Dictionary<string, object> data = new Dictionary<string, object>();
 
         if (buttonObject.Has<GameObjectData>()) {
-            data = buttonObject.Get<GameObjectData>().ToDictionary();            
+            data = buttonObject.Get<GameObjectData>().ToDictionary();
 
             Debug.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
-            
+
             OnButtonClickDataEventHandler(buttonObject.name, data);
         }
         else {
             Messenger<string>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK, buttonObject.name);
         }
     }
-    
+
     public virtual void OnButtonClickEventHandler(
-        string buttonName) {        
+        string buttonName) {
         OnButtonClickDataEventHandler(buttonName, null);
     }
-            
+
     public virtual void OnButtonClickDataEventHandler(
-        string buttonName, 
-        Dictionary<string,object> data = null) {
+        string buttonName,
+        Dictionary<string, object> data = null) {
 
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
         if (data == null) {
             data = new Dictionary<string, object>();
         }
-     
+
         hasBeenClicked = true;
 
         // GAME
@@ -3486,7 +3619,7 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         // UI / MODES
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameAchievements, buttonName)) {
             GameUIController.ShowAchievements();
         }
@@ -3519,9 +3652,29 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         // rating/community
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAppRate, buttonName)) {
             Platforms.ShowReviewPage();
+        }
+
+        // ACTION URL
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonActionUrl, buttonName)) {
+
+            if (data != null) {
+
+                if (data.Has(BaseDataObjectKeys.url)) {
+                    string url = data.Get<string>(BaseDataObjectKeys.url);
+                    string title = data.Get<string>(BaseDataObjectKeys.title);
+
+                    if (title.IsNullOrEmpty()) {
+                        title = AppConfigs.appGameDisplayName;
+                    }
+
+                    if (!url.IsNullOrEmpty()) {
+                        Platforms.ShowWebView(title, url);
+                    }
+                }
+            }
         }
 
         // Game networks
@@ -3569,7 +3722,7 @@ public class BaseUIController : GameObjectBehavior {
 
         // Game Modes
 
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {                        
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             //GameUIController.ShowGameModeArcade();
             GameUIController.ShowGameWorlds();
@@ -3605,7 +3758,7 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
         }
 #endif
-        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {            
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
         }
@@ -3618,7 +3771,7 @@ public class BaseUIController : GameObjectBehavior {
 #endif
 
         // PRODUCTS
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsWeapon, buttonName)) {
             GameUIController.ShowProducts(GameProductType.weapon);
         }
@@ -3650,24 +3803,24 @@ public class BaseUIController : GameObjectBehavior {
         // ACTION ITEMS / USE
 
         else if (buttonName.IndexOf(BaseUIButtonNames.buttonGameActionItemBuyUse + "$") > -1) {
-            
+
             string productCodeUse = "";
             string productTypeUse = "";
             string productCharacterUse = "";
-            
+
             string[] commandActionParams = buttonName.Replace(BaseUIButtonNames.buttonGameActionItemBuyUse + "$", "").Split('$');
-            
+
             if (commandActionParams.Length > 0)
                 productTypeUse = commandActionParams[0];
             if (commandActionParams.Length > 1)
                 productCodeUse = commandActionParams[1];
             if (commandActionParams.Length > 2)
                 productCharacterUse = commandActionParams[2];
-            
+
             if (!string.IsNullOrEmpty(productTypeUse)
                 && !string.IsNullOrEmpty(productCodeUse)
                 && !string.IsNullOrEmpty(productCharacterUse)) {
-                
+
                 GameStoreController.Purchase(productCodeUse, 1);
 
                 GameUIPanelProducts.LoadData();
@@ -3693,13 +3846,13 @@ public class BaseUIController : GameObjectBehavior {
 #endif
 
         // COMMUNITY
-                
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
             GameCommunity.HideGameCommunity();
-        }       
+        }
 
         // COMMUNITY - BROADCAST
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityBroadcastRecordStart, buttonName)) {
             BroadcastNetworks.StartRecording();
         }
@@ -3756,7 +3909,7 @@ public class BaseUIController : GameObjectBehavior {
 
         // COMMUNITY - RESULTS / SHARE
 
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultFacebook, buttonName)) {
             //GameCommunitySocialController.PostGameResultsFacebook();
             UIPanelCommunityCamera.TakePhotoGameState();
@@ -3781,8 +3934,26 @@ public class BaseUIController : GameObjectBehavior {
             GameUIPanelHeader.CharacterLargeShowBack();
         }
 
+        // AR
+
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonARSettings, buttonName)) {
+            showARSettings();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonAR, buttonName)) {
+            showAR();
+        }
+
+        // VR
+
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonVRSettings, buttonName)) {
+            showVRSettings();
+        }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonVR, buttonName)) {
+            showVR();
+        }
+
         // GAME INIT
-        
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
 
             GameCommunity.HideGameCommunity();
@@ -3790,27 +3961,27 @@ public class BaseUIController : GameObjectBehavior {
             UIPanelOverlayPrepare.HideAll();
 
             GameController.InitLevelFinish();
-        }  
-        
+        }
+
         // GAME PRESET CHARACTER COLORS
-        
+
         else if (UIUtil.IsButtonClickedLike(UIButtonNames.buttonGamePlayerPresets, buttonName)) {
-            
+
             GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-            
+
             string[] arrButtonName = buttonName.Split('$');
-            
+
             string presetTexture = "";
             string presetColor = "";
-            
+
             string panelNext = "";
-            
+
             string markerTexture = "preset-texture--";
             string markerColor = "preset-color--";
             string markerNext = "panel-next--";
-            
+
             if (arrButtonName != null) {
-                
+
                 foreach (string s in arrButtonName) {
                     if (s.Contains(markerTexture)) {
                         presetTexture = s.Replace(markerTexture, "");
@@ -3823,36 +3994,36 @@ public class BaseUIController : GameObjectBehavior {
                     }
                 }
             }
-            
+
             bool loadCharacter = false;
-            
+
             if (!string.IsNullOrEmpty(presetTexture)) {
                 // SET CUSTOM VALUES FOR THIS PLAYER
-                
+
                 customItem = GameCustomController.UpdateTexturePresetObject(
-                    customItem, GameController.CurrentGamePlayerController.gameObject,  
+                    customItem, GameController.CurrentGamePlayerController.gameObject,
                     AppContentAssetTexturePresets.Instance.GetByCode(presetTexture));
-                
+
                 loadCharacter = true;
             }
-            
-            
+
+
             if (!string.IsNullOrEmpty(presetColor)) {
                 customItem = GameCustomController.UpdateColorPresetObject(
-                    customItem, GameController.CurrentGamePlayerController.gameObject,   
+                    customItem, GameController.CurrentGamePlayerController.gameObject,
                     AppColorPresets.Instance.GetByCode(presetColor));
-                
+
                 loadCharacter = true;
             }
-            
-            if (loadCharacter) {                
-                GameCustomController.SaveCustomItem(customItem); 
+
+            if (loadCharacter) {
+                GameCustomController.SaveCustomItem(customItem);
                 GameController.LoadCurrentProfileCharacter();
             }
-            
+
             if (!string.IsNullOrEmpty(panelNext)) {
-                if (panelNext == BaseUIPanel.panelGameMode) {                    
-                    GameUIController.ShowGameMode(); 
+                if (panelNext == BaseUIPanel.panelGameMode) {
+                    GameUIController.ShowGameMode();
                 }
             }
         }
@@ -3872,37 +4043,37 @@ public class BaseUIController : GameObjectBehavior {
         // LAST 
 
         else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
-            || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {  
-            
+            || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
+
             object dataType = null;
             object dataCode = null;
-            
+
             if (data.ContainsKey(BaseDataObjectKeys.type)) {
                 dataType = data.Get(BaseDataObjectKeys.type);
             }
             if (data.ContainsKey(BaseDataObjectKeys.code)) {
                 dataCode = data.Get(BaseDataObjectKeys.code);
             }
-            
+
             if (dataType != null) {
 
                 // COLLECTION LOAD - MISSION
-                
+
                 if (dataType.ToString() == BaseDataObjectKeys.mission) {
-                    
+
                     string code = dataCode.ToString();
-                    
+
                     if (!string.IsNullOrEmpty(code)) {
 
                         AppContentCollect appContentCollect = AppContentCollects.Instance.GetById(code);
 
-                        if(appContentCollect != null) {
-                            
+                        if (appContentCollect != null) {
+
                             AppContentCollects.ChangeCurrent(code);
-                            
+
                             Debug.Log("ACTION:" + " mission:" + code);
 
-                            if(appContentCollect.data != null) {
+                            if (appContentCollect.data != null) {
                                 string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
                                 levelTo = string.Format("{0}-{1}", worldTo, appContentCollect.GetLevelSuffixRandom());
@@ -3912,7 +4083,7 @@ public class BaseUIController : GameObjectBehavior {
                     }
                 }
             }
-            
+
             GameCommunity.HideGameCommunity();
             GameCommunity.HideBroadcastRecordPlayShare();
 
@@ -3923,7 +4094,7 @@ public class BaseUIController : GameObjectBehavior {
 
         else {
             if (buttonName == BaseUIButtonNames.buttonBack) {
-                
+
                 GameCommunity.HideGameCommunity();
 
                 NavigateBack(buttonName);
@@ -3934,7 +4105,7 @@ public class BaseUIController : GameObjectBehavior {
         GameUIController.HandleNetworkedButtons(buttonName);
 #endif
         GameUIController.HandleHUDButtons(buttonName);
-     
+
         /*
         if(buttonName.IndexOf("FreeDownloadButton") > -1) {
         
@@ -4055,21 +4226,21 @@ public class BaseUIController : GameObjectBehavior {
 
         return true;
     }
-    
+
     public virtual void handleNetworkedButtons(string buttonName) {
         // handle network state by buttons and areas
         if (AppConfigs.featureEnableNetworking) {
-            if (UIUtil.IsButtonClickedLike("GameMode", buttonName)) { 
-                if (UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) { 
+            if (UIUtil.IsButtonClickedLike("GameMode", buttonName)) {
+                if (UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) {
                     //Gameverses.GameNetworking.Connect();
                 }
                 else {
                     //Gameverses.GameNetworking.Disconnect();
                 }
-            }  
+            }
         }
     }
- 
+
     public virtual void handleHUDButtons(string buttonName) {
         if (AllowPress(lastPressAttack)
             && buttonName == BaseHUDButtonNames.buttonInputAttack) {
@@ -4127,25 +4298,25 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (buttonName == BaseHUDButtonNames.buttonInputInventoryWeaponNext) {
             GameController.CurrentGamePlayerController.LoadWeaponNext();
-        }          
+        }
     }
- 
-    public virtual void GameContinue() {     
+
+    public virtual void GameContinue() {
         GameController.QuitGame();
     }
-  
+
     public virtual void GameRestart() {
         GameController.RestartGame();
     }
- 
+
     public virtual void GameResume() {
         GameController.ResumeGame();
     }
- 
+
     public virtual void GamePause() {
         GameController.TogglePauseGame();
     }
- 
+
     public virtual void GameQuit() {
         GameController.QuitGame();
         GameUIController.ShowMain();

@@ -104,6 +104,8 @@ public class LoadSceneAsync : GameObjectBehavior {
         UIUtil.SetSliderValue(progressBarUI, 1f);
         UIUtil.SetLabelValue(progressBarTextUI, "100%");
 
+        yield return new WaitForSeconds(2f);
+
         yield return asyncLevelLoad;
 		
 		running = false;

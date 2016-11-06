@@ -56,6 +56,9 @@ public class GameUISceneRoot : GameObjectBehavior {
     
     IEnumerator Start() {
 
+        GameUIPanelBackgrounds.ShowStateDefault();
+
+        
         //var glob = GameGlobal.Instance;
 
         // HACK to prevent game starting in portrait due to Unity bug 
@@ -72,7 +75,7 @@ public class GameUISceneRoot : GameObjectBehavior {
 
             // None landscape orientation, set it manually
 
-            Screen.orientation = ScreenOrientation.LandscapeLeft;
+           // Screen.orientation = ScreenOrientation.LandscapeLeft;
 
             // Wait a bit
 
@@ -80,7 +83,7 @@ public class GameUISceneRoot : GameObjectBehavior {
 
             // Set back to autorotation, it should be alright by now
 
-            Screen.orientation = ScreenOrientation.AutoRotation;
+            //Screen.orientation = ScreenOrientation.AutoRotation;
 
             break;
 
