@@ -10,6 +10,8 @@ using UnityEngine.UI;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_SETTINGS
+
 public class BaseGameUIPanelSettings : GameUIPanelBase {
 
     public static GameUIPanelSettings Instance;
@@ -156,3 +158,5 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
         yield return new WaitForSeconds(1f);
     }
 }
+
+#endif

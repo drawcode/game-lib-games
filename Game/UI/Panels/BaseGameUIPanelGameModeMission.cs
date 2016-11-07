@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_GAME_MODE_MISSION
+
 public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
     
     public static GameUIPanelGameModeMission Instance;
@@ -218,3 +220,5 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
     }
 	
 }
+
+#endif

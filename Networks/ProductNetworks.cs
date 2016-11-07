@@ -17,7 +17,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using UnityEngine;
+#if PURCHASE_USE_UNITY
 using UnityEngine.Purchasing;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
@@ -383,15 +385,15 @@ public class ProductNetworks : GameObjectBehavior {
     }
     
     public void restoreTransactions() {
-        #if PURCHASE_USE_APPLE_ITUNES
+#if PURCHASE_USE_APPLE_ITUNES
         //return false;
-        #elif PURCHASE_USE_AMAZON
+#elif PURCHASE_USE_AMAZON
         //return false;
-        #elif PURCHASE_USE_GOOGLE_PLAY
+#elif PURCHASE_USE_GOOGLE_PLAY
         //return GoogleIABManager.
-        #else
+#else
         //return false;
-        #endif        
+#endif
     }
 
     public static bool IsSubscriptionSupported() {
@@ -402,15 +404,15 @@ public class ProductNetworks : GameObjectBehavior {
     }
 
     public bool isSubscriptionSupported() {
-        #if PURCHASE_USE_APPLE_ITUNES
+#if PURCHASE_USE_APPLE_ITUNES
         return false;
-        #elif PURCHASE_USE_AMAZON
+#elif PURCHASE_USE_AMAZON
         return false;
-        #elif PURCHASE_USE_GOOGLE_PLAY
+#elif PURCHASE_USE_GOOGLE_PLAY
         return GoogleIAB.areSubscriptionsSupported();
-        #else
+#else
         return false;
-        #endif
+#endif
         
     }
 
@@ -700,7 +702,8 @@ public class ProductNetworks : GameObjectBehavior {
     }
 
 #endif
-        
+
+#if PURCHASE_USE_UNITY
     // UNITY INAPP PURCHASING
 
     // Deriving the Purchaser class from IStoreListener enables it to receive messages from Unity Purchasing.
@@ -914,6 +917,7 @@ public class ProductNetworks : GameObjectBehavior {
             Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
         }
     }
+#endif
 
 }
 

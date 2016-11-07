@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_GAME_MODE_ARCADE
+
 public class BaseGameUIPanelGameModeArcade : GameUIPanelBase {
     
     public static GameUIPanelGameModeArcade Instance;
@@ -122,3 +124,5 @@ public class BaseGameUIPanelGameModeArcade : GameUIPanelBase {
 	}
 	
 }
+
+#endif

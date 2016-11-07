@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_GAME_MODE
+
 public class BaseGameUIPanelGameMode : GameUIPanelBase {
     
     public static GameUIPanelGameMode Instance;
@@ -125,3 +127,5 @@ public class BaseGameUIPanelGameMode : GameUIPanelBase {
 	}
 	
 }
+
+#endif
