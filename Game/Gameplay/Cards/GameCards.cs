@@ -40,7 +40,7 @@ public class GameCard {
     public string val;
 
     public GameCard() {
-        uid = UniqueUtil.Instance.CreateUUID4();
+        uid = UniqueUtil.CreateUUID4();
         type = GameCardTypes.cardNormal;
         val = "";
     }
@@ -448,7 +448,7 @@ public class GameCardPlayer : IGameCardPlayer {
     }
     
     public GameCardPlayer() {
-        uid = UniqueUtil.Instance.CreateUUID4();
+        uid = UniqueUtil.CreateUUID4();
         type = GameCardPlayerType.player;
         typePlayer = GameCardPlayerType.player;
         ClearCardHands();
