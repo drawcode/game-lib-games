@@ -66,7 +66,9 @@ public class UIPanelDialogRPGEnergy : UIPanelDialogRPGObject {
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameController.QuitGame();
+#if ENABLE_FEATURE_GAME_MODE
             GameUIController.ShowGameMode();
+#endif
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();

@@ -232,7 +232,9 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
             LogUtil.Log("Player Clicked: " + buttonName);                 
             
             GameController.LoadCurrentProfileCharacter();
+#if ENABLE_FEATURE_GAME_MODE
             GameUIController.ShowGameMode();   
+#endif
         }
     }
 }

@@ -287,8 +287,8 @@ public class BaseGameGlobal : GameObjectBehavior {
         AudioSystem.Instance.SetAmbienceVolume(volumeMusic);
         AudioSystem.Instance.SetEffectsVolume(volumeEffects);
 
-        GameAudioController.SetVolumeGame(volumeMusic);
-        GameAudioController.SetVolumeUI(volumeMusic);
+        //GameAudioController.SetVolumeGame(volumeMusic);
+        //GameAudioController.SetVolumeUI(volumeMusic);
 
         GameState.SaveProfile();
     }

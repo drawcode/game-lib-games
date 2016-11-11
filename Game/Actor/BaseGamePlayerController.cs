@@ -3265,7 +3265,7 @@ public class BaseGamePlayerController : GameActor {
             uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
         else {
-            uniqueId = UniqueUtil.Instance.CreateUUID4();
+            uniqueId = UniqueUtil.CreateUUID4();
         }
 
         ResetPosition();

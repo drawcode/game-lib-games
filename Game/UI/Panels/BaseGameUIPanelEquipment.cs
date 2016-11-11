@@ -109,9 +109,11 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
 		else if(UIUtil.IsButtonClicked(buttonStatistics, buttonName)) {
 			GameUIController.ShowStatistics();
 		}
-		else if(UIUtil.IsButtonClicked(buttonEquipmentPowerups, buttonName)) {
+#if ENABLE_FEATURE_PRODUCTS
+        else if(UIUtil.IsButtonClicked(buttonEquipmentPowerups, buttonName)) {
 			GameUIController.ShowProducts();
 		}
+#endif
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 		else if(UIUtil.IsButtonClicked(buttonCustomize, buttonName)) {

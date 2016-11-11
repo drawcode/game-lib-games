@@ -131,15 +131,13 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
     
     public void OnUIControllerShowHandler() {
-        if (GameUIPanelSettings.isInst) {
-            GameUIPanelWorlds.Instance.ShowWorldsContainer();
-        }
+        GameUIPanelWorlds.Instance.ShowWorldsContainer();
     }
     
     public void OnUIControllerHideHandler() {
-        if (GameUIPanelSettings.isInst) {
-            GameUIPanelWorlds.Instance.HideWorldsContainer();
-        }
+        //if (GameUIPanelSettings.isInst) {
+        GameUIPanelWorlds.Instance.HideWorldsContainer();
+        //}
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {

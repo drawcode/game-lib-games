@@ -1891,9 +1891,10 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelSettingsCredits)
                     || isUIPanel(GameUIPanel.panelSettingsProfile)) {
 
+#if ENABLE_FEATURE_SETTINGS
                     GameUIController.ShowSettings();
                     handled = true;
-
+#endif
                 }
                 else if (isUIPanel(GameUIPanel.panelAchievements)
                     || isUIPanel(GameUIPanel.panelCustomize)
@@ -1930,10 +1931,14 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelGameModeTraining)
                     || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
 
+#if ENABLE_FEATURE_MODE
                     GameUIController.ShowGameMode();
                     handled = true;
+#endif
 
                 }
+
+#if ENABLE_FEATURE_MODE
                 else if (isUIPanel(GameUIPanel.panelGameModeTrainingModeContent)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
@@ -1943,6 +1948,7 @@ public class BaseUIController : GameObjectBehavior {
                     handled = true;
 
                 }
+#endif
                 else {
                     GameUIController.ShowMain();
                     handled = true;
@@ -2166,11 +2172,14 @@ public class BaseUIController : GameObjectBehavior {
     // ------------------------------------------------------------
     // GAME MODES
 
-    //public static virtual void ShowGameMode() {
-    //   if(isInst) {
-    //       Instance.showGameMode();
-    //   }
-    //}
+//public static virtual void ShowGameMode() {
+//   if(isInst) {
+//       Instance.showGameMode();
+//   }
+//}
+
+
+#if ENABLE_FEATURE_MODE
 
     public virtual void showGameMode() {
 
@@ -2192,6 +2201,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameMode));
     }
+
+#endif
 
 
 #if ENABLE_FEATURE_MODE_COOP
@@ -2274,6 +2285,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 #endif
 
+#if ENABLE_FEATURE_MODE_MISSION
     // ------------------------------------------------------------
     // GAME MODE - MISSION
 
@@ -2290,6 +2302,9 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelGameModeMission));
     }
 
+#endif
+
+#if ENABLE_FEATURE_WORLDS
     // ------------------------------------------------------------
     // GAME WORLDS
 
@@ -2345,6 +2360,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelLevels));
     }
+
+#endif
 
 
 #if ENABLE_FEATURE_AR
@@ -2601,6 +2618,8 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
+#if ENABLE_FEATURE_MODE_ARCADE
+
     // ------------------------------------------------------------
     // GAME MODE - ARCADE
 
@@ -2627,6 +2646,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelGameModeArcade));
     }
+
+#endif
 
 #if ENABLE_FEATURE_MODE_CUSTOMIZE
     
@@ -2659,178 +2680,179 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
-    /*
- // ------------------------------------------------------------
- // EQUIPMENT - MAIN
- 
-    public static virtual void ShowEquipment() {
-     if(isInst) {
-         Instance.showEquipment();
-     }
- }
- 
-    public virtual void showEquipment() {    
-     
-     currentPanel = BaseUIPanel.panelEquipment;      
-     
-     HideAllPanelsNow();
-     
-     GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-     GameUIPanelHeader.Instance.AnimateInInternal(); 
-     GameUIPanelHeader.ShowTitle("EQUIPMENT ROOM");
-     
-     GameUIPanelEquipment.Instance.AnimateIn();      
-    } 
- 
- public static virtual void HideEquipment() {
-     if(isInst) {
-         Instance.hideEquipment();
-     }
- }
-    
-    public virtual void hideEquipment() {
-     GameUIPanelEquipment.Instance.AnimateOut();
-    }
- 
- 
- // ------------------------------------------------------------
- // EQUIPMENT - STATISTICS
- 
-    public static virtual void ShowStatistics() {
-     if(isInst) {
-         Instance.showStatistics();
-     }
- }
- 
-    public virtual void showStatistics() {   
-     
-     currentPanel = BaseUIPanel.panelStatistics;     
-     
-     HideAllPanelsNow();
-     
-     GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-     GameUIPanelHeader.Instance.AnimateInInternal(); 
-     GameUIPanelHeader.ShowTitle("STATISTICS");
-     
-     GameUIPanelStatistics.Instance.AnimateIn();     
-    } 
- 
- public static virtual void HideStatistics() {
-     if(isInst) {
-         Instance.hideStatistics();
-     }
- }
-    
-    public virtual void hideStatistics() {
-     GameUIPanelStatistics.Instance.AnimateOut();
-    }
- 
-     
- // ------------------------------------------------------------
- // EQUIPMENT - ACHIEVEMENTS
- 
-    public static virtual void ShowAchievements() {
-     if(isInst) {
-         Instance.showAchievements();
-     }
- }
- 
-    public virtual void showAchievements() { 
-     
-     currentPanel = BaseUIPanel.panelAchievements;       
-     
-     HideAllPanelsNow();
-     
-     GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-     GameUIPanelHeader.Instance.AnimateInInternal(); 
-     GameUIPanelHeader.ShowTitle("ACHIEVEMENTS");
-     
-     GameUIPanelAchievements.Instance.AnimateIn();       
-    } 
- 
- public static virtual void HideAchievements() {
-     if(isInst) {
-         Instance.hideAchievements();
-     }
- }
-    
-    public virtual void hideAchievements() {
-     GameUIPanelAchievements.Instance.AnimateOut();
-    }
- 
-     
-     
- // ------------------------------------------------------------
- // EQUIPMENT - ACHIEVEMENTS
- 
-    public static virtual void ShowProducts() {
-     if(isInst) {
-         Instance.showProducts();
-     }
- }
- 
-    public virtual void showProducts() { 
-     
-     currentPanel = BaseUIPanel.panelProducts;       
-     
-     HideAllPanelsNow();
-     
-     GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-     GameUIPanelHeader.Instance.AnimateInInternal(); 
-     GameUIPanelHeader.ShowTitle("POWERUPS");
-     
-     GameUIPanelProducts.Instance.AnimateIn();       
-    } 
- 
- public static virtual void HideProducts() {
-     if(isInst) {
-         Instance.hideProducts();
-     }
- }
-    
-    public virtual void hideProducts() {
-     GameUIPanelProducts.Instance.AnimateOut();
-    }
- 
-         
- // ------------------------------------------------------------
- // EQUIPMENT - ACHIEVEMENTS
- 
-    public static virtual void ShowCustomize() {
-     if(isInst) {
-         Instance.showCustomize();
-     }
- }
- 
-    public virtual void showCustomize() {    
-     
-     currentPanel = BaseUIPanel.panelCustomize;      
-     
-     HideAllPanelsNow();
-     
-     GameUIPanelBackgrounds.Instance.AnimateInStarry();
-     
-     GameUIPanelHeader.Instance.AnimateInInternal(); 
-     GameUIPanelHeader.ShowTitle("CUSTOMIZE");
-     
-     GameUIPanelCustomize.Instance.AnimateIn();      
-    } 
- 
- public static virtual void HideCustomize() {
-     if(isInst) {
-         Instance.hideCustomize();
-     }
- }
-    
-    public virtual void hideCustomize() {
-     GameUIPanelCustomize.Instance.AnimateOut();
-    }
- */
+/*
+// ------------------------------------------------------------
+// EQUIPMENT - MAIN
 
+public static virtual void ShowEquipment() {
+ if(isInst) {
+     Instance.showEquipment();
+ }
+}
+
+public virtual void showEquipment() {    
+
+ currentPanel = BaseUIPanel.panelEquipment;      
+
+ HideAllPanelsNow();
+
+ GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+ GameUIPanelHeader.Instance.AnimateInInternal(); 
+ GameUIPanelHeader.ShowTitle("EQUIPMENT ROOM");
+
+ GameUIPanelEquipment.Instance.AnimateIn();      
+} 
+
+public static virtual void HideEquipment() {
+ if(isInst) {
+     Instance.hideEquipment();
+ }
+}
+
+public virtual void hideEquipment() {
+ GameUIPanelEquipment.Instance.AnimateOut();
+}
+
+
+// ------------------------------------------------------------
+// EQUIPMENT - STATISTICS
+
+public static virtual void ShowStatistics() {
+ if(isInst) {
+     Instance.showStatistics();
+ }
+}
+
+public virtual void showStatistics() {   
+
+ currentPanel = BaseUIPanel.panelStatistics;     
+
+ HideAllPanelsNow();
+
+ GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+ GameUIPanelHeader.Instance.AnimateInInternal(); 
+ GameUIPanelHeader.ShowTitle("STATISTICS");
+
+ GameUIPanelStatistics.Instance.AnimateIn();     
+} 
+
+public static virtual void HideStatistics() {
+ if(isInst) {
+     Instance.hideStatistics();
+ }
+}
+
+public virtual void hideStatistics() {
+ GameUIPanelStatistics.Instance.AnimateOut();
+}
+
+
+// ------------------------------------------------------------
+// EQUIPMENT - ACHIEVEMENTS
+
+public static virtual void ShowAchievements() {
+ if(isInst) {
+     Instance.showAchievements();
+ }
+}
+
+public virtual void showAchievements() { 
+
+ currentPanel = BaseUIPanel.panelAchievements;       
+
+ HideAllPanelsNow();
+
+ GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+ GameUIPanelHeader.Instance.AnimateInInternal(); 
+ GameUIPanelHeader.ShowTitle("ACHIEVEMENTS");
+
+ GameUIPanelAchievements.Instance.AnimateIn();       
+} 
+
+public static virtual void HideAchievements() {
+ if(isInst) {
+     Instance.hideAchievements();
+ }
+}
+
+public virtual void hideAchievements() {
+ GameUIPanelAchievements.Instance.AnimateOut();
+}
+
+
+
+// ------------------------------------------------------------
+// EQUIPMENT - ACHIEVEMENTS
+
+public static virtual void ShowProducts() {
+ if(isInst) {
+     Instance.showProducts();
+ }
+}
+
+public virtual void showProducts() { 
+
+ currentPanel = BaseUIPanel.panelProducts;       
+
+ HideAllPanelsNow();
+
+ GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+ GameUIPanelHeader.Instance.AnimateInInternal(); 
+ GameUIPanelHeader.ShowTitle("POWERUPS");
+
+ GameUIPanelProducts.Instance.AnimateIn();       
+} 
+
+public static virtual void HideProducts() {
+ if(isInst) {
+     Instance.hideProducts();
+ }
+}
+
+public virtual void hideProducts() {
+ GameUIPanelProducts.Instance.AnimateOut();
+}
+
+
+// ------------------------------------------------------------
+// EQUIPMENT - ACHIEVEMENTS
+
+public static virtual void ShowCustomize() {
+ if(isInst) {
+     Instance.showCustomize();
+ }
+}
+
+public virtual void showCustomize() {    
+
+ currentPanel = BaseUIPanel.panelCustomize;      
+
+ HideAllPanelsNow();
+
+ GameUIPanelBackgrounds.Instance.AnimateInStarry();
+
+ GameUIPanelHeader.Instance.AnimateInInternal(); 
+ GameUIPanelHeader.ShowTitle("CUSTOMIZE");
+
+ GameUIPanelCustomize.Instance.AnimateIn();      
+} 
+
+public static virtual void HideCustomize() {
+ if(isInst) {
+     Instance.hideCustomize();
+ }
+}
+
+public virtual void hideCustomize() {
+ GameUIPanelCustomize.Instance.AnimateOut();
+}
+*/
+
+#if ENABLE_FEATURE_SETTINGS
     // ------------------------------------------------------------
     // SETTINGS
 
@@ -2857,6 +2879,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelSettings));
     }
+
+#endif
 
 #if ENABLE_FEATURE_SETTINGS_AUDIO
 
@@ -3147,6 +3171,9 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelAchievements));
     }
 
+
+#if ENABLE_FEATURE_PRODUCTS
+
     // ------------------------------------------------------------
     // EQUIPMENT - PRODUCTS
 
@@ -3181,6 +3208,8 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             typeof(GameUIPanelProducts));
     }
+
+#endif
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
@@ -3637,9 +3666,14 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowSettingsAudio();
         }
 #endif
+
+#if ENABLE_FEATURE_SETTINGS
+
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameSettings, buttonName)) {
             GameUIController.ShowSettings();
         }
+
+#endif
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonMain, buttonName)) {
             GameUIController.ShowMain();
         }
@@ -3720,14 +3754,15 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
-        // Game Modes
+// Game Modes
 
+#if ENABLE_FEATURE_MODE_ARCADE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             //GameUIController.ShowGameModeArcade();
             GameUIController.ShowGameWorlds();
         }
-
+#endif
 
 #if ENABLE_FEATURE_MODE_CHALLENGE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenge, buttonName)) {            
@@ -3758,10 +3793,13 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowGameModeCoop(); // non multiplayer coop with co bots
         }
 #endif
+
+#if ENABLE_FEATURE_WORLDS
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
             GameUIController.ShowGameWorlds();
         }
+#endif
 
 #if ENABLE_FEATURE_TRAINING
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeTraining, buttonName)) {
@@ -3769,6 +3807,9 @@ public class BaseUIController : GameObjectBehavior {
             GameUIController.ShowGameModeTrainingMode();
         }
 #endif
+
+
+#if ENABLE_FEATURE_PRODUCTS
 
         // PRODUCTS
 
@@ -3799,6 +3840,8 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProducts, buttonName)) {
             GameUIController.ShowProducts();
         }
+
+#endif
 
         // ACTION ITEMS / USE
 
@@ -3934,6 +3977,9 @@ public class BaseUIController : GameObjectBehavior {
             GameUIPanelHeader.CharacterLargeShowBack();
         }
 
+
+#if ENABLE_FEATURE_AR
+
         // AR
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonARSettings, buttonName)) {
@@ -3943,6 +3989,9 @@ public class BaseUIController : GameObjectBehavior {
             showAR();
         }
 
+#endif
+
+#if ENABLE_FEATURE_VR
         // VR
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonVRSettings, buttonName)) {
@@ -3951,6 +4000,7 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonVR, buttonName)) {
             showVR();
         }
+#endif
 
         // GAME INIT
 
@@ -4021,11 +4071,13 @@ public class BaseUIController : GameObjectBehavior {
                 GameController.LoadCurrentProfileCharacter();
             }
 
+#if ENABLE_FEATURE_MODE
             if (!string.IsNullOrEmpty(panelNext)) {
                 if (panelNext == BaseUIPanel.panelGameMode) {
                     GameUIController.ShowGameMode();
                 }
             }
+#endif
         }
 #if ENABLE_FEATURE_PRODUCT_CURRENCY
 

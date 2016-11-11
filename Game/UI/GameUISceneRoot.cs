@@ -56,7 +56,7 @@ public class GameUISceneRoot : GameObjectBehavior {
     
     IEnumerator Start() {
 
-        GameUIPanelBackgrounds.ShowStateDefault();
+        //GameUIPanelBackgrounds.ShowStateDefault();
 
         
         //var glob = GameGlobal.Instance;

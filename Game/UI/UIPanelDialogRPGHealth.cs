@@ -66,7 +66,9 @@ public class UIPanelDialogRPGHealth : UIPanelDialogRPGObject {
         }
         else if(UIUtil.IsButtonClicked(buttonEarn, buttonName)) {
             GameController.QuitGame();
+#if ENABLE_FEATURE_PRODUCTS
             GameUIController.ShowGameMode();
+#endif
         }
         else if(UIUtil.IsButtonClicked(buttonResume, buttonName)) {
             HideAll();

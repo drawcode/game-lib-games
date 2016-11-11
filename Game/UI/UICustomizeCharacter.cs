@@ -143,7 +143,9 @@ public class UICustomizeCharacter : UIAppPanelBaseList {
     }
 
     public void BuyUpgrades() {
+#if ENABLE_FEATURE_PRODUCTS
         GameUIController.ShowProducts(GameProductType.rpgUpgrade);
+#endif
     }
 
     public void HandleRPGItemChanged(string rpgCodeFrom, string characterCodeFrom, double valFrom) {

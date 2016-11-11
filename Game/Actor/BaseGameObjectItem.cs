@@ -16,7 +16,7 @@ public class BaseGameObjectItem : GameObjectTimerBehavior {
 	}
 	
 	public virtual void Init() {
-		uniqueId = UniqueUtil.Instance.CreateUUID4();
+		uniqueId = UniqueUtil.CreateUUID4();
 	}
 	
 	public virtual void OnEnable() {

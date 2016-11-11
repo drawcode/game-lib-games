@@ -280,7 +280,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         }
         else if(UIUtil.IsButtonClicked(buttonResultsModes, buttonName)) {
             Reset();
+#if ENABLE_FEATURE_GAME_MODE
             GameUIController.ShowGameMode();
+#endif
         }
     }
 
