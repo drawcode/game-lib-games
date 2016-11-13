@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-#if ENABLE_FEATURE_GAME_MODE_MISSION
+#if ENABLE_FEATURE_GAME_MODE_MISSIONS
 
 public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
     

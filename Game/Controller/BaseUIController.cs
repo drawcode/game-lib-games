@@ -1931,14 +1931,14 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelGameModeTraining)
                     || isUIPanel(GameUIPanel.panelGameModeTrainingMode)) {
 
-#if ENABLE_FEATURE_MODE
+#if ENABLE_FEATURE_GAME_MODE
                     GameUIController.ShowGameMode();
                     handled = true;
 #endif
 
                 }
 
-#if ENABLE_FEATURE_MODE
+#if ENABLE_FEATURE_GAME_MODE
                 else if (isUIPanel(GameUIPanel.panelGameModeTrainingModeContent)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeChoice)
                     || isUIPanelLike(GameUIPanel.panelGameModeTrainingModeCollection)) {
@@ -2179,7 +2179,7 @@ public class BaseUIController : GameObjectBehavior {
 //}
 
 
-#if ENABLE_FEATURE_MODE
+#if ENABLE_FEATURE_GAME_MODE
 
     public virtual void showGameMode() {
 
@@ -2205,7 +2205,7 @@ public class BaseUIController : GameObjectBehavior {
 #endif
 
 
-#if ENABLE_FEATURE_MODE_COOP
+#if ENABLE_FEATURE_GAME_MODE_COOP
     
     // ------------------------------------------------------------
     // GAME MODE - COOP
@@ -2285,7 +2285,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 #endif
 
-#if ENABLE_FEATURE_MODE_MISSION
+#if ENABLE_FEATURE_GAME_MODE_MISSIONS
     // ------------------------------------------------------------
     // GAME MODE - MISSION
 
@@ -2588,7 +2588,7 @@ public class BaseUIController : GameObjectBehavior {
 #endif
 
 
-#if ENABLE_FEATURE_MODE_CHALLENGE
+#if ENABLE_FEATURE_GAME_MODE_CHALLENGE
     // ------------------------------------------------------------
     // GAME MODE - CHALLENGE
  
@@ -2618,7 +2618,7 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
-#if ENABLE_FEATURE_MODE_ARCADE
+#if ENABLE_FEATURE_GAME_MODE_ARCADE
 
     // ------------------------------------------------------------
     // GAME MODE - ARCADE
@@ -2649,7 +2649,7 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
-#if ENABLE_FEATURE_MODE_CUSTOMIZE
+#if ENABLE_FEATURE_GAME_MODE_CUSTOMIZE
     
     // ------------------------------------------------------------
     // GAME MODE - CUSTOMIZE
@@ -3756,7 +3756,7 @@ public virtual void hideCustomize() {
 
 // Game Modes
 
-#if ENABLE_FEATURE_MODE_ARCADE
+#if ENABLE_FEATURE_GAME_MODE_ARCADE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
             //GameUIController.ShowGameModeArcade();
@@ -3764,7 +3764,7 @@ public virtual void hideCustomize() {
         }
 #endif
 
-#if ENABLE_FEATURE_MODE_CHALLENGE
+#if ENABLE_FEATURE_GAME_MODE_CHALLENGE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenge, buttonName)) {            
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
             GameUIController.ShowGameModeChallenge();
@@ -4071,7 +4071,7 @@ public virtual void hideCustomize() {
                 GameController.LoadCurrentProfileCharacter();
             }
 
-#if ENABLE_FEATURE_MODE
+#if ENABLE_FEATURE_GAME_MODE
             if (!string.IsNullOrEmpty(panelNext)) {
                 if (panelNext == BaseUIPanel.panelGameMode) {
                     GameUIController.ShowGameMode();
