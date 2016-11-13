@@ -1,8 +1,8 @@
-#pragma warning disable CS0169
-#pragma warning disable CS0618
-#pragma warning disable CS0649
-#pragma warning disable CS0414
-#pragma warning disable CS0108
+#pragma warning disable 0169
+#pragma warning disable 0618
+#pragma warning disable 0649
+#pragma warning disable 0414
+#pragma warning disable 0108
 using System;
 using System.Collections;
 using System.Collections.Generic;

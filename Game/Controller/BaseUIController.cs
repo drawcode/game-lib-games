@@ -1,3 +1,4 @@
+#pragma warning disable 0169
 using UnityEngine;
 using System;
 using System.Collections;
