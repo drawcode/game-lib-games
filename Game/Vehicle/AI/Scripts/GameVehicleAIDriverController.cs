@@ -118,16 +118,16 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     private float m_sqrDistanceToWaypoint = 4;
     private float m_sqrDistanceToWpOa = 0;
     private float m_sqrDistanceToWpNoOa = 4;
-    private Vector3 m_leftDirection;
-    private Vector3 m_rightDirection;
+    //private Vector3 m_leftDirection;
+    //private Vector3 m_rightDirection;
     private Vector3 m_centerPointL;
     private Vector3 m_centerPointR;
-    private float m_obstacleAvoidanceWidth;
+    //private float m_obstacleAvoidanceWidth;
     private bool m_backwardDriving = false;
     private bool m_isBackwardDriving = false;
     private float m_currentMaxSteerAngle = 0;
-    private float m_lastSqrDistanceNextWp;
-    private float m_lastSqrDistanceAfterNextWp;
+    //private float m_lastSqrDistanceNextWp;
+    //private float m_lastSqrDistanceAfterNextWp;
     
     [HideInInspector]
     public GameObject

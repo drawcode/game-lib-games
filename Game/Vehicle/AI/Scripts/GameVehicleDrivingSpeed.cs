@@ -14,7 +14,7 @@ public class GameVehicleDrivingSpeed : GameObjectBehavior {
     //private GUIStyle styleShadow = new GUIStyle();
     //public Font myFont;
     //public int fontSize = 16;
-    private float currentSpeed;
+    //private float currentSpeed;
     //private int leftRect, topRect, widthRect, heightRect;
 	// Use this for initialization
 	void Start () {

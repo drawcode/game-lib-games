@@ -8,7 +8,7 @@ public class RelativeObjectScaler : GameObjectBehavior {
     public bool realtime = false;
     public bool broadcast = true;
     public bool run = true;
-    Vector3 positionTo;
+    //Vector3 positionTo;
     Vector3 originalPosition;
     Vector3 originalScale;
     //float lastScreenRatio;    

@@ -11,7 +11,7 @@ public class DrawLineToNext : GameObjectBehavior {
     
     //private bool active = true;
     private Color color = Color.cyan;
-    private GameVehicleAIDriverController aiDriverController;
+    //private GameVehicleAIDriverController aiDriverController;
 
     public void OnDrawGizmos() {
         

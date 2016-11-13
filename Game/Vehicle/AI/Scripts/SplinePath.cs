@@ -10,7 +10,7 @@ public class SplinePath : GameObjectBehavior {
     [HideInInspector]
     public List <Transform>
         path;
-    private Vector3[] pathPositions;
+    //private Vector3[] pathPositions;
     [HideInInspector]
     public List<Vector3>
         sequence;

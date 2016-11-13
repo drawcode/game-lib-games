@@ -27,7 +27,7 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
     public AudioClip motorSound;
     public float soundVolume = 1;
     private AudioSource m_motorAudioSource;
-    private float m_targetAngle;
+    //private float m_targetAngle;
     private float m_wheelRadius;
     [HideInInspector]
     public int

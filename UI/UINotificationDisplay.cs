@@ -110,7 +110,7 @@ public class UINotificationDisplay
     public GameObject notificationContainerTip;
     public GameObject notificationContainerError;
     
-    UINotificationItem notificationItem;
+    //UINotificationItem notificationItem;
     float positionYOpenInGame = 0;
     float positionYClosedInGame = 900;
     public static UINotificationDisplay Instance;

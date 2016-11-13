@@ -14,8 +14,8 @@ public class SetWheelColliderSettings : GameObjectBehavior {
     public float radiusFront = 0.3f;
     public float radiusBack = 0.3f;
     public bool mirrorWheels = true;
-    private Vector3 frontLeftPosition;
-    private Vector3 rearLeftPosition;
+    //private Vector3 frontLeftPosition;
+    //private Vector3 rearLeftPosition;
   
     void Awake() {
         flWheelCollider.transform.position = flWheel.position;

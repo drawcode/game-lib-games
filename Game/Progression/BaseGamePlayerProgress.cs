@@ -653,7 +653,7 @@ public class BaseGamePlayerProgress {
     public float lastSpawns = 0f;
     public float lastPoints = 0f;
     //
-    Thread syncThread;
+    //Thread syncThread;
     
     public static BaseGamePlayerProgress BaseInstance {
         get {

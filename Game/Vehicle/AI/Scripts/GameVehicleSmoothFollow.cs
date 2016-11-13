@@ -27,7 +27,7 @@ public class GameVehicleSmoothFollow : GameObjectBehavior {
 	float currentRotationAngle;
 	float currentHeight;
  
-	Quaternion currentRotation;
+	//Quaternion currentRotation;
 	Vector3 wantedPosition;
  
 	private float yVelocity = 0.0F;
