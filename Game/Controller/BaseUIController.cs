@@ -4044,6 +4044,8 @@ public virtual void hideCustomize() {
                         panelNext = s.Replace(markerNext, "");
                     }
                 }
+
+                Debug.Log("panelNext:" + panelNext);
             }
 
             bool loadCharacter = false;

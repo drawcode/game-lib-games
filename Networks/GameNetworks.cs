@@ -5,7 +5,7 @@
 // TODO wire in UNITY native social/game networks
 
 #if UNITY_IPHONE
-#define GAMENETWORK_IOS_APPLE_GAMECENTER
+//#define GAMENETWORK_IOS_APPLE_GAMECENTER
 #endif
 
 #if UNITY_ANDROID

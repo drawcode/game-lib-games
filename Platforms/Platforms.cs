@@ -82,7 +82,7 @@ public class Platforms {
 #elif UNITY_ANDROID     
         Application.OpenURL(url);
 #elif UNITY_IPHONE
-        EtceteraTwoBinding.playMovie(url, showControls, supportLandscape, supportPortrait);
+        //EtceteraTwoBinding.playMovie(url, showControls, supportLandscape, supportPortrait);
 #endif
     }
 
