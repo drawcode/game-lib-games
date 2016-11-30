@@ -3181,7 +3181,7 @@ public class BaseGamePlayerController : GameActor {
          
          if(IsPlayerControlled) {
              Gameverses.GameNetworkingAction actionEvent = new Gameverses.GameNetworkingAction();
-             actionEvent.uuid = UniqueUtil.Instance.CreateUUID4();
+             actionEvent.uuid = UniqueUtil.CreateUUID4();
              actionEvent.uuidOwner = uuid;
              actionEvent.code = animationName;
              actionEvent.type = Gameverses.GameNetworkingPlayerTypeMessages.PlayerTypeAction;

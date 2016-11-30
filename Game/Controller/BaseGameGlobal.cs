@@ -151,7 +151,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         world.sort_order_type = 0;
         world.status = "";
         world.type = "default";
-        world.uuid = UniqueUtil.Instance.CreateUUID4();
+        world.uuid = UniqueUtil.CreateUUID4();
         //world.
         */
 
