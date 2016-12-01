@@ -652,11 +652,19 @@ public class BaseGameController : GameObjectTimerBehavior {
     // CAMERAS
     
     public List<Camera> camerasAlwaysOn;
-    public List<Camera> camerasGame;
-    public List<Camera> camerasUI;
-    public GameObject camerasContainerGame;
-    public GameObject cameraContainersUI;
     public GameObject cameraContainersAlwaysOn;
+    //
+    public List<Camera> camerasGame;
+    public GameObject camerasContainerGame;
+    //
+    public List<Camera> camerasUI;
+    public GameObject cameraContainersUI;
+    //
+#if ENABLE_FEATURE_AR
+    public List<Camera> camerasAR;
+    public GameObject cameraContainersAR;
+#endif
+    //
     public float runDirectorsDelay = 10f;
 
     // QUEUES
@@ -2850,6 +2858,21 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
         }
+
+#if ENABLE_FEATURE_AR
+
+        if (camerasAR == null) {
+            camerasAR = new List<Camera>();
+            if (cameraContainersAR != null) {
+                foreach (Camera cam
+                         in cameraContainersAR.GetComponentsInChildren<Camera>()) {
+                    if (!camerasAR.Contains(cam)) {
+                        camerasAR.Add(cam);
+                    }
+                }
+            }
+        }
+#endif
     }
     
     public virtual void showCameras(List<Camera> cams) {
@@ -2895,13 +2918,27 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void handleCamerasInGame() {
         GameController.ShowCameras(camerasGame);
         GameController.HideCameras(camerasUI);
+#if ENABLE_FEATURE_AR
+        GameController.HideCameras(camerasAR);
+#endif
     }
     
     public virtual void handleCamerasInUI() {
         GameController.HideCameras(camerasGame);
         GameController.ShowCameras(camerasUI);
+#if ENABLE_FEATURE_AR
+        GameController.HideCameras(camerasAR);
+#endif
     }
-    
+
+    public virtual void handleCamerasInAR() {
+        GameController.HideCameras(camerasGame);
+        GameController.ShowCameras(camerasUI);
+#if ENABLE_FEATURE_AR
+        GameController.ShowCameras(camerasAR);
+#endif
+    }
+
     public virtual void changeGameCameraMode(GameCameraView cameraViewTo) {
         if (cameraViewTo == cameraView) {
             return;
