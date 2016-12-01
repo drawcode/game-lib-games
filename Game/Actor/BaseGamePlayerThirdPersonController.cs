@@ -100,7 +100,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     //Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     //Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
 
-    public NavMeshAgent navMeshAgent = null;
+    public UnityEngine.AI.NavMeshAgent navMeshAgent = null;
  
     public virtual void Awake() {
         moveDirection = transform.TransformDirection(Vector3.forward);
@@ -371,7 +371,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         jumpButton = true;
         
         if(navMeshAgent == null) {
-            navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+            navMeshAgent = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
         }
 
         // off while we jump

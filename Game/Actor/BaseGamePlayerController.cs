@@ -233,7 +233,7 @@ public class BaseGamePlayerControllerData {
     public Color gamePlayerEffectsIndicatorColorLast;
 
     // navigation/movement
-    public NavMeshAgent navMeshAgent;
+    public UnityEngine.AI.NavMeshAgent navMeshAgent;
     public GamePlayerNavMeshAgentFollowController navMeshAgentFollowController;
     public GamePlayerNavMeshAgentController navMeshAgentController;
     public CharacterController characterController;
@@ -5225,10 +5225,10 @@ public class BaseGamePlayerController : GameActor {
          
             if (!IsUIState()) {
 
-                currentControllerData.navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+                currentControllerData.navMeshAgent = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
 
                 if (currentControllerData.navMeshAgent == null) {
-                    currentControllerData.navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+                    currentControllerData.navMeshAgent = gameObject.AddComponent<UnityEngine.AI.NavMeshAgent>();
                 }
 
                 if (currentControllerData.navMeshAgent != null) {

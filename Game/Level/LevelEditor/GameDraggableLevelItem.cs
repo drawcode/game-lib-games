@@ -13,7 +13,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 	
 	public GameLevelItemAsset gameLevelItemAsset;	
 
-    public NavMeshAgent navAgent;
+    public UnityEngine.AI.NavMeshAgent navAgent;
 
     bool frozen = false;
     bool visible = true;

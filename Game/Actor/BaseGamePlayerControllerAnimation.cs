@@ -77,7 +77,7 @@ public class BaseGamePlayerControllerAnimationData {
     public bool isRunning = false;
     public bool isDead = false;
     public GamePlayerController gamePlayerController;
-    public NavMeshAgent navAgent;
+    public UnityEngine.AI.NavMeshAgent navAgent;
     public Animator animator;
     public Avatar avatar;
     public RuntimeAnimatorController animationController;
@@ -931,7 +931,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         animationData = new GamePlayerControllerAnimationData();
         
         animationData.gamePlayerController = GetComponent<GamePlayerController>();
-        animationData.navAgent = GetComponent<NavMeshAgent>();
+        animationData.navAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
                 
         if (animationData.gamePlayerController != null) {
             animationData.gamePlayerController.LoadAnimatedActor();

@@ -11,7 +11,7 @@ public enum GamePlayerFollowAgentType {
 
 public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     
-    public NavMeshAgent agent;
+    public UnityEngine.AI.NavMeshAgent agent;
     public Transform targetFollow;
     public float agentDistance = 4f;
     public float targetAttractRange = 10f;
@@ -23,7 +23,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     // Use this for initialization
     public virtual void Start() {
         
-        agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
         NavigateToDestination();
     }

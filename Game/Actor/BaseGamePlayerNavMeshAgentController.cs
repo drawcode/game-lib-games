@@ -11,13 +11,13 @@ public enum GamePlayerNavMeshAgentState {
 
 public class BaseGamePlayerNavMeshAgentController : GameObjectBehavior {
 	
-	public NavMeshAgent agent;
+	public UnityEngine.AI.NavMeshAgent agent;
 	public Vector3 nextDestination = Vector3.one;	
 	public GamePlayerNavMeshAgentState agentState = GamePlayerNavMeshAgentState.PURSUE;
 	
 	// Use this for initialization
 	public virtual void Start() {
-		agent = GetComponent<NavMeshAgent>();
+		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		nextDestination = transform.position;
 		NavigateToDestination();
 	}	
