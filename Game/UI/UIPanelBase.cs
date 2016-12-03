@@ -620,7 +620,21 @@ public class UIPanelBase : UIAppPanel {
         float time = durationShow;
         float delay = durationDelayShow;
 
+        //AnimateCancelEasing(delay);
+
         AnimateIn(time, delay);
+    }
+
+    public virtual void AnimateCancelEasing(float delay) {
+
+        StartCoroutine(AnimateCancelEasingCo(delay));        
+    }
+
+    IEnumerator AnimateCancelEasingCo(float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        LeanTween.cancelAll();
     }
 
     public virtual void AnimateIn(float time, float delay) {
