@@ -123,6 +123,11 @@ public class LoadSceneAsync : GameObjectBehavior {
     void Update() {
             
 		if(running) {
+
+            if (asyncLevelLoad == null) {
+                return;
+            }
+
 	        if(asyncLevelLoad.isDone) {
                 UIUtil.SetSliderValue(progressBarUI, 1f);
                 UIUtil.SetLabelValue(progressBarTextUI, "100%");

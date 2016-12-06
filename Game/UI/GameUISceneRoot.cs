@@ -79,7 +79,7 @@ public class GameUISceneRoot : GameObjectBehavior {
 
             // Wait a bit
 
-            yield return new WaitForSeconds(0.5f);
+            //yield return new WaitForSeconds(0.5f);
 
             // Set back to autorotation, it should be alright by now
 
