@@ -2143,19 +2143,19 @@ public class BaseUIController : GameObjectBehavior {
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
 
-        GameUIPanelBackgrounds.Instance.AnimateIn();
+        //GameUIPanelBackgrounds.Instance.AnimateIn();
 
-        if (GameUIPanelHeader.Instance != null) {
-            GameUIPanelHeader.Instance.AnimateInMain();
-        }
+        //if (GameUIPanelHeader.Instance != null) {
+            //GameUIPanelHeader.Instance.AnimateInMain();
+        //}
 
-        if (GameUIPanelFooter.Instance != null) {
-            GameUIPanelFooter.Instance.AnimateInMain();
-        }
+        //if (GameUIPanelFooter.Instance != null) {
+            //GameUIPanelFooter.Instance.AnimateInMain();
+        //}
 
-        if (GameUIPanelFooter.Instance != null) {
-            GameUIPanelMain.Instance.AnimateIn();
-        }
+        //if (GameUIPanelFooter.Instance != null) {
+            //GameUIPanelMain.Instance.AnimateIn();
+        //}
 
     }
 
