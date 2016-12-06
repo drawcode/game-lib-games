@@ -56,9 +56,8 @@ public class GameUISceneRoot : GameObjectBehavior {
     
     IEnumerator Start() {
 
-        //GameUIPanelBackgrounds.ShowStateDefault();
-
-        
+        GameUIPanelBackgrounds.ShowStateDefault();
+                
         //var glob = GameGlobal.Instance;
 
         // HACK to prevent game starting in portrait due to Unity bug 
