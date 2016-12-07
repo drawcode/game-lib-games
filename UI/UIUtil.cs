@@ -798,7 +798,7 @@ public class UIUtil {
     }
 
     public static void SetSliderValue(GameObject obj, double val) {
-        SetSliderValue(obj, val);
+        SetSliderValue(obj, (float)val);
     }
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
