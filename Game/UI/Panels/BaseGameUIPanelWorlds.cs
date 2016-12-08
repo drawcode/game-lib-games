@@ -72,7 +72,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     
     public override void Start() {
         Init();
-    }
+    } 
     
     public override void Init() {
         base.Init();    
@@ -85,6 +85,8 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public override void OnEnable() {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+
+        Messenger<string, Dictionary<string, object>>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickEventDataHandler);
 
         Messenger<string>.AddListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -109,6 +111,8 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public override void OnDisable() {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+
+        Messenger<string, Dictionary<string, object>>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickEventDataHandler);
 
         Messenger<string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateIn,

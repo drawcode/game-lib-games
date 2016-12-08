@@ -82,6 +82,7 @@ public class BaseUIButtonNames {
     public static string buttonGameProductsCharacterSkin = "ButtonGameProductsCharacterSkin";
     public static string buttonGameProductsWeapon = "ButtonGameProductsWeapon";
     public static string buttonGameProductsCurrency = "ButtonGameProductsCurrency";
+    public static string buttonGameProductsAccess = "ButtonGameProductsAccess";
     public static string buttonGameProductsFeature = "ButtonGameProductsFeature";
     public static string buttonGameProductsPickup = "ButtonGameProductsPickup";
     public static string buttonGameProductsPowerup = "ButtonGameProductsPowerup";
@@ -330,6 +331,8 @@ public class BaseUIController : GameObjectBehavior {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
+        Messenger<string, Dictionary<string, object>>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickDataEventHandler);
+
         Messenger<GameObject>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
 
         //Messenger<string, string, bool>.AddListener(ListEvents.EVENT_ITEM_SELECT, OnListItemClickEventHandler);
@@ -367,6 +370,8 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void OnDisable() {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+
+        Messenger<string, Dictionary<string,object>>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickDataEventHandler);
 
         Messenger<GameObject>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK_OBJECT, OnButtonClickObjectEventHandler);
 
@@ -3606,7 +3611,10 @@ public virtual void hideCustomize() {
 
             Debug.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
 
-            OnButtonClickDataEventHandler(buttonObject.name, data);
+            //OnButtonClickDataEventHandler(buttonObject.name, data);
+
+            Messenger<string, Dictionary<string, object>>.Broadcast(
+                ButtonEvents.EVENT_BUTTON_CLICK_DATA, buttonObject.name, data);
         }
         else {
             Messenger<string>.Broadcast(ButtonEvents.EVENT_BUTTON_CLICK, buttonObject.name);
@@ -3620,8 +3628,9 @@ public virtual void hideCustomize() {
 
     public virtual void OnButtonClickDataEventHandler(
         string buttonName,
-        Dictionary<string, object> data = null) {
-
+        Dictionary<string, object> data = null
+        ) {
+        
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
         if (data == null) {
@@ -3826,6 +3835,9 @@ public virtual void hideCustomize() {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsCurrency, buttonName)) {
             GameUIController.ShowProducts(GameProductType.currency);
         }
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsAccess, buttonName)) {
+            GameUIController.ShowProducts(GameProductType.access);
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameProductsFeature, buttonName)) {
             GameUIController.ShowProducts(GameProductType.feature);
         }
@@ -3869,6 +3881,21 @@ public virtual void hideCustomize() {
 
                 GameUIPanelProducts.LoadData();
             }
+        }
+
+        else if (buttonName.IsEqualLowercase(BaseUIButtonNames.buttonGameActionItemBuyUse)) {
+
+            if (data != null) {
+
+                string productCodeUse = data.Get<string>(BaseDataObjectKeys.code);
+                string productTypeUse = data.Get<string>(BaseDataObjectKeys.type);
+                                
+                if (!string.IsNullOrEmpty(productTypeUse)
+                    && !string.IsNullOrEmpty(productCodeUse)) {
+
+                    GameStoreController.Purchase(productCodeUse, 1);
+                }
+            }            
         }
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE

@@ -164,26 +164,26 @@ public class BaseStoreController : GameObjectBehavior {
 
     // QUEUE/PROCESSING
 
-    public void SetItemPurchasing(string key, GameStorePurchaseDataItem item) {       
-        
+    public void SetItemPurchasing(string key, GameStorePurchaseDataItem item) {
+
         LogUtil.Log("SET SetItemPurchasing:" + " key:" + key + " item.product.code:" + item.product.code);
-        
+
         LogUtil.Log("BEFORE SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
-        itemsPurchasing.Set<string,GameStorePurchaseDataItem>(key, item);
-        
+        itemsPurchasing.Set<string, GameStorePurchaseDataItem>(key, item);
+
         LogUtil.Log("AFTER SetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
     }
 
     public GameStorePurchaseDataItem GetItemPurchasing(string key) {
-        
-        LogUtil.Log("GET GetItemPurchasing:" + " key:" + key);        
-        
+
+        LogUtil.Log("GET GetItemPurchasing:" + " key:" + key);
+
         LogUtil.Log("BEFORE GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
         GameStorePurchaseDataItem itemPurchasing = itemsPurchasing.Get<GameStorePurchaseDataItem>(key);
-        
-        LogUtil.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson() + " itemPurchasing:" + itemPurchasing.ToJson());        
+
+        LogUtil.Log("AFTER GetItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson() + " itemPurchasing:" + itemPurchasing.ToJson());
 
         return itemPurchasing;
     }
@@ -191,18 +191,18 @@ public class BaseStoreController : GameObjectBehavior {
     public void RemoveItemPurchasing(string key) {
 
         LogUtil.Log("REMOVING RemoveItemPurchasing:" + " key:" + key);
-        
+
         LogUtil.Log("BEFORE RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
 
         itemsPurchasing.Remove(key);
-        
+
         LogUtil.Log("AFTER RemoveItemPurchasing:" + " itemsPurchasing:" + itemsPurchasing.ToJson());
     }
 
     // PRODUCT PURCHASE EVENTS
 
     public void onProductPurchaseSuccess(ProductNetworkRecord record) {
-        
+
         LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
         if (record == null) {
@@ -218,10 +218,10 @@ public class BaseStoreController : GameObjectBehavior {
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
-        
+
         if (itemPurchasing == null) {
             LogUtil.Log("itemPurchasing not found:" + product.code);
-            
+
             LogUtil.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
         }
 
@@ -257,10 +257,10 @@ public class BaseStoreController : GameObjectBehavior {
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
-        
+
         if (itemPurchasing == null) {
             LogUtil.Log("itemPurchasing not found:" + product.code);
-            
+
             LogUtil.Log("itemsPurchasing:" + itemsPurchasing.ToJson());
         }
 
@@ -280,7 +280,7 @@ public class BaseStoreController : GameObjectBehavior {
     }
 
     public void onProductPurchaseCancelled(ProductNetworkRecord record) {
-        
+
         LogUtil.Log("onProductPurchaseSuccess:" + " record:" + record.ToJson());
 
         if (record == null) {
@@ -296,7 +296,7 @@ public class BaseStoreController : GameObjectBehavior {
         }
 
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
-        
+
         if (itemPurchasing == null) {
             LogUtil.Log("itemPurchasing not found:" + product.code);
 
@@ -342,7 +342,7 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (data == null)
             return;
-        
+
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(data.productId);
 
         if (itemPurchasing != null) {
@@ -367,18 +367,25 @@ public class BaseStoreController : GameObjectBehavior {
             LogUtil.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
             UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
         }
-                
+
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
-        
+
         if (product == null) {
             return;
         }
-        
+
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
-        
+
         if (itemPurchasing != null) {
             LogUtil.Log("onStoreThirdPartyPurchaseSuccess: itemPurchasing.product:" + itemPurchasing.product.code);
-            GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);
+
+            if (product.type == GameProductType.currency) {
+                GameStoreController.HandleCurrencyPurchase(itemPurchasing.product, itemPurchasing.quantity);
+            }
+            else if (product.type == GameProductType.access) {
+                GameStoreController.HandleAccessPurchase(itemPurchasing.product, itemPurchasing.quantity);
+            }
+
             ResetPurchase(itemPurchasing.product.code);
         }
     }
@@ -391,11 +398,11 @@ public class BaseStoreController : GameObjectBehavior {
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
-        
+
         if (product == null) {
             return;
         }
-        
+
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(product.code);
 
         if (itemPurchasing != null) {
@@ -417,14 +424,16 @@ public class BaseStoreController : GameObjectBehavior {
         foreach (GameStorePurchaseDataItem item in data.items) {
 
             if (item.product != null) {
-                
+
                 if (IsPurchasing(item.product.code)) {
                     return;
                 }
-                
+
                 SetItemPurchasing(item.product.code, item);
 
-                if (item.product.type == GameProductType.currency) {
+                if (item.product.type == GameProductType.currency
+                    || item.product.type == GameProductType.access) {
+ 
                     // do third party process and event
 
                     GameStoreController.PurchaseThirdParty(item.product, item.quantity);
@@ -576,6 +585,12 @@ public class BaseStoreController : GameObjectBehavior {
             doPurchase = true;
 
         }
+        else if (gameProduct.type == GameProductType.access) {
+            // Add skraight cash moneh
+            GameStoreController.HandleAccessPurchase(gameProduct, quantity);
+            doPurchase = true;
+
+        }
         else if (gameProduct.type == GameProductType.characterSkin) {
             // TODO lookup skin and apply
 
@@ -587,13 +602,13 @@ public class BaseStoreController : GameObjectBehavior {
             }
             */
             doPurchase = true;
-            
+
         }
         else {
 
             // trigger purchased and rewards from the product items
             handleGameProductItems(gameProduct);
-                
+
             doPurchase = true;
         }
 
@@ -601,23 +616,23 @@ public class BaseStoreController : GameObjectBehavior {
             GameStoreController.BroadcastPurchaseSuccess(
                 GameStorePurchaseRecord.Create(true,
                     gameProduct, "",
-                    "Purchase Successful:" + 
+                    "Purchase Successful:" +
                 gameProduct.GetCurrentProductInfoByLocale().display_name,
-                    gameProduct.GetCurrentProductInfoByLocale().description, 
+                    gameProduct.GetCurrentProductInfoByLocale().description,
                                        gameProduct.code, quantity));
         }
     }
 
     public virtual void handleGameProductItems(GameProduct gameProduct) {
-                
+
         if (gameProduct.data == null) {
             return;
         }
-        
+
         if (gameProduct.data.items == null) {
             return;
         }
-        
+
         foreach (GameDataObject item in gameProduct.data.items) {
 
             if (item.type == GameProductType.character) {
@@ -625,12 +640,17 @@ public class BaseStoreController : GameObjectBehavior {
                 GameProfileCharacters.Current.AddCharacter(item.code);
             }
             else if (item.type == GameProductType.currency) {
-                
+
                 // Add skraight cash moneh
                 GameProfileRPGs.Current.AddCurrency(item.valDouble);
             }
+            else if (item.type == GameProductType.access) {
+
+                // Add permission
+                GameProfiles.Current.SetAccessPermission(item.valString);
+            }
             else if (item.type == GameProductType.item) {
-                
+
                 // Add skraight cash moneh
                 //GameProfileRPGs.Current.AddCurrency(item.valDouble);
                 //GameProfileCharacters.Current.
@@ -638,7 +658,7 @@ public class BaseStoreController : GameObjectBehavior {
             }
             else if (item.type == GameProductType.powerup) {
                 // Add upgrades
-                
+
                 if (gameProduct.code.Contains("rpg-recharge-full")) {
 
                     GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(1f, 1f);
@@ -657,7 +677,7 @@ public class BaseStoreController : GameObjectBehavior {
                     //message = "Recharging your health...";
                     //doPurchase = true;
                 }
-                
+
             }
             else if (item.type == GameProductType.rpgUpgrade) {
 
@@ -693,5 +713,16 @@ public class BaseStoreController : GameObjectBehavior {
         }
 
         ResetPurchase(gameProduct.code);
+    }
+
+    public virtual void handleAccessPurchase(GameProduct gameProduct, double quantity) {
+
+        string productCode = gameProduct.code;
+
+        LogUtil.Log("GameStoreController:handleAccessPurchase:productId:" + productCode);
+
+        GameProfiles.Current.SetAccessPermission(productCode);
+
+        ResetPurchase(productCode);
     }
 }

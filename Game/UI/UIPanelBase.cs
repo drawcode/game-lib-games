@@ -136,6 +136,9 @@ public class UIPanelBase : UIAppPanel {
 
         panelTypes.Add(UIPanelBaseTypes.typeDefault);
 
+        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, Dictionary<string, object>>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickEventDataHandler);
+
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
         Messenger<string>.AddListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
 
@@ -149,6 +152,10 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void OnDisable() {
+
+        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, Dictionary<string, object>>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK_DATA, OnButtonClickEventDataHandler);
+
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateIn, OnUIControllerPanelAnimateIn);
         Messenger<string>.RemoveListener(UIControllerMessages.uiPanelAnimateOut, OnUIControllerPanelAnimateOut);
 
@@ -161,7 +168,13 @@ public class UIPanelBase : UIAppPanel {
         Messenger<string, string>.RemoveListener(UIControllerMessages.uiPanelAnimateType, OnUIControllerPanelAnimateType);
     }
 
-    public virtual void OnButtonClickEventHandler(string buttonName) {
+    public virtual void OnButtonClickEventHandler(
+        string buttonName) {
+
+    }
+
+    public virtual void OnButtonClickEventDataHandler(
+        string buttonName, Dictionary<string, object> data) {
 
     }
 

@@ -29,6 +29,7 @@ public class ButtonEvents : GameObjectBehavior {
 
     public static string EVENT_BUTTON_CLICK = "event-button-click";
     public static string EVENT_BUTTON_CLICK_OBJECT = "event-button-click-object";
+    public static string EVENT_BUTTON_CLICK_DATA = "event-button-click-data";
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     UIButton btn;
