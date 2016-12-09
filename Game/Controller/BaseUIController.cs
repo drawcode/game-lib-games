@@ -3888,10 +3888,8 @@ public virtual void hideCustomize() {
             if (data != null) {
 
                 string productCodeUse = data.Get<string>(BaseDataObjectKeys.code);
-                string productTypeUse = data.Get<string>(BaseDataObjectKeys.type);
                                 
-                if (!string.IsNullOrEmpty(productTypeUse)
-                    && !string.IsNullOrEmpty(productCodeUse)) {
+                if (!string.IsNullOrEmpty(productCodeUse)) {
 
                     GameStoreController.Purchase(productCodeUse, 1);
                 }

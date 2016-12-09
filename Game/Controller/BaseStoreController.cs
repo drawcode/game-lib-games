@@ -17,6 +17,8 @@ public class GameStoreMessages {
     public static string purchaseThirdPartySuccess = "store-third-party-purchase-success";
     public static string purchaseThirdPartyFailed = "store-third-party-purchase-failed";
     public static string purchaseThirdPartyCancelled = "store-third-party-purchase-cancelled";
+    //
+    public static string purchaseAccessSuccess = "store-purchase-access-success";
 
 }
 
@@ -722,6 +724,8 @@ public class BaseStoreController : GameObjectBehavior {
         LogUtil.Log("GameStoreController:handleAccessPurchase:productId:" + productCode);
 
         GameProfiles.Current.SetAccessPermission(productCode);
+
+        GameState.SaveProfile();
 
         ResetPurchase(productCode);
     }
