@@ -727,6 +727,9 @@ public class BaseStoreController : GameObjectBehavior {
 
         GameState.SaveProfile();
 
+        Messenger<string>.Broadcast(
+            GameStoreMessages.purchaseAccessSuccess, productCode);
+
         ResetPurchase(productCode);
     }
 }
