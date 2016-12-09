@@ -261,43 +261,58 @@ public class UIPanelBase : UIAppPanel {
 
     // CENTER
 
-    public virtual void AnimateInCenter(GameObject go) {
-        AnimateInCenter(go, durationShow, durationDelayShow);
+    public virtual void AnimateInCenter(GameObject go, bool local = true) {
+        AnimateInCenter(go, durationShow, durationDelayShow, local);
     }
 
-    public virtual void AnimateOutCenter(GameObject go) {
-        AnimateOutCenter(go, durationHide, durationDelayHide);
+    public virtual void AnimateOutCenter(GameObject go, bool local = true) {
+        AnimateOutCenter(go, durationHide, durationDelayHide, local);
     }
 
-    public virtual void AnimateInCenter(GameObject go, float time, float delay) {
+    public virtual void AnimateInCenter(GameObject go, float time, float delay, bool local = true) {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
 
-            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
+            if (local) {
 
+                LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
+                    .setDelay(delay)
+                    .setEase(LeanTweenType.easeInOutQuad);
+            }
+            else {
+                LeanTween.move(go, Vector3.zero.WithY(bottomOpenY), time)
+                    .setDelay(delay)
+                    .setEase(LeanTweenType.easeInOutQuad);
+            }
         }
     }
 
-    public virtual void AnimateInCenter(float time, float delay) {
-        AnimateInCenter(panelCenterObject, time, delay);
+    public virtual void AnimateInCenter(float time, float delay, bool local = true) {
+        AnimateInCenter(panelCenterObject, time, delay, local);
     }
 
-    public virtual void AnimateOutCenter(GameObject go, float time, float delay) {
+    public virtual void AnimateOutCenter(GameObject go, float time, float delay, bool local = true) {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
 
-            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
+            if (local) {
+
+                LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
+                    .setDelay(delay)
+                    .setEase(LeanTweenType.easeInOutQuad);
+            }
+            else {
+                LeanTween.move(go, Vector3.zero.WithY(bottomClosedY), time)
+                    .setDelay(delay)
+                    .setEase(LeanTweenType.easeInOutQuad);
+            }
         }
     }
 
-    public virtual void AnimateOutCenter(float time, float delay) {
-        AnimateOutCenter(panelCenterObject, time, delay);
+    public virtual void AnimateOutCenter(float time, float delay, bool local = true) {
+        AnimateOutCenter(panelCenterObject, time, delay, local);
     }
 
     // LEFT
