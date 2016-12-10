@@ -274,6 +274,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
 
+            LeanTween.cancel(go);
+
             if (local) {
 
                 LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
@@ -296,6 +298,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+
+            LeanTween.cancel(go);
 
             if (local) {
 
@@ -330,6 +334,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -344,6 +350,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
                 .setDelay(delay)
@@ -370,6 +378,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -384,6 +394,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
                 .setDelay(delay)
@@ -410,6 +422,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -424,6 +438,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
                 .setDelay(delay)
@@ -450,6 +466,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -464,6 +482,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
                 .setDelay(delay)
@@ -490,6 +510,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -504,6 +526,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
                 .setDelay(delay)
@@ -530,6 +554,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -544,6 +570,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
                 .setDelay(delay)
@@ -570,6 +598,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithY(topOpenY), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -584,6 +614,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithY(topClosedY), time)
                 .setDelay(delay)
@@ -610,6 +642,8 @@ public class UIPanelBase : UIAppPanel {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
 
+            LeanTween.cancel(go);
+
             LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
                 .setDelay(delay)
                 .setEase(LeanTweenType.easeInOutQuad);
@@ -624,6 +658,8 @@ public class UIPanelBase : UIAppPanel {
         if (go != null) {
             //UITweenerUtil.MoveTo(go,
             //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
+
+            LeanTween.cancel(go);
 
             LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
                 .setDelay(delay)
@@ -655,7 +691,7 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void AnimateCancelEasing(float delay) {
 
-        StartCoroutine(AnimateCancelEasingCo(delay));        
+        StartCoroutine(AnimateCancelEasingCo(delay));
     }
 
     IEnumerator AnimateCancelEasingCo(float delay) {
@@ -780,11 +816,6 @@ public class UIPanelBase : UIAppPanel {
 
     }
 
-    //
-    //
-    //
-
-
     public void ListContainerScale(GameObject listObject, float scaleTo) {
         if (listObject != null) {
             Vector3 currentScale = listObject.transform.localScale;
@@ -868,7 +899,9 @@ public class UIPanelBase : UIAppPanel {
             grid.Reposition();
             if (gridObject.transform.parent != null) {
 
-                UIDraggablePanel[] dragPanels = gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
+                UIDraggablePanel[] dragPanels =
+                    gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
+
                 if (dragPanels != null) {
                     foreach (UIDraggablePanel panel
                      in dragPanels) {
@@ -902,6 +935,8 @@ public class UIPanelBase : UIAppPanel {
             //// UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftOpenX).WithY(topClosedY));   
 
+            LeanTween.cancel(panel);
+
             if (fade) {
                 //UITweenerUtil.FadeTo(panel, 
                 //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
@@ -928,6 +963,8 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HidePanelTop(GameObject panel, bool fade) {
         if (panel != null) {
+
+            LeanTween.cancel(panel);
 
             if (fade) {
                 //UITweenerUtil.FadeTo(panel, 
@@ -961,6 +998,8 @@ public class UIPanelBase : UIAppPanel {
     public virtual void ShowPanelBottom(GameObject panel, bool fade) {
         if (panel != null) {
 
+            LeanTween.cancel(panel);
+
             //UITweenerUtil.MoveTo(panel,
             //                     UITweener.Method.EaseInOut, UITweener.Style.Once, 0f, 0f,
             //                     Vector3.zero.WithY(bottomOpenY));
@@ -992,6 +1031,8 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HidePanelBottom(GameObject panel, bool fade) {
         if (panel != null) {
+
+            LeanTween.cancel(panel);
 
             if (fade) {
                 //UITweenerUtil.FadeTo(panel, 
@@ -1030,6 +1071,8 @@ public class UIPanelBase : UIAppPanel {
     public virtual void ShowPanelLeft(GameObject panel, bool fade) {
         if (panel != null) {
 
+            LeanTween.cancel(panel);
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(leftClosedX));   
@@ -1060,6 +1103,8 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HidePanelLeft(GameObject panel, bool fade) {
         if (panel != null) {
+
+            LeanTween.cancel(panel);
 
             if (fade) {
                 //UITweenerUtil.FadeTo(panel, 
@@ -1093,6 +1138,8 @@ public class UIPanelBase : UIAppPanel {
     public virtual void ShowPanelRight(GameObject panel, bool fade) {
         if (panel != null) {
 
+            LeanTween.cancel(panel);
+
             //UITweenerUtil.MoveTo(panel, 
             //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
             //   Vector3.zero.WithX(rightClosedX));  
@@ -1123,6 +1170,8 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HidePanelRight(GameObject panel, bool fade) {
         if (panel != null) {
+
+            LeanTween.cancel(panel);
 
             if (fade) {
                 //UITweenerUtil.FadeTo(panel, 
@@ -1230,7 +1279,6 @@ public class UIPanelBase : UIAppPanel {
     }
 
     // PANEL SECTIONS STATES
-
 
     public void HandleCharacterDisplay() {
 
