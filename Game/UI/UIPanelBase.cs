@@ -676,7 +676,7 @@ public class UIPanelBase : UIAppPanel {
     public virtual void AnimateIn() {
 
         //AnimateOut(0f, 0f);
-
+        
         HandleUniquePanelTypes();
 
         ShowPanel();

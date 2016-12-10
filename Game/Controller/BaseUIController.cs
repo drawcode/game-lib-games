@@ -477,11 +477,16 @@ public class BaseUIController : GameObjectBehavior {
             return;
         }
 
+        if (currentPanel != panelCode) {
+
+        }
+
         currentPanel = panelCode;
 
         AnalyticsNetworks.LogEventSceneChange(panelCode, title);
 
-        HideAllPanelsNow();
+        //HideAllPanelsNow();
+        HideAllPanels();
 
         if (panelCode != BaseUIPanel.panelMain) {
             broadcastUIMessageAnimateType(
