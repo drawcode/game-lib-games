@@ -37,7 +37,7 @@ public class GameItemData : GameDataObject {
     }
 }
 
-public class BaseItemController : GameObjectBehavior {
+public class BaseItemController : GameObjectBehavior, IBaseItemController {
  
     public static BaseItemController BaseInstance;
     //

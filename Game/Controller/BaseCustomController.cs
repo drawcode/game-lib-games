@@ -46,7 +46,7 @@ public class BaseGameCustomColors : DataObjectItem {
     //public static Color colorCardinalsRed = ColorHelper.FromRGB(135,6,25);//.FromHex("870619");
 }
 
-public class BaseGameCustomController : GameObjectBehavior { 
+public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomController { 
         
     public bool runDirector = true;
     public float currentFPS = 0f;

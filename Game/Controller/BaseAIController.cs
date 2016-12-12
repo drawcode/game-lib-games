@@ -43,7 +43,7 @@ public enum GameAICharacterGenerateType {
     team
 }
 
-public class BaseAIController : GameObjectBehavior {
+public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
     public static BaseAIController BaseInstance;
     //

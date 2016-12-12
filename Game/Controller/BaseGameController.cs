@@ -582,7 +582,7 @@ public enum GameRunningState {
     STOPPED
 }
 
-public class BaseGameController : GameObjectTimerBehavior {
+public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public GamePlayerController currentGamePlayerController;
     public Dictionary<string, GamePlayerController> gamePlayerControllers;
