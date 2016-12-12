@@ -512,7 +512,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     //} 
     
     public virtual void ShowBackButtonObject() {
+
         if (backObject != null) {
+
             ShowObject(backObject);
 
             //iTween.FadeTo(backObject, iTween.Hash(
@@ -522,9 +524,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
             //  "delay", 0f
             //));
 
-
             UITweenerUtil.FadeTo(backObject,
                 UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
+
             foreach (Transform t in backObject.transform) {
                 
                 UITweenerUtil.FadeTo(t.gameObject,
@@ -534,7 +536,9 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
     
     public virtual void HideBackButtonObject() {
+
         if (backObject != null) {
+
             //iTween.FadeTo(backObject, iTween.Hash(
             //  "easetype", "linear",
             //  "alpha", 0f,

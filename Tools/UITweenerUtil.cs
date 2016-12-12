@@ -342,7 +342,9 @@ public class UITweenerUtil {
         if (reset) {
             //go.RemoveComponent<TweenAlpha>();
         }
-        
+
+        iTween.Stop(go);
+
         TweenAlpha comp = UITweenerUtil.Begin<TweenAlpha>(go, method, style, duration, delay);
         if (reset) {
             comp = ResetTween(comp);
