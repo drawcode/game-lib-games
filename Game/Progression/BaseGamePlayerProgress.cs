@@ -768,6 +768,7 @@ public class BaseGamePlayerProgress {
         string trackerCode = "";
         
         if (!string.IsNullOrEmpty(trackerCode)) {
+#if ENABLE_FEATURE_AR
             ARDataSetTracker tracker = ARDataSetTrackers.Instance.GetByNameAndPack(
                 trackerName,
                 GamePacks.Current.code);
@@ -778,6 +779,7 @@ public class BaseGamePlayerProgress {
                     ProcessProgressTracker(trackerCode);
                 }
             }
+#endif
         }
     }
     
@@ -794,6 +796,7 @@ public class BaseGamePlayerProgress {
         string trackerCode = "";
         
         if (!string.IsNullOrEmpty(trackerCode)) {
+#if ENABLE_FEATURE_AR
             ARDataSetTracker tracker = ARDataSetTrackers.Instance.GetByNameAndPack(
                 trackerName,
                 GamePacks.Current.code);
@@ -804,6 +807,7 @@ public class BaseGamePlayerProgress {
                     EndProcessProgressTracker(trackerCode);
                 }
             }
+#endif
         }
     }
     
