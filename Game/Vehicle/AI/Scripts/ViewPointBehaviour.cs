@@ -18,15 +18,15 @@ public class ViewPointBehaviour : GameObjectBehavior {
                 }
             }
             else {
-                aiDriverController = 
+                aiDriverController =
                     gameObject.transform.parent.GetComponent<GameVehicleAIDriverController>() as GameVehicleAIDriverController;
-                if (aiDriverController != null) {                    
+                if (aiDriverController != null) {
                     if (aiDriverController.useObstacleAvoidance) {
                         Gizmos.color = Color.cyan;
                         Gizmos.DrawWireSphere(gameObject.transform.position, 0.1f);
                     }
                 }
-            
+
             }
         }
     }

@@ -24,15 +24,15 @@ public class GameVehicleMotorMapping : GameObjectBehavior {
     public Transform frWheelMesh;
     public bool usingGameVehicleAIDriverMotor = true;
     private GameVehicleAIDriverMotor aIDriverMotor;
-    
+
     ////Edy's -B
     //private CarControl carControl;
     ////Edy's -E
-    
+
     ////Unity Car Tutorial -B
     //private Car car;
     ////Unity Car Tutorial -E
-    
+
     void Awake() {
         if (usingGameVehicleAIDriverMotor) {
             aIDriverMotor = this.GetComponent<GameVehicleAIDriverMotor>();
@@ -53,11 +53,11 @@ public class GameVehicleMotorMapping : GameObjectBehavior {
             ////Unity Car Tutorial -B
         }
     }
-        
+
     // Update is called once per frame
     void Update() {
 
-        if (usingGameVehicleAIDriverMotor) {            
+        if (usingGameVehicleAIDriverMotor) {
             aIDriverMotor.aiSteerAngle = steerInput;
             aIDriverMotor.aiSpeedPedal = motorInput;
             aIDriverMotor.aiBrakePedal = brakeInput;
@@ -77,7 +77,7 @@ public class GameVehicleMotorMapping : GameObjectBehavior {
             //    carControl.gearInput = -1;
             //}
             ////Edy's -E
-            
+
             ////Unity Car Tutorial -B           
             //car.steer = steerInput;     
             //if (brakeInput > 0)

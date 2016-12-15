@@ -2,35 +2,35 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class SplinePath : GameObjectBehavior {   
+public class SplinePath : GameObjectBehavior {
 
     public int steps = 5;
     public bool loop = true;
     public Color color = Color.white;
     [HideInInspector]
-    public List <Transform>
+    public List<Transform>
         path;
     //private Vector3[] pathPositions;
     [HideInInspector]
     public List<Vector3>
         sequence;
     //private bool isLoaded = false;
-    
+
     protected virtual void Awake() {
-        
+
         FillSequence();
     }
-    
+
     protected virtual void OnDrawGizmos() {
-    
+
         FillSequence();
-        DrawGizmos();       
-                
+        DrawGizmos();
+
     }
-    
+
     protected void DrawGizmos() {
-        if (sequence != null) {         
-                    
+        if (sequence != null) {
+
             int count;
             int c = 0;
             count = sequence.Count;
@@ -44,11 +44,8 @@ public class SplinePath : GameObjectBehavior {
             }
         }
     }
-    
+
     protected void FillSequence() {
-        
         sequence = SplineCalculation.NewCatmullRom(path, steps, loop);
-        
     }
-            
 }

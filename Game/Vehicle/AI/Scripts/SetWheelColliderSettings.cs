@@ -16,7 +16,7 @@ public class SetWheelColliderSettings : GameObjectBehavior {
     public bool mirrorWheels = true;
     //private Vector3 frontLeftPosition;
     //private Vector3 rearLeftPosition;
-  
+
     void Awake() {
         flWheelCollider.transform.position = flWheel.position;
         rlWheelCollider.transform.position = rlWheel.position;
@@ -28,10 +28,10 @@ public class SetWheelColliderSettings : GameObjectBehavior {
         rlWheelCollider.radius = radiusBack;
         rrWheelCollider.radius = radiusBack;
     }
-   
+
 
     // Update is called once per frame
-    void Update() {                
+    void Update() {
         if (!Application.isPlaying) {
             if (mirrorWheels) {
 

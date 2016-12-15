@@ -11,7 +11,7 @@ public class TriggerSound : GameObjectBehavior {
     void Awake() {
         //InitSound(out triggerAudioSource, triggerSound, soundVolume, false);
     }
-    
+
     void InitSound(out AudioSource audioSource, AudioClip clip, float volume, bool looping) {
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
@@ -31,5 +31,4 @@ public class TriggerSound : GameObjectBehavior {
         //}
 
     }
-
 }

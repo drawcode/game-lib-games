@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GameVehicleDrivingSpeed : GameObjectBehavior {
     public WheelCollider myWheelCollider;
-    
+
     //public int textBoxMarginSide;
     //public int textBoxMarginBottom;
     //public int shadowOffset= 2;
@@ -16,8 +16,8 @@ public class GameVehicleDrivingSpeed : GameObjectBehavior {
     //public int fontSize = 16;
     //private float currentSpeed;
     //private int leftRect, topRect, widthRect, heightRect;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
 
         //style.font = myFont;
         //style.normal.textColor = Color.cyan;
@@ -26,12 +26,12 @@ public class GameVehicleDrivingSpeed : GameObjectBehavior {
         //styleShadow.font = myFont;
         //styleShadow.normal.textColor = Color.black;
         //styleShadow.fontSize = fontSize;
-	}
-	
-	// Update is called once per frame
-	void Update () {       
-        	
-	}
+    }
+
+    // Update is called once per frame
+    void Update() {
+
+    }
 
     /*
     void OnGUI() {
@@ -58,5 +58,4 @@ public class GameVehicleDrivingSpeed : GameObjectBehavior {
         GUILayout.EndArea();
     }
     */
-    
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameVehicleRespawn : GameObjectBehavior {
-    
+
     private Transform currentRespawnPoint;
     //[HideInInspector]
     public int currentRespawnPointInt;
@@ -20,36 +20,35 @@ public class GameVehicleRespawn : GameObjectBehavior {
 
     public static RespawnHandler onRespawnWaypoint;
 
-    void Awake() {        
-        
-        
+    void Awake() {
+
     }
-    
+
     void Start() {
         //wir machen dies in der Start-Routine, weil wir im GameVehicleAIDriver-Skript erst in der Awake-Fkt die Waypoints zuweisen
         //Um sicherzugehen, dass die Waypoints auch gefunden und der List zugewiesen wurde, weisen wir dies deshalb erst hier zu!
-        
+
         aiDriver = gameObject.GetComponent<GameVehicleAIDriver>();
-        if(aiDriver != null) {
+        if (aiDriver != null) {
             waypoints = aiDriver.waypoints;
         }
     }
 
     public void StartRespawn() {
         if (!isStartingRespawn) {
-            isStartingRespawn = true;           
+            isStartingRespawn = true;
             Respawn();
         }
     }
 
-    void Update() {       
+    void Update() {
         if (!IsCorrectMoving()) {
             StartRespawn();
         }
     }
-                
-    void Respawn() { 
-         
+
+    void Respawn() {
+
         int currentWaypoint = aiDriver.currentWaypoint;
         if (currentWaypoint == 0) {
             currentWaypoint = waypoints.Count - 1;
@@ -62,8 +61,8 @@ public class GameVehicleRespawn : GameObjectBehavior {
         transform.rotation = currentRespawnPoint.rotation;
 
         aiDriver.aiSteerAngle = 0;
-        aiDriver.currentAngle = 0;        
-        
+        aiDriver.currentAngle = 0;
+
         isStartingRespawn = false;
         lastTimeToReachNextWP = 0;
 
@@ -84,16 +83,13 @@ public class GameVehicleRespawn : GameObjectBehavior {
     bool IsCorrectMoving() {
         bool moving = true;
         lastTimeToReachNextWP += Time.deltaTime;
-       
+
         if (lastTimeToReachNextWP >= timeTillRespawn) {
-           
-            moving = false;          
+
+            moving = false;
 
         }
         //lastPosition = transform.position;
         return moving;
     }
-
-    
-   
 }

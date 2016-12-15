@@ -6,8 +6,8 @@ using System;
 [RequireComponent(typeof(SplinePathWaypoints))]
 
 public class GameVehicleAIDriverController : GameObjectBehavior {
-      
-    
+
+
     private float m_calcMaxSpeed = 200.0f;
     //public float torque = 150.0f;
     //public float brakeTorque = 500.0f;
@@ -24,7 +24,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     public float m_frontDistanceLength = 0;
     private float m_leftRightSideDistanceLength = 0;
     private bool optimizedWpTargeting = true; //Use the next waypoint when it's better //2013-06-17
-    
+
     ////if wheels turn in wrong direction, please activate this parameter
     //private bool inverseWheelTurning = false;
     //private int  wheelTurningParameter = 1;
@@ -89,7 +89,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         viewPoint;
     public bool useObstacleAvoidance = true;
     public bool ignoreWaypointsForObstacleAvoidanceControl = false;
-    public bool onlyStoppingWhileOa = false; 
+    public bool onlyStoppingWhileOa = false;
     //public bool ignoreWaypointsForObstacleAvoidanceControl = false;
     public float oADistance = 10;
     public float oAWidth = 4;
@@ -128,7 +128,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     private float m_currentMaxSteerAngle = 0;
     //private float m_lastSqrDistanceNextWp;
     //private float m_lastSqrDistanceAfterNextWp;
-    
+
     [HideInInspector]
     public GameObject
         leftDirectionGO;
@@ -189,8 +189,8 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     private float currentWaitTimeToSwitchBackToWpMode = 0;
     private float defaultWaitTimeToSwitchBackToWpMode = 5;
     private bool oAisActive = false;
-    
-    public enum DriveMode { 
+
+    public enum DriveMode {
         OneWay,
         Laps
     }
@@ -201,43 +201,40 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     }
 
     void Awake() {
-                
-        //2011-12-27
+        
         //GetWaypointNames();
         //FillWaypointList();
-        //2011-12-27      
-        
+
         aiRespawnControllerScript = gameObject.GetComponent<GameVehicleRespawnController>();
         aiPreMotor = GetComponent<GameVehicleMotorMapping>();
         flWheel = aiPreMotor.flWheelMesh;
         frWheel = aiPreMotor.frWheelMesh;
     }
 
-    void Start() {      
+    void Start() {
         m_sqrDistanceToWpNoOa = wpContactAreaRadius * wpContactAreaRadius;
-        //2011-12-27
+
         GetWaypointNames();
         FillWaypointList();
-        //2011-12-27
+
         steerAngle = aiPreMotor.steerMax;
         m_calcMaxSpeed = aiPreMotor.speedMax;
-        m_maxSpeed = m_calcMaxSpeed; 
+        m_maxSpeed = m_calcMaxSpeed;
         m_sqrDistanceToWpOa = roadMaxWidth * roadMaxWidth;
-        
+
         if (steerAngle < hsSteerAngle) {
             LogUtil.LogError("hsSteerAngle is bigger then aiPreMotor.steerMax. It has to be lower or equal.");
         }
         //ObstacleAvoidance
-        if (useObstacleAvoidance) {
-            //2012-07-10 
-            if (ignoreWaypointsForObstacleAvoidanceControl) {                                                   
-                m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa; 
+        if (useObstacleAvoidance) {            
+
+            if (ignoreWaypointsForObstacleAvoidanceControl) {
+                m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;
             }
             else {
-                m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa; //2012-06-24
+                m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;
             }
-            //2012-07-10 
-            
+
             ////unnoetig
             //if (viewPoint == null)
             //{
@@ -252,14 +249,14 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
 
             viewPointRightGO = new GameObject("viewPointRightGO");
             viewPointRightGO.transform.parent = transform;
-            viewPointRightGO.transform.position = viewPoint.transform.position;                      
+            viewPointRightGO.transform.position = viewPoint.transform.position;
             viewPointRightGO.transform.position += viewPoint.TransformDirection((Vector3.right * frWheel.localPosition.x));
             viewPointRightGO.transform.rotation = transform.rotation;
 
             //obstacleAvoidanceWidth = viewPointRightGO.transform.localPosition.x + oAWidth;           
             //leftDirection = viewPoint.position + viewPoint.TransformDirection((Vector3.left * obstacleAvoidanceWidth) + (Vector3.forward * oADistance));           
             //rightDirection = viewPoint.position + viewPoint.TransformDirection((Vector3.right * obstacleAvoidanceWidth) + (Vector3.forward * oADistance));
-                
+
             m_centerPointL = transform.position + transform.TransformDirection(Vector3.left * oASideOffset);
             m_centerPointL.y = viewPoint.position.y;
             m_centerPointR = transform.position + transform.TransformDirection(Vector3.right * oASideOffset);
@@ -332,7 +329,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             m_leftRearSidePos = transform.position + transform.TransformDirection(Vector3.left * oASideOffset);
             m_leftRearSidePos.y = viewPoint.position.y;
             m_leftRearSidePos -= transform.TransformDirection(Vector3.forward * oASideFromMid);
-            
+
             leftRearSideGO = new GameObject("leftRearSideGO");
             leftRearSideGO.transform.parent = transform;
             leftRearSideGO.transform.position = m_leftRearSidePos;
@@ -374,7 +371,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             rightRearSideEndGO.transform.rotation = transform.rotation;
 
             //Ende Seiten-Raycasts--------------------------------------------------------------------------------------------
-            
+
             //------------
             leftDirectionGO = new GameObject("leftDirectionGO");
             leftDirectionGO.transform.parent = transform;
@@ -385,25 +382,25 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             rightDirectionGO.transform.parent = transform;
             rightDirectionGO.transform.position = viewPointRightEndGO.transform.position + viewPointRightEndGO.transform.TransformDirection(Vector3.right * oAWidth);
             //rightDirectionGO.transform.position = viewPointRightEndGO.transform.position;
-            
+
             rightDirectionGO.transform.rotation = transform.rotation;
             //------------
 
             m_leftRightDistanceLength = Vector3.Distance(viewPointRightGO.transform.position, rightDirectionGO.transform.position);
-            m_leftRightSideDistanceLength = Vector3.Distance(centerPointRGO.transform.position, centerPointEndRGO.transform.position);            
+            m_leftRightSideDistanceLength = Vector3.Distance(centerPointRGO.transform.position, centerPointEndRGO.transform.position);
             m_frontDistanceLength = Vector3.Distance(viewPoint.transform.position, viewPointEndGO.transform.position);
             //LogUtil.Log("leftRightDistanceLength: " + leftRightDistanceLength.ToString());
             //LogUtil.Log("leftRightSideDistanceLength: " + leftRightSideDistanceLength.ToString());
             //frontCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            frontCollider = transform.FindChild("ViewPointCollider");                  
+            frontCollider = transform.FindChild("ViewPointCollider");
             //frontCollider.transform.parent = transform;
             Vector3 fcPos = viewPoint.transform.localPosition;
-            fcPos.y += 0.1f;            
+            fcPos.y += 0.1f;
             frontCollider.transform.localPosition = fcPos;
-            frontCollider.transform.rotation = transform.rotation; 
+            frontCollider.transform.rotation = transform.rotation;
             frontCollider.transform.localScale = new Vector3(frWheel.localPosition.x * 2 + 0.1f, 0.05f, 0.05f);
             //frontCollider.renderer.enabled = false;
-            
+
         }
         else {
             m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;
@@ -411,20 +408,20 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     }
 
     void FixedUpdate() {
-        
+
         m_currentSpeed = Mathf.Round(rigidbody.velocity.magnitude * 3.6f);
-        
+
         if (m_currentSpeed > (m_maxSpeed + 10)) {
             m_isBraking = true;
         }
         else {
-            m_isBraking = false;            
+            m_isBraking = false;
             aiPreMotor.brakeInput = 0;
         }
 
         if (m_isBraking == false) {
-           
-            if (m_currentSpeed < m_maxSpeed) {                                 
+
+            if (m_currentSpeed < m_maxSpeed) {
                 aiPreMotor.motorInput = aiSpeedPedal;
             }
             else {
@@ -435,7 +432,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             aiPreMotor.motorInput = 0;
             aiPreMotor.brakeInput = 1;
         }
-        
+
         if (ignoreWaypointsForObstacleAvoidanceControl) {
             //Old AI Behaviour
             AIIgnoreWaypointsForObstacleAvoidanceControl();
@@ -443,17 +440,16 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         else {
             AI();
         }
-
     }
-    
+
     void AIIgnoreWaypointsForObstacleAvoidanceControl() {
+
         if (currentWaypoint < waypoints.Count) {
+
             Vector3 target = waypoints[currentWaypoint].position;
-            Vector3 moveDirection = target - transform.position;                
+            Vector3 moveDirection = target - transform.position;
             Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentWaypoint].position);
-            
-            
-            
+
             //je hoeher die Geschwindigkeit,  desto geringer der maximale Einschlagwinkel.
 
             float speedProcent = m_currentSpeed / m_calcMaxSpeed;
@@ -461,11 +457,11 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
 
             m_currentMaxSteerAngle = steerAngle - ((steerAngle - hsSteerAngle) * speedProcent);
             if (!useObstacleAvoidance) {
-                m_targetAngle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;              
+                m_targetAngle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
             }
             else {
                 //ObstacleAvoidance
-                
+
                 //m_targetAngle = ObstacleAvoidanceSteering();  
                 bool dummy = false;
                 m_targetAngle = ObstacleAvoidanceSteering(ref dummy);
@@ -483,27 +479,25 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                     currentAngle = m_targetAngle;
                 }
             }
-                        
+
             aiSteerAngle = Mathf.Clamp(currentAngle, (-1) * m_currentMaxSteerAngle, m_currentMaxSteerAngle);
 
             aiPreMotor.steerInput = (aiSteerAngle / m_currentMaxSteerAngle);
-            
-              
+
             //Noch Performance pruefen und ggf. verbessern!!!
             //Vector3 afterNextPos  = waypoints[AfterNextWaypointIndex()].position;
             //Vector3 moveDirectionAfter  = afterNextPos - transform.position;
             //float afterNextSqrDistance =  moveDirectionAfter.sqrMagnitude;
             float sqrMagnitude = moveDirection.sqrMagnitude;
-            
-            
+
             //if (moveDirection.sqrMagnitude < m_sqrDistanceToWaypoint)
-            if (sqrMagnitude < m_sqrDistanceToWaypoint) {                 
-                  
+            if (sqrMagnitude < m_sqrDistanceToWaypoint) {
+
                 NextWaypoint();
-                    
+
                 //GameVehicleAIWaypoint aiWaypoint;
                 //aiWaypoint = waypoints[currentWaypoint].GetComponent("GameVehicleAIWaypoint") as GameVehicleAIWaypoint;
-                
+
                 //if (aiWaypoint != null)
                 //{
                 //    m_maxSpeed = aiWaypoint.speed;
@@ -512,7 +506,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                 //{
                 //    m_maxSpeed = m_calcMaxSpeed;
                 //}
-                
+
                 //currentWaypoint++;
 
                 //aiRespawnControllerScript.lastTimeToReachNextWP = 0;
@@ -533,15 +527,15 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                 //    }
                 //    //fire event END
                 //}
-                
-                
+
+
                 //afterNextPos  = waypoints[AfterNextWaypointIndex()].position;
                 //moveDirectionAfter  = afterNextPos - transform.position;
                 //afterNextSqrDistance =  moveDirectionAfter.sqrMagnitude;
                 //target  = waypoints[currentWaypoint].position;
                 //moveDirection  = target - transform.position; 
                 //sqrMagnitude = moveDirection.sqrMagnitude;
-                
+
             }
             //else if(sqrMagnitude > m_lastSqrDistanceNextWp) 
             //{
@@ -550,7 +544,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             //  {
             //if i drive aside my waypoint, but I'm on the right way, switch to the next waypoint! --> TESTEN!!!
             //      NextWaypoint(); 
-                    
+
             //      afterNextPos  = waypoints[AfterNextWaypointIndex()].position;
             //      moveDirectionAfter  = afterNextPos - transform.position;
             //      afterNextSqrDistance =  moveDirectionAfter.sqrMagnitude;
@@ -559,44 +553,43 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             //      sqrMagnitude = moveDirection.sqrMagnitude;
             //  }
             //} 
-            
+
             //m_lastSqrDistanceNextWp = sqrMagnitude; 
             //m_lastSqrDistanceAfterNextWp = afterNextSqrDistance;
-            
+
         }
         else {
-            
+
             //if (driveCircleModus)
-            if (driveMode == DriveMode.Laps) {       
-                currentWaypoint = 0; 
+            if (driveMode == DriveMode.Laps) {
+                currentWaypoint = 0;
             }
-            else {               
-                aiSpeedPedal = 0;                
-                aiRespawnControllerScript.enabled = false;                            
+            else {
+                aiSpeedPedal = 0;
+                aiRespawnControllerScript.enabled = false;
             }
-            
-        }        
-        
+        }
     }
-    
+
     void AI() {
+
         bool linecastsHitsObject = false;
-        
+
         if (currentWaypoint < waypoints.Count) {
-            
+
             Vector3 target = waypoints[currentWaypoint].position;
-            Vector3 moveDirection = target - transform.position;                
+            Vector3 moveDirection = target - transform.position;
             Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentWaypoint].position);
 
-            Vector3 localTargetNext; 
+            Vector3 localTargetNext;
             float targetAngleNext;
-            
+
             if (currentWaypoint + 2 < waypoints.Count) {
                 localTargetNext = transform.InverseTransformPoint(waypoints[currentWaypoint + 2].position);
             }
             else {
                 localTargetNext = transform.InverseTransformPoint(waypoints[currentWaypoint + 2 - waypoints.Count].position);
-            }   
+            }
 
             //je hoeher die Geschwindigkeit,  desto geringer der maximale Einschlagwinkel.
 
@@ -604,19 +597,18 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             speedProcent = Mathf.Clamp(speedProcent, 0, 1);
 
             m_currentMaxSteerAngle = steerAngle - ((steerAngle - hsSteerAngle) * speedProcent);
-            
+
             if (!useObstacleAvoidance) {
                 m_targetAngle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
-                
+
                 //targetAngleNext = Mathf.Atan2(localTargetNext.x, localTargetNext.z) * Mathf.Rad2Deg;
                 //if (Mathf.Abs(m_targetAngle) > Mathf.Abs (targetAngleNext))
                 //  m_targetAngle = targetAngleNext;
-
             }
             else {
-                 
+
                 if (onlyStoppingWhileOa) {
-                    bool hitFront = ObstacleAvoidanceFrontDetection();                  
+                    bool hitFront = ObstacleAvoidanceFrontDetection();
                     //float targetAngleWp   = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg; //2012-08-06
                     m_targetAngle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;      //2012-08-06
 
@@ -632,51 +624,50 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                     else {
                         m_isBraking = false;
                     }
-                    
+
                 }
                 else {
-                     
+
                     //ObstacleAvoidance
                     //m_targetAngle = ObstacleAvoidanceSteering();  
-                    float targetAngleOa = ObstacleAvoidanceSteering(ref linecastsHitsObject);                   
+                    float targetAngleOa = ObstacleAvoidanceSteering(ref linecastsHitsObject);
                     float targetAngleWp = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
 
                     if (optimizedWpTargeting) {
-                        
+
                         //LogUtil.Log("doublewptest");                    
                         targetAngleNext = Mathf.Atan2(localTargetNext.x, localTargetNext.z) * Mathf.Rad2Deg;
                         if (Mathf.Abs(targetAngleWp) > Mathf.Abs(targetAngleNext))
                             targetAngleWp = targetAngleNext;
-                        
+
                     }
-                    
-                    targetAngleWp = Mathf.Clamp(targetAngleWp, (-1) * m_currentMaxSteerAngle, m_currentMaxSteerAngle);//2012-06-30
+
+                    targetAngleWp = Mathf.Clamp(targetAngleWp, (-1) * m_currentMaxSteerAngle, m_currentMaxSteerAngle);
+
                     //LogUtil.Log("targetAngleOa: " + targetAngleOa + "; targetAngleWp: " + targetAngleWp);
-                    
+
                     if (!linecastsHitsObject) {
-                        
+
                         //m_targetAngle = Mathf.Atan2(localTarget.x, localTarget.z) * Mathf.Rad2Deg;
                         if (!oAisActive) {
                             m_targetAngle = targetAngleWp;
                             m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;
                         }
                         else {
-                            
+
                             //m_targetAngle = targetAngleOa;
 
                             //m_targetAngle = (targetAngleWp + targetAngleOa) / 2;                      
                             m_targetAngle = GetTimeDependendSteeringAngle(targetAngleOa, targetAngleWp);
 
                             m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;
-                            
                         }
-                        
                     }
                     else {
-                        
+
                         //wenn rechts ein Fremdobjekt ist und mein naechster WP links ist, dann nehme ich den Mittel-Weg, der durch die WPs vorgeben wird.
                         if ((targetAngleOa > 0.5 && targetAngleWp > 0.5) || (targetAngleOa < -0.5 && targetAngleWp < -0.5)) { //0.5 nehme ich, um nicht bei kleinen Differenzen auf die Nase zu fallen.
-                            
+
                             //m_targetAngle = targetAngleWp;
                             //m_targetAngle = (targetAngleWp + targetAngleOa) / 2;                      
                             m_targetAngle = GetTimeDependendSteeringAngle(targetAngleOa, targetAngleWp);
@@ -685,19 +676,17 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                         else {
                             m_targetAngle = targetAngleOa;
                         }
-                        
+
                         m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;
-                        
+
                         if (oAisActive) {
                             currentWaitTimeToSwitchBackToWpMode = defaultWaitTimeToSwitchBackToWpMode;
                         }
                         else {
                             StartCoroutine(WaitForSwitchingToWpMode());
                         }
-                        
                     }
                 }
-                
             }
 
             if (currentAngle < m_targetAngle) {
@@ -712,67 +701,61 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                     currentAngle = m_targetAngle;
                 }
             }
-                        
+
             aiSteerAngle = Mathf.Clamp(currentAngle, (-1) * m_currentMaxSteerAngle, m_currentMaxSteerAngle);
 
             aiPreMotor.steerInput = (aiSteerAngle / m_currentMaxSteerAngle);
-            
-              
+
             //Noch Performance pruefen und ggf. verbessern!!!
             //Vector3 afterNextPos  = waypoints[AfterNextWaypointIndex()].position;
             //Vector3 moveDirectionAfter  = afterNextPos - transform.position;
             //float afterNextSqrDistance =  moveDirectionAfter.sqrMagnitude;
             float sqrMagnitude = moveDirection.sqrMagnitude;
-            
-            
+
             //if (moveDirection.sqrMagnitude < m_sqrDistanceToWaypoint)
-            if (sqrMagnitude < m_sqrDistanceToWaypoint) {                 
-                  
+            if (sqrMagnitude < m_sqrDistanceToWaypoint) {
+
                 NextWaypoint();
-                                    
             }
-            
         }
         else {
-            
+
             //if (driveCircleModus)
-            if (driveMode == DriveMode.Laps) {       
-                currentWaypoint = 0; 
+            if (driveMode == DriveMode.Laps) {
+                currentWaypoint = 0;
             }
-            else {               
-                aiSpeedPedal = 0;                
-                aiRespawnControllerScript.enabled = false;                            
+            else {
+                aiSpeedPedal = 0;
+                aiRespawnControllerScript.enabled = false;
             }
-            
-        }        
-        
+        }
     }
-        
+
     private float GetTimeDependendSteeringAngle(float angleOa, float angleWp) {
         float angle = 0;
         currentWaitTimeToSwitchBackToWpMode = 0;
         defaultWaitTimeToSwitchBackToWpMode = 5;
         float percent = currentWaitTimeToSwitchBackToWpMode / defaultWaitTimeToSwitchBackToWpMode;
-        
+
         angle = angleOa * (1 - percent) + angleWp * percent;
         return angle;
     }
-    
+
     private IEnumerator WaitForSwitchingToWpMode() {
-        
-        
+
+
         while (currentWaitTimeToSwitchBackToWpMode > 0) {
             yield return new WaitForSeconds(1);
             currentWaitTimeToSwitchBackToWpMode -= 1;
         }
-        
+
         oAisActive = false;
     }
-    
+
     public void NextWaypoint() {
         GameVehicleAIWaypoint aiWaypoint;
         aiWaypoint = waypoints[currentWaypoint].GetComponent("GameVehicleAIWaypoint") as GameVehicleAIWaypoint;
-        
+
         if (aiWaypoint != null) {
             //m_maxSpeed = aiWaypoint.speed;//2012-07-09
             m_maxSpeed = aiWaypoint.speed + offsetWaypointSpeed;//2012-07-09
@@ -780,7 +763,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         else {
             m_maxSpeed = m_calcMaxSpeed;
         }
-        
+
         currentWaypoint++;
 
         aiRespawnControllerScript.lastTimeToReachNextWP = 0;
@@ -802,8 +785,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             //fire event END
         }
     }
-    
-    
+
     //private int AfterNextWaypointIndex()
     //{                     
     //  int nextWaypoint = currentWaypoint +1;       
@@ -814,30 +796,29 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     //    }
     //  return nextWaypoint;
     //}
-    
-    
-    void FillWaypointList() {               
+
+    void FillWaypointList() {
         waypoints.Clear(); //2012-06-23
         bool found = true;
         int counter = 1;
         while (found) {
-            GameObject go;                      
+            GameObject go;
             string currentName;
-            currentName = "/" + m_waypointFolder + "/" + m_waypointPreName + counter.ToString();            
+            currentName = "/" + m_waypointFolder + "/" + m_waypointPreName + counter.ToString();
             go = GameObject.Find(currentName);
-            
-            if (go != null) {                               
+
+            if (go != null) {
                 waypoints.Add(go.transform);
                 counter++;
             }
             else {
-                found = false;               
+                found = false;
             }
 
             //rotate forerunner waypoint            
             if (counter > 2 && found) {
                 string forerunnerName;
-                forerunnerName = "/" + m_waypointFolder + "/" + m_waypointPreName + (counter - 2).ToString();                               
+                forerunnerName = "/" + m_waypointFolder + "/" + m_waypointPreName + (counter - 2).ToString();
                 GameObject forerunnerGo;
                 forerunnerGo = GameObject.Find(forerunnerName);
                 forerunnerGo.transform.LookAt(go.transform);
@@ -848,17 +829,17 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                 string lastName;
                 lastName = "/" + m_waypointFolder + "/" + m_waypointPreName + (counter - 1).ToString();
                 GameObject lastGo;
-                lastGo = GameObject.Find(lastName);                
+                lastGo = GameObject.Find(lastName);
 
                 string firstName;
-                firstName = "/" + m_waypointFolder + "/" + m_waypointPreName + "1";               
+                firstName = "/" + m_waypointFolder + "/" + m_waypointPreName + "1";
                 GameObject firstGo;
                 firstGo = GameObject.Find(firstName);
-                lastGo.transform.LookAt(firstGo.transform);                
+                lastGo.transform.LookAt(firstGo.transform);
             }
-        }        
+        }
     }
-    
+
     void GetWaypointNames() {
         GameVehicleAIWaypointEditor aiWaypointEditor;
 
@@ -868,7 +849,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             m_waypointFolder = aiWaypointEditor.folderName;
         }
     }
-     
+
     /// <summary>
     /// Calculate the steering angle when using Obstacles avoidance.
     /// </summary>
@@ -897,48 +878,46 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         RaycastHit hitL;
         RaycastHit hitRSide;
         RaycastHit hitLSide;
-        
-        hitsObject = false; 
+
+        hitsObject = false;
         //Vector3 forwardDirection = viewPoint.TransformDirection(Vector3.forward * oADistance);      
 
         //front raycasts BEGIN ------------------------------------     
 
         if (Physics.Linecast(viewPoint.position, viewPointEndGO.transform.position, out hitFrontMid, visibleLayers)) {
-            
+
             frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             frontMinDistance = hitFrontMid.distance;
-            frontMaxDistance = hitFrontMid.distance; 
-            
-            
-        }        
-       
+            frontMaxDistance = hitFrontMid.distance;
+        }
+
         if (Physics.Linecast(viewPointLeftGO.transform.position, viewPointLeftEndGO.transform.position, out hitFrontLeft, visibleLayers)) {
             frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontLeft.distance) {
                 frontMinDistance = hitFrontLeft.distance;
             }
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontLeft.distance) {
                 frontMaxDistance = hitFrontLeft.distance;
-            }  
-            
+            }
+
         }
         else {
             frontMaxDistance = -1;
         }
-       
+
         if (Physics.Linecast(viewPointRightGO.transform.position, viewPointRightEndGO.transform.position, out hitFrontRight, visibleLayers)) {
             frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontRight.distance) {
                 frontMinDistance = hitFrontRight.distance;
             }
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontRight.distance) {
                 frontMaxDistance = hitFrontRight.distance;
-            }            
+            }
         }
         else {
             frontMaxDistance = -1;
@@ -947,13 +926,13 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
 
         //cast forward sideways BEGIN ------------------------------------        
         if (Physics.Linecast(viewPointLeftGO.transform.position, leftDirectionGO.transform.position, out hitL, visibleLayers)) {
-            hitsObject = true; 
-            leftDistance = hitL.distance;  
-            
+            hitsObject = true;
+            leftDistance = hitL.distance;
+
         }
-                
+
         if (Physics.Linecast(viewPointRightGO.transform.position, rightDirectionGO.transform.position, out hitR, visibleLayers)) {
-            hitsObject = true; 
+            hitsObject = true;
             rightDistance = hitR.distance;
         }
         //cast forward sideways END ------------------------------------ 
@@ -966,18 +945,18 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         //    //LogUtil.Log("center left: " + hitLSide.collider.gameObject.name);
         //}        
         if (Physics.Linecast(leftFrontSideGO.transform.position, leftFrontSideEndGO.transform.position, out hitLSide, visibleLayers)) {
-            hitsObject = true; 
-            leftSideDistance = hitLSide.distance;            
+            hitsObject = true;
+            leftSideDistance = hitLSide.distance;
             //weil wir gleich und auch spaeter auf 0 pruefen und annehmen, dass bei 0 keine Detektion stattfindet.
             if (leftSideDistance == 0) {
                 leftSideDistance = 0.01f;
             }
-            
+
         }
 
         if (Physics.Linecast(leftRearSideGO.transform.position, leftRearSideEndGO.transform.position, out hitLSide, visibleLayers)) {
-            
-            hitsObject = true; 
+
+            hitsObject = true;
             if (leftSideDistance == 0 || leftSideDistance > hitLSide.distance) {
                 leftSideDistance = hitLSide.distance;
             }
@@ -985,7 +964,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             if (leftSideDistance == 0) {
                 leftSideDistance = 0.01f;
             }
-            
+
         }
 
         //if (Physics.Linecast(centerPointRGO.transform.position, centerPointEndRGO.transform.position, out hitRSide, visibleLayers))
@@ -993,7 +972,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         //    rightSideDistance = hitRSide.distance;
         //}
         if (Physics.Linecast(rightFrontSideGO.transform.position, rightFrontSideEndGO.transform.position, out hitRSide, visibleLayers)) {
-            hitsObject = true; 
+            hitsObject = true;
             rightSideDistance = hitRSide.distance;
             //weil wir gleich und auch spaeter auf 0 pruefen und annehmen, dass bei 0 keine Detektion stattfindet.
             if (rightSideDistance == 0) {
@@ -1002,7 +981,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         }
 
         if (Physics.Linecast(rightRearSideGO.transform.position, rightRearSideEndGO.transform.position, out hitRSide, visibleLayers)) {
-            hitsObject = true; 
+            hitsObject = true;
             if (rightSideDistance == 0 || rightSideDistance > hitRSide.distance) {
                 rightSideDistance = hitRSide.distance;
             }
@@ -1014,22 +993,21 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
 
         //Space for avoiding/steering? END ------------------------------------    
 
-
         newSteerAngle = SteeringDecision(leftSideDistance, rightSideDistance, leftDistance, rightDistance, frontMinDistance, frontContact, steeringMode);
 
         if (m_backwardDriving) {
 
             if (m_currentSpeed > 2 && m_isBackwardDriving == false) {
-               
+
                 aiPreMotor.motorInput = 0;
-                aiPreMotor.brakeInput = 1;           
+                aiPreMotor.brakeInput = 1;
 
             }
             else {
-                
+
                 aiPreMotor.motorInput = -0.5f;
                 aiPreMotor.brakeInput = 0;
-                newSteerAngle = (-1) * newSteerAngle;                
+                newSteerAngle = (-1) * newSteerAngle;
                 m_isBackwardDriving = true;
             }
 
@@ -1041,11 +1019,10 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         else {
             m_isBackwardDriving = false;
         }
-        
+
         return newSteerAngle;
     }
-    
-     
+
     public bool ObstacleAvoidanceFrontDetection() {
         //float newSteerAngle;
         //bool frontContact = false;
@@ -1053,8 +1030,8 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         float frontMaxDistance = -1;
         //float leftDistance = 0;
         //float rightDistance = 0;
-       // float leftSideDistance = 0;
-       // float rightSideDistance = 0;
+        // float leftSideDistance = 0;
+        // float rightSideDistance = 0;
         //float localSteeringAngle = steerAngle;
         //bool doSteering = false;
         RaycastHit hitFrontMid;
@@ -1065,53 +1042,52 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         //RaycastHit hitRSide;
         //RaycastHit hitLSide;
         bool hitsObject = false;
-        
-        hitsObject = false; 
+
+        hitsObject = false;
         //Vector3 forwardDirection = viewPoint.TransformDirection(Vector3.forward * oADistance);      
 
         //front raycasts BEGIN ------------------------------------     
 
         if (Physics.Linecast(viewPoint.position, viewPointEndGO.transform.position, out hitFrontMid, visibleLayers)) {
-            
+
             //frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             frontMinDistance = hitFrontMid.distance;
-            frontMaxDistance = hitFrontMid.distance; 
-            
-            
-        }        
-       
+            frontMaxDistance = hitFrontMid.distance;
+
+
+        }
+
         if (Physics.Linecast(viewPointLeftGO.transform.position, viewPointLeftEndGO.transform.position, out hitFrontLeft, visibleLayers)) {
             //frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontLeft.distance) {
                 frontMinDistance = hitFrontLeft.distance;
             }
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontLeft.distance) {
                 frontMaxDistance = hitFrontLeft.distance;
-            }  
-            
+            }
+
         }
         else {
             frontMaxDistance = -1;
         }
-       
+
         if (Physics.Linecast(viewPointRightGO.transform.position, viewPointRightEndGO.transform.position, out hitFrontRight, visibleLayers)) {
             //frontContact = true;
-            hitsObject = true; 
+            hitsObject = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontRight.distance) {
                 frontMinDistance = hitFrontRight.distance;
             }
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontRight.distance) {
                 frontMaxDistance = hitFrontRight.distance;
-            }            
+            }
         }
         else {
             frontMaxDistance = -1;
         }
-
         
         return hitsObject;
     }
@@ -1119,7 +1095,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     private float SteeringDecision(float leftSideDistance, float rightSideDistance, float leftDistance, float rightDistance, float frontMinDistance, bool frontContact, SteeringMode style) {
         //float localSteeringAngle = steerAngle;
         float localSteeringAngle = m_currentMaxSteerAngle;
-        
+
         float result = 0;
         //keine Prozent sonder von 0 bis 1;
         float rightPercent = 1;
@@ -1131,186 +1107,185 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             m_backwardDriving = true;
         }
 
-        switch (style) { 
-        case SteeringMode.Cautious:
+        switch (style) {
+            case SteeringMode.Cautious:
                 //steer left
-            if (leftSideDistance == 0 && ((leftDistance == 0 && rightDistance > 0) || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)                 
-                || (leftDistance == 0 && frontMinDistance > 0) || (rightDistance < leftDistance && frontMinDistance > 0 && rightDistance != 0) || (frontContact == false && rightSideDistance > 0))) {
-                //|| (leftDistance == 0 && frontMinDistance > 0) || (rightDistance > leftDistance && frontMinDistance > 0) || (frontContact==false && rightSideDistance > 0)))
-                if (!steerAbsolute) {
-                    //result = (-1) * localSteeringAngle; old
-                    if (frontMinDistance > 0) {
-                        result = (-1) * localSteeringAngle;                 
-                        //rightPercent = frontMinDistance / m_frontDistanceLength;                  
-                        //result = (-1) * localSteeringAngle * (1 - rightPercent);
-                    }
-                    else {
-                                                   
-                        if (rightSideDistance > 0) {
-                            rightSidePercent = rightSideDistance / m_leftRightSideDistanceLength;
-                        }
-    
-                        if (rightDistance > 0) {
-                            rightPercent = rightDistance / m_leftRightDistanceLength;
-                        }
-    
-                        if (rightSidePercent < rightPercent) {
-                            result = (-1) * localSteeringAngle * (1 - rightSidePercent);
+                if (leftSideDistance == 0 && ((leftDistance == 0 && rightDistance > 0) || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
+                    || (leftDistance == 0 && frontMinDistance > 0) || (rightDistance < leftDistance && frontMinDistance > 0 && rightDistance != 0) || (frontContact == false && rightSideDistance > 0))) {
+                    //|| (leftDistance == 0 && frontMinDistance > 0) || (rightDistance > leftDistance && frontMinDistance > 0) || (frontContact==false && rightSideDistance > 0)))
+                    if (!steerAbsolute) {
+                        //result = (-1) * localSteeringAngle; old
+                        if (frontMinDistance > 0) {
+                            result = (-1) * localSteeringAngle;
+                            //rightPercent = frontMinDistance / m_frontDistanceLength;                  
+                            //result = (-1) * localSteeringAngle * (1 - rightPercent);
                         }
                         else {
-                            result = (-1) * localSteeringAngle * (1 - rightPercent);
+
+                            if (rightSideDistance > 0) {
+                                rightSidePercent = rightSideDistance / m_leftRightSideDistanceLength;
+                            }
+
+                            if (rightDistance > 0) {
+                                rightPercent = rightDistance / m_leftRightDistanceLength;
+                            }
+
+                            if (rightSidePercent < rightPercent) {
+                                result = (-1) * localSteeringAngle * (1 - rightSidePercent);
+                            }
+                            else {
+                                result = (-1) * localSteeringAngle * (1 - rightPercent);
+                            }
+
                         }
-    
                     }
+                    else {
+                        result = (-1) * localSteeringAngle;
+                    }
+
                 }
-                else {
-                    result = (-1) * localSteeringAngle; 
-                }
-                                        
-            }
 
                 //steer right
                 //No "(leftSideDistance > 0) ||" because pushing away should not be possible
-            if (rightSideDistance == 0 && ((rightDistance == 0 && leftDistance > 0) || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)    
-                || (rightDistance == 0 && frontMinDistance > 0) || (leftDistance < rightDistance && frontMinDistance > 0 && leftDistance != 0) || (frontContact == false && leftSideDistance > 0))) {
-                //|| (rightDistance == 0 && frontMinDistance > 0) || (leftDistance > rightDistance && frontMinDistance > 0) || (frontContact == false && leftSideDistance > 0)))
-                if (!steerAbsolute) {
-                    if (frontMinDistance > 0) {
-                        result = localSteeringAngle;
-                        //leftPercent = frontMinDistance / m_frontDistanceLength;                   
-                        //result = localSteeringAngle * (1 - leftPercent);
-                    }
-                    else {
-                            
-                        if (leftSideDistance > 0) {
-                            leftSidePercent = leftSideDistance / m_leftRightSideDistanceLength;                           
-                        }
-    
-                        if (leftDistance > 0) {
-                            leftPercent = leftDistance / m_leftRightDistanceLength;                          
-                        }
-    
-                        if (leftSidePercent < leftPercent) {
-                            result = localSteeringAngle * (1 - leftSidePercent);
+                if (rightSideDistance == 0 && ((rightDistance == 0 && leftDistance > 0) || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
+                    || (rightDistance == 0 && frontMinDistance > 0) || (leftDistance < rightDistance && frontMinDistance > 0 && leftDistance != 0) || (frontContact == false && leftSideDistance > 0))) {
+                    //|| (rightDistance == 0 && frontMinDistance > 0) || (leftDistance > rightDistance && frontMinDistance > 0) || (frontContact == false && leftSideDistance > 0)))
+                    if (!steerAbsolute) {
+                        if (frontMinDistance > 0) {
+                            result = localSteeringAngle;
+                            //leftPercent = frontMinDistance / m_frontDistanceLength;                   
+                            //result = localSteeringAngle * (1 - leftPercent);
                         }
                         else {
-                            result = localSteeringAngle * (1 - leftPercent);
-                        }                   
-                            
-                    }                   
-                }
-                else {
-                    result = localSteeringAngle;
-                }
-            }
 
-            if (rightSideDistance != 0 && leftSideDistance != 0) {
-                if (rightDistance > 0) {
-                    rightPercent = rightDistance / m_leftRightDistanceLength;
+                            if (leftSideDistance > 0) {
+                                leftSidePercent = leftSideDistance / m_leftRightSideDistanceLength;
+                            }
+
+                            if (leftDistance > 0) {
+                                leftPercent = leftDistance / m_leftRightDistanceLength;
+                            }
+
+                            if (leftSidePercent < leftPercent) {
+                                result = localSteeringAngle * (1 - leftSidePercent);
+                            }
+                            else {
+                                result = localSteeringAngle * (1 - leftPercent);
+                            }
+
+                        }
+                    }
+                    else {
+                        result = localSteeringAngle;
+                    }
                 }
 
-                if (leftDistance > 0) {
-                    leftPercent = leftDistance / m_leftRightDistanceLength;
+                if (rightSideDistance != 0 && leftSideDistance != 0) {
+                    if (rightDistance > 0) {
+                        rightPercent = rightDistance / m_leftRightDistanceLength;
+                    }
+
+                    if (leftDistance > 0) {
+                        leftPercent = leftDistance / m_leftRightDistanceLength;
+                    }
+
+                    if (rightPercent < leftPercent || leftPercent == 0) {
+                        result = (-1) * localSteeringAngle * (1 - rightPercent);
+
+                    }
+                    else if (rightPercent > leftPercent || rightPercent == 0) {
+                        result = localSteeringAngle * (1 - leftPercent);
+                    }
                 }
 
-                if (rightPercent < leftPercent || leftPercent == 0) {
-                    result = (-1) * localSteeringAngle * (1 - rightPercent);
-                    
-                }
-                else if (rightPercent > leftPercent || rightPercent == 0) {
-                    result = localSteeringAngle * (1 - leftPercent);
-                }
-            }
+                break;
 
-            break;
-
-        case SteeringMode.Tough:
+            case SteeringMode.Tough:
                 //steering
                 //steer left
                 //No "(rightSideDistance > 0) ||" because pushing away should not be possible
-            if (leftSideDistance == 0 && ((leftDistance == 0 && rightDistance > 0) || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
-                || (leftDistance == 0 && frontMinDistance > 0) || (rightDistance > leftDistance && frontMinDistance > 0))) {
-                if (!steerAbsolute) {
-                    
-                    if (frontMinDistance > 0) {
-                        result = (-1) * localSteeringAngle;
-                        //rightPercent = frontMinDistance / m_frontDistanceLength;                  
-                        //result = (-1) * localSteeringAngle * (1 - rightPercent);
+                if (leftSideDistance == 0 && ((leftDistance == 0 && rightDistance > 0) || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
+                    || (leftDistance == 0 && frontMinDistance > 0) || (rightDistance > leftDistance && frontMinDistance > 0))) {
+                    if (!steerAbsolute) {
+
+                        if (frontMinDistance > 0) {
+                            result = (-1) * localSteeringAngle;
+                            //rightPercent = frontMinDistance / m_frontDistanceLength;                  
+                            //result = (-1) * localSteeringAngle * (1 - rightPercent);
+                        }
+                        else {
+
+                            if (rightDistance > 0) {
+                                rightPercent = rightDistance / m_leftRightDistanceLength;
+                            }
+
+                            result = (-1) * localSteeringAngle * (1 - rightPercent);
+
+
+                        }
                     }
                     else {
-                                                   
-                        if (rightDistance > 0) {
-                            rightPercent = rightDistance / m_leftRightDistanceLength;
-                        }
-                           
-                        result = (-1) * localSteeringAngle * (1 - rightPercent);
-                            
-    
+                        result = (-1) * localSteeringAngle;
                     }
                 }
-                else {
-                    result = (-1) * localSteeringAngle;
-                }
-            }
 
                 //steer right
                 //No "(leftSideDistance > 0) ||" because pushing away should not be possible
-            if (rightSideDistance == 0 && ((rightDistance == 0 && leftDistance > 0) || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
-                || (rightDistance == 0 && frontMinDistance > 0) || (leftDistance > rightDistance && frontMinDistance > 0))) {
-                if (!steerAbsolute) {
-                    //result = localSteeringAngle;
-                    if (frontMinDistance > 0) {
-                        result = localSteeringAngle;
-                        //leftPercent = frontMinDistance / m_frontDistanceLength;                   
-                        //result = localSteeringAngle * (1 - leftPercent);
+                if (rightSideDistance == 0 && ((rightDistance == 0 && leftDistance > 0) || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
+                    || (rightDistance == 0 && frontMinDistance > 0) || (leftDistance > rightDistance && frontMinDistance > 0))) {
+                    if (!steerAbsolute) {
+                        //result = localSteeringAngle;
+                        if (frontMinDistance > 0) {
+                            result = localSteeringAngle;
+                            //leftPercent = frontMinDistance / m_frontDistanceLength;                   
+                            //result = localSteeringAngle * (1 - leftPercent);
+                        }
+                        else {
+
+                            if (leftDistance > 0) {
+                                leftPercent = leftDistance / m_leftRightDistanceLength;
+                            }
+
+                            result = localSteeringAngle * (1 - leftPercent);
+
+                        }
                     }
                     else {
-    
-                        if (leftDistance > 0) {
-                            leftPercent = leftDistance / m_leftRightDistanceLength;
-                        }
-    
-                        result = localSteeringAngle * (1 - leftPercent);
-    
+                        result = localSteeringAngle;
                     }
                 }
-                else {
-                    result = localSteeringAngle;
-                }
-            }
-            break;        
-        }    
-            
+                break;
+        }
+
         return result;
     }
 
     public void SwitchOaMode(bool useOa) {
         useObstacleAvoidance = useOa;
         if (useOa) {
-            m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;  
+            m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;
         }
         else {
-            m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;    
+            m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;
         }
     }
-    
+
     public void SetNewWaypointSet(string folderName, string preName, float maxSpeed, int nextWaypointNo) {
-        
+
         GameVehicleAIWaypointEditor aiWaypointEditor;
 
         aiWaypointEditor = GetComponent("GameVehicleAIWaypointEditor") as GameVehicleAIWaypointEditor;
         if (aiWaypointEditor != null) {
             aiWaypointEditor.folderName = folderName;
-            aiWaypointEditor.preName = preName;           
-            
+            aiWaypointEditor.preName = preName;
+
         }
-        
+
         GetWaypointNames();
         FillWaypointList();
-        
-        m_maxSpeed = maxSpeed;      
+
+        m_maxSpeed = maxSpeed;
         currentWaypoint = nextWaypointNo - 1;
-        
+
     }
-    
 }

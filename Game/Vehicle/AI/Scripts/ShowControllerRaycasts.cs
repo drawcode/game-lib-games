@@ -27,7 +27,7 @@ public class ShowControllerRaycasts : GameObjectBehavior {
                 viewPointRight = aiDriverController.viewPoint.transform.position;
                 viewPointLeft += aiDriverController.viewPoint.TransformDirection((Vector3.right * aIMotorMapping.flWheelMesh.localPosition.x));
                 viewPointRight += aiDriverController.viewPoint.TransformDirection((Vector3.right * aIMotorMapping.frWheelMesh.localPosition.x));
-                float obstacleAvoidanceWidth = aiDriverController.oAWidth;               
+                float obstacleAvoidanceWidth = aiDriverController.oAWidth;
 
                 Vector3 leftDirection = aiDriverController.viewPoint.TransformDirection((Vector3.left * obstacleAvoidanceWidth) + (Vector3.forward * aiDriverController.oADistance));
                 Vector3 rightDirection = aiDriverController.viewPoint.TransformDirection((Vector3.right * obstacleAvoidanceWidth) + (Vector3.forward * aiDriverController.oADistance));
@@ -48,7 +48,7 @@ public class ShowControllerRaycasts : GameObjectBehavior {
                 //leftFront
                 Vector3 leftFrontSidePos = transform.position + transform.TransformDirection(Vector3.left * aiDriverController.oASideOffset);
                 leftFrontSidePos.y = aiDriverController.viewPoint.position.y;
-                leftFrontSidePos += transform.TransformDirection(Vector3.forward * aiDriverController.oASideFromMid);                
+                leftFrontSidePos += transform.TransformDirection(Vector3.forward * aiDriverController.oASideFromMid);
                 Debug.DrawRay(leftFrontSidePos, leftSide, Color.magenta);
 
                 //leftRear
@@ -68,7 +68,7 @@ public class ShowControllerRaycasts : GameObjectBehavior {
                 rightRearSidePos.y = aiDriverController.viewPoint.position.y;
                 rightRearSidePos -= transform.TransformDirection(Vector3.forward * aiDriverController.oASideFromMid);
                 Debug.DrawRay(rightRearSidePos, rightSide, Color.magenta);
-            }            
+            }
         }
     }
 

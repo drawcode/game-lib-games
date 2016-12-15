@@ -26,7 +26,7 @@ public class ShowRaycasts : GameObjectBehavior {
                 viewPointRight = aiDriver.viewPoint.transform.position;
                 viewPointLeft += aiDriver.viewPoint.TransformDirection((Vector3.right * aiDriver.flWheel.localPosition.x));
                 viewPointRight += aiDriver.viewPoint.TransformDirection((Vector3.right * aiDriver.frWheel.localPosition.x));
-                float obstacleAvoidanceWidth = aiDriver.oAWidth;               
+                float obstacleAvoidanceWidth = aiDriver.oAWidth;
 
                 Vector3 leftDirection = aiDriver.viewPoint.TransformDirection((Vector3.left * obstacleAvoidanceWidth) + (Vector3.forward * aiDriver.oADistance));
                 Vector3 rightDirection = aiDriver.viewPoint.TransformDirection((Vector3.right * obstacleAvoidanceWidth) + (Vector3.forward * aiDriver.oADistance));
@@ -41,7 +41,7 @@ public class ShowRaycasts : GameObjectBehavior {
                 Debug.DrawRay(viewPointRight, forwardDirection, Color.green);
                 Debug.DrawRay(centerPointL, leftSide, Color.magenta);
                 Debug.DrawRay(centerPointR, rightSide, Color.magenta);
-            }            
+            }
         }
     }
 

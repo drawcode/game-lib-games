@@ -8,6 +8,5 @@ public class GameVehicleAIWaypointEditor : GameObjectBehavior {
     public string preName = "Waypoint";
     public int speed = 100;
     public Material waypointMaterial;
-    public bool batchCreating = false; 
-    
+    public bool batchCreating = false;
 }

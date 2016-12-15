@@ -15,68 +15,68 @@ public class GameVehicleAIWaypointEditorEditor : Editor
 	public bool m_batchCreating = false;
     private bool m_lastFrameBatchCreating = false;
 	
-    //[MenuItem("GameObject/AI Driver Toolkit/AI Driver")]
-    //static void CreateAIDPrototype()
-    //{
-    //    GameObject prefab = Resources.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/GameVehicleAIDriverPrototype.prefab", typeof(GameObject)) as GameObject;                    
-    //    GameObject newObject = Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
-    //    newObject.name = "AI Driver";
+    [MenuItem("GameObject/AI Driver Toolkit/AI Driver")]
+    static void CreateAIDPrototype()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/GameVehicleAIDriverPrototype.prefab", typeof(GameObject)) as GameObject;                    
+        GameObject newObject = Instantiate(prefab,Vector3.zero,Quaternion.identity) as GameObject;
+        newObject.name = "AI Driver";
 
-    //    // positioned new object
-    //    Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(ray, out hit))
-    //    {               
-    //        newObject.transform.position = hit.point;
-    //    } 
+        // positioned new object
+        Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {               
+            newObject.transform.position = hit.point;
+        } 
 
-    //    //select new object
-    //    UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
-    //    selectedObjects[0] = newObject;
-    //    Selection.objects = selectedObjects;
-    //}
+        //select new object
+        UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
+        selectedObjects[0] = newObject;
+        Selection.objects = selectedObjects;
+    }
 
-    //[MenuItem("GameObject/AI Driver Toolkit/Buggy")]
-    //static void CreateAIDBuggy()
-    //{
-    //    GameObject prefab = Resources.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/AIBuggy.prefab", typeof(GameObject)) as GameObject;
-    //    GameObject newObject = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-    //    newObject.name = "Buggy";
+    [MenuItem("GameObject/AI Driver Toolkit/Buggy")]
+    static void CreateAIDBuggy()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/AIBuggy.prefab", typeof(GameObject)) as GameObject;
+        GameObject newObject = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        newObject.name = "Buggy";
 
-    //    // positioned new object
-    //    Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(ray, out hit))
-    //    {               
-    //        newObject.transform.position = hit.point;
-    //    }                   
+        // positioned new object
+        Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {               
+            newObject.transform.position = hit.point;
+        }                   
 
-    //    //select new object
-    //    UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
-    //    selectedObjects[0] = newObject;
-    //    Selection.objects = selectedObjects;
-    //}
+        //select new object
+        UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
+        selectedObjects[0] = newObject;
+        Selection.objects = selectedObjects;
+    }
 
-    //[MenuItem("GameObject/AI Driver Toolkit/Components/AI Controller")]
-    //static void AddAIController()
-    //{
-    //    //GameObject prefab = Resources.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/GameVehicleAIDriverPrototype.prefab", typeof(GameObject)) as GameObject;
-    //    //GameObject newObject = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-    //    //newObject.name = "AI Driver";
+    [MenuItem("GameObject/AI Driver Toolkit/Components/AI Controller")]
+    static void AddAIController()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath("Assets/GameVehicleAIDriverToolkit/Prefabs/GameVehicleAIDriverPrototype.prefab", typeof(GameObject)) as GameObject;
+        GameObject newObject = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        newObject.name = "AI Driver";
 
-    //    //// positioned new object
-    //    //Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
-    //    //RaycastHit hit;
-    //    //if (Physics.Raycast(ray, out hit))
-    //    //{
-    //    //    newObject.transform.position = hit.point;
-    //    //}
+        // positioned new object
+        Ray ray = SceneView.lastActiveSceneView.camera.ViewportPointToRay(new Vector3(0.5F, 0.5F, 0));
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            newObject.transform.position = hit.point;
+        }
 
-    //    ////select new object
-    //    //UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
-    //    //selectedObjects[0] = newObject;
-    //    //Selection.objects = selectedObjects;
-    //}
+        //select new object
+        UnityEngine.Object[] selectedObjects = new UnityEngine.Object[1];
+        selectedObjects[0] = newObject;
+        Selection.objects = selectedObjects;
+    }
 
     void OnSceneGUI()
     {

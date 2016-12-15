@@ -80,7 +80,7 @@ public class GameZone : GameObjectBehavior {
     // 
     public double totalNeeded = 1.0;
     public double totalCompleted = 0.0;
-    
+
     public enum GameZoneActionAssetState {
         none,
         creating,
@@ -88,21 +88,21 @@ public class GameZone : GameObjectBehavior {
         created,
         destroyed
     }
-    
+
     // ------------------------------------------------------------
-    
+
     public virtual void Start() {
-        
+
     }
-    
+
     public virtual void OnEnable() {
-        
+
     }
-    
+
     public virtual void OnDisable() {
-        
+
     }
-    
+
     public virtual void Reset() {
         gameZoneType = GameZoneKeys.none;
         assetCode = BaseDataObjectKeys.none;
@@ -131,19 +131,19 @@ public class GameZone : GameObjectBehavior {
             return IsActionCode(GameZoneActions.action_attack);
         }
     }
-    
+
     public bool isActionCodeDefend {
         get {
             return IsActionCode(GameZoneActions.action_defend);
         }
     }
-    
+
     public bool isActionCodeRepair {
         get {
             return IsActionCode(GameZoneActions.action_repair);
         }
     }
-    
+
     public bool isActionCodeBuild {
         get {
             return IsActionCode(GameZoneActions.action_build);
@@ -158,13 +158,13 @@ public class GameZone : GameObjectBehavior {
 
 
     // COLLECT + SAVE
-    
+
     public bool isActionCodeSave {
         get {
             return IsActionCode(GameZoneActions.action_save);
         }
     }
-    
+
     public bool isActionCodeCollect {
         get {
             return IsActionCode(GameZoneActions.action_collect);
@@ -172,13 +172,13 @@ public class GameZone : GameObjectBehavior {
     }
 
     // 
-        
+
     public bool isActionCodeKill {
         get {
             return IsActionCode(GameZoneActions.action_kill);
         }
     }
-    
+
     // ------------------------------------------------------------
     // EFFECTS
 
@@ -199,7 +199,7 @@ public class GameZone : GameObjectBehavior {
             containerEffects.StopParticleSystem(true);
         }
     }
-    
+
     // ------------------------------------------------------------
     // EFFECTS SCORE
 
@@ -223,12 +223,12 @@ public class GameZone : GameObjectBehavior {
             containerEffectsScore.StopParticleSystem(true);
         }
     }
-    
+
     // ------------------------------------------------------------
     // EFFECTS INDICATOR
 
     public virtual void PlayEffectsIndicator() {
-        
+
         if (FPSDisplay.isUnder25FPS) {
             return;
         }
@@ -247,7 +247,7 @@ public class GameZone : GameObjectBehavior {
 
     // ------------------------------------------------------------
     // ASSETS
-    
+
     public virtual void LoadAsset(string assetCodeTo) {
         LoadAsset(assetCodeTo, Vector3.zero);
     }
@@ -256,18 +256,15 @@ public class GameZone : GameObjectBehavior {
         if (string.IsNullOrEmpty(assetCodeTo)) {
             return;
         }
-        
+
         if (containerAssets == null) {
             return;
         }
 
         assetCode = assetCodeTo;
-        
+
         // Load in asset at position
-        
+
         containerAssets.DestroyChildren();
-        
-        
     }
-    
 }

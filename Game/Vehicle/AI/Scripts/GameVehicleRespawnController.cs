@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameVehicleRespawnController : GameObjectBehavior {
-    
+
     public float heightOffset = 0;
     private Transform currentRespawnPoint;
     [HideInInspector]
@@ -24,11 +24,11 @@ public class GameVehicleRespawnController : GameObjectBehavior {
 
     public static RespawnHandler onRespawnWaypoint;
 
-    void Awake() {        
-        
-        
+    void Awake() {
+
+
     }
-    
+
     void Start() {
         //wir machen dies in der Start-Routine, weil wir im GameVehicleAIDriver-Skript erst in der Awake-Fkt die Waypoints zuweisen
         //Um sicherzugehen, dass die Waypoints auch gefunden und der List zugewiesen wurde, weisen wir dies deshalb erst hier zu!
@@ -39,22 +39,22 @@ public class GameVehicleRespawnController : GameObjectBehavior {
 
     public void StartRespawn() {
         if (!isStartingRespawn) {
-            isStartingRespawn = true;           
+            isStartingRespawn = true;
             Respawn();
         }
     }
 
-    void Update() {       
+    void Update() {
         if (!IsCorrectMoving()) {
             StartRespawn();
         }
     }
-                
-    void Respawn() { 
+
+    void Respawn() {
         Vector3 startPos;
-        
+
         StartCoroutine(Freeze(1));
-        
+
         int currentWaypoint = aiDriverControllerScript.currentWaypoint;
         if (currentWaypoint == 0) {
             currentWaypoint = waypoints.Count - 1;
@@ -64,23 +64,23 @@ public class GameVehicleRespawnController : GameObjectBehavior {
         }
         currentRespawnPoint = waypoints[currentWaypoint];
         startPos = currentRespawnPoint.position;
-        startPos.y += heightOffset; 
+        startPos.y += heightOffset;
         transform.position = startPos;
         transform.rotation = currentRespawnPoint.rotation;
-        
+
         aiDriverControllerScript.aiSteerAngle = 0;
-        aiDriverControllerScript.currentAngle = 0;        
-        
+        aiDriverControllerScript.currentAngle = 0;
+
         isStartingRespawn = false;
         lastTimeToReachNextWP = 0;
-        
+
         //fire event BEGIN
-        if (onRespawnWaypoint != null) {            
+        if (onRespawnWaypoint != null) {
             GameVehicleEventArgs e = new GameVehicleEventArgs();
             e.name = gameObject.name;
             e.currentWaypointIndex = currentWaypoint;
             e.currentWaypointName = waypoints[currentWaypoint].name;
-            e.position = gameObject.transform.position;         
+            e.position = gameObject.transform.position;
             e.rotation = gameObject.transform.rotation;
             e.tag = gameObject.tag;
             onRespawnWaypoint(e);
@@ -91,24 +91,21 @@ public class GameVehicleRespawnController : GameObjectBehavior {
     bool IsCorrectMoving() {
         bool moving = true;
         lastTimeToReachNextWP += Time.deltaTime;
-       
+
         if (lastTimeToReachNextWP >= timeTillRespawn) {
-           
-            moving = false;          
+
+            moving = false;
 
         }
         //lastPosition = transform.position;
         return moving;
     }
-    
+
     IEnumerator Freeze(float seconds) {
-        
+
         rigidbody.freezeRotation = true;
         rigidbody.velocity = Vector3.zero;
         yield return new WaitForSeconds(seconds);
         rigidbody.freezeRotation = false;
-        
     }
-    
-   
 }

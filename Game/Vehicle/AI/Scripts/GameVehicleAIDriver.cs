@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 
 public class GameVehicleAIDriver : GameObjectBehavior {
-    
+
     public float calcMaxSpeed = 200.0f;
     public float torque = 150.0f;
     public float brakeTorque = 500.0f;
@@ -13,21 +13,21 @@ public class GameVehicleAIDriver : GameObjectBehavior {
     public float steeringSpeed = 100;
     private float maxSpeed = 0;
     private float currentSpeed = 0.0f;
-    private bool isBraking = false; 
-       
+    private bool isBraking = false;
+
     //wenn die Raeder sich falsch herum drehen, dann diesen Parameter aktivieren.
     private bool inverseWheelTurning = false;
-    private int  wheelTurningParameter = 1;
+    private int wheelTurningParameter = 1;
     //Gaenge
     public int gears = 5;
-    private List<int> gearSpeed = new List <int>();
+    private List<int> gearSpeed = new List<int>();
     private int currentGear = 0;
 
     //Autosound
     public bool playSound = true;
     public AudioClip motorSound;
     public float soundVolume = 1;
-    private AudioSource motorAudioSource; 
+    private AudioSource motorAudioSource;
 
     //IA
     public GameVehicleDriveMode driveMode = GameVehicleDriveMode.OneWay;
@@ -90,9 +90,9 @@ public class GameVehicleAIDriver : GameObjectBehavior {
     //Event 1
     public delegate void LastWaypointHandler(GameVehicleEventArgs e);
 
-    public static LastWaypointHandler onLastWaypoint;   
+    public static LastWaypointHandler onLastWaypoint;
 
-    public enum GameVehicleDriveMode { 
+    public enum GameVehicleDriveMode {
         OneWay,
         Laps
     }
@@ -115,13 +115,13 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         else {
             wheelTurningParameter = 1;
         }
-        
+
         rigidbody.centerOfMass = new Vector3(0, centerOfMassY, 0);
         if (playSound && motorSound != null) {
             InitSound();
         }
-        aiRespawnScript = gameObject.GetComponent("GameVehicleRespawn") as GameVehicleRespawn;        
-       
+        aiRespawnScript = gameObject.GetComponent("GameVehicleRespawn") as GameVehicleRespawn;
+
     }
 
     void Start() {
@@ -138,14 +138,14 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
             viewPointRightGO = new GameObject("viewPointRightGO");
             viewPointRightGO.transform.parent = transform;
-            viewPointRightGO.transform.position = viewPoint.transform.position;                      
+            viewPointRightGO.transform.position = viewPoint.transform.position;
             viewPointRightGO.transform.position += viewPoint.TransformDirection(
                 (Vector3.right * frWheel.localPosition.x));
             viewPointRightGO.transform.rotation = transform.rotation;
 
-            obstacleAvoidanceWidth = viewPointRightGO.transform.localPosition.x + oAWidth;           
+            obstacleAvoidanceWidth = viewPointRightGO.transform.localPosition.x + oAWidth;
             leftDirection = viewPoint.position + viewPoint.TransformDirection(
-                (Vector3.left * obstacleAvoidanceWidth) + (Vector3.forward * oADistance));                    
+                (Vector3.left * obstacleAvoidanceWidth) + (Vector3.forward * oADistance));
             rightDirection = viewPoint.position + viewPoint.TransformDirection(
                 (Vector3.right * obstacleAvoidanceWidth) + (Vector3.forward * oADistance));
 
@@ -200,19 +200,19 @@ public class GameVehicleAIDriver : GameObjectBehavior {
             centerPointEndRGO.transform.rotation = transform.rotation;
 
             //frontCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            frontCollider = transform.FindChild("ViewPointCollider");                  
+            frontCollider = transform.FindChild("ViewPointCollider");
             //frontCollider.transform.parent = transform;
             Vector3 fcPos = viewPoint.transform.localPosition;
-            fcPos.y += 0.1f;            
+            fcPos.y += 0.1f;
             frontCollider.transform.localPosition = fcPos;
             frontCollider.transform.rotation = transform.rotation;
             frontCollider.transform.localScale = new Vector3(frWheel.localPosition.x * 2 + 0.1f, 0.05f, 0.05f);
             //frontCollider.renderer.enabled = false;
-            
+
         }
     }
 
-    void InitSound() {    
+    void InitSound() {
 
         motorAudioSource = gameObject.AddComponent<AudioSource>();
         motorAudioSource.clip = motorSound;
@@ -221,12 +221,12 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         motorAudioSource.playOnAwake = false;
         motorAudioSource.pitch = 0.1f;
         //motorAudioSource.rolloffMode = AudioRolloffMode.Linear;
-        motorAudioSource.Play();    
+        motorAudioSource.Play();
 
     }
 
-    void FixedUpdate() {      
-            
+    void FixedUpdate() {
+
         currentSpeed = (Mathf.PI * 2 * wheelRadius) * flWheelCollider.rpm * 60 / 1000;
         //currentSpeed = (int)currentSpeed;
         currentSpeed = Mathf.Round(currentSpeed);
@@ -242,11 +242,11 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         }
 
         if (isBraking == false) {
-           
-            if (currentSpeed < maxSpeed) {  
-                                
+
+            if (currentSpeed < maxSpeed) {
+
                 flWheelCollider.motorTorque = torque * aiSpeedPedal;
-                frWheelCollider.motorTorque = torque * aiSpeedPedal;                    
+                frWheelCollider.motorTorque = torque * aiSpeedPedal;
             }
             else {
                 flWheelCollider.motorTorque = 0;
@@ -261,7 +261,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         }
 
         AiSteering();
-       
+
 
         flWheelCollider.steerAngle = aiSteerAngle;
         frWheelCollider.steerAngle = aiSteerAngle;
@@ -276,17 +276,17 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
         RotateWheels();
         SteelWheels();
-        
+
     }
 
     void RotateWheels() {
-        flWheel.Rotate(flWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);  
-        frWheel.Rotate(frWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);  
-        rlWheel.Rotate(rlWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);  
-        rrWheel.Rotate(rrWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);  
+        flWheel.Rotate(flWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);
+        frWheel.Rotate(frWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);
+        rlWheel.Rotate(rlWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);
+        rrWheel.Rotate(rrWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);
     }
 
-    void SteelWheels() {        
+    void SteelWheels() {
         flWheel.localEulerAngles = new Vector3(flWheel.localEulerAngles.x, flWheelCollider.steerAngle - flWheel.localEulerAngles.z, flWheel.localEulerAngles.z);
         frWheel.localEulerAngles = new Vector3(frWheel.localEulerAngles.x, frWheelCollider.steerAngle - frWheel.localEulerAngles.z, frWheel.localEulerAngles.z);
     }
@@ -307,24 +307,24 @@ public class GameVehicleAIDriver : GameObjectBehavior {
     void GearSound() {
         float tempMinSpeed = 0.00f;
         float tempMaxSpeed = 0.00f;
-        float currentPitch = 0.00f;        
+        float currentPitch = 0.00f;
 
         switch (currentGear) {
-        case 0:
-            tempMinSpeed = 0.00f;
-            tempMaxSpeed = gearSpeed[currentGear];                            
-            break;
-                
-        default:
-            tempMinSpeed = gearSpeed[currentGear - 1];
-            tempMaxSpeed = gearSpeed[currentGear];                
-            break;
+            case 0:
+                tempMinSpeed = 0.00f;
+                tempMaxSpeed = gearSpeed[currentGear];
+                break;
+
+            default:
+                tempMinSpeed = gearSpeed[currentGear - 1];
+                tempMaxSpeed = gearSpeed[currentGear];
+                break;
         }
 
         //currentPitch = (float)(((Mathf.Abs(currentSpeed) - tempMinSpeed) / (tempMaxSpeed - tempMinSpeed)) + 0.8);
         float delta = tempMaxSpeed - tempMinSpeed;
         currentPitch = (float)((((currentSpeed - tempMinSpeed) / delta)) / 2 + 0.8);
-        
+
         //LogUtil.Log(currentPitch + ";" + currentSpeed + ";" + tempMinSpeed + ";" + delta +";" + currentGear);
         if (currentPitch > 2) {
             currentPitch = 2;
@@ -336,7 +336,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
     void AiSteering() {
         if (currentWaypoint < waypoints.Count) {
             Vector3 target = waypoints[currentWaypoint].position;
-            Vector3 moveDirection = target - transform.position;                
+            Vector3 moveDirection = target - transform.position;
             Vector3 localTarget = transform.InverseTransformPoint(waypoints[currentWaypoint].position);
 
             if (!useObstacleAvoidance) {
@@ -348,7 +348,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
             }
             //iaSteerAngle = Mathf.Clamp(targetAngle, -1, 1);
 
-            
+
             if (currentAngle < targetAngle) {
                 currentAngle = currentAngle + (Time.deltaTime * steeringSpeed);
                 if (currentAngle > targetAngle) {
@@ -361,7 +361,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
                     currentAngle = targetAngle;
                 }
             }
-            
+
 
             //je hoeher die Geschwindigkeit,  desto geringer der maximale Einschlagwinkel.
             float aiCalculationMaxSpeed = calcMaxSpeed;
@@ -370,13 +370,13 @@ public class GameVehicleAIDriver : GameObjectBehavior {
             speedProcent = Mathf.Clamp(speedProcent, 0, 1);
             float speedControlledMaxSteerAngle;
             speedControlledMaxSteerAngle = steerAngle - ((steerAngle - hsSteerAngle) * speedProcent);
-           
+
 
             aiSteerAngle = Mathf.Clamp(currentAngle, (-1) * speedControlledMaxSteerAngle, speedControlledMaxSteerAngle);
-           
+
             //if (moveDirection.magnitude < 2) {
             if (moveDirection.sqrMagnitude < sqrDistanceToWaypoint) {
-                
+
 
                 //LogUtil.Log("currentWaypoint: " + currentWaypoint.ToString());                     
                 GameVehicleAIWaypoint aiWaypoint;
@@ -407,44 +407,44 @@ public class GameVehicleAIDriver : GameObjectBehavior {
                     //fire event END
                 }
             }
-            
+
         }
         else {
-            
+
             //if (driveCircleModus)
-            if (driveMode == GameVehicleDriveMode.Laps) {       
-                currentWaypoint = 0; 
+            if (driveMode == GameVehicleDriveMode.Laps) {
+                currentWaypoint = 0;
             }
-            else {               
-                aiSpeedPedal = 0;                
-                aiRespawnScript.enabled = false;                            
+            else {
+                aiSpeedPedal = 0;
+                aiRespawnScript.enabled = false;
             }
-            
+
         }
-        
+
     }
-    
-    void FillWaypointList() {               
+
+    void FillWaypointList() {
         bool found = true;
         int counter = 1;
         while (found) {
-            GameObject go;                      
+            GameObject go;
             string currentName;
-            currentName = "/" + waypointFolder + "/" + waypointPreName + counter.ToString();            
+            currentName = "/" + waypointFolder + "/" + waypointPreName + counter.ToString();
             go = GameObject.Find(currentName);
-            
-            if (go != null) {                               
+
+            if (go != null) {
                 waypoints.Add(go.transform);
                 counter++;
             }
             else {
-                found = false;               
+                found = false;
             }
 
             //rotate forerunner waypoint            
             if (counter > 2 && found) {
                 string forerunnerName;
-                forerunnerName = "/" + waypointFolder + "/" + waypointPreName + (counter - 2).ToString();                               
+                forerunnerName = "/" + waypointFolder + "/" + waypointPreName + (counter - 2).ToString();
                 GameObject forerunnerGo;
                 forerunnerGo = GameObject.Find(forerunnerName);
                 forerunnerGo.transform.LookAt(go.transform);
@@ -455,16 +455,16 @@ public class GameVehicleAIDriver : GameObjectBehavior {
                 string lastName;
                 lastName = "/" + waypointFolder + "/" + waypointPreName + (counter - 1).ToString();
                 GameObject lastGo;
-                lastGo = GameObject.Find(lastName);                
+                lastGo = GameObject.Find(lastName);
 
                 string firstName;
-                firstName = "/" + waypointFolder + "/" + waypointPreName + "1";               
+                firstName = "/" + waypointFolder + "/" + waypointPreName + "1";
                 GameObject firstGo;
                 firstGo = GameObject.Find(firstName);
 
-                lastGo.transform.LookAt(firstGo.transform);                
+                lastGo.transform.LookAt(firstGo.transform);
             }
-        }        
+        }
     }
 
     void GetWaypointNames() {
@@ -483,10 +483,10 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         if (gears < 1) {
             gears = 1;
         }
-        
+
         gearSpeedStep = (int)Mathf.Round(calcMaxSpeed / gears);
-        gearSpeed.Clear();  
-     
+        gearSpeed.Clear();
+
         for (int i = 0; i < gears; i++) {
             gearSpeed.Add(gearSpeedStep * (i + 1));
         }
@@ -494,7 +494,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
     }
 
     //ObstacleAvoidance
-    float ObstacleAvoidanceSteering() {        
+    float ObstacleAvoidanceSteering() {
         bool frontContact = false;
         float frontMinDistance = 0;
         float frontMaxDistance = -1;
@@ -519,9 +519,9 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         if (Physics.Linecast(viewPoint.position, viewPointEndGO.transform.position, out hitFrontMid, visibleLayers)) {
             frontContact = true;
             frontMinDistance = hitFrontMid.distance;
-            frontMaxDistance = hitFrontMid.distance;    
-        }        
-       
+            frontMaxDistance = hitFrontMid.distance;
+        }
+
         if (Physics.Linecast(viewPointLeftGO.transform.position, viewPointLeftEndGO.transform.position, out hitFrontLeft, visibleLayers)) {
             frontContact = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontLeft.distance) {
@@ -530,12 +530,12 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontLeft.distance) {
                 frontMaxDistance = hitFrontLeft.distance;
-            }            
+            }
         }
         else {
             frontMaxDistance = -1;
         }
-       
+
         if (Physics.Linecast(viewPointRightGO.transform.position, viewPointRightEndGO.transform.position, out hitFrontRight, visibleLayers)) {
             frontContact = true;
             if (frontMinDistance == 0 || frontMinDistance > hitFrontRight.distance) {
@@ -544,7 +544,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
             if (frontMaxDistance != -1 && frontMaxDistance < hitFrontRight.distance) {
                 frontMaxDistance = hitFrontRight.distance;
-            }            
+            }
         }
         else {
             frontMaxDistance = -1;
@@ -553,15 +553,15 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
         //nach vorne zu den Seiten schauen BEGIN ------------------------------------        
         if (Physics.Linecast(
-            viewPointLeftGO.transform.position, 
-            leftDirectionGO.transform.position, 
+            viewPointLeftGO.transform.position,
+            leftDirectionGO.transform.position,
             out hitL, visibleLayers)) {
-            leftDistance = hitL.distance;            
+            leftDistance = hitL.distance;
         }
-                
+
         if (Physics.Linecast(
-            viewPointRightGO.transform.position, 
-            rightDirectionGO.transform.position, 
+            viewPointRightGO.transform.position,
+            rightDirectionGO.transform.position,
             out hitR, visibleLayers)) {
             rightDistance = hitR.distance;
         }
@@ -569,22 +569,22 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
         //Hab ich Platz zum ausweichen? BEGIN ------------------------------------         
         if (Physics.Linecast(
-            centerPointLGO.transform.position, 
-            centerPointEndLGO.transform.position, 
+            centerPointLGO.transform.position,
+            centerPointEndLGO.transform.position,
             out hitLSide, visibleLayers)) {
             leftSideDistance = hitLSide.distance;
             //LogUtil.Log("center left: " + hitLSide.collider.gameObject.name);
         }
-        
+
         if (Physics.Linecast(
-            centerPointRGO.transform.position, 
-            centerPointEndRGO.transform.position, 
+            centerPointRGO.transform.position,
+            centerPointEndRGO.transform.position,
             out hitRSide, visibleLayers)) {
             rightSideDistance = hitRSide.distance;
         }
         //Hab ich Platz zum ausweichen? END ------------------------------------  
 
-        
+
         ////steering
         ////nach links lenken
         ////Kein "(rightSideDistance > 0) ||" weil kein Abdrengeln m�glich sein soll
@@ -609,24 +609,24 @@ public class GameVehicleAIDriver : GameObjectBehavior {
         //}
 
         currentAngle = SteeringDecision(
-            leftSideDistance, 
-            rightSideDistance, 
-            leftDistance, 
-            rightDistance, 
-            frontMinDistance, 
-            frontContact, 
+            leftSideDistance,
+            rightSideDistance,
+            leftDistance,
+            rightDistance,
+            frontMinDistance,
+            frontContact,
             steeringMode);
 
         if (backwardDriving) {
-            
+
             if (currentSpeed > 2) {
                 flWheelCollider.motorTorque = 0;
                 frWheelCollider.motorTorque = 0;
                 flWheelCollider.brakeTorque = brakeTorque;
                 frWheelCollider.brakeTorque = brakeTorque;
-                           
+
             }
-            else {               
+            else {
                 flWheelCollider.motorTorque = (-1) * 100;
                 frWheelCollider.motorTorque = (-1) * 100;
                 flWheelCollider.brakeTorque = 0;
@@ -637,81 +637,78 @@ public class GameVehicleAIDriver : GameObjectBehavior {
 
             if (frontMinDistance > 8 || frontMinDistance == 0) {
                 backwardDriving = false;
-            }          
-            
+            }
+
         }
-        
+
         return currentAngle;
     }
 
     private float SteeringDecision(
-        float leftSideDistance, 
-        float rightSideDistance, 
-        float leftDistance, 
-        float rightDistance, 
-        float frontMinDistance, 
-        bool frontContact, 
+        float leftSideDistance,
+        float rightSideDistance,
+        float leftDistance,
+        float rightDistance,
+        float frontMinDistance,
+        bool frontContact,
         GameVehicleSteeringMode style) {
 
         float localSteeringAngle = steerAngle;
         float result = 0;
 
-        switch (style) { 
-        case GameVehicleSteeringMode.Cautious:
-            if (leftSideDistance == 0 
-                && 
-                ((leftDistance == 0 && rightDistance > 0) 
-                || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
-                || (leftDistance == 0 && frontMinDistance > 0) 
-                || (rightDistance > leftDistance && frontMinDistance > 0) 
-                || (frontContact == false && rightSideDistance > 0))) {
-                result = (-1) * localSteeringAngle;
-                //LogUtil.Log(" 1 leftDistance: " + leftDistance + ";rightDistance: " + rightDistance);
-            }
+        switch (style) {
+            case GameVehicleSteeringMode.Cautious:
+                if (leftSideDistance == 0
+                    &&
+                    ((leftDistance == 0 && rightDistance > 0)
+                    || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
+                    || (leftDistance == 0 && frontMinDistance > 0)
+                    || (rightDistance > leftDistance && frontMinDistance > 0)
+                    || (frontContact == false && rightSideDistance > 0))) {
+                    result = (-1) * localSteeringAngle;
+                    //LogUtil.Log(" 1 leftDistance: " + leftDistance + ";rightDistance: " + rightDistance);
+                }
 
                 //nach rechts lenken
                 //Kein "(leftSideDistance > 0) ||" weil kein Abdrengeln m�glich sein soll
-            if (rightSideDistance == 0 
-                && ((rightDistance == 0 && leftDistance > 0) 
-                || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
-                || (rightDistance == 0 && frontMinDistance > 0) 
-                || (leftDistance > rightDistance && frontMinDistance > 0) 
-                || (frontContact == false && leftSideDistance > 0))) {
-                result = localSteeringAngle;
-            }
-            break;
+                if (rightSideDistance == 0
+                    && ((rightDistance == 0 && leftDistance > 0)
+                    || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
+                    || (rightDistance == 0 && frontMinDistance > 0)
+                    || (leftDistance > rightDistance && frontMinDistance > 0)
+                    || (frontContact == false && leftSideDistance > 0))) {
+                    result = localSteeringAngle;
+                }
+                break;
 
-        case GameVehicleSteeringMode.Tough:
+            case GameVehicleSteeringMode.Tough:
                 //steering
                 //nach links lenken
                 //Kein "(rightSideDistance > 0) ||" weil kein Abdrengeln m�glich sein soll
-            if (leftSideDistance == 0 
-                && ((leftDistance == 0 && rightDistance > 0) 
-                || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
-                || (leftDistance == 0 && frontMinDistance > 0) 
-                || (rightDistance > leftDistance && frontMinDistance > 0))) {
-                result = (-1) * localSteeringAngle;
-                //LogUtil.Log(" 1 leftDistance: " + leftDistance + ";rightDistance: " + rightDistance);
-            }
+                if (leftSideDistance == 0
+                    && ((leftDistance == 0 && rightDistance > 0)
+                    || (rightDistance != 0 && leftDistance != 0 && leftDistance > rightDistance)
+                    || (leftDistance == 0 && frontMinDistance > 0)
+                    || (rightDistance > leftDistance && frontMinDistance > 0))) {
+                    result = (-1) * localSteeringAngle;
+                    //LogUtil.Log(" 1 leftDistance: " + leftDistance + ";rightDistance: " + rightDistance);
+                }
 
                 //nach rechts lenken
                 //Kein "(leftSideDistance > 0) ||" weil kein Abdrengeln m�glich sein soll
-            if (rightSideDistance == 0 
-                && ((rightDistance == 0 && leftDistance > 0) 
-                || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
-                || (rightDistance == 0 && frontMinDistance > 0) 
-                || (leftDistance > rightDistance && frontMinDistance > 0))) {
-                result = localSteeringAngle;
-            }
-            break;        
-        }     
+                if (rightSideDistance == 0
+                    && ((rightDistance == 0 && leftDistance > 0)
+                    || (rightDistance != 0 && leftDistance != 0 && rightDistance > leftDistance)
+                    || (rightDistance == 0 && frontMinDistance > 0)
+                    || (leftDistance > rightDistance && frontMinDistance > 0))) {
+                    result = localSteeringAngle;
+                }
+                break;
+        }
 
         return result;
     }
-
 }
-
-
 
 //public class GameVehicleEventArgs
 //{

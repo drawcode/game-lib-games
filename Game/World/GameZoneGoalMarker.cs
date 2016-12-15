@@ -8,7 +8,7 @@ public class GameZoneGoalMarker : GameObjectBehavior {
 
     public GameObject containerEffects;
     public GameObject containerAssets;
-     
+
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 7.0f;
 
@@ -17,32 +17,32 @@ public class GameZoneGoalMarker : GameObjectBehavior {
 
     bool initialized = false;
 
-	public void Start() {
+    public void Start() {
         Init();
-	}
-	
-	public void OnEnable() {
-		
-	}
-	
-	public void OnDisable() {
-		
-	}
+    }
+
+    public void OnEnable() {
+
+    }
+
+    public void OnDisable() {
+
+    }
 
     public void CheckZones() {
-        if(gameZoneGoalLeft == null) {
+        if (gameZoneGoalLeft == null) {
             gameZoneGoalLeft = GetZoneObject(GameZoneKeys.goal_left);
         }
-        if(gameZoneGoalRight == null) {
+        if (gameZoneGoalRight == null) {
             gameZoneGoalRight = GetZoneObject(GameZoneKeys.goal_right);
         }
     }
 
     public GameZoneGoal GetZoneObject(string goalZoneType) {
-        foreach(GameZoneGoal zoneItem in
+        foreach (GameZoneGoal zoneItem in
             GameController.Instance.levelZonesContainerObject
             .GetComponentsInChildren<GameZoneGoal>(true)) {
-            if(zoneItem.gameEndZoneType == goalZoneType) {
+            if (zoneItem.gameEndZoneType == goalZoneType) {
                 return zoneItem;
             }
         }
@@ -57,24 +57,24 @@ public class GameZoneGoalMarker : GameObjectBehavior {
 
     void Update() {
 
-        if(!initialized) {
+        if (!initialized) {
             return;
         }
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
         currentTimeBlock += Time.deltaTime;
 
-        if(currentTimeBlock > actionInterval) {
+        if (currentTimeBlock > actionInterval) {
             currentTimeBlock = 0.0f;
             UpdateZoneMarker();
         }
     }
 
     public static GameZoneGoalMarker GetMarker() {
-        foreach(GameZoneGoalMarker marker in
+        foreach (GameZoneGoalMarker marker in
             GameController.Instance.levelMarkersContainerObject
             .GetComponentsInChildren<GameZoneGoalMarker>(true)) {
             return marker;
@@ -83,7 +83,7 @@ public class GameZoneGoalMarker : GameObjectBehavior {
     }
 
     public void UpdateIndicator() {
-        if(!AppModes.Instance.isAppModeGameTraining) {
+        if (!AppModes.Instance.isAppModeGameTraining) {
             GamePlayerIndicator.AddIndicator(
                 gameObject, GamePlayerIndicatorType.goal);
         }
@@ -92,28 +92,26 @@ public class GameZoneGoalMarker : GameObjectBehavior {
     void UpdateZoneMarker() {
         // Check for marker location and move it
 
-        if(!AppModes.Instance.isAppModeGameTraining) {
-            if(GameController.Instance.currentGameZone == GameZoneKeys.goal_left) {
+        if (!AppModes.Instance.isAppModeGameTraining) {
+            if (GameController.Instance.currentGameZone == GameZoneKeys.goal_left) {
                 transform.position = gameZoneGoalLeft.gameObject.transform.position;
             }
-            else if(GameController.Instance.currentGameZone == GameZoneKeys.goal_right) {
+            else if (GameController.Instance.currentGameZone == GameZoneKeys.goal_right) {
                 transform.position = gameZoneGoalRight.gameObject.transform.position;
             }
         }
     }
 
-
     public virtual void PlayEffects() {
-        if(containerEffects != null) {
+        if (containerEffects != null) {
             containerEffects.Show();
             containerEffects.PlayParticleSystem(true);
         }
     }
 
     public virtual void StopEffects() {
-        if(containerEffects != null) {
+        if (containerEffects != null) {
             containerEffects.StopParticleSystem(true);
         }
     }
-	
 }

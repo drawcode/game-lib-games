@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 
 public class GameVehicleAIDriverMotor : GameObjectBehavior {
-    
+
     public float maxSpeed = 200.0f;
     public float torque = 150.0f;
     public float brakeTorque = 500.0f;
@@ -58,11 +58,11 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
     public delegate void LastWaypointHandler(GameVehicleEventArgs e);
 
     public static LastWaypointHandler onLastWaypoint;
-    
+
     void Awake() {
         m_currentMaxSpeed = maxSpeed;
         m_wheelRadius = flWheelCollider.radius;
-        
+
         InitGearSpeeds();
 
         if (m_inverseWheelTurning) {
@@ -72,17 +72,17 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
             m_wheelTurningParameter = 1;
         }
 
-        
+
         if (playSound && motorSound != null) {
             InitSound();
         }
-        
+
         if (centerOfMass != null) {
             rigidbody.centerOfMass = centerOfMass.localPosition;
         }
-                
+
     }
-    
+
     void InitSound() {
 
         m_motorAudioSource = gameObject.AddComponent<AudioSource>();
@@ -97,14 +97,14 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
     }
 
     void FixedUpdate() {
-        m_currentSpeed = (Mathf.PI * 2 * m_wheelRadius) * flWheelCollider.rpm * 60 / 1000;       
+        m_currentSpeed = (Mathf.PI * 2 * m_wheelRadius) * flWheelCollider.rpm * 60 / 1000;
         m_currentSpeed = Mathf.Round(m_currentSpeed);
-       
+
         flWheelCollider.motorTorque = torque * aiSpeedPedal;
-        frWheelCollider.motorTorque = torque * aiSpeedPedal;        
-        
-        flWheelCollider.brakeTorque = brakeTorque * aiBrakePedal;       
-        frWheelCollider.brakeTorque = brakeTorque * aiBrakePedal;       
+        frWheelCollider.motorTorque = torque * aiSpeedPedal;
+
+        flWheelCollider.brakeTorque = brakeTorque * aiBrakePedal;
+        frWheelCollider.brakeTorque = brakeTorque * aiBrakePedal;
 
         flWheelCollider.steerAngle = maxSteerAngle * aiSteerAngle;
         frWheelCollider.steerAngle = maxSteerAngle * aiSteerAngle;
@@ -116,13 +116,13 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
     }
 
     void Update() {
-        
-        if(GameConfigs.isUIRunning) {
+
+        if (GameConfigs.isUIRunning) {
             return;
         }
 
         RotateWheels();
-        SteelWheels();        
+        SteelWheels();
     }
 
     void RotateWheels() {
@@ -156,15 +156,15 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
         float currentPitch = 0.00f;
 
         switch (m_currentGear) {
-        case 0:
-            tempMinSpeed = 0.00f;
-            tempMaxSpeed = m_gearSpeed[m_currentGear];
-            break;
+            case 0:
+                tempMinSpeed = 0.00f;
+                tempMaxSpeed = m_gearSpeed[m_currentGear];
+                break;
 
-        default:
-            tempMinSpeed = m_gearSpeed[m_currentGear - 1];
-            tempMaxSpeed = m_gearSpeed[m_currentGear];
-            break;
+            default:
+                tempMinSpeed = m_gearSpeed[m_currentGear - 1];
+                tempMaxSpeed = m_gearSpeed[m_currentGear];
+                break;
         }
 
         //currentPitch = (float)(((Mathf.Abs(currentSpeed) - tempMinSpeed) / (tempMaxSpeed - tempMinSpeed)) + 0.8);
@@ -194,5 +194,4 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
         }
 
     }
-
 }

@@ -10,20 +10,20 @@ public class GameVehicleAntiRollBar : GameObjectBehavior {
     // The two wheels connected by the anti-roll bar. These should be on the same axle.
     public WheelCollider wheelL;
     public WheelCollider wheelR;
-    
+
     // Coeefficient determining how much force is transfered by the bar.
     public float antiRoll = 5000.0F;
     WheelHit hit;
     float travelL = 1.0F;
     float travelR = 1.0F;
-    
+
     void FixedUpdate() {
-        
-        if(GameConfigs.isUIRunning) {
+
+        if (GameConfigs.isUIRunning) {
             return;
         }
-        
-        if(!GameConfigs.isGameRunning) {
+
+        if (!GameConfigs.isGameRunning) {
             return;
         }
         /*
@@ -31,25 +31,25 @@ public class GameVehicleAntiRollBar : GameObjectBehavior {
         wheelL.suspensionForceInput =+ force;
         wheelR.suspensionForceInput =- force;
         */
-        
-        bool groundedL = wheelL.GetGroundHit(out hit);  
-        
-        if (groundedL) 
-            travelL = (-wheelL.transform.InverseTransformPoint(hit.point).y - wheelL.radius) 
+
+        bool groundedL = wheelL.GetGroundHit(out hit);
+
+        if (groundedL)
+            travelL = (-wheelL.transform.InverseTransformPoint(hit.point).y - wheelL.radius)
                 / wheelL.suspensionDistance;
 
-        bool groundedR = wheelR.GetGroundHit(out hit); 
-        if (groundedR) 
-            travelR = (-wheelR.transform.InverseTransformPoint(hit.point).y - wheelR.radius) 
+        bool groundedR = wheelR.GetGroundHit(out hit);
+        if (groundedR)
+            travelR = (-wheelR.transform.InverseTransformPoint(hit.point).y - wheelR.radius)
                 / wheelR.suspensionDistance;
 
         float antiRollForce = (travelL - travelR) * antiRoll;
 
-        if (groundedL) 
-            rigidbody.AddForceAtPosition(wheelL.transform.up * -antiRollForce, wheelL.transform.position); 
-        if (groundedR) 
-            rigidbody.AddForceAtPosition(wheelR.transform.up * antiRollForce, wheelR.transform.position); 
-                 
-    
+        if (groundedL)
+            rigidbody.AddForceAtPosition(wheelL.transform.up * -antiRollForce, wheelL.transform.position);
+        if (groundedR)
+            rigidbody.AddForceAtPosition(wheelR.transform.up * antiRollForce, wheelR.transform.position);
+
+
     }
 }
