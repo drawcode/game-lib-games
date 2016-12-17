@@ -694,6 +694,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         GameController.Reset();
 
+        initCameras();
+
         foreach (GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
             if (gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
