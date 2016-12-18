@@ -644,13 +644,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public string contentDisplayCode = "default";
     public bool isGameOver = false;
     public bool updateFingerNavigate = false;
-    
+
     // CUSTOM
-    
-    public string currentGameZone = GameZoneKeys.goal_right;    
-    
+
+    public string currentGameZone = GameZoneKeys.goal_right;
+
     // CAMERAS
-    
+
     public List<Camera> camerasAlwaysOn;
     public GameObject cameraContainersAlwaysOn;
     //
@@ -692,7 +692,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void Init() {
 
-        GameController.Reset();
+        reset();
 
         initCameras();
 
@@ -702,23 +702,24 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 break;
             }
         }
-        
-        GameController.InitGameWorldBounds();
-        
-        GameController.LoadCharacterTypes();
+
+        initGameWorldBounds();
+
+        loadCharacterTypes();
+
         GameDraggableEditor.LoadDraggableContainerObject();
 
         initCustomProfileCharacters();
     }
-        
-    public virtual void initCustomProfileCharacters() {       
-        
+
+    public virtual void initCustomProfileCharacters() {
+
         StartCoroutine(initCustomProfileCharactersCo());
     }
 
     public virtual IEnumerator initCustomProfileCharactersCo() {
         yield return new WaitForEndOfFrame();
-        
+
         GameCustomController.BroadcastCustomCharacterProfileCodeSync();
         GameCustomController.BroadcastCustomSync();
     }
@@ -741,7 +742,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
     }
-    
+
     public virtual void OnDisable() {
         Gameverses.GameMessenger<string>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
@@ -761,9 +762,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     // ---------------------------------------------------------------------
-    
+
     // PROPERTIES
-    
+
     public int characterActorsCount {
         get {
             return levelActorsContainerObject.transform.childCount;
@@ -771,13 +772,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public int characterActorEnemyCount {
-        get {           
+        get {
 
             int countEnemies = 0;
 
-            foreach (GamePlayerController gamePlayerController in 
+            foreach (GamePlayerController gamePlayerController in
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-            
+
                 if (gamePlayerController.IsAgentControlled) {
                     countEnemies += 1;
                 }
@@ -788,22 +789,22 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public int characterActorSidekickCount {
-        get {           
-            
+        get {
+
             int countEnemies = 0;
-            
-            foreach (GamePlayerController gamePlayerController in 
+
+            foreach (GamePlayerController gamePlayerController in
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-                
+
                 if (gamePlayerController.IsSidekickControlled) {
                     countEnemies += 1;
                 }
             }
-            
+
             return countEnemies;
         }
     }
-    
+
     public int itemsCount {
         get {
             int countItems = 0;
@@ -847,9 +848,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         }
     }
-    
+
     // ---------------------------------------------------------------------
-    
+
     // EVENTS
 
     public virtual void OnProfileShouldBeSavedEventHandler() {
@@ -862,25 +863,25 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         loadLevelActions(1f);
     }
-    
+
     public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
-    
+
         if (state == GameDraggableEditEnum.StateEditing) {
             ////GameHUD.Instance.ShowCurrentCharacter();
         }
         else {
 
             GameHUD.Instance.ShowGameState();
-    
+
             GameUIController.ShowHUD();
             //ShowUIPanelEditButton();
         }
-    }   
-    
+    }
+
     // Listen to object creation events and create them such as network players...
-    
+
     public virtual void OnNetworkPlayerContainerAdded(string uid) {
-    
+
         // Look for object by that uuid, if not create it
 
         LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
@@ -891,9 +892,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 
         GamePlayerController[] playerControllers = UnityObjectUtil.FindObjects<GamePlayerController>();
-    
+
         if (playerControllers.Length > 0) {
-    
+
             bool found = false;
 
             foreach (GamePlayerController gamePlayerController in playerControllers) {
@@ -915,13 +916,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 string pathPlayer = Path.Combine(
                     ContentPaths.appCacheVersionSharedPrefabCharacters,
                     "GamePlayerObject");
-    
+
                 UnityEngine.Object prefabGameplayer = Resources.Load(pathPlayer);
                 if (prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
-                    GamePlayerController playerControllerOther = 
-                        (Instantiate(prefabGameplayer, placementPos, Quaternion.identity) 
+                    GamePlayerController playerControllerOther =
+                        (Instantiate(prefabGameplayer, placementPos, Quaternion.identity)
                          as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
                     playerControllerOther.UpdateNetworkContainer(uid);
@@ -933,33 +934,33 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void OnGameAIDirectorData(GameAIDirectorData actor) {
-        GameController.LoadActor(actor.code, actor.type);
+        loadActor(actor.code, actor.type);
     }
 
     public virtual void OnGameItemDirectorData(GameItemData item) {
 
-        GameController.LoadItem(item.code);
+        loadItem(item.code);
     }
 
     // ---------------------------------------------------------------------
 
     // GAMEPLAYER CONTROLLER   
-    
-    public virtual GamePlayerController getCurrentPlayerController {
+
+    public virtual GamePlayerController currentPlayerController {
         get {
             return getCurrentController();
         }
     }
 
     public virtual GamePlayerController getCurrentController() {
-        if (GameController.Instance.currentGamePlayerController != null) {
-            return GameController.Instance.currentGamePlayerController;
-        }
-        return null;
+        //if (GameController.Instance.currentGamePlayerController != null) {
+        //    return GameController.Instance.currentGamePlayerController;
+        //}
+        return currentGamePlayerController;
     }
 
     public virtual GamePlayerController getGamePlayerController(string uid) {
-        foreach (GamePlayerController gamePlayerController 
+        foreach (GamePlayerController gamePlayerController
                 in UnityObjectUtil.FindObjects<GamePlayerController>()) {
             if (gamePlayerController.uniqueId == uid) {
                 return gamePlayerController;
@@ -989,7 +990,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             if (gamePlayerCollision.gamePlayerController == null) {
                 return null;
             }
-               
+
             GamePlayerController gamePlayerController = gamePlayerCollision.gamePlayerController;
             if (gamePlayerController != null) {
                 return gamePlayerController;
@@ -1008,7 +1009,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         if (go.name.Contains("GamePlayerObject")) {
 
-            gamePlayerController = GameController.GetGamePlayerController(go);
+            gamePlayerController = getGamePlayerController(go);
 
             if (gamePlayerController != null) {
 
@@ -1026,7 +1027,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
             //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
-            gamePlayerController = GameController.GetGamePlayerControllerParent(go);
+            gamePlayerController = getGamePlayerControllerParent(go);
 
             if (gamePlayerController != null) {
 
@@ -1051,7 +1052,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         if (go.name.Contains("GamePlayerObject")) {
 
-            gamePlayerController = GameController.GetGamePlayerController(go);
+            gamePlayerController = getGamePlayerController(go);
 
             if (gamePlayerController != null) {
 
@@ -1068,7 +1069,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
             //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
 
-            gamePlayerController = GameController.GetGamePlayerControllerParent(go);
+            gamePlayerController = getGamePlayerControllerParent(go);
 
             if (gamePlayerController != null) {
 
@@ -1086,22 +1087,22 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     // SCORING
 
     public virtual void gamePlayerScores(double val) {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.ProgressScores(val);
+        if (currentPlayerController != null) {
+            currentPlayerController.ProgressScores(val);
         }
     }
- 
+
     // ATTACK
-    
+
     //public static void GamePlayerAttack() {
     //    if(isInst) {
     //        Instance.gamePlayerAttack();
     //    }
     //}
-    
+
     public virtual void gamePlayerAttack() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendAttack();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendAttack();
         }
     }
 
@@ -1112,8 +1113,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerAttackAlt() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendAttackAlt();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendAttackAlt();
         }
     }
 
@@ -1124,8 +1125,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerAttackRight() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendAttackRight();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendAttackRight();
         }
     }
 
@@ -1136,8 +1137,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerAttackLeft() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendAttackLeft();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendAttackLeft();
         }
     }
 
@@ -1150,8 +1151,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerDefend() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendDefend();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendDefend();
         }
     }
 
@@ -1162,8 +1163,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerDefendAlt() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendDefendAlt();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendDefendAlt();
         }
     }
 
@@ -1174,8 +1175,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerDefendRight() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendDefendRight();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendDefendRight();
         }
     }
 
@@ -1186,11 +1187,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerDefendLeft() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.SendDefendLeft();
+        if (currentPlayerController != null) {
+            currentPlayerController.SendDefendLeft();
         }
     }
- 
+
     // JUMP
 
     //public static void GamePlayerJump() {
@@ -1198,38 +1199,38 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //        Instance.gamePlayerJump();
     //    }
     //}
-    
+
     public virtual void gamePlayerJump() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.InputJump();
+        if (currentPlayerController != null) {
+            currentPlayerController.InputJump();
         }
     }
-     
+
     // USE
-    
+
     //public static void GamePlayerUse() {
     //    if(isInst) {
     //        Instance.gamePlayerUse();
     //    }
     //}
-    
+
     public virtual void gamePlayerUse() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.InputUse();
+        if (currentPlayerController != null) {
+            currentPlayerController.InputUse();
         }
     }
-    
+
     // MOUNT
-    
+
     //public static void GamePlayerUse() {
     //    if(isInst) {
     //        Instance.gamePlayerUse();
     //    }
     //}
-    
+
     public virtual void gamePlayerMount() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.InputMount();
+        if (currentPlayerController != null) {
+            currentPlayerController.InputMount();
         }
     }
 
@@ -1242,8 +1243,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerSkill() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.InputSkill();
+        if (currentPlayerController != null) {
+            currentPlayerController.InputSkill();
         }
     }
 
@@ -1256,8 +1257,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //}
 
     public virtual void gamePlayerMagic() {
-        if (GameController.CurrentGamePlayerController != null) {
-            GameController.CurrentGamePlayerController.InputMagic();
+        if (currentPlayerController != null) {
+            currentPlayerController.InputMagic();
         }
     }
 
@@ -1304,13 +1305,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
 
-        GameController.GoalZoneChange(zone);
+        goalZoneChange(zone);
     }
 
     // ---------------------------------------------------------------------
-    
+
     // BOUNDS
-    
+
     public virtual void initGameWorldBounds() {
         if (gameBounds == null) {
             gameBounds = gameObject.AddComponent<GameBounds>();
@@ -1349,10 +1350,10 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void loadLevelActions() {
-        foreach(GameZoneActionAsset gameZoneActionAsset in 
+        foreach (GameZoneActionAsset gameZoneActionAsset in
                 levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
-            
-            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
+
+            if (gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
                 // Make it a type of needed action or none. 
                 // Update placeholder actions to actual actions of default
 
@@ -1415,19 +1416,19 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void loadLevelAssets() {
-        GameController.LoadLevelAssets(GameLevels.Current.code);
+        loadLevelAssets(GameLevels.Current.code);
     }
 
     public virtual void loadLevelAssets(string code) {
 
         // LogUtil.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
 
-        GameDraggableEditor.levelItemsContainerObject = GameController.Instance.levelItemsContainerObject;
-    
+        GameDraggableEditor.levelItemsContainerObject = levelItemsContainerObject;
+
         //GameLevelItems.Current.code = code;
-            
+
         // Clear items from LevelContainer
-        GameController.Reset();
+        reset();
 
         Debug.Log("loadLevelAssets:" + " code:" + code);
 
@@ -1436,11 +1437,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         GameLevelItems.Instance.ChangeCurrentAbsolute(code);
 
         // Prepare game level items for this mode
-        GameController.LoadLevelItems();
-    
+        loadLevelItems();
+
         // Load in the level assets
         GameDraggableEditor.LoadLevelItems();
-                
+
         // Find actions and make them current actions or none
 
         //List<AppContentCollectItem> actionItemsAsset = new List<AppContentCollectItem>();
@@ -1467,7 +1468,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
         */
-    
+
     }
 
     public virtual void loadLevel(string code) {
@@ -1476,18 +1477,19 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         // Load the game levelitems for the game level code
         ////GameController.StartGame(code);
-        GameController.PrepareGame(code);
+
+        prepareGame(code);
 
         //GameController.LoadLevelAssets(code);
-    
+
         //GameHUD.Instance.SetLevelInit(GameLevels.Current);
-    
+
         //GameHUD.Instance.AnimateIn();
-    
+
         //GameUI.Instance.ToggleGameUI();
-    
+
     }
-    
+
     public virtual void loadLevelItems() {
 
         bool updated = false;
@@ -1510,7 +1512,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                         + AppContentStates.Instance.isAppContentStateGameChallenge);
 
                     GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
+                        = getLevelRandomizedGrid();
                     updated = true;
                 }
             }
@@ -1542,7 +1544,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
 
                     GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid(GameLevelGridData.GetModeTypeChoice(4));
+                        = getLevelRandomizedGrid(GameLevelGridData.GetModeTypeChoice(4));
                     updated = true;
                 }
 
@@ -1590,19 +1592,19 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             // if(AppModes.Instance.isAppModeGameArcade) {
             LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
                 + AppModes.Instance.isAppModeGameArcade);
-            
+
             if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
-                
+
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
-                
+
                 if (AppContentStates.Instance.isAppContentStateGameArcade) {
-                    
+
                     LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
                         + AppContentStates.Instance.isAppContentStateGameArcade);
-                    
+
                     GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
+                        = getLevelRandomizedGrid();
                     updated = true;
                 }
             }
@@ -1611,29 +1613,29 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         if (!updated) {
             GameLevelItems.Current.level_items
-                = GameController.GetLevelRandomizedGrid();
+                = getLevelRandomizedGrid();
         }
     }
 
     public virtual void saveCurrentLevel() {
         GameDraggableEditor.SaveCurrentLevel(
-            GameController.Instance.levelItemsContainerObject);
+            levelItemsContainerObject);
     }
 
     public virtual void playGame() {
 
         if (!levelInitializing) {
-        
+
             //AdNetworks.ShowFullscreenAd();
-            
+
             //if(string.IsNullOrEmpty(GameLevels.Current.code)) {
             //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
             //}
-            
+
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
             //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
-                        
-            GameController.LoadStartLevel();
+
+            loadStartLevel();
         }
     }
 
@@ -1642,13 +1644,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public bool levelInitializing = false;
-       
+
     public virtual IEnumerator initLevelCo(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
 
-        //GameController.ResetRuntimeData();
+        //resetRuntimeData();
 
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
@@ -1663,47 +1665,47 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         // PRELOAD/CACHE/POOL CONTROLLERS
 
         yield return StartCoroutine(GameAIController.Instance.preloadCo());
-        
+
         yield return StartCoroutine(GameItemController.Instance.preloadCo());
-        
+
         GameHUD.Instance.ResetIndicators();
 
         // TODO load customizations
-        GameController.LoadLevel(levelCode);
-        
+        loadLevel(levelCode);
+
         // TODO load anim
     }
-    
+
     public virtual void initLevelFinish(string levelCode) {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
-    
-    public virtual IEnumerator initLevelFinishCo(string levelCode) {        
+
+    public virtual IEnumerator initLevelFinishCo(string levelCode) {
         if (UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
-                       
+
         Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
 
         yield return new WaitForSeconds(1f);
-        
+
         if (currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeOut();
         }
-        
+
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
-        
+
         UIPanelOverlayPrepare.HideAll();
-        
+
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
-                
+
         Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
-                
+
         //UIPanelOverviewMode.ShowDefault();
 
         levelInitializing = false;
     }
-    
+
     public virtual void startLevel(string levelCode) {
         initLevel(levelCode);
     }
@@ -1716,11 +1718,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         yield return StartCoroutine(initLevelFinishCo(levelCode));
     }
     */
-         
+
     public virtual void changeLevelFlash() {
         startLevel("1-2");
     }
-    
+
     // ---------------------------------------------------------------------
     // PROFILE
 
@@ -1748,14 +1750,14 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //catch (Exception e) {
         //    LogUtil.Log("ERROR:changeGameState:e:" + e.Message + e.StackTrace);
         //}
-        GameController.SaveGameStates();
+        saveGameStates();
 
         LogUtil.Log("changeGameStates:app_content_state:AFTER:" + app_content_state);
 
     }//AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameArcade);
 
     public virtual void changeCharacterModel(string characterCode) {
-        GameController.CurrentGamePlayerController.ChangeCharacter(characterCode);
+        currentPlayerController.ChangeCharacter(characterCode);
     }
 
     public virtual void loadCurrentProfileCharacter() {
@@ -1767,7 +1769,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void loadProfileCharacter(string characterProfileCode) {
 
-        GameProfileCharacterItem profileCharacterItem = 
+        GameProfileCharacterItem profileCharacterItem =
             GameProfileCharacters.Current.GetCharacter(characterProfileCode);
 
         if (profileCharacterItem == null) {
@@ -1775,24 +1777,24 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 
         GameProfileCharacters.Current.SetCurrentCharacterProfileCode(characterProfileCode);
-               
+
         string characterCode = ProfileConfigs.defaultGameCharacterCode;
-        
+
         if (!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
             characterCode = profileCharacterItem.characterCode;
         }
-        
-        GameController.ChangeCharacterModel(characterCode);
+
+        changeCharacterModel(characterCode);
     }
-    
+
     public virtual void loadStartLevel() {
-        GameController.LoadStartLevel(GameConfigs.defaultGameLevelCode);
+        loadStartLevel(GameConfigs.defaultGameLevelCode);
     }
-    
+
     public virtual void loadStartLevel(string levelCode) {
-        
+
         GameDraggableEditor.ChangeStateEditing(GameDraggableEditEnum.StateNotEditing);
-        GameController.StartLevel(levelCode);
+        startLevel(levelCode);
     }
 
     public virtual void loadActor(string characterCode, string displayType) {
@@ -1802,21 +1804,21 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         actorDataItem.type = BaseDataObjectKeys.character;
         actorDataItem.data_type = GameSpawnType.zonedType;
         actorDataItem.display_type = displayType;
-        
+
         //for (int i = 0; i < actorDataItem.currentSpawnAmount; i++) {
-        GameController.LoadActor(actorDataItem);
+        loadActor(actorDataItem);
         //}
     }
 
     public virtual void loadActor(
-        string characterCode, 
-        string characterType, 
-        string spawnType, 
-        string displayType, 
-        Vector3 pos, 
-        Quaternion rot, 
+        string characterCode,
+        string characterType,
+        string spawnType,
+        string displayType,
+        Vector3 pos,
+        Quaternion rot,
         bool overrideLoading = false) {
-        
+
         GameActorDataItem actorDataItem = new GameActorDataItem();
         actorDataItem.code = characterCode;
         actorDataItem.type = characterType;
@@ -1825,9 +1827,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         actorDataItem.position_data.FromVector3(pos);
         actorDataItem.rotation_data.FromVector3(rot.eulerAngles);
         actorDataItem.overrideLoading = overrideLoading;
-        
+
         //for (int i = 0; i < actor.currentSpawnAmount; i++) {
-        GameController.LoadActor(actorDataItem);
+        loadActor(actorDataItem);
         //}
     }
 
@@ -1836,17 +1838,17 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void loadItem(string itemCode, string itemType, string spawnType, Vector3 pos) {
-        
+
         GameItemData data = new GameItemData();
         data.code = itemCode;
         data.type = itemType;
         data.data_type = spawnType;
         data.position_data.FromVector3(pos);
-        
+
         // DEFAULT ITEM LOADING
-        
+
         //for (int i = 0; i < item.currentSpawnAmount; i++) {
-        GameController.LoadItem(data);
+        loadItem(data);
         //} 
     }
 
@@ -1856,9 +1858,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         data.code = itemCode;
 
         // DEFAULT ITEM LOADING
-        
+
         //for (int i = 0; i < item.currentSpawnAmount; i++) {
-        GameController.LoadItem(data);
+        loadItem(data);
         //}
     }
 
@@ -1866,11 +1868,17 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         StartCoroutine(loadItemCo(data));
     }
 
+    public virtual Vector3 currentPlayerPosition {
+        get {
+            return getCurrentPlayerPosition();
+        }
+    }
+
     public virtual Vector3 getCurrentPlayerPosition() {
         Vector3 currentPlayerPosition = Vector3.zero;
-        if (GameController.CurrentGamePlayerController != null) {
-            if (GameController.CurrentGamePlayerController.gameObject != null) {
-                currentPlayerPosition = GameController.CurrentGamePlayerController.gameObject.transform.position;
+        if (currentPlayerController != null) {
+            if (currentPlayerController.gameObject != null) {
+                currentPlayerPosition = currentPlayerController.gameObject.transform.position;
             }
         }
         return currentPlayerPosition;
@@ -1878,7 +1886,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual Vector3 getRandomSpawnLocation() {
         Vector3 spawnLocation = Vector3.zero;
-        Vector3 currentPlayerPosition = GameController.CurrentPlayerPosition;
+        Vector3 currentPlayerPosition = getCurrentPlayerPosition();
 
         Vector3 boundaryBottomLeftPosition = boundaryEdgeObjectBottomLeft.transform.position;
         Vector3 boundaryBottomRightPosition = boundaryEdgeObjectBottomRight.transform.position;
@@ -1889,11 +1897,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         float playerTopRight = currentPlayerPosition.z + 50f;
         float playerBottomLeft = currentPlayerPosition.x - 50f;
         float playerBottomRight = currentPlayerPosition.x + 50f;
-    
+
         //Rect rect = new Rect(0, 0, 150, 150);
         //if (rect.Contains())
         //    print("Inside");
-    
+
         if (playerBottomLeft < boundaryBottomLeftPosition.x) {
             playerBottomLeft = boundaryBottomLeftPosition.x;
         }
@@ -1913,7 +1921,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         return spawnLocation;
     }
-    
+
     //bool loadingCharacterContainer = false;
 
     public virtual IEnumerator loadActorCo(GameActorDataItem data) {
@@ -1930,7 +1938,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             //loadingCharacterContainer = false;
             yield break;
         }
-        
+
         string modelPath = ContentPaths.appCacheVersionSharedPrefabCharacters;
         modelPath = PathUtil.Combine(modelPath, "GamePlayerObject");
 
@@ -1939,7 +1947,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         GameObject prefabObject = PrefabsPool.PoolPrefab(modelPath);
 
         Vector3 spawnLocation = data.position_data.GetVector3();
-                
+
         //Debug.Log("loadActorCo:" + " data.json:" + data.ToJson());
         //Debug.Log("loadActorCo:" + " modelPath:" + modelPath);
         //Debug.Log("loadActorCo:" + " gameCharacter:" + gameCharacter.code);
@@ -1968,20 +1976,20 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
                 // get random
                 if (currentGameZone == GameZoneKeys.goal_right) {
-                    spawnLocation = Vector3.zero.WithX(80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero.WithX(80f).WithZ(currentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
                 else if (currentGameZone == GameZoneKeys.goal_left) {
-                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(GameController.CurrentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
+                    spawnLocation = Vector3.zero.WithX(-80f).WithZ(currentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
             }
 
             if (spawnLocation == Vector3.zero) {
-                spawnLocation = GameController.GetRandomSpawnLocation();
+                spawnLocation = getRandomSpawnLocation();
             }
         }
         else if (data.data_type == GameSpawnType.randomType) {
             // get random
-            spawnLocation = GameController.GetRandomSpawnLocation();
+            spawnLocation = getRandomSpawnLocation();
         }
         else if (data.data_type == GameSpawnType.explicitType) {
             // get random
@@ -1991,32 +1999,32 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             // FIND spawn location
         }
 
-        if(spawnLocation == Vector3.zero) {
-            spawnLocation = GameController.GetRandomSpawnLocation();
+        if (spawnLocation == Vector3.zero) {
+            spawnLocation = getRandomSpawnLocation();
         }
 
         if (data.data_type == GameSpawnType.centeredType) {
             spawnLocation = Vector3.zero;
         }
 
-        if (prefabObject == null) {            
+        if (prefabObject == null) {
             //loadingCharacterContainer = false;
             yield break;
         }
 
         GameObject characterObject = GameObjectHelper.CreateGameObject(
             prefabObject, spawnLocation, Quaternion.identity, GameConfigs.usePooledGamePlayers) as GameObject;
-        
+
         //Debug.Log("loadActorCo:" + " characterObject:" + characterObject.name);
 
         if (characterObject != null) {
-    
+
             characterObject.transform.parent = levelActorsContainerObject.transform;
-            
+
             characterObject.transform.localScale = Vector3.one;
             //characterObject.transform.localPosition = Vector3.zero;
             characterObject.transform.position = spawnLocation;
-        
+
             GamePlayerController characterGamePlayerController
                 = characterObject.Get<GamePlayerController>();
 
@@ -2024,40 +2032,40 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
                 if (data.display_type == GameActorType.player) {
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerPlayer, 
-                        GamePlayerContextState.ContextInput, 
+                        GamePlayerControllerState.ControllerPlayer,
+                        GamePlayerContextState.ContextInput,
                         data.overrideLoading);
-                    
+
                     characterGamePlayerController.attackRange = 12f;
                 }
                 else if (data.display_type == GameActorType.sidekick) {
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerSidekick, 
+                        GamePlayerControllerState.ControllerSidekick,
                         GamePlayerContextState.ContextFollowAgent,
                         data.overrideLoading);
-                    
+
                     characterGamePlayerController.attackRange = 12f;
                 }
                 else { //if (data.display_type == GameActorType.enemy) {                        
-                    //characterGamePlayerController.currentTarget = GameController.CurrentGamePlayerController.gameObject.transform;
+                    //characterGamePlayerController.currentTarget = getCurrentPlayerController.gameObject.transform;
                     //characterGamePlayerController.ChangeContextState(GamePlayerContextState.ContextFollowAgentAttack);
                     //characterGamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerAgent);
                     characterGamePlayerController.Init(
-                        GamePlayerControllerState.ControllerAgent, 
-                        GamePlayerContextState.ContextFollowAgentAttack, 
+                        GamePlayerControllerState.ControllerAgent,
+                        GamePlayerContextState.ContextFollowAgentAttack,
                         data.overrideLoading);
-                    
+
                     characterGamePlayerController.attackRange = 12f;
                 }
-                
+
                 characterGamePlayerController.LoadCharacter(data.code);
-                
+
                 characterGamePlayerController.transform.localScale
                     = data.scale_data.GetVector3();
 
             }
         }
-        
+
         //loadingCharacterContainer = false;
     }
 
@@ -2066,18 +2074,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         if (data == null) {
             yield break;
         }
-        
-        GameItem item = GameItems.Instance.GetById(data.code);     
-        
+
+        GameItem item = GameItems.Instance.GetById(data.code);
+
         if (item == null) {
             //Debug.Log("loadItemCo:" + "Item not found" + " code:" + data.code);
             yield break;
         }
 
         string path = Path.Combine(
-            ContentPaths.appCacheVersionSharedPrefabLevelItems, 
+            ContentPaths.appCacheVersionSharedPrefabLevelItems,
             item.data.GetModel().code);
-        
+
         GameObject prefabObject = PrefabsPool.PoolPrefab(path);
         Vector3 spawnLocation = Vector3.zero;
 
@@ -2095,18 +2103,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             else if (currentGameZone == GameZoneKeys.goal_left) {
                 //spawnCode = leftMiddle;
             }
-            
+
             // LogUtil.Log("spawnCode:" + spawnCode);
-            
+
             //GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
             //if(spawn != null) {
             //    spawnLocation = spawn.gameObject.transform.position;
             //}
             //else {
-            
+
             // get random
             if (currentGameZone == GameZoneKeys.goal_right) {
-                
+
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
                         0, gameBounds.boundaryTopRight.transform.position.x))
@@ -2116,7 +2124,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                             boundaryTopLeft.transform.position.z));
             }
             else if (currentGameZone == GameZoneKeys.goal_left) {
-                
+
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
                         gameBounds.boundaryTopLeft.transform.position.x, 0))
@@ -2140,11 +2148,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
         else {//if (data.data_type == GameSpawnType.randomType) {
             // get random
-            spawnLocation = GameController.GetRandomSpawnLocation().WithY(50f);
+            spawnLocation = getRandomSpawnLocation().WithY(50f);
         }
-        
-        if(spawnLocation == Vector3.zero) {
-            spawnLocation = GameController.GetRandomSpawnLocation().WithY(50f);
+
+        if (spawnLocation == Vector3.zero) {
+            spawnLocation = getRandomSpawnLocation().WithY(50f);
         }
 
         if (prefabObject == null) {
@@ -2152,7 +2160,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 
         GameObject spawnObj = GameObjectHelper.CreateGameObject(
-            prefabObject, spawnLocation, Quaternion.identity, 
+            prefabObject, spawnLocation, Quaternion.identity,
             GameConfigs.usePooledItems) as GameObject;
 
         if (spawnObj != null && levelActorsContainerObject != null) {
@@ -2163,7 +2171,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // ---------------------------------------------------------------------
     // GAME OBJECT LEVEL START LOAD
-        
+
     public virtual void queueGameObjectTypeData(
         string type, string code, string data_type, string display_type, Vector3 pos, Quaternion rot) {
 
@@ -2179,7 +2187,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void checkQueueGameObjectTypeData() {
-        
+
         if (queueGameObjectItems == null) {
             queueGameObjectItems = new List<GameObjectQueueItem>();
         }
@@ -2189,35 +2197,35 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         checkQueueGameObjectTypeData();
 
-        queueGameObjectItems.Add(queueItem);         
+        queueGameObjectItems.Add(queueItem);
     }
 
     public virtual void clearQueueGameObjectTypeData() {
 
         checkQueueGameObjectTypeData();
-        
-        queueGameObjectItems.Clear(); 
+
+        queueGameObjectItems.Clear();
     }
 
     public virtual void processQueueGameObjectTypeData() {
 
         if (queueGameObjectItems != null) {
 
-            foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {            
+            foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {
 
-                if (queueItem.type == BaseDataObjectKeys.character) {                
+                if (queueItem.type == BaseDataObjectKeys.character) {
 
-                    GameController.LoadActor(
-                    queueItem.code, 
-                    queueItem.type, 
-                    queueItem.data_type, 
-                    queueItem.display_type, 
+                    loadActor(
+                    queueItem.code,
+                    queueItem.type,
+                    queueItem.data_type,
+                    queueItem.display_type,
                     queueItem.pos,
                     queueItem.rot,
                     true);
                 }
             }
-            
+
         }
 
         clearQueueGameObjectTypeData();
@@ -2225,7 +2233,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // ---------------------------------------------------------------------
     // RESETS
-    
+
     public virtual void resetLevelActors() {
         if (levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
@@ -2240,15 +2248,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void reset() {
 
-        GameController.ResetRuntimeData();
+        resetRuntimeData();
 
-        GameController.ResetLevel();
+        resetLevel();
     }
 
     public virtual void resetLevel() {
-        
-        GameController.StopDirectors();
-                
+
+        stopDirectors();
+
         GameUIController.HideGameCanvas();
 
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
@@ -2258,8 +2266,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void resetRuntimeData() {
 
-        GameController.ResetCurrentGamePlayer();
-        GameController.ResetLevelActors();
+        resetCurrentGamePlayer();
+        resetLevelActors();
 
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);
@@ -2305,7 +2313,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // ---------------------------------------------------------------------
     // CHARACTER TYPES
-    
+
     public virtual void loadCharacterTypes() {
         foreach (GameCharacterType type in GameCharacterTypes.Instance.GetAll()) {
             if (!gameCharacterTypes.Contains(type.code)) {
@@ -2313,19 +2321,19 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
     }
-    
+
     public virtual void cycleCharacterTypesNext() {
         currentCharacterTypeIndex++;
-        GameController.CycleCharacterTypes(currentCharacterTypeIndex);
+        cycleCharacterTypes(currentCharacterTypeIndex);
     }
-    
+
     public virtual void cycleCharacterTypesPrevious() {
         currentCharacterTypeIndex--;
-        GameController.CycleCharacterTypes(currentCharacterTypeIndex);
+        cycleCharacterTypes(currentCharacterTypeIndex);
     }
-    
+
     public virtual void cycleCharacterTypes(int updatedIndex) {
-    
+
         if (updatedIndex > gameCharacterTypes.Count - 1) {
             currentCharacterTypeIndex = 0;
         }
@@ -2335,7 +2343,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         else {
             currentCharacterTypeIndex = updatedIndex;
         }
-    
+
         if (currentGamePlayerController != null) {
             currentGamePlayerController.LoadCharacter(gameCharacterTypes[currentCharacterTypeIndex]);
         }
@@ -2344,20 +2352,20 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // ---------------------------------------------------------------------
     // GAME MODES
-    
+
     public virtual void restartGame() {
-        GameController.Reset();
-        GameController.PrepareGame(GameLevels.Current.code);
+        reset();
+        prepareGame(GameLevels.Current.code);
     }
 
     public virtual void startGame(string levelCode) {
         //GameController.Reset();
-        GameController.ChangeGameState(GameStateGlobal.GameStarted);
+        changeGameState(GameStateGlobal.GameStarted);
     }
-        
+
     public virtual void stopGame() {
-        GameController.ProcessLevelStats();
-        GameController.StopDirectors();
+        processLevelStats();
+        stopDirectors();
     }
 
     public virtual void prepareGame(string levelCode) {
@@ -2365,32 +2373,32 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //GameController.Reset();
 
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
-        
-        GameController.LoadLevelAssets(levelCode);
-        
+
+        loadLevelAssets(levelCode);
+
         GameHUD.Instance.SetLevelInit(GameLevels.Current);
-        
+
         GameHUD.Instance.AnimateIn();
 
-        GameController.ChangeGameState(GameStateGlobal.GamePrepare);
+        changeGameState(GameStateGlobal.GamePrepare);
     }
 
     public virtual void gameContentDisplay(string contentDisplayCodeTo) {
         contentDisplayCode = contentDisplayCodeTo;
-        GameController.ChangeGameState(GameStateGlobal.GameContentDisplay);
+        changeGameState(GameStateGlobal.GameContentDisplay);
     }
 
     public virtual void pauseGame() {
-        GameController.ChangeGameState(GameStateGlobal.GamePause);
+        changeGameState(GameStateGlobal.GamePause);
     }
 
     public virtual void resumeGame() {
-        GameController.ChangeGameState(GameStateGlobal.GameResume);
+        changeGameState(GameStateGlobal.GameResume);
     }
 
     public virtual void quitGame() {
-        GameController.Reset();
-        GameController.ChangeGameState(GameStateGlobal.GameQuit);
+        reset();
+        changeGameState(GameStateGlobal.GameQuit);
     }
 
     public virtual void resultsGameDelayed() {
@@ -2398,39 +2406,39 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual void resultsGame() {
-        GameController.ChangeGameState(GameStateGlobal.GameResults);
+        changeGameState(GameStateGlobal.GameResults);
     }
 
     public virtual void togglePauseGame() {
         if (gameState == GameStateGlobal.GamePause) {
-            GameController.ResumeGame();
+            resumeGame();
         }
         else {
-            GameController.PauseGame();
+            pauseGame();
         }
     }
 
     // -------------------------------------------------------
     // DIRECTORS
-    
+
     public virtual void runDirectorsDelayed(float delay) {
         StartCoroutine(runDirectorsDelayedCo(delay));
     }
 
     public virtual IEnumerator runDirectorsDelayedCo(float delay) {
         yield return new WaitForSeconds(delay);
-        GameController.RunDirectors();
-        
-        //GameController.CurrentGamePlayerController.GamePlayerModelHolderEaseIn();
-        //GameController.CurrentGamePlayerController.PlayerEffectWarpFadeOut();
+        runDirectors();
+
+        //getCurrentPlayerController.GamePlayerModelHolderEaseIn();
+        //getCurrentPlayerController.PlayerEffectWarpFadeOut();
     }
-    
+
     public virtual void runDirectors() {
-        GameController.UpdateDirectors(true);
+        updateDirectors(true);
     }
-    
+
     public virtual void stopDirectors() {
-        GameController.UpdateDirectors(false);
+        updateDirectors(false);
     }
 
     public virtual void updateDirectors(bool run) {
@@ -2439,15 +2447,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         bool runItem = run;
 
         if (run) {
-            
+
             List<GameDataDirector> directorsLevels = GameLevels.Current.data.directors;
             List<GameDataDirector> directors = GameWorlds.Current.data.directors;
 
-            if(directors == null) {
+            if (directors == null) {
                 directors = new List<GameDataDirector>();
             }
 
-            if(directorsLevels != null && directors.Count > 0) {
+            if (directorsLevels != null && directors.Count > 0) {
                 directors.AddRange(directorsLevels);
             }
 
@@ -2467,8 +2475,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
 
-        GameController.UpdateDirectorAI(runAI);
-        GameController.UpdateDirectorItem(runItem);
+        updateDirectorAI(runAI);
+        updateDirectorItem(runItem);
     }
 
     public virtual void updateDirectorAI(bool run) {
@@ -2487,7 +2495,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     // STOPPED
-    
+
     public virtual void gameRunningStateStopped() {
         gameRunningStateStopped(1f);
     }
@@ -2495,7 +2503,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void gameRunningStateStopped(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.STOPPED;
-        GameController.Instance.gameState = GameStateGlobal.GameNotStarted;
+        gameState = GameStateGlobal.GameNotStarted;
     }
 
     // PAUSED
@@ -2507,19 +2515,19 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void gameRunningStatePause(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.PAUSED;
-        GameController.Instance.gameState = GameStateGlobal.GamePause;
+        gameState = GameStateGlobal.GamePause;
     }
 
     // RUN
-    
+
     public virtual void gameRunningStateRun() {
         gameRunningStateRun(1f);
     }
-    
+
     public virtual void gameRunningStateRun(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.RUNNING;
-        GameController.Instance.gameState = GameStateGlobal.GameStarted;
+        gameState = GameStateGlobal.GameStarted;
     }
 
     // CONTENT
@@ -2530,24 +2538,24 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void gameRunningStateContent(float timeScale) {
         gameRunningState = GameRunningState.PAUSED;
-        GameController.Instance.gameState = GameStateGlobal.GameContentDisplay;
+        gameState = GameStateGlobal.GameContentDisplay;
         gameSetTimeScale(timeScale);
     }
 
     // OVERLAY
-    
+
     public virtual void gameRunningStateOverlay() {
         gameRunningStateOverlay(1f);
     }
-    
+
     public virtual void gameRunningStateOverlay(float timeScale) {
         gameRunningState = GameRunningState.PAUSED;
-        GameController.Instance.gameState = GameStateGlobal.GameOverlay;
+        gameState = GameStateGlobal.GameOverlay;
         gameSetTimeScale(timeScale);
     }
 
     // EVENTS ON
-        
+
     public virtual void onGameOverlay() {
         handleOverlay();
     }
@@ -2561,11 +2569,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void onGameContentDisplay() {
         // Show runtime content display data
         //GameRunningStatePause();
-    
+
         if (contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
-    
-            GameController.GamePlayerOutOfBoundsDelayed(3f);
-    
+
+            gamePlayerOutOfBoundsDelayed(3f);
+
             UIPanelDialogBackground.ShowDefault();
             UIPanelDialogDisplay.SetTitle("OUT OF BOUNDS");
             //UIPanelDialogDisplay.SetDescription("RUN, BUT STAY IN BOUNDS...");
@@ -2581,30 +2589,30 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             handleContentDialogXP();
         }
         else {
-        
+
             //AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz
             UIPanelDialogBackground.HideAll();
         }
-    
+
         //GameRunningStateRun();
     }
 
     public virtual void handleContentTutorial() {
-        
-        if (contentDisplayCode == GameContentDisplayTypes.gameTutorial) {            
+
+        if (contentDisplayCode == GameContentDisplayTypes.gameTutorial) {
             //UIPanelDialogBackground.ShowDefault();
         }
     }
-    
+
     public virtual void handleContentTips() {
-        
-        if (contentDisplayCode == GameContentDisplayTypes.gameTips) {            
+
+        if (contentDisplayCode == GameContentDisplayTypes.gameTips) {
             //UIPanelDialogBackground.ShowDefault();
         }
     }
-    
+
     public virtual void handleContentOverview() {
-        
+
         if (contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
             UIPanelOverviewMode.ShowDefault();
         }
@@ -2631,25 +2639,25 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void onGameContentDisplayPause() {
         GameDraggableEditor.HideAllEditDialogs();
         UIPanelDialogBackground.ShowDefault();
-        GameController.GameRunningStatePause();
+        gameRunningStatePause();
     }
-    
+
     public virtual void onGameContentDisplayResume() {
         GameDraggableEditor.HideAllEditDialogs();
         UIPanelDialogBackground.HideAll();
-        GameController.GameRunningStateRun();
+        gameRunningStateRun();
     }
-    
+
     public virtual void onGameOverlayPause() {
         GameDraggableEditor.HideAllEditDialogs();
         //UIPanelDialogBackground.ShowDefault();
-        GameController.GameRunningStatePause();
+        gameRunningStatePause();
     }
-    
+
     public virtual void onGameOverlayResume() {
         GameDraggableEditor.HideAllEditDialogs();
         //UIPanelDialogBackground.HideAll();
-        GameController.GameRunningStateRun();
+        gameRunningStateRun();
     }
 
     public virtual void onGamePrepare(bool startGame) {
@@ -2669,12 +2677,12 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             GameController.StartGame(GameLevels.Current.code);
         }
     }
-    
+
     public virtual void onGameStarted() {
 
         //LogUtil.Log("GAME START FLOW: STEP #8: onGameStarted");
 
-        GameController.StartLevelStats();
+        startLevelStats();
 
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
@@ -2682,83 +2690,83 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         if (allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
-    
-        GameController.GameRunningStateRun();
+
+        gameRunningStateRun();
 
         GameUIController.ShowGameCanvas();
-        
+
         AnalyticsNetworks.LogEventLevelStart(GameLevels.Current.code, GameLevels.Current.display_name);
 
-        GameController.RunDirectorsDelayed(runDirectorsDelay);
+        runDirectorsDelayed(runDirectorsDelay);
 
         processQueues();
     }
 
     public virtual void processQueues() {
-    
+
         StartCoroutine(processQueuesCo());
     }
 
     public IEnumerator processQueuesCo() {
         yield return new WaitForSeconds(2);
 
-        GameController.ProcessQueueGameObjectTypeData();
+        processQueueGameObjectTypeData();
     }
 
     public virtual void onGameQuit() {
-    
+
         // Cleanup
         GameUIController.HideHUD();
         GameDraggableEditor.HideAllEditDialogs();
         GameDraggableEditor.HideAllUIEditPanels();
-        
+
         AnalyticsNetworks.LogEventLevelQuit(GameLevels.Current.code, GameLevels.Current.display_name);
 
         Messenger<string>.Broadcast(GameMessages.gameLevelQuit, GameLevels.Current.code);
-    
+
         // Back
         GameUIController.ShowUI();
-    
+
         //ChangeGameState(GameStateGlobal.GameResults);
 
-        GameController.QuitGameRunning();
+        quitGameRunning();
     }
 
     public virtual void quitGameRunning() {
-        GameController.Reset();
-        GameController.StopDirectors();
-        GameController.GameRunningStateStopped();
+        reset();
+        stopDirectors();
+        gameRunningStateStopped();
         Time.timeScale = 1f;
     }
-    
+
     public virtual void onGamePause() {
-        
+
         Messenger<string>.Broadcast(GameMessages.gameLevelPause, GameLevels.Current.code);
 
         // Show pause, resume, quit menu
         GameUIController.ShowUIPanelPause();
         UIPanelDialogBackground.ShowDefault();
-        GameController.GameRunningStatePause();
+        gameRunningStatePause();
     }
-    
+
     public virtual void onGameResume() {
         GameDraggableEditor.HideAllEditDialogs();
         GameUIController.ShowHUD();
         GameUIController.HideUIPanelPause();
         UIPanelDialogBackground.HideAll();
-        GameController.GameRunningStateRun();
-        
+        gameRunningStateRun();
+
         Messenger<string>.Broadcast(GameMessages.gameLevelResume, GameLevels.Current.code);
     }
-    
+
     public virtual void onGameNotStarted() {
         //
     }
-    
+
     public virtual void onGameResults() {
 
         //LogUtil.Log("OnGameResults");
-    
+
         //if(runtimeData.localPlayerWin){
         //GameUIPanelResults.Instance.ShowSuccess();
         //GameUIPanelResults.Instance.HideFailed();
@@ -2767,45 +2775,45 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //GameUIPanelResults.Instance.HideSuccess();
         //GameUIPanelResults.Instance.ShowFailed();
         //}
-    
+
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
-    
-        GameController.StopGame();
-        
+
+        stopGame();
+
         AnalyticsNetworks.LogEventLevelResults(GameLevels.Current.code, GameLevels.Current.display_name);
     }
-    
+
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
         gameState = gameStateTo;
-    
+
         Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
-    
+
         if (gameState == GameStateGlobal.GameStarted) {
-            GameController.OnGameStarted();
+            onGameStarted();
         }
         else if (gameState == GameStateGlobal.GamePause) {
-            GameController.OnGamePause();
+            onGamePause();
         }
         else if (gameState == GameStateGlobal.GameResume) {
-            GameController.OnGameResume();
+            onGameResume();
         }
         else if (gameState == GameStateGlobal.GameQuit) {
-            GameController.OnGameQuit();
+            onGameQuit();
         }
         else if (gameState == GameStateGlobal.GameNotStarted) {
-            GameController.OnGameNotStarted();
+            onGameNotStarted();
         }
         else if (gameState == GameStateGlobal.GameResults) {
-            GameController.OnGameResults();
+            onGameResults();
         }
         else if (gameState == GameStateGlobal.GameContentDisplay) {
-            GameController.OnGameContentDisplay();
+            onGameContentDisplay();
         }
         else if (gameState == GameStateGlobal.GameOverlay) {
-            GameController.OnGameOverlay();
+            onGameOverlay();
         }
         else if (gameState == GameStateGlobal.GamePrepare) {
-            GameController.OnGamePrepare();
+            onGamePrepare(true);
         }
     }
 
@@ -2817,18 +2825,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             return false;
         }
     }
-        
+
     // -------------------------------------------------------
-    
+
     // GAME CAMERA
-    
+
     public virtual void initCameras() {
-        
+
         if (camerasAlwaysOn == null) {
             camerasAlwaysOn = new List<Camera>();
-            
+
             if (cameraContainersAlwaysOn != null) {
-                foreach (Camera cam 
+                foreach (Camera cam
                          in cameraContainersAlwaysOn.GetComponentsInChildren<Camera>()) {
                     if (!camerasAlwaysOn.Contains(cam)) {
                         camerasAlwaysOn.Add(cam);
@@ -2836,11 +2844,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 }
             }
         }
-        
+
         if (camerasGame == null) {
             camerasGame = new List<Camera>();
             if (camerasContainerGame != null) {
-                foreach (Camera cam 
+                foreach (Camera cam
                          in camerasContainerGame.GetComponentsInChildren<Camera>()) {
                     if (!camerasGame.Contains(cam)) {
                         camerasGame.Add(cam);
@@ -2848,11 +2856,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 }
             }
         }
-        
+
         if (camerasUI == null) {
             camerasUI = new List<Camera>();
             if (cameraContainersUI != null) {
-                foreach (Camera cam 
+                foreach (Camera cam
                          in cameraContainersUI.GetComponentsInChildren<Camera>()) {
                     if (!camerasUI.Contains(cam)) {
                         camerasUI.Add(cam);
@@ -2876,18 +2884,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 #endif
     }
-    
+
     public virtual void showCameras(List<Camera> cams) {
         StartCoroutine(showCamerasCo(cams));
     }
-    
+
     public virtual void hideCameras(List<Camera> cams) {
         StartCoroutine(hideCamerasCo(cams));
     }
-    
+
     public virtual IEnumerator showCamerasCo(List<Camera> cams) {
-        
-        foreach (Camera cam in cams) { 
+
+        foreach (Camera cam in cams) {
             if (cam != null) {
                 if (cam.gameObject != null) {
                     cam.gameObject.Show();
@@ -2895,9 +2903,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 }
             }
         }
-        yield return new WaitForSeconds(2f);       
+        yield return new WaitForSeconds(2f);
     }
-    
+
     public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
         foreach (Camera cam in cams) {
             if (cam != null) {
@@ -2908,8 +2916,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 
         yield return new WaitForSeconds(1f);
-        
-        foreach (Camera cam in cams) {  
+
+        foreach (Camera cam in cams) {
             if (cam != null) {
                 if (cam.gameObject != null) {
                     cam.gameObject.Hide();
@@ -2917,28 +2925,28 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
     }
-    
+
     public virtual void handleCamerasInGame() {
-        GameController.ShowCameras(camerasGame);
-        GameController.HideCameras(camerasUI);
+        showCameras(camerasGame);
+        hideCameras(camerasUI);
 #if ENABLE_FEATURE_AR
-        GameController.HideCameras(camerasAR);
+        hideCameras(camerasAR);
 #endif
     }
-    
+
     public virtual void handleCamerasInUI() {
-        GameController.HideCameras(camerasGame);
-        GameController.ShowCameras(camerasUI);
+        hideCameras(camerasGame);
+        showCameras(camerasUI);
 #if ENABLE_FEATURE_AR
-        GameController.HideCameras(camerasAR);
+        hideCameras(camerasAR);
 #endif
     }
 
     public virtual void handleCamerasInAR() {
-        GameController.HideCameras(camerasGame);
-        GameController.ShowCameras(camerasUI);
+        hideCameras(camerasGame);
+        showCameras(camerasUI);
 #if ENABLE_FEATURE_AR
-        GameController.ShowCameras(camerasAR);
+        showCameras(camerasAR);
 #endif
     }
 
@@ -2949,88 +2957,88 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         else {
             cameraView = cameraViewTo;
         }
-        
+
         LogUtil.Log("ChangeGameCameraMode:cameraViewTo: " + cameraViewTo);
-        
+
         if (cameraGame != null
             && cameraGameGround != null) {
-            
+
             if (cameraView == GameCameraView.ViewSide) {
-                
+
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(30);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGame.gameObject, positionTo, rotationTo, 2f);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
             else if (cameraView == GameCameraView.ViewSideTop) {
-                
+
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGame.gameObject, positionTo, rotationTo, 2f);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
             else if (cameraView == GameCameraView.ViewBackTilt) {
-                
+
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(45).WithY(90);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGame.gameObject, positionTo, rotationTo, 2f);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
             else if (cameraView == GameCameraView.ViewBackTop) {
-                
+
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80).WithY(90);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGame.gameObject, positionTo, rotationTo, 2f);
-                
-                GameController.ChangeGameCameraProperties(
+
+                changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
         }
     }
-    
+
     public virtual void changeGameCameraProperties(
         GameObject cameraObject, Vector3 positionTo, Vector3 rotationTo, float timeDelay) {
         //cameraObject.transform.rotation = Quaternion.Euler(rotationTo);
         //iTween.RotateTo(cameraObject, rotationTo, timeDelay);
         UITweenerUtil.RotateTo(cameraObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, timeDelay, rotationTo);
     }
-    
+
     public virtual void cycleGameCameraMode() {
-        
+
         LogUtil.Log("CycleGameCameraMode: " + cameraView);
-        
+
         if (cameraView == GameCameraView.ViewSide) {
-            GameController.ChangeGameCameraMode(GameCameraView.ViewSideTop);
+            changeGameCameraMode(GameCameraView.ViewSideTop);
         }
         else if (cameraView == GameCameraView.ViewSideTop) {
-            GameController.ChangeGameCameraMode(GameCameraView.ViewBackTilt);
+            changeGameCameraMode(GameCameraView.ViewBackTilt);
         }
         else if (cameraView == GameCameraView.ViewBackTilt) {
-            GameController.ChangeGameCameraMode(GameCameraView.ViewBackTop);
+            changeGameCameraMode(GameCameraView.ViewBackTop);
         }
         else if (cameraView == GameCameraView.ViewBackTop) {
-            GameController.ChangeGameCameraMode(GameCameraView.ViewSide);
+            changeGameCameraMode(GameCameraView.ViewSide);
         }
     }
 
     // -------------------------------------------------------
 
     // GAME PLAYER BOUNDS
-    
+
     public virtual void gamePlayerOutOfBounds() {
 
         if (!GameConfigs.isGameRunning) {
@@ -3042,7 +3050,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
 
         GameAudioController.PlaySoundPlayerOutOfBounds();
-        GameController.GameContentDisplay(GameContentDisplayTypes.gamePlayerOutOfBounds);
+
+        gameContentDisplay(GameContentDisplayTypes.gamePlayerOutOfBounds);
     }
 
     public virtual void gamePlayerOutOfBoundsDelayed(float delay) {
@@ -3063,7 +3072,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         //LogUtil.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);
 
-        GameController.CheckForGameOver();
+        checkForGameOver();
     }
 
     // -------------------------------------------------------
@@ -3072,10 +3081,10 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void goalZoneChange() {
         if (currentGameZone == GameZoneKeys.goal_left) {
-            GameController.GoalZoneChange(GameZoneKeys.goal_right);
+            goalZoneChange(GameZoneKeys.goal_right);
         }
         else if (currentGameZone == GameZoneKeys.goal_right) {
-            GameController.GoalZoneChange(GameZoneKeys.goal_left);
+            goalZoneChange(GameZoneKeys.goal_left);
         }
     }
 
@@ -3091,7 +3100,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             currentGameZone = zone;
         }
 
-        GameController.HandleGoalZoneChange();
+        handleGoalZoneChange();
     }
 
     // -------------------------------------------------------
@@ -3132,11 +3141,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         //LogUtil.Log("gamePlayerGoalZoneDelayedCo:");
 
-        GameController.GoalZoneChange();
+        goalZoneChange();
     }
 
     // GAME RUNTIME DATA
-    
+
     public virtual void gameRuntimeTimeExtend(double extendAmount) {
         if (runtimeData != null) {
             runtimeData.AppendTime(extendAmount);
@@ -3154,7 +3163,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual IEnumerator processLevelStatsCo() {
 
         // END OF LEVEL PROCESSING WHILE SETTING UP RESULTS
-         
+
         yield return new WaitForSeconds(.5f);
 
         // TOTAL SCORES
@@ -3199,31 +3208,31 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         yield return new WaitForEndOfFrame();
 
         // STOP ALL STAT COUNTS / TIMERS
-             
-        GameController.EndLevelStats();
-    
+
+        endLevelStats();
+
         yield return new WaitForEndOfFrame();
-    
+
         GamePlayerProgress.Instance.ProcessProgressRuntimeAchievements();
-        
+
         yield return new WaitForEndOfFrame();
 
         // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
         // COLLECTION
 
-        GameController.ProcessProgressCollections(
+        processProgressCollections(
             runtimeData, currentGamePlayerController.runtimeData);
-                
+
         yield return new WaitForEndOfFrame();
-    
+
         if (!isAdvancing) {
-            GameController.AdvanceToResults();
+            advanceToResults();
         }
-        
+
         GameState.SyncProfile();
 
         yield return new WaitForEndOfFrame();
-        
+
         GamePlayerProgress.Instance.ProcessProgressLeaderboards();
 
         //GC.Collect();
@@ -3231,52 +3240,50 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //yield return new WaitForSeconds(8f);
     }
 
-    public static void ProcessProgressCollections(
-        GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
-        if (GameController.isInst) {
-            GameController.Instance.processProgressCollections(runtimeData, playerRuntimeData);
-        }
-    }
+    //public static void ProcessProgressCollections(
+    //    GameGameRuntimeData runtimeData, GamePlayerRuntimeData playerRuntimeData) {
+    //    processProgressCollections(runtimeData, playerRuntimeData);
+    //}
 
     public virtual void processProgressCollections(
         GameGameRuntimeData gameRuntimeData, GamePlayerRuntimeData playerRuntimeData) {
         // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
         // COLLECTION
-        
+
         if (AppModes.Instance.isAppModeGameArcade
             || AppModes.Instance.isAppModeGameChallenge
-            || AppModes.Instance.isAppModeGameMission) {  
+            || AppModes.Instance.isAppModeGameMission) {
 
             double collectScore = AppContentCollects.Current.ScoreCompleted(
                 BaseDataObjectKeys.mission, gameRuntimeData, playerRuntimeData);
-                        
+
             // CHECK ON ADDING BY ALREADY COMPLETED...
             GameProfileRPGs.Current.AddCurrency(collectScore);
         }
     }
-    
+
     public virtual void advanceToResults() {
         isAdvancing = true;
         Invoke("advanceToResultsDelayed", .5f);
     }
-    
+
     public virtual void advanceToResultsDelayed() {
         GameUIController.ShowUIPanelDialogResults();
         //GameAudio.StartGameLoop(4);
         isAdvancing = false;
-        GameController.GameRunningStateStopped();
+        gameRunningStateStopped();
 
         broadcastResultsDelayed();
     }
 
     public virtual void broadcastResultsDelayed(float delay) {
-        Invoke("broadcastResultsDelayed", .5f);    
+        Invoke("broadcastResultsDelayed", .5f);
     }
 
     public virtual void broadcastResultsDelayed() {
         Messenger<string>.Broadcast(GameMessages.gameLevelEnd, GameLevels.Current.code);
     }
-    
+
     //public virtual void ProcessStatShot() {
     //    GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.shots, 1f);
     //}
@@ -3284,13 +3291,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     //public virtual void ProcessStatDestroy() {
     //    GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.destroyed, 1f);
     //}
-    
+
     public virtual void startLevelStats() {
         GamePlayerProgress.Instance.ProcessProgressPack("default");
         GamePlayerProgress.Instance.ProcessProgressAction(GameLevels.Current.code);
         GamePlayerProgress.Instance.ProcessProgressAction(AppModes.Current.code);
     }
-    
+
     public virtual void endLevelStats() {
         GamePlayerProgress.Instance.EndProcessProgressPack("default");
         GamePlayerProgress.Instance.EndProcessProgressAction(GameLevels.Current.code);
@@ -3299,38 +3306,38 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
 
     // -------------------------------------------------------
-    
+
     // GAME SCORE/CHECK GAME OVER
 
     public virtual void checkForGameOver() {
-    
+
         //LogUtil.Log("CheckForGameOver:isGameOver:" + isGameOver);
         //LogUtil.Log("CheckForGameOver:isGameRunning:" + isGameRunning);
 
         if (isGameRunning) {
-        
+
             // Check player health/status
             // Go to results if health gone
-            
+
             // if time expired on current round advance to next.
-            
+
             //LogUtil.Log("runtimeData:" + runtimeData.currentLevelTime);
-            
+
             // Check for out of ammo
             // Check if user destroyed or completed mission
             // destroyed all destructable objects
             //if(runtimeData.ammo == 0
             //  || IsLevelDestructableItemsComplete()) {
-            
+
             // TODO HANDLE MODES
-            
+
             if (!isGameOver) {
-            
+
                 bool gameOverMode = false;
-    
+
                 if (AppModes.Instance.isAppModeGameArcade) {
                     if (currentGamePlayerController.runtimeData.health <= 0f
-                        || runtimeData.timeExpired) { 
+                        || runtimeData.timeExpired) {
                         gameOverMode = true;
                     }
                 }
@@ -3355,20 +3362,20 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                         //gameOverMode = true;
                     }
                 }
-    
+
                 if (runtimeData.outOfBounds) {
                     //LogUtil.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
                     //LogUtil.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
-    
+
                 if (gameOverMode) {
                     isGameOver = true;
-                    GameController.ResultsGameDelayed();
+                    resultsGameDelayed();
                 }
-    
+
                 runtimeData.SubtractTime(Time.deltaTime);
-    
+
                 //if(runtimeData.timeExpired) {
                 // Change level/flash
                 //ChangeLevelFlash();
@@ -3400,43 +3407,43 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         if (currentGamePlayerController != null) {
             var playerPos = currentGamePlayerController.transform.position;
             var touchPos = Camera.main.ScreenToWorldPoint(point);
-    
+
             var direction = touchPos - playerPos;
             direction.Normalize();
             var directionNormal = direction.normalized;
-    
+
             //touchPos.Normalize();
             //var touchPosNormalized = touchPos.normalized;
-    
+
             var pointNormalized = point;
             pointNormalized.Normalize();
             pointNormalized = pointNormalized.normalized;
 
             //LogUtil.Log("directionNormal:" + directionNormal);
             //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
-    
+
             updateFingerNavigate = true;
-    
+
             if (controlInputTouchOnScreen) {
                 // If on screen controls are on don't do touch navigate just off the edge of the
                 /// backer on the virtual joystick to prevent random movements.
-    
+
                 var center = Vector3.zero;//.WithX(Screen.width/2).WithY(Screen.height/2);
-    
+
                 var directionAllow = touchPos - center;
                 directionAllow.Normalize();
                 //var directionAllowNormal = directionAllow.normalized;
-    
+
                 //LogUtil.Log("directionAllowNormal:" + directionAllowNormal);
                 //LogUtil.Log("touchPos:" + touchPos);
                 //LogUtil.Log("pointNormalized:" + pointNormalized);
                 //LogUtil.Log("point:" + point);
-    
+
                 if (pointNormalized.y < .2f) {
                     if (pointNormalized.x < .2f) {
                         updateFingerNavigate = false;
                     }
-    
+
                     if (pointNormalized.x > .8f) {
                         updateFingerNavigate = false;
                     }
@@ -3444,7 +3451,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
                 //LogUtil.Log("updateFingerNavigate:" + updateFingerNavigate);
             }
-        
+
             if (updateFingerNavigate) {
 
                 handled = true;
@@ -3456,7 +3463,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                 axisInput.x = directionNormal.x;
                 axisInput.y = directionNormal.y;
 
-                GameController.SendInputAxisMessage("move", axisInput);
+                sendInputAxisMessage("move", axisInput);
             }
         }
 
@@ -3471,7 +3478,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     // -------------------------------------------------------
-    
+
     // LEVEL ITEMS, DATA, RANDOMIZER
 
     public virtual string getGameLevelGridKey(Vector3 gridPos) {
@@ -3487,9 +3494,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         bool filled = false;
 
-        GameController.CheckGameLevelGrid();
+        checkGameLevelGrid();
 
-        string key = GameController.GetGameLevelGridKey(gridPos);
+        string key = getGameLevelGridKey(gridPos);
 
         if (levelGrid.ContainsKey(key)) {
             filled = true;
@@ -3502,9 +3509,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void setGameLevelGridSpaceFilled(Vector3 gridPos, GameLevelItemAsset asset) {
 
-        GameController.CheckGameLevelGrid();
+        checkGameLevelGrid();
 
-        string key = GameController.GetGameLevelGridKey(gridPos);
+        string key = getGameLevelGridKey(gridPos);
 
         if (levelGrid.ContainsKey(key)) {
             levelGrid[key] = asset;
@@ -3532,7 +3539,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         Debug.Log("clearGameLevelItems:");
 
-        GameController.CheckGameLevelItems();
+        checkGameLevelItems();
 
         if (levelItems != null) {
             levelItems.Clear();
@@ -3543,7 +3550,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         Debug.Log("clearGameLevelGrid:");
 
-        GameController.CheckGameLevelGrid();
+        checkGameLevelGrid();
 
         if (levelGrid != null) {
             levelGrid.Clear();
@@ -3554,7 +3561,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         List<GameLevelItemAsset> levelItems = new List<GameLevelItemAsset>();
 
-        return GameController.GetLevelRandomized(levelItems);
+        return getLevelRandomized(levelItems);
     }
 
     public virtual Vector3 getRandomVectorInGameBounds() {
@@ -3566,13 +3573,13 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     public virtual List<GameLevelItemAsset> getLevelRandomizedGrid() {
-        return GameController.GetLevelRandomizedGrid(GameLevelGridData.GetDefault());
+        return getLevelRandomizedGrid(GameLevelGridData.GetDefault());
     }
-    
+
     public virtual List<GameLevelItemAsset> getLevelRandomizedGrid(GameLevelGridData gameLevelGridData) {
 
-        GameController.ClearGameLevelItems();
-        GameController.ClearGameLevelGrid();
+        clearGameLevelItems();
+        clearGameLevelGrid();
 
         /*
             if(randomChance <= 8) {
@@ -3601,50 +3608,50 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual List<GameLevelItemAsset> getLevelRandomizedGridAssets(GameLevelGridData gameLevelGridData) {
 
-        GameController.ClearGameLevelItems();
-        GameController.ClearGameLevelGrid();
+        clearGameLevelItems();
+        clearGameLevelGrid();
 
         return levelItems;
     }
-    
+
     public virtual GameLevelItemAsset getLevelItemAsset(
         GameLevelItemAssetData data) {
 
-        return GameController.GetLevelItemAssetRandom(data);
+        return getLevelItemAssetRandom(data);
     }
-    
+
     public virtual GameLevelItemAsset getLevelItemAssetRandom(
         GameLevelItemAssetData data) {
 
-        data.position_data = new Vector3Data(GameController.GetRandomVectorInGameBounds());
+        data.position_data = new Vector3Data(getRandomVectorInGameBounds());
 
-        return GameController.GetLevelItemAssetFull(data);
+        return getLevelItemAssetFull(data);
     }
 
     public virtual void syncLevelItem(Vector3 gridPos, GameLevelItemAssetData data) {
-        if (!GameController.IsGameLevelGridSpaceFilled(gridPos)) {
+        if (!isGameLevelGridSpaceFilled(gridPos)) {
             //&& GameController.CheckBounds(gridPos)) {
 
-            GameLevelItemAsset asset = GameController.GetLevelItemAssetFull(data);
+            GameLevelItemAsset asset = getLevelItemAssetFull(data);
 
             asset.local_position_data = new Vector3Data();
             asset.local_position_data = data.local_position_data;
-            
+
             asset.local_rotation_data = new Vector3Data();
             asset.local_rotation_data = data.local_rotation_data;
-            
+
             asset.scale_data = new Vector3Data();
             asset.scale_data = data.scale_data;
 
             levelItems.Add(asset);
 
-            GameController.SetGameLevelGridSpaceFilled(gridPos, asset);
+            setGameLevelGridSpaceFilled(gridPos, asset);
         }
     }
-    
+
     public virtual GameLevelItemAsset getLevelItemAssetFull(
         GameLevelItemAssetData data) {
-        
+
         GameLevelItemAssetStep step = new GameLevelItemAssetStep();
         step.position_data = data.position_data;
 
@@ -3687,9 +3694,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         return asset;
     }
-        
+
     public virtual List<GameLevelItemAsset> getLevelRandomized(List<GameLevelItemAsset> levelItems) {
-        
+
         for (int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
@@ -3702,12 +3709,12 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             //data.range_rotation = Vector2.zero.WithX(.7f).WithY(1.2f);
             //data.range_rotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
-            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
+            GameLevelItemAsset asset = getLevelItemAssetRandom(data);
 
             levelItems.Add(asset);
         }
-        
-        
+
+
         for (int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
@@ -3720,7 +3727,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             //data.range_rotation = Vector2.zero.WithX(.7f).WithY(1.2f);
             //data.range_rotation = Vector2.zero.WithX(-.1f).WithY(.1f);
 
-            GameLevelItemAsset asset = GameController.GetLevelItemAssetRandom(data);
+            GameLevelItemAsset asset = getLevelItemAssetRandom(data);
 
             levelItems.Add(asset);
         }
@@ -3832,16 +3839,16 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     }
 
     // -------------------------------------------------------
-    
+
     // UPDATE
 
     public static bool touchHandled = false;
-    
+
     // Update is called once per frame
     public virtual void Update() {
 
         // TOOLS
-        
+
         if (UIGameKeyCodes.isActionProfileSave) {
             GameState.SaveProfile();
         }
@@ -3859,32 +3866,32 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //bool mouseSecondaryPressed = InputSystem.isMouseSecondaryPressed;
         bool touchPressed = InputSystem.isTouchPressed;
         bool handled = false;
-    
+
         //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
         //bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
-                
+
         //if(controlInputTouchFinger) {
 
         if (touchPressed) {
             foreach (Touch touch in Input.touches) {
-                handled = GameController.HandleTouchInputPoint(touch.position);
-                
+                handled = handleTouchInputPoint(touch.position);
+
                 if (handled)
                     break;
             }
         }
         else if (mousePressed) {
-            handled = GameController.HandleTouchInputPoint(Input.mousePosition);
+            handled = handleTouchInputPoint(Input.mousePosition);
         }
         else {
-            if (GameController.CurrentGamePlayerController != null) {
-                
+            if (currentPlayerController != null) {
+
                 // reset handled in input axis, might be keyboard input so don't reset.
-                //if(GameController.CurrentGamePlayerController.controllerData.thirdPersonController != null) {
-                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput = 0f;
-                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
-                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
-                //    GameController.CurrentGamePlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
+                //if(getCurrentPlayerController.controllerData.thirdPersonController != null) {
+                //    getCurrentPlayerController.controllerData.thirdPersonController.verticalInput = 0f;
+                //    getCurrentPlayerController.controllerData.thirdPersonController.horizontalInput = 0f;
+                //    getCurrentPlayerController.controllerData.thirdPersonController.verticalInput2 = 0f;
+                //    getCurrentPlayerController.controllerData.thirdPersonController.horizontalInput2 = 0f;
                 //}
             }
         }
@@ -3892,56 +3899,56 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //}
 
         touchHandled = handled;
-        
+
         if (gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }
-        
-        
+
+
         if (!gameObjectTimer.IsTimerPerf(
             GameObjectTimerKeys.gameUpdateAll)) {
             return;
         }
-        
+
         if (isGameRunning) {
-            GameController.CheckForGameOver();
+            checkForGameOver();
         }
-        
+
         currentTimeBlockBase += Time.deltaTime;
-        
+
         if (currentTimeBlockBase > actionIntervalBase) {
             currentTimeBlockBase = 0.0f;
         }
-    }    
+    }
 
     // ----------------------------------------------------------------------
 
     // EXTRA
 
     public virtual Vector3 cardinalAngles(Vector3 pos1, Vector3 pos2) {
-    
+
         // Adjust both positions to be relative to our origin point (pos1)
         pos2 -= pos1;
         pos1 -= pos1;
-    
+
         Vector3 angles = Vector3.zero;
-    
+
         // Rotation to get from World +Z to pos2, rotated around World X (degrees up from Z axis)
         angles.x = Vector3.Angle(Vector3.forward, pos2 - Vector3.right * pos2.x);
-    
+
         // Rotation to get from World +Z to pos2, rotated around World Y (degrees right? from Z axis)
         angles.y = Vector3.Angle(Vector3.forward, pos2 - Vector3.up * pos2.y);
-    
+
         // Rotation to get from World +X to pos2, rotated around World Z (degrees up from X axis)
         angles.z = Vector3.Angle(Vector3.right, pos2 - Vector3.forward * pos2.z);
-    
+
         return angles;
     }
-    
+
     public virtual float contAngle(Vector3 fwd, Vector3 targetDir, Vector3 upDir) {
         var angle = Vector3.Angle(fwd, targetDir);
-    
+
         if (angleDir(fwd, targetDir, upDir) == -1) {
             return 360 - angle;
         }
@@ -3949,14 +3956,14 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             return angle;
         }
     }
-    
+
     //returns -1 when to the left, 1 to the right, and 0 for forward/backward
     public virtual float angleDir(Vector3 fwd, Vector3 targetDir, Vector3 up) {
-    
+
         Vector3 perp = Vector3.Cross(fwd, targetDir);
-    
+
         float dir = Vector3.Dot(perp, up);
-    
+
         if (dir > 0.0) {
             return 1.0f;
         }

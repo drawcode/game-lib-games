@@ -12,7 +12,7 @@ public interface IBaseGameController {
     int characterActorSidekickCount {
         get;
     }
-    GamePlayerController getCurrentPlayerController {
+    GamePlayerController currentPlayerController {
         get;
     }
     bool isGameRunning {
