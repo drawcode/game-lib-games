@@ -155,6 +155,7 @@ public class BaseUIButtonNames {
     
     public static string buttonAR = "ButtonAR";
     public static string buttonARSettings = "ButtonARSettings";
+    public static string buttonARSettingsSelect = "ButtonARSettingsSelect";
     //
     public static string buttonVR = "ButtonVR";
     public static string buttonVRSettings = "ButtonVRSettings";
@@ -3998,7 +3999,6 @@ public virtual void hideCustomize() {
 #if ENABLE_FEATURE_AR
 
         // AR
-
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonARSettings, buttonName)) {
             showARSettings();
         }
