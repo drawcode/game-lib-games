@@ -18,40 +18,66 @@ public class SetWheelColliderSettings : GameObjectBehavior {
     //private Vector3 rearLeftPosition;
 
     void Awake() {
-        flWheelCollider.transform.position = flWheel.position;
-        rlWheelCollider.transform.position = rlWheel.position;
-        frWheelCollider.transform.position = frWheel.position;
-        rrWheelCollider.transform.position = rrWheel.position;
 
-        flWheelCollider.radius = radiusFront;
-        frWheelCollider.radius = radiusFront;
-        rlWheelCollider.radius = radiusBack;
-        rrWheelCollider.radius = radiusBack;
+        UpdateColliders();
     }
 
+    void UpdateColliders() {
+
+        if (flWheelCollider != null) {
+            flWheelCollider.transform.position = flWheel.position;
+        }
+
+        if (rlWheelCollider != null) {
+            rlWheelCollider.transform.position = rlWheel.position;
+        }
+
+        if (frWheelCollider != null) {
+            frWheelCollider.transform.position = frWheel.position;
+        }
+
+        if (rrWheelCollider != null) {
+            rrWheelCollider.transform.position = rrWheel.position;
+        }
+
+
+        if (rrWheelCollider != null) {
+            rrWheelCollider.radius = radiusFront;
+        }
+
+        if (frWheelCollider != null) {
+            frWheelCollider.radius = radiusFront;
+        }
+
+        if (rlWheelCollider != null) {
+            rlWheelCollider.radius = radiusBack;
+        }
+
+        if (rrWheelCollider != null) {
+            rrWheelCollider.radius = radiusBack;
+        }
+    }
 
     // Update is called once per frame
     void Update() {
         if (!Application.isPlaying) {
             if (mirrorWheels) {
 
-                Vector3 fllp = frWheel.localPosition;
-                fllp.x = fllp.x * (-1);
-                flWheel.localPosition = fllp;
+                if (frWheel != null) {
 
-                Vector3 rllp = rrWheel.localPosition;
-                rllp.x = rllp.x * (-1);
-                rlWheel.localPosition = rllp;
+                    Vector3 fllp = frWheel.localPosition;
+                    fllp.x = fllp.x * (-1);
+                    flWheel.localPosition = fllp;
+                }
+
+                if (rrWheel != null) {
+                    Vector3 rllp = rrWheel.localPosition;
+                    rllp.x = rllp.x * (-1);
+                    rlWheel.localPosition = rllp;
+                }
             }
-            flWheelCollider.transform.position = flWheel.position;
-            rlWheelCollider.transform.position = rlWheel.position;
-            frWheelCollider.transform.position = frWheel.position;
-            rrWheelCollider.transform.position = rrWheel.position;
 
-            flWheelCollider.radius = radiusFront;
-            frWheelCollider.radius = radiusFront;
-            rlWheelCollider.radius = radiusBack;
-            rrWheelCollider.radius = radiusBack;
+            UpdateColliders();
         }
     }
 
@@ -64,13 +90,24 @@ public class SetWheelColliderSettings : GameObjectBehavior {
             Vector3 cubeRear = new Vector3(rearLength, rearLength, rearLength);
             Gizmos.color = Color.white;
 
-            Gizmos.DrawWireCube(frWheel.position, cubeFront);
-            Gizmos.DrawWireCube(rrWheel.position, cubeRear);
+            if (frWheel != null) {
+                Gizmos.DrawWireCube(frWheel.position, cubeFront);
+            }
+
+            if (rrWheel != null) {
+               Gizmos.DrawWireCube(rrWheel.position, cubeRear);
+            }
             if (mirrorWheels) {
                 Gizmos.color = Color.red;
             }
-            Gizmos.DrawWireCube(flWheel.position, cubeFront);
-            Gizmos.DrawWireCube(rlWheel.position, cubeRear);
+
+            if (flWheel != null) {
+                Gizmos.DrawWireCube(flWheel.position, cubeFront);
+            }
+
+            if (rlWheel != null) {
+                Gizmos.DrawWireCube(rlWheel.position, cubeRear);
+            }
         }
     }
 }

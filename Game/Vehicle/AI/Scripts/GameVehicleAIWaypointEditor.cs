@@ -9,4 +9,5 @@ public class GameVehicleAIWaypointEditor : GameObjectBehavior {
     public int speed = 100;
     public Material waypointMaterial;
     public bool batchCreating = false;
+
 }

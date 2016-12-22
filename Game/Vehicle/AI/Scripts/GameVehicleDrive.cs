@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameVehicleDriveData {
+    
     public float inputAxisVertical = 0;
     public float inputAxisHorizontal = 0;
     public bool inputUse = false;
     public bool inputBrake = false;
     public bool inputGas = true;
-
 }
 
 public class GameVehicleDrive : GameObjectBehavior {
@@ -496,9 +496,7 @@ public class GameVehicleDrive : GameObjectBehavior {
         }
 
         motorAudioSource.pitch = currentPitch;
-
         motorAudioSourceLow.pitch = currentPitch;
         motorAudioSourceMid.pitch = currentPitch;
-
     }
 }

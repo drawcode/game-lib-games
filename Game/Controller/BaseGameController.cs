@@ -760,7 +760,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
     }
-
+    
     // ---------------------------------------------------------------------
 
     // PROPERTIES

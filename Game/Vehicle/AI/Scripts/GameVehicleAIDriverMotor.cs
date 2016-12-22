@@ -1,4 +1,5 @@
-#pragma warning disable 0414
+//#pragma warning disable 0414
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -151,6 +152,7 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
     }
 
     void GearSound() {
+
         float tempMinSpeed = 0.00f;
         float tempMaxSpeed = 0.00f;
         float currentPitch = 0.00f;
@@ -192,6 +194,5 @@ public class GameVehicleAIDriverMotor : GameObjectBehavior {
         for (int i = 0; i < gears; i++) {
             m_gearSpeed.Add(gearSpeedStep * (i + 1));
         }
-
     }
 }

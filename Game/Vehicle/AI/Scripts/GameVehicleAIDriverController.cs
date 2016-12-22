@@ -209,6 +209,10 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         aiPreMotor = GetComponent<GameVehicleMotorMapping>();
         flWheel = aiPreMotor.flWheelMesh;
         frWheel = aiPreMotor.frWheelMesh;
+
+        if (viewPoint == null) {
+            viewPoint = transform.FindChild("ViewPoint");
+        }
     }
 
     void Start() {
@@ -235,11 +239,11 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
                 m_sqrDistanceToWaypoint = m_sqrDistanceToWpNoOa;
             }
 
-            ////unnoetig
-            //if (viewPoint == null)
-            //{
-            //    viewPoint = transform.FindChild("ViewPoint");  
-            //}
+            //unnoetig
+            if (viewPoint == null)
+            {
+                viewPoint = transform.FindChild("ViewPoint");  
+            }
 
             viewPointLeftGO = new GameObject("viewPointLeftGO");
             viewPointLeftGO.transform.parent = transform;
