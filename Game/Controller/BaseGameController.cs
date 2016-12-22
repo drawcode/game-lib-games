@@ -961,7 +961,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public bool isGameplayWorldTypeStationary() {
         return gameplayWorldType == GameplayWorldType.gameStationary;
     }
-
+    
     // ---------------------------------------------------------------------
 
     // PROPERTIES
