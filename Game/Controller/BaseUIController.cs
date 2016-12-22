@@ -4113,7 +4113,7 @@ public virtual void hideCustomize() {
 
         // LAST 
 
-        else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay, buttonName)
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
 
             object dataType = null;

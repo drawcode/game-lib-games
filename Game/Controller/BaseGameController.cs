@@ -1874,7 +1874,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    public virtual Vector3 getCurrentPlayerPosition() {
+    public virtual Vector3 getCurrentPlayerPosition() { 
         Vector3 currentPlayerPosition = Vector3.zero;
         if (currentPlayerController != null) {
             if (currentPlayerController.gameObject != null) {
@@ -2684,7 +2684,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         startLevelStats();
 
-        GameUIController.HideUI(true);
+        GameUIController.HideUI();
         GameUIController.ShowHUD();
 
         if (allowedEditing) {
