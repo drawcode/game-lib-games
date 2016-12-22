@@ -181,7 +181,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
         }
     }
     
-    public void hideUI() {
+    public virtual void hideUI() {
         HidePanelBottom(backgroundUI, false);
         //Debug.Log("GameUIPanelBackgrounds::HideUI");
     }

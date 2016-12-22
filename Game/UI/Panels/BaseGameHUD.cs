@@ -142,7 +142,7 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (buttonName == buttonCamera.name) {
+        if (UIUtil.IsButtonClicked(buttonCamera, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             if (!AppModes.Instance.isAppModeGameTraining) {
                 ChangeCameraMode();
