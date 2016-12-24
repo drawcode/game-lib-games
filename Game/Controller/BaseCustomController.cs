@@ -316,6 +316,10 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
 
+        if (customItemTo == null) {
+            return customItemTo;
+        }
+
         if (customItemTo.HasData()) {
             return customItemTo;
         }
@@ -324,7 +328,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
         List<AppColorPreset> colors = AppColorPresets.Instance.GetListByType(type);
 
-        int randomIndex = UnityEngine.Random.Range(1, colors.Count - 1);
+        int randomIndex = UnityEngine.Random.Range(0, colors.Count - 1);
         AppColorPreset randomPreset = colors[randomIndex];
 
         customItemTo = loadColorPresetCustomItem(customItemTo, randomPreset);
