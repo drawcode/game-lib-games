@@ -94,7 +94,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 		base.Init();	
 		
 		//LoadData();
-		//AnimateIn();
+		AnimateIn();
 	}
 	
     public virtual void LoadData() {
@@ -103,8 +103,76 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 	
 	IEnumerator LoadDataCo() {
 		yield break;
-	}	
-	
+	}
+
+    // SHOW/HIDE GENERIC
+    
+    // show
+    
+    public virtual void ShowOverlayMoveObject(
+        GameObject go, float time = 0f, float delay = 0f) {
+        
+        LeanTween.move(go, Vector3.zero, time).setDelay(delay);
+
+        //iTween.MoveTo(go, iTween.Hash)
+
+        //  iTween
+        
+        //UITweenerUtil.MoveTo(go,
+        //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, Vector3.zero);
+    }
+
+    public virtual void ShowOverlayFadeObject(
+        GameObject go, float time = 0f, float delay = 0f, float amountFrom = 0f, float amountTo = 1f) {
+        
+        LeanTween.alpha(go, amountTo, time).setDelay(delay);
+
+        //UITweenerUtil.FadeTo(go,
+        //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
+    }
+
+    public virtual void ShowOverlayObject(GameObject go, float time, float delay, float amountFrom, float amountTo) {
+
+        if (go != null) {
+
+            ShowOverlayMoveObject(go);
+
+            ShowOverlayFadeObject(go, time, delay, amountFrom, amountTo);
+        }
+    }
+
+    // hide 
+
+    public virtual void HideOverlayMoveObject(
+        GameObject go, float time = 0f, float delay = 0f) {
+        
+        LeanTween.move(go, Vector3.zero, time).setDelay(delay);
+
+        //UITweenerUtil.MoveTo(go,
+        //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, Vector3.zero.WithY(-2500f));
+    }
+
+    public virtual void HideOverlayFadeObject(
+        GameObject go, float time = 0f, float delay = 0f, float amountFrom = 1f, float amountTo = 0f) {
+
+        LeanTween.alpha(go, amountTo, time).setDelay(delay);
+
+        //UITweenerUtil.FadeTo(go,
+        //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
+    }
+
+    public virtual void HideOverlayObject(GameObject go, float time, float delay, float amountFrom, float amountTo) {
+
+        if (go != null) {
+            
+            HideOverlayFadeObject(go, time, delay, amountFrom, amountTo);
+
+            HideOverlayMoveObject(go, 0, time + delay);
+        }
+    }
+
+    // OVERLAY WHITE FLASH
+
     public virtual void ShowOverlayWhiteFlash() {
 		//LogUtil.Log("ShowWhiteFlash");
 		
@@ -123,107 +191,97 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 		//LogUtil.Log("HideOverlayWhiteFlash");
 		HideOverlayWhite(.3f, .3f, 1f, 0f);
 	}
-	
+
+    // OVERLAY WHITE
+
     public virtual void ShowOverlayWhite() {
 		ShowOverlayWhite(.2f, .1f, 0f, 1f);
 	}
-	
+    
     public virtual void ShowOverlayWhite(float time, float delay, float amountFrom, float amountTo) {
-		
-		if(overlayWhiteSolid != null) {
-			UITweenerUtil.FadeTo(overlayWhiteSolid, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
+
+        ShowOverlayObject(overlayWhiteSolid, time, delay, amountFrom, amountTo);
 	}
 	
     public virtual void HideOverlayWhite() {
 		HideOverlayWhite(.1f, .2f, 0f, 0f);
 	}
-	
-    public virtual void HideOverlayWhite(float time, float delay, float amountFrom, float amountTo) {		
-		if(overlayWhiteSolid != null) {
-			UITweenerUtil.FadeTo(overlayWhiteSolid, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}	
-	
+
+    public virtual void HideOverlayWhite(float time, float delay, float amountFrom, float amountTo) {
+
+        HideOverlayObject(overlayWhiteSolid, time, delay, amountFrom, amountTo);
+    }
+    
+    // OVERLAY WHITE STATIC 
+
     public virtual void ShowOverlayWhiteStatic() {
 		ShowOverlayWhiteStatic(.5f, 0f, 0f, 1f);
 	}
-	
+
     public virtual void ShowOverlayWhiteStatic(float time, float delay, float amountFrom, float amountTo) {
-		
-		if(overlayWhiteSolidStatic != null) {
-			UITweenerUtil.FadeTo(overlayWhiteSolidStatic, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}
-	
+
+        ShowOverlayObject(overlayWhiteSolidStatic, time, delay, amountFrom, amountTo);
+    }
+
     public virtual void HideOverlayWhiteStatic() {
 		HideOverlayWhiteStatic(1f, 0f, 0f, 0f);
-	}
+    }
+
+    public virtual void HideOverlayWhiteStatic(float time, float delay, float amountFrom, float amountTo) {
+
+        HideOverlayObject(overlayWhiteSolidStatic, time, delay, amountFrom, amountTo);
+    }	
 	
-    public virtual void HideOverlayWhiteStatic(float time, float delay, float amountFrom, float amountTo) {		
-		if(overlayWhiteSolidStatic != null) {
-			UITweenerUtil.FadeTo(overlayWhiteSolidStatic, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}	
-	
-	// White radial
+	// OVERLAY WHITE RADIAL
 	
     public virtual void ShowOverlayWhiteRadial() {
 		ShowOverlayWhite(.2f, .1f, 0f, 1f);
-	}
-	
+    }
+
     public virtual void ShowOverlayWhiteRadial(float time, float delay, float amountFrom, float amountTo) {
-		
-		if(overlayWhiteRadial != null) {
-			UITweenerUtil.FadeTo(overlayWhiteRadial, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}
+
+        ShowOverlayObject(overlayWhiteRadial, time, delay, amountFrom, amountTo);
+    }
 	
     public virtual void HideOverlayWhiteRadial() {
 		HideOverlayWhiteRadial(.1f, .2f, 0f, 0f);
 	}
-	
-    public virtual void HideOverlayWhiteRadial(float time, float delay, float amountFrom, float amountTo) {		
-		if(overlayWhiteRadial != null) {
-			UITweenerUtil.FadeTo(overlayWhiteRadial, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}		
-	
+    
+    public virtual void HideOverlayWhiteRadial(float time, float delay, float amountFrom, float amountTo) {
+
+        HideOverlayObject(overlayWhiteRadial, time, delay, amountFrom, amountTo);
+    }
+
+    // OVERLAY BLACK 
+
     public virtual void ShowOverlayBlack() {
 		ShowOverlayBlack(.2f, .1f, 0f, 1f);
 	}
-	
+
     public virtual void ShowOverlayBlack(float time, float delay, float amountFrom, float amountTo) {
-		
-		if(overlayBlackSolid != null) {
-			UITweenerUtil.FadeTo(overlayBlackSolid, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}
-	
+
+        ShowOverlayObject(overlayBlackSolid, time, delay, amountFrom, amountTo);
+    }
+
     public virtual void HideOverlayBlack() {
 		HideOverlayBlack(.1f, .2f, 0f, 0f);
-	}
-	
-    public virtual void HideOverlayBlack(float time, float delay, float amountFrom, float amountTo) {		
-		if(overlayBlackSolid != null) {
-			UITweenerUtil.FadeTo(overlayBlackSolid, 
-				UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
-		}
-	}	
-	
+    }
+
+    public virtual void HideOverlayBlack(float time, float delay, float amountFrom, float amountTo) {
+
+        HideOverlayObject(overlayBlackSolid, time, delay, amountFrom, amountTo);
+    }
+
+    // OVERLAY HIDE ALL
+
     public virtual void HideAll() {
 		HideOverlayWhite(0f, 0f, 0f, 0f);
 		HideOverlayWhiteRadial(0f, 0f, 0f, 0f);
 		HideOverlayBlack(0f, 0f, 0f, 0f);
 		HideOverlayWhiteStatic();
 	}
+
+    // ANIMATE/EASING
 	
 	public override void AnimateIn() {
 		
