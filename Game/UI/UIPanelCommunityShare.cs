@@ -7,12 +7,13 @@ using System.Linq;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public class UIPanelCommunityShare : UIPanelCommunityBase {
 
     public static UIPanelCommunityShare Instance;
 
-    public GameObject containerShares;    
+    public GameObject containerShares;
     public GameObject containerActionTools;
     public GameObject containerActionAppRate;
 
@@ -40,7 +41,7 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
         base.Init();
 
         HideAllItems();
-                
+
         Invoke("InitPlatform", 1);
     }
 
@@ -49,13 +50,13 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -71,9 +72,9 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
         ShowActionTools();
         ShowActionAppRate();
     }
-    
+
     public void HideAllItems() {
-        
+
         HideAllShares();
         HideActionTools();
         HideActionAppRate();
@@ -82,112 +83,112 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
     //
 
     public virtual void ShowShare(string code) {
-        
-        foreach (GameObjectShowItem item in 
+
+        foreach (GameObjectShowItem item in
                 containerShares.GetComponentsInChildren<GameObjectShowItem>(true)) {
-            
+
             if (item.code == code) {
                 HideAllShares();
-                ShowPanelBottom(item.gameObject);
+                TweenUtil.ShowObjectBottom(item.gameObject);
                 item.gameObject.ShowObjectDelayed(.7f);
             }
         }
     }
-    
-    public virtual void HideAllShares() {        
-        
-        foreach (GameObjectShowItem item in 
+
+    public virtual void HideAllShares() {
+
+        foreach (GameObjectShowItem item in
                 containerShares.GetComponentsInChildren<GameObjectShowItem>(true)) {
-            HidePanelBottom(item.gameObject);
+            TweenUtil.HideObjectBottom(item.gameObject);
             item.gameObject.HideObjectDelayed(.5f);
         }
     }
-    
+
     //
-    
+
     public static void ShowSharesCenter() {
         if (isInst) {
             Instance.showSharesCenter();
         }
     }
-    
-    public virtual void showSharesCenter() {   
-        
+
+    public virtual void showSharesCenter() {
+
         if (Context.Current.isWeb) {
             return;
         }
-        
+
         ShowShare(GameCommunityUIShares.shareCenter);
     }
-    
+
     public static void HideSharesCenter() {
         if (isInst) {
             Instance.hideSharesCenter();
         }
     }
-    
-    public virtual void hideSharesCenter() {   
+
+    public virtual void hideSharesCenter() {
         HideAllShares();
     }
 
     //
-    
+
     public static void ShowActionTools() {
         if (isInst) {
             Instance.showActionTools();
         }
     }
-    
-    public virtual void showActionTools() {   
-        
+
+    public virtual void showActionTools() {
+
         if (Context.Current.isWeb) {
             return;
         }
 
-        ShowPanelBottom(containerActionTools);
+        TweenUtil.ShowObjectBottom(containerActionTools);
     }
-    
+
     public static void HideActionTools() {
         if (isInst) {
             Instance.hideActionTools();
         }
     }
-    
-    public virtual void hideActionTools() {   
 
-        HidePanelBottom(containerActionTools);
+    public virtual void hideActionTools() {
+
+        TweenUtil.HideObjectBottom(containerActionTools);
     }
 
     //
-    
+
     public static void ShowActionAppRate() {
         if (isInst) {
             Instance.showActionAppRate();
         }
     }
-    
-    public virtual void showActionAppRate() {   
-        
+
+    public virtual void showActionAppRate() {
+
         if (Context.Current.isWeb) {
             return;
         }
-        
+
         //Debug.Log("UIPaneCommnityShare::showActionAppRate:");
-        
-        ShowPanelRight(containerActionAppRate);
+
+        TweenUtil.ShowObjectRight(containerActionAppRate);
     }
-    
+
     public static void HideActionAppRate() {
         if (isInst) {
             Instance.hideActionAppRate();
         }
     }
-    
-    public virtual void hideActionAppRate() {   
+
+    public virtual void hideActionAppRate() {
 
         //Debug.Log("UIPaneCommnityShare::hideActionAppRate:");
-        
-        HidePanelRight(containerActionAppRate);
+
+        TweenUtil.HideObjectRight(containerActionAppRate);
     }
 
     //
@@ -225,5 +226,4 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
     public override void Update() {
         base.Update();
     }
- 
 }

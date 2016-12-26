@@ -9,6 +9,7 @@ using UnityEngine.UI;
 #endif
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum GameActionsMode {
     Loading,
@@ -38,19 +39,19 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 #endif
 
     public GameObject containerObject;
-    
+
     public GameObject containerActionControlsDefault;
-    
+
     public GameObject prefabDefault;
-    
+
     public GameObject panelDefault;
 
-    
+
     public int actionsTotal = 2;
     public int currentActionIndex = 0;
-    
+
     public float currentChangeDelay = 6f;
-    
+
     public GameObject actionsCenterContainer;
     public GameObject actionsTopContainer;
     public GameObject actionsBottomContainer;
@@ -60,127 +61,127 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     public GameObject actionsBottomRightContainer;
     public GameObject actionsRightContainer;
     public GameObject actionsLeftContainer;
-    
+
     public GameActionsMode actionsMode = GameActionsMode.Internal;
 
     public bool hidden = true;
-    
+
     bool deferTap = false;
 
     public void Awake() {
 
     }
-        
+
     public override void OnEnable() {
         base.OnEnable();
 
         //Messenger<DeviceOrientation>.AddListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
         Messenger<float>.AddListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         //Messenger<SwipeGesture>.AddListener(FingerGesturesMessages.OnSwipe, 
         //                                    OnInputSwipe);
-        
+
         //Messenger<TapGesture>.AddListener(FingerGesturesMessages.OnTap, 
         //                                  OnInputTap);
     }
-    
+
     public override void OnDisable() {
         base.OnDisable();
 
         //Messenger<DeviceOrientation>.RemoveListener(DeviceOrientationMessages.deviceOrientationChange, OnDeviceOrientationChangeHandler);
         Messenger<float>.RemoveListener(DeviceOrientationMessages.deviceScreenRatioChange, OnDeviceScreenRatioChangeHandler);
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         //Messenger<SwipeGesture>.RemoveListener(FingerGesturesMessages.OnSwipe, 
         //                                    OnInputSwipe);
         //Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnTap, 
         //                                     OnInputTap);
 
     }
-    
+
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-        
-        if(UIUtil.IsButtonClicked(buttonNext, buttonName)) {
+
+        if (UIUtil.IsButtonClicked(buttonNext, buttonName)) {
             //
-            if(isVisible && actionsMode != GameActionsMode.Loading) {
+            if (isVisible && actionsMode != GameActionsMode.Loading) {
                 ShowActionsNext();
             }
         }
-        else if(UIUtil.IsButtonClicked(buttonBack, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonBack, buttonName)) {
             //
-            if(isVisible && actionsMode != GameActionsMode.Loading) {
+            if (isVisible && actionsMode != GameActionsMode.Loading) {
                 ShowActionsPrevious();
             }
         }
-        else if(UIUtil.IsButtonClicked(buttonClose, buttonName)) {
+        else if (UIUtil.IsButtonClicked(buttonClose, buttonName)) {
             AnimateOut();
         }
     }
-    
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
-        base.Init();            
+        base.Init();
         AnimateIn();
         ShowControlsDefault();
         ShowActionsFirst();
         currentChangeDelay = 6f;
     }
-    
+
     public void OnInputSwipe(SwipeGesture gesture) {
-        
+
         //if(!isVisible) {
         //  return;
         //}
-        
-        if(gesture.Direction == FingerGestures.SwipeDirection.Right
+
+        if (gesture.Direction == FingerGestures.SwipeDirection.Right
            || gesture.Direction == FingerGestures.SwipeDirection.UpperRightDiagonal
            || gesture.Direction == FingerGestures.SwipeDirection.Down) {
             deferTap = true;
             ShowActionsPrevious();
-            
+
         }
-        else if(gesture.Direction == FingerGestures.SwipeDirection.Left
+        else if (gesture.Direction == FingerGestures.SwipeDirection.Left
                 || gesture.Direction == FingerGestures.SwipeDirection.LowerLeftDiagonal
                 || gesture.Direction == FingerGestures.SwipeDirection.Up) {
             deferTap = true;
             ShowActionsNext();
-            
+
         }
     }
-    
+
     public void OnInputTap(TapGesture gesture) {
-        
+
         //if(!isVisible) {
         //  return;
         //}
-        if(deferTap) {
+        if (deferTap) {
             deferTap = false;
             return;
         }
-        
-        if(gesture.Taps > 0) {
-            
+
+        if (gesture.Taps > 0) {
+
             ShowActionsNext();
-            
+
         }
     }
-    
+
     public void HideControlsAll() {
-        
+
         GameObjectHelper.HideObject(containerActionControlsDefault);
     }
-    
+
     public void HideControlsDefault() {
         GameObjectHelper.HideObject(containerActionControlsDefault);
     }
-    
+
     public void ShowControlsDefault() {
-        HideControlsAll();      
+        HideControlsAll();
         GameObjectHelper.ShowObject(containerActionControlsDefault);
         actionsMode = GameActionsMode.Internal;
     }
@@ -196,19 +197,19 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         GameObjectHelper.HideObject(containerActionControlsLoad);
     }
     */
-    
+
     public void LoadData() {
         StartCoroutine(LoadDataCo());
     }
-    
+
     IEnumerator LoadDataCo() {
-        
+
         //HidePanelDefault();
-        
+
         yield return new WaitForSeconds(.5f);
-        
+
         //TakePhoto();
-        
+
         /*
         // Load up list
         ListClear();
@@ -234,82 +235,82 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         
         ShowPanelDefault();
         */
-        
+
         yield break;
     }
-    
+
     public void ShowActionsFirst() {
-        if(actionsMode == GameActionsMode.Loading) {
+        if (actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
             ShowAction(0);
         }
-    }   
-    
+    }
+
     public void ShowActionsRandomNext() {
-        if(actionsCenterContainer != null) {
+        if (actionsCenterContainer != null) {
             actionsTotal = actionsCenterContainer.transform.childCount;
             ShowAction(UnityEngine.Random.Range(0, actionsTotal - 1));
         }
     }
-    
+
     public void ShowActionsNext() {
-        if(actionsMode == GameActionsMode.Loading) {
+        if (actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
             ShowAction(currentActionIndex + 1);
         }
     }
-    
+
     public void ShowActionsPrevious() {
-        if(actionsMode == GameActionsMode.Loading) {
+        if (actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
-            ShowAction(currentActionIndex - 1);   
+            ShowAction(currentActionIndex - 1);
         }
     }
-    
+
     public void ShowAction(int index) {
-        
+
         ResetChangeTime();
-        
+
         actionsTotal = actionsCenterContainer.transform.childCount;
-        
-        if(index > actionsTotal - 1) {
+
+        if (index > actionsTotal - 1) {
             Messenger<string>.Broadcast(UIPanelGameActionMessages.actionsCycle, gameObject.name);
             index = 0;
         }
-        
-        if(index < 0) {
+
+        if (index < 0) {
             index = actionsTotal - 1;
         }
-        
+
         currentActionIndex = index;
-        
+
         HideAllActionContainers();
 
-        if(gameObject.activeSelf && gameObject.activeInHierarchy) {
+        if (gameObject.activeSelf && gameObject.activeInHierarchy) {
             StartCoroutine(ShowCurrentActionObjectsCo());
         }
     }
-    
+
     public IEnumerator ShowCurrentActionObjectsCo() {
         yield return new WaitForSeconds(.1f);
         ShowCurrentActionObjects();
     }
-    
+
     public void ShowCurrentActionObjects() {
-        
+
         //AppViewerUIPanelHUD.Instance.inModalAction = true;
-        
+
         //AppViewerUIPanelActionTrackerSearch.HideTrackerDetectObject();
         //AppViewerUIPanelActionTrackerSearch.HideTrackerDetectLabel();
-        
-        string actionCode = "action-" + (currentActionIndex + 1).ToString(); 
-        
+
+        string actionCode = "action-" + (currentActionIndex + 1).ToString();
+
         ShowContainer(actionsCenterContainer, actionCode);
         ShowContainer(actionsTopContainer, actionCode);
         ShowContainer(actionsBottomContainer, actionCode);
@@ -321,12 +322,12 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         ShowContainer(actionsLeftContainer, actionCode);
 
         UIUtil.SetLabelValue(
-            labelCurrentActionStatus, 
+            labelCurrentActionStatus,
             string.Format("action {0} of {1}", currentActionIndex + 1, actionsTotal));
     }
-    
+
     public void HideAllActionContainers() {
-        
+
         HideContainer(actionsCenterContainer);
         HideContainer(actionsTopContainer);
         HideContainer(actionsBottomContainer);
@@ -335,35 +336,35 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         HideContainer(actionsBottomLeftContainer);
         HideContainer(actionsBottomRightContainer);
         HideContainer(actionsRightContainer);
-        HideContainer(actionsLeftContainer);       
-        
+        HideContainer(actionsLeftContainer);
+
         //AppViewerUIPanelActionTrackerSearch.ShowTrackerDetectObject();
         //AppViewerUIPanelActionTrackerSearch.ShowTrackerDetectLabel();
         //AppViewerUIPanelActionTrackerSearch.ShowDefault();
-        
+
         //AppViewerUIPanelHUD.Instance.inModalAction = false;
     }
-    
+
     public void ShowContainer(GameObject container, string actionCode) {
         StartCoroutine(ShowContainerCo(container, actionCode));
     }
-    
+
     IEnumerator ShowContainerCo(GameObject container, string actionCode) {
-        
-        if(container != null) {
+
+        if (container != null) {
             container.HideChildren(true);
-        
-            foreach(GameObjectInactive inactive in container.GetComponentsInChildren<GameObjectInactive>(true)) {
-                
-                if(inactive.name == actionCode ||
+
+            foreach (GameObjectInactive inactive in container.GetComponentsInChildren<GameObjectInactive>(true)) {
+
+                if (inactive.name == actionCode ||
                    inactive.name.IndexOf(actionCode + "-") > -1) {
                     inactive.gameObject.Show();
-                    
+
                     var animate = inactive.gameObject.GetComponent<GameObjectBouncy>();
-                    if(animate != null) {
+                    if (animate != null) {
                         animate.Animate();
                     }
-                    
+
                     UITweenerUtil.FadeTo(inactive.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
                     //if(actionsMode != GameActionsMode.Loading) {
                     //  if(inactive.name.IndexOf(actionCode + "-Settings") > -1) {
@@ -374,16 +375,16 @@ public class UIPanelGameAction : UIAppPanelBaseList {
                     //  }
                     //}
                 }
-            }   
+            }
         }
-        
-        
+
+
         yield break;
     }
-    
+
     public void HideContainer(GameObject container) {
-        if(container != null) {
-            if(!gameObject.activeSelf || !gameObject.activeInHierarchy 
+        if (container != null) {
+            if (!gameObject.activeSelf || !gameObject.activeInHierarchy
                || !container.activeSelf || !container.activeInHierarchy) {
                 container.HideChildren(true);
             }
@@ -392,28 +393,28 @@ public class UIPanelGameAction : UIAppPanelBaseList {
             }
         }
     }
-    
+
     IEnumerator HideContainerCo(GameObject container) {
-        if(container != null) {
+        if (container != null) {
             container.HideChildren(true);
         }
-        
+
         yield return new WaitForSeconds(.1f);
-        
-        if(container != null) {
+
+        if (container != null) {
             //container.HideChildren(true);
         }
     }
-    
+
     public void ShowPanelDefault() {
-        ShowPanelTop(panelDefault);
+        TweenUtil.ShowObjectTop(panelDefault);
     }
-    
+
     public void HidePanelDefault() {
-        
-        HidePanelTop(panelDefault);
+
+        TweenUtil.HideObjectTop(panelDefault);
     }
-    
+
     public void showDefault() {
         AnimateIn();
         LoadDefault();
@@ -427,38 +428,38 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         //ShowControlsLoad();     
     }
     */
-    
+
     public void LoadDefault() {
         ShowActionsFirst();
         LoadData();
     }
-        
+
     public override void AnimateIn() {
         hidden = false;
         base.AnimateIn();
-    }       
-    
+    }
+
     public override void AnimateOut() {
-        
+
         hidden = true;
         base.AnimateOut();
-        
+
         HidePanelDefault();
     }
-    
-    void ResetChangeTime() {        
+
+    void ResetChangeTime() {
         currentChangeDelay = 6f;
     }
-    
+
     void Update() {
         currentChangeDelay -= Time.deltaTime;
-        if(currentChangeDelay <= 0) {
-            if(GameUIController.Instance.uiVisible
+        if (currentChangeDelay <= 0) {
+            if (GameUIController.Instance.uiVisible
                && actionsMode == GameActionsMode.Loading) {
                 //ShowActionsRandomNext();
             }
         }
-        
+
         /*
         if(lastUICheck + .8f < Time.realtimeSinceStartup) {
             lastUICheck = Time.realtimeSinceStartup;
@@ -474,6 +475,6 @@ public class UIPanelGameAction : UIAppPanelBaseList {
             }
         }
         */
-        
+
     }
 }

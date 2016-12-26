@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     
@@ -170,7 +171,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     
     public IEnumerator showUICo() {
         yield return new WaitForSeconds(.55f);
-        ShowPanelBottom(backgroundUI, false);
+        TweenUtil.ShowObjectBottom(backgroundUI, TweenCoord.local, true);
 
         //Debug.Log("GameUIPanelBackgrounds::ShowUICo");
     }
@@ -182,7 +183,7 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     }
     
     public virtual void hideUI() {
-        HidePanelBottom(backgroundUI, false);
+        TweenUtil.HideObjectBottom(backgroundUI, TweenCoord.local, true);
         //Debug.Log("GameUIPanelBackgrounds::HideUI");
     }
 

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 #endif
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum GameWorldsState {
     selection,
@@ -205,28 +206,28 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
     public virtual void ShowWorldsContainer() {
         containerWorlds.Show();
-        ShowPanelBottom(containerWorlds);    
+        TweenUtil.ShowObjectBottom(containerWorlds);    
     }
     
-    public virtual void HideWorldsContainer() {  
-        HidePanelBottom(containerWorlds);
+    public virtual void HideWorldsContainer() {
+        TweenUtil.HideObjectBottom(containerWorlds);
         containerWorlds.HideObjectDelayed(.5f);
     }
 
     public virtual void ShowSelect() {
-        ShowPanelBottom(containerMissions);
+        TweenUtil.ShowObjectBottom(containerMissions);
     }
 
-    public virtual void HideSelect() {        
-        HidePanelBottom(containerMissions);
+    public virtual void HideSelect() {
+        TweenUtil.HideObjectBottom(containerMissions);
     }
     
     public virtual void ShowButtons() {
-        ShowPanelBottom(containerButtons);
+        TweenUtil.ShowObjectBottom(containerButtons);
     }
     
-    public virtual void HideButtons() {        
-        HidePanelBottom(containerButtons);
+    public virtual void HideButtons() {
+        TweenUtil.HideObjectBottom(containerButtons);
     }
     
     public override void OnButtonClickEventHandler(string buttonName) {     

@@ -72,6 +72,7 @@ public class UIPanelBase : UIAppPanel {
     public GameObject panelBottomObject;
     public GameObject panelCenterObject;
     public GameObject panelContainer;
+    
     [NonSerialized]
     public float
         durationShow = .45f;
@@ -262,414 +263,164 @@ public class UIPanelBase : UIAppPanel {
 
     // CENTER
 
-    public virtual void AnimateInCenter(GameObject go, bool local = true) {
-        AnimateInCenter(go, durationShow, durationDelayShow, local);
+    public virtual void AnimateInCenter(float time = 1f, float delay = 0f) {
+        AnimateInCenter(panelCenterObject, time, delay);
     }
 
-    public virtual void AnimateOutCenter(GameObject go, bool local = true) {
-        AnimateOutCenter(go, durationHide, durationDelayHide, local);
+    public virtual void AnimateInCenter(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.ShowObjectBottom(go, TweenCoord.local, true, time, delay);
     }
 
-    public virtual void AnimateInCenter(GameObject go, float time, float delay, bool local = true) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomOpenY));
-
-            LeanTween.cancel(go);
-
-            if (local) {
-
-                LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
-                    .setDelay(delay)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-            else {
-                LeanTween.move(go, Vector3.zero.WithY(bottomOpenY), time)
-                    .setDelay(delay)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-        }
+    public virtual void AnimateOutCenter(float time = 1f, float delay = 0f) {
+        AnimateOutCenter(panelCenterObject, time, delay);
     }
 
-    public virtual void AnimateInCenter(float time, float delay, bool local = true) {
-        AnimateInCenter(panelCenterObject, time, delay, local);
-    }
-
-    public virtual void AnimateOutCenter(GameObject go, float time, float delay, bool local = true) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
-
-            LeanTween.cancel(go);
-
-            if (local) {
-
-                LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
-                    .setDelay(delay)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-            else {
-                LeanTween.move(go, Vector3.zero.WithY(bottomClosedY), time)
-                    .setDelay(delay)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-        }
-    }
-
-    public virtual void AnimateOutCenter(float time, float delay, bool local = true) {
-        AnimateOutCenter(panelCenterObject, time, delay, local);
+    public virtual void AnimateOutCenter(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.HideObjectBottom(go, TweenCoord.local, true, time, delay);
     }
 
     // LEFT
 
-    public virtual void AnimateInLeft(GameObject go) {
-        AnimateInLeft(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutLeft(GameObject go) {
-        AnimateOutLeft(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInLeft(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInLeft(float time, float delay) {
+    public virtual void AnimateInLeft(float time = 1f, float delay = 0f) {
         AnimateInLeft(panelLeftObject, time, delay);
     }
 
-    public virtual void AnimateOutLeft(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInLeft(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.ShowObjectLeft(go, TweenCoord.local, true, time, delay);
     }
 
-    public virtual void AnimateOutLeft(float time, float delay) {
+    public virtual void AnimateOutLeft(float time = 1f, float delay = 0f) {
         AnimateOutLeft(panelLeftObject, time, delay);
+    }
+
+    public virtual void AnimateOutLeft(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.HideObjectLeft(go, TweenCoord.local, true, time, delay);
     }
 
     // LEFT BOTTOM
 
-    public virtual void AnimateInLeftBottom(GameObject go) {
-        AnimateInLeftBottom(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutLeftBottom(GameObject go) {
-        AnimateOutLeftBottom(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInLeftBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInLeftBottom(float time, float delay) {
+    public virtual void AnimateInLeftBottom(float time = 1f, float delay = 0f) {
         AnimateInLeftBottom(panelLeftBottomObject, time, delay);
     }
 
-    public virtual void AnimateOutLeftBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInLeftBottom(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateInLeft(go, time, delay);
     }
 
-    public virtual void AnimateOutLeftBottom(float time, float delay) {
+    public virtual void AnimateOutLeftBottom(float time = 1f, float delay = 0f) {
         AnimateOutLeftBottom(panelLeftBottomObject, time, delay);
+    }
+
+    public virtual void AnimateOutLeftBottom(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateOutLeft(go, time, delay);
     }
 
     // LEFT TOP
 
-    public virtual void AnimateInLeftTop(GameObject go) {
-        AnimateInLeftTop(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutLeftTop(GameObject go) {
-        AnimateOutLeftTop(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInLeftTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInLeftTop(float time, float delay) {
+    public virtual void AnimateInLeftTop(float time = 1f, float delay = 0f) {
         AnimateInLeftTop(panelLeftTopObject, time, delay);
     }
 
-    public virtual void AnimateOutLeftTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(leftClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInLeftTop(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateInLeft(go, time, delay);
     }
 
-    public virtual void AnimateOutLeftTop(float time, float delay) {
+    public virtual void AnimateOutLeftTop(float time = 1f, float delay = 0f) {
         AnimateOutLeftTop(panelLeftTopObject, time, delay);
     }
 
+    public virtual void AnimateOutLeftTop(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateOutLeft(go, time, delay);
+    }
+
     // RIGHT
-
-    public virtual void AnimateInRight(GameObject go) {
-        AnimateInRight(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutRight(GameObject go) {
-        AnimateOutRight(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInRight(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInRight(float time, float delay) {
+    
+    public virtual void AnimateInRight(float time = 1f, float delay = 0f) {
         AnimateInRight(panelRightObject, time, delay);
     }
 
-    public virtual void AnimateOutRight(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInRight(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.ShowObjectRight(go, TweenCoord.local, true, time, delay);
     }
 
-    public virtual void AnimateOutRight(float time, float delay) {
+    public virtual void AnimateOutRight(float time = 1f, float delay = 0f) {
         AnimateOutRight(panelRightObject, time, delay);
     }
 
+    public virtual void AnimateOutRight(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.HideObjectRight(go, TweenCoord.local, true, time, delay);
+    }
+
     // BOTTOM RIGHT
-
-    public virtual void AnimateInRightBottom(GameObject go) {
-        AnimateInRightBottom(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutRightBottom(GameObject go) {
-        AnimateOutRightBottom(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInRightBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInRightBottom(float time, float delay) {
+    
+    public virtual void AnimateInRightBottom(float time = 1f, float delay = 0f) {
         AnimateInRightBottom(panelRightBottomObject, time, delay);
     }
 
-    public virtual void AnimateOutRightBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInRightBottom(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateInRight(go, time, delay);
     }
 
-    public virtual void AnimateOutRightBottom(float time, float delay) {
+    public virtual void AnimateOutRightBottom(float time = 1f, float delay = 0f) {
         AnimateOutRightBottom(panelRightBottomObject, time, delay);
     }
 
+    public virtual void AnimateOutRightBottom(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateOutRight(go, time, delay);
+    }
+
     // TOP RIGHT
-
-    public virtual void AnimateInRightTop(GameObject go) {
-        AnimateInRightTop(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutRightTop(GameObject go) {
-        AnimateOutRightTop(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInRightTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightOpenX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInRightTop(float time, float delay) {
+    
+    public virtual void AnimateInRightTop(float time = 1f, float delay = 0f) {
         AnimateInRightTop(panelRightTopObject, time, delay);
     }
 
-    public virtual void AnimateOutRightTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithX(rightClosedX), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInRightTop(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateInRight(go, time, delay);
     }
 
-    public virtual void AnimateOutRightTop(float time, float delay) {
+    public virtual void AnimateOutRightTop(float time = 1f, float delay = 0f) {
         AnimateOutRightTop(panelRightTopObject, time, delay);
+    }
+
+    public virtual void AnimateOutRightTop(GameObject go, float time = 1f, float delay = 0f) {
+        AnimateOutRight(go, time, delay);
     }
 
     // TOP
 
-    public virtual void AnimateInTop(GameObject go) {
-        AnimateInTop(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutTop(GameObject go) {
-        AnimateOutTop(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithY(topOpenY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInTop(float time, float delay) {
+    public virtual void AnimateInTop(float time = 1f, float delay = 0f) {
         AnimateInTop(panelTopObject, time, delay);
     }
 
-    public virtual void AnimateOutTop(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithY(topClosedY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInTop(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.ShowObjectTop(go, TweenCoord.local, true, time, delay);
     }
 
-    public virtual void AnimateOutTop(float time, float delay) {
-        AnimateInTop(panelTopObject, time, delay);
+    public virtual void AnimateOutTop(float time = 1f, float delay = 0f) {
+        AnimateOutTop(panelTopObject, time, delay);
+    }
+
+    public virtual void AnimateOutTop(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.HideObjectTop(go, TweenCoord.local, true, time, delay);
     }
 
     // BOTTOM
 
-    public virtual void AnimateInBottom(GameObject go) {
-        AnimateInBottom(go, durationShow, durationDelayShow);
-    }
-
-    public virtual void AnimateOutBottom(GameObject go) {
-        AnimateOutBottom(go, durationHide, durationDelayHide);
-    }
-
-    public virtual void AnimateInBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(0));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomOpenY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    public virtual void AnimateInBottom(float time, float delay) {
+    public virtual void AnimateInBottom(float time = 1f, float delay = 0f) {
         AnimateInBottom(panelBottomObject, time, delay);
     }
 
-    public virtual void AnimateOutBottom(GameObject go, float time, float delay) {
-        if (go != null) {
-            //UITweenerUtil.MoveTo(go,
-            //UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(bottomClosedY));
-
-            LeanTween.cancel(go);
-
-            LeanTween.moveLocal(go, Vector3.zero.WithY(bottomClosedY), time)
-                .setDelay(delay)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
+    public virtual void AnimateInBottom(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.ShowObjectBottom(go, TweenCoord.local, true, time, delay);
     }
 
-    public virtual void AnimateOutBottom(float time, float delay) {
+    public virtual void AnimateOutBottom(float time = 1f, float delay = 0f) {
         AnimateOutBottom(panelBottomObject, time, delay);
+    }
+    
+    public virtual void AnimateOutBottom(GameObject go, float time = 1f, float delay = 0f) {
+        TweenUtil.HideObjectBottom(go, TweenCoord.local, true, time, delay);
     }
 
     // ANIMATE
@@ -702,7 +453,7 @@ public class UIPanelBase : UIAppPanel {
         LeanTween.cancelAll();
     }
 
-    public virtual void AnimateIn(float time, float delay) {
+    public virtual void AnimateIn(float time = 1f, float delay = 0f) {
 
         if (isVisible) {
             return;
@@ -922,195 +673,9 @@ public class UIPanelBase : UIAppPanel {
             draggablePanel.ResetPosition();
         }
     }
+ 
 
-    // top
-
-    public virtual void ShowPanelTop(GameObject panel) {
-        ShowPanelTop(panel, true);
-    }
-
-    public virtual void ShowPanelTop(GameObject panel, bool fade) {
-        if (panel != null) {
-
-            //UITweenerUtil.MoveTo(panel, 
-            //// UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
-            //   Vector3.zero.WithX(leftOpenX).WithY(topClosedY));   
-
-            LeanTween.cancel(panel);
-
-            if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, .7f);
-
-                LeanTween.alpha(panel, 1f, durationShow)
-                    .setDelay(durationDelayShow)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, 
-            //                     Vector3.zero.WithY(topOpenY));
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithY(topOpenY), durationShow)
-                .setDelay(durationDelayShow)
-                .setEase(LeanTweenType.easeInOutQuad);
-
-        }
-    }
-
-    public virtual void HidePanelTop(GameObject panel) {
-        HidePanelTop(panel, true);
-    }
-
-    public virtual void HidePanelTop(GameObject panel, bool fade) {
-        if (panel != null) {
-
-            LeanTween.cancel(panel);
-
-            if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-
-                LeanTween.alpha(panel, 0f, durationHide)
-                    .setDelay(durationDelayHide)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
-            //                     Vector3.zero.WithY(topClosedY));
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationHide * 2, 
-            //   Vector3.zero.WithX(leftClosedX).WithY(topClosedY)); 
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithY(topClosedY), durationHide)
-                .setDelay(durationDelayHide)
-                .setEase(LeanTweenType.easeInOutQuad);
-        }
-    }
-
-    // bottom
-
-    public virtual void ShowPanelBottom(GameObject panel) {
-        ShowPanelBottom(panel, true);
-    }
-
-    public virtual void ShowPanelBottom(GameObject panel, bool fade) {
-        if (panel != null) {
-
-            LeanTween.cancel(panel);
-
-            //UITweenerUtil.MoveTo(panel,
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, 0f, 0f,
-            //                     Vector3.zero.WithY(bottomOpenY));
-
-            if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-
-                LeanTween.alpha(panel, 1f, durationHide)
-                    .setDelay(durationDelayHide)
-                    .setEase(LeanTweenType.easeInOutQuad);
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(bottomOpenY), durationShow, durationDelayShow, false);
-
-            // TODO look for -alpha-[number] to handle nested items to only fade to a certain amount.
-            //foreach(Transform t in panel.transform) {
-
-            //}
-        }
-    }
-
-    public virtual void HidePanelBottom(GameObject panel, bool fade) {
-
-        if (panel != null) {
-            
-            if (fade) {
-                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(bottomClosedY), durationShow, durationDelayShow, false);
-        }
-    }
-
-    public virtual void HidePanelBottom(GameObject panel) {
-        HidePanelBottom(panel, true);
-    }
-
-    // left
-
-    public virtual void ShowPanelLeft(GameObject panel) {
-        ShowPanelLeft(panel, true);
-    }
-
-    public virtual void ShowPanelLeft(GameObject panel, bool fade) {
-
-        if (panel != null) {
-            
-            if (fade) {
-                TweenUtil.FadeToObject(panel, 1f, durationShow, durationDelayShow);
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(leftOpenX), durationShow, durationDelayShow, false);
-        }
-    }
-
-    public virtual void HidePanelLeft(GameObject panel) {
-        HidePanelLeft(panel, true);
-    }
-
-    public virtual void HidePanelLeft(GameObject panel, bool fade) {
-
-        if (panel != null) {
-            
-            if (fade) {
-                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(leftClosedX), durationHide, durationDelayHide, false);
-        }
-    }
-
-    // right
-
-    public virtual void ShowPanelRight(GameObject panel) {
-        ShowPanelRight(panel, true);
-    }
-
-    public virtual void ShowPanelRight(GameObject panel, bool fade) {
-
-        if (panel != null) {
-            
-            if (fade) {
-                TweenUtil.FadeToObject(panel, 1f, durationShow, durationDelayShow);
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(rightOpenX), durationShow, durationDelayShow, false);
-        }
-    }
-
-    public virtual void HidePanelRight(GameObject panel) {
-        HidePanelRight(panel, true);
-    }
-
-    public virtual void HidePanelRight(GameObject panel, bool fade) {
-        if (panel != null) {
-            
-            if (fade) {
-                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);                
-            }
-
-            TweenUtil.MoveToObject(
-                panel, Vector3.zero.WithX(rightClosedX), durationHide, durationDelayHide, false);
-        }
-    }
+    // LOADING
 
     public virtual GameObject LoadObject(GameObject prefabObject, string itemName) {
         return LoadObject(listGridRoot, prefabObject, itemName);
