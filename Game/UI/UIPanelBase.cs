@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum UIPanelBackgroundDisplayState {
     None,
@@ -1013,48 +1014,26 @@ public class UIPanelBase : UIAppPanel {
                     .setEase(LeanTweenType.easeInOutQuad);
             }
 
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(bottomOpenY), durationShow, durationDelayShow, false);
+
             // TODO look for -alpha-[number] to handle nested items to only fade to a certain amount.
             //foreach(Transform t in panel.transform) {
 
             //}
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow, durationDelayShow, 
-            //   Vector3.zero.WithY(bottomOpenY));   
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithY(bottomOpenY), durationShow)
-                .setDelay(durationDelayShow)
-                .setEase(LeanTweenType.easeInOutQuad);
-
         }
     }
 
     public virtual void HidePanelBottom(GameObject panel, bool fade) {
+
         if (panel != null) {
-
-            LeanTween.cancel(panel);
-
+            
             if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-
-
-                LeanTween.alpha(panel, 0f, durationHide)
-                    .setDelay(durationDelayHide)
-                    .setEase(LeanTweenType.easeInOutQuad);
+                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);
             }
 
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide, durationDelayHide, 
-            //                     Vector3.zero.WithY(bottomClosedY));
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationHide * 2, 
-            //   Vector3.zero.WithX(leftClosedX).WithY(bottomClosedY)); 
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithY(bottomClosedY), durationHide)
-                .setDelay(durationDelayHide)
-                .setEase(LeanTweenType.easeInOutQuad);
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(bottomClosedY), durationShow, durationDelayShow, false);
         }
     }
 
@@ -1069,31 +1048,15 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void ShowPanelLeft(GameObject panel, bool fade) {
+
         if (panel != null) {
-
-            LeanTween.cancel(panel);
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
-            //   Vector3.zero.WithX(leftClosedX));   
-
+            
             if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
-
-                LeanTween.alpha(panel, 1f, durationShow)
-                    .setDelay(durationDelayShow)
-                    .setEase(LeanTweenType.easeInOutQuad);
+                TweenUtil.FadeToObject(panel, 1f, durationShow, durationDelayShow);
             }
 
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
-            //                     Vector3.zero.WithX(leftOpenX));
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithX(leftOpenX), durationShow)
-                .setDelay(durationDelayShow)
-                .setEase(LeanTweenType.easeInOutQuad);
-
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(leftOpenX), durationShow, durationDelayShow, false);
         }
     }
 
@@ -1102,30 +1065,15 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void HidePanelLeft(GameObject panel, bool fade) {
+
         if (panel != null) {
-
-            LeanTween.cancel(panel);
-
+            
             if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
-
-                LeanTween.alpha(panel, 0f, durationHide)
-                    .setDelay(durationDelayHide)
-                    .setEase(LeanTweenType.easeInOutQuad);
+                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);
             }
 
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
-            //                     Vector3.zero.WithX(leftClosedX));
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, durationHide * 4, durationHide * 8, 
-            //   Vector3.zero.WithY(topClosedY));   
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithX(leftClosedX), durationHide)
-                .setDelay(durationDelayHide)
-                .setEase(LeanTweenType.easeInOutQuad);
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(leftClosedX), durationHide, durationDelayHide, false);
         }
     }
 
@@ -1136,31 +1084,15 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void ShowPanelRight(GameObject panel, bool fade) {
+
         if (panel != null) {
-
-            LeanTween.cancel(panel);
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 
-            //   Vector3.zero.WithX(rightClosedX));  
-
+            
             if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationShow * 2, durationShow / 2, 1f);
-
-                LeanTween.alpha(panel, 1f, durationShow)
-                    .setDelay(durationDelayShow)
-                    .setEase(LeanTweenType.easeInOutQuad);
+                TweenUtil.FadeToObject(panel, 1f, durationShow, durationDelayShow);
             }
 
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationShow * 2, durationShow / 2, 
-            //                     Vector3.zero.WithX(rightOpenX));
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithX(rightOpenX), durationShow)
-                .setDelay(durationDelayShow)
-                .setEase(LeanTweenType.easeInOutQuad);
-
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(rightOpenX), durationShow, durationDelayShow, false);
         }
     }
 
@@ -1170,29 +1102,13 @@ public class UIPanelBase : UIAppPanel {
 
     public virtual void HidePanelRight(GameObject panel, bool fade) {
         if (panel != null) {
-
-            LeanTween.cancel(panel);
-
+            
             if (fade) {
-                //UITweenerUtil.FadeTo(panel, 
-                //                     UITweener.Method.Linear, UITweener.Style.Once, durationHide * 2, durationHide * 2, 0f);
-
-                LeanTween.alpha(panel, 0f, durationHide)
-                    .setDelay(durationDelayHide)
-                    .setEase(LeanTweenType.easeInOutQuad);
+                TweenUtil.FadeToObject(panel, 0f, durationHide, durationDelayHide);                
             }
 
-            //UITweenerUtil.MoveTo(panel, 
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, durationHide * 2, 0f, 
-            //                     Vector3.zero.WithX(rightClosedX));
-
-            //UITweenerUtil.MoveTo(panel, 
-            //   UITweener.Method.Linear, UITweener.Style.Once, durationHide * 4, durationHide * 8, 
-            //   Vector3.zero.WithX(rightClosedX).WithY(topClosedY));
-
-            LeanTween.moveLocal(panel, Vector3.zero.WithX(rightClosedX), durationHide)
-                .setDelay(durationDelayHide)
-                .setEase(LeanTweenType.easeInOutQuad);
+            TweenUtil.MoveToObject(
+                panel, Vector3.zero.WithX(rightClosedX), durationHide, durationDelayHide, false);
         }
     }
 
@@ -1362,7 +1278,6 @@ public class UIPanelBase : UIAppPanel {
 
         if (backgroundDisplayState ==
             UIPanelBackgroundDisplayState.PanelBacker) {
-
             GameUIPanelBackgrounds.ShowUI();
         }
         else if (backgroundDisplayState ==
