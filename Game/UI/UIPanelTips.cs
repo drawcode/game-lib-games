@@ -9,6 +9,7 @@ using UnityEngine.UI;
 #endif
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum TipsMode {
     Loading,
@@ -415,12 +416,12 @@ public class UIPanelTips : UIAppPanelBaseList {
     }
     
     public void ShowPanelDefault() {
-        ShowPanelTop(panelDefault);
+        TweenUtil.ShowObjectTop(panelDefault);
     }
     
     public void HidePanelDefault() {
-        
-        HidePanelTop(panelDefault);
+
+        TweenUtil.HideObjectTop(panelDefault);
     }
     
     public void showDefault() {

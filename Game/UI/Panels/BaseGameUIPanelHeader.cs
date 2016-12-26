@@ -9,6 +9,7 @@ using UnityEngine.UI;
 #endif
 
 using Engine.Events;
+using Engine.Utility;
 
 public class BaseGameUIPanelHeader : GameUIPanelBase {
 
@@ -414,7 +415,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
     public IEnumerator showCharacterCo() {
         yield return new WaitForSeconds(.55f);
-        ShowPanelTop(containerCharacter, false);
+        TweenUtil.ShowObjectTop(containerCharacter);
 
         if(containerCharacter != null) {
             containerCharacter.ResetRigidBodiesVelocity();
@@ -436,7 +437,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
     
     public virtual void hideCharacter() {
-        HidePanelTop(containerCharacter, false);
+        TweenUtil.HideObjectTop(containerCharacter);
         
         GameUIController.Instance.currentDraggableUIGameObject = 
             null;
@@ -456,7 +457,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     
     public IEnumerator showCharacterLargeCo() {
         yield return new WaitForSeconds(.55f);
-        ShowPanelTop(containerCharacterLarge, false);
+        TweenUtil.ShowObjectTop(containerCharacterLarge);
                 
         if (containerCharacterLarge != null) {
             containerCharacterLarge.ResetRigidBodiesVelocity();
@@ -476,7 +477,7 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
     }
     
     public virtual void hideCharacterLarge() {
-        HidePanelTop(containerCharacterLarge, false);
+        TweenUtil.HideObjectTop(containerCharacterLarge);
         
         GameUIController.Instance.currentDraggableUIGameObject = null;
     }

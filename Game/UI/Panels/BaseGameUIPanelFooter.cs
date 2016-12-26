@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public class GameUIPanelFooterButtons {
     public static string gameNetworks = "game-networks";
@@ -211,7 +212,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
                 if(hideCurrent) {
                     HideAllButtons();
                 }
-                ShowPanelBottom(item.gameObject);
+                TweenUtil.ShowObjectBottom(item.gameObject);
                 item.gameObject.ShowObjectDelayed(.7f);
                 currentButtonCode = code;
             }
@@ -230,7 +231,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 
         foreach (GameObjectShowItem item in
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
-            HidePanelBottom(item.gameObject);
+            TweenUtil.HideObjectBottom(item.gameObject);
             item.gameObject.HideObjectDelayed(.5f);
         }
     }
