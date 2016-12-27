@@ -263,164 +263,164 @@ public class UIPanelBase : UIAppPanel {
 
     // CENTER
 
-    public virtual void AnimateInCenter(float time = 1f, float delay = 0f) {
-        AnimateInCenter(panelCenterObject, time, delay);
+    public virtual void AnimateInCenter(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInCenter(panelCenterObject, time, delay, fade);
     }
 
-    public virtual void AnimateInCenter(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.ShowObjectBottom(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateInCenter(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        TweenUtil.ShowObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
-    public virtual void AnimateOutCenter(float time = 1f, float delay = 0f) {
-        AnimateOutCenter(panelCenterObject, time, delay);
+    public virtual void AnimateOutCenter(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutCenter(panelCenterObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutCenter(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.HideObjectBottom(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateOutCenter(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        TweenUtil.HideObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
     // LEFT
 
-    public virtual void AnimateInLeft(float time = 1f, float delay = 0f) {
-        AnimateInLeft(panelLeftObject, time, delay);
+    public virtual void AnimateInLeft(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInLeft(panelLeftObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeft(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.ShowObjectLeft(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateInLeft(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        TweenUtil.ShowObjectLeft(go, TweenCoord.local, fade, time, delay);
     }
 
-    public virtual void AnimateOutLeft(float time = 1f, float delay = 0f) {
-        AnimateOutLeft(panelLeftObject, time, delay);
+    public virtual void AnimateOutLeft(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutLeft(panelLeftObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutLeft(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.HideObjectLeft(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateOutLeft(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        TweenUtil.HideObjectLeft(go, TweenCoord.local, fade, time, delay);
     }
 
     // LEFT BOTTOM
 
-    public virtual void AnimateInLeftBottom(float time = 1f, float delay = 0f) {
-        AnimateInLeftBottom(panelLeftBottomObject, time, delay);
+    public virtual void AnimateInLeftBottom(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInLeftBottom(panelLeftBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeftBottom(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateInLeft(go, time, delay);
+    public virtual void AnimateInLeftBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInLeft(go, time, delay, fade);
     }
 
-    public virtual void AnimateOutLeftBottom(float time = 1f, float delay = 0f) {
-        AnimateOutLeftBottom(panelLeftBottomObject, time, delay);
+    public virtual void AnimateOutLeftBottom(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutLeftBottom(panelLeftBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutLeftBottom(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateOutLeft(go, time, delay);
+    public virtual void AnimateOutLeftBottom(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutLeft(go, time, delay, fade);
     }
 
     // LEFT TOP
 
-    public virtual void AnimateInLeftTop(float time = 1f, float delay = 0f) {
-        AnimateInLeftTop(panelLeftTopObject, time, delay);
+    public virtual void AnimateInLeftTop(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInLeftTop(panelLeftTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeftTop(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateInLeft(go, time, delay);
+    public virtual void AnimateInLeftTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInLeft(go, time, delay, fade);
     }
 
-    public virtual void AnimateOutLeftTop(float time = 1f, float delay = 0f) {
-        AnimateOutLeftTop(panelLeftTopObject, time, delay);
+    public virtual void AnimateOutLeftTop(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutLeftTop(panelLeftTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutLeftTop(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateOutLeft(go, time, delay);
+    public virtual void AnimateOutLeftTop(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutLeft(go, time, delay, fade);
     }
 
     // RIGHT
     
-    public virtual void AnimateInRight(float time = 1f, float delay = 0f) {
-        AnimateInRight(panelRightObject, time, delay);
+    public virtual void AnimateInRight(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInRight(panelRightObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRight(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.ShowObjectRight(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateInRight(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        TweenUtil.ShowObjectRight(go, TweenCoord.local, fade, time, delay);
     }
 
-    public virtual void AnimateOutRight(float time = 1f, float delay = 0f) {
-        AnimateOutRight(panelRightObject, time, delay);
+    public virtual void AnimateOutRight(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutRight(panelRightObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutRight(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.HideObjectRight(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateOutRight(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        TweenUtil.HideObjectRight(go, TweenCoord.local, fade, time, delay);
     }
 
     // BOTTOM RIGHT
     
-    public virtual void AnimateInRightBottom(float time = 1f, float delay = 0f) {
-        AnimateInRightBottom(panelRightBottomObject, time, delay);
+    public virtual void AnimateInRightBottom(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInRightBottom(panelRightBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRightBottom(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateInRight(go, time, delay);
+    public virtual void AnimateInRightBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInRight(go, time, delay, fade);
     }
 
-    public virtual void AnimateOutRightBottom(float time = 1f, float delay = 0f) {
-        AnimateOutRightBottom(panelRightBottomObject, time, delay);
+    public virtual void AnimateOutRightBottom(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutRightBottom(panelRightBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutRightBottom(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateOutRight(go, time, delay);
+    public virtual void AnimateOutRightBottom(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutRight(go, time, delay, fade);
     }
 
     // TOP RIGHT
     
-    public virtual void AnimateInRightTop(float time = 1f, float delay = 0f) {
-        AnimateInRightTop(panelRightTopObject, time, delay);
+    public virtual void AnimateInRightTop(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInRightTop(panelRightTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRightTop(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateInRight(go, time, delay);
+    public virtual void AnimateInRightTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInRight(go, time, delay, fade);
     }
 
-    public virtual void AnimateOutRightTop(float time = 1f, float delay = 0f) {
-        AnimateOutRightTop(panelRightTopObject, time, delay);
+    public virtual void AnimateOutRightTop(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutRightTop(panelRightTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutRightTop(GameObject go, float time = 1f, float delay = 0f) {
-        AnimateOutRight(go, time, delay);
+    public virtual void AnimateOutRightTop(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutRight(go, time, delay, fade);
     }
 
     // TOP
 
-    public virtual void AnimateInTop(float time = 1f, float delay = 0f) {
-        AnimateInTop(panelTopObject, time, delay);
+    public virtual void AnimateInTop(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInTop(panelTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInTop(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.ShowObjectTop(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateInTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        TweenUtil.ShowObjectTop(go, TweenCoord.local, fade, time, delay);
     }
 
-    public virtual void AnimateOutTop(float time = 1f, float delay = 0f) {
-        AnimateOutTop(panelTopObject, time, delay);
+    public virtual void AnimateOutTop(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutTop(panelTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateOutTop(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.HideObjectTop(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateOutTop(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        TweenUtil.HideObjectTop(go, TweenCoord.local, fade, time, delay);
     }
 
     // BOTTOM
 
-    public virtual void AnimateInBottom(float time = 1f, float delay = 0f) {
-        AnimateInBottom(panelBottomObject, time, delay);
+    public virtual void AnimateInBottom(float time = 1f, float delay = 0f, bool fade = true) {
+        AnimateInBottom(panelBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInBottom(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.ShowObjectBottom(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateInBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+        TweenUtil.ShowObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
-    public virtual void AnimateOutBottom(float time = 1f, float delay = 0f) {
-        AnimateOutBottom(panelBottomObject, time, delay);
+    public virtual void AnimateOutBottom(float time = .3f, float delay = 0f, bool fade = true) {
+        AnimateOutBottom(panelBottomObject, time, delay, fade);
     }
     
-    public virtual void AnimateOutBottom(GameObject go, float time = 1f, float delay = 0f) {
-        TweenUtil.HideObjectBottom(go, TweenCoord.local, true, time, delay);
+    public virtual void AnimateOutBottom(GameObject go, float time = .3f, float delay = 0f, bool fade = true) {
+        TweenUtil.HideObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
     // ANIMATE
@@ -453,7 +453,7 @@ public class UIPanelBase : UIAppPanel {
         LeanTween.cancelAll();
     }
 
-    public virtual void AnimateIn(float time = 1f, float delay = 0f) {
+    public virtual void AnimateIn(float time = .5f, float delay = .5f) {
 
         if (isVisible) {
             return;
