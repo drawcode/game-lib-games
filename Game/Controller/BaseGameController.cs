@@ -660,6 +660,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public List<Camera> camerasUI;
     public GameObject cameraContainersUI;
     //
+    public List<Camera> camerasBackground;
+    public GameObject cameraContainersBackground;
+    //
 #if ENABLE_FEATURE_AR
     public List<Camera> camerasAR;
     public GameObject cameraContainersAR;
@@ -2869,6 +2872,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
 
+        if (camerasBackground == null) {
+            camerasBackground = new List<Camera>();
+            if (cameraContainersBackground != null) {
+                foreach (Camera cam
+                         in cameraContainersBackground.GetComponentsInChildren<Camera>()) {
+                    if (!camerasBackground.Contains(cam)) {
+                        camerasBackground.Add(cam);
+                    }
+                }
+            }
+        }
+
 #if ENABLE_FEATURE_AR
 
         if (camerasAR == null) {
@@ -2929,6 +2944,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void handleCamerasInGame() {
         showCameras(camerasGame);
         hideCameras(camerasUI);
+        hideCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
         hideCameras(camerasAR);
 #endif
@@ -2937,6 +2953,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void handleCamerasInUI() {
         hideCameras(camerasGame);
         showCameras(camerasUI);
+        showCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
         hideCameras(camerasAR);
 #endif
@@ -2945,6 +2962,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public virtual void handleCamerasInAR() {
         hideCameras(camerasGame);
         showCameras(camerasUI);
+        hideCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
         showCameras(camerasAR);
 #endif
