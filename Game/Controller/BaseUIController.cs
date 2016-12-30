@@ -3756,7 +3756,7 @@ public virtual void hideCustomize() {
 
 #endif
 
-// Game Modes
+        // Game Modes
 
 #if ENABLE_FEATURE_GAME_MODE_ARCADE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
@@ -4118,14 +4118,28 @@ public virtual void hideCustomize() {
 
             object dataType = null;
             object dataCode = null;
+            string dataAppContentState = null;
 
             if (data.ContainsKey(BaseDataObjectKeys.type)) {
                 dataType = data.Get(BaseDataObjectKeys.type);
             }
+
             if (data.ContainsKey(BaseDataObjectKeys.code)) {
                 dataCode = data.Get(BaseDataObjectKeys.code);
             }
 
+            if (data.ContainsKey(BaseDataObjectKeys.app_content_state)) {
+
+                dataAppContentState = data.Get<string>(BaseDataObjectKeys.app_content_state);
+                
+                // Check content states/modes from button
+
+                if(dataAppContentState != null) {
+                    // TODO check content state validity
+                    GameController.ChangeGameStates(dataAppContentState);
+                }
+            }
+            
             if (dataType != null) {
 
                 // COLLECTION LOAD - MISSION

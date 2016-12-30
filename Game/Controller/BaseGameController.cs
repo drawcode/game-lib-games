@@ -2512,6 +2512,17 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     // PAUSED
 
     public virtual void gameRunningStatePause() {
+        gameRunningStatePauseDelayed(1);
+    }
+
+    public virtual void gameRunningStatePauseDelayed(float delay) {
+        StartCoroutine(gameRunningStatePauseDelayedCo(delay));
+    }
+
+    public virtual IEnumerator gameRunningStatePauseDelayedCo(float delay) {
+
+        yield return new WaitForSeconds(delay);
+
         gameRunningStatePause(0f);
     }
 
