@@ -2698,7 +2698,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         startLevelStats();
 
-        GameUIController.HideUI();
+        GameUIController.HideUI(true);
         GameUIController.ShowHUD();
 
         if (allowedEditing) {
