@@ -263,11 +263,11 @@ public class UIPanelBase : UIAppPanel {
 
     // CENTER
 
-    public virtual void AnimateInCenter(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInCenter(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInCenter(panelCenterObject, time, delay, fade);
     }
 
-    public virtual void AnimateInCenter(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInCenter(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         TweenUtil.ShowObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
@@ -281,11 +281,11 @@ public class UIPanelBase : UIAppPanel {
 
     // LEFT
 
-    public virtual void AnimateInLeft(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeft(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInLeft(panelLeftObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeft(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeft(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         TweenUtil.ShowObjectLeft(go, TweenCoord.local, fade, time, delay);
     }
 
@@ -299,11 +299,11 @@ public class UIPanelBase : UIAppPanel {
 
     // LEFT BOTTOM
 
-    public virtual void AnimateInLeftBottom(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeftBottom(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInLeftBottom(panelLeftBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeftBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeftBottom(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInLeft(go, time, delay, fade);
     }
 
@@ -317,11 +317,11 @@ public class UIPanelBase : UIAppPanel {
 
     // LEFT TOP
 
-    public virtual void AnimateInLeftTop(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeftTop(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInLeftTop(panelLeftTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInLeftTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInLeftTop(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInLeft(go, time, delay, fade);
     }
 
@@ -335,11 +335,11 @@ public class UIPanelBase : UIAppPanel {
 
     // RIGHT
     
-    public virtual void AnimateInRight(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRight(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInRight(panelRightObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRight(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRight(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         TweenUtil.ShowObjectRight(go, TweenCoord.local, fade, time, delay);
     }
 
@@ -353,11 +353,11 @@ public class UIPanelBase : UIAppPanel {
 
     // BOTTOM RIGHT
     
-    public virtual void AnimateInRightBottom(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRightBottom(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInRightBottom(panelRightBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRightBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRightBottom(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInRight(go, time, delay, fade);
     }
 
@@ -371,11 +371,11 @@ public class UIPanelBase : UIAppPanel {
 
     // TOP RIGHT
     
-    public virtual void AnimateInRightTop(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRightTop(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInRightTop(panelRightTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInRightTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInRightTop(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInRight(go, time, delay, fade);
     }
 
@@ -389,11 +389,11 @@ public class UIPanelBase : UIAppPanel {
 
     // TOP
 
-    public virtual void AnimateInTop(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInTop(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInTop(panelTopObject, time, delay, fade);
     }
 
-    public virtual void AnimateInTop(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInTop(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         TweenUtil.ShowObjectTop(go, TweenCoord.local, fade, time, delay);
     }
 
@@ -407,11 +407,11 @@ public class UIPanelBase : UIAppPanel {
 
     // BOTTOM
 
-    public virtual void AnimateInBottom(float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInBottom(float time = .5f, float delay = .5f, bool fade = true) {
         AnimateInBottom(panelBottomObject, time, delay, fade);
     }
 
-    public virtual void AnimateInBottom(GameObject go, float time = 1f, float delay = 0f, bool fade = true) {
+    public virtual void AnimateInBottom(GameObject go, float time = .5f, float delay = .5f, bool fade = true) {
         TweenUtil.ShowObjectBottom(go, TweenCoord.local, fade, time, delay);
     }
 
