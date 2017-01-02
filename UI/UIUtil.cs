@@ -714,6 +714,27 @@ public class UIUtil {
         return null;
     }
 
+    // IMAGES
+
+    public static void SetImageFillValue(Image obj, double val) {
+        if (obj != null) {
+            if (obj.type == Image.Type.Filled) {
+                obj.fillAmount = (float)val;
+            }
+        }
+    }
+
+    public static float GetImageFillValue(Image obj) {
+        if (obj != null) {
+            if (obj.type == Image.Type.Filled) {
+                return obj.fillAmount;
+            }
+        }
+        return 0f;
+    }
+
+    // INPUTS
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static void SetInputValue(UIInput obj, string val) {
         if (obj != null) {
@@ -776,6 +797,8 @@ public class UIUtil {
         return null;
     }
 
+    // SLIDERS
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public static void SetSliderValue(UISlider obj, double val) {
         if (obj != null) {
@@ -799,6 +822,10 @@ public class UIUtil {
 
     public static void SetSliderValue(GameObject obj, double val) {
         SetSliderValue(obj, (float)val);
+    }
+
+    public static void SetSliderValue(Image obj, double val) {
+        SetImageFillValue(obj, val);
     }
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -836,6 +863,9 @@ public class UIUtil {
             else if (obj.Has<Scrollbar>()) {
                 SetSliderValue(obj.Get<Scrollbar>(), val);
             }
+            else if (obj.Has<Image>()) {
+                SetSliderValue(obj.Get<Image>(), val);
+            }
 
         }
     }
@@ -863,6 +893,9 @@ public class UIUtil {
             else if (obj.Has<Scrollbar>()) {
                 return GetSliderValue(obj.Get<Scrollbar>());
             }
+            else if (obj.Has<Image>()) {
+                return GetSliderValue(obj.Get<Image>());
+            }
         }
 
         return 0f;
@@ -881,6 +914,12 @@ public class UIUtil {
         }
         return 0f;
     }
+
+    public static float GetSliderValue(Image obj) {
+        return GetImageFillValue(obj);
+    }
+
+    // TOGGLES / CHECKBOXES
 
 #if USE_UI_NGUI_2_7
     public static void SetToggleValue(UICheckbox obj, bool selected) {
@@ -1028,6 +1067,8 @@ public class UIUtil {
         }
         return false;
     }
+
+    // BUTTON
 
     public static bool IsButton(GameObject go) {
         if (go == null)
