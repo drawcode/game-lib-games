@@ -11,6 +11,7 @@ using UnityEngine.UI;
 #endif
 
 using Engine.Events;
+using Engine.Utility;
 
 public class UIPanelOverviewMode : UIPanelBase {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -283,6 +284,35 @@ public class UIPanelOverviewMode : UIPanelBase {
         }
     }
 
+    public void UpdateOverviewWorld() {
+
+        GameWorld gameWorld = GameWorlds.Current;
+
+        if (gameWorld == null) {
+            return;
+        }
+
+        foreach (GameObjectInactive obj in containerOverview.GetList<GameObjectInactive>()) {
+
+            if (obj.type == BaseDataObjectKeys.overview
+                && obj.code == BaseDataObjectKeys.world) {
+
+                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+                    if (world.type == BaseDataObjectKeys.world) {
+                        TweenUtil.HideObjectBottom(world.gameObject);
+                    }
+                }
+
+                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+
+                    if (world.code.IsEqualLowercase(gameWorld.code)) {
+                        TweenUtil.ShowObjectBottom(world.gameObject);
+                    }
+                }
+            }
+        }
+    }
+
     public void ShowOverview() {
 
         HideStates();
@@ -293,6 +323,8 @@ public class UIPanelOverviewMode : UIPanelBase {
         flowState = AppOverviewFlowState.Mode;
 
         UIPanelDialogBackground.ShowDefault();
+
+        UpdateOverviewWorld();
 
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
 
