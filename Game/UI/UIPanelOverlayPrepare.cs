@@ -55,7 +55,10 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public GameObject containerTipsMode;
     public GameObject containerTipsGameplay;
     public GameObject containerTipsGeneral;
-    
+
+    public GameObject containerLoader;
+    public GameObject containerLoaderSpinner;
+
     public string loadingLevelDisplay = "Loading Level...";
         
     //public UIPanelTips tips
@@ -282,15 +285,65 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public void ShowButtonPlay() {
         if(buttonReady != null) {
-            buttonReady.gameObject.Show();        
+            buttonReady.gameObject.Show();
         }
+
+        HideLoaderSpinner();
     }
     
     public void HideButtonPlay() {
         if(buttonReady != null) {
             buttonReady.gameObject.Hide();        
         }
+
+        ShowLoaderSpinner();
     }
+
+    public void ShowLoader() {
+        containerLoader.Show();
+    }
+
+    public void HideLoader() {
+        containerLoader.Hide();
+    }
+
+    public void ShowLoaderSpinner() {
+        containerLoaderSpinner.Show();
+    }
+
+    public void HideLoaderSpinner() {
+        containerLoaderSpinner.Hide();
+    }
+
+    public void UpdateOverviewWorld() {
+
+        GameWorld gameWorld = GameWorlds.Current;
+
+        if (gameWorld == null) {
+            return;
+        }
+
+        foreach (GameObjectInactive obj in containerOverview.GetList<GameObjectInactive>()) {
+
+            if (obj.type == BaseDataObjectKeys.overview
+                && obj.code == BaseDataObjectKeys.world) {
+
+                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+                    if (world.type == BaseDataObjectKeys.world) {
+                        TweenUtil.HideObjectBottom(world.gameObject);
+                    }
+                }
+                
+                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+
+                    if (world.code.IsEqualLowercase(gameWorld.code)) {
+                        TweenUtil.ShowObjectBottom(world.gameObject);
+                    }
+                }
+            }
+        }
+    }
+
 
     public void ShowOverview() {
 
@@ -299,6 +352,15 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         containerOverview.Show();
 
         ShowCamera();
+
+        ShowLoaderSpinner();
+
+        UpdateOverviewWorld();
+
+        if (containerLoader.Has<GameObjectImageFill>()) {
+            GameObjectImageFill fill = containerLoader.Get<GameObjectImageFill>();
+            fill.Reset();
+        }
 
         // Update team display
 
@@ -340,10 +402,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
         UIUtil.SetLabelValue(labelTipTitle, currentTip.display_name);
         UIUtil.SetLabelValue(labelTipDescription, currentTip.description);
-        UIUtil.SetLabelValue(labelTipType, currentTip.keys[0] + " Tips");
-                
+        UIUtil.SetLabelValue(labelTipType, currentTip.keys[0] + " Tips");                
     }
-
 
     public void HideOverview() {
 

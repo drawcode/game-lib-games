@@ -62,6 +62,24 @@ public enum GameStateGlobal {
     GameOverlay, // external dialog such as sharing/community/over
 }
 
+public class BaseGameplayType {
+    public static string gameDasher = "game-dasher";
+    public static string gameRunner = "game-runner";
+}
+
+public class BaseGameplayWorldType {
+    public static string gameDefault = "game-default";
+    public static string gameStationary = "game-stationary";
+}
+
+public class GameplayType : BaseGameplayType {
+
+}
+
+public class GameplayWorldType : BaseGameplayWorldType {
+
+}
+
 public class GameActorType {
     public static string enemy = "enemy";
     public static string player = "player";
@@ -585,19 +603,24 @@ public enum GameRunningState {
 public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public GamePlayerController currentGamePlayerController;
-    public Dictionary<string, GamePlayerController> gamePlayerControllers;
-    public Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
-    public List<string> gameCharacterTypes = new List<string>();
+
+    public string gameplayType = GameplayType.gameDasher;
+    public string gameplayWorldType = GameplayWorldType.gameDefault;
+
+
+    internal Dictionary<string, GamePlayerController> gamePlayerControllers;
+    internal Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
+    internal List<string> gameCharacterTypes = new List<string>();
     int currentCharacterTypeIndex = 0;
     //int lastCharacterTypeIndex = 0;
 
-    public bool initialized = false;
-    public bool allowedEditing = true;
+    internal bool initialized = false;
+    internal bool allowedEditing = true;
     public bool isAdvancing = false;
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
     public UnityEngine.Object prefabDraggableContainer;
-    public Dictionary<string, GameLevelItemAsset> levelGrid = null;
-    public List<GameLevelItemAsset> levelItems = null;
+    internal Dictionary<string, GameLevelItemAsset> levelGrid = null;
+    internal List<GameLevelItemAsset> levelItems = null;
     public GameObject levelBoundaryContainerObject;
     public GameObject levelContainerObject;
     public GameObject levelItemsContainerObject;
@@ -2652,7 +2675,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public virtual void onGameContentDisplayPause() {
         GameDraggableEditor.HideAllEditDialogs();
-        UIPanelDialogBackground.ShowDefault();
+        //UIPanelDialogBackground.ShowDefault();
         gameRunningStatePause();
     }
 
@@ -2759,7 +2782,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         // Show pause, resume, quit menu
         GameUIController.ShowUIPanelPause();
-        UIPanelDialogBackground.ShowDefault();
+        //UIPanelDialogBackground.ShowDefault();
         gameRunningStatePause();
     }
 

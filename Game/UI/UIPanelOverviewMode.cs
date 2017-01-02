@@ -393,6 +393,8 @@ public class UIPanelOverviewMode : UIPanelBase {
     public override void AnimateIn() {
         base.AnimateIn();
 
+        UIPanelDialogBackground.ShowDefault();
+
         loadData();
     }
 
