@@ -1647,20 +1647,27 @@ public class BaseGamePlayerController : GameActor {
         }
         else if (controllerState == GamePlayerControllerState.ControllerPlayer) {
             if (currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+
+                if (currentControllerData.navMeshAgent.isActiveAndEnabled) {
+                    currentControllerData.navMeshAgent.Stop();
+                }
                 //navMeshAgent.enabled = false;
             }
         }
         else if (controllerState == GamePlayerControllerState.ControllerNetwork) {
             if (currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                if (currentControllerData.navMeshAgent.isActiveAndEnabled) {
+                    currentControllerData.navMeshAgent.Stop();
+                }
                 //navMeshAgent.enabled = false;
             }
             ChangeContextState(GamePlayerContextState.ContextNetwork);
         }
         else if (controllerState == GamePlayerControllerState.ControllerUI) {
             if (currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                if (currentControllerData.navMeshAgent.isActiveAndEnabled) {
+                    currentControllerData.navMeshAgent.Stop();
+                }
                 //navMeshAgent.enabled = false;  
                 if (currentControllerData.thirdPersonController != null) {
                     currentControllerData.thirdPersonController.getUserInput = true;
@@ -2104,7 +2111,10 @@ public class BaseGamePlayerController : GameActor {
 
             LoadInventory();
 
-            LoadWeapon(weaponInventory[weaponInventoryIndex]);
+            if (weaponInventory != null
+                && weaponInventory.Count != 0) {
+                LoadWeapon(weaponInventory[weaponInventoryIndex]);
+            }
         }
     }
 
