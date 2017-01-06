@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-
+using UnityEngine.AI;
 
 using Engine.Data.Json;
 using Engine.Events;
@@ -3213,9 +3213,14 @@ public class BaseGamePlayerController : GameActor {
     // --------------------------------------------------------------------
     // STATE/RESET
 
-    public virtual void ResetPositionAir(float y) {    
+    public virtual void ResetPositionAir(float y) {
 
         //if(IsPlayerControlled) {
+
+        //if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+        //    return;
+        //}
+
         if (currentControllerData.lastAirCheck > 1f) {
             currentControllerData.lastAirCheck = 0;
 
@@ -3239,6 +3244,9 @@ public class BaseGamePlayerController : GameActor {
         }
 
         if (IsPlayerControlled) {
+            if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+                //return;
+            }
             gameObject.ResetPosition();
         }
     }
@@ -3928,10 +3936,10 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void StartNavAgent() {
-        
+                
         if (!IsPlayerControlled && !isExiting) {
             //&& gameObject.Has<CharacterController>() && !isExiting) {
-
+            
             if (currentControllerData.navMeshAgent != null) {
                 currentControllerData.navMeshAgent.StartAgent();
             }
@@ -4526,6 +4534,33 @@ public class BaseGamePlayerController : GameActor {
 
     }
 
+    Vector3 moveGamePlayerDistance = Vector3.zero;
+    Vector3 currentGamePlayerDistance = Vector3.zero;
+    Vector3 overallGamePlayerDistance = Vector3.zero;
+
+    internal virtual void handleLateUpdateStationary() {
+
+        currentGamePlayerDistance.z = transform.position.z;
+        
+        overallGamePlayerDistance.z += currentGamePlayerDistance.z;
+
+        overallGamePlayerDistance.z = currentGamePlayerDistance.z;
+
+        moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
+
+        //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
+        
+        transform.position = transform.position.WithZ(-moveGamePlayerDistance.z);
+
+        //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
+        //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+
+        //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
+        //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+
+
+    }
+
     float lastUpdatePhysics = 0;
 
     public virtual void UpdatePhysicsState() {
@@ -4543,24 +4578,38 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        StartCoroutine(UpdatePhysicStateCo());
+        if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+            
+            if (currentControllerData.characterController.enabled) {
+                currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
+            }
+
+            // consumes the currentControllerData.impact energy each cycle:
+            currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+            //}
+        }
+
+        UpdatePlayerEffectsState();
+
+        //StartCoroutine(UpdatePhysicStateCo());
     }
 
     public virtual IEnumerator UpdatePhysicStateCo() {
         
         //Vectrosity.VectorLine.SetLine (Color.red, transform.position, currentControllerData.impact);
 
-        if (currentControllerData.characterController.enabled) {
-            currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
-        }
-                
+        //if (currentControllerData.characterController.enabled) {
+        //    currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
+        // }
+                                
         // consumes the currentControllerData.impact energy each cycle:
-        currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+        //currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
         //}
 
-        UpdatePlayerEffectsState();
-                
-        yield return new WaitForFixedUpdate();
+        //UpdatePlayerEffectsState();
+
+        yield return null;
+        //new WaitForFixedUpdate();
 
     }
 
@@ -4945,16 +4994,22 @@ public class BaseGamePlayerController : GameActor {
                 //}
 
                 if (gameObject.transform.position.y < UnityEngine.Random.Range(1.3f, 1.8f)) { //UnityEngine.Random.Range(1f, 2f)) {
-                      
+
                     // jagged jumps
                     //if (Mathf.Abs(distanceCurrent) > .5f) {
                     //    Jump(.05f);
                     //}
 
-                    Vector3 dir = gameGoalNext.transform.position - transform.position;
-                    dir.y = distanceCurrent / 2f;//UnityEngine.Random.Range(120f, 200f);
-                    currentControllerData.impact = Vector3.zero;
-                    AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
+                    if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+                    }
+                    else {
+                        
+                        Vector3 dir = gameGoalNext.transform.position - transform.position;
+                        dir.y = distanceCurrent / 2f;//UnityEngine.Random.Range(120f, 200f);
+                        currentControllerData.impact = Vector3.zero;
+                        AddImpactForce(dir, UnityEngine.Random.Range(1.3f, 1.8f));
+                    }
                 }
 
 
@@ -5078,18 +5133,23 @@ public class BaseGamePlayerController : GameActor {
                 GetPlayerProgress();
             }
     
-            currentControllerData.runtimeRPGData.modifierSpeed = currentControllerData.currentRPGItem.GetSpeed();
+            currentControllerData.runtimeRPGData.modifierSpeed = 
+                currentControllerData.currentRPGItem.GetSpeed();
 
-            currentControllerData.runtimeRPGData.modifierEnergy = currentControllerData.currentRPGItem.GetEnergy()
-            + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+            currentControllerData.runtimeRPGData.modifierEnergy = 
+                currentControllerData.currentRPGItem.GetEnergy()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
 
-            currentControllerData.runtimeRPGData.modifierHealth = currentControllerData.currentRPGItem.GetHealth()
-            + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth();
+            currentControllerData.runtimeRPGData.modifierHealth = 
+                currentControllerData.currentRPGItem.GetHealth()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressHealth();
     
-            currentControllerData.runtimeRPGData.modifierAttack = currentControllerData.currentRPGItem.GetAttack()
-            + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
+            currentControllerData.runtimeRPGData.modifierAttack = 
+                currentControllerData.currentRPGItem.GetAttack()
+                + currentControllerData.currentPlayerProgressItem.GetGamePlayerProgressEnergy();
 
-            currentControllerData.runtimeRPGData.modifierScale = currentControllerData.currentRPGItem.GetScale();
+            currentControllerData.runtimeRPGData.modifierScale = 
+                currentControllerData.currentRPGItem.GetScale();
 
             // HANDLE ITEM RUNTIME
 
@@ -5098,8 +5158,10 @@ public class BaseGamePlayerController : GameActor {
             //Debug.Log("modifierScale:" + currentControllerData.runtimeRPGData.modifierScale);
             //Debug.Log("modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
                         
-            Vector3 scalePos = initialScale * Mathf.Clamp((float)currentControllerData.runtimeRPGData.modifierScale
-                               * currentControllerData.modifierItemScaleCurrent, .4f, 2.4f);
+            Vector3 scalePos = 
+                initialScale 
+                * Mathf.Clamp((float)currentControllerData.runtimeRPGData.modifierScale 
+                * currentControllerData.modifierItemScaleCurrent, .4f, 2.4f);
             
             //Debug.Log("scalePos:" + scalePos);
 
@@ -5107,11 +5169,13 @@ public class BaseGamePlayerController : GameActor {
 
             // SPEED
             
-            float modifiedItem = Mathf.Clamp(currentControllerData.modifierItemSpeedCurrent, .3f, 4f);
+            float modifiedItem = Mathf.Clamp
+                (currentControllerData.modifierItemSpeedCurrent, .3f, 4f);
 
             // FLY / JUMP
 
-            float modifiedFly = Mathf.Clamp(currentControllerData.modifierItemFlyCurrent, .3f, 4f);
+            float modifiedFly = Mathf.Clamp(
+                currentControllerData.modifierItemFlyCurrent, .3f, 4f);
 
             if (modifiedFly > 1.0) {
                 ///Jump();
@@ -5119,8 +5183,9 @@ public class BaseGamePlayerController : GameActor {
 
             // POWER
 
-            float modifiedPower = (float)(currentControllerData.runtimeRPGData.modifierSpeed +
-                                  currentControllerData.runtimeRPGData.modifierEnergy);
+            float modifiedPower = 
+                (float)(currentControllerData.runtimeRPGData.modifierSpeed +
+                currentControllerData.runtimeRPGData.modifierEnergy);
 
             float baseWalkSpeed = 5f;
             float baseTrotSpeed = 12f;
@@ -5229,16 +5294,17 @@ public class BaseGamePlayerController : GameActor {
 
                 HandleRPGProperties();
             }
-            
+
             // 
             // AGENTS
-         
-            if (!IsUIState()) {
 
-                currentControllerData.navMeshAgent = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (ShouldHaveNavAgent()) {
+            
+
+                currentControllerData.navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 
                 if (currentControllerData.navMeshAgent == null) {
-                    currentControllerData.navMeshAgent = gameObject.AddComponent<UnityEngine.AI.NavMeshAgent>();
+                    currentControllerData.navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
                 }
 
                 if (currentControllerData.navMeshAgent != null) {
@@ -5277,7 +5343,7 @@ public class BaseGamePlayerController : GameActor {
          
             if (contextState == GamePlayerContextState.ContextFollowAgent
                 || contextState == GamePlayerContextState.ContextFollowAgentAttack
-                && !IsUIState()) {
+                && ShouldHaveNavAgent()) {
 
                 currentControllerData.navMeshAgentFollowController = 
                     gameObject.GetComponent<GamePlayerNavMeshAgentFollowController>();
@@ -5304,7 +5370,7 @@ public class BaseGamePlayerController : GameActor {
             }
          
             if (contextState == GamePlayerContextState.ContextRandom
-                && !IsUIState()) {
+                && ShouldHaveNavAgent()) {
 
                 currentControllerData.navMeshAgentController = 
                     gameObject.GetComponent<GamePlayerNavMeshAgentController>();
@@ -5380,10 +5446,17 @@ public class BaseGamePlayerController : GameActor {
             yield return new WaitForEndOfFrame();
         }
     }
- 
+
     // --------------------------------------------------------------------
     // GAME STATE
- 
+
+    public bool ShouldHaveNavAgent() {
+
+        return (!IsUIState()
+            && !(IsPlayerControlled 
+                && GameController.IsGameplayType(GameplayType.gameRunner)));
+    }
+     
     public virtual void CheckIfShouldRemove() {
         if (IsNetworkPlayerState()) {
             // if network container is gone remove the player...
@@ -5455,7 +5528,8 @@ public class BaseGamePlayerController : GameActor {
     public virtual void TurnOffNavAgent() {
         if (currentControllerData.navAgentRunning) {
             if (currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                //currentControllerData.navMeshAgent.Stop();
+                StopNavAgent();
                 currentControllerData.navAgentRunning = false;
             }        
         }
@@ -5924,7 +5998,7 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void LateUpdate() {
-
+        
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameLateUpdateAll, IsPlayerControlled ? 1 : 2)) {
             return;
@@ -5953,8 +6027,7 @@ public class BaseGamePlayerController : GameActor {
         HandlePlayerInactionState();
     }
 
-    public virtual void UpdateEditorTools() {
-        
+    public virtual void UpdateEditorTools() {        
         
         if (IsPlayerControlled) {
             
@@ -6040,8 +6113,10 @@ public class BaseGamePlayerController : GameActor {
 
     }
 
-    public override void Update() { 
-            
+    public override void Update() {
+
+        handleLateUpdateStationary();
+
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
             return;
@@ -6057,7 +6132,7 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (GameConfigs.isUIRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
      

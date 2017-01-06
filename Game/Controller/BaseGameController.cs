@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 // CUSTOM
 
@@ -47,6 +48,10 @@ public class BaseGamePlayerMessages {
     public static string PlayerAnimationSkill = "skill";
     public static string PlayerAnimationAttack = "attack";
     public static string PlayerAnimationFall = "fall";
+    //
+
+    public static string PlayerCurrentDistance = "player-current-distance";
+    public static string PlayerOverallDistance = "player-overall-distance";
 }
 
 public enum GameStateGlobal {
@@ -600,7 +605,7 @@ public enum GameRunningState {
     STOPPED
 }
 
-public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
+public class BaseGameController : GameObjectTimerBehavior {
 
     public GamePlayerController currentGamePlayerController;
 
@@ -616,7 +621,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     internal bool initialized = false;
     internal bool allowedEditing = true;
-    public bool isAdvancing = false;
+    internal bool isAdvancing = false;
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
     public UnityEngine.Object prefabDraggableContainer;
     internal Dictionary<string, GameLevelItemAsset> levelGrid = null;
@@ -660,13 +665,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     public GameRunningState gameRunningState = GameRunningState.STOPPED;
     public GameControllerType gameControllerType = GameControllerType.Iso3D;
     //
-    float currentTimeBlockBase = 0.0f;
-    float actionIntervalBase = 1.3f;
+    internal float currentTimeBlockBase = 0.0f;
+    internal float actionIntervalBase = 1.3f;
     //
     public float defaultLevelTime = 90;
     public string contentDisplayCode = "default";
     public bool isGameOver = false;
     public bool updateFingerNavigate = false;
+
+    internal bool levelInitializing = false;
 
     // CUSTOM
 
@@ -695,7 +702,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // QUEUES
 
-    public List<GameObjectQueueItem> queueGameObjectItems;
+    internal List<GameObjectQueueItem> queueGameObjectItems;
 
     // ----------------------------------------------------------------------
 
@@ -743,7 +750,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         StartCoroutine(initCustomProfileCharactersCo());
     }
 
-    public virtual IEnumerator initCustomProfileCharactersCo() {
+    internal virtual IEnumerator initCustomProfileCharactersCo() {
         yield return new WaitForEndOfFrame();
 
         GameCustomController.BroadcastCustomCharacterProfileCodeSync();
@@ -786,7 +793,43 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
     }
+
     
+    // ---------------------------------------------------------------------
+    // CONTROLLER TYPES
+
+    public bool isGameplayType(string gameplayTypeTo) {
+        return gameplayType == gameplayTypeTo;
+    }
+
+    public void gameplayTypeSet(string gameplayTypeTo) {
+        gameplayType = gameplayTypeTo;
+    }
+
+    public string gameplayTypeGet() {
+        return gameplayType;
+    }
+
+    public static bool IsGameplayType(string gameplayTypeTo) {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayType(gameplayTypeTo);
+        }
+        return false;
+    }
+
+    public static void GameplayTypeSet(string gameplayTypeTo) {
+        if (GameController.isInst) {
+            GameController.Instance.gameplayTypeSet(gameplayTypeTo);
+        }
+    }
+
+    public static string GameplayTypeGet() {
+        if (GameController.isInst) {
+            return GameController.Instance.gameplayTypeGet();
+        }
+        return null;
+    }
+
     // ---------------------------------------------------------------------
 
     // PROPERTIES
@@ -871,7 +914,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
 
             return true;
-
         }
     }
 
@@ -879,18 +921,18 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // EVENTS
 
-    public virtual void OnProfileShouldBeSavedEventHandler() {
+    internal virtual void OnProfileShouldBeSavedEventHandler() {
         if (!GameConfigs.isGameRunning) {
             GameState.SaveProfile();
         }
     }
 
-    public void OnGameLevelItemsLoaded() {
+    internal void OnGameLevelItemsLoaded() {
 
         loadLevelActions(1f);
     }
 
-    public virtual void OnEditStateHandler(GameDraggableEditEnum state) {
+    internal virtual void OnEditStateHandler(GameDraggableEditEnum state) {
 
         if (state == GameDraggableEditEnum.StateEditing) {
             ////GameHUD.Instance.ShowCurrentCharacter();
@@ -906,7 +948,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     // Listen to object creation events and create them such as network players...
 
-    public virtual void OnNetworkPlayerContainerAdded(string uid) {
+    internal virtual void OnNetworkPlayerContainerAdded(string uid) {
 
         // Look for object by that uuid, if not create it
 
@@ -959,11 +1001,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    public virtual void OnGameAIDirectorData(GameAIDirectorData actor) {
+    internal virtual void OnGameAIDirectorData(GameAIDirectorData actor) {
         loadActor(actor.code, actor.type);
     }
 
-    public virtual void OnGameItemDirectorData(GameItemData item) {
+    internal virtual void OnGameItemDirectorData(GameItemData item) {
 
         loadItem(item.code);
     }
@@ -1110,6 +1152,8 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         return false;
     }
 
+    // ----------------------------------------------------------------------
+
     // SCORING
 
     public virtual void gamePlayerScores(double val) {
@@ -1118,13 +1162,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // ATTACK
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerAttack() {
-    //    if(isInst) {
-    //        Instance.gamePlayerAttack();
-    //    }
-    //}
+    // ATTACK
 
     public virtual void gamePlayerAttack() {
         if (currentPlayerController != null) {
@@ -1132,23 +1172,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    //public static void GamePlayerAttackAlt() {
-    //    if(isInst) {
-    //        Instance.gamePlayerAttackAlt();
-    //    }
-    //}
-
     public virtual void gamePlayerAttackAlt() {
         if (currentPlayerController != null) {
             currentPlayerController.SendAttackAlt();
         }
     }
-
-    //public static void GamePlayerAttackRight() {
-    //    if(isInst) {
-    //        Instance.gamePlayerAttackRight();
-    //    }
-    //}
 
     public virtual void gamePlayerAttackRight() {
         if (currentPlayerController != null) {
@@ -1156,25 +1184,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    //public static void GamePlayerAttackLeft() {
-    //    if(isInst) {
-    //        Instance.gamePlayerAttackLeft();
-    //    }
-    //}
-
     public virtual void gamePlayerAttackLeft() {
         if (currentPlayerController != null) {
             currentPlayerController.SendAttackLeft();
         }
     }
 
-    // DEFEND
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerDefend() {
-    //    if(isInst) {
-    //        Instance.gamePlayerDefend();
-    //    }
-    //}
+    // DEFEND
 
     public virtual void gamePlayerDefend() {
         if (currentPlayerController != null) {
@@ -1182,23 +1200,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    //public static void GamePlayerDefendAlt() {
-    //    if(isInst) {
-    //        Instance.gamePlayerDefendAlt();
-    //    }
-    //}
-
     public virtual void gamePlayerDefendAlt() {
         if (currentPlayerController != null) {
             currentPlayerController.SendDefendAlt();
         }
     }
-
-    //public static void GamePlayerDefendRight() {
-    //    if(isInst) {
-    //        Instance.gamePlayerDefendRight();
-    //    }
-    //}
 
     public virtual void gamePlayerDefendRight() {
         if (currentPlayerController != null) {
@@ -1206,25 +1212,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    //public static void GamePlayerDefendLeft() {
-    //    if(isInst) {
-    //        Instance.gamePlayerDefendLeft();
-    //    }
-    //}
-
     public virtual void gamePlayerDefendLeft() {
         if (currentPlayerController != null) {
             currentPlayerController.SendDefendLeft();
         }
     }
 
-    // JUMP
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerJump() {
-    //    if(isInst) {
-    //        Instance.gamePlayerJump();
-    //    }
-    //}
+    // JUMP
 
     public virtual void gamePlayerJump() {
         if (currentPlayerController != null) {
@@ -1232,13 +1228,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // USE
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerUse() {
-    //    if(isInst) {
-    //        Instance.gamePlayerUse();
-    //    }
-    //}
+    // USE
 
     public virtual void gamePlayerUse() {
         if (currentPlayerController != null) {
@@ -1246,13 +1238,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // MOUNT
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerUse() {
-    //    if(isInst) {
-    //        Instance.gamePlayerUse();
-    //    }
-    //}
+    // MOUNT
 
     public virtual void gamePlayerMount() {
         if (currentPlayerController != null) {
@@ -1260,13 +1248,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // SKILL
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerSkill() {
-    //    if(isInst) {
-    //        Instance.gamePlayerSkill();
-    //    }
-    //}
+    // SKILL
 
     public virtual void gamePlayerSkill() {
         if (currentPlayerController != null) {
@@ -1274,13 +1258,9 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // MAGIC
+    // ----------------------------------------------------------------------
 
-    //public static void GamePlayerMagic() {
-    //    if(isInst) {
-    //        Instance.gamePlayerMagic();
-    //    }
-    //}
+    // MAGIC
 
     public virtual void gamePlayerMagic() {
         if (currentPlayerController != null) {
@@ -1494,7 +1474,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             }
         }
         */
-
     }
 
     public virtual void loadLevel(string code) {
@@ -1502,18 +1481,15 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //LogUtil.Log("GAME START FLOW: STEP #6: loadLevel: code:" + code);
 
         // Load the game levelitems for the game level code
+
         ////GameController.StartGame(code);
 
         prepareGame(code);
 
         //GameController.LoadLevelAssets(code);
-
         //GameHUD.Instance.SetLevelInit(GameLevels.Current);
-
         //GameHUD.Instance.AnimateIn();
-
         //GameUI.Instance.ToggleGameUI();
-
     }
 
     public virtual void loadLevelItems() {
@@ -1565,10 +1541,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                     LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz);
 
-                    //
-
-
-
                     GameLevelItems.Current.level_items
                         = getLevelRandomizedGrid(GameLevelGridData.GetModeTypeChoice(4));
                     updated = true;
@@ -1581,37 +1553,16 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
                     + AppModeTypes.Instance.isAppModeTypeGameCollection);
 
                 // LOAD COLLECTION GAME LEVEL ITEMS
-
-                /*
-                if(AppContentStates.Instance.isAppContentStateGameTrainingCollectionSmarts) {
-
-                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSmarts:"
-                        + AppContentStates.Instance.isAppContentStateGameTrainingCollectionSmarts);
-
-                    GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
-                }
-                else if(AppContentStates.Instance.isAppContentStateGameTrainingCollectionSafety) {
-
-                    LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingCollectionSafety:"
-                        + AppContentStates.Instance.isAppContentStateGameTrainingCollectionSafety);
-
-                    GameLevelItems.Current.level_items
-                        = GameController.GetLevelRandomizedGrid();
-                }*/
-
             }
             else if (AppModeTypes.Instance.isAppModeTypeGameContent) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameContent:"
                     + AppModeTypes.Instance.isAppModeTypeGameContent);
-
             }
             else if (AppModeTypes.Instance.isAppModeTypeGameTips) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameTips:"
                     + AppModeTypes.Instance.isAppModeTypeGameTips);
-
             }
         }
         else {
@@ -1658,9 +1609,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
             //}
 
-            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));    
-            //UITweenerUtil.CameraColor(new Color(1f, 0f, 0f, .5f));
-
             loadStartLevel();
         }
     }
@@ -1669,9 +1617,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         StartCoroutine(initLevelCo(levelCode));
     }
 
-    public bool levelInitializing = false;
-
-    public virtual IEnumerator initLevelCo(string levelCode) {
+    internal virtual IEnumerator initLevelCo(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
@@ -1702,11 +1648,11 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         // TODO load anim
     }
 
-    public virtual void initLevelFinish(string levelCode) {
+    internal virtual void initLevelFinish(string levelCode) {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
 
-    public virtual IEnumerator initLevelFinishCo(string levelCode) {
+    internal virtual IEnumerator initLevelFinishCo(string levelCode) {
         if (UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
@@ -1900,7 +1846,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    public virtual Vector3 getCurrentPlayerPosition() { 
+    public virtual Vector3 getCurrentPlayerPosition() {
         Vector3 currentPlayerPosition = Vector3.zero;
         if (currentPlayerController != null) {
             if (currentPlayerController.gameObject != null) {
@@ -1950,7 +1896,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     //bool loadingCharacterContainer = false;
 
-    public virtual IEnumerator loadActorCo(GameActorDataItem data) {
+    internal virtual IEnumerator loadActorCo(GameActorDataItem data) {
 
         //if (loadingCharacterContainer) {
         //    yield break; 
@@ -2095,7 +2041,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //loadingCharacterContainer = false;
     }
 
-    public virtual IEnumerator loadItemCo(GameItemData data) {
+    internal virtual IEnumerator loadItemCo(GameItemData data) {
 
         if (data == null) {
             yield break;
@@ -2198,7 +2144,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
     // ---------------------------------------------------------------------
     // GAME OBJECT LEVEL START LOAD
 
-    public virtual void queueGameObjectTypeData(
+    internal virtual void queueGameObjectTypeData(
         string type, string code, string data_type, string display_type, Vector3 pos, Quaternion rot) {
 
         GameObjectQueueItem queueItem = new GameObjectQueueItem();
@@ -2212,28 +2158,28 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         queueGameObjectTypeData(queueItem);
     }
 
-    public virtual void checkQueueGameObjectTypeData() {
+    internal virtual void checkQueueGameObjectTypeData() {
 
         if (queueGameObjectItems == null) {
             queueGameObjectItems = new List<GameObjectQueueItem>();
         }
     }
 
-    public virtual void queueGameObjectTypeData(GameObjectQueueItem queueItem) {
+    internal virtual void queueGameObjectTypeData(GameObjectQueueItem queueItem) {
 
         checkQueueGameObjectTypeData();
 
         queueGameObjectItems.Add(queueItem);
     }
 
-    public virtual void clearQueueGameObjectTypeData() {
+    internal virtual void clearQueueGameObjectTypeData() {
 
         checkQueueGameObjectTypeData();
 
         queueGameObjectItems.Clear();
     }
 
-    public virtual void processQueueGameObjectTypeData() {
+    internal virtual void processQueueGameObjectTypeData() {
 
         if (queueGameObjectItems != null) {
 
@@ -2299,43 +2245,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
     }
-    /*
-    // ---------------------------------------------------------------------
-    // GAME MODES
-    
-    public virtual void changeGameMode(GameModeGlobal gameModeTo) {
-        if(gameModeTo != gameMode) {
-            gameMode = gameModeTo;
-        }
-    }
-    
-    public bool isGameModeArcade {
-        get {
-            if(gameMode == GameModeGlobal.GameModeArcade) {
-                return true;
-            }
-            return false;
-        }
-    }       
-    
-    public bool isGameModeChallenge {
-        get {
-            if(gameMode == GameModeGlobal.GameModeChallenge) {
-                return true;
-            }
-            return false;
-        }
-    }           
-    
-    public bool isGameModeTraining {
-        get {
-            if(gameMode == GameModeGlobal.GameModeTraining) {
-                return true;
-            }
-            return false;
-        }
-    }
-    */
 
     // ---------------------------------------------------------------------
     // CHARACTER TYPES
@@ -3445,77 +3354,80 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
         bool handled = false;
 
-        if (!isGameRunning) {
-            return handled;
-        }
+        if (gameplayType == GameplayType.gameDasher) {
 
-        if (!GameUIController.CheckIfAllowedTouch(point)) {
-            return handled;
-        }
-
-        //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
-        bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
-
-        if (currentGamePlayerController != null) {
-            var playerPos = currentGamePlayerController.transform.position;
-            var touchPos = Camera.main.ScreenToWorldPoint(point);
-
-            var direction = touchPos - playerPos;
-            direction.Normalize();
-            var directionNormal = direction.normalized;
-
-            //touchPos.Normalize();
-            //var touchPosNormalized = touchPos.normalized;
-
-            var pointNormalized = point;
-            pointNormalized.Normalize();
-            pointNormalized = pointNormalized.normalized;
-
-            //LogUtil.Log("directionNormal:" + directionNormal);
-            //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
-
-            updateFingerNavigate = true;
-
-            if (controlInputTouchOnScreen) {
-                // If on screen controls are on don't do touch navigate just off the edge of the
-                /// backer on the virtual joystick to prevent random movements.
-
-                var center = Vector3.zero;//.WithX(Screen.width/2).WithY(Screen.height/2);
-
-                var directionAllow = touchPos - center;
-                directionAllow.Normalize();
-                //var directionAllowNormal = directionAllow.normalized;
-
-                //LogUtil.Log("directionAllowNormal:" + directionAllowNormal);
-                //LogUtil.Log("touchPos:" + touchPos);
-                //LogUtil.Log("pointNormalized:" + pointNormalized);
-                //LogUtil.Log("point:" + point);
-
-                if (pointNormalized.y < .2f) {
-                    if (pointNormalized.x < .2f) {
-                        updateFingerNavigate = false;
-                    }
-
-                    if (pointNormalized.x > .8f) {
-                        updateFingerNavigate = false;
-                    }
-                }
-
-                //LogUtil.Log("updateFingerNavigate:" + updateFingerNavigate);
+            if (!isGameRunning) {
+                return handled;
             }
 
-            if (updateFingerNavigate) {
+            if (!GameUIController.CheckIfAllowedTouch(point)) {
+                return handled;
+            }
 
-                handled = true;
+            //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
+            bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
 
-                //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
-                //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+            if (currentGamePlayerController != null) {
+                var playerPos = currentGamePlayerController.transform.position;
+                var touchPos = Camera.main.ScreenToWorldPoint(point);
 
-                Vector3 axisInput = Vector3.zero;
-                axisInput.x = directionNormal.x;
-                axisInput.y = directionNormal.y;
+                var direction = touchPos - playerPos;
+                direction.Normalize();
+                var directionNormal = direction.normalized;
 
-                sendInputAxisMessage("move", axisInput);
+                //touchPos.Normalize();
+                //var touchPosNormalized = touchPos.normalized;
+
+                var pointNormalized = point;
+                pointNormalized.Normalize();
+                pointNormalized = pointNormalized.normalized;
+
+                //LogUtil.Log("directionNormal:" + directionNormal);
+                //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
+
+                updateFingerNavigate = true;
+
+                if (controlInputTouchOnScreen) {
+                    // If on screen controls are on don't do touch navigate just off the edge of the
+                    /// backer on the virtual joystick to prevent random movements.
+
+                    var center = Vector3.zero;//.WithX(Screen.width/2).WithY(Screen.height/2);
+
+                    var directionAllow = touchPos - center;
+                    directionAllow.Normalize();
+                    //var directionAllowNormal = directionAllow.normalized;
+
+                    //LogUtil.Log("directionAllowNormal:" + directionAllowNormal);
+                    //LogUtil.Log("touchPos:" + touchPos);
+                    //LogUtil.Log("pointNormalized:" + pointNormalized);
+                    //LogUtil.Log("point:" + point);
+
+                    if (pointNormalized.y < .2f) {
+                        if (pointNormalized.x < .2f) {
+                            updateFingerNavigate = false;
+                        }
+
+                        if (pointNormalized.x > .8f) {
+                            updateFingerNavigate = false;
+                        }
+                    }
+
+                    //LogUtil.Log("updateFingerNavigate:" + updateFingerNavigate);
+                }
+
+                if (updateFingerNavigate) {
+
+                    handled = true;
+
+                    //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
+                    //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+
+                    Vector3 axisInput = Vector3.zero;
+                    axisInput.x = directionNormal.x;
+                    axisInput.y = directionNormal.y;
+
+                    sendInputAxisMessage("move", axisInput);
+                }
             }
         }
 
@@ -3800,91 +3712,6 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
             asset.steps.Add(step);
             levelItems.Add(asset);
         }
-        
-        for(int i = 0; i < UnityEngine.Random.Range(0, 1); i++) {
-            GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-            step.position.FromVector3(GetRandomVectorInGameBounds());
-            step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.3f, .7f));
-            step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
-            GameLevelItemAsset asset = new GameLevelItemAsset();
-            asset.asset_code = "stone-spinny-thing";
-            asset.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
-            asset.destructable = false;
-            asset.reactive = false;
-            asset.kinematic = false;
-            asset.gravity = false;
-            asset.rotation_speed.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-10f, 20f)));
-            asset.steps.Add(step);
-            levelItems.Add(asset);
-        }
-        
-        for(int i = 0; i < UnityEngine.Random.Range(0, 1); i++) {
-            GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-            step.position.FromVector3(GetRandomVectorInGameBounds());
-            step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.5f, 1f));
-            step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
-            GameLevelItemAsset asset = new GameLevelItemAsset();
-            asset.asset_code = "stone-spinny-thing2";
-            asset.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
-            asset.destructable = false;
-            asset.reactive = false;
-            asset.kinematic = false;
-            asset.gravity = false;
-            asset.rotation_speed.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-10f, 50f)));
-            asset.steps.Add(step);
-            levelItems.Add(asset);
-        }
-        
-        for(int i = 0; i < UnityEngine.Random.Range(0, 1); i++) {
-            GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-            step.position.FromVector3(GetRandomVectorInGameBounds());
-            step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.5f, 1f));
-            step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
-            GameLevelItemAsset asset = new GameLevelItemAsset();
-            asset.asset_code = "blocks-gray-large";
-            asset.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
-            asset.destructable = false;
-            asset.reactive = false;
-            asset.kinematic = false;
-            asset.gravity = false;
-            asset.rotation_speed.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-10f, 50f)));
-            asset.steps.Add(step);
-            levelItems.Add(asset);
-        }
-        
-        for(int i = 0; i < UnityEngine.Random.Range(0, 1); i++) {
-            GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-            step.position.FromVector3(GetRandomVectorInGameBounds());
-            step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.5f, 1f));
-            step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
-            GameLevelItemAsset asset = new GameLevelItemAsset();
-            asset.asset_code = "blocks-gray-small";
-            asset.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
-            asset.destructable = false;
-            asset.reactive = false;
-            asset.kinematic = false;
-            asset.gravity = false;
-            asset.rotation_speed.FromVector3(Vector3.zero);
-            asset.steps.Add(step);
-            levelItems.Add(asset);
-        }
-        
-        for(int i = 0; i < UnityEngine.Random.Range(0, 1); i++) {
-            GameLevelItemAssetStep step = new GameLevelItemAssetStep();
-            step.position.FromVector3(GetRandomVectorInGameBounds());
-            step.scale.FromVector3(Vector3.one * UnityEngine.Random.Range(.5f, 1f));
-            step.rotation.FromVector3(Vector3.zero.WithZ(UnityEngine.Random.Range(-.1f, .1f)));
-            GameLevelItemAsset asset = new GameLevelItemAsset();
-            asset.asset_code = "rocket";
-            asset.physics_type = GameLevelItemAssetPhysicsType.physicsStatic;
-            asset.destructable = true;
-            asset.reactive = false;
-            asset.kinematic = false;
-            asset.gravity = false;
-            asset.rotation_speed.FromVector3(Vector3.zero);
-            asset.steps.Add(step);
-            levelItems.Add(asset);
-        }
         */
 
         return levelItems;
@@ -3896,23 +3723,7 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
 
     public static bool touchHandled = false;
 
-    // Update is called once per frame
-    public virtual void Update() {
-
-        // TOOLS
-
-        if (UIGameKeyCodes.isActionProfileSave) {
-            GameState.SaveProfile();
-        }
-        else if (UIGameKeyCodes.isActionProfileSync) {
-            GameState.SyncProfile();
-        }
-
-        // UPDATE
-
-        if (!isGameRunning) {
-            return;
-        }
+    internal virtual void handleInputTouch() {
 
         bool mousePressed = InputSystem.isMousePressed;
         //bool mouseSecondaryPressed = InputSystem.isMouseSecondaryPressed;
@@ -3951,12 +3762,112 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         //}
 
         touchHandled = handled;
+    }
+
+    internal virtual void handleInput() {
+
+        if (gameplayType == GameplayType.gameDasher) {
+            handleInputTouch();
+        }
+        else if (gameplayType == GameplayType.gameRunner) {
+            //handleInputTouch();
+        }
+    }
+
+    internal virtual void handleUpdate() {
+
+        handleInput();
+
+        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+            handleUpdateDefault();
+        }
+        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            handleUpdateStationary();
+        }
+    }
+
+    internal virtual void handleUpdateDefault() {
+
+
+    }
+    
+
+    internal virtual void handleUpdateStationary() {
+
+        if (currentGamePlayerController == null) {
+            return;
+        }
+        
+    }
+
+
+    internal virtual void handleLateUpdate() {
+
+        handleInput();
+
+        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+            handleLateUpdateDefault();
+        }
+        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            handleLateUpdateStationary();
+        }
+    }
+
+    internal virtual void handleLateUpdateDefault() {
+
+
+    }
+
+    Vector3 currentGamePlayerDistance = Vector3.zero;
+    Vector3 overallGamePlayerDistance = Vector3.zero;
+
+    internal virtual void handleLateUpdateStationary() {
+
+        if (currentGamePlayerController == null) {
+            return;
+        }
+
+        currentGamePlayerDistance = currentGamePlayerController.transform.position;
+
+        overallGamePlayerDistance += currentGamePlayerDistance;
+
+        currentGamePlayerController.transform.position = -currentGamePlayerDistance;
+
+        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
+        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+
+        Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
+        //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+    }
+
+    // ------------------------------------------------------------------------
+    // UPDATE
+
+    // Update is called once per frame
+
+    public virtual void Update() {
+
+        // TOOLS
+
+        if (UIGameKeyCodes.isActionProfileSave) {
+            GameState.SaveProfile();
+        }
+        else if (UIGameKeyCodes.isActionProfileSync) {
+            GameState.SyncProfile();
+        }
+
+        // UPDATE
+
+        if (!isGameRunning) {
+            return;
+        }
 
         if (gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }
 
+        //handleUpdate();
 
         if (!gameObjectTimer.IsTimerPerf(
             GameObjectTimerKeys.gameUpdateAll)) {
@@ -3974,56 +3885,20 @@ public class BaseGameController : GameObjectTimerBehavior, IBaseGameController {
         }
     }
 
-    // ----------------------------------------------------------------------
+    public virtual void FixedUpdate() {
 
-    // EXTRA
+        // UPDATE
 
-    public virtual Vector3 cardinalAngles(Vector3 pos1, Vector3 pos2) {
+        if (!isGameRunning) {
+            return;
+        }
 
-        // Adjust both positions to be relative to our origin point (pos1)
-        pos2 -= pos1;
-        pos1 -= pos1;
+        if (gameState == GameStateGlobal.GamePause
+            || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+            return;
+        }
 
-        Vector3 angles = Vector3.zero;
-
-        // Rotation to get from World +Z to pos2, rotated around World X (degrees up from Z axis)
-        angles.x = Vector3.Angle(Vector3.forward, pos2 - Vector3.right * pos2.x);
-
-        // Rotation to get from World +Z to pos2, rotated around World Y (degrees right? from Z axis)
-        angles.y = Vector3.Angle(Vector3.forward, pos2 - Vector3.up * pos2.y);
-
-        // Rotation to get from World +X to pos2, rotated around World Z (degrees up from X axis)
-        angles.z = Vector3.Angle(Vector3.right, pos2 - Vector3.forward * pos2.z);
-
-        return angles;
+        //handleLateUpdate();
     }
 
-    public virtual float contAngle(Vector3 fwd, Vector3 targetDir, Vector3 upDir) {
-        var angle = Vector3.Angle(fwd, targetDir);
-
-        if (angleDir(fwd, targetDir, upDir) == -1) {
-            return 360 - angle;
-        }
-        else {
-            return angle;
-        }
-    }
-
-    //returns -1 when to the left, 1 to the right, and 0 for forward/backward
-    public virtual float angleDir(Vector3 fwd, Vector3 targetDir, Vector3 up) {
-
-        Vector3 perp = Vector3.Cross(fwd, targetDir);
-
-        float dir = Vector3.Dot(perp, up);
-
-        if (dir > 0.0) {
-            return 1.0f;
-        }
-        else if (dir < 0.0) {
-            return -1.0f;
-        }
-        else {
-            return 0.0f;
-        }
-    }
 }
