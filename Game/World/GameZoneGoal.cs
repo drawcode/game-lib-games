@@ -31,6 +31,7 @@ public class GameZoneGoal : GameZone {
 
         if (gameZoneType.StartsWith(GameZoneKeys.goal)) {
 
+            /*
             bool isLeft = gameEndZoneType == GameZoneKeys.goal_left;
 
             string colorNameHighlight = isLeft ?
@@ -59,6 +60,7 @@ public class GameZoneGoal : GameZone {
                     objectSprite.SetColorByKey(colorNameBackground, .8f);
                 }
             }
+            */
         }
     }
 }

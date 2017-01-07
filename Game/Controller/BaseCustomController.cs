@@ -523,6 +523,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         
         int randomColor = UnityEngine.Random.Range(0, 8);
         
+        /*
         if (randomColor == 1) {
             colorTo = customItem.GetCustomColor(GameCustomItemNames.helmet);
         }
@@ -544,6 +545,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         else {
             colorTo = customItem.GetCustomColor(GameCustomItemNames.helmetHighlight);
         }
+        */
 
         return colorTo;
     }
