@@ -1227,6 +1227,37 @@ public class BaseGameController : GameObjectTimerBehavior {
             currentPlayerController.InputJump();
         }
     }
+    
+    // ----------------------------------------------------------------------
+
+    // STRAFE
+
+    public virtual void gamePlayerStrafe(Vector3 amount) {
+        if (currentPlayerController != null) {
+            currentPlayerController.InputStrafe(amount);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+
+    // STRAFE
+
+    public virtual void gamePlayerMove(Vector3 amount, Vector3 rangeStart, Vector3 rangeEnd, bool append = true) {
+        if (currentPlayerController != null) {
+            currentPlayerController.InputMove(amount, rangeStart, rangeEnd, append);
+        }
+    }
+
+
+    // ----------------------------------------------------------------------
+
+    // STRAFE
+
+    public virtual void gamePlayerSlide(Vector3 amount) {
+        if (currentPlayerController != null) {
+            currentPlayerController.InputSlide(amount);
+        }
+    }
 
     // ----------------------------------------------------------------------
 
@@ -3421,17 +3452,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
                     //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
-
-                    Vector3 axisInput = Vector3.zero;
-                    axisInput.x = directionNormal.x;
-                    axisInput.y = directionNormal.y;
-
-                    sendInputAxisMessage("move", axisInput);
+                    
+                    sendInputAxisMoveMessage(directionNormal.x, directionNormal.y);
                 }
             }
         }
 
         return handled;
+    }
+
+    public virtual void sendInputAxisMoveMessage(float x, float y) {
+        Vector3 axisInput = Vector3.zero;
+        axisInput.x = x;
+        axisInput.y = y;
+
+        sendInputAxisMessage("move", axisInput);
     }
 
     public virtual void sendInputAxisMessage(string axisNameTo, Vector3 axisInputTo) {
@@ -3782,7 +3817,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            handleUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 
@@ -3791,13 +3826,63 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     }
     
+    Vector3 moveGamePlayerDistance = Vector3.zero;
+    Vector3 currentGamePlayerDistance = Vector3.zero;
+    Vector3 overallGamePlayerDistance = Vector3.zero;
 
-    internal virtual void handleUpdateStationary() {
+    GameObjectInfiniteController controllerInfinity;
+    GameObjectInfiniteContainer containerInfinity;
+
+    internal virtual void handleLateUpdateStationary() {
 
         if (currentGamePlayerController == null) {
             return;
         }
-        
+
+        if (controllerInfinity == null) {
+            controllerInfinity = gameObject.Get<GameObjectInfiniteController>();
+        }
+
+        if (containerInfinity == null) {
+            containerInfinity = gameObject.Get<GameObjectInfiniteContainer>();
+        }
+
+        if (GameConfigs.isGameRunning) {
+
+            currentGamePlayerDistance.z = currentGamePlayerController.transform.position.z;
+
+            overallGamePlayerDistance.z += currentGamePlayerDistance.z;
+
+            overallGamePlayerDistance.z = currentGamePlayerDistance.z;
+
+            moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
+
+            //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
+
+            currentGamePlayerController.transform.position = currentGamePlayerController.transform.position.WithZ(-moveGamePlayerDistance.z);
+
+            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
+            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+
+            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
+            //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+
+            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerDistance.z);
+
+        }
+    }
+
+
+    internal virtual void handleFixedUpdate() {
+
+        //handleInput();
+
+        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+            //handleLateUpdateDefault();
+        }
+        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            //handleLateUpdateStationary();
+        }
     }
 
 
@@ -3818,9 +3903,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     }
 
+    /*
     Vector3 currentGamePlayerDistance = Vector3.zero;
     Vector3 overallGamePlayerDistance = Vector3.zero;
-
+    
     internal virtual void handleLateUpdateStationary() {
 
         if (currentGamePlayerController == null) {
@@ -3838,7 +3924,15 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
         //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+
+        //foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
+
+        //    part.transform.position = part.transform.position  + -currentGamePlayerDistance;
+
+        //}
     }
+    */
+
 
     // ------------------------------------------------------------------------
     // UPDATE
@@ -3899,6 +3993,22 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         //handleLateUpdate();
+    }
+
+    public virtual void LateUpdate() {
+
+        // UPDATE
+
+        if (!isGameRunning) {
+            return;
+        }
+
+        if (gameState == GameStateGlobal.GamePause
+            || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
+            return;
+        }
+
+        handleLateUpdate();
     }
 
 }

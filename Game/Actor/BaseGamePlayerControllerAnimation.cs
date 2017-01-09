@@ -684,8 +684,24 @@ public class BaseGamePlayerControllerAnimationData {
         }
     }
     
+    // slide
+
+    public void PlayAnimationSlide() {
+
+        if (isDead) {
+            return;
+        }
+
+        if (isLegacy) {
+            PlayAnimationCrossFade(GameDataActionKeys.slide, .2f, PlayMode.StopSameLayer);
+        }
+        else if (isMecanim) {
+            animator.PlayOneShotFloat(GameDataActionKeys.slide);
+        }
+    }
+
     // hit
-    
+
     public void PlayAnimationHit() {
         
         if (isDead) {
@@ -1150,6 +1166,32 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         // animationData.actor.animation.Play("jumpland");
         // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
         // SendMessage("SyncAnimation", "jumpland", SendMessageOptions.DontRequireReceiver);
+    }
+
+    // --------------
+    // ACTIONS - SLIDE    
+
+    public virtual void Slide() {
+
+        if (animationData == null) {
+            return;
+        }
+
+        if (animationData.isDead) {
+            return;
+        }
+
+        animationData.PlayAnimationSlide();
+
+        SendMessage("SyncAnimation",
+                    GameDataActionKeys.jump,
+                    SendMessageOptions.DontRequireReceiver);
+
+        //animationData.actor.animation.CrossFade("jetpackjump", 0.2f);
+        //SendMessage("SyncAnimation", "jetpackjump", SendMessageOptions.DontRequireReceiver);
+        //animationData.actor.animation.CrossFade("jumpfall", 0.2f);
+        //SendMessage("SyncAnimation", "jumpfall", SendMessageOptions.DontRequireReceiver);
+
     }
 
     // --------------

@@ -1,5 +1,8 @@
-using UnityEngine;
+using System;
 using System.Collections;
+
+using UnityEngine;
+using UnityEngine.AI;
 
 using Engine;
 using Engine.Data;
@@ -29,6 +32,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     // We add extraJumpHeight meters on top when holding the button down longer while jumping
     public float extraJumpHeight = 2.5f;
 
+    // How high do we slide when pressing slide and letting go immediately
+    public float slideLength = 0.5f;
+    // We add extraSlideHeight meters on  when holding the button down longer while slidinging
+    public float extraSlideHeight = 2.5f;
+
     // The gravity for the character
     public float gravity = 20.0f;
     // The gravity in cape fly mode
@@ -36,12 +44,20 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public float speedSmoothing = 10.0f;
     public float rotateSpeed = 500.0f;
     public float trotAfterSeconds = 3.0f;
+    //
     public bool canJump = true;
     public bool canCapeFly = true;
     public bool canWallJump = false;
+    public bool canSlide = true;
     public float jumpRepeatTime = 0.05f;
     public float wallJumpTimeout = 0.15f;
     public float jumpTimeout = 0.15f;
+
+    public float slideRepeatTime = 0.05f;
+    public float wallSlideTimeout = 0.15f;
+    public float slideTimeout = 0.15f;
+    //
+    //
     public float groundedTimeout = 0.25f;
 
     // The camera doesnt start following the target immediately but waits for a split second to avoid too much waving around.
@@ -61,6 +77,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public bool jumping = false;
     public bool jumpingReachedApex = false;
 
+    //
+    public bool sliding = false;
+
     // Are we moving backwards (This locks the camera to not do a 180 degree spin)
     public bool movingBack = false;
     // Is the user pressing any keys?
@@ -69,8 +88,12 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public float walkTimeStart = 0.0f;
     // Last time the jump button was clicked down
     public float lastJumpButtonTime = -10.0f;
+    // Last time the slide button was clicked down
+    public float lastSlideButtonTime = -10.0f;
     // Last time we performed a jump
     public float lastJumpTime = -1.0f;
+    // Last time we performed a slide
+    public float lastSlideTime = -1.0f;
     //public float lastShootTime = -1.0f;
     // Average normal of the last touched geometry
     public Vector3 wallJumpContactNormal;
@@ -82,6 +105,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public float touchWallJumpTime = -1.0f;
     public Vector3 inAirVelocity = Vector3.zero;
     public float lastGroundedTime = 0.0f;
+    
+    //
+    public float lastSlideStartHeight = 0.0f;
 
     //public float lean = 0.0f;
 
@@ -90,9 +116,12 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public float horizontalInput = 0.0f;
     public float verticalInput2 = 0.0f;
     public float horizontalInput2 = 0.0f;
+    //
     public bool jumpButton = false;
+    public bool slideButton = false;
     public bool getUserInput = false;
     public bool isNetworked = false;
+    //
     public Vector3 targetDirection = Vector3.zero;
     public Vector3 movementDirection = Vector3.zero;
     public Vector3 aimingDirection = Vector3.zero;
@@ -295,7 +324,23 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             }
         }
     }
- 
+
+    public virtual void ApplySliding() {
+        // Prevent sliding too fast after each other
+        if (lastSlideTime + slideRepeatTime > Time.time)
+            return;
+
+        if (IsGrounded()) {
+            // Slide
+            // - Only when pressing the button down
+            // - With a timeout so you can press the button slightly before landing      
+            if (canSlide && Time.time < lastSlideButtonTime + slideTimeout) {
+                //verticalSpeed = CalculateJumpVerticalSpeed(slideHeight);
+                Slide();
+            }
+        }
+    }
+
     public virtual void ApplyAttack() {  
         bool doAttack = false;
      
@@ -358,6 +403,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         return Mathf.Sqrt(2 * targetJumpHeight * gravity);
     }
 
+    // JUMP
+
     public virtual void Jump() {
         Jump(.5f);
     }
@@ -387,11 +434,45 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         CancelInvoke("JumpStop");
         Invoke("JumpStop", duration);
     }
-    
+        
     public virtual void JumpStop() {
         jumpButton = false;
     }
-     
+    
+    // SLIDE
+
+    public virtual void Slide() {
+        Slide(Vector3.zero.WithZ(-.5f), .5f);
+    }
+
+    public virtual void Slide(Vector3 amount, float time = .5f) {
+
+        if (slideButton) {
+            return;
+        }
+
+        slideButton = true;
+
+        if (navMeshAgent == null) {
+            navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        }
+
+        // off while we slide
+        navMeshAgent.StopAgent();
+
+        sliding = true;
+        lastSlideTime = Time.time;
+        lastSlideStartHeight = transform.position.y;
+        lastSlideButtonTime = -10;
+
+        CancelInvoke("SlideStop");
+        Invoke("SlideStop", time);
+    }
+
+    public virtual void SlideStop() {
+        slideButton = false;
+    }
+
     // Update is called once per frame
     public virtual void Update() {
         
@@ -413,9 +494,13 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         if(getUserInput) {
             if(Input.GetButtonDown("Jump"))
                 lastJumpButtonTime = Time.time;
+            if (Input.GetButtonDown("Slide"))
+                lastSlideButtonTime = Time.time;
         }
         else {
             if(jumpButton)
+                lastJumpButtonTime = Time.time;
+            if (slideButton)
                 lastJumpButtonTime = Time.time;
         }
 
@@ -434,7 +519,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
         // Apply jumping logic
         ApplyJumping();
-     
+
+        ApplySliding();
+
         ApplyAttack();
 
         // Calculate actual motion
@@ -491,6 +578,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual bool IsJumping() {
         return jumping;
+    }
+
+    public virtual bool IsSliding() {
+        return sliding;
     }
 
     public virtual bool IsGrounded() {
@@ -551,7 +642,12 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         enabled = true;
         controllerData.removing = false;
         jumping = false;
+        sliding = false;
         //transform.position = Vector3.zero;
+    }
+
+    public virtual void MoveTo(Vector3 move, bool local = true) {
+
     }
 }
 // Require a character controller to be attached to the same game object
