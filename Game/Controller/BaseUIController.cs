@@ -614,8 +614,37 @@ public class BaseUIController : GameObjectBehavior {
             }
         }
 
-        //DetectSwipe();
-        GameUIController.UpdateTouchLaunch();
+        handleGameInput();
+    }
+
+    Vector3 rangeStart = Vector3.zero.WithX(-16f);
+    Vector3 rangeEnd = Vector3.zero.WithX(16f);
+
+    internal virtual void handleGameInput() {
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (InputSystem.isUpPressed) {
+                GameController.GamePlayerJump();
+            }
+            else if (InputSystem.isDownPressed) {
+                GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+                //GameController.GamePlayerAttack();
+            }
+            else if (InputSystem.isLeftPressed) {
+                GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
+            }
+            else if (InputSystem.isRightPressed) {
+                GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
+            }
+            else {
+                GameController.SendInputAxisMoveMessage(0, 1);
+            }
+        }
+        else if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+            //DetectSwipe();
+            GameUIController.UpdateTouchLaunch();
+        }
     }
 
     public virtual void FingerGestures_OnDragMove(DragGesture gesture) { //Vector2 fingerPos, Vector2 delta) {
@@ -1114,7 +1143,7 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if (angleDiff > 45 && angleDiff < 135) { // rightish
             LogUtil.Log("swipe controller: RIGHT :angleDiff:" + angleDiff);
-            GameController.CurrentGamePlayerController.StrafeRight(forceVector, force * 2f);
+            GameController.CurrentGamePlayerController.Strafe(forceVector, force * 2f);
         }
         else if (angleDiff <= 320 && angleDiff >= 225) { // leftish
             LogUtil.Log("swipe controller: LEFT :angleDiff:" + angleDiff);

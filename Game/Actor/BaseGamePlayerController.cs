@@ -175,6 +175,8 @@ public class BaseGamePlayerControllerData {
     public float lastAttackTime = 0;
     public float lastBoostTime = 0;
     public float lastStrafeLeftTime = 0;
+    public float lastMoveLeftTime = 0;
+    public float lastMoveRightTime = 0;
     public float lastSpinTime = 0;
     public float lastStrafeRightTime = 0;
     public float lastAudioPlayedAttack = 0f;
@@ -490,6 +492,7 @@ public class BaseGamePlayerController : GameActor {
     public ParticleSystem gamePlayerEffectCircleStars;
     public ParticleSystem gamePlayerEffectAttack;
     public ParticleSystem gamePlayerEffectSkill;
+    public ParticleSystem gamePlayerEffectSlide;
     public GameObject gamePlayerEffectMarker;
     public ParticleSystem gamePlayerEffectHit;
     public ParticleSystem gamePlayerEffectDeath;
@@ -3470,6 +3473,18 @@ public class BaseGamePlayerController : GameActor {
         //Magic();
     }
 
+    public virtual void InputSlide(Vector3 amount) {
+        Slide(amount);
+    }
+
+    public virtual void InputStrafe(Vector3 amount) {
+        Strafe(amount);
+    }
+
+    public virtual void InputMove(Vector3 amount, Vector3 rangeStart, Vector3 rangeEnd, bool append = true) {
+        Move(amount, rangeStart, rangeEnd, append);
+    }
+
     public virtual void InputStrafeLeft() {
         StrafeLeft();
     }
@@ -3581,8 +3596,38 @@ public class BaseGamePlayerController : GameActor {
         currentControllerData.thirdPersonController.JumpStop();
     }
 
+    // SLIDE
+
+    public virtual void Slide() {
+        Slide(Vector3.zero.WithZ(-.5f));
+    }
+
+    public virtual void Slide(Vector3 amount) {
+        if (isDead) {
+            return;
+        }
+
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.Slide(amount);
+        }
+
+        currentControllerData.gamePlayerControllerAnimation.Slide();
+
+        if (gamePlayerEffectSlide != null) {
+            gamePlayerEffectSlide.Emit(1);
+        }
+    }
+
+    public virtual void SlideStop() {
+        if (isDead) {
+            return;
+        }
+
+        currentControllerData.thirdPersonController.SlideStop();
+    }
+
     // SKILL
- 
+
     public virtual void Skill() {
         if (isDead) {
             return;
@@ -3602,85 +3647,146 @@ public class BaseGamePlayerController : GameActor {
     public virtual void StrafeLeft() {
         Vector3 dir = transform.TransformPoint(transform.localPosition.WithX(-1));//Vector3.zero.WithX(-1);
         float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
-        StrafeLeft(dir, power);
-    }
-
-    public virtual void StrafeLeft(Vector3 dir) {
-        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
-        StrafeLeft(dir, power);
+        Strafe(dir, power);
     }
 
     public virtual void StrafeLeft(float power) {
         Vector3 dir = transform.TransformPoint(transform.localPosition.WithX(-1));//Vector3.zero.WithX(-1);
-        StrafeLeft(dir, power);
+        Strafe(dir, power);
     }
 
-    public virtual void StrafeLeft(Vector3 dir, float power) {
-        //LogUtil.Log("GamePlayerController:StrafeLeft:");
+    // STRAFE RIGHT
 
-        if (!controllerReady) {
-            return;
-        }
+    public virtual void StrafeRight() {
+        Vector3 dir = transform.localPosition.WithX(1);
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
+        Strafe(dir, power);
+    }
+
+    public virtual void StrafeRight(float power) {
+        Vector3 dir = transform.localPosition.WithX(1);
+        Strafe(dir, power);
+    }
+
+    // STRAFE BASE
+
+    public virtual void Strafe(Vector3 dir) {
+        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
+        Strafe(dir, power);
+    }
+
+    public virtual void Strafe(Vector3 dir, float power) {
 
         if (isDead) {
             return;
         }
 
         if (Time.time > currentControllerData.lastStrafeLeftTime + 1f) {
-            currentControllerData.gamePlayerControllerAnimation.StrafeLeft();
+            
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+            
+            if (dir.x < 0) {
+                //LogUtil.Log("GamePlayerController:StrafeLeft:");
+                currentControllerData.gamePlayerControllerAnimation.StrafeLeft();
+                GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
+                currentControllerData.lastStrafeLeftTime = Time.time;
+            }
+            
+            StartCoroutine(StrafeCo(dir, power));
+        }
+
+        if (Time.time > currentControllerData.lastStrafeRightTime + 1f) {
 
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
-            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
 
-            currentControllerData.lastStrafeLeftTime = Time.time;
-            StartCoroutine(StrafeLeftCo(dir, power));
-        }
+            if (dir.x > 0) {
+                //LogUtil.Log("GamePlayerController:StrafeRight:");
+                currentControllerData.gamePlayerControllerAnimation.StrafeRight();
+                GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
+                currentControllerData.lastStrafeRightTime = Time.time;
+            }
+
+            StartCoroutine(StrafeCo(dir, power));
+        }   
     }
 
-    public virtual IEnumerator StrafeLeftCo(Vector3 dir, float power) {
+    public virtual IEnumerator StrafeCo(Vector3 dir, float power) {
         AddForce(dir, power, false);
         yield return new WaitForEndOfFrame();
     }
 
-    // STRAFE RIGHT
+
+    // MOVE BASE
 
 
-    public virtual void StrafeRight() {
-        Vector3 dir = transform.localPosition.WithX(1);
-        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
-        StrafeRight(dir, power);
-    }
-
-    public virtual void StrafeRight(Vector3 dir) {
-        float power = 10f + 5f * (float)currentControllerData.runtimeRPGData.modifierAttack;
-        StrafeRight(dir, power);
-    }
-
-    public virtual void StrafeRight(float power) {
-        Vector3 dir = transform.localPosition.WithX(1);
-        StrafeRight(dir, power);
-    }
-
-    public virtual void StrafeRight(Vector3 dir, float power) {
-        //LogUtil.Log("GamePlayerController:StrafeRight:");
+    
+    public virtual void Move(Vector3 dir, Vector3 rangeStart, Vector3 rangeEnd, bool append = true) {
 
         if (isDead) {
             return;
         }
-        if (Time.time > currentControllerData.lastStrafeRightTime + 1f) {
 
-            currentControllerData.gamePlayerControllerAnimation.StrafeRight();
+        if (Time.time > currentControllerData.lastMoveLeftTime + .1f) {
 
             GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
-            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
 
-            currentControllerData.lastStrafeRightTime = Time.time;
-            StartCoroutine(StrafeRightCo(dir, power));
+            if (dir.x < 0) {
+                //LogUtil.Log("GamePlayerController:StrafeLeft:");
+                currentControllerData.gamePlayerControllerAnimation.StrafeLeft();
+                GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsLeft, 1f);
+                currentControllerData.lastMoveLeftTime = Time.time;
+            }
+
+            StartCoroutine(MoveCo(dir, rangeStart, rangeEnd));
+        }
+
+        if (Time.time > currentControllerData.lastMoveRightTime + .1f) {
+
+            GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cuts, 1f);
+
+            if (dir.x > 0) {
+                //LogUtil.Log("GamePlayerController:StrafeRight:");
+                currentControllerData.gamePlayerControllerAnimation.StrafeRight();
+                GamePlayerProgress.Instance.ProcessProgressTotal(GameStatCodes.cutsRight, 1f);
+                currentControllerData.lastMoveRightTime = Time.time;
+            }
+
+            StartCoroutine(MoveCo(dir, rangeStart, rangeEnd));
         }
     }
 
-    public virtual IEnumerator StrafeRightCo(Vector3 dir, float power) {
-        AddForce(dir, power, false);
+    public virtual IEnumerator MoveCo(Vector3 dir, Vector3 rangeStart, Vector3 rangeEnd, bool append = true) {
+        //AddForce(dir, power, false);
+
+        if (append) {
+            dir = gameObject.transform.localPosition + dir;
+        }
+
+        if (dir.x >= rangeEnd.x) {
+            dir.x = rangeEnd.x;
+        }
+        
+        if (dir.x <= rangeStart.x) {
+            dir.x = rangeStart.x;
+        }
+
+        if (dir.y >= rangeEnd.y) {
+            dir.y = rangeEnd.y;
+        }
+
+        if (dir.y <= rangeStart.y) {
+            dir.y = rangeStart.y;
+        }
+
+        if (dir.z >= rangeEnd.z) {
+            dir.z = rangeEnd.z;
+        }
+
+        if (dir.z <= rangeStart.z) {
+            dir.z = rangeStart.z;
+        }
+
+        TweenUtil.MoveToObject(gameObject, dir, .3f, 0f, true, TweenCoord.local);
         yield return new WaitForEndOfFrame();
     }
 
@@ -4538,27 +4644,32 @@ public class BaseGamePlayerController : GameActor {
     Vector3 currentGamePlayerDistance = Vector3.zero;
     Vector3 overallGamePlayerDistance = Vector3.zero;
 
-    internal virtual void handleLateUpdateStationary() {
+    internal virtual void handleUpdateStationary() {
 
-        currentGamePlayerDistance.z = transform.position.z;
-        
-        overallGamePlayerDistance.z += currentGamePlayerDistance.z;
+        /*
+        if (GameConfigs.isGameRunning) {
 
-        overallGamePlayerDistance.z = currentGamePlayerDistance.z;
+            currentGamePlayerDistance.z = transform.position.z;
 
-        moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
+            overallGamePlayerDistance.z += currentGamePlayerDistance.z;
 
-        //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
-        
-        transform.position = transform.position.WithZ(-moveGamePlayerDistance.z);
+            overallGamePlayerDistance.z = currentGamePlayerDistance.z;
 
-        //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
-        //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+            moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
 
-        //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
-        //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+            //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 
+            transform.position = transform.position.WithZ(-moveGamePlayerDistance.z);
 
+            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
+            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+
+            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
+            //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+
+            
+        }
+        */
     }
 
     float lastUpdatePhysics = 0;
@@ -4578,7 +4689,7 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+        //if (GameController.IsGameplayType(GameplayType.gameDasher)) {
             
             if (currentControllerData.characterController.enabled) {
                 currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
@@ -4587,7 +4698,7 @@ public class BaseGamePlayerController : GameActor {
             // consumes the currentControllerData.impact energy each cycle:
             currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
             //}
-        }
+        //}
 
         UpdatePlayerEffectsState();
 
@@ -5208,6 +5319,23 @@ public class BaseGamePlayerController : GameActor {
                 currentControllerData.thirdPersonController.getUserInput = false;
                 currentControllerData.thirdPersonController.capeFlyGravity = 8f;
                 currentControllerData.thirdPersonController.gravity = 16f;
+
+
+                // TODO RUNNER 
+                if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+                    currentControllerData.thirdPersonController.inAirControlAcceleration = 7f;
+                    currentControllerData.thirdPersonController.jumpHeight = 7f;
+                    currentControllerData.thirdPersonController.extraJumpHeight = 7f;
+                    currentControllerData.thirdPersonController.gravity = 100f;
+                    currentControllerData.thirdPersonController.capeFlyGravity = 100f;
+
+
+                    currentControllerData.thirdPersonController.walkSpeed = 40f;
+                    currentControllerData.thirdPersonController.trotSpeed = 40f;
+                    currentControllerData.thirdPersonController.runSpeed = 50f;
+                }
+
+
             }                       
             
             if (currentControllerData.gamePlayerControllerAnimation != null) {
@@ -6054,11 +6182,11 @@ public class BaseGamePlayerController : GameActor {
                             power);
                     }
                     else if (Input.GetKey(KeyCode.N)) {
-                        StrafeLeft(Vector3.zero.WithX(-1),
+                        Strafe(Vector3.zero.WithX(-1),
                             power);
                     }
                     else if (Input.GetKey(KeyCode.M)) {
-                        StrafeRight(Vector3.zero.WithX(1),
+                        Strafe(Vector3.zero.WithX(1),
                             power);
                     }
                 }
@@ -6115,7 +6243,7 @@ public class BaseGamePlayerController : GameActor {
 
     public override void Update() {
 
-        handleLateUpdateStationary();
+        handleUpdateStationary();
 
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
