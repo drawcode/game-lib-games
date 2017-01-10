@@ -2661,6 +2661,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         startLevelStats();
 
+        handleGameStart();
+
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
 
@@ -3832,6 +3834,44 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     GameObjectInfiniteController controllerInfinity;
     GameObjectInfiniteContainer containerInfinity;
+    public float curveInfiniteDistance = 50f;
+    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
+    public Vector4 curve = Vector4.zero;
+
+    public static Vector4 GetCurveInfiniteAmount() {
+        if (GameController.isInst) {
+            return GameController.Instance.curveInfiniteAmount;
+        }
+
+        return Vector4.zero;
+    }
+
+    public static float GetCurveInfiniteDistance() {
+        if (GameController.isInst) {
+            return GameController.Instance.curveInfiniteDistance;
+        }
+
+        return 50f;
+    }
+
+    internal virtual void handleGameStart() {
+
+        if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            handleInfiniteCurve();
+        }
+    }
+
+    internal virtual void handleInfiniteCurve() {
+        
+        if (!isGameRunning) {
+            return;
+        }
+
+        curve.x = UnityEngine.Random.Range(-22, 22);
+        curve.z = UnityEngine.Random.Range(-22, 10);
+
+        Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
+    }
 
     internal virtual void handleLateUpdateStationary() {
 
@@ -3868,6 +3908,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
 
             containerInfinity.UpdatePositionPartsZ(-moveGamePlayerDistance.z);
+
+            curveInfiniteAmount = Vector4.Lerp(curveInfiniteAmount, curve, .15f * Time.deltaTime);
 
         }
     }

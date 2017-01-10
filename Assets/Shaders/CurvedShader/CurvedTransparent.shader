@@ -1,22 +1,28 @@
-Shader "Curved/Curved" {
+Shader "Curved/CurvedTransparent" {
 	Properties {
-		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_MainTex("Color (RGB) Alpha (A)", 2D) = "white"
 		_QOffset ("Offset", Vector) = (0,0,0,0)
 		_Dist ("Distance", Float) = 100.0
 	}
-	SubShader {
-		Tags { "RenderType"="Opaque" }
+	SubShader { 
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }          
+		Lighting Off
+		cull off
+		//ztest always
+		Zwrite off
+		Fog{ Mode Off }
 		Pass
 		{
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-                        sampler2D _MainTex;
+            sampler2D _MainTex;
 			float4 _QOffset;
 			float _Dist;
-			
+						
 			struct v2f {
 			    float4 pos : SV_POSITION;
 			    float4 uv : TEXCOORD0;
@@ -30,6 +36,7 @@ Shader "Curved/Curved" {
 			    vPos += _QOffset*zOff*zOff;
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
 			    o.uv = v.texcoord;
+				//o.Alpha = tex2D(_MainTex, v.uv_MainTex).a;
 			    return o;
 			}
 
