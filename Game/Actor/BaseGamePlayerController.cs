@@ -690,6 +690,15 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
+    public virtual void SetSpeed(float moveSpeedTo) {
+
+        if (controllerData.thirdPersonController == null) {
+            return;
+        }
+
+        controllerData.thirdPersonController.SetSpeed(moveSpeedTo);
+    }
+
     public virtual void SetRuntimeData(GamePlayerRuntimeData data) {
         if (data == null) {
             data = new GamePlayerRuntimeData();
