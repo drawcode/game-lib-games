@@ -576,6 +576,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         return moveSpeed;
     }
 
+    public virtual void SetSpeed(float moveSpeedTo) {
+        moveSpeed = moveSpeedTo;
+    }
+
     public virtual bool IsJumping() {
         return jumping;
     }

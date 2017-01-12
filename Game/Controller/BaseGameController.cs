@@ -3393,7 +3393,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 return handled;
             }
 
-            if (!GameUIController.CheckIfAllowedTouch(point)) {
+            if (!InputSystem.CheckIfAllowedTouch(point)) {
                 return handled;
             }
 
