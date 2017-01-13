@@ -5,7 +5,7 @@ Shader "Curved/Curved" {
 		_Dist ("Distance", Float) = 100.0
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase" }
 		Pass
 		{
 			CGPROGRAM

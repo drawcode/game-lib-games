@@ -3,12 +3,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameObjectInfiniteContainer : GameObjectBehavior {
+[Serializable]
+public class GameObjectInfinteData {
 
     public string code;
     public string codeGamePart = "game-part-col-3";
-            
+
+    public Dictionary<string, object> positions = new Dictionary<string, object>();
+    public List<Vector3> lines;
+    public int currentLine = 0;
+}
+
+public class GameObjectInfiniteContainer : GameObjectBehavior {
+
+    public GameObjectInfinteData data = new GameObjectInfinteData();
+                
     Dictionary<int, GameObjectInfinitePart> parts;
+
 
     int padIndex = 0;
     public Vector3 distance = Vector3.zero;
@@ -17,6 +28,10 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
     public Vector3 rangeBoundsMax = Vector3.zero.WithX(200f).WithY(200f).WithZ(1000f);
 
     public float distanceTickZ = 16f;
+    public float distanceX = 16f;
+    
+    int lastLoadIndex = 0;
+    int currentIndex = 0;
 
     bool initialized = false;
 
@@ -26,12 +41,61 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
     void Init() {
 
-        if (code.IsNullOrEmpty()) {
-            code = UniqueUtil.CreateUUID4();
+        if (data.code.IsNullOrEmpty()) {
+            data.code = UniqueUtil.CreateUUID4();
         }
 
         InitParts();
 
+        if (data.lines == null) {
+
+            data.lines = new List<Vector3>();
+
+            data.lines.Add(Vector3.zero.WithX(-distanceX));
+            data.lines.Add(Vector3.zero.WithX(0f));
+            data.lines.Add(Vector3.zero.WithX(distanceX));
+        }
+
+        SwitchLine(data.currentLine);
+
+    }
+
+    public Vector3 GetCurrentLine() {
+        if (data.lines.Count > data.currentLine) {
+            return data.lines[data.currentLine];
+        }
+        return Vector3.zero;
+    }
+
+    public void SetCurrentLine(int index) {
+        if (index > data.lines.Count - 1) {
+            return;
+        }
+
+        data.currentLine = index;
+    }
+
+    public Vector3 SwitchLine(int index) {
+
+        if (index > data.lines.Count - 1) {
+            return GetCurrentLine();
+        }
+
+        if (index < 0) {
+            return GetCurrentLine();
+        }
+
+        SetCurrentLine(index);
+
+        return GetCurrentLine();
+    }
+
+    public Vector3 SwitchLineLeft() {
+        return SwitchLine(data.currentLine - 1);
+    }
+
+    public Vector3 SwitchLineRight() {
+        return SwitchLine(data.currentLine + 1);
     }
 
     void InitParts() {
@@ -70,9 +134,6 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         }
     }
 
-    int lastLoadIndex = 0;
-    int currentIndex = 0;
-
     public void UpdateParts() {
 
         // index is 31 range 1000 
@@ -91,8 +152,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
     void LoadLevelAssetByIndex(int indexItem) {
 
-        GameObject go = AppContentAssets.LoadAssetLevelAssets(codeGamePart);
-        go.name = StringUtil.Dashed(code, indexItem.ToString());
+        GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGamePart);
+        go.name = StringUtil.Dashed(data.code, indexItem.ToString());
         go.transform.parent = transform;
 
         if (go != null) {

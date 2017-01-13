@@ -20,7 +20,7 @@ public class GameObjectInfiniteController : GameObjectBehavior {
     void UpdateContainers() {
 
         foreach (GameObjectInfiniteContainer container in gameObject.GetList<GameObjectInfiniteContainer>()) {
-            containersInfinite.Set(container.code, container);
+            containersInfinite.Set(container.data.code, container);
         }
 
     }

@@ -234,10 +234,10 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
      
-        bool leftPressed = InputSystem.isLeftPressed;
-        bool rightPressed = InputSystem.isRightPressed;
-        bool upPressed = InputSystem.isUpPressed;
-        bool downPressed = InputSystem.isDownPressed;
+        bool leftPressed = InputSystem.isLeftPressDown;
+        bool rightPressed = InputSystem.isRightPressDown;
+        bool upPressed = InputSystem.isUpPressDown;
+        bool downPressed = InputSystem.isDownPressDown;
         
         if (axisName == "move") {
             //LogUtil.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()

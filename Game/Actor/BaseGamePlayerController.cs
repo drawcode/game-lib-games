@@ -628,7 +628,7 @@ public class BaseGamePlayerController : GameActor {
      
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
-
+        
     }
 
     public override void OnDisable() {
@@ -660,7 +660,7 @@ public class BaseGamePlayerController : GameActor {
      
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
- 
+
     }
 
     public virtual void OnGameLevelStart(string levelCode) {
@@ -2211,9 +2211,92 @@ public class BaseGamePlayerController : GameActor {
     }
 
 
- 
+
     // --------------------------------------------------------------------
     // EVENTS
+    
+        /*
+
+    public virtual void OnInputSwipe(InputSystemSwipeDirection direction, Vector3 pos, float velocity) {
+
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        if (controllerData == null) {
+            return;
+        }
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (direction == InputSystemSwipeDirection.Up) {
+                InputJump();
+            }
+            else if (direction == InputSystemSwipeDirection.Down) {
+                //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+                //GameController.GamePlayerAttack();
+                InputSlide(Vector3.zero.WithZ(3f));
+            }
+            else if (direction == InputSystemSwipeDirection.Left
+                || direction == InputSystemSwipeDirection.LowerLeftDiagonal
+                || direction == InputSystemSwipeDirection.UpperLeftDiagonal) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
+                InputMove(GameController.Instance.containerInfinity.SwitchLineLeft(), rangeStart, rangeEnd);
+            }
+            else if (direction == InputSystemSwipeDirection.Right
+                || direction == InputSystemSwipeDirection.LowerRightDiagonal
+                || direction == InputSystemSwipeDirection.UpperRightDiagonal) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
+                  InputMove(GameController.Instance.containerInfinity.SwitchLineRight(), rangeStart, rangeEnd);
+            }
+        }
+    }
+
+    Vector3 rangeStart = Vector3.zero.WithX(-16f);
+    Vector3 rangeEnd = Vector3.zero.WithX(16f);
+    float infiniteSpeed = 200f;
+
+    internal virtual void handleGameInput() {
+
+        if (!IsPlayerControlled) {
+            return;
+        }
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (InputSystem.isUpPressed) {
+                InputJump();
+            }
+            else if (InputSystem.isDownPressed) {
+                //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+                //GameController.GamePlayerAttack();
+                InputSlide(Vector3.zero.WithZ(3f));
+            }
+            else if (InputSystem.isLeftPressed) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
+                InputMove(GameController.Instance.containerInfinity.SwitchLineLeft(), rangeStart, rangeEnd);
+            }
+            else if (InputSystem.isRightPressed) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);  
+                InputMove(GameController.Instance.containerInfinity.SwitchLineRight(), rangeStart, rangeEnd);
+            }
+            else {
+
+                //infiniteSpeed += .3f * Time.deltaTime;
+
+                infiniteSpeed = Mathf.Clamp(infiniteSpeed, 0, 500);
+
+                SetSpeed(infiniteSpeed);
+                //GameController.SendInputAxisMoveMessage(0, 1);
+            }
+        }
+        else if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+            //DetectSwipe();
+            InputSystem.UpdateTouchLaunch();
+        }
+    }
+
+    */
 
     public virtual void OnInputAxis(string name, Vector3 axisInput) {
                      
@@ -2235,6 +2318,8 @@ public class BaseGamePlayerController : GameActor {
         //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
      
         if (name == GameTouchInputAxis.inputAxisMove) {
+
+            // INITIAL D-PAD
          
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
 
@@ -2256,6 +2341,8 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack) {
+
+            // SECONDARY D-PAD for DUAL STICK
          
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
          
@@ -2274,6 +2361,8 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if (name == GameTouchInputAxis.inputAxisMoveHorizontal) {
+
+            // INITIAL D-PAD ONLY FOR HORIZONTAL MOVEMENT
                 
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
             
@@ -2298,9 +2387,11 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if (name == GameTouchInputAxis.inputAxisMoveVertical) {
-                
+
+            // INITIAL D-PAD ONLY FOR VERTICAL MOVEMENT
+
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
-            
+
             if (currentControllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
@@ -2311,9 +2402,11 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack2DSide2) {
-                
+
+            // INITIAL D-PAD ONLY FOR SIDE SCROLLER ATTACK 2 
+
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
-            
+
             if (currentControllerData.thirdPersonController != null) {
                     
                 //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
@@ -2337,9 +2430,11 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if (name == GameTouchInputAxis.inputAxisAttack2DSide) {
-            
+
+            // INITIAL D-PAD ONLY FOR SIDE SCROLLER ATTACK 1
+
             //LogUtil.Log("OnInputAxis:" + name + "input:" + axisInput);
-            
+
             if (currentControllerData.thirdPersonController != null) {
                 
                 if (axisInput.IsBiggerThanDeadzone(axisDeadZone)) {
@@ -6162,6 +6257,8 @@ public class BaseGamePlayerController : GameActor {
 
         HandleCharacterAttachedSounds(); // always run to turn off audio when not playing.
         HandlePlayerInactionState();
+
+        //handleGameInput();
     }
 
     public virtual void UpdateEditorTools() {        
@@ -6198,12 +6295,7 @@ public class BaseGamePlayerController : GameActor {
                         Strafe(Vector3.zero.WithX(1),
                             power);
                     }
-                }
-            }
-            
-            
-            if (Application.isEditor) {
-                if (Input.GetKey(KeyCode.LeftControl)) {
+
                     if (Input.GetKey(KeyCode.RightBracket)) {
                         if (!IsPlayerControlled) {
                             Die();

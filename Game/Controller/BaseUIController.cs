@@ -25,9 +25,7 @@ public class BaseUIControllerMessages {
     public static string uiUpdateTouchLaunch = "ui-update-touch-launch";
 
     public static string uiShow = "ui-show";
-    public static string uiHide = "ui-hide";
-
-    public static string uiSwipe = "ui-swipe";
+    public static string uiHide = "ui-hide"; 
 }
 
 public class UIControllerAnimateTypes {
@@ -553,47 +551,8 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
         }
-
-        handleGameInput();
     }
-
-    Vector3 rangeStart = Vector3.zero.WithX(-16f);
-    Vector3 rangeEnd = Vector3.zero.WithX(16f);
-    float infiniteSpeed = 200f;
-
-    internal virtual void handleGameInput() {
-
-        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
-
-            if (InputSystem.isUpPressed) {
-                GameController.GamePlayerJump();
-            }
-            else if (InputSystem.isDownPressed) {
-                GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
-                //GameController.GamePlayerAttack();
-            }
-            else if (InputSystem.isLeftPressed) {
-                GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
-            }
-            else if (InputSystem.isRightPressed) {
-                GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
-            }
-            else {
-
-                //infiniteSpeed += .3f * Time.deltaTime;
-
-                infiniteSpeed = Mathf.Clamp(infiniteSpeed, 0, 500);
-
-                GameController.CurrentGamePlayerController.SetSpeed(infiniteSpeed);
-                //GameController.SendInputAxisMoveMessage(0, 1);
-            }
-        }
-        else if (GameController.IsGameplayType(GameplayType.gameDasher)) {
-            //DetectSwipe();
-            InputSystem.UpdateTouchLaunch();
-        }
-    }
-    
+        
     public virtual void ToggleUI() {
 
         LogUtil.Log("ToggleUI uiVisible: " + uiVisible);

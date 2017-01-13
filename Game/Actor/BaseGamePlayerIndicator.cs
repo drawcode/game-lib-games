@@ -411,7 +411,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         indicateTemp = cam.WorldToViewportPoint(camTransform.TransformPoint(relativePosition + offset));
         //LogUtil.Log("indicateTemp1viewport:" + indicateTemp);
      
-        if (indicatorType == GamePlayerIndicatorPlacementType.VIEWPORT) {
+        if (   indicatorType == GamePlayerIndicatorPlacementType.VIEWPORT) {
             indicatorObject.transform.localPosition = indicateTemp;
         }
         else { //(cam.WorldToScreenPoint(relativePosition + offset));//camTransform.TransformPoint(relativePosition + offset)) * 1f);//.WithY(0f);   
