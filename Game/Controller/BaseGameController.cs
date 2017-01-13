@@ -622,10 +622,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     internal bool initialized = false;
     internal bool allowedEditing = true;
     internal bool isAdvancing = false;
+    //
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
+    //
     public UnityEngine.Object prefabDraggableContainer;
+    //
     internal Dictionary<string, GameLevelItemAsset> levelGrid = null;
     internal List<GameLevelItemAsset> levelItems = null;
+    //
     public GameObject levelBoundaryContainerObject;
     public GameObject levelContainerObject;
     public GameObject levelItemsContainerObject;
@@ -774,6 +778,9 @@ public class BaseGameController : GameObjectTimerBehavior {
         Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
 
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
+
+        Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(InputSystemEvents.inputSwipe, OnInputSwipe);
+
     }
 
     public virtual void OnDisable() {
@@ -792,8 +799,9 @@ public class BaseGameController : GameObjectTimerBehavior {
         Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
 
         Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
-    }
 
+        Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(InputSystemEvents.inputSwipe, OnInputSwipe);
+    }
     
     // ---------------------------------------------------------------------
     // CONTROLLER TYPES
@@ -1256,6 +1264,16 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void gamePlayerSlide(Vector3 amount) {
         if (currentPlayerController != null) {
             currentPlayerController.InputSlide(amount);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+
+    // SPEED
+
+    public virtual void gamePlayerSetSpeed(float amount) {
+        if (currentPlayerController != null) {
+            currentPlayerController.SetSpeed(amount);
         }
     }
 
@@ -3801,16 +3819,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         touchHandled = handled;
     }
 
-    internal virtual void handleInput() {
-
-        if (gameplayType == GameplayType.gameDasher) {
-            handleInputTouch();
-        }
-        else if (gameplayType == GameplayType.gameRunner) {
-            //handleInputTouch();
-        }
-    }
-
     internal virtual void handleUpdate() {
 
         handleInput();
@@ -3826,17 +3834,165 @@ public class BaseGameController : GameObjectTimerBehavior {
     internal virtual void handleUpdateDefault() {
 
 
+    } 
+
+    internal virtual void handleInput() {
+
+        handleGameInput();
+
+        if (gameplayType == GameplayType.gameDasher) {
+            handleInputTouch();
+        }
+        else if (gameplayType == GameplayType.gameRunner) {
+            //handleInputTouch();
+        }
     }
     
-    Vector3 moveGamePlayerDistance = Vector3.zero;
-    Vector3 currentGamePlayerDistance = Vector3.zero;
-    Vector3 overallGamePlayerDistance = Vector3.zero;
+    Vector3 rangeStart = Vector3.zero.WithX(-16f);
+    Vector3 rangeEnd = Vector3.zero.WithX(16f);
+    float infiniteSpeed = 200f;
 
-    GameObjectInfiniteController controllerInfinity;
-    GameObjectInfiniteContainer containerInfinity;
+    public Vector3 moveGamePlayerPosition = Vector3.zero;
+    public Vector3 currentGamePlayerPosition = Vector3.zero;
+    public Vector3 overallGamePlayerPosition = Vector3.zero;
+
+    public GameObjectInfiniteController controllerInfinity;
+    public GameObjectInfiniteContainer containerInfinity;
     public float curveInfiniteDistance = 50f;
     public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
     public Vector4 curve = Vector4.zero;
+
+    public enum GamePlayerDirection {
+        None,
+        Up,
+        Down,
+        Left,
+        Right,
+        LowerLeftDiagonal,
+        UpperLeftDiagonal,
+        LowerRightDiagonal,
+        UpperRightDiagonal
+    }
+
+    public virtual void handleGameInputDirection(GamePlayerDirection direction) {
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        //if (controllerData == null) {
+        //    return;
+        //}
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (direction == GamePlayerDirection.Up) {
+                GameController.GamePlayerJump();
+            }
+            else if (direction == GamePlayerDirection.Down) {
+                //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+                //GameController.GamePlayerAttack();
+                GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+            }
+            else if (direction == GamePlayerDirection.Left
+                || direction == GamePlayerDirection.LowerLeftDiagonal
+                || direction == GamePlayerDirection.UpperLeftDiagonal) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
+
+                Vector3 pos = GameController.Instance.containerInfinity.SwitchLineLeft();
+
+                Debug.Log("handleGameInputDirection:left:" + pos);
+
+                moveGamePlayerPositionTo.x = pos.x;
+
+                //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
+            }
+            else if (direction == GamePlayerDirection.Right
+                || direction == GamePlayerDirection.LowerRightDiagonal
+                || direction == GamePlayerDirection.UpperRightDiagonal) {
+                //GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
+
+                Vector3 pos = GameController.Instance.containerInfinity.SwitchLineRight();
+
+                Debug.Log("handleGameInputDirection:right:" + pos);
+
+                moveGamePlayerPositionTo.x = pos.x;
+
+                //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
+            }
+            else {
+
+                //infiniteSpeed += .3f * Time.deltaTime;
+
+                infiniteSpeed = Mathf.Clamp(infiniteSpeed, 0, 500);
+
+                GameController.GamePlayerSetSpeed(infiniteSpeed);
+                //GameController.SendInputAxisMoveMessage(0, 1);
+            }
+        }
+    }
+
+        
+    // TODO move to player controller and events
+    
+    public virtual void OnInputSwipe(InputSystemSwipeDirection direction, Vector3 pos, float velocity) {
+
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        //if (controllerData == null) {
+        //    return;
+        //}
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (direction == InputSystemSwipeDirection.Up) {
+                handleGameInputDirection(GamePlayerDirection.Up);
+            }
+            else if (direction == InputSystemSwipeDirection.Down) {
+                handleGameInputDirection(GamePlayerDirection.Down);
+            }
+            else if (direction == InputSystemSwipeDirection.Left
+                || direction == InputSystemSwipeDirection.LowerLeftDiagonal
+                || direction == InputSystemSwipeDirection.UpperLeftDiagonal) {
+                handleGameInputDirection(GamePlayerDirection.Left);
+            }
+            else if (direction == InputSystemSwipeDirection.Right
+                || direction == InputSystemSwipeDirection.LowerRightDiagonal
+                || direction == InputSystemSwipeDirection.UpperRightDiagonal) {
+                handleGameInputDirection(GamePlayerDirection.Right);
+            }
+            else {
+                handleGameInputDirection(GamePlayerDirection.None);
+            }
+        }
+    }
+
+    internal virtual void handleGameInput() {
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+
+            if (InputSystem.isUpPressDown) {
+                handleGameInputDirection(GamePlayerDirection.Up);
+            }
+            else if (InputSystem.isDownPressDown) {
+                handleGameInputDirection(GamePlayerDirection.Down);
+            }
+            else if (InputSystem.isLeftPressDown) {
+                handleGameInputDirection(GamePlayerDirection.Left);
+            }
+            else if (InputSystem.isRightPressDown) {
+                handleGameInputDirection(GamePlayerDirection.Right);
+            }
+            else {
+                handleGameInputDirection(GamePlayerDirection.None);
+            }
+        }
+        else if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+            //DetectSwipe();
+            InputSystem.UpdateTouchLaunch();
+        }
+    }
 
     public static Vector4 GetCurveInfiniteAmount() {
         if (GameController.isInst) {
@@ -3873,6 +4029,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
 
+    Vector3 moveGamePlayerPositionTo = Vector3.zero;
+
     internal virtual void handleLateUpdateStationary() {
 
         if (currentGamePlayerController == null) {
@@ -3889,17 +4047,20 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if (GameConfigs.isGameRunning) {
 
-            currentGamePlayerDistance.z = currentGamePlayerController.transform.position.z;
+            currentGamePlayerPosition.z = currentGamePlayerController.transform.position.z;
 
-            overallGamePlayerDistance.z += currentGamePlayerDistance.z;
+            overallGamePlayerPosition.z += currentGamePlayerPosition.z;
+            //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
 
-            overallGamePlayerDistance.z = currentGamePlayerDistance.z;
-
-            moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
+            moveGamePlayerPosition.z = Mathf.Lerp(moveGamePlayerPosition.z, currentGamePlayerPosition.z, .3f * Time.deltaTime);
+            moveGamePlayerPosition.x = Mathf.Lerp(moveGamePlayerPosition.x, moveGamePlayerPositionTo.x, 10f * Time.deltaTime);
 
             //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 
-            currentGamePlayerController.transform.position = currentGamePlayerController.transform.position.WithZ(-moveGamePlayerDistance.z);
+            currentGamePlayerController.transform.position = 
+                currentGamePlayerController.transform.position
+                .WithX(moveGamePlayerPosition.x)
+                .WithZ(-moveGamePlayerPosition.z);
 
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
@@ -3907,9 +4068,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
             //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
 
-            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerDistance.z);
+            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerPosition.z);
 
             curveInfiniteAmount = Vector4.Lerp(curveInfiniteAmount, curve, .15f * Time.deltaTime);
+
+
 
         }
     }
@@ -3930,7 +4093,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void handleLateUpdate() {
 
-        handleInput();
+        //handleInput();
 
         if (gameplayWorldType == GameplayWorldType.gameDefault) {
             handleLateUpdateDefault();
@@ -4003,7 +4166,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        //handleUpdate();
+        handleUpdate();
 
         if (!gameObjectTimer.IsTimerPerf(
             GameObjectTimerKeys.gameUpdateAll)) {
