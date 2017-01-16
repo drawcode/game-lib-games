@@ -3850,7 +3850,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     
     Vector3 rangeStart = Vector3.zero.WithX(-16f);
     Vector3 rangeEnd = Vector3.zero.WithX(16f);
-    float infiniteSpeed = 200f;
+    float infiniteSpeed = 100f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPosition = Vector3.zero;
@@ -4053,7 +4053,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
 
             moveGamePlayerPosition.z = Mathf.Lerp(moveGamePlayerPosition.z, currentGamePlayerPosition.z, .3f * Time.deltaTime);
-            moveGamePlayerPosition.x = Mathf.Lerp(moveGamePlayerPosition.x, moveGamePlayerPositionTo.x, 10f * Time.deltaTime);
+            moveGamePlayerPosition.x = Mathf.Lerp(moveGamePlayerPosition.x, moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
             //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 

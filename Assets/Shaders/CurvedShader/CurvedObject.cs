@@ -18,7 +18,7 @@ public class CurvedObject : MonoBehaviour {
 
     void UpdateShader() {
         GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", GameController.GetCurveInfiniteAmount());
-        GetComponent<Renderer>().sharedMaterial.SetFloat("_Distance", GameController.GetCurveInfiniteDistance());
+        GetComponent<Renderer>().sharedMaterial.SetFloat("_Dist", GameController.GetCurveInfiniteDistance());
     }
 
     private void OnApplicationQuit() {

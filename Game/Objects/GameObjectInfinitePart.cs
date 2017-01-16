@@ -7,7 +7,7 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
     public GameObjectInfiniteController controller;
     public GameObjectInfiniteContainer container;
-
+    
     public int index = 0;
 
     public Vector3 bounds = Vector3.zero.WithX(16f).WithY(16f).WithZ(16f);
@@ -27,6 +27,10 @@ public class GameObjectInfinitePart : GameObjectBehavior {
         }
     }
 
+    public void ClearItems() {
+        gameObject.DestroyChildren();
+    }
+    
     void Update() {
 
         bool destroy = false;
@@ -38,6 +42,13 @@ public class GameObjectInfinitePart : GameObjectBehavior {
         }
         
         if (destroy) {
+
+            foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
+                part.ClearItems();
+            }
+
+            ClearItems();
+
             gameObject.DestroyGameObject();
         }
          

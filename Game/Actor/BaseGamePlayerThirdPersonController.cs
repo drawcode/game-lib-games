@@ -460,7 +460,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         // off while we slide
         navMeshAgent.StopAgent();
 
-        sliding = true;
+        sliding = true;        
+
         lastSlideTime = Time.time;
         lastSlideStartHeight = transform.position.y;
         lastSlideButtonTime = -10;
@@ -501,7 +502,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             if(jumpButton)
                 lastJumpButtonTime = Time.time;
             if (slideButton)
-                lastJumpButtonTime = Time.time;
+                lastSlideButtonTime = Time.time;
         }
 
         UpdateSmoothedMovementDirection();
@@ -558,8 +559,14 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
             if(jumping) {
                 jumping = false;
-                SendMessage("Land", SendMessageOptions.DontRequireReceiver);
+                SendMessage("land", SendMessageOptions.DontRequireReceiver);
                 JumpStop();
+            }
+
+            if (sliding) {
+                sliding = false;
+                SendMessage("land", SendMessageOptions.DontRequireReceiver);
+                SlideStop();
             }
         }
      
