@@ -20,6 +20,10 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
         }
     }
 
+    public void ClearItems() {
+        gameObject.DestroyChildren();
+    }
+
     void Update() {
 
         /*

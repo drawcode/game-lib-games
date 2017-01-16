@@ -159,7 +159,15 @@ public class BaseGamePlayerControllerAnimationData {
     }
 
     //
-        
+
+    public string animationCodeSlide {
+        get {
+            return GetAnimation(GameDataActionKeys.slide);
+        }
+    }
+
+    //
+
     public string animationCodeJump {
         get {
             return GetAnimation(GameDataActionKeys.jump);
@@ -483,7 +491,7 @@ public class BaseGamePlayerControllerAnimationData {
 
             GamePlayerAnimationDataItem animationItem = items.Get<GamePlayerAnimationDataItem>(type);
 
-            if (animationItem.last_update + 5 < Time.time) {
+            if (animationItem.last_update + 1f < Time.time) {
                 animationItem.last_update = Time.time;
                 code = GetDataAnimation(type);                
             }
@@ -536,6 +544,7 @@ public class BaseGamePlayerControllerAnimationData {
             animator.ResetFloat(GameDataActionKeys.jump);
             animator.ResetFloat(GameDataActionKeys.attack);
             animator.ResetFloat(GameDataActionKeys.hit);
+            animator.ResetFloat(GameDataActionKeys.slide);
         }
         else {
             PlayAnimationIdle();
@@ -1184,7 +1193,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         animationData.PlayAnimationSlide();
 
         SendMessage("SyncAnimation",
-                    GameDataActionKeys.jump,
+                    GameDataActionKeys.slide,
                     SendMessageOptions.DontRequireReceiver);
 
         //animationData.actor.animation.CrossFade("jetpackjump", 0.2f);
@@ -1497,8 +1506,9 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             string currentAnimationRun = animationData.animationCodeRun;
             string currentAnimationWalk = animationData.animationCodeWalk;
             string currentAnimationJump = animationData.animationCodeJump;
-            
-            
+            string currentAnimationSlide = animationData.animationCodeSlide;
+
+
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (actorAnimation != null) {
@@ -1564,8 +1574,11 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                     }
                     // We fade out jumpland quick otherwise we get sliding feet
                     if (actorAnimation[currentAnimationJump] != null) {
-                        actorAnimation.CrossFade(currentAnimationJump, 0);
+                        //actorAnimation.CrossFade(currentAnimationJump, 0);//, PlayMode.StopSameLayer);
                     }
+                    if (actorAnimation[currentAnimationSlide] != null) {
+                        //actorAnimation.CrossFade(currentAnimationSlide, 0);//, PlayMode.StopSameLayer);
+                    }                    
                 }
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, currentSpeed);
@@ -1579,6 +1592,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (actorAnimation != null) {
+                            //
                             if (actorAnimation[currentAnimationJump] != null) {
                                 if (actorAnimation[currentAnimationJump] != null) {
                                     actorAnimation.CrossFade(currentAnimationJump);
@@ -1586,6 +1600,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                 // We fade out jumpland realy quick otherwise we get sliding feet
                                 actorAnimation.Blend(currentAnimationJump, 0);
                             }
+                            //
+                            if (actorAnimation[currentAnimationSlide] != null) {
+                                if (actorAnimation[currentAnimationSlide] != null) {
+                                    actorAnimation.CrossFade(currentAnimationSlide);
+                                }
+                                // We fade out jumpland realy quick otherwise we get sliding feet
+                                actorAnimation.Blend(currentAnimationSlide, 0);
+                            }
+                            //
                             if (actorAnimation[currentAnimationWalk] != null) {
 
                                 if (actorAnimation[currentAnimationWalk] != null) {
@@ -1636,12 +1659,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             // JUMPING
             
             bool isJumping = false;
+            bool isSliding = false;
             bool isCapeFlying = false;
             bool hasJumpReachedApex = false;
             bool isGroundedWithTimeout = false;
             
             if (animationData.thirdPersonController != null) {
                 isJumping = animationData.thirdPersonController.IsJumping();
+                isSliding = animationData.thirdPersonController.IsSliding();
                 isCapeFlying = animationData.thirdPersonController.IsCapeFlying();
                 hasJumpReachedApex = animationData.thirdPersonController.HasJumpReachedApex();
                 isGroundedWithTimeout = animationData.thirdPersonController.IsGroundedWithTimeout();
@@ -1656,6 +1681,14 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 }
                 else {
                     Jump();
+                }
+            }
+            else if (isSliding) {
+                if (isCapeFlying) {
+                    Slide();
+                }
+                else {
+                    Slide();
                 }
             }
             // We fell down somewhere

@@ -1504,7 +1504,8 @@ public class BaseGamePlayerController : GameActor {
 
         // Look at camera
 
-        OnInputAxis(GameTouchInputAxis.inputAxisMove, Vector3.zero.WithY(-1));
+        // TODO set default
+        //OnInputAxis(GameTouchInputAxis.inputAxisMove, Vector3.zero.WithY(-1));
 
         Idle();
     }

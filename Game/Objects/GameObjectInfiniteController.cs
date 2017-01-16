@@ -17,14 +17,11 @@ public class GameObjectInfiniteController : GameObjectBehavior {
         UpdateContainers();
     }
     
-    void UpdateContainers() {
+    public void UpdateContainers() {
 
         foreach (GameObjectInfiniteContainer container in gameObject.GetList<GameObjectInfiniteContainer>()) {
             containersInfinite.Set(container.data.code, container);
         }
-
     }
-
-
 
 }

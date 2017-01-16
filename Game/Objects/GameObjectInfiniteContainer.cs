@@ -7,11 +7,27 @@ using System.Collections.Generic;
 public class GameObjectInfinteData {
 
     public string code;
-    public string codeGamePart = "game-part-col-3";
+    public string codeGamePartItems = "game-part-items";
+    public string codeGamePartItem = "game-part-item";
 
-    public Dictionary<string, object> positions = new Dictionary<string, object>();
+    public string codeGameBlock = "game-block-1";
+    public string codeGameBlockLow = "game-block-low";
+    public string codeGameBlockHigh = "game-block-high";
+
+    //public Dictionary<string, object> positions;
+
     public List<Vector3> lines;
+
     public int currentLine = 0;
+
+    public List<GameObject> lineObjects;
+
+    public GameObjectInfinteData() {
+        //positions = new Dictionary<string, object>();
+        lines = new List<Vector3>();
+        lineObjects = new List<GameObject>();
+    }
+
 }
 
 public class GameObjectInfiniteContainer : GameObjectBehavior {
@@ -144,12 +160,13 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         if (lastLoadIndex < loadIndex) {
 
-            LoadLevelAssetByIndex(loadIndex);
+            LoadLevelAssetDynamicByIndex(loadIndex);
 
             lastLoadIndex = loadIndex;
         }
     }
 
+    /*
     void LoadLevelAssetByIndex(int indexItem) {
 
         GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGamePart);
@@ -172,15 +189,186 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             }
         }
     }
+    */
 
-    
+    void LoadLevelAssetDynamicByIndex(int indexItem, bool clear = false) {
+
+        // ADD PART ITEMS CONTAINER
+
+        GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGamePartItems);
+
+        if (go == null) {
+            Debug.Log("Asset not found levelassets/" + data.codeGamePartItems);
+            return;
+        }
+
+        go.DestroyChildren();
+
+        go.name = StringUtil.Dashed(data.code, indexItem.ToString());
+        go.transform.parent = transform;
+
+        GameObjectInfinitePart part = go.Get<GameObjectInfinitePart>();
+
+        if (part == null) {
+            Debug.Log("GameObjectInfinitePart not found part:" + data.codeGamePartItems);
+            return;
+        }
+
+        part.index = indexItem;
+        Vector3 bounds = part.bounds;
+
+        go.transform.position = go.transform.position.WithZ(
+            (((indexItem + 1) * bounds.z) - bounds.z) + distance.z);
+
+        // ADD PART ITEM CONTAINER AT LINES
+
+        string template1 = "   ";
+        string template2 = "X  ";
+        string template3 = " X ";
+        string template4 = "  X";
+
+        for (int i = 0; i < data.lines.Count; i++) {
+
+            GameObject goItem = AppContentAssets.LoadAssetLevelAssets(data.codeGamePartItem);
+
+            if (goItem == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGamePartItem);
+                continue;
+            }
+
+            goItem.DestroyChildren();
+
+            goItem.transform.parent = go.transform;
+            goItem.transform.position = go.transform.position;
+            goItem.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
+
+            GameObjectInfinitePartItem partItem = goItem.Get<GameObjectInfinitePartItem>();
+
+            if (partItem == null) {
+                continue;
+            }
+
+            partItem.code = i.ToString();
+
+            int rand = UnityEngine.Random.Range(1,10);
+
+            if (rand < 2 && !clear) {
+                continue;
+            }
+
+            // ADD PART BLOCK AND ASSETS FROM TEMPLATE
+
+            GameObject goAssetBlock = AppContentAssets.LoadAssetLevelAssets(data.codeGameBlock);
+
+            if (goAssetBlock == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameBlock);
+                continue;
+            }
+
+            goAssetBlock.Hide();
+            
+            goAssetBlock.transform.parent = goItem.transform;
+            goAssetBlock.transform.position = goItem.transform.position;
+            //goAssetBlock.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
+
+            goAssetBlock.Show();
+
+
+            // ADD PART BLOCK JUMP AND ASSETS FROM TEMPLATE
+
+            int randObstacleLow = UnityEngine.Random.Range(1, 30);
+
+            if (randObstacleLow < 5 && !clear) {
+                GameObject goAssetObstacleLow = AppContentAssets.LoadAssetLevelAssets(data.codeGameBlockLow);
+
+                if (goAssetObstacleLow == null) {
+                    Debug.Log("Asset not found levelassets/" + data.codeGameBlockLow);
+                    continue;
+                }
+
+                goAssetObstacleLow.Hide();
+
+                goAssetObstacleLow.transform.parent = goItem.transform;
+                goAssetObstacleLow.transform.position = goItem.transform.position;
+
+                goAssetObstacleLow.transform.localPosition = goAssetObstacleLow.transform.localPosition.WithY(bounds.y);
+
+                goAssetObstacleLow.Show();
+            }           
+
+        }
+
+        /*
+
+
+        string assetCodeBlock1 = "block-rock-1";
+
+        for (int i = 0; i < data.lines.Count; i++) {
+
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(assetCodeBlock1);
+            go.name = StringUtil.Dashed(data.code, "0", indexItem.ToString());
+            go.transform.parent = transform;
+
+
+            if (go != null) {
+                GameObjectInfinitePart part = go.Get<GameObjectInfinitePart>();
+
+                part.index = indexItem;
+                Vector3 bounds = part.bounds;
+
+                go.transform.position = go.transform.position.WithZ(
+                    (((indexItem + 1) * bounds.z) - bounds.z) + distance.z);
+            }
+        }
+        */
+
+
+        // Layer in blocks
+
+        // Layer in obstacles
+
+        // Layer in collectables
+
+        // 
+
+
+        /*
+        GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGamePart);
+        go.name = StringUtil.Dashed(data.code, indexItem.ToString());
+        go.transform.parent = transform;
+
+        if (go != null) {
+
+            GameObjectInfinitePart part = go.Get<GameObjectInfinitePart>();
+
+            if (part != null) {
+
+                part.index = indexItem;
+                Vector3 bounds = part.bounds;
+
+                go.transform.position = go.transform.position.WithZ(
+                    (((indexItem + 1) * bounds.z) - bounds.z) + distance.z);
+
+
+            }
+        }
+        */
+    }
+
     void LoadInitialParts() {
         
         // Add initial parts that can spawn other parts
         // Fill out parts to boundaries
 
         for (int i = 0; i < (int)rangeBoundsMax.z/distanceTickZ; i++) {
-            LoadLevelAssetByIndex(i);
+
+            bool shouldClear = false;
+
+            if (i < 10) {
+                shouldClear = true;
+            }
+
+            LoadLevelAssetDynamicByIndex(i, shouldClear);
 
             padIndex = i;
             lastLoadIndex = i;
@@ -189,11 +377,11 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         // Place 10 parts back from view
 
         for (int i = 0; i < 10; i++) {
-            LoadLevelAssetByIndex(-i);
+            LoadLevelAssetDynamicByIndex(-i, true);
         }
     }
 
-    void Update() {
+    void FixedUpdate() {
 
         if (!GameConfigs.isGameRunning) {
             return;
