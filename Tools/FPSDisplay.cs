@@ -1,10 +1,12 @@
-using UnityEngine;
+using System;
 using System.Collections;
+
+using UnityEngine;
+using UnityEngine.UI;
 
 public class GameFPS : FPSDisplay {
 
 }
-
 
 public class FPSDisplay: GameObjectBehavior {
     
@@ -12,8 +14,12 @@ public class FPSDisplay: GameObjectBehavior {
     private float accum = 0; // FPS accumulated over the interval
     private int   frames = 0; // Frames drawn over the interval
     private float timeleft; // Left time for current interval
-    
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelFPS;
+#else
+    public Text labelFPS;
+#endif
     public float lastFPS = 0f;
     public static FPSDisplay Instance;
         
@@ -108,7 +114,8 @@ public class FPSDisplay: GameObjectBehavior {
             string format = System.String.Format("{0:F2} FPS", fps);
             
             if (labelFPS != null) {
-                labelFPS.text = format;
+
+                UIUtil.SetLabelValue(labelFPS, format);
              
                 if (fps < 27) {
                     labelFPS.color = Color.Lerp(labelFPS.color, Color.yellow, Time.deltaTime);

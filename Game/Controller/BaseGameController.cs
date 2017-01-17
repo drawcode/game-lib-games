@@ -188,6 +188,7 @@ public class BaseGameStatCodes {
 
     public static string score = "score";//--
     public static string scores = "scores";//--
+    public static string special = "special";//--
     public static string evaded = "evaded";//--
     public static string kills = "kills";
     public static string deaths = "deaths";

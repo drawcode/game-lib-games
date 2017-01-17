@@ -2785,29 +2785,50 @@ List<string> codes = new List<string>();
         }
     }
     
-    // xp
+    // special
     
+    public static void SetStatSpecial(double val) {
+        SetStatSpecial((float)val);
+    }
+    
+    public static void SetStatSpecial(float val) {
+        if (GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatSpecial(val);
+        }
+    }
+    
+    float lastSpecialTime = 0;
+    
+    public virtual void setStatSpecial(float val) {
+        if (lastSpecialTime + .05f < Time.time) {
+            lastSpecialTime = Time.time;
+            SetStatTotal(GameStatCodes.special, val);
+        }
+    }
+
+    // xp
+
     public static void SetStatXP(double val) {
         SetStatXP((float)val);
     }
-    
+
     public static void SetStatXP(float val) {
         if (GamePlayerProgress.Instance != null) {
             GamePlayerProgress.Instance.setStatXP(val);
         }
     }
-    
+
     float lastXPTime = 0;
-    
+
     public virtual void setStatXP(float val) {
         if (lastXPTime + .05f < Time.time) {
             lastXPTime = Time.time;
             SetStatTotal(GameStatCodes.xp, val);
         }
     }
-    
+
     // coins
-    
+
     public static void SetStatCoins(double val) {
         SetStatCoins((float)val);
     }

@@ -125,7 +125,7 @@ public class BaseGameHUD : GameUIPanelBase {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
-        Messenger<string, object>.AddListener(GameMessages.gameActionItem, OnGameItem);
+        Messenger<string, string, object>.AddListener(GameMessages.gameActionItem, OnGameItem);
         
         Messenger<double>.AddListener(GameMessages.gameActionScore, OnGameShooterScore);
         Messenger<double>.AddListener(GameMessages.gameActionScores, OnGameShooterScores);
@@ -135,7 +135,7 @@ public class BaseGameHUD : GameUIPanelBase {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         
-        Messenger<string, object>.RemoveListener(GameMessages.gameActionItem, OnGameItem);
+        Messenger<string, string, object>.RemoveListener(GameMessages.gameActionItem, OnGameItem);
 
         Messenger<double>.RemoveListener(GameMessages.gameActionScore, OnGameShooterScore);
         Messenger<double>.RemoveListener(GameMessages.gameActionScores, OnGameShooterScores);
@@ -174,7 +174,7 @@ public class BaseGameHUD : GameUIPanelBase {
         GameController.CycleGameCameraMode();
     }
 
-    public virtual void OnGameItem(string type, object val) {
+    public virtual void OnGameItem(string code, string type, object val) {
         //if(type == GamePlayerItemType.itemCoin) {            
         //    SetCoins(GameController.CurrentGamePlayerController.runtimeData.coins);
         //}
