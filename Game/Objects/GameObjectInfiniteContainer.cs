@@ -253,7 +253,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             int rand = UnityEngine.Random.Range(1,10);
 
             if (rand < 2 && !clear) {
-                continue;
+                //continue;
             }
 
             // ADD PART BLOCK AND ASSETS FROM TEMPLATE
@@ -272,6 +272,40 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             //goAssetBlock.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
 
             goAssetBlock.Show();
+
+            // ADD ITEMS
+
+
+            int randCoin = UnityEngine.Random.Range(1, 10);
+
+            if (randCoin < 2 && !clear) {
+
+                string itemCoin = "item-coin";
+
+                GameObject goAssetItemCoin = AppContentAssets.LoadAssetItems(itemCoin);
+
+                if (goAssetItemCoin == null) {
+                    Debug.Log("Asset not found items/" + itemCoin);
+                    continue;
+                }
+
+                goAssetItemCoin.Hide();
+
+                goAssetItemCoin.transform.parent = goItem.transform;
+                goAssetItemCoin.transform.position = goItem.transform.position;
+                goAssetItemCoin.transform.localPosition = goItem.transform.localPosition.WithY(4f);
+
+                goAssetItemCoin.Show();
+            }
+
+            
+
+
+
+
+
+            //
+            continue;
 
 
             // ADD PART BLOCK JUMP AND ASSETS FROM TEMPLATE

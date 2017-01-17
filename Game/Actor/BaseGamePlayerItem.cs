@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         
@@ -222,71 +223,32 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
         if (go != null) {        
             if (!go.activeInHierarchy || !go.activeSelf) {
-                ShowObject(go);
+                go.Show();
             }
-            LogUtil.Log("FadeInObject:" + go.name);
-            UITweenerUtil.FadeIn(go);  
-            //iTween.FadeTo(go, 1f, 2f);
+            TweenUtil.FadeToObject(go, 1f);
         }
     }
         
     public virtual void FadeOutObject(GameObject go) {
                 
         if (go != null) {                        
-            LogUtil.Log("FadeOutObject:" + go.name);
-            
-            UITweenerUtil.FadeOut(go);        
-            // iTween.FadeTo(go, 0f, 1f);//(go, iTween.Hash("alpha", 0f, "delay", 0f, "time", 1f));
-            HideObjectDelayed(go, 1f);
+            TweenUtil.FadeToObject(go, 0f);
+            go.HideObjectDelayed(1f);
         }
     }
         
     public virtual void FadeOutObjectNow(GameObject go) {
         if (go != null) {                        
-            LogUtil.Log("FadeOutObjectNow:" + go.name);
-            UITweenerUtil.FadeOutNow(go);        
-            HideObject(go);
-        }
-    }
-        
-    public virtual void ShowObject(GameObject go) {
-        if (go != null) {
-            go.Show();
-        }
-    }
-        
-    public virtual void HideObjectDelayed(GameObject go, float delay) {
-        StartCoroutine(HideObjectCo(go, delay));
-    }
-
-    public virtual IEnumerator HideObjectCo(GameObject go, float delay) {
-        yield return new WaitForSeconds(delay);
-        if (go != null) {
+            TweenUtil.FadeToObject(go, 0f, 0f, 0f);
             go.Hide();
         }
-    }
-        
-    public virtual void HideObject(GameObject go) {
-        if (go != null) {
-            go.Hide();
-        }
-    }
+    }                
         
     // Update is called once per frame
     public virtual void FixedUpdate() {
         if (cameraTransform != null) {
             //transform.LookAt(cameraTransform);
         }
-    }
-        
-    public virtual GamePlayerController GetController(Transform transform) {
-        if (transform != null) {
-            GamePlayerController gamePlayerController = transform.GetComponentInChildren<GamePlayerController>();
-            if (gamePlayerController != null) {
-                return gamePlayerController;
-            }
-        }
-        return null;
     }
                 
     public virtual void UpdateCollect() {

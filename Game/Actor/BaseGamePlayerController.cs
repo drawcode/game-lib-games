@@ -877,6 +877,8 @@ public class BaseGamePlayerController : GameActor {
         if (data == null) {
             return;
         }
+
+        //Messenger.Broadcast(GameMessages.gameActionItem)
         
         float modifier = 1f;
 
@@ -910,7 +912,7 @@ public class BaseGamePlayerController : GameActor {
                     continue;
                 }
                 
-                if (item.type == GameDataItemReward.xp) {
+                if (item.type.IsEqualLowercase(GameDataItemReward.xp)) {
 
                     double val = item.valDouble * modifier;   
                     
@@ -921,7 +923,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.type == GameDataItemReward.currency) {
+                else if (item.type.IsEqualLowercase(GameDataItemReward.currency)) {
                     
                     double val = item.valDouble * modifier;   
                     
@@ -933,7 +935,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.type == GameDataItemReward.health) {
+                else if (item.type.IsEqualLowercase(GameDataItemReward.health)) {
                     
                     double val = item.valDouble * modifier;  
 
@@ -945,7 +947,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.type == GameDataItemReward.weapon) {
+                else if (item.type.IsEqualLowercase(GameDataItemReward.weapon)) {
 
                     double val = item.valDouble * modifier;   
 
@@ -959,7 +961,7 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                else if (item.type == GameDataItemReward.goalFly) {
+                else if (item.type.IsEqualLowercase(GameDataItemReward.goalFly)) {
                     
                     double val = item.valDouble * modifier;  
                     
@@ -971,9 +973,25 @@ public class BaseGamePlayerController : GameActor {
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
-                
+                else if (item.type.IsEqualLowercase(GameDataItemReward.letter)) {
+
+                    string val = item.valString;
+                    
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+                else if (item.type.IsEqualLowercase(GameDataItemReward.special)) {
+
+                    double val = item.valDouble;
+                    
+                    GamePlayerProgress.SetStatSpecial(val);
+
+                    broadcastEvent = true;
+                    broadcastVal = val;
+                }
+
                 if (broadcastEvent) {        
-                    Messenger<string, object>.Broadcast(GameMessages.gameActionItem, item.type, broadcastVal);
+                    Messenger<string, string, object>.Broadcast(GameMessages.gameActionItem, item.code, item.type, broadcastVal);
                 }
                 
             }
@@ -1252,7 +1270,7 @@ public class BaseGamePlayerController : GameActor {
         currentControllerData.actorEntering = val;
     }
     
-    public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = 1f, float delay = .1f) {
+    public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = .5f, float delay = .1f) {
         
         PlayerEffectWarpFadeOut();
         GamePlayerModelHolderEase(height, time, delay);
@@ -1260,12 +1278,12 @@ public class BaseGamePlayerController : GameActor {
         GamePlayerModelActorEnteringSet(delay, false);
     }
 
-    public virtual void GamePlayerModelHolderEaseOut(float height = 5, float time = 2f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEaseOut(float height = 5, float time = .5f, float delay = 0) {
         PlayerEffectWarpFadeIn();
         GamePlayerModelHolderEase(height, time, delay);
     }
 
-    public virtual void GamePlayerModelHolderEase(float height = 0, float time = 1f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEase(float height = 0, float time = .5f, float delay = 0) {
 
         //LeanTween.cancel(gamePlayerModelHolder);
 
