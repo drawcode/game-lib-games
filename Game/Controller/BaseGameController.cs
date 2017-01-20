@@ -3820,23 +3820,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         touchHandled = handled;
     }
 
-    internal virtual void handleUpdate() {
-
-        handleInput();
-
-        if (gameplayWorldType == GameplayWorldType.gameDefault) {
-            handleUpdateDefault();
-        }
-        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleUpdateStationary();
-        }
-    }
-
-    internal virtual void handleUpdateDefault() {
-
-
-    } 
-
     internal virtual void handleInput() {
 
         handleGameInput();
@@ -4078,6 +4061,22 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
+    internal virtual void handleUpdate() {
+
+        handleInput();
+
+        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+            handleUpdateDefault();
+        }
+        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            //handleLateUpdateStationary();
+        }
+    }
+
+    internal virtual void handleUpdateDefault() {
+
+
+    }
 
     internal virtual void handleFixedUpdate() {
 
@@ -4100,7 +4099,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            handleLateUpdateStationary();
+              handleLateUpdateStationary();
         }
     }
 
@@ -4198,7 +4197,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        //handleLateUpdate();
+        handleFixedUpdate();
     }
 
     public virtual void LateUpdate() {
