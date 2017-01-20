@@ -282,27 +282,44 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 string itemCoin = "item-coin";
 
-                GameObject goAssetItemCoin = AppContentAssets.LoadAssetItems(itemCoin);
+                GameObject goAssetItem = AppContentAssets.LoadAssetItems(itemCoin);
 
-                if (goAssetItemCoin == null) {
+                if (goAssetItem == null) {
                     Debug.Log("Asset not found items/" + itemCoin);
                     continue;
                 }
 
-                goAssetItemCoin.Hide();
+                goAssetItem.Hide();
 
-                goAssetItemCoin.transform.parent = goItem.transform;
-                goAssetItemCoin.transform.position = goItem.transform.position;
-                goAssetItemCoin.transform.localPosition = goItem.transform.localPosition.WithY(4f);
+                goAssetItem.transform.parent = goItem.transform;
+                goAssetItem.transform.position = goItem.transform.position.WithX(0);
+                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
 
-                goAssetItemCoin.Show();
+                goAssetItem.Show();
             }
 
-            
 
+            int randLetter = UnityEngine.Random.Range(1, 10);
 
+            if (randLetter < 2 && !clear) {
 
+                string itemLetter = "item-special-watermelon";
 
+                GameObject goAssetItem = AppContentAssets.LoadAssetItems(itemLetter);
+
+                if (goAssetItem == null) {
+                    Debug.Log("Asset not found items/" + itemLetter);
+                    continue;
+                }
+
+                goAssetItem.Hide();
+
+                goAssetItem.transform.parent = goItem.transform;
+                goAssetItem.transform.position = goItem.transform.position.WithX(0);
+                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
+
+                goAssetItem.Show();
+            } 
 
             //
             continue;

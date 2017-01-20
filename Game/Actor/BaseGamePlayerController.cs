@@ -6363,7 +6363,7 @@ public class BaseGamePlayerController : GameActor {
 
     public override void Update() {
 
-        handleUpdateStationary();
+        //handleUpdateStationary();
 
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
