@@ -40,6 +40,7 @@ public class BaseGameHUD : GameUIPanelBase {
     public Text labelScores;
     public Text labelScore;
     public Text labelCoins;
+    public Text labelSpecials;
     public Text labelLevel;
     public Text labelTime;
     public Button buttonCamera;
@@ -59,6 +60,7 @@ public class BaseGameHUD : GameUIPanelBase {
     public GameObject containerScoreObject;
     public GameObject containerScoresObject;
     public GameObject containerCoinsObject;
+    public GameObject containerSpecialsObject;
     public GameObject containerCameraObject;
     public GameObject containerDevObject;
     public GameObject containerTimeObject;
@@ -230,6 +232,7 @@ public class BaseGameHUD : GameUIPanelBase {
             SetCoins(0);
             SetScore(0);
             SetScores(0);
+            SetSpecials(0);
             SetLevel(gameLevel.code);
         }       
         
@@ -246,7 +249,11 @@ public class BaseGameHUD : GameUIPanelBase {
     public virtual void SetCoins(double coins) {
         UIUtil.SetLabelValue(labelCoins, coins.ToString("N0"));
     }
-    
+
+    public virtual void SetSpecials(double specials) {
+        UIUtil.SetLabelValue(labelSpecials, specials.ToString("N0"));
+    }
+
     public virtual void SetLevel(string levelName) {
         UIUtil.SetLabelValue(labelLevel, levelName);
     }
@@ -273,7 +280,7 @@ public class BaseGameHUD : GameUIPanelBase {
         //HideOverlayRed(.1f, 0f, 0f);
         ShowOverlayRed(.2f, .1f, 0f, .4f * modifier);
         HideOverlayRed(1, .2f, .4f * modifier, 0f);
-    }
+    } 
     
     public virtual void ShowOverlayRed() {
         ///ShowOverlayRed(.3f, .1f, 1f);
@@ -449,6 +456,7 @@ public class BaseGameHUD : GameUIPanelBase {
             HideObject(containerScoreObject);
             HideObject(containerScoresObject);
             HideObject(containerCoinsObject);
+            HideObject(containerSpecialsObject);
             HideObject(containerCameraObject);
             HideObject(containerTimeObject);
             HideObject(containerOverviewObject);
@@ -461,6 +469,7 @@ public class BaseGameHUD : GameUIPanelBase {
             ShowObject(containerScoreObject);
             ShowObject(containerScoresObject);
             ShowObject(containerCoinsObject);
+            ShowObject(containerSpecialsObject);
             ShowObject(containerCameraObject);
             ShowObject(containerTimeObject);
             ShowObject(containerOverviewObject);
@@ -508,6 +517,7 @@ public class BaseGameHUD : GameUIPanelBase {
                         SetScore(GameController.CurrentGamePlayerController.runtimeData.score);
                         SetScores(GameController.CurrentGamePlayerController.runtimeData.scores);
                         SetCoins(GameController.CurrentGamePlayerController.runtimeData.coins);
+                        SetSpecials(GameController.CurrentGamePlayerController.runtimeData.specials);
                         SetTime(GameController.Instance.runtimeData.timeRemaining);
                     }
                 }

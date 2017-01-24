@@ -1274,7 +1274,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void gamePlayerSetSpeed(float amount) {
         if (currentPlayerController != null) {
-            currentPlayerController.SetSpeed(amount);
+            currentPlayerController.GamePlayerMoveSpeedSet(amount);
         }
     }
 
@@ -3831,10 +3831,13 @@ public class BaseGameController : GameObjectTimerBehavior {
             //handleInputTouch();
         }
     }
+
+    // TODO move to runtimeData n 
     
     Vector3 rangeStart = Vector3.zero.WithX(-16f);
     Vector3 rangeEnd = Vector3.zero.WithX(16f);
-    float infiniteSpeed = 100f;
+    public float speedInfinite = 0f;
+    public float speedInfiniteTo = 200f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPosition = Vector3.zero;
@@ -3905,12 +3908,12 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
             else {
 
-                //infiniteSpeed += .3f * Time.deltaTime;
+                ////infiniteSpeed += .3f * Time.deltaTime;
 
-                infiniteSpeed = Mathf.Clamp(infiniteSpeed, 0, 500);
+                //speedInfinite = Mathf.Clamp(speedInfinite, 0, 400);
 
-                GameController.GamePlayerSetSpeed(infiniteSpeed);
-                //GameController.SendInputAxisMoveMessage(0, 1);
+                //GameController.GamePlayerSetSpeed(speedInfinite);
+                ////GameController.SendInputAxisMoveMessage(0, 1);
             }
         }
     }
@@ -4015,9 +4018,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     Vector3 moveGamePlayerPositionTo = Vector3.zero;
 
-    internal virtual void handleLateUpdateStationary() {
+    internal virtual void handleUpdateStationary() {
 
-        if (currentGamePlayerController == null) {
+        if (currentGamePlayerController == null) { 
             return;
         }
 
@@ -4041,10 +4044,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 
+            //currentGamePlayerController.transform.position = 
+            //    currentGamePlayerController.transform.position 
+            //    .WithX(moveGamePlayerPosition.x)
+            //    .WithZ(-moveGamePlayerPosition.z);
+
+            speedInfinite = Mathf.Lerp(speedInfinite, speedInfiniteTo, 1f * Time.deltaTime);
+
+            GameController.GamePlayerSetSpeed(speedInfinite);
+            
             currentGamePlayerController.transform.position = 
-                currentGamePlayerController.transform.position
-                .WithX(moveGamePlayerPosition.x)
-                .WithZ(-moveGamePlayerPosition.z);
+                Vector3.Lerp(
+                    currentGamePlayerController.transform.position, 
+                    currentGamePlayerController.transform.position
+                        .WithX(moveGamePlayerPosition.x)
+                        .WithZ(-moveGamePlayerPosition.z), speedInfinite * Time.deltaTime);
 
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
@@ -4052,12 +4066,13 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
             //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
 
-            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerPosition.z);
+            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerPosition.z * Time.deltaTime * speedInfinite);
+
+            //Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
+
+            Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, moveGamePlayerPosition, speedInfinite);
 
             curveInfiniteAmount = Vector4.Lerp(curveInfiniteAmount, curve, .15f * Time.deltaTime);
-
-
-
         }
     }
 
@@ -4069,7 +4084,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleLateUpdateStationary();
+            handleUpdateStationary();
         }
     }
 
@@ -4099,7 +4114,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-              handleLateUpdateStationary();
+              //handleUpdateStationary();
         }
     }
 
