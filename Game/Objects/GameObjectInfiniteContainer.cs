@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using Engine.Events;
+
 [Serializable]
 public class GameObjectInfinteData {
 
@@ -33,9 +35,8 @@ public class GameObjectInfinteData {
 public class GameObjectInfiniteContainer : GameObjectBehavior {
 
     public GameObjectInfinteData data = new GameObjectInfinteData();
-                
-    Dictionary<int, GameObjectInfinitePart> parts;
 
+    Dictionary<int, GameObjectInfinitePart> parts;
 
     int padIndex = 0;
     public Vector3 distance = Vector3.zero;
@@ -45,14 +46,27 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
     public float distanceTickZ = 16f;
     public float distanceX = 16f;
-    
+
     int lastLoadIndex = 0;
     int currentIndex = 0;
 
     bool initialized = false;
 
+    void OnEnable() {
+        //Messenger<Vector3, float>.AddListener(GamePlayerMessages.PlayerCurrentDistance, OnPlayerCurrentDistance);
+    }
+
+    void Disable() {
+        //Messenger<Vector3, float>.RemoveListener(GamePlayerMessages.PlayerCurrentDistance, OnPlayerCurrentDistance);
+    }
+
     void Start() {
         Init();
+    }
+
+    void OnPlayerCurrentDistance(Vector3 pos, float speed) {
+
+        //distance.z += -pos.z;
     }
 
     void Init() {
@@ -123,30 +137,42 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         initialized = true;
     }
 
-    public void UpdatePositionPartsX(float x) {
+    public void UpdatePositionX(float val) {
+        distance.x += val;
+    }
 
-        distance.x += x;
+    public void UpdatePositionY(float val) {
+        distance.y += val;
+    }
 
-        foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
-            part.transform.position = part.transform.position.WithX(part.transform.position.x + x);
+    public void UpdatePositionZ(float val) {
+        distance.z += val;
+    }
+    
+    public void UpdatePositionPartsX(float val) {
+
+        UpdatePositionY(val);
+
+        foreach (GameObjectInfinitePart part in GetComponentsInChildren<GameObjectInfinitePart>(true)) {
+            part.transform.position = part.transform.position.WithX(part.transform.position.x + val);
         }
     }
 
-    public void UpdatePositionPartsY(float y) {
+    public void UpdatePositionPartsY(float val) {
 
-        distance.y += y;
+        UpdatePositionX(val);
 
-        foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
-            part.transform.position = part.transform.position.WithY(part.transform.position.y + y);
+        foreach (GameObjectInfinitePart part in GetComponentsInChildren<GameObjectInfinitePart>(true)) {
+            part.transform.position = part.transform.position.WithY(part.transform.position.y + val);
         }
     }
 
-    public void UpdatePositionPartsZ(float z) {
+    public void UpdatePositionPartsZ(float val) {
 
-        distance.z += z;
+        UpdatePositionZ(val);
 
-        foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
-            part.transform.position = part.transform.position.WithZ(part.transform.position.z + z);
+        foreach (GameObjectInfinitePart part in GetComponentsInChildren<GameObjectInfinitePart>(true)) {
+            part.transform.position = part.transform.position.WithZ(part.transform.position.z + val);
         }
     }
 
@@ -155,7 +181,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         // index is 31 range 1000 
         // rangeBoundsMax.z / distanceTickZ;
 
-        currentIndex = (int)(-distance.z/distanceTickZ);
+        currentIndex = (int)(-distance.z / distanceTickZ);
         int loadIndex = currentIndex + padIndex;
 
         if (lastLoadIndex < loadIndex) {
@@ -250,7 +276,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
             partItem.code = i.ToString();
 
-            int rand = UnityEngine.Random.Range(1,10);
+            int rand = UnityEngine.Random.Range(1, 10);
 
             if (rand < 2 && !clear) {
                 //continue;
@@ -266,7 +292,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             }
 
             goAssetBlock.Hide();
-            
+
             goAssetBlock.transform.parent = goItem.transform;
             goAssetBlock.transform.position = goItem.transform.position;
             //goAssetBlock.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
@@ -319,7 +345,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
 
                 goAssetItem.Show();
-            } 
+            }
 
             //
             continue;
@@ -345,7 +371,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 goAssetObstacleLow.transform.localPosition = goAssetObstacleLow.transform.localPosition.WithY(bounds.y);
 
                 goAssetObstacleLow.Show();
-            }           
+            }
 
         }
 
@@ -407,11 +433,11 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
     }
 
     void LoadInitialParts() {
-        
+
         // Add initial parts that can spawn other parts
         // Fill out parts to boundaries
 
-        for (int i = 0; i < (int)rangeBoundsMax.z/distanceTickZ; i++) {
+        for (int i = 0; i < (int)rangeBoundsMax.z / distanceTickZ; i++) {
 
             bool shouldClear = false;
 
@@ -424,7 +450,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             padIndex = i;
             lastLoadIndex = i;
         }
-        
+
         // Place 10 parts back from view
 
         for (int i = 0; i < 10; i++) {
@@ -432,7 +458,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         }
     }
 
-    void FixedUpdate() {
+    void Update() {
 
         if (!GameConfigs.isGameRunning) {
             return;
