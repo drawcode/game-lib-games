@@ -3349,20 +3349,26 @@ public class BaseGameController : GameObjectTimerBehavior {
                 bool gameOverMode = false;
 
                 if (AppModes.Instance.isAppModeGameArcade) {
-                    if (currentGamePlayerController.runtimeData.health <= 0f
-                        || runtimeData.timeExpired) {
+                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired)
+                        // TODO move to config/controller type
+                        && gameplayType != GameplayType.gameRunner) {
                         gameOverMode = true;
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameChallenge) {
-                    if (currentGamePlayerController.runtimeData.health <= 0f
-                        || runtimeData.timeExpired) {
+                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired)
+                        // TODO move to config/controller type
+                        && gameplayType != GameplayType.gameRunner) {
                         gameOverMode = true;
                     }
                 }
                 else if (AppModes.Instance.isAppModeGameMission) {
-                    if (currentGamePlayerController.runtimeData.health <= 0f
-                        || runtimeData.timeExpired) {
+                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                        || runtimeData.timeExpired)
+                        // TODO move to config/controller type
+                        && gameplayType != GameplayType.gameRunner) {
                         gameOverMode = true;
 
                     }
@@ -3837,7 +3843,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     Vector3 rangeStart = Vector3.zero.WithX(-16f);
     Vector3 rangeEnd = Vector3.zero.WithX(16f);
     public float speedInfinite = 0f;
-    public float speedInfiniteTo = 200f;
+    public float speedInfiniteTo = 10f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPosition = Vector3.zero;
@@ -4010,8 +4016,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        curve.x = UnityEngine.Random.Range(-22, 22);
-        curve.z = UnityEngine.Random.Range(-22, 10);
+        curve.x = UnityEngine.Random.Range(-15, 15);
+        curve.z = UnityEngine.Random.Range(-22, 15);
 
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
