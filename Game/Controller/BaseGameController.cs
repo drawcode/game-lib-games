@@ -803,7 +803,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(InputSystemEvents.inputSwipe, OnInputSwipe);
     }
-    
+
     // ---------------------------------------------------------------------
     // CONTROLLER TYPES
 
@@ -1236,7 +1236,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             currentPlayerController.InputJump();
         }
     }
-    
+
     // ----------------------------------------------------------------------
 
     // STRAFE
@@ -3479,7 +3479,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
                     //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
-                    
+
                     sendInputAxisMoveMessage(directionNormal.x, directionNormal.y);
                 }
             }
@@ -3839,7 +3839,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     // TODO move to runtimeData n 
-    
+
     Vector3 rangeStart = Vector3.zero.WithX(-16f);
     Vector3 rangeEnd = Vector3.zero.WithX(16f);
     public float speedInfinite = 0f;
@@ -3851,9 +3851,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public GameObjectInfiniteController controllerInfinity;
     public GameObjectInfiniteContainer containerInfinity;
-    public float curveInfiniteDistance = 50f;
-    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
     public Vector4 curve = Vector4.zero;
+
+    bool curveEnabled = true;
+    float curveInfiniteDistance = 50f;
+    Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
 
     public enum GamePlayerDirection {
         None,
@@ -3924,9 +3926,9 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
-        
+
     // TODO move to player controller and events
-    
+
     public virtual void OnInputSwipe(InputSystemSwipeDirection direction, Vector3 pos, float velocity) {
 
         if (!GameConfigs.isGameRunning) {
@@ -3987,21 +3989,98 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
-    public static Vector4 GetCurveInfiniteAmount() {
+    // ------------------------------------------------------------------------
+    // CURVE INFINITE HANDLING
+
+    // ------------------------------------------------------------------------
+    // CURVE ENABLED
+
+    // get
+
+    public static bool CurveInfiniteEnabledGet() {
         if (GameController.isInst) {
-            return GameController.Instance.curveInfiniteAmount;
+            return GameController.Instance.curveInfiniteEnabledGet();
+        }
+
+        return false;
+    }
+
+    public bool curveInfiniteEnabledGet() {
+        return curveEnabled;
+    }
+
+    // set
+
+    public static void CurveInfiniteEnabledSet(bool val) {
+        if (GameController.isInst) {
+            GameController.Instance.curveInfiniteEnabledSet(val);
+        }
+    }
+
+    public void curveInfiniteEnabledSet(bool val) {
+        curveEnabled = val;
+    }
+
+    // ------------------------------------------------------------------------
+    // CURVE AMOUNT
+
+    // get
+
+    public static Vector4 CurveInfiniteAmountGet() {
+        if (GameController.isInst) {
+            return GameController.Instance.curveInfiniteAmountGet();
         }
 
         return Vector4.zero;
     }
 
-    public static float GetCurveInfiniteDistance() {
+    public Vector4 curveInfiniteAmountGet() {
+        return curveInfiniteAmount;
+    }
+
+    // set
+
+    public static void CurveInfiniteAmountSet(Vector4 val) {
         if (GameController.isInst) {
-            return GameController.Instance.curveInfiniteDistance;
+            GameController.Instance.curveInfiniteAmountSet(val);
+        }
+    }
+
+    public void curveInfiniteAmountSet(Vector4 val) {
+        curveInfiniteAmount = val;
+    }
+
+    // ------------------------------------------------------------------------
+    // CURVE DISTANCE
+
+    // get
+
+    public static float CurveInfiniteDistanceGet() {
+        if (GameController.isInst) {
+            return GameController.Instance.curveInfiniteDistanceGet();
         }
 
         return 50f;
     }
+
+    public float curveInfiniteDistanceGet() {
+        return curveInfiniteDistance;
+    }
+
+    // set
+
+    public static void CurveInfiniteDistanceSet(float val) {
+        if (GameController.isInst) {
+            GameController.Instance.curveInfiniteDistanceSet(val);
+        }
+    }
+
+    public void curveInfiniteDistanceSet(float val) {
+        curveInfiniteDistance = val;
+    }
+
+    // ------------------------------------------------------------------------
+    // HANDLE
 
     internal virtual void handleGameStart() {
 
@@ -4011,13 +4090,19 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     internal virtual void handleInfiniteCurve() {
-        
+
         if (!isGameRunning) {
             return;
         }
 
-        curve.x = UnityEngine.Random.Range(-15, 15);
-        curve.z = UnityEngine.Random.Range(-22, 15);
+        if (curveEnabled) {
+            curve.x = UnityEngine.Random.Range(-15, 15);
+            curve.z = UnityEngine.Random.Range(-22, 15);
+        }
+        else {
+            curve.x = 0;
+            curve.z = 0;
+        }
 
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
@@ -4026,7 +4111,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void handleUpdateStationary() {
 
-        if (currentGamePlayerController == null) { 
+        if (currentGamePlayerController == null) {
             return;
         }
 
@@ -4058,10 +4143,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             speedInfinite = Mathf.Lerp(speedInfinite, speedInfiniteTo, 1f * Time.deltaTime);
 
             GameController.GamePlayerSetSpeed(speedInfinite);
-            
-            currentGamePlayerController.transform.position = 
+
+            currentGamePlayerController.transform.position =
                 Vector3.Lerp(
-                    currentGamePlayerController.transform.position, 
+                    currentGamePlayerController.transform.position,
                     currentGamePlayerController.transform.position
                         .WithX(moveGamePlayerPosition.x)
                         .WithZ(-moveGamePlayerPosition.z), speedInfinite * Time.deltaTime);
@@ -4077,6 +4162,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
 
             Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, moveGamePlayerPosition, speedInfinite);
+
+            if (!curveEnabled) {
+                curve = Vector4.zero;
+                curveInfiniteAmount = curve;
+            }
 
             curveInfiniteAmount = Vector4.Lerp(curveInfiniteAmount, curve, .15f * Time.deltaTime);
         }
@@ -4120,7 +4210,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-              //handleUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 
@@ -4236,5 +4326,4 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         handleLateUpdate();
     }
-
 }

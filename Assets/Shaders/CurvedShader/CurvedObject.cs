@@ -8,21 +8,51 @@ using System.Collections;
 /// 
 public class CurvedObject : MonoBehaviour {
 
+    bool straighten = false;
+    Vector4 curveAmount = Vector4.zero;
+    float curveDistance = 50;
+    
     void Start() {
+
         UpdateShader();
     }
 
     void Update() {
+
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl)
+                || Input.GetKey(KeyCode.RightControl)) {
+
+                if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                    bool curveEnabled = GameController.CurveInfiniteEnabledGet();
+                    curveEnabled = curveEnabled ? false : true;
+                    GameController.CurveInfiniteEnabledSet(curveEnabled);
+                }                       
+            }
+        } 
+
         UpdateShader();
     }
 
     void UpdateShader() {
-        GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", GameController.GetCurveInfiniteAmount());
-        GetComponent<Renderer>().sharedMaterial.SetFloat("_Dist", GameController.GetCurveInfiniteDistance());
+
+        if (!GameController.CurveInfiniteEnabledGet()) {
+            curveAmount = Vector4.zero;
+            //curveDistance = 0;
+        }
+        else {
+            curveAmount = GameController.CurveInfiniteAmountGet();
+            curveDistance = GameController.CurveInfiniteDistanceGet();
+        }
+
+        GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", curveAmount);
+        GetComponent<Renderer>().sharedMaterial.SetFloat("_Dist", curveDistance);
     }
 
     private void OnApplicationQuit() {
-        GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", Vector4.zero);
-        //GetComponent<Renderer>().sharedMaterial.SetFloat("_Distance", GameController.GetCurveInfiniteDistance());
+
+        GameController.CurveInfiniteEnabledSet(false);
+
+        UpdateShader();
     }
 }
