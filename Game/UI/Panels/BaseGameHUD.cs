@@ -441,6 +441,8 @@ public class BaseGameHUD : GameUIPanelBase {
         
         base.AnimateIn();
 
+        HandleHUDItems();
+
         if (GameDraggableEditor.isEditing) {
             ShowEditState();
         }
@@ -476,6 +478,41 @@ public class BaseGameHUD : GameUIPanelBase {
         }
 
         //HideOverlayRed();
+    }
+
+    public virtual void HandleHUDItems() {
+
+        // Handle by world
+
+        string codeWorld = GameWorlds.Current.code;
+
+        if (codeWorld.IsNullOrEmpty()) {
+            return;
+        }
+        
+        foreach (GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
+            if (container.type.IsEqualLowercase(BaseDataObjectKeys.hudItems)) {
+
+                foreach (GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
+
+                    if (item.type.IsEqualLowercase(BaseDataObjectKeys.hudItem)) {
+                        item.gameObject.HideChildren();
+                    }
+                }
+
+                foreach (GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
+
+                    Dictionary<string, object> data = dataItem.ToDictionary();
+
+                    string val = data.Get<string>(BaseDataObjectKeys.world);
+
+                    if (val.IsEqualLowercase(codeWorld)) {
+
+                        dataItem.gameObject.Show();
+                    }
+                }
+            }
+        }
     }
     
     public virtual void AnimateInOverlayDamage() {
