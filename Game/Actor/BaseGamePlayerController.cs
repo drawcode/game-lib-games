@@ -1005,10 +1005,7 @@ internal virtual void handleGameInput() {
         // Button pressed to run game after load
 
         if (IsPlayerControlled) {
-            //GamePlayerModelHolderEaseIn(0, 1, 1);
-
-            GamePlayerModelHolderEaseOut(5, .1f, 0);
-            //GamePlayerModelHolderEaseIn();
+            GamePlayerModelHolderEaseOutByType();
         }
     }
 
@@ -1655,7 +1652,35 @@ internal virtual void handleGameInput() {
         GamePlayerModelActorEnteringSet(delay, false);
     }
 
-    public virtual void GamePlayerModelHolderEaseOut(float height = 5, float time = .5f, float delay = 0) {
+    public virtual void GamePlayerModelHolderEaseInByType() {
+
+        if (GameController.IsGameplayTypeRunner()) {
+            GamePlayerModelHolderEaseOut(0f, 0f, 0f);
+            if (!IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, 0f, 0f);
+            }
+        }
+        else if (GameController.IsGameplayTypeDasher()) {
+            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
+            if (!IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            }
+        }
+    }
+
+    public virtual void GamePlayerModelHolderEaseOutByType() {
+
+        if (GameController.IsGameplayTypeRunner()) {
+
+            GamePlayerModelHolderEaseOut(0, 0f, 0);
+        }
+        else if (GameController.IsGameplayTypeDasher()) {
+
+            GamePlayerModelHolderEaseOut(5, .1f, 0);
+        }
+    }
+
+    public virtual void GamePlayerModelHolderEaseOut(float height = 0, float time = .5f, float delay = 0) {
         PlayerEffectWarpFadeIn();
         GamePlayerModelHolderEase(height, time, delay);
     }
@@ -2437,18 +2462,7 @@ internal virtual void handleGameInput() {
 
     public virtual void LoadEnterExitState() {
 
-        if (GameController.IsGameplayTypeRunner()) {
-            GamePlayerModelHolderEaseOut(0f, 0f, 0f);
-            if (!IsPlayerControlled) {
-                GamePlayerModelHolderEaseIn(0, 0f, 0f);
-            }
-        }
-        else if (GameController.IsGameplayTypeDasher()) {
-            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
-            if (!IsPlayerControlled) {
-                GamePlayerModelHolderEaseIn(0, .3f, .3f);
-            }
-        }
+        GamePlayerModelHolderEaseOutByType();
     }
 
     public virtual void LoadPlayerReadyState() {
@@ -2456,18 +2470,7 @@ internal virtual void handleGameInput() {
 
             UpdateCharacterRuntimeState();
             
-            if (GameController.IsGameplayTypeRunner()) {
-
-                //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
-                GamePlayerModelHolderEaseIn(0, 0f, 0f);
-            }
-            else if (GameController.IsGameplayTypeDasher()) {
-
-                //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
-                GamePlayerModelHolderEaseIn(0, .3f, .3f);
-            }
-
-
+            GamePlayerModelHolderEaseInByType();
         }
     }
 
@@ -4212,7 +4215,7 @@ internal virtual void handleGameInput() {
         */
 
         if (IsPlayerControlled) {
-            GamePlayerModelHolderEaseOut();
+            GamePlayerModelHolderEaseOutByType();
         }
 
         runtimeData.health = 0;
@@ -4278,7 +4281,7 @@ internal virtual void handleGameInput() {
 
             AudioAttack();
 
-            GamePlayerModelHolderEaseOut();
+            GamePlayerModelHolderEaseOutByType();
 
             //Jump(50);
 
@@ -5998,10 +6001,10 @@ internal virtual void handleGameInput() {
                 PlayerEffectWarpFadeOut();
             }
             else if (Input.GetKeyDown(KeyCode.K)) {
-                GamePlayerModelHolderEaseIn();
+                GamePlayerModelHolderEaseInByType();
             }
             else if (Input.GetKeyDown(KeyCode.L)) {
-                GamePlayerModelHolderEaseOut();
+                GamePlayerModelHolderEaseOutByType();
             }
         }
 
