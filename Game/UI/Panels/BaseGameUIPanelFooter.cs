@@ -204,6 +204,10 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     public virtual void ShowButtons(string code, bool hideCurrent = true) {
         
         AnimateIn();
+
+        if (containerButtons == null) {
+            return;
+        }
                 
         foreach(GameObjectShowItem item in 
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
