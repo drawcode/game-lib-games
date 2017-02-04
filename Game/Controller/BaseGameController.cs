@@ -805,7 +805,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     // ---------------------------------------------------------------------
-    // CONTROLLER TYPES
+    // GAMEPLAY CONTROLLER TYPES
 
     public bool isGameplayType(string gameplayTypeTo) {
         return gameplayType == gameplayTypeTo;
@@ -837,6 +837,102 @@ public class BaseGameController : GameObjectTimerBehavior {
             return GameController.Instance.gameplayTypeGet();
         }
         return null;
+    }
+
+    // GAMEPLAY TYPE HELPERS
+    // TODO leaf out types
+
+    // RUNNER
+
+    public static bool IsGameplayTypeRunner() {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayTypeRunner();
+        }
+        return false;
+    }
+
+    public bool isGameplayTypeRunner() {
+        return gameplayType == GameplayType.gameRunner;
+    }
+
+    // DASHER
+
+    public static bool IsGameplayTypeDasher() {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayTypeDasher();
+        }
+        return false;
+    }
+
+    public bool isGameplayTypeDasher() {
+        return gameplayType == GameplayType.gameDasher;
+    }
+
+
+    // ---------------------------------------------------------------------
+    // GAMEPLAY WORLD TYPES
+
+    public bool isGameplayWorldType(string gameplayWorldTypeTo) {
+        return gameplayWorldType == gameplayWorldTypeTo;
+    }
+
+    public void gameplayWorldTypeSet(string gameplayWorldTypeTo) {
+        gameplayWorldType = gameplayWorldTypeTo;
+    }
+
+    public string gameplayWorldTypeGet() {
+        return gameplayWorldType;
+    }
+
+    public static bool IsGameplayWorldType(string gameplayWorldTypeTo) {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayWorldType(gameplayWorldTypeTo);
+        }
+        return false;
+    }
+
+    public static void GameplayWorldTypeSet(string gameplayWorldTypeTo) {
+        if (GameController.isInst) {
+            GameController.Instance.gameplayWorldTypeSet(gameplayWorldTypeTo);
+        }
+    }
+
+    public static string GameplayWorldTypeGet() {
+        if (GameController.isInst) {
+            return GameController.Instance.gameplayWorldTypeGet();
+        }
+        return null;
+    }
+
+    // GAMEPLAY TYPE HELPERS
+    // TODO leaf out types
+    // TODO enums possible instead of stringly but settings 
+    //  come from server as strings so conversion process needed
+
+    // RUNNER
+
+    public static bool IsGameplayWorldTypeDefault() {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayWorldTypeDefault();
+        }
+        return false;
+    }
+
+    public bool isGameplayWorldTypeDefault() {
+        return gameplayWorldType == GameplayWorldType.gameDefault;
+    }
+
+    // DASHER
+
+    public static bool IsGameplayWorldTypeStationary() {
+        if (GameController.isInst) {
+            return GameController.Instance.isGameplayWorldTypeStationary();
+        }
+        return false;
+    }
+
+    public bool isGameplayWorldTypeStationary() {
+        return gameplayWorldType == GameplayWorldType.gameStationary;
     }
 
     // ---------------------------------------------------------------------
@@ -4110,6 +4206,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     Vector3 moveGamePlayerPositionTo = Vector3.zero;
 
     internal virtual void handleUpdateStationary() {
+
+        //speedInfinite = Mathf.Lerp(speedInfinite, speedInfiniteTo, 1f * Time.deltaTime);
+
+        //GameController.GamePlayerSetSpeed(speedInfinite);
+
+        //return;
 
         if (currentGamePlayerController == null) {
             return;

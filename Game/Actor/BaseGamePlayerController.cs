@@ -2436,9 +2436,18 @@ internal virtual void handleGameInput() {
     // LOADING
 
     public virtual void LoadEnterExitState() {
-        GamePlayerModelHolderEaseOut(5f, .1f, 0f);
-        if (!IsPlayerControlled) {
-            GamePlayerModelHolderEaseIn(0, .3f, .3f);
+
+        if (GameController.IsGameplayTypeRunner()) {
+            GamePlayerModelHolderEaseOut(0f, 0f, 0f);
+            if (!IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, 0f, 0f);
+            }
+        }
+        else if (GameController.IsGameplayTypeDasher()) {
+            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
+            if (!IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            }
         }
     }
 
@@ -2446,10 +2455,19 @@ internal virtual void handleGameInput() {
         if (IsPlayerControlled) {
 
             UpdateCharacterRuntimeState();
+            
+            if (GameController.IsGameplayTypeRunner()) {
 
-            //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
+                //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
+                GamePlayerModelHolderEaseIn(0, 0f, 0f);
+            }
+            else if (GameController.IsGameplayTypeDasher()) {
 
-            GamePlayerModelHolderEaseIn(0, .3f, .3f);
+                //GamePlayerModelHolderEaseOut(5f, 0f, 0f);    
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            }
+
+
         }
     }
 
@@ -2865,6 +2883,11 @@ internal virtual void handleGameInput() {
     // ------------------------------------------------------------------------
     // COLLISIONS/TRIGGERS
 
+    string nameGameObstacle = "GameObstacle";
+    string nameGameDamageObstacle = "GameDamageObstacle";
+    string nameGameItemObject = "GameItemObject";
+    string nameGamePlayerCollider = "GamePlayerCollider";
+
     public virtual void HandleCollision(Collision collision) {
 
         if (!controllerReady) {
@@ -2891,16 +2914,20 @@ internal virtual void handleGameInput() {
                         }
                     }
 
-                    bool isObstacle = parentName.Contains("GameObstacle")
-                                      || t.name.Contains("GameObstacle");
+                    bool isObstacle = parentName.Contains(nameGameObstacle)
+                                      || t.name.Contains(nameGameObstacle);
 
-                    bool isLevelObject = parentName.Contains("GameItemObject")
-                                         || parentParentName.Contains("GameItemObject")
-                                         || parentParentParentName.Contains("GameItemObject")
-                                         || t.name.Contains("GameItemObject");
+                    bool isDamageObstacle = parentName.Contains(nameGameDamageObstacle)
+                                      || t.name.Contains(nameGameDamageObstacle);
+
+
+                    bool isLevelObject = parentName.Contains(nameGameItemObject)
+                                         || parentParentName.Contains(nameGameItemObject)
+                                         || parentParentParentName.Contains(nameGameItemObject)
+                                         || t.name.Contains(nameGameItemObject);
 
                     bool isPlayerObject =
-                        t.name.Contains("GamePlayerCollider");
+                        t.name.Contains(nameGamePlayerCollider);
                     //|| t.name.Contains("GamePlayerObject");
 
                     if (!isObstacle && !isLevelObject && !isPlayerObject) {
@@ -2935,6 +2962,35 @@ internal virtual void handleGameInput() {
                             ProgressScore(1);
                             GamePlayerProgress.SetStatHitsObstacles(1f);
                         }
+                    }
+                    else if(isDamageObstacle) {
+                        if (IsPlayerControlled) {
+
+                            float power = .35f;
+                            runtimeData.health -= power;
+
+                            //GamePlayerProgress.Instance.ProcessProgressSpins
+                            //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
+                            //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressEnergy(power/2f); // TODO get by skill upgrade
+
+                            Vector3 normal = contact.normal;
+                            float magnitude = contact.point.sqrMagnitude;
+
+                            // TODO config
+
+                            float hitPower = (magnitude * (float)runtimeData.mass) / 110;
+
+                            //LogUtil.Log("hitPower:" + hitPower);
+
+                            // TODO config
+
+                            AddImpact(normal, Mathf.Clamp(hitPower, 0f, 80f));
+
+                            // we hit an enemy, so we are the player
+                            GamePlayerProgress.SetStatHits(1f);
+                            Hit(power);
+                        }
+
                     }
                     else if (isPlayerObject) {
 
@@ -3434,7 +3490,7 @@ internal virtual void handleGameInput() {
         }
 
         if (IsPlayerControlled) {
-            if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+            if (GameController.IsGameplayTypeRunner()) {
                 //return;
             }
             gameObject.ResetPosition();
@@ -5380,7 +5436,7 @@ internal virtual void handleGameInput() {
                     //    Jump(.05f);
                     //}
 
-                    if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+                    if (GameController.IsGameplayTypeRunner()) {
 
                     }
                     else {
@@ -5591,10 +5647,8 @@ internal virtual void handleGameInput() {
                 currentControllerData.thirdPersonController.getUserInput = false;
                 currentControllerData.thirdPersonController.capeFlyGravity = 8f;
                 currentControllerData.thirdPersonController.gravity = 16f;
-
-
-                // TODO RUNNER 
-                if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+                
+                if (GameController.IsGameplayTypeRunner()) {
                     currentControllerData.thirdPersonController.inAirControlAcceleration = 7f;
                     currentControllerData.thirdPersonController.jumpHeight = 7f;
                     currentControllerData.thirdPersonController.extraJumpHeight = 7f;
@@ -5606,8 +5660,6 @@ internal virtual void handleGameInput() {
                     currentControllerData.thirdPersonController.trotSpeed = 40f;
                     currentControllerData.thirdPersonController.runSpeed = 50f;
                 }
-
-
             }
 
             if (currentControllerData.gamePlayerControllerAnimation != null) {
@@ -5855,7 +5907,7 @@ internal virtual void handleGameInput() {
 
         return (!IsUIState()
             && !(IsPlayerControlled
-                && GameController.IsGameplayType(GameplayType.gameRunner)));
+                && GameController.IsGameplayTypeRunner()));
     }
 
     public virtual void CheckIfShouldRemove() {
