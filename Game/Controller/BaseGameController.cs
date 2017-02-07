@@ -229,11 +229,11 @@ public class BaseGameGameRuntimeData {
     public string levelCode = "";
     public double score = 0;
     public bool outOfBounds = false;
-    
+
     public BaseGameGameRuntimeData() {
         Reset();
     }
-    
+
     public virtual void Reset() {
         currentLevelTime = 0;
         timeRemaining = 90;
@@ -242,8 +242,27 @@ public class BaseGameGameRuntimeData {
         score = 0;
         outOfBounds = false;
         ResetTimeDefault();
+
+        // TYPES
+
+        rangeStart = Vector3.zero.WithX(-16f);
+        rangeEnd = Vector3.zero.WithX(16f);
+        speedInfinite = 0f;
+        speedInfiniteTo = 100f;
+
+        moveGamePlayerPosition = Vector3.zero;
+        currentGamePlayerPosition = Vector3.zero;
+        overallGamePlayerPosition = Vector3.zero;
+        currentGamePlayerPositionBounce = Vector3.zero;
+        curve = Vector4.zero;
+
+        curveEnabled = true;
+        curveInfiniteDistance = 50f;
+        curveInfiniteAmount = Vector4.zero;     // Determines how much the platform bends (default value (-5,-5,0,0)
+
+        moveGamePlayerPositionTo = Vector3.zero;
     }
-    
+
     public virtual bool timeExpired {
         get {
             if (timeRemaining <= 0) {
@@ -259,24 +278,47 @@ public class BaseGameGameRuntimeData {
             return !timeExpired;
         }
     }
-    
+
     public virtual void SubtractTime(double delta) {
         if (timeRemaining > 0) {
             timeRemaining -= delta;
         }
     }
-    
+
     public virtual void ResetTimeDefault() {
         timeRemaining = 90;
     }
-    
+
     public virtual void ResetTime(double timeTo) {
         timeRemaining = timeTo;
     }
-    
+
     public virtual void AppendTime(double timeAppend) {
         timeRemaining += timeAppend;
     }
+
+    // GAMEPLAY TYPE SPECIFIC
+
+    // RUNNER
+
+    // TODO move to runtimeData n 
+
+    public Vector3 rangeStart;
+    public Vector3 rangeEnd;
+    public float speedInfinite = 0f;
+    public float speedInfiniteTo = 0f;
+
+    public Vector3 moveGamePlayerPosition;
+    public Vector3 currentGamePlayerPosition;
+    public Vector3 overallGamePlayerPosition;
+    public Vector3 currentGamePlayerPositionBounce;
+    public Vector4 curve;
+
+    public bool curveEnabled = false;
+    public float curveInfiniteDistance = 0f;
+    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
+
+    public Vector3 moveGamePlayerPositionTo;
 }
 
 public class GameLevelItemDataType {
@@ -299,8 +341,7 @@ public class GameLevelItemData {
         type = typeTo;
         count = countTo;
         pos = posTo;
-    }
-    
+    }    
 }
 
 public class GameLevelTemplate {
@@ -613,7 +654,6 @@ public class BaseGameController : GameObjectTimerBehavior {
     public string gameplayType = GameplayType.gameDasher;
     public string gameplayWorldType = GameplayWorldType.gameDefault;
 
-
     internal Dictionary<string, GamePlayerController> gamePlayerControllers;
     internal Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
     internal List<string> gameCharacterTypes = new List<string>();
@@ -660,6 +700,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     //
     public GameObject gameZoneEndLeft;
     public GameObject gameZoneEndRight;
+    //
+    public GameObjectInfiniteController controllerInfinity;
+    public GameObjectInfiniteContainer containerInfinity;
     //
     public GameGameRuntimeData runtimeData;
     //
@@ -2369,6 +2412,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         resetRuntimeData();
 
         resetLevel();
+
+        resetGameplayTypes();
     }
 
     public virtual void resetLevel() {
@@ -2390,6 +2435,18 @@ public class BaseGameController : GameObjectTimerBehavior {
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
+    }
+
+    public virtual void resetGameplayTypes() {
+        
+        handleGametypeInit();
+
+        if (isGameplayWorldTypeStationary()) {
+            
+            if (containerInfinity != null) {
+                containerInfinity.Reset();
+            }
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -3934,25 +3991,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
-    // TODO move to runtimeData n 
-
-    Vector3 rangeStart = Vector3.zero.WithX(-16f);
-    Vector3 rangeEnd = Vector3.zero.WithX(16f);
-    public float speedInfinite = 0f;
-    public float speedInfiniteTo = 10f;
-
-    public Vector3 moveGamePlayerPosition = Vector3.zero;
-    public Vector3 currentGamePlayerPosition = Vector3.zero;
-    public Vector3 overallGamePlayerPosition = Vector3.zero;
-
-    public GameObjectInfiniteController controllerInfinity;
-    public GameObjectInfiniteContainer containerInfinity;
-    public Vector4 curve = Vector4.zero;
-
-    bool curveEnabled = true;
-    float curveInfiniteDistance = 50f;
-    Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
-
     public enum GamePlayerDirection {
         None,
         Up,
@@ -3977,23 +4015,23 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (GameController.IsGameplayType(GameplayType.gameRunner)) {
 
             if (direction == GamePlayerDirection.Up) {
-                GameController.GamePlayerJump();
+                gamePlayerJump();
             }
             else if (direction == GamePlayerDirection.Down) {
                 //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
                 //GameController.GamePlayerAttack();
-                GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
+                gamePlayerSlide(Vector3.zero.WithZ(3f));
             }
             else if (direction == GamePlayerDirection.Left
                 || direction == GamePlayerDirection.LowerLeftDiagonal
                 || direction == GamePlayerDirection.UpperLeftDiagonal) {
                 //GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
 
-                Vector3 pos = GameController.Instance.containerInfinity.SwitchLineLeft();
+                Vector3 pos = containerInfinity.SwitchLineLeft();
 
                 Debug.Log("handleGameInputDirection:left:" + pos);
 
-                moveGamePlayerPositionTo.x = pos.x;
+                runtimeData.moveGamePlayerPositionTo.x = pos.x;
 
                 //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
             }
@@ -4002,11 +4040,11 @@ public class BaseGameController : GameObjectTimerBehavior {
                 || direction == GamePlayerDirection.UpperRightDiagonal) {
                 //GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
 
-                Vector3 pos = GameController.Instance.containerInfinity.SwitchLineRight();
+                Vector3 pos = containerInfinity.SwitchLineRight();
 
                 Debug.Log("handleGameInputDirection:right:" + pos);
 
-                moveGamePlayerPositionTo.x = pos.x;
+                runtimeData.moveGamePlayerPositionTo.x = pos.x;
 
                 //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
             }
@@ -4084,7 +4122,27 @@ public class BaseGameController : GameObjectTimerBehavior {
             InputSystem.UpdateTouchLaunch();
         }
     }
+    
+    public static void HandleGameDamageObstacleHit() {
+        if (GameController.isInst) {
+            GameController.Instance.handleGameDamageObstacleHit();
+        }
+    }
 
+    internal virtual void handleGameDamageObstacleHit() {
+
+        if (runtimeData == null) {
+            return;
+        }
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+            // If stationary aff move back
+
+            runtimeData.currentGamePlayerPositionBounce =
+                runtimeData.currentGamePlayerPositionBounce.WithZ(100);
+        }
+    }
+        
     // ------------------------------------------------------------------------
     // CURVE INFINITE HANDLING
 
@@ -4102,7 +4160,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public bool curveInfiniteEnabledGet() {
-        return curveEnabled;
+
+        if (runtimeData == null) {
+            return false;
+        }
+
+        return runtimeData.curveEnabled;
     }
 
     // set
@@ -4114,7 +4177,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public void curveInfiniteEnabledSet(bool val) {
-        curveEnabled = val;
+
+        if (runtimeData == null) {
+            return;
+        }
+
+        runtimeData.curveEnabled = val;
     }
 
     // ------------------------------------------------------------------------
@@ -4131,7 +4199,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public Vector4 curveInfiniteAmountGet() {
-        return curveInfiniteAmount;
+
+        if (runtimeData == null) {
+            return Vector4.zero;
+        }
+
+        return runtimeData.curveInfiniteAmount;
     }
 
     // set
@@ -4143,7 +4216,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public void curveInfiniteAmountSet(Vector4 val) {
-        curveInfiniteAmount = val;
+
+        if (runtimeData == null) {
+            return;
+        }
+
+        runtimeData.curveInfiniteAmount = val;
     }
 
     // ------------------------------------------------------------------------
@@ -4160,7 +4238,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public float curveInfiniteDistanceGet() {
-        return curveInfiniteDistance;
+
+        if (runtimeData == null) {
+            return 50f;
+        }
+
+        return runtimeData.curveInfiniteDistance;
     }
 
     // set
@@ -4172,7 +4255,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public void curveInfiniteDistanceSet(float val) {
-        curveInfiniteDistance = val;
+
+        if (runtimeData == null) {
+            return;
+        }
+
+        runtimeData.curveInfiniteDistance = val;
     }
 
     // ------------------------------------------------------------------------
@@ -4191,19 +4279,30 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        if (curveEnabled) {
-            curve.x = UnityEngine.Random.Range(-15, 15);
-            curve.z = UnityEngine.Random.Range(-22, 15);
+        if (runtimeData.curveEnabled) {
+            runtimeData.curve.x = UnityEngine.Random.Range(-15, 15);
+            runtimeData.curve.z = UnityEngine.Random.Range(-22, 15);
         }
         else {
-            curve.x = 0;
-            curve.z = 0;
+            runtimeData.curve.x = 0;
+            runtimeData.curve.z = 0;
         }
 
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
 
-    Vector3 moveGamePlayerPositionTo = Vector3.zero;
+    internal virtual void handleGametypeInit() {
+
+        if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            //if (controllerInfinity == null) {
+            controllerInfinity = gameObject.Get<GameObjectInfiniteController>();
+            //}
+
+            //if (containerInfinity == null) {
+            containerInfinity = gameObject.Get<GameObjectInfiniteContainer>();
+            //}
+        }
+    }
 
     internal virtual void handleUpdateStationary() {
 
@@ -4217,23 +4316,19 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        if (controllerInfinity == null) {
-            controllerInfinity = gameObject.Get<GameObjectInfiniteController>();
-        }
-
         if (containerInfinity == null) {
-            containerInfinity = gameObject.Get<GameObjectInfiniteContainer>();
+            handleGametypeInit();
         }
 
         if (GameConfigs.isGameRunning) {
 
-            currentGamePlayerPosition.z = currentGamePlayerController.transform.position.z;
+            runtimeData.currentGamePlayerPosition.z = currentGamePlayerController.transform.position.z;
 
-            overallGamePlayerPosition.z += currentGamePlayerPosition.z;
+            runtimeData.overallGamePlayerPosition.z += runtimeData.currentGamePlayerPosition.z;
             //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
 
-            moveGamePlayerPosition.z = Mathf.Lerp(moveGamePlayerPosition.z, currentGamePlayerPosition.z, .3f * Time.deltaTime);
-            moveGamePlayerPosition.x = Mathf.Lerp(moveGamePlayerPosition.x, moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
+            runtimeData.moveGamePlayerPosition.z = Mathf.Lerp(runtimeData.moveGamePlayerPosition.z, runtimeData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
+            runtimeData.moveGamePlayerPosition.x = Mathf.Lerp(runtimeData.moveGamePlayerPosition.x, runtimeData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
             //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 
@@ -4242,35 +4337,45 @@ public class BaseGameController : GameObjectTimerBehavior {
             //    .WithX(moveGamePlayerPosition.x)
             //    .WithZ(-moveGamePlayerPosition.z);
 
-            speedInfinite = Mathf.Lerp(speedInfinite, speedInfiniteTo, 1f * Time.deltaTime);
+            runtimeData.speedInfinite = Mathf.Lerp(runtimeData.speedInfinite, runtimeData.speedInfiniteTo, 1f * Time.deltaTime);
 
-            GameController.GamePlayerSetSpeed(speedInfinite);
+            GameController.GamePlayerSetSpeed(runtimeData.speedInfinite);
 
             currentGamePlayerController.transform.position =
                 Vector3.Lerp(
                     currentGamePlayerController.transform.position,
                     currentGamePlayerController.transform.position
-                        .WithX(moveGamePlayerPosition.x)
-                        .WithZ(-moveGamePlayerPosition.z), speedInfinite * Time.deltaTime);
+                        .WithX(runtimeData.moveGamePlayerPosition.x)
+                        .WithZ(-runtimeData.moveGamePlayerPosition.z * runtimeData.currentGamePlayerPositionBounce.z), 
+                    runtimeData.speedInfinite * Time.deltaTime);
+
+            runtimeData.currentGamePlayerPositionBounce =
+                Vector3.Lerp(
+                    runtimeData.currentGamePlayerPositionBounce,
+                    Vector3.zero, 1000 * Time.deltaTime);
 
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+            
+            Debug.Log("GameController: handleLateUpdateStationary: runtimeData.currentGamePlayerPositionBounce.z:" + runtimeData.currentGamePlayerPositionBounce.z);
+
+            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
 
             //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
             //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
 
-            containerInfinity.UpdatePositionPartsZ(-moveGamePlayerPosition.z * Time.deltaTime * speedInfinite);
+            containerInfinity.UpdatePositionPartsZ(-runtimeData.moveGamePlayerPosition.z * Time.deltaTime * runtimeData.speedInfinite);
 
-            //Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
+            Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
 
-            Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, moveGamePlayerPosition, speedInfinite);
+            Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, runtimeData.moveGamePlayerPosition, runtimeData.speedInfinite);
 
-            if (!curveEnabled) {
-                curve = Vector4.zero;
-                curveInfiniteAmount = curve;
+            if (!runtimeData.curveEnabled) {
+                runtimeData.curve = Vector4.zero;
+                runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
 
-            curveInfiniteAmount = Vector4.Lerp(curveInfiniteAmount, curve, .15f * Time.deltaTime);
+            runtimeData.curveInfiniteAmount = Vector4.Lerp(runtimeData.curveInfiniteAmount, runtimeData.curve, .15f * Time.deltaTime);
         }
     }
 
@@ -4282,7 +4387,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            handleUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 
@@ -4299,7 +4404,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleLateUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 
@@ -4312,7 +4417,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleUpdateStationary();
+            handleUpdateStationary();
         }
     }
 

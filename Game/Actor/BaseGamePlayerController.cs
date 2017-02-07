@@ -1912,10 +1912,14 @@ internal virtual void handleGameInput() {
         bool update = false;
 
         if (controllerData != null) {
+
             if (currentControllerData.lastIdleActions + UnityEngine.Random.Range(3, 7) < Time.time) {
+
                 currentControllerData.lastIdleActions = Time.time;
+                
                 if (currentControllerData.thirdPersonController != null) {
-                    if (currentControllerData.thirdPersonController.moveSpeed == 0f) {
+
+                    if (currentControllerData.thirdPersonController.GetSpeed() == 0f) {
                         update = true;
                     }
                 }
@@ -2959,6 +2963,23 @@ internal virtual void handleGameInput() {
                         }
                     }
 
+                    if (isDamageObstacle) {
+
+                        if (IsPlayerControlled) {
+                            // If stationary aff move back
+
+                            float power = .35f;
+                            runtimeData.health -= power;
+
+                            GameController.Instance.runtimeData.currentGamePlayerPositionBounce = 
+                                GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(100);
+                        }
+
+
+                    }
+
+
+
                     if (isObstacle || isLevelObject) {
                         if (IsPlayerControlled) {
                             AudioAttack();
@@ -2969,6 +2990,8 @@ internal virtual void handleGameInput() {
                     else if(isDamageObstacle) {
                         if (IsPlayerControlled) {
 
+                            /*
+                                                        
                             float power = .35f;
                             runtimeData.health -= power;
 
@@ -2981,7 +3004,7 @@ internal virtual void handleGameInput() {
 
                             // TODO config
 
-                            float hitPower = (magnitude * (float)runtimeData.mass) / 110;
+                            float hitPower = (magnitude * (float)runtimeData.mass) / 50;
 
                             //LogUtil.Log("hitPower:" + hitPower);
 
@@ -2992,6 +3015,7 @@ internal virtual void handleGameInput() {
                             // we hit an enemy, so we are the player
                             GamePlayerProgress.SetStatHits(1f);
                             Hit(power);
+                            */
                         }
 
                     }
