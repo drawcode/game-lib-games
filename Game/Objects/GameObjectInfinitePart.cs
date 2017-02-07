@@ -58,7 +58,7 @@ public class GameObjectInfinitePart : GameObjectBehavior {
         if (container != null) {
             destroy = MathUtil.IsVector3OutOfRange(
                 gameObject.transform.position,
-                container.rangeBoundsMin, container.rangeBoundsMax, bounds);
+                container.data.rangeBoundsMin, container.data.rangeBoundsMax, bounds);
         }
 
         if (destroy) {

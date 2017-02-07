@@ -105,14 +105,19 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 	}
 
     public virtual void ShowContentState() {
+
         if(containerModes != null) {
 
-            foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
-                if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()) {
-                    inactive.gameObject.Show();
-                }
-                else {
+            foreach (GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+                if (inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
                     inactive.gameObject.Hide();
+                }
+            }
+
+            foreach (GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+                if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()
+                    && inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
+                    inactive.gameObject.Show();
                 }
             }
         }
@@ -176,6 +181,43 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         ShowContentState();
 	}
 
+    public virtual void HandleItems() {
+
+        // Handle by world
+
+        string codeWorld = GameWorlds.Current.code;
+
+        if (codeWorld.IsNullOrEmpty()) {
+            return;
+        }
+
+        foreach (GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
+
+            if (container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
+
+                foreach (GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
+
+                    if (item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)
+                        && !item.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
+                        item.gameObject.HideChildren();
+                    }
+                }    
+
+                foreach (GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
+
+                    Dictionary<string, object> data = dataItem.ToDictionary();
+
+                    string val = data.Get<string>(BaseDataObjectKeys.world);
+
+                    if (val.IsEqualLowercase(codeWorld)) {
+
+                        dataItem.gameObject.Show();
+                    }
+                }
+            }
+        }
+    }
+    
     public override void HandleShow() {
         base.HandleShow();
         
@@ -187,6 +229,8 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     public override void AnimateIn() {
         base.AnimateIn();
+
+        HandleItems();
 
         loadData();        
         
