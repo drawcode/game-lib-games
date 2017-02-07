@@ -153,6 +153,8 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public override void AnimateOut() {
         base.AnimateOut();
 
+        CancelInvoke("AnimateInDelayed");
+
         HandleHide();
     }
 

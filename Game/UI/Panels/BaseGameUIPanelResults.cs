@@ -241,11 +241,11 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         
     public override void AnimateOut() {
 
+        base.AnimateOut();
+
         Messenger.Broadcast(GameMessages.gameResultsEnd);
                 
         GameCommunity.HideSharesCenter();
-
-        base.AnimateOut();
     }
 	
 }
