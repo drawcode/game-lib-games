@@ -38,7 +38,7 @@ public class GameObjectInfinteData {
     public int currentIndex = 0;
 
     public Dictionary<int, GameObjectInfinitePart> parts;
-
+   
     public GameObjectInfinteData() {
         Reset();
     }
