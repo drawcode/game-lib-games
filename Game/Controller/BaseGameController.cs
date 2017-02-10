@@ -4320,6 +4320,12 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleGametypeInit();
         }
 
+
+        if (containerInfinity == null
+            || controllerInfinity == null) {
+            return;
+        }
+
         if (GameConfigs.isGameRunning) {
 
             runtimeData.currentGamePlayerPosition.z = currentGamePlayerController.transform.position.z;
@@ -4475,7 +4481,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // UPDATE
 
-        if (!isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -4506,7 +4512,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // UPDATE
 
-        if (!isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -4522,7 +4528,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // UPDATE
 
-        if (!isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
