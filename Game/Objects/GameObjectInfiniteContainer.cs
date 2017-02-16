@@ -236,13 +236,36 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 
             }
-        }
+        } 
     }
     */
 
+    void LoadPartDynamicByIndexPartData(int indexItem, bool clear = false) {
+        
+        // Get current index part
+
+        // Cycle through index parts until new index part needed
+
+        // Get new index part and continue 
+
+        GameLevelGridData dataItems = new GameLevelGridData();
+
+       dataItems = GameLevels.GetLevelGridLayoutParts(
+           dataItems, GameLevels.Current.data.layout_presets, BaseDataObjectKeys.dynamicKey);
+
+        
+        Debug.Log("LoadPartDynamicByIndex");
+    }
+         
     void LoadLevelAssetDynamicByIndex(int indexItem, bool clear = false) {
 
+        LoadPartDynamicByIndexPart(indexItem, clear);
+    }
+     
+    void LoadPartDynamicByIndexPart(int indexItem, bool clear = false) {
+
         // Use off screen location to spawn before move
+
         Vector3 spawnLocation = Vector3.zero.WithY(5000);
 
         bool used = false;
@@ -271,18 +294,12 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         part.index = indexItem;
         Vector3 bounds = part.bounds;
 
-        //Vector3 infinityPosition = go.transform.position.WithZ(
+        //Vector3 infinityPosition = go.transform.position.WithZ(   
         //    (((indexItem + 1) * bounds.z) - bounds.z) + distance.z);
 
         go.transform.position = go.transform.position.WithZ(
             (((indexItem + 1) * bounds.z) - bounds.z) + data.distance.z);
-
-        // ADD PART ITEM CONTAINER AT LINES
-
-        string template1 = "   ";
-        string template2 = "X  ";
-        string template3 = " X ";
-        string template4 = "  X";
+        
 
         for (int i = 0; i < data.lines.Count; i++) {
             
@@ -396,6 +413,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             */
             
 
+            /*
             // ADD PART BLOCK JUMP AND ASSETS FROM TEMPLATE
 
             int randObstacleLow = UnityEngine.Random.Range(1, 30);
@@ -419,6 +437,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 used = true;
             }
+            */
 
         }
         
