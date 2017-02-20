@@ -116,7 +116,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
             gamePlayerItemCode = gamePlayerItemCode.Replace("(Clone)", "");
         }
 
-        Debug.Log("InitItem:" + " gamePlayerItemCode:" + gamePlayerItemCode);
+        //Debug.Log("InitItem:" + " gamePlayerItemCode:" + gamePlayerItemCode);
 
         if(gameItem == null) {
             gameItem = GameItems.Instance.GetById(gamePlayerItemCode);
@@ -145,7 +145,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
             GameController.CurrentGamePlayerController.HandleItemUse(gameItem); 
 
-            Debug.Log("CollectContent:" + gameItem.ToJson());
+            //Debug.Log("CollectContent:" + gameItem.ToJson());
                                 
             //UINotificationDisplay.Instance.QueuePoint(title, description, pointValue);
             //}

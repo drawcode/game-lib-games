@@ -248,7 +248,7 @@ public class BaseGameGameRuntimeData {
         rangeStart = Vector3.zero.WithX(-16f);
         rangeEnd = Vector3.zero.WithX(16f);
         speedInfinite = 0f;
-        speedInfiniteTo = 100f;
+        speedInfiniteTo = 80f;
 
         moveGamePlayerPosition = Vector3.zero;
         currentGamePlayerPosition = Vector3.zero;
@@ -4280,13 +4280,15 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         if (runtimeData.curveEnabled) {
-            runtimeData.curve.x = UnityEngine.Random.Range(-10, 10);
-            runtimeData.curve.z = UnityEngine.Random.Range(-12, 12);
+            runtimeData.curve.x = UnityEngine.Random.Range(-6, 6);
+            runtimeData.curve.z = UnityEngine.Random.Range(-6, 6);
         }
         else {
             runtimeData.curve.x = 0;
             runtimeData.curve.z = 0;
         }
+
+        Debug.Log("handleInfiniteCurve:" + runtimeData.curve);
 
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
@@ -4363,7 +4365,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
             
-            Debug.Log("GameController: handleLateUpdateStationary: runtimeData.currentGamePlayerPositionBounce.z:" + runtimeData.currentGamePlayerPositionBounce.z);
+            //Debug.Log("GameController: handleLateUpdateStationary: runtimeData.currentGamePlayerPositionBounce.z:" + runtimeData.currentGamePlayerPositionBounce.z);
 
             //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
 
@@ -4372,7 +4374,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             containerInfinity.UpdatePositionPartsZ(-runtimeData.moveGamePlayerPosition.z * Time.deltaTime * runtimeData.speedInfinite);
 
-            Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
+            //Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
 
             Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, runtimeData.moveGamePlayerPosition, runtimeData.speedInfinite);
 
