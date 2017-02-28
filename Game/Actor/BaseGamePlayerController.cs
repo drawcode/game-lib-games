@@ -2946,7 +2946,7 @@ internal virtual void handleGameInput() {
                             currentControllerData.lastCollision = Time.time;
                         }
                         else {
-                            return;
+                        //    return;
                         }
                     }
 
@@ -2965,20 +2965,21 @@ internal virtual void handleGameInput() {
 
                     if (isDamageObstacle) {
 
-                        if (IsPlayerControlled) {
+                        if (IsPlayerControlled) { 
                             // If stationary aff move back
 
                             float power = .35f;
                             runtimeData.health -= power;
 
+                            GameController.Instance.runtimeData.currentGamePlayerPosition = t.position.WithZ(-16);
+
+                            //GameController.Instance.runtimeData.currentGamePlayerPosition = 
+                            //    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(-4);
+
                             GameController.Instance.runtimeData.currentGamePlayerPositionBounce = 
                                 GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(250);
                         }
-
-
                     }
-
-
 
                     if (isObstacle || isLevelObject) {
                         if (IsPlayerControlled) {
@@ -6466,7 +6467,7 @@ internal virtual void handleGameInput() {
 
         //handleGameInput();
     }
-
+    
     public virtual void UpdateEditorTools() {
 
         if (IsPlayerControlled) {
@@ -6547,9 +6548,7 @@ internal virtual void handleGameInput() {
     }
 
     public override void Update() {
-
-        //handleUpdateStationary();
-
+        
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
             return;
