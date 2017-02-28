@@ -330,6 +330,28 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
             go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
         }
+
+        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
+
+            // Load terrain and ambience
+
+            GameObject goSideLeft = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
+            GameObject goSideRight = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
+
+            if (goSideLeft == null || goSideRight == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameSide);
+                return;
+            }
+
+            goSideLeft.transform.parent = parentGo.transform;
+            goSideRight.transform.parent = parentGo.transform;
+            
+            goSideLeft.transform.localRotation = Quaternion.Euler(0, -90, 0);
+            goSideRight.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+            goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
+            goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
+        }
     }
 
          

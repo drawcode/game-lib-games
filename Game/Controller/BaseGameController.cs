@@ -4338,6 +4338,17 @@ public class BaseGameController : GameObjectTimerBehavior {
             runtimeData.moveGamePlayerPosition.z = Mathf.Lerp(runtimeData.moveGamePlayerPosition.z, runtimeData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
             runtimeData.moveGamePlayerPosition.x = Mathf.Lerp(runtimeData.moveGamePlayerPosition.x, runtimeData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
+            if (runtimeData.currentGamePlayerPosition.y < -1) {
+
+                GameController.Instance.runtimeData.currentGamePlayerPositionBounce =
+                    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(0);
+
+                GameController.Instance.runtimeData.moveGamePlayerPosition =
+                    GameController.Instance.runtimeData.moveGamePlayerPosition.WithZ(0);
+
+                GameController.CurrentGamePlayerController.runtimeData.health -= 2;
+            }
+
             //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
 
             //currentGamePlayerController.transform.position = 
@@ -4354,7 +4365,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     currentGamePlayerController.transform.position,
                     currentGamePlayerController.transform.position
                         .WithX(runtimeData.moveGamePlayerPosition.x)
-                        .WithZ(-runtimeData.moveGamePlayerPosition.z * runtimeData.currentGamePlayerPositionBounce.z), 
+                        .WithZ(-runtimeData.moveGamePlayerPosition.z * runtimeData.currentGamePlayerPositionBounce.z),
                     runtimeData.speedInfinite * Time.deltaTime);
 
             runtimeData.currentGamePlayerPositionBounce =
@@ -4364,7 +4375,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
             //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
-            
+
             //Debug.Log("GameController: handleLateUpdateStationary: runtimeData.currentGamePlayerPositionBounce.z:" + runtimeData.currentGamePlayerPositionBounce.z);
 
             //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
