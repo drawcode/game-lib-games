@@ -2972,7 +2972,7 @@ internal virtual void handleGameInput() {
                             runtimeData.health -= power;
 
                             GameController.Instance.runtimeData.currentGamePlayerPositionBounce = 
-                                GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(100);
+                                GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(250);
                         }
 
 
