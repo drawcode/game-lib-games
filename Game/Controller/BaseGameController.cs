@@ -4280,8 +4280,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         if (runtimeData.curveEnabled) {
-            runtimeData.curve.x = UnityEngine.Random.Range(-6, 6);
-            runtimeData.curve.z = UnityEngine.Random.Range(-6, 6);
+            runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
+            runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
         }
         else {
             runtimeData.curve.x = 0;

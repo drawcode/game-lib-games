@@ -1,7 +1,7 @@
 Shader "Curved/CurvedDiffuseAmbient" {
 	Properties {
 		//_MainTex ("Base (RGB)", 2D) = "white" {}
-		[NoScaleOffset] _MainTex("Texture", 2D) = "white" {}
+		_MainTex("Texture", 2D) = "white" {}
 		_QOffset ("Offset", Vector) = (0,0,0,0)
 		_Dist ("Distance", Float) = 100.0
 	}
@@ -18,11 +18,12 @@ Shader "Curved/CurvedDiffuseAmbient" {
             sampler2D _MainTex;
 			float4 _QOffset;
 			float _Dist;
+			float4 _MainTex_ST;
 			
 			struct v2f {
 			    float4 vertex : SV_POSITION;
 				fixed4 diff : COLOR0; // diffuse lighting color
-			    float4 uv : TEXCOORD0;
+				float2 uv : TEXCOORD0;
 			};
 
 			v2f vert (appdata_base v)
@@ -43,7 +44,8 @@ Shader "Curved/CurvedDiffuseAmbient" {
 			    float zOff = vPos.z/_Dist;
 			    vPos += _QOffset*zOff*zOff;
 			    o.vertex = mul (UNITY_MATRIX_P, vPos);
-			    o.uv = v.texcoord;
+				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
+															//o.uv = v.texcoord;
 
 				// the only difference from previous shader:
 				// in addition to the diffuse lighting from the main light,

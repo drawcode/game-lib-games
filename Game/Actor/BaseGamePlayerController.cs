@@ -1236,7 +1236,7 @@ internal virtual void handleGameInput() {
         if (data.HasRPGs()) {
             rpg = data.GetRPG();
 
-            Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
+            //Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
 
             HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
             HandleItemStateScaleModifier(rpg.scale, rpg.duration);
