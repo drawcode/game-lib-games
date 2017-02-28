@@ -14,7 +14,7 @@ public class GameObjectInfinteData {
 
     public string codeGameFloor = "game-world-floor-1";
     public string codeGameSide = "game-world-side-1";
-    public string codeGameSky = "game-world-sky-1";
+    public string codeGameSky = "game-world-sky-1";   
     public string codeGameWater = "game-world-water-1";
 
     public string codeGameBlock = "game-block-1";
@@ -469,12 +469,20 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 && fillBlock
                 && codeItem != codeBlock) {
 
-
                 // TODO change to game specific lookup
 
                 codeItem = GameController.GameItemCodeContextGet(codeItem);
 
-                GameObject goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
+                GameObject goAssetItem;
+
+                if (codeItem.StartsWith(BaseDataObjectKeys.item)) {
+
+                    goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
+                }
+                else {
+
+                    goAssetItem = AppContentAssets.LoadAssetLevelAssets(codeItem, spawnLocation);
+                }
 
                 if (goAssetItem == null) {
                     Debug.Log("Asset not found items/" + codeItem);
