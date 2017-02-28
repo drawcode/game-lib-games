@@ -13,13 +13,14 @@ Shader "Curved/Curved" {
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-                        sampler2D _MainTex;
+            sampler2D _MainTex;
 			float4 _QOffset;
 			float _Dist;
+			float4 _MainTex_ST;
 			
 			struct v2f {
 			    float4 pos : SV_POSITION;
-			    float4 uv : TEXCOORD0;
+			    float2 uv : TEXCOORD0;
 			};
 
 			v2f vert (appdata_base v)
@@ -29,7 +30,8 @@ Shader "Curved/Curved" {
 			    float zOff = vPos.z/_Dist;
 			    vPos += _QOffset*zOff*zOff;
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
-			    o.uv = v.texcoord;
+			    o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
+				//o.uv = v.texcoord;
 			    return o;
 			}
 

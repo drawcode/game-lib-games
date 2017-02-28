@@ -12,6 +12,11 @@ public class GameObjectInfinteData {
     public string codeGamePartItems = "game-part-items";
     public string codeGamePartItem = "game-part-item";
 
+    public string codeGameFloor = "game-world-floor-1";
+    public string codeGameSide = "game-world-side-1";
+    public string codeGameSky = "game-world-sky-1";
+    public string codeGameWater = "game-world-water-1";
+
     public string codeGameBlock = "game-block-1";
     public string codeGameBlockLow = "game-block-low";
     public string codeGameBlockHigh = "game-block-high";
@@ -306,6 +311,27 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 
         //Debug.Log("LoadPartDynamicByIndex");
     }
+
+    void LoadLevelAssetsPeriodic(GameObject parentGo, int indexItem, bool clear = true) {
+
+        //if (((indexItem + 1) * data.distanceTickZ) % data.distanceTickZ == 0) {
+        if ((indexItem + 1) % (data.distanceTickZ/2) == 0) {
+
+            // Load terrain and ambience
+            
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGameFloor, parentGo.transform.position);
+
+            if (go == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameFloor);
+                return;
+            }
+
+            go.transform.parent = parentGo.transform;
+
+            go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
+        }
+    }
+
          
     void LoadLevelAssetDynamicByIndex(int indexItem, bool clear = false) {
 
@@ -334,6 +360,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         go.name = StringUtil.Dashed(data.code, indexItem.ToString());
         go.transform.parent = transform;
+        
+        // PART ITEMS       
 
         GameObjectInfinitePart part = go.Get<GameObjectInfinitePart>();
 
@@ -354,6 +382,12 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         if (indexItem > data.partBackCount) {
             LoadPartDynamicByIndexPartData(indexItem);
         }
+        
+        // LOAD ENVIRONMENT
+
+        LoadLevelAssetsPeriodic(go, indexItem, clear);
+        
+        // TILES
 
         for (int i = 0; i < data.lines.Count; i++) {
 
@@ -438,29 +472,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 // TODO change to game specific lookup
 
-                if (codeItem.IsEqualLowercase("item-special")) {
-
-                    string codeWorld = GameWorlds.Current.code;
-
-                    if (codeWorld.IsEqualLowercase("hippo")) {
-                        codeItem = codeItem + "-" + "watermelon";
-                    }
-                    else if (codeWorld.IsEqualLowercase("tiger")) {
-                        codeItem = codeItem + "-" + "t-bone-steak";
-                    }
-                    else if (codeWorld.IsEqualLowercase("zebra")) {
-                        codeItem = codeItem + "-" + "fig-fruit";
-                    }
-                    else if (codeWorld.IsEqualLowercase("cheetah")) {
-                        codeItem = codeItem + "-" + "sausage";
-                    }
-                    else if (codeWorld.IsEqualLowercase("elephant")) {
-                        codeItem = codeItem + "-" + "apple";
-                    }
-                    else if (codeWorld.IsEqualLowercase("rhino")) {
-                        codeItem = codeItem + "-" + "twig";
-                    }
-                }
+                codeItem = GameController.GameItemCodeContextGet(codeItem);
 
                 GameObject goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
 
