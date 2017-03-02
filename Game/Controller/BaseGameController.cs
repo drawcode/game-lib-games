@@ -247,20 +247,12 @@ public class BaseGameGameRuntimeData {
 
         rangeStart = Vector3.zero.WithX(-16f);
         rangeEnd = Vector3.zero.WithX(16f);
-        speedInfinite = 0f;
-        speedInfiniteTo = 80f;
-
-        moveGamePlayerPosition = Vector3.zero;
-        currentGamePlayerPosition = Vector3.zero;
-        overallGamePlayerPosition = Vector3.zero;
-        currentGamePlayerPositionBounce = Vector3.zero;
         curve = Vector4.zero;
 
         curveEnabled = true;
         curveInfiniteDistance = 50f;
         curveInfiniteAmount = Vector4.zero;     // Determines how much the platform bends (default value (-5,-5,0,0)
 
-        moveGamePlayerPositionTo = Vector3.zero;
     }
 
     public virtual bool timeExpired {
@@ -305,20 +297,12 @@ public class BaseGameGameRuntimeData {
 
     public Vector3 rangeStart;
     public Vector3 rangeEnd;
-    public float speedInfinite = 0f;
-    public float speedInfiniteTo = 0f;
-
-    public Vector3 moveGamePlayerPosition;
-    public Vector3 currentGamePlayerPosition;
-    public Vector3 overallGamePlayerPosition;
-    public Vector3 currentGamePlayerPositionBounce;
     public Vector4 curve;
 
     public bool curveEnabled = false;
     public float curveInfiniteDistance = 0f;
     public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
 
-    public Vector3 moveGamePlayerPositionTo;
 }
 
 public class GameLevelItemDataType {
@@ -4031,7 +4015,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Debug.Log("handleGameInputDirection:left:" + pos);
 
-                runtimeData.moveGamePlayerPositionTo.x = pos.x;
+                currentGamePlayerController.controllerData.moveGamePlayerPositionTo.x = pos.x;
 
                 //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
             }
@@ -4044,7 +4028,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Debug.Log("handleGameInputDirection:right:" + pos);
 
-                runtimeData.moveGamePlayerPositionTo.x = pos.x;
+                currentGamePlayerController.controllerData.moveGamePlayerPositionTo.x = pos.x;
 
                 //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
             }
@@ -4138,8 +4122,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (GameController.IsGameplayType(GameplayType.gameRunner)) {
             // If stationary aff move back
 
-            runtimeData.currentGamePlayerPositionBounce =
-                runtimeData.currentGamePlayerPositionBounce.WithZ(100);
+            //runtimeData.currentGamePlayerPositionBounce =
+            //    runtimeData.currentGamePlayerPositionBounce.WithZ(100);
         }
     }
         
@@ -4329,66 +4313,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         if (GameConfigs.isGameRunning) {
-
-            runtimeData.currentGamePlayerPosition.z = currentGamePlayerController.transform.position.z;
-
-            runtimeData.overallGamePlayerPosition.z += runtimeData.currentGamePlayerPosition.z;
-            //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
-
-            runtimeData.moveGamePlayerPosition.z = Mathf.Lerp(runtimeData.moveGamePlayerPosition.z, runtimeData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
-            runtimeData.moveGamePlayerPosition.x = Mathf.Lerp(runtimeData.moveGamePlayerPosition.x, runtimeData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
-
-            if (runtimeData.currentGamePlayerPosition.y < -1) {
-
-                GameController.Instance.runtimeData.currentGamePlayerPositionBounce =
-                    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(0);
-
-                GameController.Instance.runtimeData.moveGamePlayerPosition =
-                    GameController.Instance.runtimeData.moveGamePlayerPosition.WithZ(0);
-
-                GameController.CurrentGamePlayerController.runtimeData.health -= 2;
-            }
-
-            //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
-
-            //currentGamePlayerController.transform.position = 
-            //    currentGamePlayerController.transform.position 
-            //    .WithX(moveGamePlayerPosition.x)
-            //    .WithZ(-moveGamePlayerPosition.z);
-
-            runtimeData.speedInfinite = Mathf.Lerp(runtimeData.speedInfinite, runtimeData.speedInfiniteTo, 1f * Time.deltaTime);
-
-            GameController.GamePlayerSetSpeed(runtimeData.speedInfinite);
-
-            currentGamePlayerController.transform.position =
-                Vector3.Lerp(
-                    currentGamePlayerController.transform.position,
-                    currentGamePlayerController.transform.position
-                        .WithX(runtimeData.moveGamePlayerPosition.x)
-                        .WithZ(-runtimeData.moveGamePlayerPosition.z * runtimeData.currentGamePlayerPositionBounce.z),
-                    runtimeData.speedInfinite * Time.deltaTime);
-
-            runtimeData.currentGamePlayerPositionBounce =
-                Vector3.Lerp(
-                    runtimeData.currentGamePlayerPositionBounce,
-                    Vector3.zero, 1000 * Time.deltaTime);
-
-            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
-            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
-
-            //Debug.Log("GameController: handleLateUpdateStationary: runtimeData.currentGamePlayerPositionBounce.z:" + runtimeData.currentGamePlayerPositionBounce.z);
-
-            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
-
-            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
-            //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
-
-            containerInfinity.UpdatePositionPartsZ(-runtimeData.moveGamePlayerPosition.z * Time.deltaTime * runtimeData.speedInfinite);
-
-            //Debug.Log("currentGamePlayerController.GamePlayerMoveSpeedGet(): " + currentGamePlayerController.GamePlayerMoveSpeedGet());
-
-            Messenger<Vector3, float>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, runtimeData.moveGamePlayerPosition, runtimeData.speedInfinite);
-
+            
+            containerInfinity.UpdatePositionPartsZ(
+                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z * Time.deltaTime * currentGamePlayerController.controllerData.speedInfinite);
+                        
             if (!runtimeData.curveEnabled) {
                 runtimeData.curve = Vector4.zero;
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
