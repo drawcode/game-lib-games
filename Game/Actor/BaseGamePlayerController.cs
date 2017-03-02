@@ -344,6 +344,17 @@ public class BaseGamePlayerControllerData {
     
     public GameDataItemRPG characterRPG = null;
 
+    // gameplay type and move/adjustments
+    
+    public Vector3 moveGamePlayerPositionTo = Vector3.zero;
+    public float speedInfinite = 0f;
+    public float speedInfiniteTo = 80f;
+
+    public Vector3 moveGamePlayerPosition = Vector3.zero;
+    public Vector3 currentGamePlayerPosition = Vector3.zero;
+    public Vector3 overallGamePlayerPosition = Vector3.zero;
+    public Vector3 currentGamePlayerPositionBounce = Vector3.zero;
+
 }
 
 public class BaseGamePlayerRuntimeRPGData {
@@ -2971,13 +2982,13 @@ internal virtual void handleGameInput() {
                             float power = .35f;
                             runtimeData.health -= power;
 
-                            GameController.Instance.runtimeData.currentGamePlayerPosition = t.position.WithZ(-16);
+                            controllerData.currentGamePlayerPosition = t.position.WithZ(-16);
 
                             //GameController.Instance.runtimeData.currentGamePlayerPosition = 
                             //    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(-4);
 
-                            GameController.Instance.runtimeData.currentGamePlayerPositionBounce = 
-                                GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(250);
+                            controllerData.currentGamePlayerPositionBounce =
+                                controllerData.currentGamePlayerPositionBounce.WithZ(250);
                         }
                     }
 
@@ -3892,6 +3903,9 @@ internal virtual void handleGameInput() {
         if (isDead) {
             return;
         }
+        
+        //GameController.Instance.runtimeData.currentGamePlayerPositionBounce =
+        //    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(250);
 
         if (currentControllerData.thirdPersonController != null) {
             currentControllerData.thirdPersonController.Slide(amount);
@@ -4996,30 +5010,52 @@ internal virtual void handleGameInput() {
 
     internal virtual void handleUpdateStationary() {
 
-        /*
         if (GameConfigs.isGameRunning) {
 
-            currentGamePlayerDistance.z = transform.position.z;
+            controllerData.currentGamePlayerPosition.z = transform.position.z;
 
-            overallGamePlayerDistance.z += currentGamePlayerDistance.z;
+            controllerData.overallGamePlayerPosition.z += controllerData.currentGamePlayerPosition.z;
+            //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
 
-            overallGamePlayerDistance.z = currentGamePlayerDistance.z;
+            controllerData.moveGamePlayerPosition.z =
+                Mathf.Lerp(controllerData.moveGamePlayerPosition.z, controllerData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
 
-            moveGamePlayerDistance.z = Mathf.Lerp(moveGamePlayerDistance.z, currentGamePlayerDistance.z, .3f * Time.deltaTime);
+            controllerData.moveGamePlayerPosition.x =
+                Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
-            //moveGamePlayerDistance.z = overallGamePlayerDistance.z;
+            if (controllerData.currentGamePlayerPosition.y < -1) {
 
-            transform.position = transform.position.WithZ(-moveGamePlayerDistance.z);
+                controllerData.currentGamePlayerPositionBounce =
+                    controllerData.currentGamePlayerPositionBounce.WithZ(0);
 
-            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
-            //Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+                controllerData.moveGamePlayerPosition =
+                    controllerData.moveGamePlayerPosition.WithZ(0);
 
-            //Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
-            //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+                runtimeData.health -= 2;
+            }
 
-            
+            controllerData.speedInfinite = Mathf.Lerp(controllerData.speedInfinite, controllerData.speedInfiniteTo, 1f * Time.deltaTime);
+
+            GamePlayerMoveSpeedSet(controllerData.speedInfinite);
+
+            transform.position =
+                Vector3.Lerp(
+                    transform.position,
+                    transform.position
+                        .WithX(controllerData.moveGamePlayerPosition.x)
+                        .WithZ(-controllerData.moveGamePlayerPosition.z * controllerData.currentGamePlayerPositionBounce.z),
+                    controllerData.speedInfinite * Time.deltaTime);
+
+            controllerData.currentGamePlayerPositionBounce =
+                Vector3.Lerp(
+                    controllerData.currentGamePlayerPositionBounce,
+                    Vector3.zero, 1000 * Time.deltaTime);
+
+            Messenger<Vector3, float>.Broadcast(
+                GamePlayerMessages.PlayerCurrentDistance,
+                controllerData.moveGamePlayerPosition,
+                controllerData.speedInfinite);
         }
-        */
     }
 
     // ------------------------------------------------------------------------
@@ -6548,15 +6584,6 @@ internal virtual void handleGameInput() {
     }
 
     public override void Update() {
-        
-        if (!gameObjectTimer.IsTimerPerf(
-                GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
-            return;
-        }
-
-        // Run outside game state as well
-
-        HandlePlayerEffectWarpAnimateTick();
 
         // Run only in game state
 
@@ -6568,6 +6595,17 @@ internal virtual void handleGameInput() {
             return;
         }
 
+        handleUpdateStationary();
+
+        if (!gameObjectTimer.IsTimerPerf(
+                GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {
+            return;
+        }
+
+        // Run outside game state as well
+
+        HandlePlayerEffectWarpAnimateTick();
+        
         if (controllerData != null && !currentControllerData.initialized) {
             return;
         }
