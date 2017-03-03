@@ -12,12 +12,12 @@ public class GameObjectInfinteData {
     public string codeGamePartItems = "game-part-items";
     public string codeGamePartItem = "game-part-item";
 
-    public string codeGameFloor = "game-world-floor-1";
-    public string codeGameSide = "game-world-side-1";
-    public string codeGameSky = "game-world-sky-1";   
-    public string codeGameWater = "game-world-water-1";
+    public string codeGameFloor = "game-world-floor";
+    public string codeGameSide = "game-world-side";
+    public string codeGameSky = "game-world-sky";   
+    public string codeGameWater = "game-world-water";
 
-    public string codeGameBlock = "game-block-1";
+    public string codeGameBlock = "game-block-floor";
     public string codeGameBlockLow = "game-block-low";
     public string codeGameBlockHigh = "game-block-high";
 
@@ -91,10 +91,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
     void Start() {
         Init();
     }
-
-    void OnPlayerCurrentDistance(Vector3 pos, float speed) {
-
-        //distance.z += -pos.z;
+     
+    void Init() {
+        Reset();
     }
 
     public void Reset() {
@@ -107,7 +106,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         else {
             data.Reset();
         }
-                
+
         if (data.code.IsNullOrEmpty()) {
             data.code = UniqueUtil.CreateUUID4();
         }
@@ -128,9 +127,12 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         SwitchLine(data.currentLine);
     }
 
-    void Init() {
-        Reset();
+    void OnPlayerCurrentDistance(Vector3 pos, float speed) {
+
+        //distance.z += -pos.z;
     }
+
+    #region lines
 
     public Vector3 GetCurrentLine() {
         if (data.lines.Count > data.currentLine) {
@@ -170,6 +172,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         return SwitchLine(data.currentLine + 1);
     }
 
+    #endregion
+
     void InitParts() {
 
         gameObject.DestroyChildren();
@@ -177,6 +181,24 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         LoadInitialParts();
 
         initialized = true;
+    }
+
+    public void UpdateParts() {
+
+        // index is 31 range 1000 
+        // rangeBoundsMax.z / distanceTickZ;
+
+        data.currentIndex = (int)(-data.distance.z / data.distanceTickZ);
+        int loadIndex = data.currentIndex + data.padIndex;
+
+        if (data.lastLoadIndex < loadIndex) {
+
+            //Debug.Log("LoadingPart");
+
+            LoadLevelAssetDynamicByIndex(loadIndex);
+
+            data.lastLoadIndex = loadIndex;
+        }
     }
 
     public void UpdatePositionX(float val) {
@@ -218,24 +240,6 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         }
     }
 
-    public void UpdateParts() {
-
-        // index is 31 range 1000 
-        // rangeBoundsMax.z / distanceTickZ;
-
-        data.currentIndex = (int)(-data.distance.z / data.distanceTickZ);
-        int loadIndex = data.currentIndex + data.padIndex;
-
-        if (data.lastLoadIndex < loadIndex) {
-
-            //Debug.Log("LoadingPart");
-
-            LoadLevelAssetDynamicByIndex(loadIndex);
-
-            data.lastLoadIndex = loadIndex;
-        }
-    }
-
     /*
     void LoadLevelAssetByIndex(int indexItem) {
 
@@ -260,8 +264,35 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         } 
     }
     */
+    
+    void LoadInitialParts() {
 
-    public GameDataObject GetLevelAssetDynamicObject(double x, double y, double z) {
+        // Add initial parts that can spawn other parts
+        // Fill out parts to boundaries
+
+        for (int i = 0; i < (int)data.rangeBoundsMax.z / data.distanceTickZ; i++) {
+
+            bool shouldClear = false;
+
+            if (i < data.partStartCount) {
+                shouldClear = true;
+            }
+
+            LoadLevelAssetDynamicByIndex(i, shouldClear);
+
+            data.padIndex = i;
+            data.lastLoadIndex = i;
+        }
+
+        // Place 10 parts back from view
+
+        for (int i = 0; i < data.partBackCount; i++) {
+            LoadLevelAssetDynamicByIndex(-i, true);
+        }
+    }
+
+
+    GameDataObject GetLevelAssetDynamicObject(double x, double y, double z) {
 
         if (data.dataObjects == null) {
             return null;
@@ -311,53 +342,108 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 
         //Debug.Log("LoadPartDynamicByIndex");
     }
-
-    void LoadLevelAssetsPeriodic(GameObject parentGo, int indexItem, bool clear = true) {
-
-        //if (((indexItem + 1) * data.distanceTickZ) % data.distanceTickZ == 0) {
-        if ((indexItem + 1) % (data.distanceTickZ/2) == 0) {
-
-            // Load terrain and ambience
-            
-            GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGameFloor, parentGo.transform.position);
-
-            if (go == null) {
-                Debug.Log("Asset not found levelassets/" + data.codeGameFloor);
-                return;
-            }
-
-            go.transform.parent = parentGo.transform;
-
-            go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
-        }
-
-        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
-
-            // Load terrain and ambience
-
-            GameObject goSideLeft = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
-            GameObject goSideRight = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
-
-            if (goSideLeft == null || goSideRight == null) {
-                Debug.Log("Asset not found levelassets/" + data.codeGameSide);
-                return;
-            }
-
-            goSideLeft.transform.parent = parentGo.transform;
-            goSideRight.transform.parent = parentGo.transform;
-            
-            goSideLeft.transform.localRotation = Quaternion.Euler(0, -90, 0);
-            goSideRight.transform.localRotation = Quaternion.Euler(0, 90, 0);
-
-            goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
-            goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
-        }
-    }
-
          
     void LoadLevelAssetDynamicByIndex(int indexItem, bool clear = false) {
 
         LoadPartDynamicByIndexPart(indexItem, clear);
+    }
+
+    GameObject LoadAssetLevelPlaceholder(string assetCode, Vector3 spawnLocation, int indexItem) {
+
+        GameObject goAssetBlock = AppContentAssets.LoadAssetLevelAssets(assetCode, spawnLocation);
+
+        if (goAssetBlock == null) {
+            Debug.Log("Asset not found levelassets/" + assetCode);
+        }
+        else {
+            goAssetBlock = GameAssetObjectContextGet(assetCode, goAssetBlock);
+        }
+
+        return goAssetBlock;
+    }
+
+    // TODO move to base when integrated
+
+    public string GameAssetPresetCode(string assetCode) {
+
+        GamePreset assetPreset = GamePresets.Instance.GetById(assetCode);
+
+        if (assetPreset != null) {
+
+            GamePresetItem presetItem = assetPreset.GetItemRandomByProbability(assetPreset.data.items);
+
+            if (presetItem != null) {
+                assetCode = presetItem.code;
+            }
+        }
+        else {
+            Debug.Log("GamePreset NOT FOUND: " + assetCode);
+        }
+
+        return assetCode;
+    }
+
+    public virtual GameObject GameAssetObjectContextGet(
+        string assetCode, GameObject go) {
+
+        // Handle template by level/world/character
+
+        if (assetCode == data.codeGameBlock) {
+
+            // game block
+            // update game template
+
+            foreach (GameObjectInactive container in
+                go.GetList<GameObjectInactive>()) {
+
+                if (!container.type.IsEqualLowercase(BaseDataObjectKeys.container)
+                    && !container.code.IsEqualLowercase(BaseDataObjectKeys.assets)) {
+
+                    continue;
+                }
+
+                foreach (GameObjectInactive assetMain in
+                    container.gameObject.GetList<GameObjectInactive>()) {
+
+                    // handle main object
+
+                    if (assetMain.type.IsEqualLowercase(BaseDataObjectKeys.asset)
+                        && assetMain.code.IsEqualLowercase(BaseDataObjectKeys.main)) {
+
+                        if (assetCode == data.codeGameBlock) {
+
+                            // replace main asset with template one
+
+                            GameObject assetMainObject = assetMain.gameObject;
+
+                            assetMainObject.DestroyChildren();
+
+                            // asset-game-block-world-tiger-1
+                            string codeMain = StringUtil.Dashed(BaseDataObjectKeys.asset,
+                                data.codeGameBlock, GameWorlds.Current.code);
+
+                            codeMain = GameAssetPresetCode(codeMain);
+                                                        
+                            GameObject goMain = AppContentAssets.LoadAssetLevelAssets(codeMain, assetMainObject.transform.position);
+
+                            if (goMain == null) {
+                                codeMain = StringUtil.Dashed(data.codeGameBlock, BaseDataObjectKeys.defaultKey);
+                            }
+                            
+                            goMain = AppContentAssets.LoadAssetLevelAssets(codeMain, assetMainObject.transform.position);
+
+                            if (goMain == null) {
+                                continue;
+                            }
+
+                            goMain.transform.parent = assetMainObject.transform;
+                        }
+                    }
+                }
+            }
+        }
+
+        return go;
     }
 
     void LoadPartDynamicByIndexPart(int indexItem, bool clear = false) {
@@ -365,16 +451,13 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         // Use off screen location to spawn before move
 
         Vector3 spawnLocation = Vector3.zero.WithY(5000);
-
-        bool used = false;
-
-        //
+        
+        // --------------------------------------------------------------------
         // ADD PART ITEMS CONTAINER
 
-        GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGamePartItems, spawnLocation);
+        GameObject go = LoadAssetLevelPlaceholder(data.codeGamePartItems, spawnLocation, indexItem);
 
         if (go == null) {
-            Debug.Log("Asset not found levelassets/" + data.codeGamePartItems);
             return;
         }
 
@@ -382,7 +465,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         go.name = StringUtil.Dashed(data.code, indexItem.ToString());
         go.transform.parent = transform;
-        
+
+        // --------------------------------------------------------------------
         // PART ITEMS       
 
         GameObjectInfinitePart part = go.Get<GameObjectInfinitePart>();
@@ -404,19 +488,22 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         if (indexItem > data.partBackCount) {
             LoadPartDynamicByIndexPartData(indexItem);
         }
-        
+
+        // --------------------------------------------------------------------
         // LOAD ENVIRONMENT
 
         LoadLevelAssetsPeriodic(go, indexItem, clear);
-        
-        // TILES
+
+        // --------------------------------------------------------------------
+        // LINES
 
         for (int i = 0; i < data.lines.Count; i++) {
 
-            GameObject goItem = AppContentAssets.LoadAssetLevelAssets(data.codeGamePartItem, spawnLocation);
+            // add part item
+
+            GameObject goItem = LoadAssetLevelPlaceholder(data.codeGamePartItem, spawnLocation, indexItem);
 
             if (goItem == null) {
-                Debug.Log("Asset not found levelassets/" + data.codeGamePartItem);
                 continue;
             }
 
@@ -434,12 +521,13 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
             partItem.code = i.ToString();
 
+            // --------------------------------------------------------------------
+            // BLOCK PLACEHOLDER
+            
             bool fillBlock = true;
 
             string codeBlock = data.codeGameBlock;
             string codeItem = "";
-
-            // CUSTOM LAYERS
 
             if (indexItem > data.partBackCount) {
 
@@ -451,13 +539,11 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                 }
             }
 
-
             if (indexItem % 10 == 0) {
                 // Every tenth load the environment pads
                 //Debug.Log("dynamicPart:10:" + indexItem);
             }
-
-
+            
             if (codeItem.IsEqualLowercase(BaseDataObjectKeys.empty)) {
                 fillBlock = false;
             }
@@ -466,10 +552,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 // ADD PART BLOCK AND ASSETS FROM TEMPLATE
 
-                GameObject goAssetBlock = AppContentAssets.LoadAssetLevelAssets(codeBlock, spawnLocation);
+                GameObject goAssetBlock = LoadAssetLevelPlaceholder(codeBlock, spawnLocation, indexItem);
 
                 if (goAssetBlock == null) {
-                    Debug.Log("Asset not found levelassets/" + codeBlock);
                     continue;
                 }
 
@@ -481,10 +566,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 goAssetBlock.Show();
             }
-
-
-            //
-
+                        
+            // --------------------------------------------------------------------
+            // LOAD DATA GRID ITEM
 
             if (indexItem > data.partBackCount
                 && !codeItem.IsNullOrEmpty()
@@ -517,46 +601,58 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 // ADD ITEM COIN LOCATION
                 //if (codeItem.IsEqualLowercase("item-coin")) {
+                //if (codeItem.IsEqualLowercase("item-special")) {
                 goAssetItem.transform.position = goItem.transform.position.WithX(0);
                 goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
-                //}
-
-                // ADD ITEM COIN LOCATION
-                //if (codeItem.IsEqualLowercase("item-special")) {
-                //goAssetItem.transform.position = goItem.transform.position.WithX(0);
-                //goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
-                //}
-
+                
                 goAssetItem.Show();
             }
+
+            // reset position to view
 
             go.transform.position = go.transform.position.WithY(0);
         }
     }
-        
-    void LoadInitialParts() {
 
-        // Add initial parts that can spawn other parts
-        // Fill out parts to boundaries
+    void LoadLevelAssetsPeriodic(GameObject parentGo, int indexItem, bool clear = true) {
 
-        for (int i = 0; i < (int)data.rangeBoundsMax.z / data.distanceTickZ; i++) {
+        //if (((indexItem + 1) * data.distanceTickZ) % data.distanceTickZ == 0) {
+        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) { // every 8
 
-            bool shouldClear = false;
+            // Load terrain and ambience
 
-            if (i < data.partStartCount) {
-                shouldClear = true;
+            GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGameFloor, parentGo.transform.position);
+
+            if (go == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameFloor);
+                return;
             }
 
-            LoadLevelAssetDynamicByIndex(i, shouldClear);
+            go.transform.parent = parentGo.transform;
 
-            data.padIndex = i;
-            data.lastLoadIndex = i;
+            go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
         }
 
-        // Place 10 parts back from view
+        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
 
-        for (int i = 0; i < data.partBackCount; i++) {
-            LoadLevelAssetDynamicByIndex(-i, true);
+            // Load terrain and ambience
+
+            GameObject goSideLeft = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
+            GameObject goSideRight = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
+
+            if (goSideLeft == null || goSideRight == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameSide);
+                return;
+            }
+
+            goSideLeft.transform.parent = parentGo.transform;
+            goSideRight.transform.parent = parentGo.transform;
+
+            goSideLeft.transform.localRotation = Quaternion.Euler(0, -90, 0);
+            goSideRight.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+            goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
+            goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
         }
     }
 
@@ -573,6 +669,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         UpdateParts();
     }
 }
+
+#region scratch
 
 // ----------------------------------------------------------------------------
 // SCRATCH
@@ -908,3 +1006,5 @@ void LoadLevelAssetDynamicByIndex(int indexItem, bool clear = false) {
 }
 
 */
+
+#endregion
