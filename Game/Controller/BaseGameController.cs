@@ -1443,6 +1443,15 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // ----------------------------------------------------------------------
 
+    // ASSET CONTEXT LOADING
+    
+    public virtual string gameItemCodeContextGet(string codeItem) {
+
+        return codeItem;
+    }
+
+    // ----------------------------------------------------------------------
+
     // ZONES
 
     public virtual GameZone getGameZone(GameObject go) {
