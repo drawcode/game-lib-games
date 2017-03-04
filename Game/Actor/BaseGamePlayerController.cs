@@ -164,12 +164,12 @@ public class BaseGamePlayerControllerData {
     public bool actorEntering = false;
 
     // controller
-    
+
     public GamePlayerController gamePlayerController;
-    
+
     // animation
     public GamePlayerControllerAnimation gamePlayerControllerAnimation;
-        
+
     // gameplay
     public float lastAirCheck = 0f;
     public float lastUpdateCommon = 0f;
@@ -201,30 +201,30 @@ public class BaseGamePlayerControllerData {
     public float incrementScore = 1f;
 
     // easing
-        
+
     public bool easeModelHolderEnabled = false;
     public Vector3 easeModelHolderStart = Vector3.zero;
     public Vector3 easeModelHolderEnd = Vector3.zero.WithY(200);
     public Vector3 easeModelHolderCurrent = Vector3.zero;
-    
+
     // effects
-    
+
     // effects - warps
-    
+
     public bool effectWarpEnabled = false;
     public float effectWarpStart = 0f;
     public float effectWarpEnd = 200f;
     public float effectWarpCurrent = 0f;
     public float effectWarpFadeSpeed = 50f;
-    
+
     // effects - lines
-    
+
     public float lastPlayerEffectsTrailUpdate = 0f;
     public TrailRenderer trailRendererBoost;
     public TrailRenderer trailRendererGround;
-    
+
     // effects - follow
-    
+
     public float lastPlayerEffectsGroundUpdate = 0f;
     public float lastPlayerEffectsBoostUpdate = 0f;
     public float lastPlayerEffectsIndicatorUpdate = 0f;
@@ -234,6 +234,7 @@ public class BaseGamePlayerControllerData {
     public Color gamePlayerEffectsBoostColorLast;
     public Color gamePlayerEffectsIndicatorColorCurrent;
     public Color gamePlayerEffectsIndicatorColorLast;
+
 
     // navigation/movement
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
@@ -248,7 +249,7 @@ public class BaseGamePlayerControllerData {
     // networking
     public Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     public Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
-        
+
     // RPG
     public GameProfileRPGItem currentRPGItem;
     public GameProfilePlayerProgressItem currentPlayerProgressItem;
@@ -256,7 +257,7 @@ public class BaseGamePlayerControllerData {
     public float lastRPGModTime = 0f;
     public bool playerSpin = false;
     public GamePlayerRuntimeRPGData runtimeRPGData = new GamePlayerRuntimeRPGData();
-    
+
     // LAUNCHING
     //public Vectrosity.VectorLine lineAim = null;
     public Vector3 positionStart = Vector3.zero;
@@ -278,7 +279,7 @@ public class BaseGamePlayerControllerData {
     public float lastRandomDie = 5f;
     public bool isInRandomDieRange = false;
     public bool lastIsInRandomDieRange = false;
-    
+
     // IDLE ACTIONS AFTER INACTION
     public float delayIdleActions = 3.0f;
     public float lastIdleActions = 0f;
@@ -286,14 +287,14 @@ public class BaseGamePlayerControllerData {
     public GameObject currentPrefabNameObjectItem;
     public string currentPrefabNameObject = "";
     public GamePlayerAttributes gamePlayerAttributes = new GamePlayerAttributes();
-    
+
     // audio
     public GameObject audioObjectFootsteps;
     public AudioClip audioObjectFootstepsClip;
     public AudioSource audioObjectFootstepsSource;
 
     // materials
-    
+
     //float currentControllerData.lastUpdate = 0f;
     public List<SkinnedMeshRenderer> renderers;
     public GamePlayerController collisionController = null;
@@ -309,23 +310,23 @@ public class BaseGamePlayerControllerData {
     public float modifierItemSpeedLerp = 0f;
 
     // scale
-        
+
     public float modifierItemScaleCurrent = 1.0f;
     public float modifierItemScaleMin = 1.0f;
     public float modifierItemScaleMax = 3.0f;
     public float modifierItemScaleLerpTime = 5f;
     public float modifierItemScaleLerp = 0f;
-        
+
     // fly
-    
+
     public float modifierItemFlyCurrent = 1.0f;
     public float modifierItemFlyMin = 1.0f;
     public float modifierItemFlyMax = 3.0f;
     public float modifierItemFlyLerpTime = 5f;
     public float modifierItemFlyLerp = 0f;
-        
+
     // goalNext
-    
+
     public float modifierItemGoalNextCurrent = 1.0f;
     public float modifierItemGoalNextMin = 1.0f;
     public float modifierItemGoalNextMax = 3.0f;
@@ -341,11 +342,11 @@ public class BaseGamePlayerControllerData {
     public GamePlayerMountData mountData = new GamePlayerMountData();
 
     // rpg
-    
+
     public GameDataItemRPG characterRPG = null;
 
     // gameplay type and move/adjustments
-    
+
     public Vector3 moveGamePlayerPositionTo = Vector3.zero;
     public float speedInfinite = 0f;
     public float speedInfiniteTo = 80f;
@@ -355,6 +356,21 @@ public class BaseGamePlayerControllerData {
     public Vector3 overallGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPositionBounce = Vector3.zero;
 
+    // Reset runtime values, only reset values that change from life to life
+    // some are 
+
+    public void ResetRuntime() {
+
+        moveGamePlayerPositionTo = Vector3.zero;
+        speedInfinite = 0f;
+        speedInfiniteTo = 80f;
+
+        moveGamePlayerPosition = Vector3.zero;
+        currentGamePlayerPosition = Vector3.zero;
+        overallGamePlayerPosition = Vector3.zero;
+        currentGamePlayerPositionBounce = Vector3.zero;
+    }
+    
 }
 
 public class BaseGamePlayerRuntimeRPGData {
@@ -1047,7 +1063,7 @@ internal virtual void handleGameInput() {
         }
 
         controllerData = data;
-
+        
         // TODO sync if needed... to update 
         // runtime expensive states that can't be polled.
     }
@@ -2280,6 +2296,8 @@ internal virtual void handleGameInput() {
         ResetPosition();
 
         SetRuntimeData(new GamePlayerRuntimeData());
+        
+        currentControllerData.ResetRuntime();
 
         currentControllerData.dying = false;
         currentControllerData.actorExiting = false;
@@ -3570,7 +3588,7 @@ internal virtual void handleGameInput() {
         else {
             uniqueId = UniqueUtil.CreateUUID4();
         }
-
+        
         ResetPosition();
     }
 
@@ -5003,11 +5021,6 @@ internal virtual void handleGameInput() {
     // ------------------------------------------------------------------------
     // UPDATE / GAMEPLAY TYPES
 
-    Vector3 moveGamePlayerDistance = Vector3.zero;
-    Vector3 currentGamePlayerDistance = Vector3.zero;
-    Vector3 overallGamePlayerDistance = Vector3.zero;
-    float lastUpdatePhysics = 0;
-
     internal virtual void handleUpdateStationary() {
 
         if (GameConfigs.isGameRunning) {
@@ -5067,8 +5080,8 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        if (lastUpdatePhysics + .2f < Time.time) {
-            lastUpdatePhysics = Time.time;
+        if (controllerData.lastUpdatePhysics + .2f < Time.time) {
+            controllerData.lastUpdatePhysics = Time.time;
         }
         else {
             if (!IsPlayerControlled) {
