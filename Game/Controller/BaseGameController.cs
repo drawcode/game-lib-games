@@ -1362,6 +1362,16 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // ----------------------------------------------------------------------
 
+    // MOVE
+
+    public virtual void gamePlayerMove(Vector3 amount) {
+        if (currentPlayerController != null) {
+            currentPlayerController.InputMove(amount);
+        }
+    }
+
+    // ----------------------------------------------------------------------
+
     // STRAFE
 
     public virtual void gamePlayerStrafe(Vector3 amount) {
@@ -4006,7 +4016,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //}
 
         if (GameController.IsGameplayType(GameplayType.gameRunner)) {
-
+            
             if (direction == GamePlayerDirection.Up) {
                 gamePlayerJump();
             }
@@ -4024,9 +4034,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Debug.Log("handleGameInputDirection:left:" + pos);
 
-                currentGamePlayerController.controllerData.moveGamePlayerPositionTo.x = pos.x;
-
-                //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
+                gamePlayerMove(pos);
             }
             else if (direction == GamePlayerDirection.Right
                 || direction == GamePlayerDirection.LowerRightDiagonal
@@ -4037,9 +4045,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Debug.Log("handleGameInputDirection:right:" + pos);
 
-                currentGamePlayerController.controllerData.moveGamePlayerPositionTo.x = pos.x;
-
-                //GameController.GamePlayerMove(pos, rangeStart, rangeEnd);
+                gamePlayerMove(pos);
             }
             else {
 

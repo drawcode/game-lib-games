@@ -2957,6 +2957,7 @@ internal virtual void handleGameInput() {
                                       || t.name.Contains(nameGameColliderObstacle);
 
                     if (isGameColliderObstacle) {
+                        Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
                         return;
                     }
 
@@ -3762,6 +3763,10 @@ internal virtual void handleGameInput() {
         Jump();
     }
 
+    public virtual void InputMove(Vector3 amount) {
+        Move(amount);
+    }
+
     public virtual void InputBoost() {
         Boost();
     }
@@ -3942,6 +3947,8 @@ internal virtual void handleGameInput() {
 
                 currentControllerData.gamePlayerControllerAnimation.Slide();
 
+                //Move(amount);
+
                 currentControllerData.moveGamePlayerPosition += amount;
             }
         }
@@ -3957,6 +3964,29 @@ internal virtual void handleGameInput() {
         }
 
         currentControllerData.thirdPersonController.SlideStop();
+    }
+    
+    // ------------------------------------------------------------------------
+    // MOVE
+
+    public virtual void Move() {
+        Move(Vector3.zero.WithZ(-.5f));
+    }
+
+    public virtual void Move(Vector3 amount) {
+        if (isDead) {
+            return;
+        }
+
+        controllerData.moveGamePlayerPositionTo = amount;
+                
+        //if (currentControllerData.thirdPersonController != null) {
+            //currentControllerData.gamePlayerControllerAnimation.Move();
+        //}
+
+        //if (gamePlayerEffectSlide != null) {
+        //    gamePlayerEffectSlide.Emit(1);
+        //}
     }
 
     // ------------------------------------------------------------------------
@@ -5072,7 +5102,7 @@ internal virtual void handleGameInput() {
                 GamePlayerBounceSet(0);
 
                 controllerData.moveGamePlayerPosition =
-                    controllerData.moveGamePlayerPosition.WithZ(0);
+                    controllerData.moveGamePlayerPosition.WithY(-4).WithZ(0);
 
                 runtimeData.health = 0;
             }
