@@ -114,7 +114,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
     public virtual void OnCollisionEnter(Collision collision) {
 
         if (!GameConfigs.isGameRunning) {
-            return;
+            //return;
         }
 
         if (lastCollision + intervalCollision < Time.time) {
