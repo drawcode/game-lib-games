@@ -1917,11 +1917,13 @@ internal virtual void handleGameInput() {
         if (runtimeData.health <= 0f) {
             Die();
         }
+
+        UpdatePhysicsState();
     }
 
     public virtual void HandlePlayerAliveStateLate() {
 
-        UpdatePhysicsState();
+       // UpdatePhysicsState();
     }
 
     public virtual void HandlePlayerAliveStateFixed() {
@@ -2923,6 +2925,7 @@ internal virtual void handleGameInput() {
     string nameGameDamageObstacle = "GameDamageObstacle";
     string nameGameItemObject = "GameItemObject";
     string nameGamePlayerCollider = "GamePlayerCollider";
+    string nameGameColliderObstacle = "GameColliderObstacle";
 
     public virtual void HandleCollision(Collision collision) {
 
@@ -2950,6 +2953,13 @@ internal virtual void handleGameInput() {
                         }
                     }
 
+                    bool isGameColliderObstacle = parentName.Contains(nameGameColliderObstacle)
+                                      || t.name.Contains(nameGameColliderObstacle);
+
+                    if (isGameColliderObstacle) {
+                        return;
+                    }
+
                     bool isObstacle = parentName.Contains(nameGameObstacle)
                                       || t.name.Contains(nameGameObstacle);
 
@@ -2966,7 +2976,7 @@ internal virtual void handleGameInput() {
                         t.name.Contains(nameGamePlayerCollider);
                     //|| t.name.Contains("GamePlayerObject");
 
-                    if (!isObstacle && !isLevelObject && !isPlayerObject) {
+                    if (!isObstacle && !isLevelObject && !isPlayerObject && !isDamageObstacle) {
                         Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
                     }
                     else {
@@ -2999,14 +3009,14 @@ internal virtual void handleGameInput() {
 
                             float power = .35f;
                             runtimeData.health -= power;
+                            
+                            currentControllerData.moveGamePlayerPosition = currentControllerData.moveGamePlayerPosition.WithZ(-.1f);
 
-                            controllerData.currentGamePlayerPosition = t.position.WithZ(-16);
+                            //controllerData.currentGamePlayerPosition = t.position.WithZ(16);
 
-                            //GameController.Instance.runtimeData.currentGamePlayerPosition = 
-                            //    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(-4);
+                            //GamePlayerBounceSet(250);
 
-                            controllerData.currentGamePlayerPositionBounce =
-                                controllerData.currentGamePlayerPositionBounce.WithZ(250);
+                            Debug.Log("isDamageObstacle:" + isDamageObstacle);
                         }
                     }
 
@@ -3921,15 +3931,20 @@ internal virtual void handleGameInput() {
         if (isDead) {
             return;
         }
-        
-        //GameController.Instance.runtimeData.currentGamePlayerPositionBounce =
-        //    GameController.Instance.runtimeData.currentGamePlayerPositionBounce.WithZ(250);
+
+        //GamePlayerBounceSet(-100);
 
         if (currentControllerData.thirdPersonController != null) {
-            currentControllerData.thirdPersonController.Slide(amount);
-        }
 
-        currentControllerData.gamePlayerControllerAnimation.Slide();
+            if (currentControllerData.thirdPersonController.IsGrounded()) {
+                
+                currentControllerData.thirdPersonController.Slide(amount);
+
+                currentControllerData.gamePlayerControllerAnimation.Slide();
+
+                currentControllerData.moveGamePlayerPosition += amount;
+            }
+        }
 
         if (gamePlayerEffectSlide != null) {
             gamePlayerEffectSlide.Emit(1);
@@ -5017,11 +5032,27 @@ internal virtual void handleGameInput() {
         //Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
 
     }
+    
+    internal virtual void GamePlayerBounceSet(float bounce) {
+
+        if (runtimeData == null) {
+            return;
+        }
+
+        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+            // If stationary aff move back
+
+            controllerData.currentGamePlayerPositionBounce =
+                controllerData.currentGamePlayerPositionBounce.WithZ(bounce);
+        }
+    }
+
+
 
     // ------------------------------------------------------------------------
     // UPDATE / GAMEPLAY TYPES
 
-    internal virtual void handleUpdateStationary() {
+    internal virtual void UpdateStationary() {
 
         if (GameConfigs.isGameRunning) {
 
@@ -5037,14 +5068,13 @@ internal virtual void handleGameInput() {
                 Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
             if (controllerData.currentGamePlayerPosition.y < -1) {
-
-                controllerData.currentGamePlayerPositionBounce =
-                    controllerData.currentGamePlayerPositionBounce.WithZ(0);
+                
+                GamePlayerBounceSet(0);
 
                 controllerData.moveGamePlayerPosition =
                     controllerData.moveGamePlayerPosition.WithZ(0);
 
-                runtimeData.health -= 2;
+                runtimeData.health = 0;
             }
 
             controllerData.speedInfinite = Mathf.Lerp(controllerData.speedInfinite, controllerData.speedInfiniteTo, 1f * Time.deltaTime);
@@ -5085,7 +5115,7 @@ internal virtual void handleGameInput() {
         }
         else {
             if (!IsPlayerControlled) {
-                return;
+                //return;
             }
         }
 
@@ -6608,7 +6638,7 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        handleUpdateStationary();
+        UpdateStationary();
 
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {

@@ -419,10 +419,14 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                             assetMainObject.DestroyChildren();
 
                             // asset-game-block-world-tiger-1
-                            string codeMain = StringUtil.Dashed(BaseDataObjectKeys.asset,
+                            string codeMain = "";
+
+                            codeMain = StringUtil.Dashed(BaseDataObjectKeys.asset,
                                 data.codeGameBlock, GameWorlds.Current.code);
 
-                            codeMain = GameAssetPresetCode(codeMain);
+                            codeMain = StringUtil.Dashed(data.codeGameBlock, BaseDataObjectKeys.defaultKey);
+
+                            //codeMain = GameAssetPresetCode(codeMain);
                                                         
                             GameObject goMain = AppContentAssets.LoadAssetLevelAssets(codeMain, assetMainObject.transform.position);
 
@@ -581,7 +585,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 GameObject goAssetItem;
 
-                if (codeItem.StartsWith(BaseDataObjectKeys.item)) {
+                bool isItem = codeItem.StartsWith(BaseDataObjectKeys.item);
+
+                if (isItem) {
 
                     goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
                 }
@@ -599,11 +605,18 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                 goAssetItem.transform.parent = goItem.transform;
 
+                float posY = 0f;
+
+                if (isItem) {
+                    posY = 2f;
+                }
+
                 // ADD ITEM COIN LOCATION
                 //if (codeItem.IsEqualLowercase("item-coin")) {
                 //if (codeItem.IsEqualLowercase("item-special")) {
+
                 goAssetItem.transform.position = goItem.transform.position.WithX(0);
-                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(2f).WithZ(0);
+                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(posY).WithZ(0);
                 
                 goAssetItem.Show();
             }
