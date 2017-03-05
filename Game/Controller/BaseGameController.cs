@@ -4013,7 +4013,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             else if (direction == GamePlayerDirection.Down) {
                 //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
                 //GameController.GamePlayerAttack();
-                gamePlayerSlide(Vector3.zero.WithZ(3f));
+                gamePlayerSlide(Vector3.zero.WithZ(.5f));
             }
             else if (direction == GamePlayerDirection.Left
                 || direction == GamePlayerDirection.LowerLeftDiagonal
@@ -4115,27 +4115,8 @@ public class BaseGameController : GameObjectTimerBehavior {
             InputSystem.UpdateTouchLaunch();
         }
     }
-    
-    public static void HandleGameDamageObstacleHit() {
-        if (GameController.isInst) {
-            GameController.Instance.handleGameDamageObstacleHit();
-        }
-    }
+       
 
-    internal virtual void handleGameDamageObstacleHit() {
-
-        if (runtimeData == null) {
-            return;
-        }
-
-        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
-            // If stationary aff move back
-
-            //runtimeData.currentGamePlayerPositionBounce =
-            //    runtimeData.currentGamePlayerPositionBounce.WithZ(100);
-        }
-    }
-        
     // ------------------------------------------------------------------------
     // CURVE INFINITE HANDLING
 
@@ -4272,7 +4253,12 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        if (runtimeData.curveEnabled) {
+        if (currentGamePlayerController == null) {
+            return;
+        }
+
+        if (runtimeData.curveEnabled 
+            && currentGamePlayerController.GamePlayerMoveSpeedGet() > 5f) {
             runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
             runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
         }
@@ -4300,13 +4286,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     internal virtual void handleUpdateStationary() {
-
-        //speedInfinite = Mathf.Lerp(speedInfinite, speedInfiniteTo, 1f * Time.deltaTime);
-
-        //GameController.GamePlayerSetSpeed(speedInfinite);
-
-        //return;
-
+        
         if (currentGamePlayerController == null) {
             return;
         }
@@ -4314,8 +4294,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (containerInfinity == null) {
             handleGametypeInit();
         }
-
-
+        
         if (containerInfinity == null
             || controllerInfinity == null) {
             return;
@@ -4324,14 +4303,21 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (GameConfigs.isGameRunning) {
             
             containerInfinity.UpdatePositionPartsZ(
-                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z * Time.deltaTime * currentGamePlayerController.controllerData.speedInfinite);
+                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z * 
+                currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
                         
             if (!runtimeData.curveEnabled) {
                 runtimeData.curve = Vector4.zero;
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
 
-            runtimeData.curveInfiniteAmount = Vector4.Lerp(runtimeData.curveInfiniteAmount, runtimeData.curve, .15f * Time.deltaTime);
+            float speedThrottle = (currentGamePlayerController.GamePlayerMoveSpeedGet() / 100f) * .5f;
+
+            // .15f *
+
+            runtimeData.curveInfiniteAmount = 
+                Vector4.Lerp(
+                    runtimeData.curveInfiniteAmount, runtimeData.curve, speedThrottle * Time.deltaTime);
         }
     }
 
@@ -4348,7 +4334,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     internal virtual void handleUpdateDefault() {
-
+        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+           // handleLateUpdateDefault();
+        }
+        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+            //handleUpdateStationary();
+        }
 
     }
 
@@ -4360,7 +4351,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleUpdateStationary();
+            handleUpdateStationary();
         }
     }
 
@@ -4373,7 +4364,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            handleUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 

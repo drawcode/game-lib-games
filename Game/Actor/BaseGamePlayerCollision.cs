@@ -121,7 +121,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
             lastCollision = Time.time;
         }
         else {
-            return;
+            //return;
         }
 
         if (gamePlayerController != null) {            
