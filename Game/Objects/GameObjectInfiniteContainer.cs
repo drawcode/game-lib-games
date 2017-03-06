@@ -388,10 +388,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         // Handle template by level/world/character
 
-        if (assetCode == data.codeGameBlock) {
+        // CUSTOM GAME BLOCK
 
-            // game block
-            // update game template
+        if (assetCode == data.codeGameBlock) {
 
             foreach (GameObjectInactive container in
                 go.GetList<GameObjectInactive>()) {
@@ -402,46 +401,172 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                     continue;
                 }
 
-                foreach (GameObjectInactive assetMain in
+                foreach (GameObjectInactive asset in
                     container.gameObject.GetList<GameObjectInactive>()) {
 
                     // handle main object
 
-                    if (assetMain.type.IsEqualLowercase(BaseDataObjectKeys.asset)
-                        && assetMain.code.IsEqualLowercase(BaseDataObjectKeys.main)) {
+                    if (asset.type.IsEqualLowercase(BaseDataObjectKeys.asset)
+                        && asset.code.IsEqualLowercase(BaseDataObjectKeys.main)) {
 
-                        if (assetCode == data.codeGameBlock) {
+                        // replace main asset with template one
 
-                            // replace main asset with template one
+                        GameObject assetObject = asset.gameObject;
 
-                            GameObject assetMainObject = assetMain.gameObject;
+                        assetObject.DestroyChildren();
 
-                            assetMainObject.DestroyChildren();
+                        // asset-game-block-world-tiger-1
+                        string codeAsset = "";
 
-                            // asset-game-block-world-tiger-1
-                            string codeMain = "";
+                        codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
+                            assetCode, GameWorlds.Current.code);
 
-                            codeMain = StringUtil.Dashed(BaseDataObjectKeys.asset,
-                                data.codeGameBlock, GameWorlds.Current.code);
+                        codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
 
-                            codeMain = StringUtil.Dashed(data.codeGameBlock, BaseDataObjectKeys.defaultKey);
+                        //codeMain = GameAssetPresetCode(codeMain);
 
-                            //codeMain = GameAssetPresetCode(codeMain);
-                                                        
-                            GameObject goMain = AppContentAssets.LoadAssetLevelAssets(codeMain, assetMainObject.transform.position);
+                        GameObject goMain = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
 
-                            if (goMain == null) {
-                                codeMain = StringUtil.Dashed(data.codeGameBlock, BaseDataObjectKeys.defaultKey);
-                            }
-                            
-                            goMain = AppContentAssets.LoadAssetLevelAssets(codeMain, assetMainObject.transform.position);
-
-                            if (goMain == null) {
-                                continue;
-                            }
-
-                            goMain.transform.parent = assetMainObject.transform;
+                        if (goMain == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
                         }
+
+                        goMain = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goMain == null) {
+                            continue;
+                        }
+
+                        goMain.transform.parent = assetObject.transform;
+                    }
+                }
+            }
+        }
+
+        // CUSTOM GAME SIDE
+
+        else if (assetCode == data.codeGameSide) {
+
+            foreach (GameObjectInactive container in
+                go.GetList<GameObjectInactive>()) {
+
+                if (!container.type.IsEqualLowercase(BaseDataObjectKeys.container)
+                    && !container.code.IsEqualLowercase(BaseDataObjectKeys.assets)) {
+
+                    continue;
+                }
+                
+
+                foreach (GameObjectInactive asset in
+                    container.gameObject.GetList<GameObjectInactive>()) {
+
+                    // handle main object
+
+                    // TERRAIN
+
+                    if (asset.type.IsEqualLowercase(BaseDataObjectKeys.asset)
+                        && asset.code.IsEqualLowercase(BaseDataObjectKeys.terrain)) {
+
+                        // replace main asset with template one
+
+                        GameObject assetObject = asset.gameObject;
+
+                        assetObject.DestroyChildren();
+
+                        // asset-game-block-world-tiger-1
+                        string codeAsset = "";
+
+                        codeAsset = StringUtil.Dashed(assetCode, asset.code, GameWorlds.Current.code);
+
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        //codeMain = GameAssetPresetCode(codeMain);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
+                    }
+                    
+                    // BUMPER
+
+                    else if (asset.type.IsEqualLowercase(BaseDataObjectKeys.asset)
+                        && asset.code.IsEqualLowercase(BaseDataObjectKeys.bumper)) {
+
+                        // replace main asset with template one
+
+                        GameObject assetObject = asset.gameObject;
+
+                        assetObject.DestroyChildren();
+
+                        // asset-game-block-world-tiger-1
+                        string codeAsset = "";
+                        
+                        codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
+                            assetCode, asset.code, GameWorlds.Current.code);
+
+                        codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        //codeMain = GameAssetPresetCode(codeMain);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
+                    }
+
+                    // ENVIRONMENT
+
+                    else if (asset.type.IsEqualLowercase(BaseDataObjectKeys.asset)
+                        && asset.code.IsEqualLowercase(BaseDataObjectKeys.environment)) {
+
+                        // replace main asset with template one
+
+                        GameObject assetObject = asset.gameObject;
+
+                        assetObject.DestroyChildren();
+
+                        // asset-game-block-world-tiger-1
+                        string codeAsset = "";
+
+                        codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
+                            assetCode, asset.code, GameWorlds.Current.code);
+
+                        codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        //codeMain = GameAssetPresetCode(codeMain);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if (goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
                     }
                 }
             }
@@ -650,8 +775,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
             // Load terrain and ambience
 
-            GameObject goSideLeft = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
-            GameObject goSideRight = AppContentAssets.LoadAssetLevelAssets(data.codeGameSide, parentGo.transform.position);
+            GameObject goSideLeft = LoadAssetLevelPlaceholder(data.codeGameSide, parentGo.transform.position, indexItem);
+            GameObject goSideRight = LoadAssetLevelPlaceholder(data.codeGameSide, parentGo.transform.position, indexItem);
 
             if (goSideLeft == null || goSideRight == null) {
                 Debug.Log("Asset not found levelassets/" + data.codeGameSide);

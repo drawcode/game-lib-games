@@ -3948,8 +3948,14 @@ internal virtual void handleGameInput() {
 
             if (currentControllerData.thirdPersonController.IsGrounded()) {
 
-                GamePlayerCollisionEnable(false);
-                GamePlayerCollisionEnableDelayed(true, 1f);
+                //GamePlayerCollisionEnable(false);
+                //GamePlayerCollisionEnableDelayed(true, 1f);
+
+                //GamePlayerCollisionPosition(Vector3.zero.WithY(-0.5f));
+                //GamePlayerCollisionPositionDelayed(Vector3.zero, 1f);
+
+                GamePlayerCollisionScale(Vector3.one.WithY(0.75f));
+                GamePlayerCollisionScaleDelayed(Vector3.one, 1f);                
 
                 currentControllerData.thirdPersonController.Slide(amount);
 
@@ -6141,6 +6147,8 @@ internal virtual void handleGameInput() {
     // ------------------------------------------------------------------------
     // COLLISION
 
+    // enable
+
     public virtual void GamePlayerCollisionEnable(bool enabled) {
 
         if (!controllerReady) {
@@ -6159,6 +6167,51 @@ internal virtual void handleGameInput() {
         yield return new WaitForSeconds(delay);
 
         GamePlayerCollisionEnable(enabled);
+    }
+
+    // -0.5
+    // position
+
+    public virtual void GamePlayerCollisionPosition(Vector3 pos) {
+
+        if (!controllerReady) {
+            return;
+        }
+
+        currentControllerData.gamePlayerCollision.gameObject.transform.position = pos;
+    }
+
+    public virtual void GamePlayerCollisionPositionDelayed(Vector3 pos, float delay) {
+        StartCoroutine(GamePlayerCollisionPositionDelayedCo(pos, delay));
+    }
+
+    public virtual IEnumerator GamePlayerCollisionPositionDelayedCo(Vector3 pos, float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        GamePlayerCollisionScale(pos);
+    }
+
+    // scale
+
+    public virtual void GamePlayerCollisionScale(Vector3 scale) {
+
+        if (!controllerReady) {
+            return;
+        }
+
+        currentControllerData.gamePlayerCollision.gameObject.transform.localScale = scale;
+    }
+
+    public virtual void GamePlayerCollisionScaleDelayed(Vector3 scale, float delay) {
+        StartCoroutine(GamePlayerCollisionScaleDelayedCo(scale, delay));
+    }
+
+    public virtual IEnumerator GamePlayerCollisionScaleDelayedCo(Vector3 scale, float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        GamePlayerCollisionScale(scale);
     }
 
     // ------------------------------------------------------------------------
