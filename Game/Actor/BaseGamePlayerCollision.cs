@@ -33,6 +33,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
 
     public virtual void OnParticleCollision(GameObject other) {
 
+        /*
         if (!GameConfigs.isGameRunning) {
             return;
         }
@@ -106,9 +107,10 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
                     i++;
                 }
             }
-            */
+            * /
             //}
         }
+    */
     }
     
     public virtual void OnCollisionEnter(Collision collision) {
