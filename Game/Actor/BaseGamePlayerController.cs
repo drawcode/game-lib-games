@@ -5085,8 +5085,6 @@ internal virtual void handleGameInput() {
         }
     }
 
-
-
     // ------------------------------------------------------------------------
     // UPDATE / GAMEPLAY TYPES
 
@@ -5100,8 +5098,26 @@ internal virtual void handleGameInput() {
 
             GamePlayerMoveSpeedSet(controllerData.speedInfinite);
 
-            //
+            //Debug.Log("controllerData.speedInfinite:" + controllerData.speedInfinite);
+            //Debug.Log("controllerData.GamePlayerMoveSpeedGet:" + GamePlayerMoveSpeedGet());
 
+            /*
+            controllerData.currentGamePlayerPositionBounce =
+                Vector3.Lerp(
+                    controllerData.currentGamePlayerPositionBounce,
+                    Vector3.zero, 1000 * Time.deltaTime);
+                    */
+            //Messenger<Vector3, float>.Broadcast(
+            //    GamePlayerMessages.PlayerCurrentDistance,
+            //    controllerData.moveGamePlayerPosition,
+            //    controllerData.speedInfinite);
+        }
+    }
+
+    internal virtual void UpdateStationaryLate() {
+
+        if (GameConfigs.isGameRunning) {
+            
             controllerData.currentGamePlayerPosition.z = transform.position.z;
 
             controllerData.overallGamePlayerPosition.z += controllerData.currentGamePlayerPosition.z;
@@ -5114,37 +5130,16 @@ internal virtual void handleGameInput() {
                 Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
 
             if (controllerData.currentGamePlayerPosition.y < -1) {
-                
+
                 GamePlayerBounceSet(0);
+
+                GamePlayerMoveSpeedSet(0);
 
                 controllerData.moveGamePlayerPosition =
                     controllerData.moveGamePlayerPosition.WithY(-4).WithZ(0);
 
                 runtimeData.health = 0;
             }
-
-
-            Debug.Log("controllerData.speedInfinite:" + controllerData.speedInfinite);
-            Debug.Log("controllerData.GamePlayerMoveSpeedGet:" + GamePlayerMoveSpeedGet());
-
-            /*
-            controllerData.currentGamePlayerPositionBounce =
-                Vector3.Lerp(
-                    controllerData.currentGamePlayerPositionBounce,
-                    Vector3.zero, 1000 * Time.deltaTime);
-                    */
-            Messenger<Vector3, float>.Broadcast(
-                GamePlayerMessages.PlayerCurrentDistance,
-                controllerData.moveGamePlayerPosition,
-                controllerData.speedInfinite);
-        }
-    }
-
-    internal virtual void UpdateStationaryLate() {
-
-        if (GameConfigs.isGameRunning) {
-
-            //Debug.Log("UpdateStationaryLate");
 
             transform.position =
                 Vector3.Lerp(
@@ -5153,6 +5148,7 @@ internal virtual void handleGameInput() {
                         .WithX(controllerData.moveGamePlayerPosition.x)
                         .WithZ(-controllerData.moveGamePlayerPosition.z),// * controllerData.currentGamePlayerPositionBounce.z),
                     controllerData.speedInfinite * Time.deltaTime);
+
         }
     }
 

@@ -4318,14 +4318,20 @@ public class BaseGameController : GameObjectTimerBehavior {
             //containerInfinity.UpdatePositionPartsZ(
             //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
             //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
-
+            
             containerInfinity.UpdatePositionPartsZ(
-                -1 *
+                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
                 currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
-            // .15f *
+            //containerInfinity.UpdatePositionPartsZ(
+            //    -1 *
+            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
-            //Debug.Log("speedThrottle:" + speedThrottle);
+            // .15f *
+            Debug.Log("speedThrottle:" + speedThrottle);
+            Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
+
+            Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
 
             runtimeData.curveInfiniteAmount = 
                 Vector4.Lerp(
