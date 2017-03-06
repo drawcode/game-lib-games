@@ -4307,10 +4307,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         if (GameConfigs.isGameRunning) {
-            
-            containerInfinity.UpdatePositionPartsZ(
-                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z * 
-                currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
                         
             if (!runtimeData.curveEnabled) {
                 runtimeData.curve = Vector4.zero;
@@ -4319,7 +4315,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             float speedThrottle = (currentGamePlayerController.GamePlayerMoveSpeedGet() / 100f) * .5f;
 
+            //containerInfinity.UpdatePositionPartsZ(
+            //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
+            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
+
+            containerInfinity.UpdatePositionPartsZ(
+                -1 *
+                currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
+
             // .15f *
+
+            //Debug.Log("speedThrottle:" + speedThrottle);
 
             runtimeData.curveInfiniteAmount = 
                 Vector4.Lerp(
