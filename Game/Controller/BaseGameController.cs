@@ -4328,10 +4328,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
             // .15f *
-            Debug.Log("speedThrottle:" + speedThrottle);
-            Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
+            //Debug.Log("speedThrottle:" + speedThrottle);
+            //Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
 
-            Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
+            //Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
 
             runtimeData.curveInfiniteAmount = 
                 Vector4.Lerp(
@@ -4369,7 +4369,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            handleUpdateStationary();
+            //handleUpdateStationary();
         }
     }
 
@@ -4382,7 +4382,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             handleLateUpdateDefault();
         }
         else if (gameplayWorldType == GameplayWorldType.gameStationary) {
-            //handleUpdateStationary();
+            handleUpdateStationary();
         }
     }
 

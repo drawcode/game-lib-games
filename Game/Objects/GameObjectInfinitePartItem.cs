@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameObjectInfinitePartItem : GameObjectBehavior {
-    
+
     public GameObjectInfinitePart part;
     public string code;
 
@@ -39,7 +39,6 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
             gameObject.DestroyGameObject();
         }
         */
-         
-    }
 
+    }
 }
