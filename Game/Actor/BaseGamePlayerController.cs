@@ -3896,7 +3896,9 @@ internal virtual void handleGameInput() {
 
         //currentControllerData.thirdPersonController.Idle();
 
-        currentControllerData.gamePlayerControllerAnimation.Idle();
+        if (currentControllerData.gamePlayerControllerAnimation != null) {
+            currentControllerData.gamePlayerControllerAnimation.Idle();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -3915,7 +3917,9 @@ internal virtual void handleGameInput() {
             currentControllerData.thirdPersonController.Jump(duration);
         }
 
-        currentControllerData.gamePlayerControllerAnimation.Jump();
+        if (currentControllerData.gamePlayerControllerAnimation != null) {
+            currentControllerData.gamePlayerControllerAnimation.Jump();
+        }
 
         if (gamePlayerEffectSkill != null) {
             gamePlayerEffectSkill.Emit(1);
@@ -3927,7 +3931,9 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        currentControllerData.thirdPersonController.JumpStop();
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.JumpStop();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -3977,7 +3983,9 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        currentControllerData.thirdPersonController.SlideStop();
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.thirdPersonController.SlideStop();
+        }
     }
     
     // ------------------------------------------------------------------------
@@ -4011,7 +4019,9 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        currentControllerData.gamePlayerControllerAnimation.Skill();
+        if (currentControllerData.thirdPersonController != null) {
+            currentControllerData.gamePlayerControllerAnimation.Skill();
+        }
 
         if (gamePlayerEffectSkill != null) {
             gamePlayerEffectSkill.Emit(1);
@@ -5133,7 +5143,7 @@ internal virtual void handleGameInput() {
                 Mathf.Lerp(controllerData.moveGamePlayerPosition.z, controllerData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
 
             controllerData.moveGamePlayerPosition.x =
-                Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, 4f * Time.deltaTime);
+                Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, gamePlayerMoveSpeed/10f * Time.deltaTime);
 
             if (controllerData.currentGamePlayerPosition.y < -1) {
 

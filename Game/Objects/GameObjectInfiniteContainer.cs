@@ -353,7 +353,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         GameObject goAssetBlock = AppContentAssets.LoadAssetLevelAssets(assetCode, spawnLocation);
 
         if (goAssetBlock == null) {
-            Debug.Log("Asset not found levelassets/" + assetCode);
+            //Debug.Log("Asset not found levelassets/" + assetCode);
         }
         else {
             goAssetBlock = GameAssetObjectContextGet(assetCode, goAssetBlock);
@@ -377,7 +377,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             }
         }
         else {
-            Debug.Log("GamePreset NOT FOUND: " + assetCode);
+            //Debug.Log("GamePreset NOT FOUND: " + assetCode);
         }
 
         return assetCode;
@@ -421,7 +421,9 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                         codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
                             assetCode, GameWorlds.Current.code);
 
-                        codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
+
+                        //codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
 
                         //codeMain = GameAssetPresetCode(codeMain);
 
@@ -478,9 +480,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
                         codeAsset = StringUtil.Dashed(assetCode, asset.code, GameWorlds.Current.code);
 
-                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
-
-                        //codeMain = GameAssetPresetCode(codeMain);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
 
                         GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
 
@@ -514,10 +514,10 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                         codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
                             assetCode, asset.code, GameWorlds.Current.code);
 
-                        codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
 
-                        //codeMain = GameAssetPresetCode(codeMain);
-
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        
                         GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
 
                         if (goAsset == null) {
@@ -550,10 +550,10 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
                         codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
                             assetCode, asset.code, GameWorlds.Current.code);
 
-                        codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
 
-                        //codeMain = GameAssetPresetCode(codeMain);
-
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        
                         GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
 
                         if (goAsset == null) {
