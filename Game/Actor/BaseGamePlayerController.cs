@@ -5897,7 +5897,7 @@ internal virtual void handleGameInput() {
 
             currentControllerData.characterController.slopeLimit = 45;
             currentControllerData.characterController.stepOffset = .3f;
-            currentControllerData.characterController.radius = 1.67f;
+            currentControllerData.characterController.radius = 2.6f;// 1.67f;
             currentControllerData.characterController.height = 2.42f;
             //currentControllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
             currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
