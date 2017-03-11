@@ -4451,29 +4451,52 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     assetObject.DestroyChildren();
 
-                    // asset-game-block-world-tiger-1
-                    string codeAsset = "";
+                    // ADD SIDE BLOCKS 
 
-                    codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
-                        assetCode, asset.code, GameWorlds.Current.code);
+                    for(int i = 0; i < 8; i++) {
 
-                    codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
+                        string codeAsset = "";
 
-                    //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        codeAsset = StringUtil.Dashed(
+                            assetCode, asset.code, "blocks", GameWorlds.Current.code);
 
-                    GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
 
-                    if (goAsset == null) {
-                        codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
+                        goAsset.transform.position = assetObject.transform.position;
+
+                        float posX = 0;
+                        float widthX = 128;
+                        float itemX = data.distanceTickZ;
+
+                        posX = (i + 1) * itemX;
+                        posX = posX - widthX / 2;
+
+                        goAsset.transform.localPosition = Vector3.zero.WithX(posX);
+
+                        if(codeAsset.Contains("plant")) {
+                            goAsset.transform.localRotation = Quaternion.Euler(MathUtil.RandomRangeY(0, 360));
+                            goAsset.transform.localScale = MathUtil.RandomRange(1f, 4f);
+                        }
+
+                        //goAsset.transform.localPosition = MathUtil.RandomRange(-64, 64, 1, 1, 2, 256);
+                        //goAsset.transform.localScale = MathUtil.RandomRange(1f, 4f);
+                        //goAsset.transform.localRotation = Quaternion.Euler(MathUtil.RandomRangeY(0, 360));
                     }
-
-                    goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
-
-                    if (goAsset == null) {
-                        continue;
-                    }
-
-                    goAsset.transform.parent = assetObject.transform;
                 }
 
                 // ENVIRONMENT
@@ -4487,29 +4510,72 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     assetObject.DestroyChildren();
 
-                    // asset-game-block-world-tiger-1
-                    string codeAsset = "";
+                    // ADD TREES 
 
-                    codeAsset = StringUtil.Dashed(BaseDataObjectKeys.asset,
-                        assetCode, asset.code, GameWorlds.Current.code);
+                    for(int i = 0; i < 8; i++) {
 
-                    codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
+                        string codeAsset = "";
 
-                    //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+                        codeAsset = StringUtil.Dashed(
+                            assetCode, asset.code, "trees", GameWorlds.Current.code);
 
-                    GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
 
-                    if (goAsset == null) {
-                        codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
+                        goAsset.transform.position = assetObject.transform.position;
+
+                        goAsset.transform.localPosition = MathUtil.RandomRange(-64, 64, 1, 1, 8, 256);
+                        goAsset.transform.localScale = MathUtil.RandomRange(1f, 4f);
+                        goAsset.transform.localRotation = Quaternion.Euler(MathUtil.RandomRangeY(0, 360));
                     }
 
-                    goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+                    // ADD PLANTS 
 
-                    if (goAsset == null) {
-                        continue;
+                    for(int i = 0; i < 8; i++) {
+
+                        string codeAsset = "";
+
+                        codeAsset = StringUtil.Dashed(
+                            assetCode, asset.code, "plants", GameWorlds.Current.code);
+
+                        codeAsset = GameAssetPresetCode(StringUtil.Dashed(BaseDataObjectKeys.asset, codeAsset));
+
+                        //codeAsset = StringUtil.Dashed(assetCode, asset.code, BaseDataObjectKeys.defaultKey);
+
+                        GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
+                        }
+
+                        goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
+
+                        if(goAsset == null) {
+                            continue;
+                        }
+
+                        goAsset.transform.parent = assetObject.transform;
+                        goAsset.transform.position = assetObject.transform.position;
+
+                        goAsset.transform.localPosition = MathUtil.RandomRange(-64, 64, 1, 1, 2, 256);
+                        goAsset.transform.localScale = MathUtil.RandomRange(1f, 4f);
+                        goAsset.transform.localRotation = Quaternion.Euler(MathUtil.RandomRangeY(0, 360));
                     }
 
-                    goAsset.transform.parent = assetObject.transform;
                 }
             }
         }
@@ -4900,7 +4966,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             runtimeData.curve.z = 0;
         }
 
-        Debug.Log("handleInfiniteCurve:" + runtimeData.curve);
+        //Debug.Log("handleInfiniteCurve:" + runtimeData.curve);
 
         Invoke("handleInfiniteCurve", UnityEngine.Random.Range(5, 10));
     }
@@ -4955,7 +5021,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
             // .15f *
-            Debug.Log("speedThrottle:" + speedThrottle);
+            //Debug.Log("speedThrottle:" + speedThrottle);
             //Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
 
             //Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
