@@ -45,6 +45,12 @@ public class CurvedObject : MonoBehaviour {
             curveDistance = GameController.CurveInfiniteDistanceGet();
         }
 
+        Renderer render = GetComponent<Renderer>();
+
+        if(render == null) {
+            return;
+        }
+
         GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", curveAmount);
         GetComponent<Renderer>().sharedMaterial.SetFloat("_Dist", curveDistance);
     }

@@ -4246,7 +4246,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // ------------------------------------------------------------------------
     // ASSETS CONTEXT
     
-    public string GameAssetPresetCode(string assetCode) {
+    public virtual string GameAssetPresetCode(string assetCode) {
 
         GamePreset assetPreset = GamePresets.Instance.GetById(assetCode);
 
@@ -4512,7 +4512,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     // ADD TREES 
 
-                    for(int i = 0; i < 8; i++) {
+                    for(int i = 0; i < 6; i++) {
 
                         string codeAsset = "";
 
@@ -4545,7 +4545,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     // ADD PLANTS 
 
-                    for(int i = 0; i < 8; i++) {
+                    for(int i = 0; i < 6; i++) {
 
                         string codeAsset = "";
 
@@ -4656,7 +4656,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         LoadLevelAssetsLines(data, go, indexItem, spawnLocation);
         */
     }
-
+    
     public virtual void LoadLevelAssetsLines(GameObjectInfinteData data, GameObject go, int indexItem, Vector3 spawnLocation) {
         /*
         // --------------------------------------------------------------------
@@ -4790,18 +4790,23 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void LoadLevelAssetsPeriodic(GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
+        
+        StartCoroutine(LoadLevelAssetsPeriodicCo(data, parentGo, indexItem, clear));
+    }
 
-        /*
+    public virtual IEnumerator LoadLevelAssetsPeriodicCo(
+        GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
+
         //if (((indexItem + 1) * data.distanceTickZ) % data.distanceTickZ == 0) {
-        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) { // every 8
+        if((indexItem + 1) % (data.distanceTickZ / 2) == 0) { // every 8
 
             // Load terrain and ambience
 
             GameObject go = AppContentAssets.LoadAssetLevelAssets(data.codeGameFloor, parentGo.transform.position);
 
-            if (go == null) {
+            if(go == null) {
                 Debug.Log("Asset not found levelassets/" + data.codeGameFloor);
-                return;
+                yield return null;
             }
 
             go.transform.parent = parentGo.transform;
@@ -4809,16 +4814,16 @@ public class BaseGameController : GameObjectTimerBehavior {
             go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
         }
 
-        if ((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
+        if((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
 
             // Load terrain and ambience
 
             GameObject goSideLeft = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
             GameObject goSideRight = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
 
-            if (goSideLeft == null || goSideRight == null) {
+            if(goSideLeft == null || goSideRight == null) {
                 Debug.Log("Asset not found levelassets/" + data.codeGameSide);
-                return;
+                yield return null;
             }
 
             goSideLeft.transform.parent = parentGo.transform;
@@ -4830,9 +4835,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
             goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
         }
-        */
     }
-
 
     void LoadLevelAssetDynamicByIndex(GameObjectInfinteData data, int indexItem, bool clear = false) {
 
@@ -4918,7 +4921,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
-    public void updatePartsStationary(GameObjectInfinteData data) {
+    public virtual void updatePartsStationary(GameObjectInfinteData data) {
 
         // index is 31 range 1000 
         // rangeBoundsMax.z / distanceTickZ;
