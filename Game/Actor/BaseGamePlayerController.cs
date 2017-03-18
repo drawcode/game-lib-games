@@ -352,7 +352,7 @@ public class BaseGamePlayerControllerData {
 
     public Vector3 moveGamePlayerPositionTo = Vector3.zero;
     public float speedInfinite = 0f;
-    public float speedInfiniteTo = 70f;
+    public float speedInfiniteTo = 80f;
     public float speedInfiniteMax = 80f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
@@ -367,7 +367,7 @@ public class BaseGamePlayerControllerData {
 
         moveGamePlayerPositionTo = Vector3.zero;
         speedInfinite = 0f;
-        speedInfiniteTo = 70f;
+        speedInfiniteTo = 80f;
         speedInfiniteMax = 80f;
 
         moveGamePlayerPosition = Vector3.zero;

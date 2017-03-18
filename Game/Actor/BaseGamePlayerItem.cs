@@ -131,7 +131,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 
         if (!isCollecting) {
             
-            Debug.Log("CollectContent:Collect" + true);
+            //Debug.Log("CollectContent:Collect" + true);
                         
             isCollecting = true;         
 

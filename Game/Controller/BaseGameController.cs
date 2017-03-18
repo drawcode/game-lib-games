@@ -4032,7 +4032,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Vector3 pos = containerInfinity.SwitchLineLeft();
 
-                Debug.Log("handleGameInputDirection:left:" + pos);
+                //Debug.Log("handleGameInputDirection:left:" + pos);
 
                 gamePlayerMove(pos);
             }
@@ -4043,7 +4043,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 Vector3 pos = containerInfinity.SwitchLineRight();
 
-                Debug.Log("handleGameInputDirection:right:" + pos);
+                //Debug.Log("handleGameInputDirection:right:" + pos);
 
                 gamePlayerMove(pos);
             }
@@ -4292,6 +4292,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual GameObject GameAssetObjectContextGetBlock(
         GameObjectInfinteData data, string assetCode, GameObject go) {
         
+        /*
         foreach (GameObjectInactive container in
                 go.GetList<GameObjectInactive>()) {
 
@@ -4354,6 +4355,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
         }  
+        */
 
         return go;
     }
@@ -4392,6 +4394,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual GameObject GameAssetObjectContextGetSide(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
+        /*
         foreach (GameObjectInactive container in
             go.GetList<GameObjectInactive>()) {
 
@@ -4579,6 +4582,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
         }
+        */
 
         return go;
     }
@@ -4797,6 +4801,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual IEnumerator LoadLevelAssetsPeriodicCo(
         GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
 
+        yield return null;
+
+        /*
         //if (((indexItem + 1) * data.distanceTickZ) % data.distanceTickZ == 0) {
         if((indexItem + 1) % (data.distanceTickZ / 2) == 0) { // every 8
 
@@ -4835,6 +4842,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
             goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
         }
+        */
     }
 
     void LoadLevelAssetDynamicByIndex(GameObjectInfinteData data, int indexItem, bool clear = false) {
