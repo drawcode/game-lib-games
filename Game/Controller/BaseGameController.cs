@@ -4267,16 +4267,23 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     //
 
-    public virtual GameObject GameAssetObjectContextGet(
+    public virtual void GameAssetObjectContextGet(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
         // Handle template by level/world/character
 
         // CUSTOM GAME BLOCK
 
-        if (assetCode == data.codeGameBlock) {
+        if (assetCode == data.codeGameBlockFloor) {
 
             GameAssetObjectContextGetBlock(data, assetCode, go);
+        }
+
+        // CUSTOM GAME BLOCK
+
+        if (assetCode == data.codeGameBlockLow) {
+
+            GameAssetObjectContextGetLow(data, assetCode, go);
         }
 
         // CUSTOM GAME SIDE
@@ -4285,11 +4292,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             GameAssetObjectContextGetSide(data, assetCode, go);
         }
-
-        return go;
     }
 
-    public virtual GameObject GameAssetObjectContextGetBlock(
+    public virtual void GameAssetObjectContextGetBlock(
         GameObjectInfinteData data, string assetCode, GameObject go) {
         
         /*
@@ -4357,9 +4362,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         }  
         */
 
-        return go;
+        //return go;
     }
+
+
+    public virtual void GameAssetObjectContextGetLow(
+        GameObjectInfinteData data, string assetCode, GameObject go) {
     
+    }
 
 
     public virtual GameObject GameAssetObjectContextItem(string assetCode, string assetPre, GameObjectInactive asset) {
@@ -4391,7 +4401,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 
 
-    public virtual GameObject GameAssetObjectContextGetSide(
+    public virtual void GameAssetObjectContextGetSide(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
         /*
@@ -4584,7 +4594,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
         */
 
-        return go;
+        //return go;
     }
 
     public virtual GameDataObject GetLevelAssetDynamicObject(GameObjectInfinteData data, double x, double y, double z) {
@@ -4858,7 +4868,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //Debug.Log("Asset not found levelassets/" + assetCode);
         }
         else {
-            goAssetBlock = GameAssetObjectContextGet(data, assetCode, goAssetBlock);
+            GameAssetObjectContextGet(data, assetCode, goAssetBlock);
         }
 
         return goAssetBlock;
@@ -4931,6 +4941,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void updatePartsStationary(GameObjectInfinteData data) {
 
+        //StartCoroutine(updatePartsStationaryCo(data));
+    //}
+
+    //public IEnumerator updatePartsStationaryCo(GameObjectInfinteData data) {
+
         // index is 31 range 1000 
         // rangeBoundsMax.z / distanceTickZ;
 
@@ -4945,6 +4960,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             data.lastLoadIndex = loadIndex;
         }
+
+        //yield return null;
     }
 
     // ------------------------------------------------------------------------

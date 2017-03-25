@@ -10,7 +10,7 @@ public class GameFPS : FPSDisplay {
 
 public class FPSDisplay: GameObjectBehavior {
     
-    public  float updateInterval = 0.5F;
+    public  float updateInterval = 0.1F;
     private float accum = 0; // FPS accumulated over the interval
     private int   frames = 0; // Frames drawn over the interval
     private float timeleft; // Left time for current interval

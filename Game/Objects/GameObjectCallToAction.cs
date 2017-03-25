@@ -63,7 +63,7 @@ public class GameObjectCallToAction : GameObjectBehavior {
     // rotate
 
     void AnimateRotate() {
-
+        
         LeanTween.rotateLocal(gameObject, Vector3.zero.WithZ(rotate), rotateTime)
             .setEase(LeanTweenType.easeInOutQuad)
             .setLoopPingPong()

@@ -1095,13 +1095,13 @@ internal virtual void handleGameInput() {
             StopAllCoroutines();
             currentControllerData.loadingCharacter = false;
 
-            Debug.Log("GameCharacter:Init:" +
-            " overrideLoading:" +
-            overrideLoading);
+            //Debug.Log("GameCharacter:Init:" +
+            //" overrideLoading:" +
+            //overrideLoading);
 
-            Debug.Log("GameCharacter:Init:" +
-            " currentControllerData.loadingCharacter:" +
-            currentControllerData.loadingCharacter);
+            //Debug.Log("GameCharacter:Init:" +
+            //" currentControllerData.loadingCharacter:" +
+            //currentControllerData.loadingCharacter);
 
         }
 
@@ -1233,10 +1233,10 @@ internal virtual void handleGameInput() {
 
         currentControllerData.modifierItemScaleLerp = 0f;
 
-        //Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
-        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
-        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerpTime:" + currentControllerData.modifierItemScaleLerpTime);
-        //Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerp:" + currentControllerData.modifierItemScaleLerp);
+        ////Debug.Log("HandleItemStateScaleModifier::" + " val:" + val + " duration:" + duration);
+        ////Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
+        ////Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerpTime:" + currentControllerData.modifierItemScaleLerpTime);
+        ////Debug.Log("HandleItemStateScaleModifier::" + " currentControllerData.modifierItemScaleLerp:" + currentControllerData.modifierItemScaleLerp);
     }
 
     public virtual void HandleItemStateFlyModifier(double val, double duration) {
@@ -1245,10 +1245,10 @@ internal virtual void handleGameInput() {
 
         currentControllerData.modifierItemFlyLerp = 0f;
 
-        //Debug.Log("HandleItemStateFlyModifier::" + " val:" + val + " duration:" + duration);
-        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyCurrent:" + currentControllerData.modifierItemFlyCurrent);
-        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerpTime:" + currentControllerData.modifierItemFlyLerpTime);
-        //Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerp:" + currentControllerData.modifierItemFlyLerp);
+        ////Debug.Log("HandleItemStateFlyModifier::" + " val:" + val + " duration:" + duration);
+        ////Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyCurrent:" + currentControllerData.modifierItemFlyCurrent);
+        ////Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerpTime:" + currentControllerData.modifierItemFlyLerpTime);
+        ////Debug.Log("HandleItemStateFlyModifier::" + " currentControllerData.modifierItemFlyLerp:" + currentControllerData.modifierItemFlyLerp);
     }
 
     public virtual void HandleItemUse(GameItem gameItem) {
@@ -1268,7 +1268,7 @@ internal virtual void handleGameInput() {
         if (data.HasRPGs()) {
             rpg = data.GetRPG();
 
-            //Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
+            ////Debug.Log("HandleItemUse::" + " rpg:" + rpg.ToJson());
 
             HandleItemStateSpeedModifier(rpg.speed, rpg.duration);
             HandleItemStateScaleModifier(rpg.scale, rpg.duration);
@@ -2263,8 +2263,8 @@ internal virtual void handleGameInput() {
 
     public virtual void LoadCharacter(string characterCodeTo) {
 
-        Debug.Log("LoadCharacter:1:" + " characterCodeTo:" + characterCodeTo);
-        Debug.Log("LoadCharacter:1:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
+        //Debug.Log("LoadCharacter:1:" + " characterCodeTo:" + characterCodeTo);
+        //Debug.Log("LoadCharacter:1:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
 
         if (currentControllerData.loadingCharacter) {
             StopAllCoroutines();
@@ -2273,8 +2273,8 @@ internal virtual void handleGameInput() {
 
         characterCode = characterCodeTo;
 
-        Debug.Log("LoadCharacter:2:" + " characterCodeTo:" + characterCodeTo);
-        Debug.Log("LoadCharacter:2:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
+        //Debug.Log("LoadCharacter:2:" + " characterCodeTo:" + characterCodeTo);
+        //Debug.Log("LoadCharacter:2:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
 
         UpdateCharacterStates();
 
@@ -2327,13 +2327,13 @@ internal virtual void handleGameInput() {
             yield break;
         }
 
-        Debug.Log("LoadCharacterCo:" + " code:" + gameCharacter.code);
+        //Debug.Log("LoadCharacterCo:" + " code:" + gameCharacter.code);
 
         currentControllerData.loadingCharacter = true;
 
         string prefabCode = gameCharacter.data.GetModel().code;
 
-        Debug.Log("LoadCharacterCo:" + " prefabCode:" + prefabCode);
+        //Debug.Log("LoadCharacterCo:" + " prefabCode:" + prefabCode);
 
         //LogUtil.Log("LoadCharacter:path:" + path);
         if (!string.IsNullOrEmpty(prefabCode)) {
@@ -2438,7 +2438,7 @@ internal virtual void handleGameInput() {
                     gamePlayerCollision.UpdateGameObjects();
                 }
 
-                Debug.Log("LoadCharacterCo:" + " gameObjectLoad:" + gameObjectLoad.name);
+                //Debug.Log("LoadCharacterCo:" + " gameObjectLoad:" + gameObjectLoad.name);
 
                 // load items
 
@@ -3022,7 +3022,7 @@ internal virtual void handleGameInput() {
 
                             //GamePlayerBounceSet(250);
 
-                            //Debug.Log("isDamageObstacle:" + isDamageObstacle);
+                            ////Debug.Log("isDamageObstacle:" + isDamageObstacle);
                         }
                     }
 
@@ -3068,7 +3068,7 @@ internal virtual void handleGameInput() {
                     else if (isPlayerObject) {
 
                         if (IsAgentControlled) {
-                            //Debug.Log("HandleCollision:Agent");
+                            ////Debug.Log("HandleCollision:Agent");
                         }
                         else {
                         }
@@ -3266,12 +3266,12 @@ internal virtual void handleGameInput() {
         // IF WITHIN ACTION RANGE TRIGGER
 
         if (goName.Contains(GameActionKeys.GameZoneActionTrigger)) {
-            Debug.Log(GameActionKeys.GameZoneActionTrigger + ":" + goName);
+            //Debug.Log(GameActionKeys.GameZoneActionTrigger + ":" + goName);
 
             HandleZonesActionsController(triggerState, go, goName);
         }
         else if (goName.Contains(GameActionKeys.GameZoneActionArea)) {
-            Debug.Log(GameActionKeys.GameZoneActionArea + ":" + goName);
+            //Debug.Log(GameActionKeys.GameZoneActionArea + ":" + goName);
 
             if (triggerState == GameActionTriggerState.TriggerExit) {
                 triggerState = GameActionTriggerState.ActionTriggerExit;
@@ -3329,7 +3329,7 @@ internal virtual void handleGameInput() {
             return;
         }
 
-        Debug.Log("HandleZonesActionsController: actionCode:" + actionItem.actionCode);
+        //Debug.Log("HandleZonesActionsController: actionCode:" + actionItem.actionCode);
 
         GameZoneActionAsset actionTypeItem =
             go.transform.GetComponentInParent<GameZoneActionAsset>();
@@ -3425,9 +3425,9 @@ internal virtual void handleGameInput() {
 
                     if (appContentCollect != null) {
 
-                        Debug.Log(GameActionKeys.GameZoneActionArea + ":" +
-                        "appContentCollect:" +
-                        appContentCollect.code);
+                        //Debug.Log(GameActionKeys.GameZoneActionArea + ":" +
+                        //"appContentCollect:" +
+                        //appContentCollect.code);
 
                         ExitPlayer();
                     }
@@ -4538,7 +4538,7 @@ internal virtual void handleGameInput() {
                     GamePlayerController playerController = GetController(hitObject);
                     if (playerController != null) {
 
-                        //Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
+                        ////Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
 
 
                         if (AllowControllerInteraction(playerController)) {
@@ -5083,7 +5083,7 @@ internal virtual void handleGameInput() {
 
         currentControllerData.impact += delta;
 
-        //Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
+        ////Debug.Log("AddImpactForce:" + " delta:" + delta + " dir:" + dir + " force:" + force); 
 
     }
     
@@ -5108,14 +5108,14 @@ internal virtual void handleGameInput() {
 
         if (GameConfigs.isGameRunning) {
 
-            //Debug.Log("UpdateStationary");
+            ////Debug.Log("UpdateStationary");
 
             controllerData.speedInfinite = Mathf.Lerp(controllerData.speedInfinite, controllerData.speedInfiniteTo, 1f * Time.deltaTime);
 
             GamePlayerMoveSpeedSet(controllerData.speedInfinite);
 
-            //Debug.Log("controllerData.speedInfinite:" + controllerData.speedInfinite);
-            //Debug.Log("controllerData.GamePlayerMoveSpeedGet:" + GamePlayerMoveSpeedGet());
+            ////Debug.Log("controllerData.speedInfinite:" + controllerData.speedInfinite);
+            ////Debug.Log("controllerData.GamePlayerMoveSpeedGet:" + GamePlayerMoveSpeedGet());
 
             /*
             controllerData.currentGamePlayerPositionBounce =
@@ -5533,7 +5533,7 @@ internal virtual void handleGameInput() {
 
             if (marker != null) {
 
-                //Debug.Log("marker:" + marker.name);
+                ////Debug.Log("marker:" + marker.name);
 
                 // goalFly position
 
@@ -5768,15 +5768,15 @@ internal virtual void handleGameInput() {
 
             // SCALE
 
-            //Debug.Log("modifierScale:" + currentControllerData.runtimeRPGData.modifierScale);
-            //Debug.Log("modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
+            ////Debug.Log("modifierScale:" + currentControllerData.runtimeRPGData.modifierScale);
+            ////Debug.Log("modifierItemScaleCurrent:" + currentControllerData.modifierItemScaleCurrent);
 
             Vector3 scalePos =
                 initialScale
                 * Mathf.Clamp((float)currentControllerData.runtimeRPGData.modifierScale
                 * currentControllerData.modifierItemScaleCurrent, .4f, 2.4f);
 
-            //Debug.Log("scalePos:" + scalePos);
+            ////Debug.Log("scalePos:" + scalePos);
 
             transform.localScale = scalePos;
 

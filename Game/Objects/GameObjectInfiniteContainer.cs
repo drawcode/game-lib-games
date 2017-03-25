@@ -17,7 +17,7 @@ public class GameObjectInfinteData {
     public string codeGameSky = "game-world-sky";   
     public string codeGameWater = "game-world-water";
 
-    public string codeGameBlock = "game-block-floor";
+    public string codeGameBlockFloor = "game-block-floor";
     public string codeGameBlockLow = "game-block-low";
     public string codeGameBlockHigh = "game-block-high";
 
@@ -49,7 +49,7 @@ public class GameObjectInfinteData {
     public int partStartCount = 10;
     public int partBackCount = 10;
 
-    public Dictionary<int, GameObjectInfinitePart> parts;
+    //public Dictionary<int, GameObjectInfinitePart> parts;
 
     public GameObject parentContainer;
    

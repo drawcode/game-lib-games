@@ -26,6 +26,10 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
 
     void Update() {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+
         /*
         bool destroy = false;
         

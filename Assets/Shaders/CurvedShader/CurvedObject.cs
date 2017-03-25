@@ -51,8 +51,12 @@ public class CurvedObject : MonoBehaviour {
             return;
         }
 
-        GetComponent<Renderer>().sharedMaterial.SetVector("_QOffset", curveAmount);
-        GetComponent<Renderer>().sharedMaterial.SetFloat("_Dist", curveDistance);
+        if(render.sharedMaterial == null) {
+            return;
+        }
+
+        render.sharedMaterial.SetVector("_QOffset", curveAmount);
+        render.sharedMaterial.SetFloat("_Dist", curveDistance);
     }
 
     private void OnApplicationQuit() {

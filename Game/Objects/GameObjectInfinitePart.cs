@@ -53,7 +53,13 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
     void Update() {
 
+        if(!GameConfigs.isGameRunning) {
+            return;
+        }
+            
         bool destroy = false;
+
+        FindController();
 
         if (container != null) {
             destroy = MathUtil.IsVector3OutOfRange(
@@ -62,6 +68,18 @@ public class GameObjectInfinitePart : GameObjectBehavior {
         }
 
         if (destroy) {
+
+            foreach (GameObjectInfiniteAssetItem item in gameObject.GetList<GameObjectInfiniteAssetItem>()) {
+                item.gameObject.DestroyGameObject();
+            }
+
+            foreach (GameObjectInfiniteAsset item in gameObject.GetList<GameObjectInfiniteAsset>()) {
+                item.gameObject.DestroyGameObject();
+            }
+
+            //foreach (PoolGameObject item in gameObject.GetList<PoolGameObject>()) {
+            //    item.gameObject.DestroyGameObject();
+            //}
 
             foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
                 part.ClearItems();
