@@ -1840,6 +1840,41 @@ public class BaseGameController : GameObjectTimerBehavior {
         // TODO load anim
     }
 
+    public virtual void preloadLevelAssetPreset(GameDataAssetPreset assetDataItem) {
+        StartCoroutine(preloadLevelAssetPresetCo(assetDataItem));
+    }
+
+    public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
+
+        yield return new WaitForEndOfFrame();     
+
+        int minAssetLimit = (int)assetDataItem.min;
+        int maxAssetLimit = (int)assetDataItem.max;
+
+        GamePreset assetPreset = GamePresets.Instance.GetById(assetDataItem.code);
+
+        if (assetPreset != null) {
+
+            foreach (GamePresetItem presetItem in assetPreset.data.items) {
+
+                Debug.Log("preloadLevelAssetPreset: " + presetItem.code);
+
+                for (int i = 0; i < 5; i++) {
+                    
+                    yield return new WaitForEndOfFrame();
+
+                    GameObject go = AppContentAssets.LoadAssetLevelAssets(presetItem.code);
+
+                    yield return new WaitForEndOfFrame();
+
+                    go.DestroyGameObject();
+                }
+            }
+        }
+
+        yield return new WaitForEndOfFrame();
+    }
+
     internal virtual void initLevelFinish(string levelCode) {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
@@ -4985,7 +5020,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         if (runtimeData.curveEnabled 
-            && currentGamePlayerController.GamePlayerMoveSpeedGet() > 5f) {
+            && currentGamePlayerController.GamePlayerMoveSpeedGet() > 15f) {
             runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
             runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
         }

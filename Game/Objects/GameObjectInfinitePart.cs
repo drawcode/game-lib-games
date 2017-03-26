@@ -69,19 +69,37 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
         if (destroy) {
 
-            foreach (GameObjectInfiniteAssetItem item in gameObject.GetList<GameObjectInfiniteAssetItem>()) {
+            bool cached = false;
+
+            foreach (GameObjectInfiniteAssetCache item in 
+                gameObject.GetList<GameObjectInfiniteAssetCache>()) {
+
                 item.gameObject.DestroyGameObject();
+                cached = true;
             }
 
-            foreach (GameObjectInfiniteAsset item in gameObject.GetList<GameObjectInfiniteAsset>()) {
-                item.gameObject.DestroyGameObject();
+            if(!cached) {
+
+                foreach (GameObjectInfiniteAssetItem item in 
+                    gameObject.GetList<GameObjectInfiniteAssetItem>()) {
+
+                    item.gameObject.DestroyGameObject();
+                }
+
+                foreach (GameObjectInfiniteAsset item in 
+                    gameObject.GetList<GameObjectInfiniteAsset>()) {
+
+                    item.gameObject.DestroyGameObject();
+                }
             }
 
             //foreach (PoolGameObject item in gameObject.GetList<PoolGameObject>()) {
             //    item.gameObject.DestroyGameObject();
             //}
 
-            foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
+            foreach (GameObjectInfinitePart part in 
+                gameObject.GetList<GameObjectInfinitePart>()) {
+
                 part.ClearItems();
             }
 

@@ -111,9 +111,10 @@ public class FPSDisplay: GameObjectBehavior {
             // display two fractional digits (f2 format)
             float fps = accum / frames;
             lastFPS = fps;
-            string format = System.String.Format("{0:F2} FPS", fps);
             
             if (labelFPS != null) {
+                
+                string format = System.String.Format("{0:F2} FPS", fps);
 
                 UIUtil.SetLabelValue(labelFPS, format);
              

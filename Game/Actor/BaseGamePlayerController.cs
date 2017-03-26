@@ -352,7 +352,7 @@ public class BaseGamePlayerControllerData {
 
     public Vector3 moveGamePlayerPositionTo = Vector3.zero;
     public float speedInfinite = 0f;
-    public float speedInfiniteTo = 80f;
+    public float speedInfiniteTo = 72f;
     public float speedInfiniteMax = 80f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
@@ -367,7 +367,7 @@ public class BaseGamePlayerControllerData {
 
         moveGamePlayerPositionTo = Vector3.zero;
         speedInfinite = 0f;
-        speedInfiniteTo = 80f;
+        speedInfiniteTo = 72f;
         speedInfiniteMax = 80f;
 
         moveGamePlayerPosition = Vector3.zero;
@@ -5110,7 +5110,12 @@ internal virtual void handleGameInput() {
 
             ////Debug.Log("UpdateStationary");
 
-            controllerData.speedInfinite = Mathf.Lerp(controllerData.speedInfinite, controllerData.speedInfiniteTo, 1f * Time.deltaTime);
+            controllerData.speedInfinite = 
+                Mathf.Clamp(
+                    Mathf.Lerp(
+                        controllerData.speedInfinite, 
+                        controllerData.speedInfiniteTo, 1f * Time.deltaTime), 
+                    0, controllerData.speedInfiniteMax);
 
             GamePlayerMoveSpeedSet(controllerData.speedInfinite);
 
