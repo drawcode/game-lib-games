@@ -8,9 +8,12 @@ using System.Collections;
 /// 
 public class CurvedObject : MonoBehaviour {
 
-    bool straighten = false;
     Vector4 curveAmount = Vector4.zero;
     float curveDistance = 50;
+
+    Renderer render = null;
+    Vector4 lastCurveAmount = Vector4.zero;
+    float lastCurveDistance = 0f;
     
     void Start() {
 
@@ -45,7 +48,9 @@ public class CurvedObject : MonoBehaviour {
             curveDistance = GameController.CurveInfiniteDistanceGet();
         }
 
-        Renderer render = GetComponent<Renderer>();
+        if(render == null) {
+            render = GetComponent<Renderer>();
+        } 
 
         if(render == null) {
             return;
@@ -55,8 +60,15 @@ public class CurvedObject : MonoBehaviour {
             return;
         }
 
-        render.sharedMaterial.SetVector("_QOffset", curveAmount);
-        render.sharedMaterial.SetFloat("_Dist", curveDistance);
+        if(lastCurveAmount != curveAmount) {
+            render.sharedMaterial.SetVector("_QOffset", curveAmount);
+            lastCurveAmount = curveAmount;
+        }
+
+        if(lastCurveDistance != curveDistance) {
+            render.sharedMaterial.SetFloat("_Dist", curveDistance);
+            lastCurveDistance = curveDistance;
+        }
     }
 
     private void OnApplicationQuit() {

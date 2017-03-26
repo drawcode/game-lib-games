@@ -7,6 +7,7 @@ using Engine.Events;
 
 public class GameObjectInfiniteAssetCache : GameObjectBehavior {
 
+    /*
     void OnEnable() {
         //Messenger<Vector3, float>.AddListener(GamePlayerMessages.PlayerCurrentDistance, OnPlayerCurrentDistance);
     }
@@ -29,4 +30,5 @@ public class GameObjectInfiniteAssetCache : GameObjectBehavior {
             gameObject.DestroyGameObject();
         }
     }
+    */
 }

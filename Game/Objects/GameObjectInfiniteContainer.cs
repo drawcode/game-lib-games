@@ -251,7 +251,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
     }
     */
 
-    void Update() {
+    void LateUpdate() {
 
         if (!GameConfigs.isGameRunning) {
             return;

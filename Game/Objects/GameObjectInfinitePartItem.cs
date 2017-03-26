@@ -24,13 +24,14 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
         gameObject.DestroyChildren();
     }
 
+    /*
     void Update() {
 
         if(!GameConfigs.isGameRunning) {
             return;
         }
 
-        /*
+        / *
         bool destroy = false;
         
         if (controller != null) {
@@ -42,7 +43,8 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
         if (destroy) {
             gameObject.DestroyGameObject();
         }
-        */
+        * /
 
     }
+*/
 }
