@@ -18,6 +18,9 @@ Shader "Curved/CurvedColorTransparent" {
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			// make fog work
+			#pragma multi_compile_fog
+
 			#include "UnityCG.cginc"
 
             sampler2D _MainTex;
@@ -29,6 +32,7 @@ Shader "Curved/CurvedColorTransparent" {
 			struct v2f {
 				float4 pos : SV_POSITION;
 				float2 uv : TEXCOORD0;
+				UNITY_FOG_COORDS(1)
 			};
 
 			v2f vert (appdata_base v)
@@ -40,6 +44,7 @@ Shader "Curved/CurvedColorTransparent" {
 				
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
+				UNITY_TRANSFER_FOG(o,o.vertex);
 				
 			    return o;
 			}
@@ -49,6 +54,8 @@ Shader "Curved/CurvedColorTransparent" {
 				half4 col = tex2D(_MainTex, i.uv.xy) * _ColorTint;
 				//col.rgb = _ColorTint.rgb;
 				//col.a = _ColorTint.a;
+				// apply fog
+				UNITY_APPLY_FOG(i.fogCoord, col);
 			    return col;
 			}
 			ENDCG

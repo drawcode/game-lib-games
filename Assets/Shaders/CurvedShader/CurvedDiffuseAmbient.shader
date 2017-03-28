@@ -12,6 +12,10 @@ Shader "Curved/CurvedDiffuseAmbient" {
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+
+			// make fog work
+			#pragma multi_compile_fog
+
 			#include "UnityCG.cginc"
 			#include "UnityLightingCommon.cginc" // for _LightColor0
 
@@ -24,6 +28,7 @@ Shader "Curved/CurvedDiffuseAmbient" {
 			    float4 vertex : SV_POSITION;
 				fixed4 diff : COLOR0; // diffuse lighting color
 				float2 uv : TEXCOORD0;
+				UNITY_FOG_COORDS(1)
 			};
 
 			v2f vert (appdata_base v)
@@ -53,6 +58,7 @@ Shader "Curved/CurvedDiffuseAmbient" {
 				// ShadeSH9 function from UnityCG.cginc evaluates it,
 				// using world space normal
 				o.diff.rgb += ShadeSH9(half4(worldNormal, 1));
+				UNITY_TRANSFER_FOG(o,o.vertex);
 
 			    return o;
 			}
@@ -62,6 +68,8 @@ Shader "Curved/CurvedDiffuseAmbient" {
 			    half4 col = tex2D(_MainTex, i.uv.xy);
 				// multiply by lighting
 				col *= i.diff;
+				// apply fog
+				UNITY_APPLY_FOG(i.fogCoord, col);
 			    return col;
 			}
 			ENDCG

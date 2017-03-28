@@ -5145,10 +5145,12 @@ internal virtual void handleGameInput() {
             //overallGamePlayerPosition.z = currentGamePlayerPosition.z;
 
             controllerData.moveGamePlayerPosition.z =
-                Mathf.Lerp(controllerData.moveGamePlayerPosition.z, controllerData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
+                Mathf.Lerp(controllerData.moveGamePlayerPosition.z, 
+                    controllerData.currentGamePlayerPosition.z, .3f * Time.deltaTime);
 
             controllerData.moveGamePlayerPosition.x =
-                Mathf.Lerp(controllerData.moveGamePlayerPosition.x, controllerData.moveGamePlayerPositionTo.x, gamePlayerMoveSpeed/10f * Time.deltaTime);
+                Mathf.Lerp(controllerData.moveGamePlayerPosition.x, 
+                    controllerData.moveGamePlayerPositionTo.x, gamePlayerMoveSpeed/10f * Time.deltaTime);
 
             if (controllerData.currentGamePlayerPosition.y < -1) {
 

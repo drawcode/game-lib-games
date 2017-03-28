@@ -14,9 +14,11 @@ public class CurvedObject : MonoBehaviour {
     Renderer render = null;
     Vector4 lastCurveAmount = Vector4.zero;
     float lastCurveDistance = 0f;
-    
-    void Start() {
 
+    float lastCurveTime = 0f;
+
+    void Start() {
+        
         UpdateShader();
     }
 
@@ -34,40 +36,60 @@ public class CurvedObject : MonoBehaviour {
             }
         } 
 
-        UpdateShader();
+        //UpdateShader();
     }
 
     void UpdateShader() {
+        //StartCoroutine(UpdateShaderCo());
+    }
 
-        if (!GameController.CurveInfiniteEnabledGet()) {
-            curveAmount = Vector4.zero;
-            //curveDistance = 0;
-        }
-        else {
-            curveAmount = GameController.CurveInfiniteAmountGet();
-            curveDistance = GameController.CurveInfiniteDistanceGet();
-        }
+    bool running = false;
 
-        if(render == null) {
-            render = GetComponent<Renderer>();
-        } 
+    IEnumerator UpdateShaderCo() {
+        yield break;
 
-        if(render == null) {
-            return;
+        if(lastCurveTime + .1f > Time.time) {
+            yield break;
         }
 
-        if(render.sharedMaterial == null) {
-            return;
-        }
+        lastCurveTime = Time.time;
 
-        if(lastCurveAmount != curveAmount) {
-            render.sharedMaterial.SetVector("_QOffset", curveAmount);
-            lastCurveAmount = curveAmount;
-        }
+        if (!running) {
 
-        if(lastCurveDistance != curveDistance) {
-            render.sharedMaterial.SetFloat("_Dist", curveDistance);
-            lastCurveDistance = curveDistance;
+            running = true;
+
+            if (!GameController.CurveInfiniteEnabledGet()) {
+                curveAmount = Vector4.zero;
+                //curveDistance = 0;
+            }
+            else {
+                curveAmount = GameController.CurveInfiniteAmountGet();
+                curveDistance = GameController.CurveInfiniteDistanceGet();
+            }
+
+            if (render == null) {
+                render = GetComponent<Renderer>();
+            } 
+
+            if (render == null) {
+                yield break;
+            }
+
+            if (render.sharedMaterial == null) {
+                yield break;
+            }
+
+            if (lastCurveAmount != curveAmount) {
+                render.sharedMaterial.SetVector("_QOffset", curveAmount);
+                lastCurveAmount = curveAmount;
+            }
+
+            if (lastCurveDistance != curveDistance) {
+                render.sharedMaterial.SetFloat("_Dist", curveDistance);
+                lastCurveDistance = curveDistance;
+            }
+
+            running = false;
         }
     }
 
