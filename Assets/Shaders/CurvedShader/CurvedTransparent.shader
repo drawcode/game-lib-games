@@ -41,10 +41,11 @@ Shader "Curved/CurvedTransparent" {
 			    float zOff = vPos.z/_Dist;
 			    vPos += _QOffset*zOff*zOff;
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
+				//o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
 															//o.uv = v.texcoord;
 				//o.Alpha = tex2D(_MainTex, v.uv_MainTex).a;
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				UNITY_TRANSFER_FOG(o,vPos);
 			    return o;
 			}
 

@@ -1,4 +1,4 @@
-Shader "Curved/CurvedFog" {
+Shader "Curved/Curved" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_QOffset ("Offset", Vector) = (0,0,0,0)
@@ -34,8 +34,9 @@ Shader "Curved/CurvedFog" {
 			    float zOff = vPos.z/_Dist;
 			    vPos += _QOffset*zOff*zOff;
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
+				//o.vertex = UnityObjectToClipPos(v.vertex);
 			    o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				UNITY_TRANSFER_FOG(o,o.pos);
 				//o.uv = v.texcoord;
 			    return o;
 			}

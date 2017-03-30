@@ -1857,7 +1857,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             foreach (GamePresetItem presetItem in assetPreset.data.items) {
 
-                Debug.Log("preloadLevelAssetPreset: " + presetItem.code);
+                //Debug.Log("preloadLevelAssetPreset: " + presetItem.code);
 
                 for (int i = 0; i < 5; i++) {
                     
@@ -4058,7 +4058,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             else if (direction == GamePlayerDirection.Down) {
                 //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
                 //GameController.GamePlayerAttack();
-                gamePlayerSlide(Vector3.zero.WithZ(.5f));
+                gamePlayerSlide(Vector3.zero.WithZ(.15f));
             }
             else if (direction == GamePlayerDirection.Left
                 || direction == GamePlayerDirection.LowerLeftDiagonal

@@ -3940,7 +3940,7 @@ internal virtual void handleGameInput() {
     // SLIDE
 
     public virtual void Slide() {
-        Slide(Vector3.zero.WithZ(-.5f));
+        Slide(Vector3.zero.WithZ(-.1f));
     }
 
     public virtual void Slide(Vector3 amount) {
@@ -3960,7 +3960,7 @@ internal virtual void handleGameInput() {
                 //GamePlayerCollisionPosition(Vector3.zero.WithY(-0.5f));
                 //GamePlayerCollisionPositionDelayed(Vector3.zero, 1f);
 
-                GamePlayerCollisionScale(Vector3.one.WithY(0.75f));
+                GamePlayerCollisionScale(Vector3.one.WithY(0.70f));
                 GamePlayerCollisionScaleDelayed(Vector3.one, 1f);                
 
                 currentControllerData.thirdPersonController.Slide(amount);

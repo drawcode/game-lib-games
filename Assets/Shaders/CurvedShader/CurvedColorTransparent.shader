@@ -44,7 +44,7 @@ Shader "Curved/CurvedColorTransparent" {
 				
 			    o.pos = mul (UNITY_MATRIX_P, vPos);
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex); //v.texcoord;
-				UNITY_TRANSFER_FOG(o,o.vertex);
+				UNITY_TRANSFER_FOG(o,o.pos);
 				
 			    return o;
 			}

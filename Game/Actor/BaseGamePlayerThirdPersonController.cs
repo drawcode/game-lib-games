@@ -442,7 +442,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     // SLIDE
 
     public virtual void Slide() {
-        Slide(Vector3.zero.WithZ(-.5f), .5f);
+        Slide(Vector3.zero.WithZ(.15f), .6f);
     }
 
     public virtual void Slide(Vector3 amount, float time = .5f) {

@@ -36,20 +36,20 @@ public class CurvedObject : MonoBehaviour {
             }
         } 
 
-        //UpdateShader();
+        UpdateShader();
     }
 
     void UpdateShader() {
-        //StartCoroutine(UpdateShaderCo());
+        StartCoroutine(UpdateShaderCo());
     }
 
     bool running = false;
 
     IEnumerator UpdateShaderCo() {
-        yield break;
+        //yield break;
 
         if(lastCurveTime + .1f > Time.time) {
-            yield break;
+            //yield break;
         }
 
         lastCurveTime = Time.time;
