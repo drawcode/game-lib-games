@@ -500,30 +500,14 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
         HideObject(obj);
     }
     
-    //public void ShowObject(GameObject obj) {
-    //  if(obj != null) {
-    //      obj.Show();
-    //  }
-    //}
-    
-    //public void HideObject(GameObject obj) {
-    //  if(obj != null) {
-    //      obj.Hide();
-    //  }
-    //} 
-    
     public virtual void ShowBackButtonObject() {
 
-        if (backObject != null) {
+        if (backObject != null) {            
 
             ShowObject(backObject);
 
-            //iTween.FadeTo(backObject, iTween.Hash(
-            //  "easetype", "linear",
-            //  "alpha", 1f,
-            //  "time", .5f,
-            //  "delay", 0f
-            //));
+            UITweenerUtil.MoveTo(backObject,
+                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero);
 
             UITweenerUtil.FadeTo(backObject,
                 UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
@@ -535,28 +519,22 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
             }
         }
     }
-    
+
     public virtual void HideBackButtonObject() {
 
         if (backObject != null) {
 
-            //iTween.FadeTo(backObject, iTween.Hash(
-            //  "easetype", "linear",
-            //  "alpha", 0f,
-            //  "time", .5f,
-            //  "delay", 0f
-            //));
+            UITweenerUtil.MoveTo(backObject,
+                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero.WithX(-3000));
 
             UITweenerUtil.FadeTo(backObject,
                 UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
-            
+
             foreach (Transform t in backObject.transform) {
                 
                 UITweenerUtil.FadeTo(t.gameObject,
-                    UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
+                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
             }
-            
-            HideObjectDelayed(backObject, .3f);
         }
     }
     
