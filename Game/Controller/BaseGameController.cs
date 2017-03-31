@@ -4425,7 +4425,9 @@ public class BaseGameController : GameObjectTimerBehavior {
             && (assetObject.transform.childCount == 0 
                 || assetObject.transform.childCount <= maxCount)) {
 
-            assetObject.DestroyChildren();
+            //if(assetObject.transform.childCount == 0) {
+            //    assetObject.DestroyChildren();
+            //}
 
             string codeAsset = "";
 
