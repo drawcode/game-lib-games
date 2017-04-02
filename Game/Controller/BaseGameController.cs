@@ -740,7 +740,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public static bool isFingerNavigating {
         get {
-            if (GameController.Instance != null) {
+            if(GameController.Instance != null) {
                 return GameController.Instance.updateFingerNavigate;
             }
             return false;
@@ -761,8 +761,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         initCameras();
 
-        foreach (GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
-            if (gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
+        foreach(GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
+            if(gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
                 break;
             }
@@ -847,20 +847,20 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public static bool IsGameplayType(string gameplayTypeTo) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayType(gameplayTypeTo);
         }
         return false;
     }
 
     public static void GameplayTypeSet(string gameplayTypeTo) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.gameplayTypeSet(gameplayTypeTo);
         }
     }
 
     public static string GameplayTypeGet() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.gameplayTypeGet();
         }
         return null;
@@ -872,7 +872,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // RUNNER
 
     public static bool IsGameplayTypeRunner() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayTypeRunner();
         }
         return false;
@@ -885,7 +885,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // DASHER
 
     public static bool IsGameplayTypeDasher() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayTypeDasher();
         }
         return false;
@@ -912,20 +912,20 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public static bool IsGameplayWorldType(string gameplayWorldTypeTo) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayWorldType(gameplayWorldTypeTo);
         }
         return false;
     }
 
     public static void GameplayWorldTypeSet(string gameplayWorldTypeTo) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.gameplayWorldTypeSet(gameplayWorldTypeTo);
         }
     }
 
     public static string GameplayWorldTypeGet() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.gameplayWorldTypeGet();
         }
         return null;
@@ -939,7 +939,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // RUNNER
 
     public static bool IsGameplayWorldTypeDefault() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayWorldTypeDefault();
         }
         return false;
@@ -952,7 +952,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // DASHER
 
     public static bool IsGameplayWorldTypeStationary() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.isGameplayWorldTypeStationary();
         }
         return false;
@@ -977,10 +977,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             int countEnemies = 0;
 
-            foreach (GamePlayerController gamePlayerController in
+            foreach(GamePlayerController gamePlayerController in
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
 
-                if (gamePlayerController.IsAgentControlled) {
+                if(gamePlayerController.IsAgentControlled) {
                     countEnemies += 1;
                 }
             }
@@ -994,10 +994,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             int countEnemies = 0;
 
-            foreach (GamePlayerController gamePlayerController in
+            foreach(GamePlayerController gamePlayerController in
                     levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
 
-                if (gamePlayerController.IsSidekickControlled) {
+                if(gamePlayerController.IsSidekickControlled) {
                     countEnemies += 1;
                 }
             }
@@ -1041,7 +1041,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public static bool shouldRunGame {
         get {
 
-            if (GameDraggableEditor.isEditing) {
+            if(GameDraggableEditor.isEditing) {
                 return false;
             }
 
@@ -1054,7 +1054,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // EVENTS
 
     internal virtual void OnProfileShouldBeSavedEventHandler() {
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             GameState.SaveProfile();
         }
     }
@@ -1066,7 +1066,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void OnEditStateHandler(GameDraggableEditEnum state) {
 
-        if (state == GameDraggableEditEnum.StateEditing) {
+        if(state == GameDraggableEditEnum.StateEditing) {
             ////GameHUD.Instance.ShowCurrentCharacter();
         }
         else {
@@ -1086,19 +1086,19 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
 
-        if (uid == UniqueUtil.Instance.currentUniqueId
+        if(uid == UniqueUtil.Instance.currentUniqueId
             || string.IsNullOrEmpty(uid)) {
             return;
         }
 
         GamePlayerController[] playerControllers = UnityObjectUtil.FindObjects<GamePlayerController>();
 
-        if (playerControllers.Length > 0) {
+        if(playerControllers.Length > 0) {
 
             bool found = false;
 
-            foreach (GamePlayerController gamePlayerController in playerControllers) {
-                if (gamePlayerController.uniqueId == uid) {
+            foreach(GamePlayerController gamePlayerController in playerControllers) {
+                if(gamePlayerController.uniqueId == uid) {
                     // already added
                     gamePlayerController.uniqueId = uid;
                     gamePlayerController.UpdateNetworkContainer(uid);
@@ -1109,7 +1109,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
 
-            if (!found) {
+            if(!found) {
                 // create
                 // Prefabs/Characters/GamePlayerObject
 
@@ -1118,7 +1118,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     "GamePlayerObject");
 
                 UnityEngine.Object prefabGameplayer = Resources.Load(pathPlayer);
-                if (prefabGameplayer != null) {
+                if(prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
                     GamePlayerController playerControllerOther =
@@ -1160,9 +1160,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual GamePlayerController getGamePlayerController(string uid) {
-        foreach (GamePlayerController gamePlayerController
+        foreach(GamePlayerController gamePlayerController
                 in UnityObjectUtil.FindObjects<GamePlayerController>()) {
-            if (gamePlayerController.uniqueId == uid) {
+            if(gamePlayerController.uniqueId == uid) {
                 return gamePlayerController;
             }
         }
@@ -1170,9 +1170,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual GamePlayerController getGamePlayerController(GameObject go) {
-        if (go != null) {
+        if(go != null) {
             GamePlayerController gamePlayerController = go.GetComponentInChildren<GamePlayerController>();
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
                 return gamePlayerController;
             }
         }
@@ -1180,19 +1180,19 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual GamePlayerController getGamePlayerControllerParent(GameObject go) {
-        if (go != null) {
+        if(go != null) {
             GamePlayerCollision gamePlayerCollision = go.Get<GamePlayerCollision>();
 
-            if (gamePlayerCollision == null) {
+            if(gamePlayerCollision == null) {
                 return null;
             }
 
-            if (gamePlayerCollision.gamePlayerController == null) {
+            if(gamePlayerCollision.gamePlayerController == null) {
                 return null;
             }
 
             GamePlayerController gamePlayerController = gamePlayerCollision.gamePlayerController;
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
                 return gamePlayerController;
             }
         }
@@ -1203,23 +1203,23 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GamePlayerController gamePlayerController = null;
 
-        if (go == null) {
+        if(go == null) {
             return gamePlayerController;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        if(go.name.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
 
-                if (!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
                 }
             }
         }
 
-        if (gamePlayerController == null
+        if(gamePlayerController == null
             && (go.name.Contains("Game")
             || go.name.Contains("GamePlayerCollider"))) {
             //&& (go.name.Contains("Helmet")
@@ -1229,11 +1229,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
 
                 //LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
-                if (!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return gamePlayerController;
                 }
             }
@@ -1246,23 +1246,23 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GamePlayerController gamePlayerController = null;
 
-        if (go == null) {
+        if(go == null) {
             return false;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        if(go.name.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
 
-                if (!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return true;
                 }
             }
         }
 
-        if (gamePlayerController == null
+        if(gamePlayerController == null
             && (go.name.Contains("Game")
             || go.name.Contains("Helmet")
             || go.name.Contains("Facemask"))) {
@@ -1271,11 +1271,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
-            if (gamePlayerController != null) {
+            if(gamePlayerController != null) {
 
                 //LogUtil.Log("GameObjectChoice:gamePlayerController:" + gamePlayerController.name);
 
-                if (!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
+                if(!onlyPlayerControlled || gamePlayerController.IsPlayerControlled) {
                     return true;
                 }
             }
@@ -1289,7 +1289,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // SCORING
 
     public virtual void gamePlayerScores(double val) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.ProgressScores(val);
         }
     }
@@ -1299,25 +1299,25 @@ public class BaseGameController : GameObjectTimerBehavior {
     // ATTACK
 
     public virtual void gamePlayerAttack() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendAttack();
         }
     }
 
     public virtual void gamePlayerAttackAlt() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendAttackAlt();
         }
     }
 
     public virtual void gamePlayerAttackRight() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendAttackRight();
         }
     }
 
     public virtual void gamePlayerAttackLeft() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendAttackLeft();
         }
     }
@@ -1327,25 +1327,25 @@ public class BaseGameController : GameObjectTimerBehavior {
     // DEFEND
 
     public virtual void gamePlayerDefend() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendDefend();
         }
     }
 
     public virtual void gamePlayerDefendAlt() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendDefendAlt();
         }
     }
 
     public virtual void gamePlayerDefendRight() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendDefendRight();
         }
     }
 
     public virtual void gamePlayerDefendLeft() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.SendDefendLeft();
         }
     }
@@ -1355,7 +1355,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // JUMP
 
     public virtual void gamePlayerJump() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputJump();
         }
     }
@@ -1365,7 +1365,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // MOVE
 
     public virtual void gamePlayerMove(Vector3 amount) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputMove(amount);
         }
     }
@@ -1375,7 +1375,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // STRAFE
 
     public virtual void gamePlayerStrafe(Vector3 amount) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputStrafe(amount);
         }
     }
@@ -1385,7 +1385,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // STRAFE
 
     public virtual void gamePlayerMove(Vector3 amount, Vector3 rangeStart, Vector3 rangeEnd, bool append = true) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputMove(amount, rangeStart, rangeEnd, append);
         }
     }
@@ -1396,7 +1396,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // STRAFE
 
     public virtual void gamePlayerSlide(Vector3 amount) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputSlide(amount);
         }
     }
@@ -1406,7 +1406,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // SPEED
 
     public virtual void gamePlayerSetSpeed(float amount) {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.GamePlayerMoveSpeedSet(amount);
         }
     }
@@ -1416,7 +1416,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // USE
 
     public virtual void gamePlayerUse() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputUse();
         }
     }
@@ -1426,7 +1426,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // MOUNT
 
     public virtual void gamePlayerMount() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputMount();
         }
     }
@@ -1436,7 +1436,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // SKILL
 
     public virtual void gamePlayerSkill() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputSkill();
         }
     }
@@ -1446,7 +1446,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // MAGIC
 
     public virtual void gamePlayerMagic() {
-        if (currentPlayerController != null) {
+        if(currentPlayerController != null) {
             currentPlayerController.InputMagic();
         }
     }
@@ -1454,7 +1454,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // ----------------------------------------------------------------------
 
     // ASSET CONTEXT LOADING
-    
+
     public virtual string gameItemCodeContextGet(string codeItem) {
 
         return codeItem;
@@ -1465,21 +1465,21 @@ public class BaseGameController : GameObjectTimerBehavior {
     // ZONES
 
     public virtual GameZone getGameZone(GameObject go) {
-        if (go != null) {
+        if(go != null) {
             return go.GetComponent<GameZone>();
         }
         return null;
     }
 
     public virtual GameZoneGoal getGoalZone(GameObject go) {
-        if (go != null) {
+        if(go != null) {
             return go.GetComponent<GameZoneGoal>();
         }
         return null;
     }
 
     public virtual GameZoneBad getBadZone(GameObject go) {
-        if (go != null) {
+        if(go != null) {
             return go.GetComponent<GameZoneBad>();
         }
         return null;
@@ -1487,18 +1487,18 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void changeGameZone(string zone) {
 
-        if (gameZoneEndLeft == null) {
+        if(gameZoneEndLeft == null) {
             Transform gameZoneEndLeftTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneLeft");
-            if (gameZoneEndLeftTransform != null) {
+            if(gameZoneEndLeftTransform != null) {
                 gameZoneEndLeft = gameZoneEndLeftTransform.gameObject;
             }
         }
 
-        if (gameZoneEndRight == null) {
+        if(gameZoneEndRight == null) {
             Transform gameZoneEndRightTransform
                 = levelZonesContainerObject.transform.FindChild("GameGoalZoneRight");
-            if (gameZoneEndRightTransform != null) {
+            if(gameZoneEndRightTransform != null) {
                 gameZoneEndRight = gameZoneEndRightTransform.gameObject;
             }
         }
@@ -1511,7 +1511,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // BOUNDS
 
     public virtual void initGameWorldBounds() {
-        if (gameBounds == null) {
+        if(gameBounds == null) {
             gameBounds = gameObject.AddComponent<GameBounds>();
             gameBounds.boundaryTopLeft = boundaryTopLeft;
             gameBounds.boundaryTopRight = boundaryTopRight;
@@ -1548,10 +1548,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void loadLevelActions() {
-        foreach (GameZoneActionAsset gameZoneActionAsset in
+        foreach(GameZoneActionAsset gameZoneActionAsset in
                 levelItemsContainerObject.GetList<GameZoneActionAsset>()) {
 
-            if (gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
+            if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
                 // Make it a type of needed action or none. 
                 // Update placeholder actions to actual actions of default
 
@@ -1690,17 +1690,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Load level items by game type....
 
-        if (AppModes.Instance.isAppModeGameChallenge) {
+        if(AppModes.Instance.isAppModeGameChallenge) {
 
             LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameChallenge:"
                 + AppModes.Instance.isAppModeGameChallenge);
 
-            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
-                if (AppContentStates.Instance.isAppContentStateGameChallenge) {
+                if(AppContentStates.Instance.isAppContentStateGameChallenge) {
 
                     LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameChallenge:"
                         + AppContentStates.Instance.isAppContentStateGameChallenge);
@@ -1711,24 +1711,24 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
         }
-        else if (AppModes.Instance.isAppModeGameTraining) {
+        else if(AppModes.Instance.isAppModeGameTraining) {
             LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameTraining:"
                 + AppModes.Instance.isAppModeGameTraining);
 
-            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
             }
-            else if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
+            else if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameChoice:"
                     + AppModeTypes.Instance.isAppModeTypeGameChoice);
 
                 // LOAD CHOICE GAME LEVEL ITEMS
 
-                if (AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
+                if(AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz) {
 
                     LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameTrainingChoiceQuiz:"
                         + AppContentStates.Instance.isAppContentStateGameTrainingChoiceQuiz);
@@ -1739,19 +1739,19 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
 
             }
-            else if (AppModeTypes.Instance.isAppModeTypeGameCollection) {
+            else if(AppModeTypes.Instance.isAppModeTypeGameCollection) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameCollection:"
                     + AppModeTypes.Instance.isAppModeTypeGameCollection);
 
                 // LOAD COLLECTION GAME LEVEL ITEMS
             }
-            else if (AppModeTypes.Instance.isAppModeTypeGameContent) {
+            else if(AppModeTypes.Instance.isAppModeTypeGameContent) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameContent:"
                     + AppModeTypes.Instance.isAppModeTypeGameContent);
             }
-            else if (AppModeTypes.Instance.isAppModeTypeGameTips) {
+            else if(AppModeTypes.Instance.isAppModeTypeGameTips) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameTips:"
                     + AppModeTypes.Instance.isAppModeTypeGameTips);
@@ -1762,12 +1762,12 @@ public class BaseGameController : GameObjectTimerBehavior {
             LogUtil.Log("loadLevelItems: AppModes.Instance.isAppModeGameArcade:"
                 + AppModes.Instance.isAppModeGameArcade);
 
-            if (AppModeTypes.Instance.isAppModeTypeGameDefault) {
+            if(AppModeTypes.Instance.isAppModeTypeGameDefault) {
 
                 LogUtil.Log("loadLevelItems: AppModeTypes.Instance.isAppModeTypeGameDefault:"
                     + AppModeTypes.Instance.isAppModeTypeGameDefault);
 
-                if (AppContentStates.Instance.isAppContentStateGameArcade) {
+                if(AppContentStates.Instance.isAppContentStateGameArcade) {
 
                     LogUtil.Log("loadLevelItems: AppModes.Instance.isAppContentStateGameArcade:"
                         + AppContentStates.Instance.isAppContentStateGameArcade);
@@ -1780,7 +1780,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //}
         }
 
-        if (!updated) {
+        if(!updated) {
             GameLevelItems.Current.level_items
                 = getLevelRandomizedGrid();
         }
@@ -1793,7 +1793,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void playGame() {
 
-        if (!levelInitializing) {
+        if(!levelInitializing) {
 
             //AdNetworks.ShowFullscreenAd();
 
@@ -1816,7 +1816,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //resetRuntimeData();
 
-        if (currentGamePlayerController != null) {
+        if(currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
 
@@ -1846,21 +1846,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
 
-        yield return new WaitForEndOfFrame();     
+        yield return new WaitForEndOfFrame();
 
         int minAssetLimit = (int)assetDataItem.min;
         int maxAssetLimit = (int)assetDataItem.max;
 
         GamePreset assetPreset = GamePresets.Instance.GetById(assetDataItem.code);
 
-        if (assetPreset != null) {
+        if(assetPreset != null) {
 
-            foreach (GamePresetItem presetItem in assetPreset.data.items) {
+            foreach(GamePresetItem presetItem in assetPreset.data.items) {
 
                 //Debug.Log("preloadLevelAssetPreset: " + presetItem.code);
 
-                for (int i = 0; i < 5; i++) {
-                    
+                for(int i = 0; i < 5; i++) {
+
                     yield return new WaitForEndOfFrame();
 
                     GameObject go = AppContentAssets.LoadAssetLevelAssets(presetItem.code);
@@ -1880,7 +1880,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     internal virtual IEnumerator initLevelFinishCo(string levelCode) {
-        if (UIPanelOverlayPrepare.Instance != null) {
+        if(UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
 
@@ -1888,7 +1888,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         yield return new WaitForSeconds(1f);
 
-        if (currentGamePlayerController != null) {
+        if(currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeOut();
         }
 
@@ -1971,7 +1971,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameProfileCharacterItem profileCharacterItem =
             GameProfileCharacters.Current.GetCharacter(characterProfileCode);
 
-        if (profileCharacterItem == null) {
+        if(profileCharacterItem == null) {
             return;
         }
 
@@ -1979,7 +1979,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         string characterCode = ProfileConfigs.defaultGameCharacterCode;
 
-        if (!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
+        if(!string.IsNullOrEmpty(profileCharacterItem.characterCode)) {
             characterCode = profileCharacterItem.characterCode;
         }
 
@@ -2075,8 +2075,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual Vector3 getCurrentPlayerPosition() {
         Vector3 currentPlayerPosition = Vector3.zero;
-        if (currentPlayerController != null) {
-            if (currentPlayerController.gameObject != null) {
+        if(currentPlayerController != null) {
+            if(currentPlayerController.gameObject != null) {
                 currentPlayerPosition = currentPlayerController.gameObject.transform.position;
             }
         }
@@ -2101,16 +2101,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         //if (rect.Contains())
         //    print("Inside");
 
-        if (playerBottomLeft < boundaryBottomLeftPosition.x) {
+        if(playerBottomLeft < boundaryBottomLeftPosition.x) {
             playerBottomLeft = boundaryBottomLeftPosition.x;
         }
-        else if (playerBottomRight > boundaryBottomRightPosition.x) {
+        else if(playerBottomRight > boundaryBottomRightPosition.x) {
             playerBottomRight = boundaryBottomRightPosition.x;
         }
-        else if (playerTopRight < boundaryTopRightPosition.z) {
+        else if(playerTopRight < boundaryTopRightPosition.z) {
             playerTopRight = boundaryTopRightPosition.z;
         }
-        else if (playerTopLeft < boundaryTopLeftPosition.z) {
+        else if(playerTopLeft < boundaryTopLeftPosition.z) {
             playerTopLeft = boundaryTopLeftPosition.z;
         }
 
@@ -2133,7 +2133,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameCharacter gameCharacter = GameCharacters.Instance.GetById(data.code);
 
-        if (gameCharacter == null) {
+        if(gameCharacter == null) {
             //loadingCharacterContainer = false;
             yield break;
         }
@@ -2151,16 +2151,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         //Debug.Log("loadActorCo:" + " modelPath:" + modelPath);
         //Debug.Log("loadActorCo:" + " gameCharacter:" + gameCharacter.code);
 
-        if (data.data_type == GameSpawnType.zonedType) {
+        if(data.data_type == GameSpawnType.zonedType) {
             // get left/right spawn location
             string leftMiddle = "left-middle";
             string rightMiddle = "right-middle";
             string spawnCode = rightMiddle;
 
-            if (currentGameZone == GameZoneKeys.goal_right) {
+            if(currentGameZone == GameZoneKeys.goal_right) {
                 spawnCode = rightMiddle;
             }
-            else if (currentGameZone == GameZoneKeys.goal_left) {
+            else if(currentGameZone == GameZoneKeys.goal_left) {
                 spawnCode = leftMiddle;
             }
 
@@ -2168,45 +2168,45 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             GamePlayerSpawn spawn = GameAIController.GetSpawn(spawnCode);
 
-            if (spawn != null) {
+            if(spawn != null) {
                 spawnLocation = spawn.gameObject.transform.position;
             }
             else {
 
                 // get random
-                if (currentGameZone == GameZoneKeys.goal_right) {
+                if(currentGameZone == GameZoneKeys.goal_right) {
                     spawnLocation = Vector3.zero.WithX(80f).WithZ(currentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
-                else if (currentGameZone == GameZoneKeys.goal_left) {
+                else if(currentGameZone == GameZoneKeys.goal_left) {
                     spawnLocation = Vector3.zero.WithX(-80f).WithZ(currentPlayerPosition.z);// UnityEngine.Random.Range(-20, 20));
                 }
             }
 
-            if (spawnLocation == Vector3.zero) {
+            if(spawnLocation == Vector3.zero) {
                 spawnLocation = getRandomSpawnLocation();
             }
         }
-        else if (data.data_type == GameSpawnType.randomType) {
+        else if(data.data_type == GameSpawnType.randomType) {
             // get random
             spawnLocation = getRandomSpawnLocation();
         }
-        else if (data.data_type == GameSpawnType.explicitType) {
+        else if(data.data_type == GameSpawnType.explicitType) {
             // get random
             spawnLocation = data.position_data.GetVector3();
         }
-        else if (data.data_type == GameSpawnType.pointsType) {
+        else if(data.data_type == GameSpawnType.pointsType) {
             // FIND spawn location
         }
 
-        if (spawnLocation == Vector3.zero) {
+        if(spawnLocation == Vector3.zero) {
             spawnLocation = getRandomSpawnLocation();
         }
 
-        if (data.data_type == GameSpawnType.centeredType) {
+        if(data.data_type == GameSpawnType.centeredType) {
             spawnLocation = Vector3.zero;
         }
 
-        if (prefabObject == null) {
+        if(prefabObject == null) {
             //loadingCharacterContainer = false;
             yield break;
         }
@@ -2216,7 +2216,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //Debug.Log("loadActorCo:" + " characterObject:" + characterObject.name);
 
-        if (characterObject != null) {
+        if(characterObject != null) {
 
             characterObject.transform.parent = levelActorsContainerObject.transform;
 
@@ -2227,9 +2227,9 @@ public class BaseGameController : GameObjectTimerBehavior {
             GamePlayerController characterGamePlayerController
                 = characterObject.Get<GamePlayerController>();
 
-            if (characterGamePlayerController != null) {
+            if(characterGamePlayerController != null) {
 
-                if (data.display_type == GameActorType.player) {
+                if(data.display_type == GameActorType.player) {
                     characterGamePlayerController.Init(
                         GamePlayerControllerState.ControllerPlayer,
                         GamePlayerContextState.ContextInput,
@@ -2237,7 +2237,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                     characterGamePlayerController.attackRange = 12f;
                 }
-                else if (data.display_type == GameActorType.sidekick) {
+                else if(data.display_type == GameActorType.sidekick) {
                     characterGamePlayerController.Init(
                         GamePlayerControllerState.ControllerSidekick,
                         GamePlayerContextState.ContextFollowAgent,
@@ -2270,13 +2270,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual IEnumerator loadItemCo(GameItemData data) {
 
-        if (data == null) {
+        if(data == null) {
             yield break;
         }
 
         GameItem item = GameItems.Instance.GetById(data.code);
 
-        if (item == null) {
+        if(item == null) {
             //Debug.Log("loadItemCo:" + "Item not found" + " code:" + data.code);
             yield break;
         }
@@ -2290,16 +2290,16 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //Debug.Log("loadItemCo:" + " data.json:" + data.ToJson());
 
-        if (data.data_type == GameSpawnType.zonedType) {
+        if(data.data_type == GameSpawnType.zonedType) {
 
             // get left/right spawn location
             //string leftMiddle = "left-middle";
             //string rightMiddle = "right-middle";
             //string spawnCode = rightMiddle;
-            if (currentGameZone == GameZoneKeys.goal_right) {
+            if(currentGameZone == GameZoneKeys.goal_right) {
                 //spawnCode = rightMiddle;
             }
-            else if (currentGameZone == GameZoneKeys.goal_left) {
+            else if(currentGameZone == GameZoneKeys.goal_left) {
                 //spawnCode = leftMiddle;
             }
 
@@ -2312,7 +2312,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //else {
 
             // get random
-            if (currentGameZone == GameZoneKeys.goal_right) {
+            if(currentGameZone == GameZoneKeys.goal_right) {
 
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
@@ -2322,7 +2322,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                             boundaryBottomLeft.transform.position.z,
                             boundaryTopLeft.transform.position.z));
             }
-            else if (currentGameZone == GameZoneKeys.goal_left) {
+            else if(currentGameZone == GameZoneKeys.goal_left) {
 
                 spawnLocation = Vector3.zero
                     .WithX(UnityEngine.Random.Range(
@@ -2335,14 +2335,14 @@ public class BaseGameController : GameObjectTimerBehavior {
             //}
 
         }
-        else if (data.data_type == GameSpawnType.explicitType) {
+        else if(data.data_type == GameSpawnType.explicitType) {
             // get random
             spawnLocation = data.position_data.GetVector3();
         }
-        else if (data.data_type == GameSpawnType.pointsType) {
+        else if(data.data_type == GameSpawnType.pointsType) {
             // FIND spawn location
         }
-        else if (data.data_type == GameSpawnType.centeredType) {
+        else if(data.data_type == GameSpawnType.centeredType) {
             spawnLocation = Vector3.zero;
         }
         else {//if (data.data_type == GameSpawnType.randomType) {
@@ -2350,11 +2350,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             spawnLocation = getRandomSpawnLocation().WithY(50f);
         }
 
-        if (spawnLocation == Vector3.zero) {
+        if(spawnLocation == Vector3.zero) {
             spawnLocation = getRandomSpawnLocation().WithY(50f);
         }
 
-        if (prefabObject == null) {
+        if(prefabObject == null) {
             yield break;
         }
 
@@ -2362,7 +2362,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             prefabObject, spawnLocation, Quaternion.identity,
             GameConfigs.usePooledItems) as GameObject;
 
-        if (spawnObj != null && levelActorsContainerObject != null) {
+        if(spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
             GamePlayerIndicator.AddIndicator(spawnObj, item.code);
         }
@@ -2387,7 +2387,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void checkQueueGameObjectTypeData() {
 
-        if (queueGameObjectItems == null) {
+        if(queueGameObjectItems == null) {
             queueGameObjectItems = new List<GameObjectQueueItem>();
         }
     }
@@ -2408,11 +2408,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void processQueueGameObjectTypeData() {
 
-        if (queueGameObjectItems != null) {
+        if(queueGameObjectItems != null) {
 
-            foreach (GameObjectQueueItem queueItem in queueGameObjectItems) {
+            foreach(GameObjectQueueItem queueItem in queueGameObjectItems) {
 
-                if (queueItem.type == BaseDataObjectKeys.character) {
+                if(queueItem.type == BaseDataObjectKeys.character) {
 
                     loadActor(
                     queueItem.code,
@@ -2434,13 +2434,13 @@ public class BaseGameController : GameObjectTimerBehavior {
     // RESETS
 
     public virtual void resetLevelActors() {
-        if (levelActorsContainerObject != null) {
+        if(levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
     }
 
     public virtual void resetCurrentGamePlayer() {
-        if (currentGamePlayerController != null) {
+        if(currentGamePlayerController != null) {
             currentGamePlayerController.Reset();
         }
     }
@@ -2476,12 +2476,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void resetGameplayTypes() {
-        
+
         handleGametypeInit();
 
-        if (isGameplayWorldTypeStationary()) {
-            
-            if (containerInfinity != null) {
+        if(isGameplayWorldTypeStationary()) {
+
+            if(containerInfinity != null) {
                 containerInfinity.Reset();
             }
         }
@@ -2491,8 +2491,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     // CHARACTER TYPES
 
     public virtual void loadCharacterTypes() {
-        foreach (GameCharacterType type in GameCharacterTypes.Instance.GetAll()) {
-            if (!gameCharacterTypes.Contains(type.code)) {
+        foreach(GameCharacterType type in GameCharacterTypes.Instance.GetAll()) {
+            if(!gameCharacterTypes.Contains(type.code)) {
                 gameCharacterTypes.Add(type.code);
             }
         }
@@ -2510,17 +2510,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void cycleCharacterTypes(int updatedIndex) {
 
-        if (updatedIndex > gameCharacterTypes.Count - 1) {
+        if(updatedIndex > gameCharacterTypes.Count - 1) {
             currentCharacterTypeIndex = 0;
         }
-        else if (updatedIndex < 0) {
+        else if(updatedIndex < 0) {
             currentCharacterTypeIndex = gameCharacterTypes.Count - 1;
         }
         else {
             currentCharacterTypeIndex = updatedIndex;
         }
 
-        if (currentGamePlayerController != null) {
+        if(currentGamePlayerController != null) {
             currentGamePlayerController.LoadCharacter(gameCharacterTypes[currentCharacterTypeIndex]);
         }
     }
@@ -2586,7 +2586,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void togglePauseGame() {
-        if (gameState == GameStateGlobal.GamePause) {
+        if(gameState == GameStateGlobal.GamePause) {
             resumeGame();
         }
         else {
@@ -2622,27 +2622,27 @@ public class BaseGameController : GameObjectTimerBehavior {
         bool runAI = run;
         bool runItem = run;
 
-        if (run) {
+        if(run) {
 
             List<GameDataDirector> directorsLevels = GameLevels.Current.data.directors;
             List<GameDataDirector> directors = GameWorlds.Current.data.directors;
 
-            if (directors == null) {
+            if(directors == null) {
                 directors = new List<GameDataDirector>();
             }
 
-            if (directorsLevels != null && directors.Count > 0) {
+            if(directorsLevels != null && directors.Count > 0) {
                 directors.AddRange(directorsLevels);
             }
 
-            if (directors != null) {
-                foreach (GameDataDirector director in directors) {
-                    if (director.code == GameDataDirectorType.enemy
+            if(directors != null) {
+                foreach(GameDataDirector director in directors) {
+                    if(director.code == GameDataDirectorType.enemy
                         || director.code == GameDataDirectorType.sidekick) {
                         runAI = director.run;
                         GameAIController.UpdateDirector(director);
                     }
-                    else if (director.code == GameDataDirectorType.item
+                    else if(director.code == GameDataDirectorType.item
                         || director.code == GameDataDirectorType.weapon) {
                         runItem = director.run;
                         GameItemController.UpdateDirector(director);
@@ -2757,7 +2757,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Show runtime content display data
         //GameRunningStatePause();
 
-        if (contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
+        if(contentDisplayCode == GameContentDisplayTypes.gamePlayerOutOfBounds) {
 
             gamePlayerOutOfBoundsDelayed(3f);
 
@@ -2766,13 +2766,13 @@ public class BaseGameController : GameObjectTimerBehavior {
             //UIPanelDialogDisplay.SetDescription("RUN, BUT STAY IN BOUNDS...");
             UIPanelDialogDisplay.ShowDefault();
         }
-        else if (contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
+        else if(contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
             handleContentDialogEnergy();
         }
-        else if (contentDisplayCode == GameContentDisplayTypes.gameHealth) {
+        else if(contentDisplayCode == GameContentDisplayTypes.gameHealth) {
             handleContentDialogHealth();
         }
-        else if (contentDisplayCode == GameContentDisplayTypes.gameXP) {
+        else if(contentDisplayCode == GameContentDisplayTypes.gameXP) {
             handleContentDialogXP();
         }
         else {
@@ -2786,21 +2786,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void handleContentTutorial() {
 
-        if (contentDisplayCode == GameContentDisplayTypes.gameTutorial) {
+        if(contentDisplayCode == GameContentDisplayTypes.gameTutorial) {
             //UIPanelDialogBackground.ShowDefault();
         }
     }
 
     public virtual void handleContentTips() {
 
-        if (contentDisplayCode == GameContentDisplayTypes.gameTips) {
+        if(contentDisplayCode == GameContentDisplayTypes.gameTips) {
             //UIPanelDialogBackground.ShowDefault();
         }
     }
 
     public virtual void handleContentOverview() {
 
-        if (contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
+        if(contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
             UIPanelOverviewMode.ShowDefault();
         }
     }
@@ -2856,11 +2856,11 @@ public class BaseGameController : GameObjectTimerBehavior {
         //GameUIController.HideUI(true);
         GameUIController.HideHUD();
 
-        if (allowedEditing) {
+        if(allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
 
-        if (startGame) {
+        if(startGame) {
             GameController.StartGame(GameLevels.Current.code);
         }
     }
@@ -2876,7 +2876,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameUIController.HideUI(true);
         GameUIController.ShowHUD();
 
-        if (allowedEditing) {
+        if(allowedEditing) {
             GameDraggableEditor.ShowUIPanelEditButton();
         }
 
@@ -2977,38 +2977,38 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
 
-        if (gameState == GameStateGlobal.GameStarted) {
+        if(gameState == GameStateGlobal.GameStarted) {
             onGameStarted();
         }
-        else if (gameState == GameStateGlobal.GamePause) {
+        else if(gameState == GameStateGlobal.GamePause) {
             onGamePause();
         }
-        else if (gameState == GameStateGlobal.GameResume) {
+        else if(gameState == GameStateGlobal.GameResume) {
             onGameResume();
         }
-        else if (gameState == GameStateGlobal.GameQuit) {
+        else if(gameState == GameStateGlobal.GameQuit) {
             onGameQuit();
         }
-        else if (gameState == GameStateGlobal.GameNotStarted) {
+        else if(gameState == GameStateGlobal.GameNotStarted) {
             onGameNotStarted();
         }
-        else if (gameState == GameStateGlobal.GameResults) {
+        else if(gameState == GameStateGlobal.GameResults) {
             onGameResults();
         }
-        else if (gameState == GameStateGlobal.GameContentDisplay) {
+        else if(gameState == GameStateGlobal.GameContentDisplay) {
             onGameContentDisplay();
         }
-        else if (gameState == GameStateGlobal.GameOverlay) {
+        else if(gameState == GameStateGlobal.GameOverlay) {
             onGameOverlay();
         }
-        else if (gameState == GameStateGlobal.GamePrepare) {
+        else if(gameState == GameStateGlobal.GamePrepare) {
             onGamePrepare(true);
         }
     }
 
     public bool isGameRunning {
         get {
-            if (gameState == GameStateGlobal.GameStarted) {
+            if(gameState == GameStateGlobal.GameStarted) {
                 return true;
             }
             return false;
@@ -3021,49 +3021,49 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void initCameras() {
 
-        if (camerasAlwaysOn == null) {
+        if(camerasAlwaysOn == null) {
             camerasAlwaysOn = new List<Camera>();
 
-            if (cameraContainersAlwaysOn != null) {
-                foreach (Camera cam
+            if(cameraContainersAlwaysOn != null) {
+                foreach(Camera cam
                          in cameraContainersAlwaysOn.GetComponentsInChildren<Camera>()) {
-                    if (!camerasAlwaysOn.Contains(cam)) {
+                    if(!camerasAlwaysOn.Contains(cam)) {
                         camerasAlwaysOn.Add(cam);
                     }
                 }
             }
         }
 
-        if (camerasGame == null) {
+        if(camerasGame == null) {
             camerasGame = new List<Camera>();
-            if (camerasContainerGame != null) {
-                foreach (Camera cam
+            if(camerasContainerGame != null) {
+                foreach(Camera cam
                          in camerasContainerGame.GetComponentsInChildren<Camera>()) {
-                    if (!camerasGame.Contains(cam)) {
+                    if(!camerasGame.Contains(cam)) {
                         camerasGame.Add(cam);
                     }
                 }
             }
         }
 
-        if (camerasUI == null) {
+        if(camerasUI == null) {
             camerasUI = new List<Camera>();
-            if (cameraContainersUI != null) {
-                foreach (Camera cam
+            if(cameraContainersUI != null) {
+                foreach(Camera cam
                          in cameraContainersUI.GetComponentsInChildren<Camera>()) {
-                    if (!camerasUI.Contains(cam)) {
+                    if(!camerasUI.Contains(cam)) {
                         camerasUI.Add(cam);
                     }
                 }
             }
         }
 
-        if (camerasBackground == null) {
+        if(camerasBackground == null) {
             camerasBackground = new List<Camera>();
-            if (cameraContainersBackground != null) {
-                foreach (Camera cam
+            if(cameraContainersBackground != null) {
+                foreach(Camera cam
                          in cameraContainersBackground.GetComponentsInChildren<Camera>()) {
-                    if (!camerasBackground.Contains(cam)) {
+                    if(!camerasBackground.Contains(cam)) {
                         camerasBackground.Add(cam);
                     }
                 }
@@ -3096,11 +3096,14 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual IEnumerator showCamerasCo(List<Camera> cams) {
 
-        foreach (Camera cam in cams) {
-            if (cam != null) {
-                if (cam.gameObject != null) {
+        foreach(Camera cam in cams) {
+            if(cam != null) {
+                if(cam.gameObject != null) {
                     cam.gameObject.Show();
-                    UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
+
+                    //UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
+
+                    TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
                 }
             }
         }
@@ -3108,19 +3111,21 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
-        foreach (Camera cam in cams) {
-            if (cam != null) {
-                if (cam.gameObject != null) {
-                    UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
+        foreach(Camera cam in cams) {
+            if(cam != null) {
+                if(cam.gameObject != null) {
+                    //UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
+
+                    TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
                 }
             }
         }
 
         yield return new WaitForSeconds(1f);
 
-        foreach (Camera cam in cams) {
-            if (cam != null) {
-                if (cam.gameObject != null) {
+        foreach(Camera cam in cams) {
+            if(cam != null) {
+                if(cam.gameObject != null) {
                     cam.gameObject.Hide();
                 }
             }
@@ -3155,7 +3160,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void changeGameCameraMode(GameCameraView cameraViewTo) {
-        if (cameraViewTo == cameraView) {
+        if(cameraViewTo == cameraView) {
             return;
         }
         else {
@@ -3164,10 +3169,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         LogUtil.Log("ChangeGameCameraMode:cameraViewTo: " + cameraViewTo);
 
-        if (cameraGame != null
+        if(cameraGame != null
             && cameraGameGround != null) {
 
-            if (cameraView == GameCameraView.ViewSide) {
+            if(cameraView == GameCameraView.ViewSide) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(30);
@@ -3178,7 +3183,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if (cameraView == GameCameraView.ViewSideTop) {
+            else if(cameraView == GameCameraView.ViewSideTop) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80);
@@ -3189,7 +3194,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if (cameraView == GameCameraView.ViewBackTilt) {
+            else if(cameraView == GameCameraView.ViewBackTilt) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(45).WithY(90);
@@ -3200,7 +3205,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 changeGameCameraProperties(
                     cameraGameGround.gameObject, positionTo, rotationTo, 2f);
             }
-            else if (cameraView == GameCameraView.ViewBackTop) {
+            else if(cameraView == GameCameraView.ViewBackTop) {
 
                 Vector3 positionTo = Vector3.zero;
                 Vector3 rotationTo = Vector3.zero.WithX(80).WithY(90);
@@ -3218,23 +3223,26 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameObject cameraObject, Vector3 positionTo, Vector3 rotationTo, float timeDelay) {
         //cameraObject.transform.rotation = Quaternion.Euler(rotationTo);
         //iTween.RotateTo(cameraObject, rotationTo, timeDelay);
-        UITweenerUtil.RotateTo(cameraObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, timeDelay, rotationTo);
+
+        TweenUtil.RotateToObject(cameraObject, rotationTo, .5f, timeDelay);
+
+        //UITweenerUtil.RotateTo(cameraObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, timeDelay, rotationTo);
     }
 
     public virtual void cycleGameCameraMode() {
 
         LogUtil.Log("CycleGameCameraMode: " + cameraView);
 
-        if (cameraView == GameCameraView.ViewSide) {
+        if(cameraView == GameCameraView.ViewSide) {
             changeGameCameraMode(GameCameraView.ViewSideTop);
         }
-        else if (cameraView == GameCameraView.ViewSideTop) {
+        else if(cameraView == GameCameraView.ViewSideTop) {
             changeGameCameraMode(GameCameraView.ViewBackTilt);
         }
-        else if (cameraView == GameCameraView.ViewBackTilt) {
+        else if(cameraView == GameCameraView.ViewBackTilt) {
             changeGameCameraMode(GameCameraView.ViewBackTop);
         }
-        else if (cameraView == GameCameraView.ViewBackTop) {
+        else if(cameraView == GameCameraView.ViewBackTop) {
             changeGameCameraMode(GameCameraView.ViewSide);
         }
     }
@@ -3245,11 +3253,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void gamePlayerOutOfBounds() {
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
-        if (AppModes.Instance.isAppModeGameTraining) {
+        if(AppModes.Instance.isAppModeGameTraining) {
             return;
         }
 
@@ -3284,10 +3292,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     // GAME PLAYER GOAL ZONE
 
     public virtual void goalZoneChange() {
-        if (currentGameZone == GameZoneKeys.goal_left) {
+        if(currentGameZone == GameZoneKeys.goal_left) {
             goalZoneChange(GameZoneKeys.goal_right);
         }
-        else if (currentGameZone == GameZoneKeys.goal_right) {
+        else if(currentGameZone == GameZoneKeys.goal_right) {
             goalZoneChange(GameZoneKeys.goal_left);
         }
     }
@@ -3297,10 +3305,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         //    return;
         //}
 
-        if (zone == GameZoneKeys.goal_left) {
+        if(zone == GameZoneKeys.goal_left) {
             currentGameZone = zone;
         }
-        else if (zone == GameZoneKeys.goal_right) {
+        else if(zone == GameZoneKeys.goal_right) {
             currentGameZone = zone;
         }
 
@@ -3312,10 +3320,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     // HANDLE GOAL ZONE CHANGE
 
     public virtual void handleGoalZoneChange() {
-        if (currentGameZone == GameZoneKeys.goal_left) {
+        if(currentGameZone == GameZoneKeys.goal_left) {
             // move goal markers
         }
-        else if (currentGameZone == GameZoneKeys.goal_right) {
+        else if(currentGameZone == GameZoneKeys.goal_right) {
             // move goal markers
         }
     }
@@ -3351,7 +3359,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // GAME RUNTIME DATA
 
     public virtual void gameRuntimeTimeExtend(double extendAmount) {
-        if (runtimeData != null) {
+        if(runtimeData != null) {
             runtimeData.AppendTime(extendAmount);
         }
     }
@@ -3387,7 +3395,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // WINS / LOSSES
 
-        if (runtimeData.localPlayerWin) {
+        if(runtimeData.localPlayerWin) {
             GamePlayerProgress.Instance.SetStatTotal(GameStatCodes.wins, 1f);
         }
         else {
@@ -3429,7 +3437,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         yield return new WaitForEndOfFrame();
 
-        if (!isAdvancing) {
+        if(!isAdvancing) {
             advanceToResults();
         }
 
@@ -3454,7 +3462,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // PROCESS GAME TYPE SPECIFIC STATS MODE DATA
         // COLLECTION
 
-        if (AppModes.Instance.isAppModeGameArcade
+        if(AppModes.Instance.isAppModeGameArcade
             || AppModes.Instance.isAppModeGameChallenge
             || AppModes.Instance.isAppModeGameMission) {
 
@@ -3518,7 +3526,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //LogUtil.Log("CheckForGameOver:isGameOver:" + isGameOver);
         //LogUtil.Log("CheckForGameOver:isGameRunning:" + isGameRunning);
 
-        if (isGameRunning) {
+        if(isGameRunning) {
 
             // Check player health/status
             // Go to results if health gone
@@ -3535,51 +3543,51 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             // TODO HANDLE MODES
 
-            if (!isGameOver) {
+            if(!isGameOver) {
 
                 bool gameOverMode = false;
 
-                if (AppModes.Instance.isAppModeGameArcade) {
-                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                if(AppModes.Instance.isAppModeGameArcade) {
+                    if((currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired)
                         // TODO move to config/controller type
-                        && gameplayType != GameplayType.gameRunner) {
+                        && !isGameplayTypeRunner()) {
                         gameOverMode = true;
                     }
                 }
-                else if (AppModes.Instance.isAppModeGameChallenge) {
-                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                else if(AppModes.Instance.isAppModeGameChallenge) {
+                    if((currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired)
                         // TODO move to config/controller type
-                        && gameplayType != GameplayType.gameRunner) {
+                        && !isGameplayTypeRunner()) {
                         gameOverMode = true;
                     }
                 }
-                else if (AppModes.Instance.isAppModeGameMission) {
-                    if ((currentGamePlayerController.runtimeData.health <= 0f
+                else if(AppModes.Instance.isAppModeGameMission) {
+                    if((currentGamePlayerController.runtimeData.health <= 0f
                         || runtimeData.timeExpired)
                         // TODO move to config/controller type
-                        && gameplayType != GameplayType.gameRunner) {
+                        && !isGameplayTypeRunner()) {
                         gameOverMode = true;
 
                     }
                 }
-                else if (AppModes.Instance.isAppModeGameTraining) {
+                else if(AppModes.Instance.isAppModeGameTraining) {
 
                     // TODO other modes
 
-                    if (runtimeData.timeExpired) {
+                    if(runtimeData.timeExpired) {
                         //gameOverMode = true;
                     }
                 }
 
-                if (runtimeData.outOfBounds) {
+                if(runtimeData.outOfBounds) {
                     //LogUtil.Log("CheckForGameOver:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
                     gameOverMode = true;
                     //LogUtil.Log("CheckForGameOver:gameOverMode:" + gameOverMode);
                 }
 
-                if (gameOverMode) {
+                if(gameOverMode) {
                     isGameOver = true;
                     resultsGameDelayed();
                 }
@@ -3603,20 +3611,20 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         bool handled = false;
 
-        if (gameplayType == GameplayType.gameDasher) {
+        if(isGameplayTypeDasher()) {
 
-            if (!isGameRunning) {
+            if(!isGameRunning) {
                 return handled;
             }
 
-            if (!InputSystem.CheckIfAllowedTouch(point)) {
+            if(!InputSystem.CheckIfAllowedTouch(point)) {
                 return handled;
             }
 
             //bool controlInputTouchFinger = GameProfiles.Current.GetControlInputTouchFinger();
             bool controlInputTouchOnScreen = GameProfiles.Current.GetControlInputTouchOnScreen();
 
-            if (currentGamePlayerController != null) {
+            if(currentGamePlayerController != null) {
                 var playerPos = currentGamePlayerController.transform.position;
                 var touchPos = Camera.main.ScreenToWorldPoint(point);
 
@@ -3636,7 +3644,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 updateFingerNavigate = true;
 
-                if (controlInputTouchOnScreen) {
+                if(controlInputTouchOnScreen) {
                     // If on screen controls are on don't do touch navigate just off the edge of the
                     /// backer on the virtual joystick to prevent random movements.
 
@@ -3651,12 +3659,12 @@ public class BaseGameController : GameObjectTimerBehavior {
                     //LogUtil.Log("pointNormalized:" + pointNormalized);
                     //LogUtil.Log("point:" + point);
 
-                    if (pointNormalized.y < .2f) {
-                        if (pointNormalized.x < .2f) {
+                    if(pointNormalized.y < .2f) {
+                        if(pointNormalized.x < .2f) {
                             updateFingerNavigate = false;
                         }
 
-                        if (pointNormalized.x > .8f) {
+                        if(pointNormalized.x > .8f) {
                             updateFingerNavigate = false;
                         }
                     }
@@ -3664,7 +3672,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     //LogUtil.Log("updateFingerNavigate:" + updateFingerNavigate);
                 }
 
-                if (updateFingerNavigate) {
+                if(updateFingerNavigate) {
 
                     handled = true;
 
@@ -3689,8 +3697,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void sendInputAxisMessage(string axisNameTo, Vector3 axisInputTo) {
         Messenger<string, Vector3>.Broadcast(
-            GameTouchInputMessages.inputAxis,
-            GameTouchInputMessages.inputAxis + "-" + axisNameTo, axisInputTo
+            InputSystemEvents.inputAxis,
+            InputSystemEvents.inputAxis + "-" + axisNameTo, axisInputTo
         );
     }
 
@@ -3715,7 +3723,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         string key = getGameLevelGridKey(gridPos);
 
-        if (levelGrid.ContainsKey(key)) {
+        if(levelGrid.ContainsKey(key)) {
             filled = true;
         }
 
@@ -3730,7 +3738,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         string key = getGameLevelGridKey(gridPos);
 
-        if (levelGrid.ContainsKey(key)) {
+        if(levelGrid.ContainsKey(key)) {
             levelGrid[key] = asset;
             LogUtil.Log("SetLevelSpaceFilled: key:" + key);
         }
@@ -3741,13 +3749,13 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void checkGameLevelItems() {
-        if (levelItems == null) {
+        if(levelItems == null) {
             levelItems = new List<GameLevelItemAsset>();
         }
     }
 
     public virtual void checkGameLevelGrid() {
-        if (levelGrid == null) {
+        if(levelGrid == null) {
             levelGrid = new Dictionary<string, GameLevelItemAsset>();
         }
     }
@@ -3758,7 +3766,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         checkGameLevelItems();
 
-        if (levelItems != null) {
+        if(levelItems != null) {
             levelItems.Clear();
         }
     }
@@ -3769,7 +3777,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         checkGameLevelGrid();
 
-        if (levelGrid != null) {
+        if(levelGrid != null) {
             levelGrid.Clear();
         }
     }
@@ -3846,7 +3854,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void syncLevelItem(Vector3 gridPos, GameLevelItemAssetData data) {
-        if (!isGameLevelGridSpaceFilled(gridPos)) {
+        if(!isGameLevelGridSpaceFilled(gridPos)) {
             //&& GameController.CheckBounds(gridPos)) {
 
             GameLevelItemAsset asset = getLevelItemAssetFull(data);
@@ -3891,7 +3899,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameLevelItemAsset asset = new GameLevelItemAsset();
 
-        if (data.limit == 0) {
+        if(data.limit == 0) {
             asset.code = data.code;
         }
         else {
@@ -3914,7 +3922,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual List<GameLevelItemAsset> getLevelRandomized(List<GameLevelItemAsset> levelItems) {
 
-        for (int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
+        for(int i = 0; i < UnityEngine.Random.Range(3, 9); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
             data.code = "portal";
@@ -3932,7 +3940,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
 
-        for (int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
+        for(int i = 0; i < UnityEngine.Random.Range(5, 20); i++) {
 
             GameLevelItemAssetData data = new GameLevelItemAssetData();
             data.code = "box";
@@ -3988,19 +3996,19 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //if(controlInputTouchFinger) {
 
-        if (touchPressed) {
-            foreach (Touch touch in Input.touches) {
+        if(touchPressed) {
+            foreach(Touch touch in Input.touches) {
                 handled = handleTouchInputPoint(touch.position);
 
-                if (handled)
+                if(handled)
                     break;
             }
         }
-        else if (mousePressed) {
+        else if(mousePressed) {
             handled = handleTouchInputPoint(Input.mousePosition);
         }
         else {
-            if (currentPlayerController != null) {
+            if(currentPlayerController != null) {
 
                 // reset handled in input axis, might be keyboard input so don't reset.
                 //if(getCurrentPlayerController.controllerData.thirdPersonController != null) {
@@ -4021,10 +4029,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         handleGameInput();
 
-        if (gameplayType == GameplayType.gameDasher) {
+        if(isGameplayTypeDasher()) {
             handleInputTouch();
         }
-        else if (gameplayType == GameplayType.gameRunner) {
+        else if(isGameplayTypeRunner()) {
             //handleInputTouch();
         }
     }
@@ -4042,7 +4050,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void handleGameInputDirection(GamePlayerDirection direction) {
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -4050,17 +4058,17 @@ public class BaseGameController : GameObjectTimerBehavior {
         //    return;
         //}
 
-        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
-            
-            if (direction == GamePlayerDirection.Up) {
+        if(isGameplayTypeRunner()) {
+
+            if(direction == GamePlayerDirection.Up) {
                 gamePlayerJump();
             }
-            else if (direction == GamePlayerDirection.Down) {
+            else if(direction == GamePlayerDirection.Down) {
                 //GameController.GamePlayerSlide(Vector3.zero.WithZ(3f));
                 //GameController.GamePlayerAttack();
                 gamePlayerSlide(Vector3.zero.WithZ(.15f));
             }
-            else if (direction == GamePlayerDirection.Left
+            else if(direction == GamePlayerDirection.Left
                 || direction == GamePlayerDirection.LowerLeftDiagonal
                 || direction == GamePlayerDirection.UpperLeftDiagonal) {
                 //GameController.GamePlayerMove(Vector3.zero.WithX(-16f), rangeStart, rangeEnd);
@@ -4071,7 +4079,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 gamePlayerMove(pos);
             }
-            else if (direction == GamePlayerDirection.Right
+            else if(direction == GamePlayerDirection.Right
                 || direction == GamePlayerDirection.LowerRightDiagonal
                 || direction == GamePlayerDirection.UpperRightDiagonal) {
                 //GameController.GamePlayerMove(Vector3.zero.WithX(16f), rangeStart, rangeEnd);
@@ -4099,7 +4107,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void OnInputSwipe(InputSystemSwipeDirection direction, Vector3 pos, float velocity) {
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -4107,20 +4115,20 @@ public class BaseGameController : GameObjectTimerBehavior {
         //    return;
         //}
 
-        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+        if(isGameplayTypeRunner()) {
 
-            if (direction == InputSystemSwipeDirection.Up) {
+            if(direction == InputSystemSwipeDirection.Up) {
                 handleGameInputDirection(GamePlayerDirection.Up);
             }
-            else if (direction == InputSystemSwipeDirection.Down) {
+            else if(direction == InputSystemSwipeDirection.Down) {
                 handleGameInputDirection(GamePlayerDirection.Down);
             }
-            else if (direction == InputSystemSwipeDirection.Left
+            else if(direction == InputSystemSwipeDirection.Left
                 || direction == InputSystemSwipeDirection.LowerLeftDiagonal
                 || direction == InputSystemSwipeDirection.UpperLeftDiagonal) {
                 handleGameInputDirection(GamePlayerDirection.Left);
             }
-            else if (direction == InputSystemSwipeDirection.Right
+            else if(direction == InputSystemSwipeDirection.Right
                 || direction == InputSystemSwipeDirection.LowerRightDiagonal
                 || direction == InputSystemSwipeDirection.UpperRightDiagonal) {
                 handleGameInputDirection(GamePlayerDirection.Right);
@@ -4133,30 +4141,30 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void handleGameInput() {
 
-        if (GameController.IsGameplayType(GameplayType.gameRunner)) {
+        if(isGameplayTypeRunner()) {
 
-            if (InputSystem.isUpPressDown) {
+            if(InputSystem.isUpPressDown) {
                 handleGameInputDirection(GamePlayerDirection.Up);
             }
-            else if (InputSystem.isDownPressDown) {
+            else if(InputSystem.isDownPressDown) {
                 handleGameInputDirection(GamePlayerDirection.Down);
             }
-            else if (InputSystem.isLeftPressDown) {
+            else if(InputSystem.isLeftPressDown) {
                 handleGameInputDirection(GamePlayerDirection.Left);
             }
-            else if (InputSystem.isRightPressDown) {
+            else if(InputSystem.isRightPressDown) {
                 handleGameInputDirection(GamePlayerDirection.Right);
             }
             else {
                 handleGameInputDirection(GamePlayerDirection.None);
             }
         }
-        else if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+        else if(isGameplayTypeDasher()) {
             //DetectSwipe();
             InputSystem.UpdateTouchLaunch();
         }
     }
-       
+
 
     // ------------------------------------------------------------------------
     // CURVE INFINITE HANDLING
@@ -4167,7 +4175,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // get
 
     public static bool CurveInfiniteEnabledGet() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.curveInfiniteEnabledGet();
         }
 
@@ -4176,7 +4184,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public bool curveInfiniteEnabledGet() {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return false;
         }
 
@@ -4186,14 +4194,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     // set
 
     public static void CurveInfiniteEnabledSet(bool val) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.curveInfiniteEnabledSet(val);
         }
     }
 
     public void curveInfiniteEnabledSet(bool val) {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return;
         }
 
@@ -4206,7 +4214,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // get
 
     public static Vector4 CurveInfiniteAmountGet() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.curveInfiniteAmountGet();
         }
 
@@ -4215,7 +4223,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public Vector4 curveInfiniteAmountGet() {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return Vector4.zero;
         }
 
@@ -4225,14 +4233,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     // set
 
     public static void CurveInfiniteAmountSet(Vector4 val) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.curveInfiniteAmountSet(val);
         }
     }
 
     public void curveInfiniteAmountSet(Vector4 val) {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return;
         }
 
@@ -4245,7 +4253,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // get
 
     public static float CurveInfiniteDistanceGet() {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             return GameController.Instance.curveInfiniteDistanceGet();
         }
 
@@ -4254,7 +4262,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public float curveInfiniteDistanceGet() {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return 50f;
         }
 
@@ -4264,14 +4272,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     // set
 
     public static void CurveInfiniteDistanceSet(float val) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.curveInfiniteDistanceSet(val);
         }
     }
 
     public void curveInfiniteDistanceSet(float val) {
 
-        if (runtimeData == null) {
+        if(runtimeData == null) {
             return;
         }
 
@@ -4280,16 +4288,16 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // ------------------------------------------------------------------------
     // ASSETS CONTEXT
-    
+
     public virtual string GameAssetPresetCode(string assetCode) {
 
         GamePreset assetPreset = GamePresets.Instance.GetById(assetCode);
 
-        if (assetPreset != null) {
+        if(assetPreset != null) {
 
             GamePresetItem presetItem = assetPreset.GetItemRandomByProbability(assetPreset.data.items);
 
-            if (presetItem != null) {
+            if(presetItem != null) {
                 assetCode = presetItem.code;
             }
         }
@@ -4309,28 +4317,28 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // CUSTOM GAME BLOCK
 
-        if (assetCode == data.codeGameBlockFloor) {
+        if(assetCode == data.codeGameBlockFloor) {
 
             GameAssetObjectContextGetBlock(data, assetCode, go);
         }
 
         // CUSTOM GAME BLOCK LOW
 
-        else if (assetCode == data.codeGameBlockLow) {
+        else if(assetCode == data.codeGameBlockLow) {
 
             GameAssetObjectContextGetLow(data, assetCode, go);
         }
 
         // CUSTOM GAME BLOCK HIGH
 
-        else if (assetCode == data.codeGameBlockHigh) {
+        else if(assetCode == data.codeGameBlockHigh) {
 
             GameAssetObjectContextGetHigh(data, assetCode, go);
         }
 
         // CUSTOM GAME SIDE
 
-        else if (assetCode == data.codeGameSide) {
+        else if(assetCode == data.codeGameSide) {
 
             GameAssetObjectContextGetSide(data, assetCode, go);
         }
@@ -4338,7 +4346,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void GameAssetObjectContextGetBlock(
         GameObjectInfinteData data, string assetCode, GameObject go) {
-        
+
         /*
         foreach (GameObjectInactive container in
                 go.GetList<GameObjectInactive>()) {
@@ -4409,7 +4417,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void GameAssetObjectContextGetLow(
         GameObjectInfinteData data, string assetCode, GameObject go) {
-    
+
     }
 
     public virtual void GameAssetObjectContextGetHigh(
@@ -4419,10 +4427,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual GameObject GameAssetObjectContextItem(
         GameObject assetObject, string assetCode, string key = "", int maxCount = 1) {
-        
-        if(assetObject != null 
-            && assetObject.transform != null 
-            && (assetObject.transform.childCount == 0 
+
+        if(assetObject != null
+            && assetObject.transform != null
+            && (assetObject.transform.childCount == 0
                 || assetObject.transform.childCount <= maxCount)) {
 
             //if(assetObject.transform.childCount == 0) {
@@ -4437,17 +4445,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             GameObject goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
 
-            if (goAsset == null) {
+            if(goAsset == null) {
                 codeAsset = StringUtil.Dashed(assetCode, key, BaseDataObjectKeys.defaultKey);
                 goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
             }
 
-            if (goAsset == null) {
+            if(goAsset == null) {
                 codeAsset = StringUtil.Dashed(assetCode, BaseDataObjectKeys.defaultKey);
                 goAsset = AppContentAssets.LoadAssetLevelAssets(codeAsset, assetObject.transform.position);
             }
 
-            if (goAsset != null) {
+            if(goAsset != null) {
                 goAsset.transform.parent = assetObject.transform;
                 goAsset.transform.position = assetObject.transform.position;
 
@@ -4726,12 +4734,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual GameDataObject GetLevelAssetDynamicObject(GameObjectInfinteData data, double x, double y, double z) {
 
-        if (data.dataObjects == null) {
+        if(data.dataObjects == null) {
             return null;
         }
 
-        foreach (GameDataObject obj in data.dataObjects) {
-            if (obj.grid_data.x == x
+        foreach(GameDataObject obj in data.dataObjects) {
+            if(obj.grid_data.x == x
                 && obj.grid_data.y == y
                 && obj.grid_data.z == z) {
                 return obj;
@@ -4797,7 +4805,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         LoadLevelAssetsLines(data, go, indexItem, spawnLocation);
         */
     }
-    
+
     public virtual void LoadLevelAssetsLines(GameObjectInfinteData data, GameObject go, int indexItem, Vector3 spawnLocation) {
         /*
         // --------------------------------------------------------------------
@@ -4931,7 +4939,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void LoadLevelAssetsPeriodic(GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
-        
+
         StartCoroutine(LoadLevelAssetsPeriodicCo(data, parentGo, indexItem, clear));
     }
 
@@ -4991,7 +4999,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameObject goAssetBlock = AppContentAssets.LoadAssetLevelAssets(assetCode, spawnLocation);
 
-        if (goAssetBlock == null) {
+        if(goAssetBlock == null) {
             //Debug.Log("Asset not found levelassets/" + assetCode);
         }
         else {
@@ -5009,11 +5017,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Get new index part and continue 
 
-        if (data.data == null) {
+        if(data.data == null) {
             data.data = new GameLevelLayout();
         }
 
-        if (data.currentLevelGridIndex == -1) {
+        if(data.currentLevelGridIndex == -1) {
 
             data.data = GameLevels.GetGameLevelLayoutFromPresets(
                 GameLevels.Current.data.layout_presets, BaseDataObjectKeys.dynamicKey);
@@ -5023,13 +5031,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         data.currentLevelGridIndex += 1;
 
-        if (data.currentLevelGridIndex >= data.data.GetGridHeight()) {
+        if(data.currentLevelGridIndex >= data.data.GetGridHeight()) {
             data.currentLevelGridIndex = -1;
         }
     }
 
     public static void LoadInitialParts(GameObjectInfinteData data) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.loadInitialParts(data);
         }
     }
@@ -5039,11 +5047,11 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Add initial parts that can spawn other parts
         // Fill out parts to boundaries
 
-        for (int i = 0; i < (int)data.rangeBoundsMax.z / data.distanceTickZ; i++) {
+        for(int i = 0; i < (int)data.rangeBoundsMax.z / data.distanceTickZ; i++) {
 
             bool shouldClear = false;
 
-            if (i < data.partStartCount) {
+            if(i < data.partStartCount) {
                 shouldClear = true;
             }
 
@@ -5055,13 +5063,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Place 10 parts back from view
 
-        for (int i = 0; i < data.partBackCount; i++) {
+        for(int i = 0; i < data.partBackCount; i++) {
             LoadLevelAssetDynamicByIndex(data, -i, true);
         }
     }
 
     public static void UpdateParts(GameObjectInfinteData data) {
-        if (GameController.isInst) {
+        if(GameController.isInst) {
             GameController.Instance.updatePartsStationary(data);
         }
     }
@@ -5069,9 +5077,9 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void updatePartsStationary(GameObjectInfinteData data) {
 
         //StartCoroutine(updatePartsStationaryCo(data));
-    //}
+        //}
 
-    //public IEnumerator updatePartsStationaryCo(GameObjectInfinteData data) {
+        //public IEnumerator updatePartsStationaryCo(GameObjectInfinteData data) {
 
         // index is 31 range 1000 
         // rangeBoundsMax.z / distanceTickZ;
@@ -5079,7 +5087,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         data.currentIndex = (int)(-data.distance.z / data.distanceTickZ);
         int loadIndex = data.currentIndex + data.padIndex;
 
-        if (data.lastLoadIndex < loadIndex) {
+        if(data.lastLoadIndex < loadIndex) {
 
             //Debug.Log("LoadingPart");
 
@@ -5096,22 +5104,22 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void handleGameStart() {
 
-        if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        if(isGameplayWorldTypeStationary()) {
             handleInfiniteCurve();
         }
     }
 
     internal virtual void handleInfiniteCurve() {
 
-        if (!isGameRunning) {
+        if(!isGameRunning) {
             return;
         }
 
-        if (currentGamePlayerController == null) {
+        if(currentGamePlayerController == null) {
             return;
         }
 
-        if (runtimeData.curveEnabled 
+        if(runtimeData.curveEnabled
             && currentGamePlayerController.GamePlayerMoveSpeedGet() > 15f) {
             runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
             runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
@@ -5128,7 +5136,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void handleGametypeInit() {
 
-        if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        if(isGameplayWorldTypeStationary()) {
             //if (controllerInfinity == null) {
             controllerInfinity = gameObject.Get<GameObjectInfiniteController>();
             //}
@@ -5140,23 +5148,23 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     internal virtual void handleUpdateStationary() {
-        
-        if (currentGamePlayerController == null) {
+
+        if(currentGamePlayerController == null) {
             return;
         }
 
-        if (containerInfinity == null) {
+        if(containerInfinity == null) {
             handleGametypeInit();
         }
-        
-        if (containerInfinity == null
+
+        if(containerInfinity == null
             || controllerInfinity == null) {
             return;
         }
 
-        if (GameConfigs.isGameRunning) {
-                        
-            if (!runtimeData.curveEnabled) {
+        if(GameConfigs.isGameRunning) {
+
+            if(!runtimeData.curveEnabled) {
                 runtimeData.curve = Vector4.zero;
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
@@ -5166,7 +5174,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             //containerInfinity.UpdatePositionPartsZ(
             //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
             //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
-            
+
             containerInfinity.UpdatePositionPartsZ(
                 -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
                 currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
@@ -5181,7 +5189,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             //Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
 
-            runtimeData.curveInfiniteAmount = 
+            runtimeData.curveInfiniteAmount =
                 Vector4.Lerp(
                     runtimeData.curveInfiniteAmount, runtimeData.curve, speedThrottle * Time.deltaTime);
         }
@@ -5191,19 +5199,19 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         handleInput();
 
-        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+        if(IsGameplayWorldTypeDefault()) {
             handleUpdateDefault();
         }
-        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        else if(isGameplayWorldTypeStationary()) {
             //handleUpdateStationary();
         }
     }
 
     internal virtual void handleUpdateDefault() {
-        if (gameplayWorldType == GameplayWorldType.gameDefault) {
-           // handleLateUpdateDefault();
+        if(IsGameplayWorldTypeDefault()) {
+            // handleLateUpdateDefault();
         }
-        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        else if(isGameplayWorldTypeStationary()) {
             //handleUpdateStationary();
         }
 
@@ -5213,10 +5221,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //handleInput();
 
-        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+        if(IsGameplayWorldTypeDefault()) {
             //handleLateUpdateDefault();
         }
-        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        else if(isGameplayWorldTypeStationary()) {
             //handleUpdateStationary();
         }
     }
@@ -5226,10 +5234,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //handleInput();
 
-        if (gameplayWorldType == GameplayWorldType.gameDefault) {
+        if(IsGameplayWorldTypeDefault()) {
             handleLateUpdateDefault();
         }
-        else if (gameplayWorldType == GameplayWorldType.gameStationary) {
+        else if(isGameplayWorldTypeStationary()) {
             handleUpdateStationary();
         }
     }
@@ -5279,38 +5287,38 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // TOOLS
 
-        if (UIGameKeyCodes.isActionProfileSave) {
+        if(UIGameKeyCodes.isActionProfileSave) {
             GameState.SaveProfile();
         }
-        else if (UIGameKeyCodes.isActionProfileSync) {
+        else if(UIGameKeyCodes.isActionProfileSync) {
             GameState.SyncProfile();
         }
 
         // UPDATE
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
-        if (gameState == GameStateGlobal.GamePause
+        if(gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }
 
         handleUpdate();
 
-        if (!gameObjectTimer.IsTimerPerf(
+        if(!gameObjectTimer.IsTimerPerf(
             GameObjectTimerKeys.gameUpdateAll)) {
             return;
         }
 
-        if (isGameRunning) {
+        if(isGameRunning) {
             checkForGameOver();
         }
 
         currentTimeBlockBase += Time.deltaTime;
 
-        if (currentTimeBlockBase > actionIntervalBase) {
+        if(currentTimeBlockBase > actionIntervalBase) {
             currentTimeBlockBase = 0.0f;
         }
     }
@@ -5319,11 +5327,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // UPDATE
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
-        if (gameState == GameStateGlobal.GamePause
+        if(gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }
@@ -5335,11 +5343,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // UPDATE
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
-        if (gameState == GameStateGlobal.GamePause
+        if(gameState == GameStateGlobal.GamePause
             || GameDraggableEditor.appEditState == GameDraggableEditEnum.StateEditing) {
             return;
         }

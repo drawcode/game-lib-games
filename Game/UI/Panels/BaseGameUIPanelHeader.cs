@@ -482,40 +482,26 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
         InputSystem.Instance.currentDraggableUIGameObject = null;
     }
     
-    //public void ShowObjectDelayed(GameObject obj, float delay) {
-    //  StartCoroutine(ShowObjectDelayedCo(obj, delay));
-    //}
-    
-    //public void HideObjectDelayed(GameObject obj, float delay) {
-    //  StartCoroutine(HideObjectDelayedCo(obj, delay));
-    //}
-        
-    IEnumerator ShowObjectDelayedCo(GameObject obj, float delay) {
-        yield return new WaitForSeconds(delay);
-        ShowObject(obj);
-    }
-    
-    IEnumerator HideObjectDelayedCo(GameObject obj, float delay) {
-        yield return new WaitForSeconds(delay);
-        HideObject(obj);
-    }
-    
     public virtual void ShowBackButtonObject() {
 
-        if (backObject != null) {            
+        if (backObject != null) {
 
-            ShowObject(backObject);
+            backerObject.Show();
+                                    
+            TweenUtil.ShowObjectLeft(backObject);
 
-            UITweenerUtil.MoveTo(backObject,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero);
+            //UITweenerUtil.MoveTo(backObject,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero);
 
-            UITweenerUtil.FadeTo(backObject,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
+            //UITweenerUtil.FadeTo(backObject,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
 
             foreach (Transform t in backObject.transform) {
-                
-                UITweenerUtil.FadeTo(t.gameObject,
-                    UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
+
+                TweenUtil.FadeToObject(t.gameObject, 1f, 1f);
+
+                //UITweenerUtil.FadeTo(t.gameObject,
+                //    UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
             }
         }
     }
@@ -524,60 +510,46 @@ public class BaseGameUIPanelHeader : GameUIPanelBase {
 
         if (backObject != null) {
 
-            UITweenerUtil.MoveTo(backObject,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero.WithX(-3000));
+            TweenUtil.HideObjectLeft(backObject);
 
-            UITweenerUtil.FadeTo(backObject,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
+            //UITweenerUtil.MoveTo(backObject,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, Vector3.zero.WithX(-3000));
+
+            //UITweenerUtil.FadeTo(backObject,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
 
             foreach (Transform t in backObject.transform) {
-                
-                UITweenerUtil.FadeTo(t.gameObject,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
+
+                TweenUtil.FadeToObject(t.gameObject, 0f, .3f);
+
+                //UITweenerUtil.FadeTo(t.gameObject,
+                //UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
             }
         }
     }
     
     public virtual void ShowBackerObject() {
-        if (backerObject != null) {
-            UITweenerUtil.FadeTo(backerObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
-        }
+        TweenUtil.FadeToObject(backerObject, 1f);
     }
     
     public virtual void HideBackerObject() {
-        if (backerObject != null) {
-            UITweenerUtil.FadeTo(backerObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
-        }
+        TweenUtil.FadeToObject(backerObject, 0f);
     }
     
     public virtual void ShowTitleObject() {
-        if (titleObject != null) {
-            UITweenerUtil.FadeTo(titleObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
-        }
+        TweenUtil.FadeToObject(titleObject, 1f);
     }
     
     public virtual void HideTitleObject() {
-        if (titleObject != null) {
-            UITweenerUtil.FadeTo(titleObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
-        }
+        TweenUtil.FadeToObject(titleObject, 0f);
     }
     
     public virtual void ShowCoinsObject() {
-        if (coinObject != null) {
-            UITweenerUtil.FadeTo(coinObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, 1f, .3f, 1f);
-        }
+        TweenUtil.FadeToObject(coinObject, 1f);
     }
     
     public virtual void HideCoinsObject() {
-        if (coinObject != null) {
-            UITweenerUtil.FadeTo(coinObject, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, .3f, .3f, 0f);
-        }
+        TweenUtil.FadeToObject(coinObject, 0f);
     }
     
     public static void LoadData() {

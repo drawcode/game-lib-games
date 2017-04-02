@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using Engine.Utility;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #else
 using UnityEngine.UI;
@@ -170,8 +171,13 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public virtual void AnimateStartCharacter() {
         
         if (containerStartObject != null) {
-            UITweenerUtil.FadeTo(containerStartObject,
-                UITweener.Method.EaseInOut, UITweener.Style.PingPong, 2f, 0f, .5f);
+
+            TweenUtil.FadeToObject(
+                containerStartObject, .5f, 2f, 0f, true, 
+                TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
+
+            //UITweenerUtil.FadeTo(containerStartObject,
+            //    UITweener.Method.EaseInOut, UITweener.Style.PingPong, 2f, 0f, .5f);
         }       
         
         /*

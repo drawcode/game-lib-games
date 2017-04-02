@@ -199,8 +199,11 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public void HideTipsObjects() {        
         if(containerTips != null) {            
             foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {   
-                tips.gameObject.Hide();             
-                UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .4f, 0f, 0f);
+                tips.gameObject.Hide();
+
+                TweenUtil.FadeToObject(tips.gameObject, 0f, .4f, 0f);
+
+                //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .4f, 0f, 0f);
             }
         }    
     }
@@ -215,9 +218,14 @@ public class UIPanelOverlayPrepare : UIPanelBase {
                                 
                 if(!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
                     tips.gameObject.Show();
-                    UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 0f);
+
+                    TweenUtil.FadeToObject(tips.gameObject, 0f, 0f, 0f);
+                    //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 0f);
+
                     tips.ShowTipsFirst();
-                    UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
+
+                    TweenUtil.FadeToObject(tips.gameObject, 1f, .5f, .6f);
+                    //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
 
                 }
             }   

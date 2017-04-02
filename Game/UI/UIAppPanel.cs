@@ -44,37 +44,7 @@ public class UIAppPanel : GameObjectBehavior {
             GetClassName(this);
         }
     }
-    
-    public void ShowObjectDelayed(GameObject obj, float delay) {
-        StartCoroutine(ShowObjectDelayedCo(obj, delay));
-    }
-    
-    public void HideObjectDelayed(GameObject obj, float delay) {
-        StartCoroutine(HideObjectDelayedCo(obj, delay));
-    }
         
-    IEnumerator ShowObjectDelayedCo(GameObject obj, float delay) {
-        yield return new WaitForSeconds(delay);
-        ShowObject(obj);
-    }
-    
-    IEnumerator HideObjectDelayedCo(GameObject obj, float delay) {
-        yield return new WaitForSeconds(delay);
-        HideObject(obj);
-    }
-    
-    public void ShowObject(GameObject obj) {
-        if (obj != null) {
-            obj.Show();
-        }
-    }
-    
-    public void HideObject(GameObject obj) {
-        if (obj != null) {
-            obj.Hide();
-        }
-    }
-    
     public string GetClassName(object item) {
         className = item.GetType().Name;
         //LogUtil.Log("CLASS NAME:" + className);

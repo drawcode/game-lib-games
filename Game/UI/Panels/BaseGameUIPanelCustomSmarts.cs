@@ -136,7 +136,7 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
 	
 	IEnumerator loadDataCo() {
 		
-		GameUIController.Instance.currentDraggableGameObject = helmetObjectRotator;
+		//GameUIController.Instance.currentDraggableGameObject = helmetObjectRotator;
 		
 		yield return new WaitForSeconds(1f);
 	}
@@ -162,7 +162,7 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
 		
 		base.AnimateOut();		
 		
-		GameUIController.Instance.currentDraggableGameObject = null;
+		//GameUIController.Instance.currentDraggableGameObject = null;
 		
 		//HidePanelDefault();
 	}

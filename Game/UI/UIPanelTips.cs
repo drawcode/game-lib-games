@@ -373,8 +373,10 @@ public class UIPanelTips : UIAppPanelBaseList {
                     if(animate != null) {
                         animate.Animate();
                     }
-                    
-                    UITweenerUtil.FadeTo(inactive.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
+
+                    TweenUtil.FadeToObject(inactive.gameObject, 1f, .5f, .6f);
+
+                    //UITweenerUtil.FadeTo(inactive.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
                     //if(tipsMode != TipsMode.Loading) {
                     //  if(inactive.name.IndexOf(tipCode + "-Settings") > -1) {
                     //      AppViewerUIPanelHUD.ShowExtraContainer();

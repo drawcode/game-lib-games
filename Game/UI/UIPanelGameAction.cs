@@ -365,7 +365,9 @@ public class UIPanelGameAction : UIAppPanelBaseList {
                         animate.Animate();
                     }
 
-                    UITweenerUtil.FadeTo(inactive.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
+                    TweenUtil.FadeToObject(inactive.gameObject, 1f, .5f, .6f);
+
+                    //UITweenerUtil.FadeTo(inactive.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
                     //if(actionsMode != GameActionsMode.Loading) {
                     //  if(inactive.name.IndexOf(actionCode + "-Settings") > -1) {
                     //      AppViewerUIPanelHUD.ShowExtraContainer();

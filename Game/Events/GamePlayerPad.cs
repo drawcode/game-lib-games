@@ -29,10 +29,13 @@ public class GamePlayerPad : GameObjectBehavior {
             lastColorHighlight = colorHighlight;
 
             if (containerHighlighted != null) {
-                UITweenerUtil.ColorToHandler<UISprite>(
-                    containerHighlighted, 
-                    colorHighlight,
-                    1f, 0f);
+
+                TweenUtil.ColorToObject(containerHighlighted, colorHighlight, 1f, 0f);
+
+                //UITweenerUtil.ColorToHandler<UISprite>(
+                //    containerHighlighted, 
+                //    colorHighlight,
+                //    1f, 0f);
             }
         }
     }

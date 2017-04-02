@@ -112,50 +112,32 @@ public class BaseGameUIPanelBackgrounds : GameUIPanelBase {
     //
 
     public virtual void ShowBackgroundPlain() {
-		if(backgroundPlainObject != null) {
-			UITweenerUtil.FadeTo(backgroundPlainObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
+        TweenUtil.FadeToObject(backgroundPlainObject, 1f, durationShow, durationDelayShow);
 	}
 	
     public virtual void HideBackgroundPlain() {
-		if(backgroundPlainObject != null) {
-			UITweenerUtil.FadeTo(backgroundPlainObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
+        TweenUtil.FadeToObject(backgroundPlainObject, 0f, durationShow, durationDelayShow);
 	}
 
     //
 		
     public virtual void ShowBackgroundStarry() {
-		if(backgroundStarryObject != null) {
-			UITweenerUtil.FadeTo(backgroundStarryObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
+        TweenUtil.FadeToObject(backgroundStarryObject, 1f, durationShow, durationDelayShow);
 	}
 	
     public virtual void HideBackgroundStarry() {
-		if(backgroundStarryObject != null) {
-			UITweenerUtil.FadeTo(backgroundStarryObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
+        TweenUtil.FadeToObject(backgroundStarryObject, 0f, durationShow, durationDelayShow);
 	}
 
     //
 	
     public virtual void ShowBackgroundStarryTop() {
-		if(backgroundStarryTopObject != null) {
-			UITweenerUtil.FadeTo(backgroundStarryTopObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationShow, durationDelayShow, 1f);
-		}
+        TweenUtil.FadeToObject(backgroundStarryTopObject, 1f, durationShow, durationDelayShow);
 	}
 	
     public virtual void HideBackgroundStarryTop() {
-		if(backgroundStarryTopObject != null) {
-			UITweenerUtil.FadeTo(backgroundStarryTopObject, 
-				UITweener.Method.Linear, UITweener.Style.Once, durationHide, durationDelayHide, 0f);
-		}
-	}
+        TweenUtil.FadeToObject(backgroundStarryTopObject, 0f, durationShow, durationDelayShow);
+    }
     // ui 
     
     public static void ShowUI() {

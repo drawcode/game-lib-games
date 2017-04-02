@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Engine.Utility;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #else
 using UnityEngine.UI;
@@ -373,8 +374,10 @@ public class UINotificationDisplay
     }
     
     public void ShowDialog() {
-        
-        UITweenerUtil.MoveTo(notificationPanel, .6f, 0f, Vector3.zero.WithY(positionYOpenInGame));
+
+        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYOpenInGame), .6f, 0f);
+
+        //UITweenerUtil.MoveTo(notificationPanel, .6f, 0f, Vector3.zero.WithY(positionYOpenInGame));
 
         Invoke("HideDialog", 4.5f);
 
@@ -408,8 +411,10 @@ public class UINotificationDisplay
     }
     
     public void HideDialog() {
-        
-        UITweenerUtil.MoveTo(notificationPanel, .2f, 0f, Vector3.zero.WithY(positionYClosedInGame));
+
+        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYClosedInGame), .2f, 0f);
+
+        //UITweenerUtil.MoveTo(notificationPanel, .2f, 0f, Vector3.zero.WithY(positionYClosedInGame));
         
         Invoke("DisplayNextNotification", 1);
     }

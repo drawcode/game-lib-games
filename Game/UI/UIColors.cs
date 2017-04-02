@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public class UIColorsMessages {
     public static string uiColorsUpdate = "ui-colors-update";
@@ -118,7 +119,10 @@ public class UIColors {
     }
 
     public static void AnimateColor(GameObject go, Color colorTo) {
-        UITweenerUtil.ColorTo(go, UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, colorTo);
+        
+        TweenUtil.ColorToObject(go, colorTo, 1f, .5f);
+
+        //UITweenerUtil.ColorTo(go, UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, colorTo);
     }
 
     // extensions

@@ -14,17 +14,17 @@ using Engine.UI;
 using Engine.Utility;
 
 public class BaseGameHUD : GameUIPanelBase {
-        
+
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 1.0f;
     public AsyncOperation asyncLevelLoad = null;
     public bool levelLoadInProgress = false;
     public bool lastLevelLoadInProgress = false;
 
-
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelScores;
     public UILabel labelScore;
+    public UILabel labelSpecials;
     public UILabel labelCoins;
     public UILabel labelLevel;
     public UILabel labelTime;
@@ -52,7 +52,6 @@ public class BaseGameHUD : GameUIPanelBase {
     public Slider sliderHealth;
     public Slider sliderEnergy;
 #endif
-
 
     public GameObject containerUseObject;
     public GameObject containerSmartsObject;
@@ -82,24 +81,24 @@ public class BaseGameHUD : GameUIPanelBase {
     public GameObject containerEnergy;
     public GameObject containerOffscreenIndicators;
     public static GameHUD Instance;
-        
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
+
     public virtual void Awake() {
 
     }
-                
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
 
         // check platform
@@ -114,7 +113,7 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public virtual void HandleInput() {
-        if (Application.isWebPlayer || Application.isEditor) {
+        if(Application.isWebPlayer || Application.isEditor) {
             // hide left virtual pad
             //HideInputLeftObject(.5f, 0f);
         }
@@ -122,21 +121,21 @@ public class BaseGameHUD : GameUIPanelBase {
             //ShowInputLeftObject(.5f, 0f);
         }
     }
-    
+
     public override void OnEnable() {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger<string, string, object>.AddListener(GameMessages.gameActionItem, OnGameItem);
-        
+
         Messenger<double>.AddListener(GameMessages.gameActionScore, OnGameShooterScore);
         Messenger<double>.AddListener(GameMessages.gameActionScores, OnGameShooterScores);
     }
-    
+
     public override void OnDisable() {
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         Messenger<string, string, object>.RemoveListener(GameMessages.gameActionItem, OnGameItem);
 
         Messenger<double>.RemoveListener(GameMessages.gameActionScore, OnGameShooterScore);
@@ -144,34 +143,34 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (UIUtil.IsButtonClicked(buttonCamera, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonCamera, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
-            if (!AppModes.Instance.isAppModeGameTraining) {
+            if(!AppModes.Instance.isAppModeGameTraining) {
                 ChangeCameraMode();
             }
         }
-        else if (UIUtil.IsButtonClicked(buttonGameOverview, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonGameOverview, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             GameController.GameContentDisplay(GameContentDisplayTypes.gameModeContentOverview);
         }
-        else if (UIUtil.IsButtonClicked(buttonGameSafety, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonGameSafety, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             GameController.GameContentDisplay(GameContentDisplayTypes.gameHealth);
         }
-        else if (UIUtil.IsButtonClicked(buttonGameSmarts, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonGameSmarts, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             GameController.GameContentDisplay(GameContentDisplayTypes.gameEnergy);
         }
-        else if (UIUtil.IsButtonClicked(buttonGameTips, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonGameTips, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             GameController.GameContentDisplay(GameContentDisplayTypes.gameTips);
         }
-        else if (UIUtil.IsButtonClicked(buttonGameTutorial, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonGameTutorial, buttonName)) {
             LogUtil.Log("Button camera Clicked: " + buttonName);
             GameController.GameContentDisplay(GameContentDisplayTypes.gameTutorial);
         }
     }
-    
+
     public virtual void ChangeCameraMode() {
         GameController.CycleGameCameraMode();
     }
@@ -192,52 +191,52 @@ public class BaseGameHUD : GameUIPanelBase {
     public virtual void OnGameShooterScores(double scores) {
         SetScores(GameController.CurrentGamePlayerController.runtimeData.scores);
     }
-        
+
     public virtual void InitEvents() {
-            
+
         LogUtil.Log("InitEvents:");
     }
-        
+
     public virtual void LateUpdate() {
 
     }
 
     public virtual void ResetIndicators() {
-        if (containerOffscreenIndicators != null) {
+        if(containerOffscreenIndicators != null) {
             containerOffscreenIndicators.DestroyChildren();
         }
 
         GameZoneGoalMarker marker = GameZoneGoalMarker.GetMarker();
         marker.UpdateIndicator();
     }
-    
+
     public virtual void Show() {
-    
+
     }
-    
+
     public virtual void Hide() {
-    
+
     }
-    
+
     public virtual void Reset() {
-    
+
     }
-    
+
     public virtual void SetLevelInit(GameLevel gameLevel) {
-        
-        if (gameLevel != null) {
+
+        if(gameLevel != null) {
             //GameController.Instance.runtimeData.ammo = gameLevel.ammo;            
             //GameController.Instance.runtimeData.score = 0;
-            
+
             SetCoins(0);
             SetScore(0);
             SetScores(0);
             SetSpecials(0);
             SetLevel(gameLevel.code);
-        }       
-        
+        }
+
     }
-    
+
     public virtual void SetScore(double score) {
         UIUtil.SetLabelValue(labelScore, score.ToString("N0"));
     }
@@ -245,7 +244,7 @@ public class BaseGameHUD : GameUIPanelBase {
     public virtual void SetScores(double scores) {
         UIUtil.SetLabelValue(labelScores, scores.ToString("N0"));
     }
-    
+
     public virtual void SetCoins(double coins) {
         UIUtil.SetLabelValue(labelCoins, coins.ToString("N0"));
     }
@@ -257,166 +256,220 @@ public class BaseGameHUD : GameUIPanelBase {
     public virtual void SetLevel(string levelName) {
         UIUtil.SetLabelValue(labelLevel, levelName);
     }
-    
+
     public virtual void SetTime(double time) {
         UIUtil.SetLabelValue(labelTime, FormatUtil.GetFormattedTimeMinutesSecondsMsSmall(time));
     }
-        
+
     public virtual void ShowHitOne() {
         //LogUtil.Log("ShowHitOne");
-        
-        DeviceUtil.Vibrate();       
-        
+
+        DeviceUtil.Vibrate();
+
         //HideOverlayRed(.1f, 0f, 0f);
         ShowOverlayRed(.2f, .1f, 0f, .4f);
         HideOverlayRed(1, .2f, .4f, 0f);
     }
-    
+
     public virtual void ShowHitOne(float modifier) {
         //LogUtil.Log("ShowHitOne");
-        
-        DeviceUtil.Vibrate();       
-        
+
+        DeviceUtil.Vibrate();
+
         //HideOverlayRed(.1f, 0f, 0f);
         ShowOverlayRed(.2f, .1f, 0f, .4f * modifier);
         HideOverlayRed(1, .2f, .4f * modifier, 0f);
-    } 
-    
+    }
+
     public virtual void ShowOverlayRed() {
         ///ShowOverlayRed(.3f, .1f, 1f);
     }
-    
+
     public virtual void ShowOverlayRed(float time, float delay, float amountFrom, float amountTo) {
-        
-        if (overlayRedObject != null) {
-            UITweenerUtil.FadeTo(overlayRedObject, 
-                UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
+
+        if(overlayRedObject != null) {
+
+            TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
+
+            //UITweenerUtil.FadeTo(overlayRedObject,
+            //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
         }
     }
 
     public virtual void HideOverlayRed() {
         HideOverlayRed(.1f, .2f, 0f, 0f);
     }
-    
-    public virtual void HideOverlayRed(float time, float delay, float amountFrom, float amountTo) {     
-        if (overlayRedObject != null) {
-            UITweenerUtil.FadeTo(overlayRedObject, 
-                UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
+
+    public virtual void HideOverlayRed(float time, float delay, float amountFrom, float amountTo) {
+        if(overlayRedObject != null) {
+
+            TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
+
+            //UITweenerUtil.FadeTo(overlayRedObject,
+            //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
         }
     }
-    
+
     public virtual void ShowCharacterObject(float time, float delay) {
-        if (containerCharacters != null) {
-            UITweenerUtil.MoveTo(containerCharacters, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftOpenX));          
+        if(containerCharacters != null) {
+
+            TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerCharacters,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftOpenX));
         }
     }
-    
+
     public virtual void HideCharacterObject(float time, float delay) {
-        if (containerCharacters != null) {
-            UITweenerUtil.MoveTo(containerCharacters, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftClosedX));            
+        if(containerCharacters != null) {
+            
+            TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerCharacters,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftClosedX));
         }
     }
-    
+
     public virtual void ShowDisplayObject(float time, float delay) {
-        if (containerDisplay != null) {
-            UITweenerUtil.MoveTo(containerDisplay, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));           
+        if(containerDisplay != null) {
+
+            TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topOpenY), time, delay);
+
+            //UITweenerUtil.MoveTo(containerDisplay,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));
         }
     }
-    
+
     public virtual void HideDisplayObject(float time, float delay) {
-        if (containerDisplay != null) {
-            UITweenerUtil.MoveTo(containerDisplay, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));         
+        if(containerDisplay != null) {
+
+            TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topClosedY), time, delay);
+
+            //UITweenerUtil.MoveTo(containerDisplay,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
         }
     }
-    
+
     public virtual void ShowOverviewObject(float time, float delay) {
-        if (containerDisplay != null) {
-            UITweenerUtil.MoveTo(containerOverviewObject, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));           
+        if(containerDisplay != null) {
+
+            TweenUtil.MoveToObject(containerOverviewObject, Vector3.zero.WithY(topOpenY), time, delay);
+
+            //UITweenerUtil.MoveTo(containerOverviewObject,
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));
         }
     }
-    
+
     public virtual void HideOverviewObject(float time, float delay) {
-        if (containerDisplay != null) {
-            UITweenerUtil.MoveTo(containerOverviewObject, 
-                                 UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));         
+        if(containerDisplay != null) {
+
+            TweenUtil.MoveToObject(containerOverviewObject, Vector3.zero.WithY(topClosedY), time, delay);
+
+            //UITweenerUtil.MoveTo(containerOverviewObject,
+            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
         }
     }
-    
+
     public virtual void ShowPauseObject(float time, float delay) {
-        if (containerPause != null) {
-            UITweenerUtil.MoveTo(containerPause, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));         
+        if(containerPause != null) {
+
+            TweenUtil.MoveToObject(containerPause, Vector3.zero.WithX(rightOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerPause,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
         }
     }
-    
+
     public virtual void HidePauseObject(float time, float delay) {
-        if (containerPause != null) {
-            UITweenerUtil.MoveTo(containerPause, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));           
+        if(containerPause != null) {
+
+            TweenUtil.MoveToObject(containerPause, Vector3.zero.WithX(rightClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerPause,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
     }
-    
+
     public virtual void ShowInputLeftObject(float time, float delay) {
-        if (containerInputLeft != null) {
-            UITweenerUtil.MoveTo(containerInputLeft, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));          
+        if(containerInputLeft != null) {
+            
+            TweenUtil.MoveToObject(containerInputLeft, Vector3.zero.WithX(leftOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerInputLeft,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));
         }
     }
-    
+
     public virtual void HideInputLeftObject(float time, float delay) {
-        if (containerInputLeft != null) {
-            UITweenerUtil.MoveTo(containerInputLeft, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));            
+        if(containerInputLeft != null) {
+
+            TweenUtil.MoveToObject(containerInputLeft, Vector3.zero.WithX(leftClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerInputLeft,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
     }
-    
+
     public virtual void ShowInputRightObject(float time, float delay) {
-        if (containerInputRight != null) {
-            UITweenerUtil.MoveTo(containerInputRight, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));         
+        if(containerInputRight != null) {
+
+            TweenUtil.MoveToObject(containerInputRight, Vector3.zero.WithX(rightOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerInputRight,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
         }
     }
-        
+
     public virtual void HideInputRightObject(float time, float delay) {
-        if (containerInputRight != null) {
-            UITweenerUtil.MoveTo(containerInputRight, 
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));           
+        if(containerInputRight != null) {
+
+            TweenUtil.MoveToObject(containerInputRight, Vector3.zero.WithX(rightClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerInputRight,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
     }
 
     public virtual void ShowControlsLeftObject(float time, float delay) {
-        if (containerControlsLeft != null) {
-            UITweenerUtil.MoveTo(containerControlsLeft,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));
+        if(containerControlsLeft != null) {
+
+            TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerControlsLeft,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));
         }
     }
-    
+
     public virtual void HideControlsLeftObject(float time, float delay) {
-        if (containerControlsLeft != null) {
-            UITweenerUtil.MoveTo(containerControlsLeft,
-             UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
+        if(containerControlsLeft != null) {
+
+            TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerControlsLeft,
+            // UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
         }
     }
-    
+
     public virtual void ShowControlsRightObject(float time, float delay) {
-        if (containerControlsRight != null) {
-            UITweenerUtil.MoveTo(containerControlsRight,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
+        if(containerControlsRight != null) {
+
+            TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightOpenX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerControlsRight,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
         }
     }
-    
+
     public virtual void HideControlsRightObject(float time, float delay) {
-        if (containerControlsRight != null) {
-            UITweenerUtil.MoveTo(containerControlsRight,
-                UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
+        if(containerControlsRight != null) {
+
+            TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightClosedX), time, delay);
+
+            //UITweenerUtil.MoveTo(containerControlsRight,
+            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
         }
     }
-    
+
     public virtual void ShowEditState() {
         ShowCharacterObject(.5f, 0f);
         ShowPauseObject(.5f, 0f);
@@ -426,7 +479,7 @@ public class BaseGameHUD : GameUIPanelBase {
 
         HandlePlatform();
     }
-    
+
     public virtual void ShowGameState() {
         ShowCharacterObject(.5f, 0f);
         ShowPauseObject(.5f, 0f);
@@ -436,45 +489,45 @@ public class BaseGameHUD : GameUIPanelBase {
 
         HandlePlatform();
     }
-    
+
     public override void AnimateIn() {
-        
+
         base.AnimateIn();
 
         HandleItems();
 
-        if (GameDraggableEditor.isEditing) {
+        if(GameDraggableEditor.isEditing) {
             ShowEditState();
         }
         else {
             ShowGameState();
         }
 
-        if (AppModes.Instance.isAppModeGameTraining) {
-            ShowObject(containerUseObject);
+        if(AppModes.Instance.isAppModeGameTraining) {
+            containerUseObject.Show();
 
-            HideObject(containerSmartsObject);
-            HideObject(containerSafetyObject);
-            HideObject(containerScoreObject);
-            HideObject(containerScoresObject);
-            HideObject(containerCoinsObject);
-            HideObject(containerSpecialsObject);
-            HideObject(containerCameraObject);
-            HideObject(containerTimeObject);
-            HideObject(containerOverviewObject);
+            containerSmartsObject.Hide();
+            containerSafetyObject.Hide();
+            containerScoreObject.Hide();
+            containerScoresObject.Hide();
+            containerCoinsObject.Hide();
+            containerSpecialsObject.Hide();
+            containerCameraObject.Hide();
+            containerTimeObject.Hide();
+            containerOverviewObject.Hide();
         }
         else {
-            HideObject(containerUseObject);
+            containerUseObject.Hide();
 
-            ShowObject(containerSmartsObject);
-            ShowObject(containerSafetyObject);
-            ShowObject(containerScoreObject);
-            ShowObject(containerScoresObject);
-            ShowObject(containerCoinsObject);
-            ShowObject(containerSpecialsObject);
-            ShowObject(containerCameraObject);
-            ShowObject(containerTimeObject);
-            ShowObject(containerOverviewObject);
+            containerSmartsObject.Show();
+            containerSafetyObject.Show();
+            containerScoreObject.Show();
+            containerScoresObject.Show();
+            containerCoinsObject.Show();
+            containerSpecialsObject.Show();
+            containerCameraObject.Show();
+            containerTimeObject.Show();
+            containerOverviewObject.Show();
         }
 
         //HideOverlayRed();
@@ -486,30 +539,30 @@ public class BaseGameHUD : GameUIPanelBase {
 
         string codeWorld = GameWorlds.Current.code;
 
-        if (codeWorld.IsNullOrEmpty()) {
+        if(codeWorld.IsNullOrEmpty()) {
             return;
         }
 
-        foreach (GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
+        foreach(GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
 
-            if (container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
+            if(container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
 
-                foreach (GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
+                foreach(GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
 
-                    if (item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)) {
+                    if(item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)) {
                         item.gameObject.HideChildren();
                     }
                 }
 
                 container.gameObject.Show();
 
-                foreach (GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
+                foreach(GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
 
                     Dictionary<string, object> data = dataItem.ToDictionary();
 
                     string val = data.Get<string>(BaseDataObjectKeys.world);
 
-                    if (val.IsEqualLowercase(codeWorld)) {
+                    if(val.IsEqualLowercase(codeWorld)) {
 
                         dataItem.gameObject.Show();
                     }
@@ -519,19 +572,19 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public virtual void AnimateInOverlayDamage() {
-        
+
         base.AnimateIn();
-        
+
         ShowOverlayRed();
     }
-    
+
     public override void AnimateOut() {
-        
+
         base.AnimateOut();
-        
+
         //HideOverlayRed();
     }
-    
+
     public virtual void Update() {
         /*
         var ry = 0f;
@@ -549,11 +602,11 @@ public class BaseGameHUD : GameUIPanelBase {
             //overlayRedObject.transform.Rotate(Vector3.forward * (ry * .005f) * Time.deltaTime);
         }
         */
-        
-        if (GameController.IsGameRunning) {
-            if (GameController.CurrentGamePlayerController != null) {
-                if (GameController.Instance != null) {
-                    if (GameController.Instance.runtimeData != null) {
+
+        if(GameController.IsGameRunning) {
+            if(GameController.CurrentGamePlayerController != null) {
+                if(GameController.Instance != null) {
+                    if(GameController.Instance.runtimeData != null) {
                         SetScore(GameController.CurrentGamePlayerController.runtimeData.score);
                         SetScores(GameController.CurrentGamePlayerController.runtimeData.scores);
                         SetCoins(GameController.CurrentGamePlayerController.runtimeData.coins);
@@ -563,14 +616,13 @@ public class BaseGameHUD : GameUIPanelBase {
                 }
             }
         }
-        
-        if (Application.isEditor) {
-            if (Input.GetKeyDown(KeyCode.P)) {
+
+        if(Application.isEditor) {
+            if(Input.GetKeyDown(KeyCode.P)) {
                 ShowHitOne();
             }
         }
     }
-    
 }
 
 /*

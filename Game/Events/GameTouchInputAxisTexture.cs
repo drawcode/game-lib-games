@@ -57,19 +57,25 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
     }
     
     public virtual void ShowInputObject(float time, float delay) {
-        UITweenerUtil.MoveTo(
-            gameObject, 
-            UITweener.Method.EaseInOut, 
-            UITweener.Style.Once, time, delay, Vector3.zero.WithY(0)); 
+
+        TweenUtil.MoveToObject(gameObject, Vector3.zero.WithY(0), time, delay);
+
+        //UITweenerUtil.MoveTo(
+        //    gameObject, 
+        //    UITweener.Method.EaseInOut, 
+        //    UITweener.Style.Once, time, delay, Vector3.zero.WithY(0)); 
         
         controlsVisible = true;
     }
     
     public virtual void HideInputObject(float time, float delay) {
-        UITweenerUtil.MoveTo(
-            gameObject, 
-            UITweener.Method.EaseInOut, 
-            UITweener.Style.Once, time, delay, Vector3.zero.WithY(3000));  
+
+        TweenUtil.MoveToObject(gameObject, Vector3.zero.WithY(3000), time, delay);
+
+        //UITweenerUtil.MoveTo(
+        //    gameObject, 
+        //    UITweener.Method.EaseInOut, 
+        //    UITweener.Style.Once, time, delay, Vector3.zero.WithY(3000));  
         
         controlsVisible = false;          
     }

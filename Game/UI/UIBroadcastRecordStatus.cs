@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using Engine.Utility;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #else
 using UnityEngine.UI;
@@ -116,28 +117,36 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
         
         if (go != null) {
             
-            UITweenerUtil.FadeTo(
-                go,
-                UITweener.Method.EaseInOut, 
-                UITweener.Style.Once, 
-                .5f, 0f, 1f);
+            TweenUtil.FadeToObject(go, 1f, .5f, 0f);
 
-            UITweenerUtil.FadeTo(
-                go,
-                UITweener.Method.EaseInOut, 
-                UITweener.Style.PingPong, 
-                .5f, .5f, .4f);
+            TweenUtil.FadeToObject(go, .4f, .5f, .5f, false, 
+                TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
+
+            //UITweenerUtil.FadeTo(
+            //    go,
+            //    UITweener.Method.EaseInOut, 
+            //    UITweener.Style.Once, 
+            //    .5f, 0f, 1f);
+
+            //UITweenerUtil.FadeTo(
+            //    go,
+            //    UITweener.Method.EaseInOut, 
+            //    UITweener.Style.PingPong, 
+            //    .5f, .5f, .4f);
         }   
     }
 
     public virtual void AnimateObjectFadeOut(GameObject go) {
         
         if (go != null) {
-            UITweenerUtil.FadeTo(
-                go,
-                UITweener.Method.EaseInOut, 
-                UITweener.Style.Once, 
-                2f, 0f, 0f);
+
+            TweenUtil.FadeToObject(go, 0f, 2f, 0f);
+
+            //UITweenerUtil.FadeTo(
+            //    go,
+            //    UITweener.Method.EaseInOut, 
+            //    UITweener.Style.Once, 
+            //    2f, 0f, 0f);
         }   
     }
 

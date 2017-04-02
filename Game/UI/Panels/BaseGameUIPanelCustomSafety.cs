@@ -121,7 +121,7 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
 	
 	IEnumerator loadDataCo() {
 		
-		GameUIController.Instance.currentDraggableGameObject = helmetObjectRotator;
+		//GameUIController.Instance.currentDraggableGameObject = helmetObjectRotator;
 		
 		yield return new WaitForSeconds(1f);
 	}
@@ -143,7 +143,7 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
 		
 		base.AnimateOut();		
 		
-		GameUIController.Instance.currentDraggableGameObject = null;
+		//GameUIController.Instance.currentDraggableGameObject = null;
 		
 		//HidePanelDefault();
 	}
