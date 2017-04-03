@@ -820,6 +820,10 @@ internal virtual void handleGameInput() {
                     axisInput.y = 0f;
                 }
 
+                //if(axisInput.x != 0 || axisInput.y != 0) {
+                Debug.Log("axisInput x:" + axisInput.x + " y:" + axisInput.y);
+                //}
+
                 //if(!GameController.isFingerNavigating) {
                 HandleThirdPersonControllerAxis(axisInput);
             }
@@ -939,13 +943,12 @@ internal virtual void handleGameInput() {
             return;
         }
 
-
         if(currentControllerData.mountData.isMountedVehicle) {
 
             currentControllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
         else {
-
+             
             currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
             currentControllerData.thirdPersonController.verticalInput = axisInput.y;
         }
@@ -1042,9 +1045,9 @@ internal virtual void handleGameInput() {
     public virtual void OnGameInitLevelStart(string levelCode) {
         // Button pressed to run game after load
 
-        if(IsPlayerControlled) {
-            GamePlayerModelHolderEaseOutByType();
-        }
+        //if(IsPlayerControlled) {
+        GamePlayerModelHolderEaseStartByType();
+        //}
     }
 
     public virtual void OnGameLevelPlayerReady() {
@@ -1424,7 +1427,7 @@ internal virtual void handleGameInput() {
     // LINE RENDERERS
 
     public virtual void PlayerEffectTrailGroundFadeIn() {
-        
+
         TweenUtil.FadeToObject(gamePlayerTrailGround, 1f, 1f, .5f);
 
         //UITweenerUtil.FadeTo(gamePlayerTrailGround,
@@ -1440,7 +1443,7 @@ internal virtual void handleGameInput() {
     }
 
     public virtual void PlayerEffectTrailBoostFadeIn() {
-        
+
         TweenUtil.FadeToObject(gamePlayerTrailBoost, 1f, 1f, .5f);
 
         //UITweenerUtil.FadeTo(gamePlayerTrailBoost,
@@ -1706,7 +1709,7 @@ internal virtual void handleGameInput() {
 
     public virtual void GamePlayerModelHolderEase(float height = 0, float time = .5f, float delay = 0) {
 
-        LeanTween.cancel(gamePlayerModelHolder);
+        //LeanTween.cancel(gamePlayerModelHolder);
 
         LeanTween
             .moveLocalY(gamePlayerModelHolder, height, time)
@@ -1727,27 +1730,41 @@ internal virtual void handleGameInput() {
         GamePlayerModelHolderEase(height, time, delay);
     }
 
-    public virtual void GamePlayerModelHolderEaseInByType() {
+    public virtual void GamePlayerModelHolderEaseStartByType() {
 
         if(GameController.IsGameplayTypeRunner()) {
-            GamePlayerModelHolderEaseIn(0f, 0f, 0f);
+            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
             if(!IsPlayerControlled) {
-                GamePlayerModelHolderEaseIn(0, 0f, 0f);
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
             }
         }
         else if(GameController.IsGameplayTypeDasher()) {
-            GamePlayerModelHolderEaseIn(0f, 1f, 0f);
+            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
             if(!IsPlayerControlled) {
                 GamePlayerModelHolderEaseIn(0, .3f, .3f);
             }
         }
     }
 
-    public virtual void GamePlayerModelHolderEaseOutByType() {
+    public virtual void GamePlayerModelHolderEaseReadyByType() {
+
+        if(GameController.IsGameplayTypeRunner()) {
+            //if(IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            //}
+        }
+        else if(GameController.IsGameplayTypeDasher()) {
+            //if(IsPlayerControlled) {
+                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            //}
+        }
+    }
+
+    public virtual void GamePlayerModelHolderEaseEndByType() {
 
         if(GameController.IsGameplayTypeRunner()) {
 
-            GamePlayerModelHolderEaseOut(0, 0f, 0);
+            GamePlayerModelHolderEaseOut(0, .1f, 0);
         }
         else if(GameController.IsGameplayTypeDasher()) {
 
@@ -1824,14 +1841,16 @@ internal virtual void handleGameInput() {
                 currentControllerData.effectWarpCurrent += (Time.deltaTime * fadeSpeed);
                 SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
-            else if(currentControllerData.effectWarpCurrent >= currentControllerData.effectWarpEnd) {
+            else if(currentControllerData.effectWarpCurrent > currentControllerData.effectWarpEnd) {
                 currentControllerData.effectWarpCurrent -= (Time.deltaTime * fadeSpeed);
                 SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
             }
             else {
-                currentControllerData.effectWarpEnabled = false;
-                currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
-                SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
+                if(currentControllerData.effectWarpCurrent != currentControllerData.effectWarpEnd) {
+                    currentControllerData.effectWarpEnabled = false;
+                    currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
+                    SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
+                }
             }
         }
     }
@@ -2185,7 +2204,8 @@ internal virtual void handleGameInput() {
 
     public virtual GamePlayerController GetController(Transform transform) {
         if(transform != null) {
-            GamePlayerController gamePlayerController = transform.GetComponentInChildren<GamePlayerController>();
+            GamePlayerController gamePlayerController = 
+                transform.GetComponentInChildren<GamePlayerController>();
             if(gamePlayerController != null) {
                 return gamePlayerController;
             }
@@ -2291,9 +2311,6 @@ internal virtual void handleGameInput() {
 
     public virtual void LoadCharacter(string characterCodeTo) {
 
-        //Debug.Log("LoadCharacter:1:" + " characterCodeTo:" + characterCodeTo);
-        //Debug.Log("LoadCharacter:1:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
-
         if(currentControllerData.loadingCharacter) {
             StopAllCoroutines();
             currentControllerData.loadingCharacter = false;
@@ -2301,12 +2318,8 @@ internal virtual void handleGameInput() {
 
         characterCode = characterCodeTo;
 
-        //Debug.Log("LoadCharacter:2:" + " characterCodeTo:" + characterCodeTo);
-        //Debug.Log("LoadCharacter:2:" + " currentControllerData.loadingCharacter:" + currentControllerData.loadingCharacter);
-
         UpdateCharacterStates();
-
-        //LogUtil.Log("LoadCharacter:prefabNameObject:" + prefabNameObject);
+        
         //if (currentControllerData.lastCharacterCode != characterCode 
         //    || currentControllerData.lastCharacterCode == null) {
 
@@ -2530,16 +2543,16 @@ internal virtual void handleGameInput() {
 
     public virtual void LoadEnterExitState() {
 
-        GamePlayerModelHolderEaseOutByType();
+        GamePlayerModelHolderEaseStartByType();
     }
 
     public virtual void LoadPlayerReadyState() {
-        if(IsPlayerControlled) {
+        //if(IsPlayerControlled) {
 
-            UpdateCharacterRuntimeState();
+        UpdateCharacterRuntimeState();
 
-            GamePlayerModelHolderEaseInByType();
-        }
+        GamePlayerModelHolderEaseReadyByType();
+        //}
     }
 
     public void LoadWorldIndicator() {
@@ -4371,7 +4384,7 @@ internal virtual void handleGameInput() {
         */
 
         if(IsPlayerControlled) {
-            GamePlayerModelHolderEaseOutByType();
+            GamePlayerModelHolderEaseEndByType();
         }
 
         runtimeData.health = 0;
@@ -4437,7 +4450,7 @@ internal virtual void handleGameInput() {
 
             AudioAttack();
 
-            GamePlayerModelHolderEaseOutByType();
+            GamePlayerModelHolderEaseEndByType();
 
             //Jump(50);
 
@@ -5930,14 +5943,20 @@ internal virtual void handleGameInput() {
 
             // CHARACTER CONTROLLER
 
-            currentControllerData.characterController = gameObject.GetComponent<CharacterController>();
-
-            if(currentControllerData.characterController == null) {
-                currentControllerData.characterController = gameObject.AddComponent<CharacterController>();
-            }
-
+            currentControllerData.characterController = gameObject.GetOrSet<CharacterController>();
+            
             // TODO config
 
+            //public float initialMaxWalkSpeed = 5f;
+            //public float initialMaxTrotSpeed = 15f;
+            //public float initialMaxRunSpeed = 20f;
+            //public float initialMaxJumpHeight = .5f;
+            //public float initialMaxExtraJumpHeight = 1f;
+            //public float characterSlopeLimit = 45;
+            //public float characterStepOffset = .3f;
+            //public float characterRadius = 1f;
+            //public float characterHeight = 2.5f;
+    
             currentControllerData.characterController.slopeLimit = 45;
             currentControllerData.characterController.stepOffset = .3f;
             currentControllerData.characterController.radius = 2.6f;// 1.67f;
@@ -5954,16 +5973,8 @@ internal virtual void handleGameInput() {
                 && !IsUIState())
                 || IsNetworkPlayerState()) {
 
-                if(gameObject.Has<GamePlayerThirdPersonController>()) {
-
-                    currentControllerData.thirdPersonController =
-                            gameObject.GetComponent<GamePlayerThirdPersonController>();
-                }
-                else {
-
-                    currentControllerData.thirdPersonController =
-                            gameObject.AddComponent<GamePlayerThirdPersonController>();
-                }
+                currentControllerData.thirdPersonController =
+                    gameObject.GetOrSet<GamePlayerThirdPersonController>();
 
                 currentControllerData.thirdPersonController.Init();
 
@@ -5975,13 +5986,8 @@ internal virtual void handleGameInput() {
 
             if(ShouldHaveNavAgent()) {
 
-
-                currentControllerData.navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-
-                if(currentControllerData.navMeshAgent == null) {
-                    currentControllerData.navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
-                }
-
+                currentControllerData.navMeshAgent = gameObject.GetOrSet<NavMeshAgent>();
+                
                 if(currentControllerData.navMeshAgent != null) {
                     //navMeshAgent.enabled = false;
                     //if(!IsPlayerControlled) {
@@ -6010,9 +6016,7 @@ internal virtual void handleGameInput() {
                         currentControllerData.navMeshAgent.speed *= adjust;
                         currentControllerData.navMeshAgent.acceleration *= adjust;
                         currentControllerData.navMeshAgent.angularSpeed *= adjust;
-
                     }
-
                 }
             }
 
@@ -6020,16 +6024,8 @@ internal virtual void handleGameInput() {
                 || contextState == GamePlayerContextState.ContextFollowAgentAttack
                 && ShouldHaveNavAgent()) {
 
-                currentControllerData.navMeshAgentFollowController =
-                    gameObject.GetComponent<GamePlayerNavMeshAgentFollowController>();
-
-                if(currentControllerData.navMeshAgentFollowController == null) {
-                    currentControllerData.navMeshAgentFollowController =
-                        gameObject.AddComponent<GamePlayerNavMeshAgentFollowController>();
-                }
-
+                currentControllerData.navMeshAgentFollowController = gameObject.GetOrSet<GamePlayerNavMeshAgentFollowController>();                
                 currentControllerData.navMeshAgentFollowController.agent = currentControllerData.navMeshAgent;
-
 
                 if(IsSidekickControlled) {
                     currentControllerData.navMeshAgentFollowController.agentDistance = 10;
@@ -6047,14 +6043,7 @@ internal virtual void handleGameInput() {
             if(contextState == GamePlayerContextState.ContextRandom
                 && ShouldHaveNavAgent()) {
 
-                currentControllerData.navMeshAgentController =
-                    gameObject.GetComponent<GamePlayerNavMeshAgentController>();
-
-                if(currentControllerData.navMeshAgentController == null) {
-                    currentControllerData.navMeshAgentController =
-                        gameObject.AddComponent<GamePlayerNavMeshAgentController>();
-                }
-
+                currentControllerData.navMeshAgentController = gameObject.GetOrSet<GamePlayerNavMeshAgentController>();
                 currentControllerData.navMeshAgentController.agent = currentControllerData.navMeshAgent;
 
                 currentControllerData.navMeshAgentController.nextDestination =
@@ -6063,15 +6052,8 @@ internal virtual void handleGameInput() {
 
             // 
             // ANIMATION
-
-            if(gameObject.Has<GamePlayerControllerAnimation>()) {
-                currentControllerData.gamePlayerControllerAnimation =
-                    gameObject.GetComponent<GamePlayerControllerAnimation>();
-            }
-            else {
-                currentControllerData.gamePlayerControllerAnimation =
-                    gameObject.AddComponent<GamePlayerControllerAnimation>();
-            }
+            
+            currentControllerData.gamePlayerControllerAnimation = gameObject.GetOrSet<GamePlayerControllerAnimation>();
 
             currentControllerData.gamePlayerControllerAnimation.Init();
 
@@ -6086,20 +6068,21 @@ internal virtual void handleGameInput() {
 
             currentControllerData.gamePlayerControllerAnimation.animationData.runSpeedScale =
                 (smoothing * .15f) * (float)(currentControllerData.runtimeRPGData.modifierSpeed +
-            currentControllerData.runtimeRPGData.modifierEnergy);// currentControllerData.thirdPersonController.trotSpeed / currentControllerData.thirdPersonController.walkSpeed / 2;
+                currentControllerData.runtimeRPGData.modifierEnergy);// currentControllerData.thirdPersonController.trotSpeed / currentControllerData.thirdPersonController.walkSpeed / 2;
 
             currentControllerData.gamePlayerControllerAnimation.animationData.walkSpeedScale =
                 1f * (float)(currentControllerData.runtimeRPGData.modifierSpeed +
-            currentControllerData.runtimeRPGData.modifierEnergy);//currentControllerData.thirdPersonController.walkSpeed / currentControllerData.thirdPersonController.walkSpeed;
+                currentControllerData.runtimeRPGData.modifierEnergy);//currentControllerData.thirdPersonController.walkSpeed / currentControllerData.thirdPersonController.walkSpeed;
 
             currentControllerData.gamePlayerControllerAnimation.animationData.isRunning = true;
 
             // 
             // SHADOW
+            
+            actorShadow = gameObject.GetOrSet<ActorShadow>();
 
-            if(actorShadow == null) {
-
-                actorShadow = gameObject.AddComponent<ActorShadow>();
+            if(actorShadow != null) {
+                
                 actorShadow.objectParent = gamePlayerModelHolderModel;
 
                 if(gamePlayerShadow != null) {
@@ -6145,12 +6128,8 @@ internal virtual void handleGameInput() {
                 if(currentControllerData.thirdPersonController) {
                     currentControllerData.thirdPersonController.ApplyDie(true);
                 }
-                
-                TweenUtil.FadeToObject(gameObject, 0f, .3f, .5f);
 
-                //UITweenerUtil.FadeTo(
-                //    gameObject,
-                //    UITweener.Method.EaseIn, UITweener.Style.Once, .3f, .5f, 0);
+                TweenUtil.FadeToObject(gameObject, 0f, .3f, .5f);
 
                 Invoke("RemoveMe", 6);
             }
@@ -6291,11 +6270,14 @@ internal virtual void handleGameInput() {
             else if(Input.GetKeyDown(KeyCode.N)) {
                 PlayerEffectWarpFadeOut();
             }
+            else if(Input.GetKeyDown(KeyCode.J)) {
+                GamePlayerModelHolderEaseStartByType();
+            }
             else if(Input.GetKeyDown(KeyCode.K)) {
-                GamePlayerModelHolderEaseInByType();
+                GamePlayerModelHolderEaseReadyByType();
             }
             else if(Input.GetKeyDown(KeyCode.L)) {
-                GamePlayerModelHolderEaseOutByType();
+                GamePlayerModelHolderEaseEndByType();
             }
         }
 

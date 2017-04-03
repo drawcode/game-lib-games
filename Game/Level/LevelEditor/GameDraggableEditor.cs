@@ -1097,7 +1097,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                     }
                     if (lastGrabbed != grabbed) {
                         lastGrabbed = grabbed;
-                        ////currentDraggableGameObject = grabbed.gameObject;
+                        InputSystem.Instance.currentDraggableGameObject = grabbed.gameObject;
                         Messenger<GameObject>.Broadcast(
                             GameDraggableEditorMessages.editorGrabbedObjectChanged, lastGrabbed.gameObject);
                     }

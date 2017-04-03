@@ -3100,9 +3100,6 @@ public class BaseGameController : GameObjectTimerBehavior {
             if(cam != null) {
                 if(cam.gameObject != null) {
                     cam.gameObject.Show();
-
-                    //UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 1f);
-
                     TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
                 }
             }
@@ -3114,8 +3111,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         foreach(Camera cam in cams) {
             if(cam != null) {
                 if(cam.gameObject != null) {
-                    //UITweenerUtil.FadeTo(cam.gameObject, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, .5f, 0f);
-
                     TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
                 }
             }
@@ -3692,7 +3687,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         axisInput.x = x;
         axisInput.y = y;
 
-        sendInputAxisMessage("move", axisInput);
+        sendInputAxisMessage(InputSystemKeys.moveKey, axisInput);
     }
 
     public virtual void sendInputAxisMessage(string axisNameTo, Vector3 axisInputTo) {
