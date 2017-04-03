@@ -1824,13 +1824,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForEndOfFrame();
 
         // PRELOAD/CACHE/POOL CONTROLLERS
 
-        yield return StartCoroutine(GameAIController.Instance.preloadCo());
+        //yield return StartCoroutine(GameAIController.Instance.preloadCo());
 
-        yield return StartCoroutine(GameItemController.Instance.preloadCo());
+        //yield return StartCoroutine(GameItemController.Instance.preloadCo());
 
         GameHUD.Instance.ResetIndicators();
 
@@ -1847,6 +1847,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
 
         yield return new WaitForEndOfFrame();
+
+        if(Application.isEditor) {
+            yield break;
+        }
 
         int minAssetLimit = (int)assetDataItem.min;
         int maxAssetLimit = (int)assetDataItem.max;
@@ -5164,15 +5168,16 @@ public class BaseGameController : GameObjectTimerBehavior {
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
 
-            float speedThrottle = (currentGamePlayerController.GamePlayerMoveSpeedGet() / 100f) * .5f;
+            float speedThrottle = 
+                (currentGamePlayerController.controllerData.speedInfinite / currentGamePlayerController.controllerData.speedInfiniteMax)  * .1f;
 
             //containerInfinity.UpdatePositionPartsZ(
             //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
             //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
             containerInfinity.UpdatePositionPartsZ(
-                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
-                currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
+                (-currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
+                currentGamePlayerController.controllerData.speedInfinite) * Time.deltaTime);
 
             //containerInfinity.UpdatePositionPartsZ(
             //    -1 *

@@ -471,11 +471,11 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public virtual void ShowEditState() {
-        ShowCharacterObject(.5f, 0f);
-        ShowPauseObject(.5f, 0f);
-        HideDisplayObject(.5f, 0f);
-        ShowControlsLeftObject(.5f, 0f);
-        HideControlsRightObject(.5f, 0f);
+        ShowCharacterObject(.5f, .5f);
+        ShowPauseObject(.5f, .5f);
+        HideDisplayObject(.5f, .5f);
+        ShowControlsLeftObject(.5f, .5f);
+        HideControlsRightObject(.5f, .5f);
 
         HandlePlatform();
     }

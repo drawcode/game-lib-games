@@ -159,7 +159,7 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
     
     public virtual IEnumerator preloadCo() {
         
-        yield return new WaitForEndOfFrame();        
+        //yield return new WaitForEndOfFrame();        
         
         GamePreset preset = GamePresets.Instance.GetCurrentPresetDataCharacter();
         
@@ -172,19 +172,19 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
         foreach (GamePresetItem item in presetItems) {
 
             for (int i = 0; i < item.limit / 3; i++) {
-                yield return new WaitForEndOfFrame();
+                //yield return new WaitForEndOfFrame();
 
                 GameAIController.Load(item.code);
             }
         }
-                
-        yield return new WaitForSeconds(1f);
+
+        yield return new WaitForEndOfFrame();
 
         // remove all characters
 
         GameController.ResetLevelActors();
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
     }
 
     public virtual void load(string code, string type = "enemy") {
