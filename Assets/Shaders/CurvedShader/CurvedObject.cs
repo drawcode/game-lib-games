@@ -18,23 +18,26 @@ public class CurvedObject : MonoBehaviour {
     float lastCurveTime = 0f;
 
     void Start() {
-        
+
+        lastCurveAmount.x = 3;
+        lastCurveAmount.y = -1;
+
         UpdateShader();
     }
 
     void Update() {
 
-        if (Application.isEditor) {
-            if (Input.GetKey(KeyCode.LeftControl)
+        if(Application.isEditor) {
+            if(Input.GetKey(KeyCode.LeftControl)
                 || Input.GetKey(KeyCode.RightControl)) {
 
-                if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                if(Input.GetKeyDown(KeyCode.KeypadEnter)) {
                     bool curveEnabled = GameController.CurveInfiniteEnabledGet();
                     curveEnabled = curveEnabled ? false : true;
                     GameController.CurveInfiniteEnabledSet(curveEnabled);
-                }                       
+                }
             }
-        } 
+        }
 
         UpdateShader();
     }
@@ -54,38 +57,59 @@ public class CurvedObject : MonoBehaviour {
 
         lastCurveTime = Time.time;
 
-        if (!running) {
+        if(!running) {
 
             running = true;
 
-            if (!GameController.CurveInfiniteEnabledGet()) {
+            if(!GameController.CurveInfiniteEnabledGet()) {
                 curveAmount = Vector4.zero;
-                //curveDistance = 0;
+                curveDistance = 0;
             }
             else {
                 curveAmount = GameController.CurveInfiniteAmountGet();
                 curveDistance = GameController.CurveInfiniteDistanceGet();
             }
 
-            if (render == null) {
+            if(render == null) {
                 render = GetComponent<Renderer>();
-            } 
+            }
 
-            if (render == null) {
+            if(render == null) {
+                yield break;
+            }
+            
+            if(render.materials == null || render.materials.Length == 0) {
                 yield break;
             }
 
-            if (render.sharedMaterial == null) {
+            int matCount = render.materials.Length;
+
+            if(render.materials.Length == 0) {
                 yield break;
             }
 
-            if (lastCurveAmount != curveAmount) {
-                render.sharedMaterial.SetVector("_QOffset", curveAmount);
+
+            if(lastCurveAmount != curveAmount) {
+                
+                for(int m = 0; m < matCount; m++) {
+
+                    if(render.materials[m] != null) {
+                        render.materials[m].SetVector("_QOffset", curveAmount);
+                    }
+                }
+
                 lastCurveAmount = curveAmount;
             }
 
-            if (lastCurveDistance != curveDistance) {
-                render.sharedMaterial.SetFloat("_Dist", curveDistance);
+            if(lastCurveDistance != curveDistance) {
+                
+                for(int m = 0; m < matCount; m++) {
+
+                    if(render.materials[m] != null) {
+                        render.materials[m].SetFloat("_Dist", curveDistance);
+                    }
+                }
+
                 lastCurveDistance = curveDistance;
             }
 
@@ -93,10 +117,10 @@ public class CurvedObject : MonoBehaviour {
         }
     }
 
-    private void OnApplicationQuit() {
+    //private void OnApplicationQuit() {
 
-        GameController.CurveInfiniteEnabledSet(false);
+    //GameController.CurveInfiniteEnabledSet(false);
 
-        UpdateShader();
-    }
+    //UpdateShader();
+    //}
 }

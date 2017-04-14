@@ -1203,11 +1203,19 @@ internal virtual void handleGameInput() {
     public virtual void HandleItemStateCurrency(double val) {
 
         runtimeData.coins += val;
+
+        if(GameController.IsGameplayWorldTypeStationary()) {
+            SpeedUp(Vector3.zero.WithZ(.10f));
+        }
     }
 
     public virtual void HandleItemStateSpecial(double val) {
 
         runtimeData.specials += val;
+
+        if(GameController.IsGameplayWorldTypeStationary()) {
+            SpeedUp(Vector3.zero.WithZ(.5f));
+        }
     }
 
     public virtual void HandleItemStateScore(double val) {
@@ -4031,6 +4039,33 @@ internal virtual void handleGameInput() {
         }
     }
 
+
+    // ------------------------------------------------------------------------
+    // SPeedUp
+
+    public virtual void SpeedUp() {
+        SpeedUp(Vector3.zero.WithZ(.15f));
+    }
+
+    public virtual void SpeedUp(Vector3 amount) {
+        if(isDead) {
+            return;
+        }
+
+        //GamePlayerBounceSet(-100);
+
+        if(currentControllerData.thirdPersonController != null) {
+            
+                currentControllerData.thirdPersonController.Slide(amount);
+            
+                currentControllerData.moveGamePlayerPosition += amount;
+        }
+
+        //if(gamePlayerEffectBoost != null) {
+        //    gamePlayerEffectBoost.Emit(1);
+        //}
+    }
+    
     // ------------------------------------------------------------------------
     // MOVE
 

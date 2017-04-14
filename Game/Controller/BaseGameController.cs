@@ -230,6 +230,20 @@ public class BaseGameGameRuntimeData {
     public double score = 0;
     public bool outOfBounds = false;
 
+    // GAMEPLAY TYPE SPECIFIC
+
+    // RUNNER
+
+    // TODO move to runtimeData n 
+
+    public Vector3 rangeStart;
+    public Vector3 rangeEnd;
+    public Vector4 curve;
+
+    public bool curveEnabled = true;
+    public float curveInfiniteDistance = 0f;
+    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
+
     public BaseGameGameRuntimeData() {
         Reset();
     }
@@ -289,19 +303,6 @@ public class BaseGameGameRuntimeData {
         timeRemaining += timeAppend;
     }
 
-    // GAMEPLAY TYPE SPECIFIC
-
-    // RUNNER
-
-    // TODO move to runtimeData n 
-
-    public Vector3 rangeStart;
-    public Vector3 rangeEnd;
-    public Vector4 curve;
-
-    public bool curveEnabled = false;
-    public float curveInfiniteDistance = 0f;
-    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
 
 }
 
@@ -4172,19 +4173,19 @@ public class BaseGameController : GameObjectTimerBehavior {
     // CURVE ENABLED
 
     // get
-
+    
     public static bool CurveInfiniteEnabledGet() {
         if(GameController.isInst) {
             return GameController.Instance.curveInfiniteEnabledGet();
         }
 
-        return false;
+        return true;
     }
 
     public bool curveInfiniteEnabledGet() {
 
         if(runtimeData == null) {
-            return false;
+            return true;
         }
 
         return runtimeData.curveEnabled;
@@ -5118,7 +5119,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        if(runtimeData.curveEnabled
+        if(curveInfiniteEnabledGet()
             && currentGamePlayerController.GamePlayerMoveSpeedGet() > 15f) {
             runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
             runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
@@ -5163,7 +5164,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if(GameConfigs.isGameRunning) {
 
-            if(!runtimeData.curveEnabled) {
+            if(!curveInfiniteEnabledGet()) {
                 runtimeData.curve = Vector4.zero;
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
