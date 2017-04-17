@@ -325,7 +325,7 @@ public class BaseGameAudioRecorder {
 				}
 			}
 	
-			if( www.audioClip ) {	
+			if( www.GetAudioClip() ) {	
 				audioClip = www.GetAudioClip(false);
 					
 				GameAudioRecorder.Instance.loadedClips.Add(file, audioClip);
