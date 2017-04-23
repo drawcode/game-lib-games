@@ -8,630 +8,6 @@ using UnityEngine;
 using Engine.Events;
 using Engine.Utility;
 
-// CUSTOM
-
-public enum GameZones {
-    left,
-    right
-}
-
-public class BaseGameContentDisplayTypes {
-    public static string gamePlayerOutOfBounds = "content-game-player-out-of-bounds";
-    public static string gameChoices = "content-game-game-choices";
-    public static string gameChoicesOverview = "content-game-game-choices-overview";
-    public static string gameChoicesItemStart = "content-game-game-choices-item-start";
-    public static string gameChoicesItemResult = "content-game-game-choices-item-result";
-    public static string gameCollect = "content-game-game-collect";
-    public static string gameCollectOverview = "content-game-game-collect-overview";
-    public static string gameCollectItemStart = "content-game-game-collect-item-start";
-    public static string gameCollectItemResult = "content-game-game-collect-item-result";
-    public static string gameEnergy = "content-game-game-energy";
-    public static string gameHealth = "content-game-game-health";
-    public static string gameXP = "content-game-game-xp";
-    public static string gameTips = "content-game-tips";
-    public static string gameTutorial = "content-game-tutorial";
-    public static string gameModeContentOverview = "content-game-mode-content-overview";
-}
-
-// GLOBAL
-
-public enum GameControllerType {
-    Iso2DSide,
-    Iso3D,
-    Iso2DTop,
-    Perspective3D
-}
-
-public class BaseGamePlayerMessages {
-
-    public static string PlayerAnimation = "playerAnimation";
-    public static string PlayerAnimationSkill = "skill";
-    public static string PlayerAnimationAttack = "attack";
-    public static string PlayerAnimationFall = "fall";
-    //
-
-    public static string PlayerCurrentDistance = "player-current-distance";
-    public static string PlayerOverallDistance = "player-overall-distance";
-}
-
-public enum GameStateGlobal {
-    GameNotStarted,
-    GameInit,
-    GamePrepare,
-    GameStarted,
-    GameQuit,
-    GamePause,
-    GameResume,
-    GameResults,
-    GameContentDisplay, // dialog or in progress choice/content/collection status
-    GameOverlay, // external dialog such as sharing/community/over
-}
-
-public class BaseGameplayType {
-    public static string gameDasher = "game-dasher";
-    public static string gameRunner = "game-runner";
-}
-
-public class BaseGameplayWorldType {
-    public static string gameDefault = "game-default";
-    public static string gameStationary = "game-stationary";
-}
-
-public class GameplayType : BaseGameplayType {
-
-}
-
-public class GameplayWorldType : BaseGameplayWorldType {
-
-}
-
-public class GameActorType {
-    public static string enemy = "enemy";
-    public static string player = "player";
-    public static string sidekick = "sidekick";
-}
-
-public class GameSpawnType {
-    public static string centeredType = "centered";
-    public static string zonedType = "zoned";
-    public static string pointsType = "points";
-    public static string explicitType = "explicit";
-    public static string randomType = "random";
-}
-
-public class GameObjectQueueItem {
-    public string type = "";
-    public string code = "";
-    public string data_type = "";
-    public string display_type = "";
-    public Vector3 pos = Vector3.zero;
-    public Quaternion rot = Quaternion.identity;
-}
-
-public class GameActorDataItem : GameDataObject {
-
-    public bool overrideLoading = false;
-
-
-    // RPG
-    
-    public virtual GameDataItemRPG rpg {
-        get {
-            return Get<GameDataItemRPG>(BaseDataObjectKeys.rpg, new GameDataItemRPG());
-        }
-        
-        set {
-            Set<GameDataItemRPG>(BaseDataObjectKeys.rpg, value);
-        }
-    }
-
-    public GameActorDataItem() {
-        Reset();
-    }
-
-    public override void Reset() {
-        base.Reset();
-
-        rpg = new GameDataItemRPG();
-
-        code = "";
-        type = BaseDataObjectKeys.character;
-        data_type = GameSpawnType.zonedType;
-        display_type = GameActorType.enemy;
-        rotation_data = new Vector3Data();
-        position_data = new Vector3Data(0, 0, 0);
-        scale_data = new Vector3Data(1, 1, 1);
-    }
-}
-
-public class BaseGameMessages {
-    //
-    public static string gameActionItem = "game-action-item";
-    public static string gameActionScores = "game-action-scores";
-    public static string gameActionScore = "game-action-score";
-    public static string gameActionAmmo = "game-action-ammo";
-    public static string gameActionSave = "game-action-save";
-    public static string gameActionShot = "game-action-shot";
-    public static string gameActionLaunch = "game-action-launch";
-    public static string gameActionState = "game-action-state";
-    //
-    
-    public static string gameActionAssetAttack = "game-action-asset-attack";
-    public static string gameActionAssetSave = "game-action-asset-save";
-    public static string gameActionAssetBuild = "game-action-asset-build";
-    public static string gameActionAssetRepair = "game-action-asset-repair";
-    public static string gameActionAssetDefend = "game-action-asset-defend";
-    //
-    public static string gameInitLevelStart = "game-init-level-start";
-    public static string gameInitLevelEnd = "game-init-level-end";
-    public static string gameLevelPlayerReady = "game-level-player-ready";
-    public static string gameLevelStart = "game-level-start";
-    public static string gameLevelEnd = "game-level-end";
-    public static string gameLevelQuit = "game-level-quit";
-    public static string gameLevelPause = "game-level-pause";
-    public static string gameLevelResume = "game-level-resume";
-    public static string gameResultsStart = "game-results-start";
-    public static string gameResultsEnd = "game-results-end";
-}
-
-public class BaseGameStatCodes {
-    
-    public static string timesPlayed = "times-played";//
-    public static string timePlayed = "time-played";//
-    public static string timesPlayedAction = "times-played-action";//
-
-    // totals
-    public static string wins = "wins";//--
-    public static string losses = "losses";//--
-    public static string shots = "shots";//--
-    public static string destroyed = "destroyed";//--
-
-    public static string score = "score";//--
-    public static string scores = "scores";//--
-    public static string special = "special";//--
-    public static string evaded = "evaded";//--
-    public static string kills = "kills";
-    public static string deaths = "deaths";
-    public static string hits = "hits";
-    public static string hitsReceived = "hits-received";
-    public static string hitsObstacles = "hits-obstacles";
-    public static string xp = "xp";
-    public static string coins = "coins";
-    public static string coinsPickup = "coinsPickup";
-    public static string coinsPurchased = "coinsPurchased";
-    public static string coinsEarned = "coinsEarned";
-    public static string ammo = "ammo";
-    public static string attacks = "attacks";//
-    public static string defends = "defends";//
-    public static string repairs = "repairs";//
-    public static string builds = "builds";//
-    public static string saves = "saves";
-
-    public static string cuts = "cuts";//
-    public static string cutsLeft = "cuts-left";//
-    public static string cutsRight = "cuts-right";//
-    public static string boosts = "boosts";//
-    public static string spins = "spins";//
-    public static string total = "total";//
-    public static string item = "item";//
-
-    // lows
-
-    // absolute
-
-    // accumulate (total)
-}
-
-public class BaseGameGameRuntimeData {
-    public double currentLevelTime = 0;
-    public double timeRemaining = 90;
-    public double coins = 0;
-    public string levelCode = "";
-    public double score = 0;
-    public bool outOfBounds = false;
-
-    // GAMEPLAY TYPE SPECIFIC
-
-    // RUNNER
-
-    // TODO move to runtimeData n 
-
-    public Vector3 rangeStart;
-    public Vector3 rangeEnd;
-    public Vector4 curve;
-
-    public bool curveEnabled = true;
-    public float curveInfiniteDistance = 0f;
-    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
-
-    public BaseGameGameRuntimeData() {
-        Reset();
-    }
-
-    public virtual void Reset() {
-        currentLevelTime = 0;
-        timeRemaining = 90;
-        coins = 0;
-        levelCode = "";
-        score = 0;
-        outOfBounds = false;
-        ResetTimeDefault();
-
-        // TYPES
-
-        rangeStart = Vector3.zero.WithX(-16f);
-        rangeEnd = Vector3.zero.WithX(16f);
-        curve = Vector4.zero;
-
-        curveEnabled = true;
-        curveInfiniteDistance = 50f;
-        curveInfiniteAmount = Vector4.zero;     // Determines how much the platform bends (default value (-5,-5,0,0)
-
-    }
-
-    public virtual bool timeExpired {
-        get {
-            if (timeRemaining <= 0) {
-                timeRemaining = 0;
-                return true;
-            }
-            return false;
-        }
-    }
-
-    public virtual bool localPlayerWin {
-        get {
-            return !timeExpired;
-        }
-    }
-
-    public virtual void SubtractTime(double delta) {
-        if (timeRemaining > 0) {
-            timeRemaining -= delta;
-        }
-    }
-
-    public virtual void ResetTimeDefault() {
-        timeRemaining = 90;
-    }
-
-    public virtual void ResetTime(double timeTo) {
-        timeRemaining = timeTo;
-    }
-
-    public virtual void AppendTime(double timeAppend) {
-        timeRemaining += timeAppend;
-    }
-
-
-}
-
-public class GameLevelItemDataType {
-    public static string randomType = "random";
-    public static string explicitType = "explicit";
-}
-
-public class GameLevelItemData {
-    public string code = "rock-1";
-    public int count = 1;
-    public Vector3 pos = Vector3.zero;
-    public string type = GameLevelItemDataType.randomType;
-    
-    public GameLevelItemData() {
-        
-    }
-    
-    public GameLevelItemData(string codeTo, string typeTo, int countTo, Vector3 posTo) {
-        code = codeTo;
-        type = typeTo;
-        count = countTo;
-        pos = posTo;
-    }    
-}
-
-public class GameLevelTemplate {
-    public Dictionary<string, GameLevelItemData> randomAssets = new Dictionary<string, GameLevelItemData>();
-    public Dictionary<string, Vector3> placedAssets = new Dictionary<string, Vector3>();
-}
-
-public class GameLevelGridData {
-    public float gridHeight = (float)GameLevels.currentLevelData.grid_height;
-    public float gridWidth = (float)GameLevels.currentLevelData.grid_width;
-    public float gridDepth = (float)GameLevels.currentLevelData.grid_depth;
-    public float gridBoxSize = (float)GameLevels.currentLevelData.grid_box_size;
-    public bool centeredX = GameLevels.currentLevelData.grid_centered_x;
-    public bool centeredY = GameLevels.currentLevelData.grid_centered_y;
-    public bool centeredZ = GameLevels.currentLevelData.grid_centered_z;
-    public List<string> presets = new List<string>();
-    public List<AppContentAsset> assets;
-    //public string[,,] assetMap;
-
-    public Dictionary<string, GameLevelItemAssetData> assetLayoutData;
-
-    public GameLevelGridData() {
-        Reset();
-    }
-
-    public void Reset() {
-        ResetGrid((int)gridHeight, (int)gridWidth, (int)gridDepth);
-        ClearAssets();
-        ClearMap();
-        ClearPresets();
-    }
-
-    public void ResetGrid(int height, int width, int depth) {
-        ResetGrid(height, width, depth, (int)gridBoxSize, true, false, true);
-    }
-
-    public void ResetGrid(int height, int width, int depth, int boxSize, bool centerX, bool centerY, bool centerZ) {
-        gridHeight = (float)height;
-        gridWidth = (float)width;
-        gridDepth = (float)depth;
-        gridBoxSize = (float)boxSize;
-
-        centeredX = centerX;
-        centeredY = centerY;
-        centeredZ = centerZ;
-    }
-
-    public static GameLevelGridData GetLevelTemplate(string template) {
-
-        //string wall1 = "wall-1";
-
-        //GameLevelGridData gridData = new GameLevelGridData();
-
-
-        return GameLevels.GetLevelGridBaseDefault();
-        
-        /*
-        GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
-        data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
-        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
-
-        return data;
-        */
-    }
-
-    public static GameLevelGridData GetBaseDefault() {
-
-        return GameLevels.GetLevelGridBaseDefault();
-
-        /*
-        GameLevelGridData data = new GameLevelGridData();
-        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
-        data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
-        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
-
-        return data;
-        */
-    }
-
-    public static GameLevelGridData GetDefault() {
-
-        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
-        data.RandomizeAssetsInAssetMap();
-
-        return data;
-    }
-
-    public static GameLevelGridData GetTemplate(string templateCode) {
-        
-        GameLevelGridData data = GameLevelGridData.GetLevelTemplate(templateCode);
-        //data.RandomizeAssetsInAssetMap();
-        
-        return data;
-    }
-
-    public static GameLevelGridData GetModeTypeChoice(int choiceCount) {
-
-        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
-        //data = AddAssets(data, "game-choice-item", choiceCount);
-        data.RandomizeAssetsInAssetMap();
-
-        return data;
-    }
-
-    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode) {
-        data.SetAssets(assetCode, 1);
-        return data;
-    }
-
-    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode, int count) {
-        data.SetAssets(assetCode, count);
-        return data;
-    }
-
-    //public string[,,] GetAssetMap() {
-    //    return assetMap;
-    //}
-
-    public Dictionary<string, GameLevelItemAssetData> GetAssetLayoutData() {
-        return assetLayoutData;
-    }
-
-    public void ClearAssets() {
-        assets = new List<AppContentAsset>();
-    }
-
-    public void ClearMap() {
-        //assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
-        assetLayoutData = new Dictionary<string, GameLevelItemAssetData>();
-    }
-    
-    public void ClearPresets() {
-        presets = new List<string>();
-    }
-
-    public void SetAssets(string code, int count) {
-        for (int i = 0; i < count; i++) {
-            SetAsset(code);
-        }
-    }
-
-    public void SetAsset(string code) {
-        AppContentAsset asset = AppContentAssets.Instance.GetByCode(code);
-        if (asset != null) {
-            //if(!HasAsset(asset.code)) {
-            assets.Add(asset);
-            //}
-        }
-    }
-
-    public bool HasAsset(string code) {
-        foreach (AppContentAsset asset in assets) {
-            if (asset.code == code) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void SetAssetsInAssetMap(
-        string code, string type, string dataType, string displayType, Vector3 pos) {
-
-        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
-
-        assetData.code = code;
-        assetData.type = type;
-        assetData.data_type = dataType;
-        assetData.display_type = displayType;
-        assetData.position_data = new Vector3Data(pos);
-        assetData.SetAssetScaleRange(.7f, 1.2f);
-        assetData.SetAssetRotationRangeY(-180, 180);
-
-        SetAssetsInAssetMap(assetData);
-    }
-
-    public void SetAssetsInAssetMap(
-        string code, string type, string dataType, string displayType, 
-        Vector3 pos, Vector3 scale, Vector3 rotation) {
-        
-        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
-        
-        assetData.code = code;
-        assetData.type = type;
-        assetData.data_type = dataType;
-        assetData.display_type = displayType;
-        assetData.position_data = new Vector3Data(pos);
-        assetData.scale_data = new Vector3Data(scale);
-        assetData.rotation_data = new Vector3Data(rotation);
-        
-        SetAssetsInAssetMap(assetData);
-    }
-
-    public void SetAssetsInAssetMap(
-        string code, string type, string dataType, string displayType, 
-        Vector3 pos, Vector3 scale, Vector3 rotation, Vector3 localPosition) {
-        
-        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
-        
-        assetData.code = code;
-        assetData.type = type;
-        assetData.data_type = dataType;
-        assetData.display_type = displayType;
-        assetData.position_data = new Vector3Data(pos);
-        assetData.scale_data = new Vector3Data(scale);
-        assetData.rotation_data = new Vector3Data(rotation);
-        assetData.local_position_data = new Vector3Data(localPosition);
-        
-        SetAssetsInAssetMap(assetData);
-    }
-
-    public void SetAssetsInAssetMap(GameLevelItemAssetData assetData) {
-
-        Vector3 pos = assetData.position_data.GetVector3();
-
-        if (pos.x > gridWidth - 1) {
-            pos.x = gridWidth - 1;
-        }
-
-        if (pos.y > gridHeight - 1) {
-            pos.y = gridHeight - 1;
-        }
-
-        if (pos.z > gridDepth - 1) {
-            pos.z = gridDepth - 1;
-        }
-
-        string keyLayout = 
-            string.Format(
-                "{0}-{1}-{2}", 
-                (int)pos.x, 
-                (int)pos.y, 
-                (int)pos.z);
-
-        assetData.position_data.FromVector3(pos);
-
-        if (!assetLayoutData.ContainsKey(keyLayout)) {
-
-            if (assetData.code != BaseDataObjectKeys.empty) {
-
-                if (assetData.type == BaseDataObjectKeys.character) {
-
-                    Debug.Log("SetAssetsIntoMap:keyLayout:" + keyLayout);
-                    Debug.Log("SetAssetsIntoMap:assetData:" + assetData.ToJson());
-                }
-            }
-
-            assetLayoutData.Set(keyLayout, assetData);
-        }
-    }
-
-    // data.rangeScale = Vector3.zero.WithX(.7f).WithY(1.2f);
-    // data.range_rotation = Vector3.zero.WithX(-180).WithY(180); 
-
-    public void RandomizeAssetsInAssetMap() {
-
-        foreach (AppContentAsset asset in assets) {
-
-            int x = 0;
-            int y = 0;
-            int z = 0;
-
-            x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
-            y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
-            z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
-
-            int midX = ((int)((gridWidth - 1) / 2));
-            // TODO 2d version
-            //int midY = ((int)((gridHeight - 1) / 2));
-            int midZ = ((int)((gridDepth - 1) / 2));
-
-            // Dont' add if in the middle spawn area until player
-            // items grid out in level data.
-            // TODO switch to area around player to gid out items
-            // if spawns on level items
-          
-            if ((x < (midX + 2)) && (x > (midX - 2))
-                && (z < (midZ + 2)) && (z > (midZ - 2))) {
-                continue;
-            }
-
-            string keyLayout = string.Format("{0}-{1}-{2}", x, y, z);
-
-            if (!assetLayoutData.ContainsKey(keyLayout)) {
-                Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
-                SetAssetsInAssetMap(asset.code, asset.type, asset.data_type, asset.display_type, pos);
-            }
-        }
-    }
-}
-
-public enum GameCameraView {
-    ViewSide, // tecmo
-    ViewSideTop, // tecmo
-    ViewBackTilt, // backbreaker cam
-    ViewBackTop // john elway cam
-}
-
-public enum GameRunningState {
-    PAUSED,
-    RUNNING,
-    STOPPED
-}
-
 public class BaseGameController : GameObjectTimerBehavior {
 
     public GamePlayerController currentGamePlayerController;
@@ -792,6 +168,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void OnEnable() {
 
+        Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
+
+        Messenger<string>.AddListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
+
+        Messenger.AddListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
+
         Gameverses.GameMessenger<string>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
@@ -804,15 +186,27 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
+        Messenger.AddListener(
+            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            OnProfileShouldBeSavedEventHandler);
 
-        Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
+        Messenger.AddListener(
+            GameDraggableEditorMessages.GameLevelItemsLoaded, 
+            OnGameLevelItemsLoaded);
 
-        Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(InputSystemEvents.inputSwipe, OnInputSwipe);
+        Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(
+            InputSystemEvents.inputSwipe, OnInputSwipe);
 
     }
 
     public virtual void OnDisable() {
+
+        Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
+
+        Messenger<string>.RemoveListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
+
+        Messenger.RemoveListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
+
         Gameverses.GameMessenger<string>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
@@ -825,11 +219,31 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
+        Messenger.RemoveListener(
+            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            OnProfileShouldBeSavedEventHandler);
 
-        Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
+        Messenger.RemoveListener(
+            GameDraggableEditorMessages.GameLevelItemsLoaded, 
+            OnGameLevelItemsLoaded);
 
-        Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(InputSystemEvents.inputSwipe, OnInputSwipe);
+        Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(
+            InputSystemEvents.inputSwipe, OnInputSwipe);
+    }
+
+    //
+
+
+    public virtual void OnGameLevelStart(string levelCode) {
+
+    }
+
+    public virtual void OnGameInitLevelStart(string levelCode) {
+        
+    }
+
+    public virtual void OnGameLevelPlayerReady() {
+        
     }
 
     // ---------------------------------------------------------------------
@@ -2468,6 +1882,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
         GameDraggableEditor.ResetCurrentGrabbedObject();
         GameDraggableEditor.HideAllEditDialogs();
+
     }
 
     public virtual void resetRuntimeData() {
@@ -2922,6 +2337,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameUIController.ShowUI();
 
         //ChangeGameState(GameStateGlobal.GameResults);
+        
+        ObjectPoolKeyedManager.clearPooled();
 
         quitGameRunning();
     }

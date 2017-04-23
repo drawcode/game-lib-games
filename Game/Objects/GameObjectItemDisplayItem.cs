@@ -23,7 +23,7 @@ public class GameObjectItemDisplayItem : GameObjectBehavior {
     }
     
     void UpdateState() {
-
+        
         TweenUtil.FadeToObject(gameObject, collected ? 1f : .4f);
     }
 }

@@ -290,9 +290,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(overlayRedObject != null) {
 
             TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
-
-            //UITweenerUtil.FadeTo(overlayRedObject,
-            //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
         }
     }
 
@@ -304,9 +301,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(overlayRedObject != null) {
 
             TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
-
-            //UITweenerUtil.FadeTo(overlayRedObject,
-            //    UITweener.Method.Linear, UITweener.Style.Once, time, delay, amountFrom, amountTo);
         }
     }
 
@@ -314,9 +308,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(containerCharacters != null) {
 
             TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftOpenX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerCharacters,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftOpenX));
         }
     }
 
@@ -324,9 +315,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(containerCharacters != null) {
             
             TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerCharacters,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(leftClosedX));
         }
     }
 
@@ -334,9 +322,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(containerDisplay != null) {
 
             TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topOpenY), time, delay);
-
-            //UITweenerUtil.MoveTo(containerDisplay,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));
         }
     }
 
@@ -344,9 +329,6 @@ public class BaseGameHUD : GameUIPanelBase {
         if(containerDisplay != null) {
 
             TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topClosedY), time, delay);
-
-            //UITweenerUtil.MoveTo(containerDisplay,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
         }
     }
 
