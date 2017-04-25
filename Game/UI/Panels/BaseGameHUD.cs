@@ -285,189 +285,146 @@ public class BaseGameHUD : GameUIPanelBase {
         ///ShowOverlayRed(.3f, .1f, 1f);
     }
 
-    public virtual void ShowOverlayRed(float time, float delay, float amountFrom, float amountTo) {
+    public virtual void ShowOverlayRed(float time, float delay, 
+        float amountFrom, float amountTo) {
 
-        if(overlayRedObject != null) {
-
-            TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
-        }
+        TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
     }
 
     public virtual void HideOverlayRed() {
         HideOverlayRed(.1f, .2f, 0f, 0f);
     }
 
-    public virtual void HideOverlayRed(float time, float delay, float amountFrom, float amountTo) {
-        if(overlayRedObject != null) {
+    public virtual void HideOverlayRed(float time, float delay, 
+        float amountFrom, float amountTo) {
 
-            TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
-        }
+        TweenUtil.FadeToObject(overlayRedObject, amountTo, time, delay);
     }
 
-    public virtual void ShowCharacterObject(float time, float delay) {
-        if(containerCharacters != null) {
+    //
 
-            TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftOpenX), time, delay);
-        }
+    public virtual void ShowCharacterObject(float time = .5f, float delay = .55f) {
+        TweenUtil.ShowObject(containerCharacters, Vector3.zero.WithY(leftOpenX));
     }
 
-    public virtual void HideCharacterObject(float time, float delay) {
+    public virtual void HideCharacterObject(float time = .5f, float delay = 0f) {
         if(containerCharacters != null) {
             
-            TweenUtil.MoveToObject(containerCharacters, Vector3.zero.WithY(leftClosedX), time, delay);
+            TweenUtil.ShowObject(containerCharacters, Vector3.zero.WithY(leftClosedX));
         }
     }
 
-    public virtual void ShowDisplayObject(float time, float delay) {
-        if(containerDisplay != null) {
+    public virtual void ShowDisplayObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topOpenY), time, delay);
-        }
+        TweenUtil.ShowObject(containerDisplay, 
+            Vector3.zero.WithY(topOpenY),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void HideDisplayObject(float time, float delay) {
-        if(containerDisplay != null) {
+    public virtual void HideDisplayObject(float time = .5f, float delay = 0f) {
 
-            TweenUtil.MoveToObject(containerDisplay, Vector3.zero.WithY(topClosedY), time, delay);
-        }
+        TweenUtil.HideObject(containerDisplay, 
+            Vector3.zero.WithY(topClosedY),
+            TweenCoord.local, true,
+            time = .5f, delay = .55f);
     }
 
-    public virtual void ShowOverviewObject(float time, float delay) {
-        if(containerDisplay != null) {
+    public virtual void ShowOverviewObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerOverviewObject, Vector3.zero.WithY(topOpenY), time, delay);
-
-            //UITweenerUtil.MoveTo(containerOverviewObject,
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topOpenY));
-        }
+        TweenUtil.ShowObject(containerOverviewObject, 
+            Vector3.zero.WithY(topOpenY),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void HideOverviewObject(float time, float delay) {
-        if(containerDisplay != null) {
+    public virtual void HideOverviewObject(float time = .5f, float delay = 0f) {
 
-            TweenUtil.MoveToObject(containerOverviewObject, Vector3.zero.WithY(topClosedY), time, delay);
-
-            //UITweenerUtil.MoveTo(containerOverviewObject,
-            //                     UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithY(topClosedY));
-        }
+        TweenUtil.HideObject(containerOverviewObject, 
+            Vector3.zero.WithY(topClosedY),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void ShowPauseObject(float time, float delay) {
-        if(containerPause != null) {
+    public virtual void ShowPauseObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerPause, Vector3.zero.WithX(rightOpenX), time, delay);
+        TweenUtil.ShowObject(containerPause, 
+            Vector3.zero.WithX(rightOpenX), 
+            TweenCoord.local, true,
+            time, delay);
+    }
+    
 
-            //UITweenerUtil.MoveTo(containerPause,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
-        }
+    public virtual void HidePauseObject(float time = .5f, float delay = 0f) {
+
+        TweenUtil.HideObject(containerPause,
+            Vector3.zero.WithY(rightClosedX),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void HidePauseObject(float time, float delay) {
-        if(containerPause != null) {
+    public virtual void ShowInputLeftObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerPause, Vector3.zero.WithX(rightClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerPause,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-        }
+        TweenUtil.ShowObject(containerInputLeft,
+            Vector3.zero.WithX(leftOpenX),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void ShowInputLeftObject(float time, float delay) {
-        if(containerInputLeft != null) {
-            
-            TweenUtil.MoveToObject(containerInputLeft, Vector3.zero.WithX(leftOpenX), time, delay);
+    public virtual void HideInputLeftObject(float time = .5f, float delay = 0f) {
 
-            //UITweenerUtil.MoveTo(containerInputLeft,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));
-        }
+        TweenUtil.HideObject(containerInputLeft,
+            Vector3.zero.WithY(leftClosedX),
+            TweenCoord.local, true,
+            time, delay);
     }
 
-    public virtual void HideInputLeftObject(float time, float delay) {
-        if(containerInputLeft != null) {
-
-            TweenUtil.MoveToObject(containerInputLeft, Vector3.zero.WithX(leftClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerInputLeft,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
-        }
-    }
-
-    public virtual void ShowInputRightObject(float time, float delay) {
-        if(containerInputRight != null) {
+    public virtual void ShowInputRightObject(float time = .5f, float delay = .55f) {
 
             TweenUtil.MoveToObject(containerInputRight, Vector3.zero.WithX(rightOpenX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerInputRight,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
-        }
     }
 
-    public virtual void HideInputRightObject(float time, float delay) {
-        if(containerInputRight != null) {
+    public virtual void HideInputRightObject(float time = .5f, float delay = 0f) {
 
-            TweenUtil.MoveToObject(containerInputRight, Vector3.zero.WithX(rightClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerInputRight,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-        }
+        TweenUtil.MoveToObject(containerInputRight, Vector3.zero.WithX(rightClosedX), time, delay);
     }
 
-    public virtual void ShowControlsLeftObject(float time, float delay) {
-        if(containerControlsLeft != null) {
+    public virtual void ShowControlsLeftObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftOpenX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerControlsLeft,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftOpenX));
-        }
+        TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftOpenX), time, delay);
     }
 
-    public virtual void HideControlsLeftObject(float time, float delay) {
-        if(containerControlsLeft != null) {
+    public virtual void HideControlsLeftObject(float time = .5f, float delay = 0f) {
 
-            TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerControlsLeft,
-            // UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(leftClosedX));
-        }
+        TweenUtil.MoveToObject(containerControlsLeft, Vector3.zero.WithX(leftClosedX), time, delay);
     }
 
-    public virtual void ShowControlsRightObject(float time, float delay) {
-        if(containerControlsRight != null) {
+    public virtual void ShowControlsRightObject(float time = .5f, float delay = .55f) {
 
-            TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightOpenX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerControlsRight,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightOpenX));
-        }
+        TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightOpenX), time, delay);
     }
 
-    public virtual void HideControlsRightObject(float time, float delay) {
-        if(containerControlsRight != null) {
+    public virtual void HideControlsRightObject(float time = .5f, float delay = 0f) {
 
-            TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightClosedX), time, delay);
-
-            //UITweenerUtil.MoveTo(containerControlsRight,
-            //    UITweener.Method.EaseInOut, UITweener.Style.Once, time, delay, Vector3.zero.WithX(rightClosedX));
-        }
+        TweenUtil.MoveToObject(containerControlsRight, Vector3.zero.WithX(rightClosedX), time, delay);
     }
 
     public virtual void ShowEditState() {
-        ShowCharacterObject(.5f, .5f);
-        ShowPauseObject(.5f, .5f);
-        HideDisplayObject(.5f, .5f);
-        ShowControlsLeftObject(.5f, .5f);
-        HideControlsRightObject(.5f, .5f);
+        ShowCharacterObject();
+        ShowPauseObject();
+        HideDisplayObject();
+        ShowControlsLeftObject();
+        HideControlsRightObject();
 
         HandlePlatform();
     }
 
     public virtual void ShowGameState() {
-        ShowCharacterObject(.5f, 0f);
-        ShowPauseObject(.5f, 0f);
-        ShowDisplayObject(.5f, 0f);
-        ShowControlsLeftObject(.5f, 0f);
-        ShowControlsRightObject(.5f, 0f);
+        ShowCharacterObject();
+        ShowPauseObject();
+        ShowDisplayObject();
+        ShowControlsLeftObject();
+        ShowControlsRightObject();
 
         HandlePlatform();
     }

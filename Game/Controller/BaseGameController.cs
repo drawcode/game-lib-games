@@ -499,7 +499,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Look for object by that uuid, if not create it
 
-        LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
+        //LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
 
         if(uid == UniqueUtil.Instance.currentUniqueId
             || string.IsNullOrEmpty(uid)) {
@@ -518,7 +518,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     gamePlayerController.uniqueId = uid;
                     gamePlayerController.UpdateNetworkContainer(uid);
                     //gamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    LogUtil.Log("OnNetworkPlayerContainerAdded:Updating character:" + uid);
+                    //LogUtil.Log("OnNetworkPlayerContainerAdded:Updating character:" + uid);
                     found = true;
                     break;
                 }
@@ -541,8 +541,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                          as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
                     playerControllerOther.UpdateNetworkContainer(uid);
-                    LogUtil.Log("OnNetworkPlayerContainerAdded:Creating character:" + uid);
-                    LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
+                    //LogUtil.Log("OnNetworkPlayerContainerAdded:Creating character:" + uid);
+                    //LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
                 }
             }
         }
@@ -902,23 +902,6 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void changeGameZone(string zone) {
 
-        if(gameZoneEndLeft == null) {
-            Transform gameZoneEndLeftTransform
-                = levelZonesContainerObject.transform.FindChild("GameGoalZoneLeft");
-            if(gameZoneEndLeftTransform != null) {
-                gameZoneEndLeft = gameZoneEndLeftTransform.gameObject;
-            }
-        }
-
-        if(gameZoneEndRight == null) {
-            Transform gameZoneEndRightTransform
-                = levelZonesContainerObject.transform.FindChild("GameGoalZoneRight");
-            if(gameZoneEndRightTransform != null) {
-                gameZoneEndRight = gameZoneEndRightTransform.gameObject;
-            }
-        }
-
-        goalZoneChange(zone);
     }
 
     // ---------------------------------------------------------------------
@@ -969,60 +952,6 @@ public class BaseGameController : GameObjectTimerBehavior {
             if(gameZoneActionAsset.gameZoneType == GameZoneKeys.action_none) {
                 // Make it a type of needed action or none. 
                 // Update placeholder actions to actual actions of default
-
-                /*
-
-                AppContentCollect appContentCollect = AppContentCollects.Current;
-
-                List<AppContentCollectItem> appContentCollectItems = appContentCollect.GetItemsData();
-
-                // --------------
-                // SAVE
-                
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_save, 
-                    GameZoneActions.action_save,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-                    
-                // --------------
-                // ATTACK
-
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_attack, 
-                    GameZoneActions.action_attack,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-                    
-                // --------------
-                // BUILD
-
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_build, 
-                    GameZoneActions.action_build,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-                    
-                // --------------
-                // REPAIR
-
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_repair, 
-                    GameZoneActions.action_repair,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-                    
-                // --------------
-                // DEFEND
-
-                gameZoneActionAsset.Load(
-                    GameZoneKeys.action_defend, 
-                    GameZoneActions.action_defend,
-                    "level-building-" + UnityEngine.Random.Range(1,10),
-                    "platform-large-1");
-
-
-                */
 
             }
         }
@@ -1261,7 +1190,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
 
         if(Application.isEditor) {
             yield break;
@@ -1280,11 +1209,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 for(int i = 0; i < 5; i++) {
 
-                    yield return new WaitForEndOfFrame();
+                    //yield return new WaitForEndOfFrame();
 
                     GameObject go = AppContentAssets.LoadAssetLevelAssets(presetItem.code);
 
-                    yield return new WaitForEndOfFrame();
+                    //yield return new WaitForEndOfFrame();
 
                     go.DestroyGameObject();
                 }
@@ -1868,9 +1797,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         resetRuntimeData();
 
-        resetLevel();
-
-        resetGameplayTypes();
+        resetLevel(); 
     }
 
     public virtual void resetLevel() {
@@ -2375,18 +2302,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void onGameResults() {
-
-        //LogUtil.Log("OnGameResults");
-
-        //if(runtimeData.localPlayerWin){
-        //GameUIPanelResults.Instance.ShowSuccess();
-        //GameUIPanelResults.Instance.HideFailed();
-        //}
-        //else {
-        //GameUIPanelResults.Instance.HideSuccess();
-        //GameUIPanelResults.Instance.ShowFailed();
-        //}
-
+        
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
 
         stopGame();
@@ -4224,135 +4140,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void LoadLevelAssetsLines(GameObjectInfinteData data, GameObject go, int indexItem, Vector3 spawnLocation) {
-        /*
-        // --------------------------------------------------------------------
-        // LINES
-
-        for (int i = 0; i < data.lines.Count; i++) {
-
-            // add part item
-
-            GameObject goItem = LoadAssetLevelPlaceholder(data, data.codeGamePartItem, spawnLocation, indexItem);
-
-            if (goItem == null) {
-                continue;
-            }
-
-            goItem.DestroyChildren();
-
-            goItem.transform.parent = go.transform;
-            goItem.transform.position = go.transform.position;
-            goItem.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
-
-            GameObjectInfinitePartItem partItem = goItem.Get<GameObjectInfinitePartItem>();
-
-            if (partItem == null) {
-                continue;
-            }
-
-            partItem.code = i.ToString();
-
-            // --------------------------------------------------------------------
-            // BLOCK PLACEHOLDER
-
-            bool fillBlock = true;
-
-            string codeBlock = data.codeGameBlock;
-            string codeItem = "";
-
-            if (indexItem > data.partBackCount) {
-
-                GameDataObject gridObject =
-                    GetLevelAssetDynamicObject(data, i, 0, data.currentLevelGridIndex);
-
-                if (gridObject != null) {
-                    codeItem = gridObject.code;
-                }
-            }
-
-            if (indexItem % 10 == 0) {
-                // Every tenth load the environment pads
-                //Debug.Log("dynamicPart:10:" + indexItem);
-            }
-
-            if (codeItem.IsEqualLowercase(BaseDataObjectKeys.empty)) {
-                fillBlock = false;
-            }
-
-            if (fillBlock) {
-
-                // ADD PART BLOCK AND ASSETS FROM TEMPLATE
-
-                GameObject goAssetBlock = LoadAssetLevelPlaceholder(data, codeBlock, spawnLocation, indexItem);
-
-                if (goAssetBlock == null) {
-                    continue;
-                }
-
-                goAssetBlock.Hide();
-
-                goAssetBlock.transform.parent = goItem.transform;
-                goAssetBlock.transform.position = goItem.transform.position;
-                //goAssetBlock.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
-
-                goAssetBlock.Show();
-            }
-
-            // --------------------------------------------------------------------
-            // LOAD DATA GRID ITEM
-
-            if (indexItem > data.partBackCount
-                && !codeItem.IsNullOrEmpty()
-                && fillBlock
-                && codeItem != codeBlock) {
-
-                // TODO change to game specific lookup
-
-                codeItem = GameController.GameItemCodeContextGet(codeItem);
-
-                GameObject goAssetItem;
-
-                bool isItem = codeItem.StartsWith(BaseDataObjectKeys.item);
-
-                if (isItem) {
-
-                    goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
-                }
-                else {
-
-                    goAssetItem = AppContentAssets.LoadAssetLevelAssets(codeItem, spawnLocation);
-                }
-
-                if (goAssetItem == null) {
-                    Debug.Log("Asset not found items/" + codeItem);
-                    continue;
-                }
-
-                goAssetItem.Hide();
-
-                goAssetItem.transform.parent = goItem.transform;
-
-                float posY = 0f;
-
-                if (isItem) {
-                    posY = 2f;
-                }
-
-                // ADD ITEM COIN LOCATION
-                //if (codeItem.IsEqualLowercase("item-coin")) {
-                //if (codeItem.IsEqualLowercase("item-special")) {
-
-                goAssetItem.transform.position = goItem.transform.position.WithX(0);
-                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(posY).WithZ(0);
-
-                goAssetItem.Show();
-            }
-
-            // reset position to view
-
-            go.transform.position = go.transform.position.WithY(0);
-        }
-        */
+        
     }
 
     public virtual void LoadLevelAssetsPeriodic(GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
@@ -4382,28 +4170,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
         }
-
-        if((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
-
-            // Load terrain and ambience
-
-            GameObject goSideLeft = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
-            GameObject goSideRight = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
-
-            if(goSideLeft == null || goSideRight == null) {
-                Debug.Log("Asset not found levelassets/" + data.codeGameSide);
-                yield return null;
-            }
-
-            goSideLeft.transform.parent = parentGo.transform;
-            goSideRight.transform.parent = parentGo.transform;
-
-            goSideLeft.transform.localRotation = Quaternion.Euler(0, -90, 0);
-            goSideRight.transform.localRotation = Quaternion.Euler(0, 90, 0);
-
-            goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
-            goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
-        }
+        
         */
     }
 
@@ -4589,22 +4356,13 @@ public class BaseGameController : GameObjectTimerBehavior {
             float speedThrottle = 
                 (currentGamePlayerController.controllerData.speedInfinite / currentGamePlayerController.controllerData.speedInfiniteMax)  * .1f;
 
-            //containerInfinity.UpdatePositionPartsZ(
-            //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
-            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
-
             containerInfinity.UpdatePositionPartsZ(
                 (-currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
                 currentGamePlayerController.controllerData.speedInfinite) * Time.deltaTime);
 
-            //containerInfinity.UpdatePositionPartsZ(
-            //    -1 *
-            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
-
             // .15f *
             //Debug.Log("speedThrottle:" + speedThrottle);
             //Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
-
             //Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
 
             runtimeData.curveInfiniteAmount =
@@ -4664,37 +4422,6 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 
     }
-
-    /*
-    Vector3 currentGamePlayerDistance = Vector3.zero;
-    Vector3 overallGamePlayerDistance = Vector3.zero;
-    
-    internal virtual void handleLateUpdateStationary() {
-
-        if (currentGamePlayerController == null) {
-            return;
-        }
-
-        currentGamePlayerDistance = currentGamePlayerController.transform.position;
-
-        overallGamePlayerDistance += currentGamePlayerDistance;
-
-        currentGamePlayerController.transform.position = -currentGamePlayerDistance;
-
-        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
-        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
-
-        Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
-        //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
-
-        //foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
-
-        //    part.transform.position = part.transform.position  + -currentGamePlayerDistance;
-
-        //}
-    }
-    */
-
 
     // ------------------------------------------------------------------------
     // UPDATE
@@ -4773,3 +4500,5 @@ public class BaseGameController : GameObjectTimerBehavior {
         handleLateUpdate();
     }
 }
+
+
