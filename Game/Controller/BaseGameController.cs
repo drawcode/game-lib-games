@@ -159,7 +159,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initCustomProfileCharactersCo());
     }
 
-    internal virtual IEnumerator initCustomProfileCharactersCo() {
+    IEnumerator initCustomProfileCharactersCo() {
         yield return new WaitForEndOfFrame();
 
         GameCustomController.BroadcastCustomCharacterProfileCodeSync();
@@ -984,6 +984,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Load in the level assets
         GameDraggableEditor.LoadLevelItems();
 
+        handlePostLoadLevelAssetsGameplayType();
+
         // Find actions and make them current actions or none
 
         //List<AppContentCollectItem> actionItemsAsset = new List<AppContentCollectItem>();
@@ -1019,7 +1021,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Load the game levelitems for the game level code
 
         ////GameController.StartGame(code);
-
+        
         prepareGame(code);
 
         //GameController.LoadLevelAssets(code);
@@ -1153,22 +1155,24 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initLevelCo(levelCode));
     }
 
-    internal virtual IEnumerator initLevelCo(string levelCode) {
-
+    IEnumerator initLevelCo(string levelCode) {
+        
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
-
+        
         //resetRuntimeData();
 
         if(currentGamePlayerController != null) {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
 
+        //return;
+
         UIPanelOverlayPrepare.ShowDefault();
 
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(1.1f);
 
         // PRELOAD/CACHE/POOL CONTROLLERS
 
@@ -1177,7 +1181,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //yield return StartCoroutine(GameItemController.Instance.preloadCo());
 
         GameHUD.Instance.ResetIndicators();
-
+        
         // TODO load customizations
         loadLevel(levelCode);
 
@@ -1185,10 +1189,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void preloadLevelAssetPreset(GameDataAssetPreset assetDataItem) {
+        if(Application.isEditor) {
+            return;
+        }
+
         StartCoroutine(preloadLevelAssetPresetCo(assetDataItem));
     }
 
-    public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
+    IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
 
         //yield return new WaitForEndOfFrame();
 
@@ -1227,7 +1235,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
 
-    internal virtual IEnumerator initLevelFinishCo(string levelCode) {
+    IEnumerator initLevelFinishCo(string levelCode) {
         if(UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
@@ -1267,7 +1275,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     */
 
     public virtual void changeLevelFlash() {
-        startLevel("1-2");
+        startLevel(GameLevels.Current.code);
     }
 
     // ---------------------------------------------------------------------
@@ -1335,7 +1343,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void loadStartLevel() {
-        loadStartLevel(GameConfigs.defaultGameLevelCode);
+        loadStartLevel(GameLevels.Current.code);// GameConfigs.defaultGameLevelCode);
     }
 
     public virtual void loadStartLevel(string levelCode) {
@@ -1471,7 +1479,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     //bool loadingCharacterContainer = false;
 
-    internal virtual IEnumerator loadActorCo(GameActorDataItem data) {
+    IEnumerator loadActorCo(GameActorDataItem data) {
 
         //if (loadingCharacterContainer) {
         //    yield break; 
@@ -1616,7 +1624,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //loadingCharacterContainer = false;
     }
 
-    internal virtual IEnumerator loadItemCo(GameItemData data) {
+    IEnumerator loadItemCo(GameItemData data) {
 
         if(data == null) {
             yield break;
@@ -1797,7 +1805,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         resetRuntimeData();
 
-        resetLevel(); 
+        resetLevel();
     }
 
     public virtual void resetLevel() {
@@ -1809,7 +1817,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
         GameDraggableEditor.ResetCurrentGrabbedObject();
         GameDraggableEditor.HideAllEditDialogs();
-
+        
+        ObjectPoolKeyedManager.clearPooled();
     }
 
     public virtual void resetRuntimeData() {
@@ -1822,14 +1831,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         isGameOver = false;
     }
 
-    public virtual void resetGameplayTypes() {
+    public virtual void handlePostLoadLevelAssetsGameplayType() {
+
+        handleGametypeReset();
 
         handleGametypeInit();
 
         if(isGameplayWorldTypeStationary()) {
-
+        
             if(containerInfinity != null) {
-                containerInfinity.Reset();
+                //containerInfinity.Reset();
             }
         }
     }
@@ -1896,12 +1907,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         //GameController.Reset();
 
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
-
+        
         loadLevelAssets(levelCode);
 
         GameHUD.Instance.SetLevelInit(GameLevels.Current);
 
         GameHUD.Instance.AnimateIn();
+
+        //return;
 
         changeGameState(GameStateGlobal.GamePrepare);
     }
@@ -1948,7 +1961,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(runDirectorsDelayedCo(delay));
     }
 
-    public virtual IEnumerator runDirectorsDelayedCo(float delay) {
+    IEnumerator runDirectorsDelayedCo(float delay) {
         yield return new WaitForSeconds(delay);
         runDirectors();
 
@@ -2039,7 +2052,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gameRunningStatePauseDelayedCo(delay));
     }
 
-    public virtual IEnumerator gameRunningStatePauseDelayedCo(float delay) {
+    IEnumerator gameRunningStatePauseDelayedCo(float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2243,7 +2256,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(processQueuesCo());
     }
 
-    public IEnumerator processQueuesCo() {
+    IEnumerator processQueuesCo() {
         yield return new WaitForSeconds(2);
 
         processQueueGameObjectTypeData();
@@ -2265,8 +2278,6 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //ChangeGameState(GameStateGlobal.GameResults);
         
-        ObjectPoolKeyedManager.clearPooled();
-
         quitGameRunning();
     }
 
@@ -2432,24 +2443,24 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(hideCamerasCo(cams));
     }
 
-    public virtual IEnumerator showCamerasCo(List<Camera> cams) {
+    IEnumerator showCamerasCo(List<Camera> cams) {
 
         foreach(Camera cam in cams) {
             if(cam != null) {
                 if(cam.gameObject != null) {
                     cam.gameObject.Show();
-                    TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
+                    //TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
                 }
             }
         }
         yield return new WaitForSeconds(2f);
     }
 
-    public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
+    IEnumerator hideCamerasCo(List<Camera> cams) {
         foreach(Camera cam in cams) {
             if(cam != null) {
                 if(cam.gameObject != null) {
-                    TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
+                    //TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
                 }
             }
         }
@@ -2603,7 +2614,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gamePlayerOutOfBoundsDelayedCo(delay));
     }
 
-    public virtual IEnumerator gamePlayerOutOfBoundsDelayedCo(float delay) {
+    IEnumerator gamePlayerOutOfBoundsDelayedCo(float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2680,7 +2691,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gamePlayerGoalZoneDelayedCo(goalObject, delay));
     }
 
-    public virtual IEnumerator gamePlayerGoalZoneDelayedCo(GameObject goalObject, float delay) {
+    IEnumerator gamePlayerGoalZoneDelayedCo(GameObject goalObject, float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2705,7 +2716,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(processLevelStatsCo());
     }
 
-    public virtual IEnumerator processLevelStatsCo() {
+    IEnumerator processLevelStatsCo() {
 
         // END OF LEVEL PROCESSING WHILE SETTING UP RESULTS
 
@@ -4148,7 +4159,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(LoadLevelAssetsPeriodicCo(data, parentGo, indexItem, clear));
     }
 
-    public virtual IEnumerator LoadLevelAssetsPeriodicCo(
+    IEnumerator LoadLevelAssetsPeriodicCo(
         GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
 
         yield return null;
@@ -4328,6 +4339,23 @@ public class BaseGameController : GameObjectTimerBehavior {
             //if (containerInfinity == null) {
             containerInfinity = gameObject.Get<GameObjectInfiniteContainer>();
             //}
+        }
+    }
+
+    internal virtual void handleGametypeReset() {
+
+        if(isGameplayWorldTypeStationary()) {
+
+            if(containerInfinity != null) {
+                //containerInfinity.Reset();
+                containerInfinity.gameObject.DestroyGameObject();
+                containerInfinity = null;
+            }
+
+            if(controllerInfinity != null) {
+                controllerInfinity.gameObject.DestroyGameObject();
+                controllerInfinity = null;
+            }
         }
     }
 

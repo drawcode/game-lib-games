@@ -85,26 +85,26 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
     void OnEnable() {
         //Messenger<Vector3, float>.AddListener(GamePlayerMessages.PlayerCurrentDistance, OnPlayerCurrentDistance);
         //Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
+
+        Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
     }
 
     void Disable() {
         //Messenger<Vector3, float>.RemoveListener(GamePlayerMessages.PlayerCurrentDistance, OnPlayerCurrentDistance);
         //Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
+
+        Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
     }
 
     void Start() {
-        Init();
+        LoadData();
     }
 
-    void Init() {
-        Reset();
+    public void OnGameLevelItemsLoadedHandler() {
+        //LoadData();
     }
 
-    void OnGameLevelStart(string levelCode) {
-        //Init();
-    }
-
-    public void Reset() {
+    public void LoadData() {
 
         initialized = false;
 
@@ -134,12 +134,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         SwitchLine(data.currentLine);
     }
-
-    void OnPlayerCurrentDistance(Vector3 pos, float speed) {
-
-        //distance.z += -pos.z;
-    }
-
+    
     #region lines
 
     public Vector3 GetCurrentLine() {
@@ -239,6 +234,10 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         }
 
         if (!initialized) {
+            LoadData();
+        }
+
+        if(!initialized) {
             return;
         }
 

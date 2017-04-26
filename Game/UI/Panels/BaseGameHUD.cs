@@ -308,10 +308,7 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public virtual void HideCharacterObject(float time = .5f, float delay = 0f) {
-        if(containerCharacters != null) {
-            
-            TweenUtil.ShowObject(containerCharacters, Vector3.zero.WithY(leftClosedX));
-        }
+       TweenUtil.ShowObject(containerCharacters, Vector3.zero.WithY(leftClosedX));
     }
 
     public virtual void ShowDisplayObject(float time = .5f, float delay = .55f) {

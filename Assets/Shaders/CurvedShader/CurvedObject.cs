@@ -42,13 +42,14 @@ public class CurvedObject : MonoBehaviour {
         UpdateShader();
     }
 
-    void UpdateShader() {
-        StartCoroutine(UpdateShaderCo());
-    }
-
     bool running = false;
 
-    IEnumerator UpdateShaderCo() {
+    void UpdateShader() {
+        //StartCoroutine(UpdateShaderCo());
+        //}
+
+
+        //IEnumerator UpdateShaderCo() {
         //yield break;
 
         if(lastCurveTime + .1f > Time.time) {
@@ -75,22 +76,25 @@ public class CurvedObject : MonoBehaviour {
             }
 
             if(render == null) {
-                yield break;
+                //yield break;
+                return;
             }
-            
+
             if(render.materials == null || render.materials.Length == 0) {
-                yield break;
+                //yield break;
+                return;
             }
 
             int matCount = render.materials.Length;
 
             if(render.materials.Length == 0) {
-                yield break;
+                //yield break;
+                return;
             }
 
 
             if(lastCurveAmount != curveAmount) {
-                
+
                 for(int m = 0; m < matCount; m++) {
 
                     if(render.materials[m] != null) {
@@ -102,7 +106,7 @@ public class CurvedObject : MonoBehaviour {
             }
 
             if(lastCurveDistance != curveDistance) {
-                
+
                 for(int m = 0; m < matCount; m++) {
 
                     if(render.materials[m] != null) {

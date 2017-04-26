@@ -130,7 +130,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     // OVERLAY WHITE
 
     public virtual void ShowOverlayWhite() {
-        ShowOverlayWhite(.2f, .1f);
+        ShowOverlayWhite(.5f, .55f);
     }
 
     public virtual void ShowOverlayWhite(float time, float delay) {
@@ -139,7 +139,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhite() {
-        HideOverlayWhite(.1f, .2f);
+        HideOverlayWhite(.5f, 0f);
     }
 
     public virtual void HideOverlayWhite(float time, float delay) {
@@ -150,7 +150,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     // OVERLAY WHITE STATIC 
 
     public virtual void ShowOverlayWhiteStatic() {
-        ShowOverlayWhiteStatic(.5f, 0f);
+        ShowOverlayWhiteStatic(.5f, .55f);
     }
 
     public virtual void ShowOverlayWhiteStatic(float time, float delay) {
@@ -159,7 +159,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhiteStatic() {
-        HideOverlayWhiteStatic(1f, 0f);
+        HideOverlayWhiteStatic(.5f, 0f);
     }
 
     public virtual void HideOverlayWhiteStatic(float time, float delay) {
@@ -170,7 +170,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     // OVERLAY WHITE RADIAL
 
     public virtual void ShowOverlayWhiteRadial() {
-        ShowOverlayWhite(.2f, .1f);
+        ShowOverlayWhite(.5f, .55f);
     }
 
     public virtual void ShowOverlayWhiteRadial(float time, float delay) {
@@ -179,7 +179,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhiteRadial() {
-        HideOverlayWhiteRadial(.1f, .2f);
+        HideOverlayWhiteRadial(.5f, 0f);
     }
 
     public virtual void HideOverlayWhiteRadial(float time, float delay) {
@@ -190,7 +190,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     // OVERLAY BLACK 
 
     public virtual void ShowOverlayBlack() {
-        ShowOverlayBlack(.2f, .1f);
+        ShowOverlayBlack(.5f, .55f);
     }
 
     public virtual void ShowOverlayBlack(float time, float delay) {
@@ -199,7 +199,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayBlack() {
-        HideOverlayBlack(.1f, .2f);
+        HideOverlayBlack(.5f, 0f);
     }
 
     public virtual void HideOverlayBlack(float time, float delay) {
