@@ -187,11 +187,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             OnGameItemDirectorData);
 
         Messenger.AddListener(
-            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            BaseGameProfileMessages.ProfileShouldBeSaved,
             OnProfileShouldBeSavedEventHandler);
 
         Messenger.AddListener(
-            GameDraggableEditorMessages.GameLevelItemsLoaded, 
+            GameDraggableEditorMessages.GameLevelItemsLoaded,
             OnGameLevelItemsLoaded);
 
         Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(
@@ -220,11 +220,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             OnGameItemDirectorData);
 
         Messenger.RemoveListener(
-            BaseGameProfileMessages.ProfileShouldBeSaved, 
+            BaseGameProfileMessages.ProfileShouldBeSaved,
             OnProfileShouldBeSavedEventHandler);
 
         Messenger.RemoveListener(
-            GameDraggableEditorMessages.GameLevelItemsLoaded, 
+            GameDraggableEditorMessages.GameLevelItemsLoaded,
             OnGameLevelItemsLoaded);
 
         Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(
@@ -239,11 +239,11 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void OnGameInitLevelStart(string levelCode) {
-        
+
     }
 
     public virtual void OnGameLevelPlayerReady() {
-        
+
     }
 
     // ---------------------------------------------------------------------
@@ -1021,7 +1021,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // Load the game levelitems for the game level code
 
         ////GameController.StartGame(code);
-        
+
         prepareGame(code);
 
         //GameController.LoadLevelAssets(code);
@@ -1156,10 +1156,10 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     IEnumerator initLevelCo(string levelCode) {
-        
+
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
-        
+
         //resetRuntimeData();
 
         if(currentGamePlayerController != null) {
@@ -1181,7 +1181,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //yield return StartCoroutine(GameItemController.Instance.preloadCo());
 
         GameHUD.Instance.ResetIndicators();
-        
+
         // TODO load customizations
         loadLevel(levelCode);
 
@@ -1808,16 +1808,114 @@ public class BaseGameController : GameObjectTimerBehavior {
         resetLevel();
     }
 
+    //-------------------------------------------------------------------------
+
+    public static void ResetLevelAssetCacheItems(bool removeCached = false) {
+        if(GameController.isInst) {
+            GameController.Instance.resetLevelAssetCacheItems(removeCached);
+        }
+    }
+
+    public virtual void resetLevelAssetCacheItems(bool removeCached = false) {
+        resetLevelAssetCacheItems(levelItemsContainerObject, removeCached);
+    }
+
+    public virtual void resetLevelAssetCacheItems(GameObject go, bool removeCached = false) {
+
+        if(go == null) {
+            return;
+        }
+
+        bool cached = resetLevelAssetCacheItem(go, removeCached);
+
+        if(!cached || removeCached) {
+
+            foreach(GameObjectInfinitePartItem partItem in
+                go.GetList<GameObjectInfinitePartItem>()) {
+
+                partItem.DestroyItems(removeCached);
+            }
+
+            foreach(GameObjectInfinitePart part in
+                go.GetList<GameObjectInfinitePart>()) {
+
+                part.DestroyItems(removeCached);
+            }
+
+            foreach(GameObjectInfiniteContainer container in
+                go.GetList<GameObjectInfiniteContainer>()) {
+
+                container.DestroyItems(removeCached);
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------
+
+    public static bool ResetLevelAssetCacheItem(GameObject go, bool removeCached = false) {
+        if(GameController.isInst) {
+            return GameController.Instance.resetLevelAssetCacheItem(go, removeCached);
+        }
+
+        return false;
+    }
+
+    public virtual bool resetLevelAssetCacheItem(GameObject go, bool removeCached = false) {
+
+        bool cached = false;
+
+        if(go == null) {
+            return cached;
+        }
+        
+        foreach(GameObjectInfiniteAssetCache item in
+            go.GetList<GameObjectInfiniteAssetCache>()) {
+
+            if(removeCached) {
+                item.gameObject.Remove<GameObjectInfiniteAssetCache>();
+            }
+            else {
+                cached = true;
+                item.gameObject.DestroyGameObject();
+            }
+        }
+
+        if(!cached || removeCached) {
+
+            foreach(GameObjectInfiniteAssetItem item in
+                go.GetList<GameObjectInfiniteAssetItem>()) {
+
+                item.gameObject.Remove<GameObjectInfiniteAssetItem>();
+
+                item.gameObject.DestroyGameObject();
+            }
+
+            foreach(GameObjectInfiniteAsset item in
+                go.GetList<GameObjectInfiniteAsset>()) {
+
+                item.gameObject.Remove<GameObjectInfiniteAsset>();
+
+                item.gameObject.DestroyGameObject();
+            }
+        }
+
+        return cached;
+    }
+
+    //-------------------------------------------------------------------------
+
     public virtual void resetLevel() {
 
         stopDirectors();
 
         GameUIController.HideGameCanvas();
 
+        GameController.ResetLevelAssetCacheItems(true);
+
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
         GameDraggableEditor.ResetCurrentGrabbedObject();
         GameDraggableEditor.HideAllEditDialogs();
-        
+
         ObjectPoolKeyedManager.clearPooled();
     }
 
@@ -1838,7 +1936,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         handleGametypeInit();
 
         if(isGameplayWorldTypeStationary()) {
-        
+
             if(containerInfinity != null) {
                 //containerInfinity.Reset();
             }
@@ -1907,7 +2005,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //GameController.Reset();
 
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
-        
+
         loadLevelAssets(levelCode);
 
         GameHUD.Instance.SetLevelInit(GameLevels.Current);
@@ -2277,7 +2375,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameUIController.ShowUI();
 
         //ChangeGameState(GameStateGlobal.GameResults);
-        
+
         quitGameRunning();
     }
 
@@ -2313,7 +2411,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void onGameResults() {
-        
+
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
 
         stopGame();
@@ -2421,12 +2519,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if ENABLE_FEATURE_AR
 
-        if (camerasAR == null) {
+        if(camerasAR == null) {
             camerasAR = new List<Camera>();
-            if (cameraContainersAR != null) {
-                foreach (Camera cam
+            if(cameraContainersAR != null) {
+                foreach(Camera cam
                          in cameraContainersAR.GetComponentsInChildren<Camera>()) {
-                    if (!camerasAR.Contains(cam)) {
+                    if(!camerasAR.Contains(cam)) {
                         camerasAR.Add(cam);
                     }
                 }
@@ -3517,7 +3615,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     // CURVE ENABLED
 
     // get
-    
+
     public static bool CurveInfiniteEnabledGet() {
         if(GameController.isInst) {
             return GameController.Instance.curveInfiniteEnabledGet();
@@ -4151,7 +4249,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void LoadLevelAssetsLines(GameObjectInfinteData data, GameObject go, int indexItem, Vector3 spawnLocation) {
-        
+
     }
 
     public virtual void LoadLevelAssetsPeriodic(GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
@@ -4381,8 +4479,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
 
-            float speedThrottle = 
-                (currentGamePlayerController.controllerData.speedInfinite / currentGamePlayerController.controllerData.speedInfiniteMax)  * .1f;
+            float speedThrottle =
+                (currentGamePlayerController.controllerData.speedInfinite / currentGamePlayerController.controllerData.speedInfiniteMax) * .1f;
 
             containerInfinity.UpdatePositionPartsZ(
                 (-currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
@@ -4528,5 +4626,3 @@ public class BaseGameController : GameObjectTimerBehavior {
         handleLateUpdate();
     }
 }
-
-

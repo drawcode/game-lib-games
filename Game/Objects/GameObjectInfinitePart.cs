@@ -39,16 +39,35 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
     void FindController() {
 
-        if (controller == null) {
-            controller = gameObject.FindTypeAboveRecursive<GameObjectInfiniteController>();
-        }
-        if (container == null) {
-            container = gameObject.FindTypeAboveRecursive<GameObjectInfiniteContainer>();
-        }
+        //if(controller == null) {
+        controller = gameObject.FindTypeAboveRecursive<GameObjectInfiniteController>();
+        //}
+        //if(container == null) {
+        container = gameObject.FindTypeAboveRecursive<GameObjectInfiniteContainer>();
+        //}
     }
 
-    public void ClearItems() {
+    public void ClearItems(bool removeCached = false) {
+
+        bool cached = GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
+
+        if(!cached || removeCached) {
+
+            foreach(GameObjectInfinitePartItem item in
+                gameObject.GetList<GameObjectInfinitePartItem>()) {
+
+                item.ClearItems(removeCached);
+            }
+        }
+
         gameObject.DestroyChildren();
+    }
+
+    public void DestroyItems(bool removeCached = false) {
+
+        ClearItems(removeCached);
+
+        gameObject.DestroyGameObject();
     }
 
     void Update() {
@@ -56,56 +75,19 @@ public class GameObjectInfinitePart : GameObjectBehavior {
         if(!GameConfigs.isGameRunning) {
             return;
         }
-            
+
         bool destroy = false;
 
         FindController();
 
-        if (container != null) {
+        if(container != null) {
             destroy = MathUtil.IsVector3OutOfRange(
                 gameObject.transform.position,
                 container.data.rangeBoundsMin, container.data.rangeBoundsMax, bounds);
         }
 
-        if (destroy) {
-
-            bool cached = false;
-
-            foreach (GameObjectInfiniteAssetCache item in 
-                gameObject.GetList<GameObjectInfiniteAssetCache>()) {
-
-                item.gameObject.DestroyGameObject();
-                cached = true;
-            }
-
-            if(!cached) {
-
-                foreach (GameObjectInfiniteAssetItem item in 
-                    gameObject.GetList<GameObjectInfiniteAssetItem>()) {
-
-                    item.gameObject.DestroyGameObject();
-                }
-
-                foreach (GameObjectInfiniteAsset item in 
-                    gameObject.GetList<GameObjectInfiniteAsset>()) {
-
-                    item.gameObject.DestroyGameObject();
-                }
-            }
-
-            //foreach (PoolGameObject item in gameObject.GetList<PoolGameObject>()) {
-            //    item.gameObject.DestroyGameObject();
-            //}
-
-            foreach (GameObjectInfinitePart part in 
-                gameObject.GetList<GameObjectInfinitePart>()) {
-
-                part.ClearItems();
-            }
-
-            ClearItems();
-
-            gameObject.DestroyGameObject();
+        if(destroy) {
+            DestroyItems();
         }
     }
 }

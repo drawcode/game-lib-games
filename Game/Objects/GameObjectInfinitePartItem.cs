@@ -15,15 +15,25 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
 
     void FindItems() {
 
-        if (part == null) {
-            part = gameObject.FindTypeAboveRecursive<GameObjectInfinitePart>();
-        }
+        //if(part == null) {
+        part = gameObject.FindTypeAboveRecursive<GameObjectInfinitePart>();
+        //}
     }
 
-    public void ClearItems() {
+    public void ClearItems(bool removeCached = false) {
+        
+        GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
+
         gameObject.DestroyChildren();
     }
 
+    public void DestroyItems(bool removeCached = false) {
+
+        ClearItems(removeCached);
+
+        gameObject.DestroyGameObject();
+    }
+    
     /*
     void Update() {
 

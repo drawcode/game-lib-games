@@ -243,4 +243,35 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         GameController.UpdateParts(data);
     }
+
+
+    public void ClearItems(bool removeCached = false) {
+
+        bool cached = GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
+
+        //foreach (PoolGameObject item in gameObject.GetList<PoolGameObject>()) {
+        //    item.gameObject.DestroyGameObject();
+        //}
+
+        foreach(GameObjectInfinitePartItem partItem in
+            gameObject.GetList<GameObjectInfinitePartItem>()) {
+
+            partItem.ClearItems(removeCached);
+        }
+
+        foreach(GameObjectInfinitePart part in
+            gameObject.GetList<GameObjectInfinitePart>()) {
+
+            part.ClearItems(removeCached);
+        }
+
+        gameObject.DestroyChildren();
+    }
+
+    public void DestroyItems(bool removeCached = false) {
+
+        ClearItems(removeCached);
+
+        gameObject.DestroyGameObject();
+    }
 }
