@@ -3977,7 +3977,12 @@ public class BaseGameController : GameObjectTimerBehavior {
         return goAsset;
     }
     */
+    
+    public virtual void GameAssetObjectContextGetWorldFloor(
+        GameObjectInfinteData data, string assetCode, GameObject go) {
 
+    }
+    
     public virtual void GameAssetObjectContextGetSide(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
