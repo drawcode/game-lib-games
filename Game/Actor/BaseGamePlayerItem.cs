@@ -391,22 +391,27 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //Debug.DrawRay(contact.point, contact.normal, Color.white);
         //LogUtil.Log("GamePlayerItem:OnCollisionEnter:", contact.otherCollider.transform.name);
 
+        return;
+
         if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        GameObject go = collision.collider.transform.gameObject;
+        foreach(ContactPoint contact in collision.contacts) {
 
-        if (go == null) {
-            return;
-        }
+            GameObject go = contact.otherCollider.transform.gameObject;
 
-        if (GameController.HasGamePlayerControllerObject(go, true)) {
-            GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
-            if (gamePlayerController != null) {
-                if (gamePlayerController.controllerState == GamePlayerControllerState.ControllerPlayer) {
-                    // If player collect this
-                    CollectContent();
+            if(go == null) {
+                return;
+            }
+
+            if(GameController.HasGamePlayerControllerObject(go, true)) {
+                GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+                if(gamePlayerController != null) {
+                    if(gamePlayerController.controllerState == GamePlayerControllerState.ControllerPlayer) {
+                        // If player collect this
+                        //CollectContent();
+                    }
                 }
             }
         }

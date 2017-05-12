@@ -126,7 +126,7 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
             //return;
         }
 
-        if (gamePlayerController != null) {            
+        if(gamePlayerController != null) {
 
             //foreach (ContactPoint contact in collision.contacts) {
             gamePlayerController.HandleCollision(collision);
