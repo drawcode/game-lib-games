@@ -764,7 +764,7 @@ public class BaseGamePlayerController : GameActor {
                 else if(item.type.IsEqualLowercase(GameDataItemReward.currency)) {
 
                     double val = item.valDouble * modifier;
-
+                                        
                     GamePlayerProgress.SetStatCoins(val);
                     GamePlayerProgress.SetStatCoinsPickup(val);
 
@@ -5780,7 +5780,7 @@ public class BaseGamePlayerController : GameActor {
             runUpdate = true;
 
             if(IsPlayerControlled) {
-                ProgressScore(2 * 1);
+                ProgressScore(1);
             }
         }
 
