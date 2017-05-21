@@ -85,10 +85,10 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 				
 	            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
 	            item.name = "AssetItem" + i;
-	            item.transform.FindChild("LabelName").GetComponent<UILabel>().text = asset.display_name;
+	            item.transform.Find("LabelName").GetComponent<UILabel>().text = asset.display_name;
 	            //item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = achievement.description;
 				
-				GameObject gameLevelItemObject = item.transform.FindChild("GameLevelItemObject").gameObject;	
+				GameObject gameLevelItemObject = item.transform.Find("GameLevelItemObject").gameObject;	
 				
 				// clear current items
 				
@@ -162,7 +162,7 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 					
 				}
 				
-				item.transform.FindChild("ButtonGameLevelItemObject").GetComponent<UIButton>().name 
+				item.transform.Find("ButtonGameLevelItemObject").GetComponent<UIButton>().name 
 						= "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
 				
 				if(filterType == UIPanelDialogEditItemsFilter.all) {

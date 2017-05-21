@@ -84,7 +84,7 @@ public class ShowControllerRaycasts : GameObjectBehavior {
 
             if (aiDriverController != null) {
 
-                Transform colliderBottom = transform.FindChild("Colliders/ColliderBottom");
+                Transform colliderBottom = transform.Find("Colliders/ColliderBottom");
 
                 if (colliderBottom != null) {
 

@@ -218,7 +218,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
             UIUtil.UpdateLabelObject(item.transform, "LabelDescription", info.description);
             UIUtil.UpdateLabelObject(item.transform, "LabelCost", info.cost);
 
-            Transform inventoryItem = item.transform.FindChild("Container/Inventory");
+            Transform inventoryItem = item.transform.Find("Container/Inventory");
             if (inventoryItem != null) {
 
                 double currentValue = 0;
@@ -232,7 +232,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
                 }
             }
             
-            Transform iconTransform = item.transform.FindChild("Container/Icon");
+            Transform iconTransform = item.transform.Find("Container/Icon");
             if (iconTransform != null) {
                 GameObject iconObject = iconTransform.gameObject;   
                 UISprite iconSprite = iconObject.GetComponent<UISprite>();          
@@ -247,7 +247,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
             // Update button action
             
             
-            Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
+            Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
             if (buttonObject != null) {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
                 if (button != null) {

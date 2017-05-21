@@ -200,7 +200,7 @@ public class GameVehicleAIDriver : GameObjectBehavior {
             centerPointEndRGO.transform.rotation = transform.rotation;
 
             //frontCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            frontCollider = transform.FindChild("ViewPointCollider");
+            frontCollider = transform.Find("ViewPointCollider");
             //frontCollider.transform.parent = transform;
             Vector3 fcPos = viewPoint.transform.localPosition;
             fcPos.y += 0.1f;

@@ -8,6 +8,629 @@ using UnityEngine;
 using Engine.Events;
 using Engine.Utility;
 
+// CUSTOM
+
+public enum GameZones {
+    left,
+    right
+}
+
+public class BaseGameContentDisplayTypes {
+    public static string gamePlayerOutOfBounds = "content-game-player-out-of-bounds";
+    public static string gameChoices = "content-game-game-choices";
+    public static string gameChoicesOverview = "content-game-game-choices-overview";
+    public static string gameChoicesItemStart = "content-game-game-choices-item-start";
+    public static string gameChoicesItemResult = "content-game-game-choices-item-result";
+    public static string gameCollect = "content-game-game-collect";
+    public static string gameCollectOverview = "content-game-game-collect-overview";
+    public static string gameCollectItemStart = "content-game-game-collect-item-start";
+    public static string gameCollectItemResult = "content-game-game-collect-item-result";
+    public static string gameEnergy = "content-game-game-energy";
+    public static string gameHealth = "content-game-game-health";
+    public static string gameXP = "content-game-game-xp";
+    public static string gameTips = "content-game-tips";
+    public static string gameTutorial = "content-game-tutorial";
+    public static string gameModeContentOverview = "content-game-mode-content-overview";
+}
+
+// GLOBAL
+
+public enum GameControllerType {
+    Iso2DSide,
+    Iso3D,
+    Iso2DTop,
+    Perspective3D
+}
+
+public class BaseGamePlayerMessages {
+
+    public static string PlayerAnimation = "playerAnimation";
+    public static string PlayerAnimationSkill = "skill";
+    public static string PlayerAnimationAttack = "attack";
+    public static string PlayerAnimationFall = "fall";
+    //
+
+    public static string PlayerCurrentDistance = "player-current-distance";
+    public static string PlayerOverallDistance = "player-overall-distance";
+}
+
+public enum GameStateGlobal {
+    GameNotStarted,
+    GameInit,
+    GamePrepare,
+    GameStarted,
+    GameQuit,
+    GamePause,
+    GameResume,
+    GameResults,
+    GameContentDisplay, // dialog or in progress choice/content/collection status
+    GameOverlay, // external dialog such as sharing/community/over
+}
+
+public class BaseGameplayType {
+    public static string gameDasher = "game-dasher";
+    public static string gameRunner = "game-runner";
+}
+
+public class BaseGameplayWorldType {
+    public static string gameDefault = "game-default";
+    public static string gameStationary = "game-stationary";
+}
+
+public class GameplayType : BaseGameplayType {
+
+}
+
+public class GameplayWorldType : BaseGameplayWorldType {
+
+}
+
+public class GameActorType {
+    public static string enemy = "enemy";
+    public static string player = "player";
+    public static string sidekick = "sidekick";
+}
+
+public class GameSpawnType {
+    public static string centeredType = "centered";
+    public static string zonedType = "zoned";
+    public static string pointsType = "points";
+    public static string explicitType = "explicit";
+    public static string randomType = "random";
+}
+
+public class GameObjectQueueItem {
+    public string type = "";
+    public string code = "";
+    public string data_type = "";
+    public string display_type = "";
+    public Vector3 pos = Vector3.zero;
+    public Quaternion rot = Quaternion.identity;
+}
+
+public class GameActorDataItem : GameDataObject {
+
+    public bool overrideLoading = false;
+
+
+    // RPG
+    
+    public virtual GameDataItemRPG rpg {
+        get {
+            return Get<GameDataItemRPG>(BaseDataObjectKeys.rpg, new GameDataItemRPG());
+        }
+        
+        set {
+            Set<GameDataItemRPG>(BaseDataObjectKeys.rpg, value);
+        }
+    }
+
+    public GameActorDataItem() {
+        Reset();
+    }
+
+    public override void Reset() {
+        base.Reset();
+
+        rpg = new GameDataItemRPG();
+
+        code = "";
+        type = BaseDataObjectKeys.character;
+        data_type = GameSpawnType.zonedType;
+        display_type = GameActorType.enemy;
+        rotation_data = new Vector3Data();
+        position_data = new Vector3Data(0, 0, 0);
+        scale_data = new Vector3Data(1, 1, 1);
+    }
+}
+
+public class BaseGameMessages {
+    //
+    public static string gameActionItem = "game-action-item";
+    public static string gameActionScores = "game-action-scores";
+    public static string gameActionScore = "game-action-score";
+    public static string gameActionAmmo = "game-action-ammo";
+    public static string gameActionSave = "game-action-save";
+    public static string gameActionShot = "game-action-shot";
+    public static string gameActionLaunch = "game-action-launch";
+    public static string gameActionState = "game-action-state";
+    //
+    
+    public static string gameActionAssetAttack = "game-action-asset-attack";
+    public static string gameActionAssetSave = "game-action-asset-save";
+    public static string gameActionAssetBuild = "game-action-asset-build";
+    public static string gameActionAssetRepair = "game-action-asset-repair";
+    public static string gameActionAssetDefend = "game-action-asset-defend";
+    //
+    public static string gameInitLevelStart = "game-init-level-start";
+    public static string gameInitLevelEnd = "game-init-level-end";
+    public static string gameLevelPlayerReady = "game-level-player-ready";
+    public static string gameLevelStart = "game-level-start";
+    public static string gameLevelEnd = "game-level-end";
+    public static string gameLevelQuit = "game-level-quit";
+    public static string gameLevelPause = "game-level-pause";
+    public static string gameLevelResume = "game-level-resume";
+    public static string gameResultsStart = "game-results-start";
+    public static string gameResultsEnd = "game-results-end";
+}
+
+public class BaseGameStatCodes {
+    
+    public static string timesPlayed = "times-played";//
+    public static string timePlayed = "time-played";//
+    public static string timesPlayedAction = "times-played-action";//
+
+    // totals
+    public static string wins = "wins";//--
+    public static string losses = "losses";//--
+    public static string shots = "shots";//--
+    public static string destroyed = "destroyed";//--
+
+    public static string score = "score";//--
+    public static string scores = "scores";//--
+    public static string special = "special";//--
+    public static string evaded = "evaded";//--
+    public static string kills = "kills";
+    public static string deaths = "deaths";
+    public static string hits = "hits";
+    public static string hitsReceived = "hits-received";
+    public static string hitsObstacles = "hits-obstacles";
+    public static string xp = "xp";
+    public static string coins = "coins";
+    public static string coinsPickup = "coinsPickup";
+    public static string coinsPurchased = "coinsPurchased";
+    public static string coinsEarned = "coinsEarned";
+    public static string ammo = "ammo";
+    public static string attacks = "attacks";//
+    public static string defends = "defends";//
+    public static string repairs = "repairs";//
+    public static string builds = "builds";//
+    public static string saves = "saves";
+
+    public static string cuts = "cuts";//
+    public static string cutsLeft = "cuts-left";//
+    public static string cutsRight = "cuts-right";//
+    public static string boosts = "boosts";//
+    public static string spins = "spins";//
+    public static string total = "total";//
+    public static string item = "item";//
+
+    // lows
+
+    // absolute
+
+    // accumulate (total)
+}
+
+public class BaseGameGameRuntimeData {
+    public double currentLevelTime = 0;
+    public double timeRemaining = 90;
+    public double coins = 0;
+    public string levelCode = "";
+    public double score = 0;
+    public bool outOfBounds = false;
+
+    public BaseGameGameRuntimeData() {
+        Reset();
+    }
+
+    public virtual void Reset() {
+        currentLevelTime = 0;
+        timeRemaining = 90;
+        coins = 0;
+        levelCode = "";
+        score = 0;
+        outOfBounds = false;
+        ResetTimeDefault();
+
+        // TYPES
+
+        rangeStart = Vector3.zero.WithX(-16f);
+        rangeEnd = Vector3.zero.WithX(16f);
+        curve = Vector4.zero;
+
+        curveEnabled = true;
+        curveInfiniteDistance = 50f;
+        curveInfiniteAmount = Vector4.zero;     // Determines how much the platform bends (default value (-5,-5,0,0)
+
+    }
+
+    public virtual bool timeExpired {
+        get {
+            if (timeRemaining <= 0) {
+                timeRemaining = 0;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public virtual bool localPlayerWin {
+        get {
+            return !timeExpired;
+        }
+    }
+
+    public virtual void SubtractTime(double delta) {
+        if (timeRemaining > 0) {
+            timeRemaining -= delta;
+        }
+    }
+
+    public virtual void ResetTimeDefault() {
+        timeRemaining = 90;
+    }
+
+    public virtual void ResetTime(double timeTo) {
+        timeRemaining = timeTo;
+    }
+
+    public virtual void AppendTime(double timeAppend) {
+        timeRemaining += timeAppend;
+    }
+
+    // GAMEPLAY TYPE SPECIFIC
+
+    // RUNNER
+
+    // TODO move to runtimeData n 
+
+    public Vector3 rangeStart;
+    public Vector3 rangeEnd;
+    public Vector4 curve;
+
+    public bool curveEnabled = false;
+    public float curveInfiniteDistance = 0f;
+    public Vector4 curveInfiniteAmount;     // Determines how much the platform bends (default value (-5,-5,0,0)
+
+}
+
+public class GameLevelItemDataType {
+    public static string randomType = "random";
+    public static string explicitType = "explicit";
+}
+
+public class GameLevelItemData {
+    public string code = "rock-1";
+    public int count = 1;
+    public Vector3 pos = Vector3.zero;
+    public string type = GameLevelItemDataType.randomType;
+    
+    public GameLevelItemData() {
+        
+    }
+    
+    public GameLevelItemData(string codeTo, string typeTo, int countTo, Vector3 posTo) {
+        code = codeTo;
+        type = typeTo;
+        count = countTo;
+        pos = posTo;
+    }    
+}
+
+public class GameLevelTemplate {
+    public Dictionary<string, GameLevelItemData> randomAssets = new Dictionary<string, GameLevelItemData>();
+    public Dictionary<string, Vector3> placedAssets = new Dictionary<string, Vector3>();
+}
+
+public class GameLevelGridData {
+    public float gridHeight = (float)GameLevels.currentLevelData.grid_height;
+    public float gridWidth = (float)GameLevels.currentLevelData.grid_width;
+    public float gridDepth = (float)GameLevels.currentLevelData.grid_depth;
+    public float gridBoxSize = (float)GameLevels.currentLevelData.grid_box_size;
+    public bool centeredX = GameLevels.currentLevelData.grid_centered_x;
+    public bool centeredY = GameLevels.currentLevelData.grid_centered_y;
+    public bool centeredZ = GameLevels.currentLevelData.grid_centered_z;
+    public List<string> presets = new List<string>();
+    public List<AppContentAsset> assets;
+    //public string[,,] assetMap;
+
+    public Dictionary<string, GameLevelItemAssetData> assetLayoutData;
+
+    public GameLevelGridData() {
+        Reset();
+    }
+
+    public void Reset() {
+        ResetGrid((int)gridHeight, (int)gridWidth, (int)gridDepth);
+        ClearAssets();
+        ClearMap();
+        ClearPresets();
+    }
+
+    public void ResetGrid(int height, int width, int depth) {
+        ResetGrid(height, width, depth, (int)gridBoxSize, true, false, true);
+    }
+
+    public void ResetGrid(int height, int width, int depth, int boxSize, bool centerX, bool centerY, bool centerZ) {
+        gridHeight = (float)height;
+        gridWidth = (float)width;
+        gridDepth = (float)depth;
+        gridBoxSize = (float)boxSize;
+
+        centeredX = centerX;
+        centeredY = centerY;
+        centeredZ = centerZ;
+    }
+
+    public static GameLevelGridData GetLevelTemplate(string template) {
+
+        //string wall1 = "wall-1";
+
+        //GameLevelGridData gridData = new GameLevelGridData();
+
+
+        return GameLevels.GetLevelGridBaseDefault();
+        
+        /*
+        GameLevelGridData data = new GameLevelGridData();
+        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
+        data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
+        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
+
+        return data;
+        */
+    }
+
+    public static GameLevelGridData GetBaseDefault() {
+
+        return GameLevels.GetLevelGridBaseDefault();
+
+        /*
+        GameLevelGridData data = new GameLevelGridData();
+        data = AddAssets(data, "bush-1", UnityEngine.Random.Range(4,8));
+        data = AddAssets(data, "box-1", UnityEngine.Random.Range(2, 4));
+        data = AddAssets(data, "padding-1", UnityEngine.Random.Range(1, 3));
+
+        return data;
+        */
+    }
+
+    public static GameLevelGridData GetDefault() {
+
+        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
+        data.RandomizeAssetsInAssetMap();
+
+        return data;
+    }
+
+    public static GameLevelGridData GetTemplate(string templateCode) {
+        
+        GameLevelGridData data = GameLevelGridData.GetLevelTemplate(templateCode);
+        //data.RandomizeAssetsInAssetMap();
+        
+        return data;
+    }
+
+    public static GameLevelGridData GetModeTypeChoice(int choiceCount) {
+
+        GameLevelGridData data = GameLevelGridData.GetBaseDefault();
+        //data = AddAssets(data, "game-choice-item", choiceCount);
+        data.RandomizeAssetsInAssetMap();
+
+        return data;
+    }
+
+    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode) {
+        data.SetAssets(assetCode, 1);
+        return data;
+    }
+
+    public static GameLevelGridData AddAssets(GameLevelGridData data, string assetCode, int count) {
+        data.SetAssets(assetCode, count);
+        return data;
+    }
+
+    //public string[,,] GetAssetMap() {
+    //    return assetMap;
+    //}
+
+    public Dictionary<string, GameLevelItemAssetData> GetAssetLayoutData() {
+        return assetLayoutData;
+    }
+
+    public void ClearAssets() {
+        assets = new List<AppContentAsset>();
+    }
+
+    public void ClearMap() {
+        //assetMap = new string[(int)gridWidth, (int)gridHeight, (int)gridDepth];
+        assetLayoutData = new Dictionary<string, GameLevelItemAssetData>();
+    }
+    
+    public void ClearPresets() {
+        presets = new List<string>();
+    }
+
+    public void SetAssets(string code, int count) {
+        for (int i = 0; i < count; i++) {
+            SetAsset(code);
+        }
+    }
+
+    public void SetAsset(string code) {
+        AppContentAsset asset = AppContentAssets.Instance.GetByCode(code);
+        if (asset != null) {
+            //if(!HasAsset(asset.code)) {
+            assets.Add(asset);
+            //}
+        }
+    }
+
+    public bool HasAsset(string code) {
+        foreach (AppContentAsset asset in assets) {
+            if (asset.code == code) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void SetAssetsInAssetMap(
+        string code, string type, string dataType, string displayType, Vector3 pos) {
+
+        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+
+        assetData.code = code;
+        assetData.type = type;
+        assetData.data_type = dataType;
+        assetData.display_type = displayType;
+        assetData.position_data = new Vector3Data(pos);
+        assetData.SetAssetScaleRange(.7f, 1.2f);
+        assetData.SetAssetRotationRangeY(-180, 180);
+
+        SetAssetsInAssetMap(assetData);
+    }
+
+    public void SetAssetsInAssetMap(
+        string code, string type, string dataType, string displayType, 
+        Vector3 pos, Vector3 scale, Vector3 rotation) {
+        
+        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+        
+        assetData.code = code;
+        assetData.type = type;
+        assetData.data_type = dataType;
+        assetData.display_type = displayType;
+        assetData.position_data = new Vector3Data(pos);
+        assetData.scale_data = new Vector3Data(scale);
+        assetData.rotation_data = new Vector3Data(rotation);
+        
+        SetAssetsInAssetMap(assetData);
+    }
+
+    public void SetAssetsInAssetMap(
+        string code, string type, string dataType, string displayType, 
+        Vector3 pos, Vector3 scale, Vector3 rotation, Vector3 localPosition) {
+        
+        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+        
+        assetData.code = code;
+        assetData.type = type;
+        assetData.data_type = dataType;
+        assetData.display_type = displayType;
+        assetData.position_data = new Vector3Data(pos);
+        assetData.scale_data = new Vector3Data(scale);
+        assetData.rotation_data = new Vector3Data(rotation);
+        assetData.local_position_data = new Vector3Data(localPosition);
+        
+        SetAssetsInAssetMap(assetData);
+    }
+
+    public void SetAssetsInAssetMap(GameLevelItemAssetData assetData) {
+
+        Vector3 pos = assetData.position_data.GetVector3();
+
+        if (pos.x > gridWidth - 1) {
+            pos.x = gridWidth - 1;
+        }
+
+        if (pos.y > gridHeight - 1) {
+            pos.y = gridHeight - 1;
+        }
+
+        if (pos.z > gridDepth - 1) {
+            pos.z = gridDepth - 1;
+        }
+
+        string keyLayout = 
+            string.Format(
+                "{0}-{1}-{2}", 
+                (int)pos.x, 
+                (int)pos.y, 
+                (int)pos.z);
+
+        assetData.position_data.FromVector3(pos);
+
+        if (!assetLayoutData.ContainsKey(keyLayout)) {
+
+            if (assetData.code != BaseDataObjectKeys.empty) {
+
+                if (assetData.type == BaseDataObjectKeys.character) {
+
+                    Debug.Log("SetAssetsIntoMap:keyLayout:" + keyLayout);
+                    Debug.Log("SetAssetsIntoMap:assetData:" + assetData.ToJson());
+                }
+            }
+
+            assetLayoutData.Set(keyLayout, assetData);
+        }
+    }
+
+    // data.rangeScale = Vector3.zero.WithX(.7f).WithY(1.2f);
+    // data.range_rotation = Vector3.zero.WithX(-180).WithY(180); 
+
+    public void RandomizeAssetsInAssetMap() {
+
+        foreach (AppContentAsset asset in assets) {
+
+            int x = 0;
+            int y = 0;
+            int z = 0;
+
+            x = UnityEngine.Random.Range(0, (int)gridWidth - 1);
+            y = UnityEngine.Random.Range(0, (int)gridHeight - 1);
+            z = UnityEngine.Random.Range(0, (int)gridDepth - 1);
+
+            int midX = ((int)((gridWidth - 1) / 2));
+            // TODO 2d version
+            //int midY = ((int)((gridHeight - 1) / 2));
+            int midZ = ((int)((gridDepth - 1) / 2));
+
+            // Dont' add if in the middle spawn area until player
+            // items grid out in level data.
+            // TODO switch to area around player to gid out items
+            // if spawns on level items
+          
+            if ((x < (midX + 2)) && (x > (midX - 2))
+                && (z < (midZ + 2)) && (z > (midZ - 2))) {
+                continue;
+            }
+
+            string keyLayout = string.Format("{0}-{1}-{2}", x, y, z);
+
+            if (!assetLayoutData.ContainsKey(keyLayout)) {
+                Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+                SetAssetsInAssetMap(asset.code, asset.type, asset.data_type, asset.display_type, pos);
+            }
+        }
+    }
+}
+
+public enum GameCameraView {
+    ViewSide, // tecmo
+    ViewSideTop, // tecmo
+    ViewBackTilt, // backbreaker cam
+    ViewBackTop // john elway cam
+}
+
+public enum GameRunningState {
+    PAUSED,
+    RUNNING,
+    STOPPED
+}
+
 public class BaseGameController : GameObjectTimerBehavior {
 
     public GamePlayerController currentGamePlayerController;
@@ -159,7 +782,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initCustomProfileCharactersCo());
     }
 
-    IEnumerator initCustomProfileCharactersCo() {
+    internal virtual IEnumerator initCustomProfileCharactersCo() {
         yield return new WaitForEndOfFrame();
 
         GameCustomController.BroadcastCustomCharacterProfileCodeSync();
@@ -167,12 +790,6 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void OnEnable() {
-
-        Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
-
-        Messenger<string>.AddListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
-
-        Messenger.AddListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
 
         Gameverses.GameMessenger<string>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
@@ -186,27 +803,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.AddListener(
-            BaseGameProfileMessages.ProfileShouldBeSaved,
-            OnProfileShouldBeSavedEventHandler);
+        Messenger.AddListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
 
-        Messenger.AddListener(
-            GameDraggableEditorMessages.GameLevelItemsLoaded,
-            OnGameLevelItemsLoaded);
+        Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
 
-        Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(
-            InputSystemEvents.inputSwipe, OnInputSwipe);
+        Messenger<InputSystemSwipeDirection, Vector3, float>.AddListener(InputSystemEvents.inputSwipe, OnInputSwipe);
 
     }
 
     public virtual void OnDisable() {
-
-        Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
-
-        Messenger<string>.RemoveListener(GameMessages.gameInitLevelStart, OnGameInitLevelStart);
-
-        Messenger.RemoveListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
-
         Gameverses.GameMessenger<string>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
@@ -219,31 +824,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameItemDirectorMessages.gameItemDirectorSpawnItem,
             OnGameItemDirectorData);
 
-        Messenger.RemoveListener(
-            BaseGameProfileMessages.ProfileShouldBeSaved,
-            OnProfileShouldBeSavedEventHandler);
+        Messenger.RemoveListener(BaseGameProfileMessages.ProfileShouldBeSaved, OnProfileShouldBeSavedEventHandler);
 
-        Messenger.RemoveListener(
-            GameDraggableEditorMessages.GameLevelItemsLoaded,
-            OnGameLevelItemsLoaded);
+        Messenger.RemoveListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoaded);
 
-        Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(
-            InputSystemEvents.inputSwipe, OnInputSwipe);
-    }
-
-    //
-
-
-    public virtual void OnGameLevelStart(string levelCode) {
-
-    }
-
-    public virtual void OnGameInitLevelStart(string levelCode) {
-
-    }
-
-    public virtual void OnGameLevelPlayerReady() {
-
+        Messenger<InputSystemSwipeDirection, Vector3, float>.RemoveListener(InputSystemEvents.inputSwipe, OnInputSwipe);
     }
 
     // ---------------------------------------------------------------------
@@ -499,7 +1084,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Look for object by that uuid, if not create it
 
-        //LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
+        LogUtil.Log("OnNetworkPlayerContainerAdded:uid:", uid);
 
         if(uid == UniqueUtil.Instance.currentUniqueId
             || string.IsNullOrEmpty(uid)) {
@@ -518,7 +1103,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                     gamePlayerController.uniqueId = uid;
                     gamePlayerController.UpdateNetworkContainer(uid);
                     //gamePlayerController.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
-                    //LogUtil.Log("OnNetworkPlayerContainerAdded:Updating character:" + uid);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:Updating character:" + uid);
                     found = true;
                     break;
                 }
@@ -541,8 +1126,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                          as GameObject).GetComponent<GamePlayerController>();
                     playerControllerOther.ChangePlayerState(GamePlayerControllerState.ControllerNetwork);
                     playerControllerOther.UpdateNetworkContainer(uid);
-                    //LogUtil.Log("OnNetworkPlayerContainerAdded:Creating character:" + uid);
-                    //LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:Creating character:" + uid);
+                    LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
                 }
             }
         }
@@ -902,6 +1487,23 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void changeGameZone(string zone) {
 
+        if(gameZoneEndLeft == null) {
+            Transform gameZoneEndLeftTransform
+                = levelZonesContainerObject.transform.Find("GameGoalZoneLeft");
+            if(gameZoneEndLeftTransform != null) {
+                gameZoneEndLeft = gameZoneEndLeftTransform.gameObject;
+            }
+        }
+
+        if(gameZoneEndRight == null) {
+            Transform gameZoneEndRightTransform
+                = levelZonesContainerObject.transform.Find("GameGoalZoneRight");
+            if(gameZoneEndRightTransform != null) {
+                gameZoneEndRight = gameZoneEndRightTransform.gameObject;
+            }
+        }
+
+        goalZoneChange(zone);
     }
 
     // ---------------------------------------------------------------------
@@ -953,6 +1555,60 @@ public class BaseGameController : GameObjectTimerBehavior {
                 // Make it a type of needed action or none. 
                 // Update placeholder actions to actual actions of default
 
+                /*
+
+                AppContentCollect appContentCollect = AppContentCollects.Current;
+
+                List<AppContentCollectItem> appContentCollectItems = appContentCollect.GetItemsData();
+
+                // --------------
+                // SAVE
+                
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_save, 
+                    GameZoneActions.action_save,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // ATTACK
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_attack, 
+                    GameZoneActions.action_attack,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // BUILD
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_build, 
+                    GameZoneActions.action_build,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // REPAIR
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_repair, 
+                    GameZoneActions.action_repair,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+                    
+                // --------------
+                // DEFEND
+
+                gameZoneActionAsset.Load(
+                    GameZoneKeys.action_defend, 
+                    GameZoneActions.action_defend,
+                    "level-building-" + UnityEngine.Random.Range(1,10),
+                    "platform-large-1");
+
+
+                */
+
             }
         }
     }
@@ -983,8 +1639,6 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // Load in the level assets
         GameDraggableEditor.LoadLevelItems();
-
-        handlePostLoadLevelAssetsGameplayType();
 
         // Find actions and make them current actions or none
 
@@ -1155,7 +1809,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initLevelCo(levelCode));
     }
 
-    IEnumerator initLevelCo(string levelCode) {
+    internal virtual IEnumerator initLevelCo(string levelCode) {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
@@ -1166,19 +1820,17 @@ public class BaseGameController : GameObjectTimerBehavior {
             currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
 
-        //return;
-
         UIPanelOverlayPrepare.ShowDefault();
 
         GameUIPanelOverlays.Instance.ShowOverlayWhite();
 
-        yield return new WaitForSeconds(1.1f);
+        yield return new WaitForSeconds(2f);
 
         // PRELOAD/CACHE/POOL CONTROLLERS
 
-        //yield return StartCoroutine(GameAIController.Instance.preloadCo());
+        yield return StartCoroutine(GameAIController.Instance.preloadCo());
 
-        //yield return StartCoroutine(GameItemController.Instance.preloadCo());
+        yield return StartCoroutine(GameItemController.Instance.preloadCo());
 
         GameHUD.Instance.ResetIndicators();
 
@@ -1189,20 +1841,12 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void preloadLevelAssetPreset(GameDataAssetPreset assetDataItem) {
-        if(Application.isEditor) {
-            return;
-        }
-
         StartCoroutine(preloadLevelAssetPresetCo(assetDataItem));
     }
 
-    IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
+    public virtual IEnumerator preloadLevelAssetPresetCo(GameDataAssetPreset assetDataItem) {
 
-        //yield return new WaitForEndOfFrame();
-
-        if(Application.isEditor) {
-            yield break;
-        }
+        yield return new WaitForEndOfFrame();
 
         int minAssetLimit = (int)assetDataItem.min;
         int maxAssetLimit = (int)assetDataItem.max;
@@ -1217,11 +1861,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
                 for(int i = 0; i < 5; i++) {
 
-                    //yield return new WaitForEndOfFrame();
+                    yield return new WaitForEndOfFrame();
 
                     GameObject go = AppContentAssets.LoadAssetLevelAssets(presetItem.code);
 
-                    //yield return new WaitForEndOfFrame();
+                    yield return new WaitForEndOfFrame();
 
                     go.DestroyGameObject();
                 }
@@ -1235,7 +1879,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(initLevelFinishCo(levelCode));
     }
 
-    IEnumerator initLevelFinishCo(string levelCode) {
+    internal virtual IEnumerator initLevelFinishCo(string levelCode) {
         if(UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
@@ -1275,7 +1919,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     */
 
     public virtual void changeLevelFlash() {
-        startLevel(GameLevels.Current.code);
+        startLevel("1-2");
     }
 
     // ---------------------------------------------------------------------
@@ -1343,7 +1987,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void loadStartLevel() {
-        loadStartLevel(GameLevels.Current.code);// GameConfigs.defaultGameLevelCode);
+        loadStartLevel(GameConfigs.defaultGameLevelCode);
     }
 
     public virtual void loadStartLevel(string levelCode) {
@@ -1479,7 +2123,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     //bool loadingCharacterContainer = false;
 
-    IEnumerator loadActorCo(GameActorDataItem data) {
+    internal virtual IEnumerator loadActorCo(GameActorDataItem data) {
 
         //if (loadingCharacterContainer) {
         //    yield break; 
@@ -1624,7 +2268,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         //loadingCharacterContainer = false;
     }
 
-    IEnumerator loadItemCo(GameItemData data) {
+    internal virtual IEnumerator loadItemCo(GameItemData data) {
 
         if(data == null) {
             yield break;
@@ -1806,103 +2450,9 @@ public class BaseGameController : GameObjectTimerBehavior {
         resetRuntimeData();
 
         resetLevel();
+
+        resetGameplayTypes();
     }
-
-    //-------------------------------------------------------------------------
-
-    public static void ResetLevelAssetCacheItems(bool removeCached = false) {
-        if(GameController.isInst) {
-            GameController.Instance.resetLevelAssetCacheItems(removeCached);
-        }
-    }
-
-    public virtual void resetLevelAssetCacheItems(bool removeCached = false) {
-        resetLevelAssetCacheItems(levelItemsContainerObject, removeCached);
-    }
-
-    public virtual void resetLevelAssetCacheItems(GameObject go, bool removeCached = false) {
-
-        if(go == null) {
-            return;
-        }
-
-        bool cached = resetLevelAssetCacheItem(go, removeCached);
-
-        if(!cached || removeCached) {
-
-            foreach(GameObjectInfinitePartItem partItem in
-                go.GetList<GameObjectInfinitePartItem>()) {
-
-                partItem.DestroyItems(removeCached);
-            }
-
-            foreach(GameObjectInfinitePart part in
-                go.GetList<GameObjectInfinitePart>()) {
-
-                part.DestroyItems(removeCached);
-            }
-
-            foreach(GameObjectInfiniteContainer container in
-                go.GetList<GameObjectInfiniteContainer>()) {
-
-                container.DestroyItems(removeCached);
-            }
-        }
-    }
-
-    //-------------------------------------------------------------------------
-
-    public static bool ResetLevelAssetCacheItem(GameObject go, bool removeCached = false) {
-        if(GameController.isInst) {
-            return GameController.Instance.resetLevelAssetCacheItem(go, removeCached);
-        }
-
-        return false;
-    }
-
-    public virtual bool resetLevelAssetCacheItem(GameObject go, bool removeCached = false) {
-
-        bool cached = false;
-
-        if(go == null) {
-            return cached;
-        }
-        
-        foreach(GameObjectInfiniteAssetCache item in
-            go.GetList<GameObjectInfiniteAssetCache>()) {
-
-            if(removeCached) {
-                item.gameObject.Remove<GameObjectInfiniteAssetCache>();
-            }
-            else {
-                cached = true;
-                item.gameObject.DestroyGameObject();
-            }
-        }
-
-        if(!cached || removeCached) {
-
-            foreach(GameObjectInfiniteAssetItem item in
-                go.GetList<GameObjectInfiniteAssetItem>()) {
-
-                item.gameObject.Remove<GameObjectInfiniteAssetItem>();
-
-                item.gameObject.DestroyGameObject();
-            }
-
-            foreach(GameObjectInfiniteAsset item in
-                go.GetList<GameObjectInfiniteAsset>()) {
-
-                item.gameObject.Remove<GameObjectInfiniteAsset>();
-
-                item.gameObject.DestroyGameObject();
-            }
-        }
-
-        return cached;
-    }
-
-    //-------------------------------------------------------------------------
 
     public virtual void resetLevel() {
 
@@ -1910,13 +2460,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameUIController.HideGameCanvas();
 
-        GameController.ResetLevelAssetCacheItems(true);
-
         GameDraggableEditor.ClearLevelItems(levelItemsContainerObject);
         GameDraggableEditor.ResetCurrentGrabbedObject();
         GameDraggableEditor.HideAllEditDialogs();
-
-        ObjectPoolKeyedManager.clearPooled();
     }
 
     public virtual void resetRuntimeData() {
@@ -1929,16 +2475,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         isGameOver = false;
     }
 
-    public virtual void handlePostLoadLevelAssetsGameplayType() {
-
-        handleGametypeReset();
+    public virtual void resetGameplayTypes() {
 
         handleGametypeInit();
 
         if(isGameplayWorldTypeStationary()) {
 
             if(containerInfinity != null) {
-                //containerInfinity.Reset();
+                containerInfinity.Reset();
             }
         }
     }
@@ -2012,8 +2556,6 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GameHUD.Instance.AnimateIn();
 
-        //return;
-
         changeGameState(GameStateGlobal.GamePrepare);
     }
 
@@ -2059,7 +2601,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(runDirectorsDelayedCo(delay));
     }
 
-    IEnumerator runDirectorsDelayedCo(float delay) {
+    public virtual IEnumerator runDirectorsDelayedCo(float delay) {
         yield return new WaitForSeconds(delay);
         runDirectors();
 
@@ -2150,7 +2692,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gameRunningStatePauseDelayedCo(delay));
     }
 
-    IEnumerator gameRunningStatePauseDelayedCo(float delay) {
+    public virtual IEnumerator gameRunningStatePauseDelayedCo(float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2354,7 +2896,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(processQueuesCo());
     }
 
-    IEnumerator processQueuesCo() {
+    public IEnumerator processQueuesCo() {
         yield return new WaitForSeconds(2);
 
         processQueueGameObjectTypeData();
@@ -2411,6 +2953,17 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void onGameResults() {
+
+        //LogUtil.Log("OnGameResults");
+
+        //if(runtimeData.localPlayerWin){
+        //GameUIPanelResults.Instance.ShowSuccess();
+        //GameUIPanelResults.Instance.HideFailed();
+        //}
+        //else {
+        //GameUIPanelResults.Instance.HideSuccess();
+        //GameUIPanelResults.Instance.ShowFailed();
+        //}
 
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
 
@@ -2519,12 +3072,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if ENABLE_FEATURE_AR
 
-        if(camerasAR == null) {
+        if (camerasAR == null) {
             camerasAR = new List<Camera>();
-            if(cameraContainersAR != null) {
-                foreach(Camera cam
+            if (cameraContainersAR != null) {
+                foreach (Camera cam
                          in cameraContainersAR.GetComponentsInChildren<Camera>()) {
-                    if(!camerasAR.Contains(cam)) {
+                    if (!camerasAR.Contains(cam)) {
                         camerasAR.Add(cam);
                     }
                 }
@@ -2541,24 +3094,24 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(hideCamerasCo(cams));
     }
 
-    IEnumerator showCamerasCo(List<Camera> cams) {
+    public virtual IEnumerator showCamerasCo(List<Camera> cams) {
 
         foreach(Camera cam in cams) {
             if(cam != null) {
                 if(cam.gameObject != null) {
                     cam.gameObject.Show();
-                    //TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
+                    TweenUtil.FadeToObject(cam.gameObject, 1f, .5f, .5f);
                 }
             }
         }
         yield return new WaitForSeconds(2f);
     }
 
-    IEnumerator hideCamerasCo(List<Camera> cams) {
+    public virtual IEnumerator hideCamerasCo(List<Camera> cams) {
         foreach(Camera cam in cams) {
             if(cam != null) {
                 if(cam.gameObject != null) {
-                    //TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
+                    TweenUtil.FadeToObject(cam.gameObject, 0f, .5f, .5f);
                 }
             }
         }
@@ -2712,7 +3265,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gamePlayerOutOfBoundsDelayedCo(delay));
     }
 
-    IEnumerator gamePlayerOutOfBoundsDelayedCo(float delay) {
+    public virtual IEnumerator gamePlayerOutOfBoundsDelayedCo(float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2789,7 +3342,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(gamePlayerGoalZoneDelayedCo(goalObject, delay));
     }
 
-    IEnumerator gamePlayerGoalZoneDelayedCo(GameObject goalObject, float delay) {
+    public virtual IEnumerator gamePlayerGoalZoneDelayedCo(GameObject goalObject, float delay) {
 
         yield return new WaitForSeconds(delay);
 
@@ -2814,7 +3367,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(processLevelStatsCo());
     }
 
-    IEnumerator processLevelStatsCo() {
+    public virtual IEnumerator processLevelStatsCo() {
 
         // END OF LEVEL PROCESSING WHILE SETTING UP RESULTS
 
@@ -3621,13 +4174,13 @@ public class BaseGameController : GameObjectTimerBehavior {
             return GameController.Instance.curveInfiniteEnabledGet();
         }
 
-        return true;
+        return false;
     }
 
     public bool curveInfiniteEnabledGet() {
 
         if(runtimeData == null) {
-            return true;
+            return false;
         }
 
         return runtimeData.curveEnabled;
@@ -3977,12 +4530,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         return goAsset;
     }
     */
-    
-    public virtual void GameAssetObjectContextGetWorldFloor(
-        GameObjectInfinteData data, string assetCode, GameObject go) {
 
-    }
-    
     public virtual void GameAssetObjectContextGetSide(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
@@ -4254,7 +4802,135 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void LoadLevelAssetsLines(GameObjectInfinteData data, GameObject go, int indexItem, Vector3 spawnLocation) {
+        /*
+        // --------------------------------------------------------------------
+        // LINES
 
+        for (int i = 0; i < data.lines.Count; i++) {
+
+            // add part item
+
+            GameObject goItem = LoadAssetLevelPlaceholder(data, data.codeGamePartItem, spawnLocation, indexItem);
+
+            if (goItem == null) {
+                continue;
+            }
+
+            goItem.DestroyChildren();
+
+            goItem.transform.parent = go.transform;
+            goItem.transform.position = go.transform.position;
+            goItem.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
+
+            GameObjectInfinitePartItem partItem = goItem.Get<GameObjectInfinitePartItem>();
+
+            if (partItem == null) {
+                continue;
+            }
+
+            partItem.code = i.ToString();
+
+            // --------------------------------------------------------------------
+            // BLOCK PLACEHOLDER
+
+            bool fillBlock = true;
+
+            string codeBlock = data.codeGameBlock;
+            string codeItem = "";
+
+            if (indexItem > data.partBackCount) {
+
+                GameDataObject gridObject =
+                    GetLevelAssetDynamicObject(data, i, 0, data.currentLevelGridIndex);
+
+                if (gridObject != null) {
+                    codeItem = gridObject.code;
+                }
+            }
+
+            if (indexItem % 10 == 0) {
+                // Every tenth load the environment pads
+                //Debug.Log("dynamicPart:10:" + indexItem);
+            }
+
+            if (codeItem.IsEqualLowercase(BaseDataObjectKeys.empty)) {
+                fillBlock = false;
+            }
+
+            if (fillBlock) {
+
+                // ADD PART BLOCK AND ASSETS FROM TEMPLATE
+
+                GameObject goAssetBlock = LoadAssetLevelPlaceholder(data, codeBlock, spawnLocation, indexItem);
+
+                if (goAssetBlock == null) {
+                    continue;
+                }
+
+                goAssetBlock.Hide();
+
+                goAssetBlock.transform.parent = goItem.transform;
+                goAssetBlock.transform.position = goItem.transform.position;
+                //goAssetBlock.transform.localPosition = goItem.transform.localPosition.WithX(data.lines[i].x);
+
+                goAssetBlock.Show();
+            }
+
+            // --------------------------------------------------------------------
+            // LOAD DATA GRID ITEM
+
+            if (indexItem > data.partBackCount
+                && !codeItem.IsNullOrEmpty()
+                && fillBlock
+                && codeItem != codeBlock) {
+
+                // TODO change to game specific lookup
+
+                codeItem = GameController.GameItemCodeContextGet(codeItem);
+
+                GameObject goAssetItem;
+
+                bool isItem = codeItem.StartsWith(BaseDataObjectKeys.item);
+
+                if (isItem) {
+
+                    goAssetItem = AppContentAssets.LoadAssetItems(codeItem, spawnLocation);
+                }
+                else {
+
+                    goAssetItem = AppContentAssets.LoadAssetLevelAssets(codeItem, spawnLocation);
+                }
+
+                if (goAssetItem == null) {
+                    Debug.Log("Asset not found items/" + codeItem);
+                    continue;
+                }
+
+                goAssetItem.Hide();
+
+                goAssetItem.transform.parent = goItem.transform;
+
+                float posY = 0f;
+
+                if (isItem) {
+                    posY = 2f;
+                }
+
+                // ADD ITEM COIN LOCATION
+                //if (codeItem.IsEqualLowercase("item-coin")) {
+                //if (codeItem.IsEqualLowercase("item-special")) {
+
+                goAssetItem.transform.position = goItem.transform.position.WithX(0);
+                goAssetItem.transform.localPosition = goItem.transform.localPosition.WithX(0).WithY(posY).WithZ(0);
+
+                goAssetItem.Show();
+            }
+
+            // reset position to view
+
+            go.transform.position = go.transform.position.WithY(0);
+        }
+        */
     }
 
     public virtual void LoadLevelAssetsPeriodic(GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
@@ -4262,7 +4938,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         StartCoroutine(LoadLevelAssetsPeriodicCo(data, parentGo, indexItem, clear));
     }
 
-    IEnumerator LoadLevelAssetsPeriodicCo(
+    public virtual IEnumerator LoadLevelAssetsPeriodicCo(
         GameObjectInfinteData data, GameObject parentGo, int indexItem, bool clear = true) {
 
         yield return null;
@@ -4284,7 +4960,28 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             go.transform.localPosition = go.transform.localPosition.WithY(-data.distanceTickZ);
         }
-        
+
+        if((indexItem + 1) % (data.distanceTickZ / 2) == 0) {
+
+            // Load terrain and ambience
+
+            GameObject goSideLeft = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
+            GameObject goSideRight = LoadAssetLevelPlaceholder(data, data.codeGameSide, parentGo.transform.position, indexItem);
+
+            if(goSideLeft == null || goSideRight == null) {
+                Debug.Log("Asset not found levelassets/" + data.codeGameSide);
+                yield return null;
+            }
+
+            goSideLeft.transform.parent = parentGo.transform;
+            goSideRight.transform.parent = parentGo.transform;
+
+            goSideLeft.transform.localRotation = Quaternion.Euler(0, -90, 0);
+            goSideRight.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+            goSideLeft.transform.localPosition = goSideLeft.transform.localPosition.WithX(-24).WithY(0);
+            goSideRight.transform.localPosition = goSideRight.transform.localPosition.WithX(24).WithY(0);
+        }
         */
     }
 
@@ -4417,7 +5114,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             return;
         }
 
-        if(curveInfiniteEnabledGet()
+        if(runtimeData.curveEnabled
             && currentGamePlayerController.GamePlayerMoveSpeedGet() > 15f) {
             runtimeData.curve.x = UnityEngine.Random.Range(-5, 5);
             runtimeData.curve.z = UnityEngine.Random.Range(-4, 4);
@@ -4445,23 +5142,6 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
-    internal virtual void handleGametypeReset() {
-
-        if(isGameplayWorldTypeStationary()) {
-
-            if(containerInfinity != null) {
-                //containerInfinity.Reset();
-                containerInfinity.gameObject.DestroyGameObject();
-                containerInfinity = null;
-            }
-
-            if(controllerInfinity != null) {
-                controllerInfinity.gameObject.DestroyGameObject();
-                controllerInfinity = null;
-            }
-        }
-    }
-
     internal virtual void handleUpdateStationary() {
 
         if(currentGamePlayerController == null) {
@@ -4479,21 +5159,29 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if(GameConfigs.isGameRunning) {
 
-            if(!curveInfiniteEnabledGet()) {
+            if(!runtimeData.curveEnabled) {
                 runtimeData.curve = Vector4.zero;
                 runtimeData.curveInfiniteAmount = runtimeData.curve;
             }
 
-            float speedThrottle =
-                (currentGamePlayerController.controllerData.speedInfinite / currentGamePlayerController.controllerData.speedInfiniteMax) * .1f;
+            float speedThrottle = (currentGamePlayerController.GamePlayerMoveSpeedGet() / 100f) * .5f;
+
+            //containerInfinity.UpdatePositionPartsZ(
+            //    -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
+            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
             containerInfinity.UpdatePositionPartsZ(
-                (-currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
-                currentGamePlayerController.controllerData.speedInfinite) * Time.deltaTime);
+                -currentGamePlayerController.controllerData.moveGamePlayerPosition.z *
+                currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
+
+            //containerInfinity.UpdatePositionPartsZ(
+            //    -1 *
+            //    currentGamePlayerController.controllerData.speedInfinite * Time.deltaTime);
 
             // .15f *
             //Debug.Log("speedThrottle:" + speedThrottle);
             //Debug.Log("currentGamePlayerController.controllerData.speedInfinite:" + currentGamePlayerController.controllerData.speedInfinite);
+
             //Debug.Log("currentGamePlayerController.controllerData.moveGamePlayerPosition.z:" + currentGamePlayerController.controllerData.moveGamePlayerPosition.z);
 
             runtimeData.curveInfiniteAmount =
@@ -4553,6 +5241,37 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 
     }
+
+    /*
+    Vector3 currentGamePlayerDistance = Vector3.zero;
+    Vector3 overallGamePlayerDistance = Vector3.zero;
+    
+    internal virtual void handleLateUpdateStationary() {
+
+        if (currentGamePlayerController == null) {
+            return;
+        }
+
+        currentGamePlayerDistance = currentGamePlayerController.transform.position;
+
+        overallGamePlayerDistance += currentGamePlayerDistance;
+
+        currentGamePlayerController.transform.position = -currentGamePlayerDistance;
+
+        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerCurrentDistance, currentGamePlayerDistance);
+        Messenger<Vector3>.Broadcast(GamePlayerMessages.PlayerOverallDistance, overallGamePlayerDistance);
+
+        Debug.Log("GameController: handleLateUpdateStationary: currentGamePlayerDistance:" + currentGamePlayerDistance);
+        //Debug.Log("GameController: handleLateUpdateStationary: overallGamePlayerDistance:" + overallGamePlayerDistance);
+
+        //foreach (GameObjectInfinitePart part in gameObject.GetList<GameObjectInfinitePart>()) {
+
+        //    part.transform.position = part.transform.position  + -currentGamePlayerDistance;
+
+        //}
+    }
+    */
+
 
     // ------------------------------------------------------------------------
     // UPDATE

@@ -55,16 +55,16 @@ public class UIPanelLevels : UIAppPanelBaseList {
                 GameObject itemSet = NGUITools.AddChild(listGridRoot, listItemSetPrefab);
                 itemSet.name = "LevelSet" + k;
              
-                UIGrid listSetGrid = itemSet.transform.FindChild("LevelContainer").GetComponent<UIGrid>();
+                UIGrid listSetGrid = itemSet.transform.Find("LevelContainer").GetComponent<UIGrid>();
                 GameObject listSetGridObject = listSetGrid.gameObject;
          
                 for(int y = (k * 20); y < ((20) * (k + 1)); y++) {
                  
                     GameObject item = NGUITools.AddChild(listSetGridObject, listItemPrefab);
                     item.name = "LevelItem" + y;
-                    item.transform.FindChild("LabelWorld").GetComponent<UILabel>().text 
+                    item.transform.Find("LabelWorld").GetComponent<UILabel>().text 
                      = (y + 1).ToString();//levels[y].name;
-                    item.transform.FindChild("ButtonPlayLevel").GetComponent<UIImageButton>().name 
+                    item.transform.Find("ButtonPlayLevel").GetComponent<UIImageButton>().name 
                      = "ButtonPlayLevel$" + (k + 1).ToString() + "-" + (y + 1).ToString(); ///levels[y].name;
                  
                     // TODO find stars/skulls

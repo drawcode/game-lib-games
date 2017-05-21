@@ -30,7 +30,7 @@ public class DrawLineToNext : GameObjectBehavior {
                 intNumber += 1;
                 string nextWpName = preFix + "_" + intNumber.ToString();
 
-                Transform nextWP = gameObject.transform.parent.FindChild(nextWpName);
+                Transform nextWP = gameObject.transform.parent.Find(nextWpName);
                 if (nextWP != null) {
                     //if (show && active)
                     if (show) {

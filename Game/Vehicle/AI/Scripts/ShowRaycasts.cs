@@ -55,7 +55,7 @@ public class ShowRaycasts : GameObjectBehavior {
 
             if (aiDriver != null) {
 
-                Transform colliderBottom = transform.FindChild("Colliders/ColliderBottom");
+                Transform colliderBottom = transform.Find("Colliders/ColliderBottom");
                 aiDriver.oASideOffset = Mathf.Abs(colliderBottom.localPosition.x) + colliderBottom.localScale.x / 2 + 0.1f;
                 Vector3 vpPos = aiDriver.viewPoint.localPosition;
                 vpPos.z = colliderBottom.localPosition.z + colliderBottom.localScale.z / 2 + 0.1f;
