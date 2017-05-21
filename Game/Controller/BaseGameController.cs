@@ -3132,7 +3132,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         hideCameras(camerasUI);
         hideCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
-        hideCameras(camerasAR);
+        //hideCameras(camerasAR);
 #endif
     }
 
@@ -3141,7 +3141,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         showCameras(camerasUI);
         showCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
-        hideCameras(camerasAR);
+        //hideCameras(camerasAR);
 #endif
     }
 
@@ -3150,7 +3150,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         showCameras(camerasUI);
         hideCameras(camerasBackground);
 #if ENABLE_FEATURE_AR
-        showCameras(camerasAR);
+        //showCameras(camerasAR);
 #endif
     }
 
