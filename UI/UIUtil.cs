@@ -631,7 +631,7 @@ public class UIUtil {
     }
 
     public static void UpdateLabelObject(Transform parentTransform, string key, string val) {
-        Transform labelObject = parentTransform.FindChild(key);
+        Transform labelObject = parentTransform.Find(key);
         if(labelObject != null) {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3

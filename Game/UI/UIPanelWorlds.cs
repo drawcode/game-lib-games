@@ -51,9 +51,9 @@ public class UIPanelWorlds : UIAppPanelBaseList {
 				
 	            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
 	            item.name = "WorldItem" + world.sort_order;
-	            item.transform.FindChild("LabelWorld").GetComponent<UILabel>().text = world.name;
-	            item.transform.FindChild("LabelWorldDisplayName").GetComponent<UILabel>().text = world.display_name;
-	            item.transform.FindChild("LabelWorldDescription").GetComponent<UILabel>().text = world.description;
+	            item.transform.Find("LabelWorld").GetComponent<UILabel>().text = world.name;
+	            item.transform.Find("LabelWorldDisplayName").GetComponent<UILabel>().text = world.display_name;
+	            item.transform.Find("LabelWorldDescription").GetComponent<UILabel>().text = world.description;
 				
 				//GameObject iconObject = item.transform.FindChild("Icon").gameObject;	
 				//UISprite iconSprite = iconObject.GetComponent<UISprite>();

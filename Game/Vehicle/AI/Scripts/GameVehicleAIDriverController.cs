@@ -211,7 +211,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         frWheel = aiPreMotor.frWheelMesh;
 
         if (viewPoint == null) {
-            viewPoint = transform.FindChild("ViewPoint");
+            viewPoint = transform.Find("ViewPoint");
         }
     }
 
@@ -242,7 +242,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             //unnoetig
             if (viewPoint == null)
             {
-                viewPoint = transform.FindChild("ViewPoint");  
+                viewPoint = transform.Find("ViewPoint");  
             }
 
             viewPointLeftGO = new GameObject("viewPointLeftGO");
@@ -396,7 +396,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             //LogUtil.Log("leftRightDistanceLength: " + leftRightDistanceLength.ToString());
             //LogUtil.Log("leftRightSideDistanceLength: " + leftRightSideDistanceLength.ToString());
             //frontCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            frontCollider = transform.FindChild("ViewPointCollider");
+            frontCollider = transform.Find("ViewPointCollider");
             //frontCollider.transform.parent = transform;
             Vector3 fcPos = viewPoint.transform.localPosition;
             fcPos.y += 0.1f;

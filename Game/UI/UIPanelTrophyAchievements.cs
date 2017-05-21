@@ -64,10 +64,10 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 				
 	            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
 	            item.name = "AchievementItem" + i;
-	            item.transform.FindChild("LabelName").GetComponent<UILabel>().text = achievement.display_name;
-	            item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = achievement.description;
+	            item.transform.Find("LabelName").GetComponent<UILabel>().text = achievement.display_name;
+	            item.transform.Find("LabelDescription").GetComponent<UILabel>().text = achievement.description;
 				
-				GameObject iconObject = item.transform.FindChild("Icon").gameObject;	
+				GameObject iconObject = item.transform.Find("Icon").gameObject;	
 				UISprite iconSprite = iconObject.GetComponent<UISprite>();
 				
 				
@@ -97,7 +97,7 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 						iconSprite.alpha = .33f;
 					}
 				}
-				item.transform.FindChild("LabelPoints").GetComponent<UILabel>().text = points;				
+				item.transform.Find("LabelPoints").GetComponent<UILabel>().text = points;				
 				
 				// Get trophy icon
 				

@@ -68,13 +68,13 @@ public class UIPanelTrophyStatistics : UIAppPanelBaseList {
 				
 	            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
 	            item.name = "StatisticItem" + i;
-	            item.transform.FindChild("LabelName").GetComponent<UILabel>().text = statistic.display_name;
-	            item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = statistic.description;
+	            item.transform.Find("LabelName").GetComponent<UILabel>().text = statistic.display_name;
+	            item.transform.Find("LabelDescription").GetComponent<UILabel>().text = statistic.description;
 				
 				double statValue = GameProfileStatistics.Current.GetStatisticValue(statistic.code);
 				string displayValue = GameStatistics.Instance.GetStatisticDisplayValue(statistic, statValue);
 				
-				item.transform.FindChild("LabelPoints").GetComponent<UILabel>().text = displayValue;				
+				item.transform.Find("LabelPoints").GetComponent<UILabel>().text = displayValue;				
 								
 				i++;
 	        }

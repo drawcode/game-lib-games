@@ -133,10 +133,10 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 			
             GameObject item = NGUITools.AddChild(listGridRoot, listItemAchievementPrefab);
             item.name = "AchievementItem" + i;
-            item.transform.FindChild("Container/LabelName").GetComponent<UILabel>().text = achievement.display_name;
-            item.transform.FindChild("Container/LabelDescription").GetComponent<UILabel>().text = achievement.description;
+            item.transform.Find("Container/LabelName").GetComponent<UILabel>().text = achievement.display_name;
+            item.transform.Find("Container/LabelDescription").GetComponent<UILabel>().text = achievement.description;
 			
-			GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;	
+			GameObject iconObject = item.transform.Find("Container/Icon").gameObject;	
 			UISprite iconSprite = iconObject.GetComponent<UISprite>();
 			
 			
@@ -176,7 +176,7 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
                 //item.transform.FindChild("Container/ContainerComplete").gameObject.Hide(); 
             }
 
-            item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = points;				
+            item.transform.Find("Container/LabelPoints").GetComponent<UILabel>().text = points;				
 			
 			// Get trophy icon
 			

@@ -293,7 +293,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
             // Update button action
                         
-            Transform buttonObject = item.transform.FindChild("Container/Button/ButtonAction");
+            Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
             if (buttonObject != null) {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
                 if (button != null) {
@@ -410,7 +410,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                 
             scoreTotal += scoreMission;
             
-            Transform scoreObject = item.transform.FindChild("Container/Stars");
+            Transform scoreObject = item.transform.Find("Container/Stars");
             if(scoreObject != null) {
                 UIUtil.UpdateLabelObject(
                     scoreObject.gameObject, "LabelScore", scoreMission.ToString("N0"));

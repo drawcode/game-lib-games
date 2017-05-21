@@ -716,14 +716,14 @@ public class UIPanelBase : UIAppPanel {
 
         // show type icon
 
-        Transform typeObjects = item.transform.FindChild("types");
+        Transform typeObjects = item.transform.Find("types");
 
         if (typeObjects != null) {
             foreach (Transform t in typeObjects.gameObject.transform) {
                 t.gameObject.Hide(); // hide all 
             }
 
-            Transform typeObject = typeObjects.FindChild(type);
+            Transform typeObject = typeObjects.Find(type);
             if (typeObject != null) {
                 // show current
                 typeObject.gameObject.Show();
@@ -749,7 +749,7 @@ public class UIPanelBase : UIAppPanel {
             return null;
         }
 
-        Transform t = item.transform.FindChild(labelName);
+        Transform t = item.transform.Find(labelName);
         if (t != null) {
             UILabel label = t.GetComponent<UILabel>();
             if (label != null) {
