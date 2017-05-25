@@ -162,6 +162,8 @@ public class BaseUIButtonNames {
 
     // 
     public static string buttonActionUrl = "ButtonActionUrl";
+
+    public static string buttonStoreRestorePurchases = "ButtonStoreRestorePurchases";
 }
 
 public class BaseHUDButtonNames {
@@ -2792,7 +2794,13 @@ public class BaseUIController : GameObjectBehavior {
         }
 
 #endif
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonStoreRestorePurchases, buttonName)) {
 
+            GameCommunity.HideGameCommunity();
+
+            GameStoreController.PurchasesRestore();
+        }
+        
         // LAST 
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)
