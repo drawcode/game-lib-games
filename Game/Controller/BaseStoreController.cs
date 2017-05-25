@@ -464,6 +464,9 @@ public class BaseStoreController : GameObjectBehavior {
             break;
         }
     }
+    public virtual void purchasesRestore() {
+        ProductNetworks.RestoreTransactions();
+    }
 
     public virtual void purchase(string productId, double quantity) {
         GameStoreController.Purchase(
