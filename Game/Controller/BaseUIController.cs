@@ -56,6 +56,8 @@ public class BaseUIButtonNames {
     public static string buttonGameStatistics = "ButtonGameStatistics";
     public static string buttonGameAchievements = "ButtonGameAchievements";
     public static string buttonGameLeaderboards = "ButtonGameLeaderboards";
+    public static string buttonGameNetworkAchievements = "ButtonGameNetworkAchievements";
+    public static string buttonGameNetworkLeaderboards = "ButtonGameNetworkLeaderboards";
     public static string buttonGameCenterLeaderboards = "ButtonGameCenterLeaderboards";
     public static string buttonGameCenterAchievements = "ButtonGameCenterAchievements";
     public static string buttonGamePlayServicesLeaderboards = "ButtonGamePlayServicesLeaderboards";
@@ -2410,6 +2412,13 @@ public class BaseUIController : GameObjectBehavior {
         }
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayServicesLeaderboards, buttonName)) {
             GameNetworks.ShowLeaderboardsOrLogin(GameNetworkType.gameNetworkGooglePlayServices);
+        }
+
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameNetworkAchievements, buttonName)) {
+            GameNetworks.ShowAchievementsOrLogin(GameNetworks.currentNetwork);
+        }
+        else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameNetworkLeaderboards, buttonName)) {
+            GameNetworks.ShowLeaderboardsOrLogin(GameNetworks.currentNetwork);
         }
 
         /*

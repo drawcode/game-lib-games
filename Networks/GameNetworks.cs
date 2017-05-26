@@ -583,7 +583,7 @@ public class GameNetworks : GameObjectBehavior {
         }
     }
 
-    public static void showLeaderboardsOrLoginiOSAppleGameCenter() {
+    public void showLeaderboardsOrLoginiOSAppleGameCenter() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         
         Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
@@ -604,10 +604,33 @@ public class GameNetworks : GameObjectBehavior {
                 }
             }
         }
-#endif      
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        
+        Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
+
+        //LogUtil.Log("showLeaderboardsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+                  //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
+                
+        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
+                if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter)) {
+                    
+                    Debug.Log("showLeaderboardWithTimeScope::");
+
+                    gameNetworkManager.showLeaderboards();
+                    //GameCenterBinding.showLeaderboardWithTimeScope(GameCenterLeaderboardTimeScope.AllTime);
+                }
+                else {
+                    gameNetworkManager.authenticate();
+                }
+            }
+        }
+#endif
     }
 
-    public static void showLeaderboardsOrLoginAndroidGooglePlay() {
+    public void showLeaderboardsOrLoginAndroidGooglePlay() {
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
@@ -819,7 +842,7 @@ public class GameNetworks : GameObjectBehavior {
         }
     }
 
-    public static void reportAchievementAppleGameCenter(string key, float progress) {
+    public void reportAchievementAppleGameCenter(string key, float progress) {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
@@ -827,19 +850,31 @@ public class GameNetworks : GameObjectBehavior {
                 GameCenterBinding.reportAchievement(key, progress);
             }
         }
-#endif      
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
+                LogUtil.Log("reportAchievementAppleGameCenter:" + " key:" + key + " progress:" + progress); 
+                //GameCenterBinding.reportAchievement(key, progress);
+                gameNetworkManager.reportProgress(key, progress, null);
+            }
+        }
+#endif
     }
 
-    public static void reportAchievementGooglePlay(string key, float progress) {
+    public void reportAchievementGooglePlay(string key, float progress) {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                 LogUtil.Log("reportAchievementGooglePlay:" + " key:" + key + " progress:" + progress);
                 if(progress / 100 > .95f) {
-                    PlayGameServices.unlockAchievement(key, true);
+                    //PlayGameServices.unlockAchievement(key, true);
+                    gameNetworkManager.reportProgress(key, progress, null);
                 }
                 else {
-                    PlayGameServices.incrementAchievement(key, (int)progress);                
+                    //PlayGameServices.incrementAchievement(key, (int)progress); 
+                    gameNetworkManager.reportProgress(key, progress, null);               
                 }
             }
         }
@@ -862,13 +897,20 @@ public class GameNetworks : GameObjectBehavior {
         GameCenterBinding.getAchievements();
             
         LogUtil.Log("GameCenter GetAchievements...");
-#endif  
+#endif
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         PlayGameServices.reloadAchievementAndLeaderboardData();
         
         //LogUtil.Log("GameCenter GetAchievements...");
-#endif  
+#endif
+
+#if GAMENETWORK_USE_UNITY
+        //PlayGameServices.reloadAchievementAndLeaderboardData();
+
+        gameNetworkManager.loadAchievements();
+        //LogUtil.Log("GameCenter GetAchievements...");
+#endif
 
     }
 
@@ -884,13 +926,19 @@ public class GameNetworks : GameObjectBehavior {
         GameCenterBinding.retrieveAchievementMetadata();
             
         //LogUtil.Log("GameCenter GetAchievements...");
-#endif  
+#endif
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         PlayGameServices.getAllAchievementMetadata();
         
         //LogUtil.Log("PlayGameServices GetAchievements...");
-#endif  
+#endif
+
+
+#if GAMENETWORK_USE_UNITY
+        gameNetworkManager.loadAchievementDescriptions();
+        //LogUtil.Log("GameCenter GetAchievements...");
+#endif
     }
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
@@ -909,7 +957,7 @@ public class GameNetworks : GameObjectBehavior {
         }
         return null;    
     }
-#endif      
+#endif
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     public static GameCenterAchievementMetadata GetGameCenterAchievementMetadata(string identifier) {
@@ -927,7 +975,7 @@ public class GameNetworks : GameObjectBehavior {
         }
         return null;    
     }
-#endif  
+#endif
 
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
@@ -936,6 +984,24 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
+#endif
+
+#if GAMENETWORK_USE_UNITY
+    
+    public static IAchievement GetGameNetworkAchievement(string id) {
+        if(instance != null) {
+            return instance.getGameNetworkAchievement(id);
+        }
+        return null;
+    }   
+    
+    public IAchievement getGameNetworkAchievement(string id) {      
+        foreach(IAchievement achievement in gameNetworkAchievements) {
+            if(achievement.id == id)
+                return achievement;
+        }
+        return null;    
+    }
 #endif
 
     public static void CheckAchievementsState() {
@@ -965,15 +1031,18 @@ public class GameNetworks : GameObjectBehavior {
 
         // Sync from local.
         foreach(GameAchievement meta in GameAchievements.Instance.GetAll()) {
-            ////IAchievement gcAchievement = GetGameCenterAchievement(meta.code);
-            ////if(gcAchievement != null) {
-            ////bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(meta.code);
-            ////bool remoteAchievementValue = gcAchievement.completed;
 
-            ////            // If different on local and remote and remote is false, set it...
-            ////if(localAchievementValue != remoteAchievementValue && !remoteAchievementValue) {
-            ////GameNetworks.SendAchievement(meta.code, true);
-            ////}
+            IAchievement gcAchievement = GetGameNetworkAchievement(meta.code);
+
+            if(gcAchievement != null) {
+                bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(meta.code);
+                bool remoteAchievementValue = gcAchievement.completed;
+
+                // If different on local and remote and remote is false, set it...
+                if(localAchievementValue != remoteAchievementValue && !remoteAchievementValue) {
+                    GameNetworks.SendAchievement(meta.code, true);
+                }
+            }
         }
 #endif
 
@@ -1034,7 +1103,7 @@ public class GameNetworks : GameObjectBehavior {
     public void loginNetwork(string networkTypeTo) {
 
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31            
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
             if(isAvailableiOSAppleGameCenter) {
                 GameCenterBinding.authenticateLocalPlayer();
                 Debug.Log("GameCenter LoginNetwork is available...");
@@ -1043,10 +1112,20 @@ public class GameNetworks : GameObjectBehavior {
         // Check existing achievements and update them if missing
             
             LogUtil.Log("GameCenter LoginNetwork...");
-#endif      
+#endif
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+            if(isAvailableiOSAppleGameCenter) {
+                gameNetworkManager.authenticate();
+                Debug.Log("Unity GameCenter LoginNetwork is available...");
+            }
+            
+            // Check existing achievements and update them if missing
+            
+            LogUtil.Log("Unity GameCenter LoginNetwork...");
+#endif
         }
         else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31            
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                 PlayGameServices.authenticate();
             }
@@ -1054,7 +1133,17 @@ public class GameNetworks : GameObjectBehavior {
             // Check existing achievements and update them if missing
             
             LogUtil.Log("PlayGameServices LoginNetwork...");
-#endif      
+#endif
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
+                gameNetworkManager.authenticate();
+                Debug.Log("Unity PlayGameServices LoginNetwork is available...");
+            }
+            
+            // Check existing achievements and update them if missing
+            
+            LogUtil.Log("Unity PlayGameServices LoginNetwork...");
+#endif
         }
 
 
@@ -1090,7 +1179,7 @@ public class GameNetworks : GameObjectBehavior {
     }
 
     public void setLocalProfileToNetworkUsernameAppleGameCenter() {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         string networkUsername = GameCenterBinding.playerAlias();
         LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
         
@@ -1101,7 +1190,20 @@ public class GameNetworks : GameObjectBehavior {
             
             //LogUtil.Log("Logging in user GameCenter: " + networkUsername);
         }
-#endif          
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        string networkUsername = gameNetworkManager.currentUser.userName;
+        LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
+        
+        if(!string.IsNullOrEmpty(networkUsername)) {
+            //GameState.ChangeUser(networkUsername);
+            //GameState.Instance.profile.SetThirdPartyNetworkUser(true);
+            //GameState.SaveProfile();
+            
+            //LogUtil.Log("Logging in user GameCenter: " + networkUsername);
+        }
+#endif
     }
 
     public void setLocalProfileToNetworkUsernameGooglePlay() {
@@ -1117,7 +1219,20 @@ public class GameNetworks : GameObjectBehavior {
             
             //LogUtil.Log("Logging in user GameCenter: " + networkUsername);
         }
-#endif          
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+        string networkUsername = gameNetworkManager.currentUser.userName;
+        LogUtil.Log("setLocalProfileToNetworkUsernameAndroidGooglePlay: " + networkUsername);
+        
+        if(!string.IsNullOrEmpty(networkUsername)) {
+            //GameState.ChangeUser(networkUsername);
+            //GameState.Instance.profile.SetThirdPartyNetworkUser(true);
+            //GameState.SaveProfile();
+            
+            //LogUtil.Log("Logging in user GameCenter: " + networkUsername);
+        }
+#endif
     }
 
     public static string GetNetworkUsername() {
@@ -1155,27 +1270,42 @@ public class GameNetworks : GameObjectBehavior {
     public string getNetworkUsernameiOSAppleGameCenter() {
         //LogUtil.Log("GetNetworkUsername");
         string networkUser = "";
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         networkUser = GameCenterBinding.playerAlias();
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
         }
-#endif          
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        networkUser = gameNetworkManager.currentUser.userName;
+        if(networkUser != GameProfiles.Current.username 
+            && !string.IsNullOrEmpty(networkUser)) {
+            LogUtil.Log("GetNetworkUsername: " + networkUser);          
+        }
+#endif
         return networkUser;
     }
 
     public string getNetworkUsernameAndroidGooglePlay() {
         //LogUtil.Log("GetNetworkUsername");
         string networkUser = "";
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31 
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         GPGPlayerInfo playerInfo = PlayGameServices.getLocalPlayerInfo();
         networkUser = playerInfo.playerId;// name
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
         }
-#endif          
+#endif
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+        networkUser = gameNetworkManager.currentUser.userName;
+        if(networkUser != GameProfiles.Current.username 
+            && !string.IsNullOrEmpty(networkUser)) {
+            LogUtil.Log("GetNetworkUsername: " + networkUser);          
+        }
+#endif
         return networkUser;
     }
 
@@ -1769,48 +1899,47 @@ public class GameNetworks : GameObjectBehavior {
     }
 
     void onGameNetworkUnityAuthenticated(ILocalUser user) {
-        Debug.Log("GameNetworks:GameCenter:onGameNetworkUnityAuthenticated:" + user.userName);
+        Debug.Log("GameNetworks:onGameNetworkUnityAuthenticated:" + user.userName);
         gameNetworkUnityPlayerAuthenticated();
     }
 
     //
 
-    void gameNetworkAchievementsLoaded(IAchievement[] achievements) {
-        LogUtil.Log("GameNetworks:gameNetworkAchievementsLoaded");
+    void gameNetworkUnityAchievementsLoaded(IAchievement[] achievements) {
+        LogUtil.Log("GameNetworks:gameNetworkUnityAchievementsLoaded");
         gameNetworkAchievements = achievements;
         CheckAchievementsState();
     }
 
     void onGameNetworkUnityAchievements(IAchievement[] achievements) {
         Debug.Log("GameNetworks:onGameNetworkUnityAchievements:" + achievements.Length);
-        gameNetworkAchievementsLoaded(achievements);
+        gameNetworkUnityAchievementsLoaded(achievements);
     }
 
-    void gameNetworkAchievementMetadataLoaded(IAchievementDescription[] achievementsMeta) {
-        LogUtil.Log("GameNetworks:gameNetworkAchievementMetadataLoaded");
+    void gameNetworkUnityAchievementMetadataLoaded(IAchievementDescription[] achievementsMeta) {
+        LogUtil.Log("GameNetworks:gameNetworkUnityAchievementMetadataLoaded");
         gameNetworkAchievementsMeta = achievementsMeta;
         CheckAchievementsState();
     }
 
     void onGameNetworkUnityAchievementDescriptions(IAchievementDescription[] achievementsMeta) {
         Debug.Log("GameNetworks:onGameNetworkUnityAchievementDescriptions:" + achievementsMeta.Length);
-        gameNetworkAchievementMetadataLoaded(achievementsMeta);
+        gameNetworkUnityAchievementMetadataLoaded(achievementsMeta);
     }
 
     //
 
     void onGameNetworkUnityLeaderboardScores(IScore[] scores) {
         Debug.Log("GameNetworks:onGameNetworkUnityLeaderboardScores:" + scores.Length);
-        gameNetworkLeaderboardScoresLoaded(scores);
+        gameNetworkUnityLeaderboardScoresLoaded(scores);
     }
 
-    void gameNetworkLeaderboardScoresLoaded(IScore[] scores) {
-        LogUtil.Log("GameNetworks:gameNetworkAchievementMetadataLoaded");
+    void gameNetworkUnityLeaderboardScoresLoaded(IScore[] scores) {
+        LogUtil.Log("GameNetworks:gameNetworkUnityLeaderboardScoresLoaded");
         gameNetworkLeaderboardScores = scores;
     }
 
     //
-
 
 #endif
 
