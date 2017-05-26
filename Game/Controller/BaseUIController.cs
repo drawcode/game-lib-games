@@ -2415,10 +2415,10 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameNetworkAchievements, buttonName)) {
-            GameNetworks.ShowAchievementsOrLogin(GameNetworks.currentNetwork);
+            GameNetworks.ShowAchievementsOrLogin();
         }
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameNetworkLeaderboards, buttonName)) {
-            GameNetworks.ShowLeaderboardsOrLogin(GameNetworks.currentNetwork);
+            GameNetworks.ShowLeaderboardsOrLogin();
         }
 
         /*

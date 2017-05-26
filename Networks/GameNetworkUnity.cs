@@ -63,7 +63,7 @@ public class GameNetworkUnity : MonoBehaviour {
     }
 
     public void authenticate(Action<ILocalUser> callback = null) {
-                
+        
         Social.localUser.Authenticate(success => {
             if(success) {
                 Debug.Log("Authentication successful");
@@ -109,6 +109,11 @@ public class GameNetworkUnity : MonoBehaviour {
     // ACHIEVEMENTS
     
     public void showAchievements() {
+
+        if(!isAuthenticated()) {
+            return;
+        }
+
         Social.ShowAchievementsUI();
     }
 
@@ -116,6 +121,9 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void loadAchievements() {
 
+        if(!isAuthenticated()) {
+            return;
+        }
         // Request loaded achievements, and register a callback for processing them
         Social.LoadAchievements(processLoadedAchievements);
     }
@@ -147,6 +155,10 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void loadAchievementDescriptions() {
 
+        if(!isAuthenticated()) {
+            return;
+        }
+
         // Request loaded achievements, and register a callback for processing them
         Social.LoadAchievementDescriptions(processLoadedAchievementDescriptions);
     }
@@ -177,6 +189,11 @@ public class GameNetworkUnity : MonoBehaviour {
     //
 
     public void reportProgress(string achievementId, double progress, Action<bool> callback) {
+
+        if(!isAuthenticated()) {
+            return;
+        }
+
         Social.ReportProgress(achievementId, progress, callback);
     }
     
@@ -184,6 +201,10 @@ public class GameNetworkUnity : MonoBehaviour {
     // LEADERBOARDS
 
     public void showLeaderboards() {
+        if(!isAuthenticated()) {
+            return;
+        }
+
         Social.ShowLeaderboardUI();
     }
 
@@ -194,6 +215,11 @@ public class GameNetworkUnity : MonoBehaviour {
     }
 
     public void reportScore(long score, string board, Action<bool> callback) {
+
+        if(!isAuthenticated()) {
+            return;
+
+        }
         Social.ReportScore(score, board, callback);
     }
 
@@ -208,6 +234,11 @@ public class GameNetworkUnity : MonoBehaviour {
     }
 
     public void loadScores(string leaderboardId, Action<IScore[]> callback) {
+
+        if(!isAuthenticated()) {
+            return;
+
+        }
         Social.LoadScores(leaderboardId, callback);
     }
     
