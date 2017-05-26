@@ -2,17 +2,29 @@
 #pragma warning disable 0168 // variable declared but not used.
 #pragma warning disable 0219 // variable assigned but not used. 
 
-// TODO wire in UNITY native social/game networks
+#define GAMENETWORK_USE_UNITY
+//#define GAMENETWORK_USE_PRIME31
 
 #if UNITY_IPHONE
-//#define GAMENETWORK_IOS_APPLE_GAMECENTER
+    #if GAMENETWORK_USE_UNITY
+        #define GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+    #endif
+    #if GAMENETWORK_USE_PRIME31
+        #define GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
+    #endif
 #endif
 
 #if UNITY_ANDROID
-//#define GAMENETWORK_ANDROID_GOOGLE_PLAY
-//#define GAMENETWORK_ANDROID_AMAZON_CIRCLE
-//#define GAMENETWORK_ANDROID_SAMSUNG
+    #if GAMENETWORK_USE_UNITY
+        #define GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+    #endif
+    #if GAMENETWORK_USE_PRIME31
+        #define GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
+        #define GAMENETWORK_ANDROID_AMAZON_CIRCLE
+        #define GAMENETWORK_ANDROID_SAMSUNG
+    #endif
 #endif
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +33,13 @@ using Engine.Data.Json;
 using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
+
+#if GAMENETWORK_USE_PRIME31
 using Prime31;
+#endif
+#if GAMENETWORK_USE_UNITY
+using UnityEngine.SocialPlatforms;
+#endif
 
 public class GameNetworkType {
     public static string gameNetworkAppleGameCenter = "game-network-apple-gamecenter";
@@ -58,16 +76,16 @@ public class GameNetworkLeaderboardsFacebook {
 }
 
 public class GameNetworks : GameObjectBehavior {
-    
+
     public GameObject gameNetworkContainer;
-    
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     public static bool gameNetworkiOSAppleGameCenterEnabled = true;
 #else
     public static bool gameNetworkiOSAppleGameCenterEnabled = false;
 #endif
-    
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
     public static bool gameNetworkAndroidGooglePlayEnabled = true;
 #else
     public static bool gameNetworkAndroidGooglePlayEnabled = false;
@@ -78,14 +96,26 @@ public class GameNetworks : GameObjectBehavior {
 #else
     public static bool gameNetworkAndroidAmazonCircleEnabled = false;
 #endif
-    
+
 #if GAMENETWORK_ANDROID_SAMSUNG
     public static bool gameNetworkAndroidSamsungEnabled = true;
 #else
     public static bool gameNetworkAndroidSamsungEnabled = false;
 #endif
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+    public static bool gameNetworkiOSAppleGameCenterUnityEnabled = true;
+#else
+    public static bool gameNetworkiOSAppleGameCenterUnityEnabled = false;
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+    public static bool gameNetworkAndroidGooglePlayUnityEnabled = true;
+#else
+    public static bool gameNetworkAndroidGooglePlayUnityEnabled = false;
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     //[NonSerialized]
     //public GameCenterManager gameCenterManager;
     //[NonSerialized]
@@ -95,8 +125,8 @@ public class GameNetworks : GameObjectBehavior {
     [NonSerialized]
     public List<GameCenterAchievementMetadata> gameCenterAchievementsMetaNetwork;
 #endif
-    
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
     [NonSerialized]
     public GPGManager gamePlayServicesManager;
     [NonSerialized]
@@ -106,296 +136,331 @@ public class GameNetworks : GameObjectBehavior {
     [NonSerialized]
     public List<GPGAchievementMetadata> gamePlayServicesAchievementsMetaNetwork;
 #endif
-        
+
+#if GAMENETWORK_USE_UNITY
+    public GameNetworkUnity gameNetworkManager;
+#endif
+
     public static string currentLoggedInUserNetwork = "";
-    
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
     public static string currentNetwork = GameNetworkType.gameNetworkGooglePlayServices;
-#elif GAMENETWORK_IOS_APPLE_GAMECENTER
+#elif GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     public static string currentNetwork = GameNetworkType.gameNetworkAppleGameCenter;
-#else    
+#else
     public static string currentNetwork = "";
 #endif
-    
-    public static GameNetworks Instance;
-    
-    public void Awake() {
-        
-        if (Instance != null && this != Instance) {
-            //There is already a copy of this script running
-            Destroy(this);
-            return;
+
+    private static GameNetworks _instance = null;
+
+    public static GameNetworks instance {
+        get {
+            if(!_instance) {
+
+                // check if an ObjectPoolManager is already available in the scene graph
+                _instance = FindObjectOfType(typeof(GameNetworks)) as GameNetworks;
+
+                // nope, create a new one
+                if(!_instance) {
+                    var obj = new GameObject("_GameNetworks");
+                    _instance = obj.AddComponent<GameNetworks>();
+                }
+            }
+
+            return _instance;
         }
-        
-        Instance = this;
     }
-        
+
     void Start() {
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         gameCenterAchievementsNetwork = new List<GameCenterAchievement>();
         gameCenterAchievementsMetaNetwork = new List<GameCenterAchievementMetadata>();
 #endif
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         //achievementsNetwork = new List<GameCenterAchievement>();
         gamePlayServicesAchievementsMetaNetwork = new List<GPGAchievementMetadata>();
 #endif
-        
+
         InvokeRepeating("checkThirdPartyNetworkLoggedInUser", 3, 3);
     }
-    
+
     void OnDisable() {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         RemoveEvents(GameNetworkType.gameNetworkAppleGameCenter);
 #endif
-        
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         RemoveEvents(GameNetworkType.gameNetworkGooglePlayServices);
 #endif
-    }   
-    
+
+#if GAMENETWORK_USE_UNITY
+        RemoveEvents(currentNetwork);
+#endif
+    }
+
     // -------------------------------------------------------------------------
     // NETWORK USER CHECK
 
     public static void CheckThirdPartyNetworkLoggedInUser() {
-        if (Instance != null) {
-            Instance.checkThirdPartyNetworkLoggedInUser();
+        if(instance != null) {
+            instance.checkThirdPartyNetworkLoggedInUser();
         }
     }
-    
+
     void checkThirdPartyNetworkLoggedInUser() {
         checkThirdPartyNetworkLoggedInUser(currentNetwork);
     }
-    
+
     public static void CheckThirdPartyNetworkLoggedInUser(string networkType) {
-        if (Instance != null) {
-            Instance.checkThirdPartyNetworkLoggedInUser(networkType);
+        if(instance != null) {
+            instance.checkThirdPartyNetworkLoggedInUser(networkType);
         }
     }
-    
+
     void checkThirdPartyNetworkLoggedInUser(string networkType) {
         // Check the third party network logged in name and the current logged in name, 
         // if the name is different change user.  
         // This helps the final case of when a user changes gamecenter while the app
         // is running and the auth changed event is just not broadcasting.
-        
-        if (GameState.Instance != null
+
+        if(GameState.Instance != null
             && GameProfiles.Current != null) {
-            
+
             currentLoggedInUserNetwork = GameProfiles.Current.username;
 
-            if ((gameNetworkiOSAppleGameCenterEnabled
+            if((gameNetworkiOSAppleGameCenterEnabled
                 || gameNetworkAndroidGooglePlayEnabled)
                 && IsThirdPartyNetworkUserAuthenticated(networkType)) {
-                
+
                 string networkName = GetNetworkUsername();
-                if (!string.IsNullOrEmpty(networkName)) {
+                if(!string.IsNullOrEmpty(networkName)) {
                     currentLoggedInUserNetwork = networkName;
                 }
             }
-    
-            if (currentLoggedInUserNetwork != GameProfiles.Current.username) {
+
+            if(currentLoggedInUserNetwork != GameProfiles.Current.username) {
                 LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: currentLoggedInUserNetwork: " + currentLoggedInUserNetwork);
-            
+
                 LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: changed: " + GameProfiles.Current.username);
                 GameState.ChangeUser(currentLoggedInUserNetwork);
                 LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: GameProfiles.Current.username: " + GameProfiles.Current.username);
             }
         }
-    }   
-    
+    }
+
     // -------------------------------------------------------------------------
     // LOAD NETWORKS        
-    
-    public static void LoadNetwork(string networkType) {    
-        if (Instance != null) {
-            Instance.loadNetwork(networkType);
+
+    public static void LoadNetwork(string networkType) {
+        if(instance != null) {
+            instance.loadNetwork(networkType);
         }
     }
-        
-    public void loadNetwork(string networkType) {       
+
+    public void loadNetwork(string networkType) {
         currentNetwork = networkType;
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
             InitNetwork();
         }
 #endif
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
             InitNetwork();
         }
 #endif
-    }
-    
-    public static void InitNetwork() {  
-        if (Instance != null) {
-            Instance.initNetwork();
-        }
-    }
-    
-    public void initNetwork() {     
-        if (gameNetworkContainer == null) {
-            gameNetworkContainer = new GameObject("GameNetworks");  
-        }
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
-        //gameCenterManager = gameNetworkContainer.AddComponent<GameCenterManager>();
-        //gameCenterEventListener = gameNetworkContainer.AddComponent<GameCenterEventListener>();
+#if GAMENETWORK_USE_UNITY
+        if(networkType == currentNetwork) {
+            InitNetwork();
+        }
+#endif
+    }
+
+    public static void InitNetwork() {
+        if(instance != null) {
+            instance.initNetwork();
+        }
+    }
+
+    public void initNetwork() {
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
+        //gameCenterManager = gameObject.Set<GameCenterManager>();
+        //gameCenterEventListener = gameObject.Set<GameCenterEventListener>();
         
         InitEvents(GameNetworkType.gameNetworkAppleGameCenter);     
         LoginNetwork(GameNetworkType.gameNetworkAppleGameCenter);           
         
         LogUtil.Log("InitNetwork iOS Apple GameCenter init...");
 #endif
-        
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
-        gamePlayServicesManager = gameNetworkContainer.AddComponent<GPGManager>();
-        gamePlayServicesEventListener = gameNetworkContainer.AddComponent<GPGSEventListener>();
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
+        gamePlayServicesManager = gameObject.Set<GPGManager>();
+        gamePlayServicesEventListener = gameObject.Set<GPGSEventListener>();
         
         InitEvents(GameNetworkType.gameNetworkGooglePlayServices);      
         LoginNetwork(GameNetworkType.gameNetworkGooglePlayServices);    
         
         LogUtil.Log("InitNetwork Android Google Play init...");
-#endif  
+#endif
+
+#if GAMENETWORK_USE_UNITY
+        gameNetworkManager = gameObject.Set<GameNetworkUnity>();
+                
+        InitEvents(currentNetwork);      
+        LoginNetwork(currentNetwork);    
+        
+        LogUtil.Log("InitNetwork Unity GameNetwork...");
+#endif
 
         // Web player...
-            
+
 #if UNITY_WEBPLAYER
             Application.ExternalCall("if(window.console) window.console.log","web init");
 #endif
     }
-    
+
     // -------------------------------------------------------------------------
     // NETWORK AVAILABILITY     
-    
+
     public static bool IsThirdPartyNetworkAvailable(string networkTypeTo) {
 
         LogUtil.Log("IsThirdPartyNetworkAvailable:" + networkTypeTo);
-        
+
         bool isAvailable = false;
-        
-        if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
             isAvailable = isAvailableiOSAppleGameCenter;
         }
-        else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
             isAvailable = isAvailableAndroidGooglePlay;
         }
-                
+
         LogUtil.Log("IsThirdPartyNetworkAvailable:isAvailable:" + isAvailable);
-    
+
         return isAvailable;
     }
-    
+
     public static bool isAvailableiOSAppleGameCenter {
         get {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
             return true;//return GameCenterBinding.isGameCenterAvailable(); 
+#elif GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+            return true;
 #else
             return false;
 #endif  
         }
     }
-    
+
     public static bool isAvailableAndroidGooglePlay {
         get {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31 
 
             return true;//PlayGameServices. false;//GameCenterBinding.isGameCenterAvailable();
+#elif GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+            return true;
 #else
             return false;
 #endif  
         }
     }
-    
+
     // -------------------------------------------------------------------------
     // USER AUTHENTICATED       
-    
+
     public static bool IsThirdPartyNetworkUserAuthenticated(string networkType) {
         bool isAuthenticated = false;
-        
+
         //Debug.Log("IsThirdPartyNetworkUserAuthenticated:networkType:" + networkType);
-        
-        if (networkType == GameNetworkType.gameNetworkAppleGameCenter) {
+
+        if(networkType == GameNetworkType.gameNetworkAppleGameCenter) {
             isAuthenticated = isAuthenticatediOSAppleGameCenter;
         }
-        else if (networkType == GameNetworkType.gameNetworkGooglePlayServices) {
+        else if(networkType == GameNetworkType.gameNetworkGooglePlayServices) {
             isAuthenticated = isAuthenticatedAndroidGooglePlay;
         }
-                
+
         //Debug.Log("IsThirdPartyNetworkUserAuthenticated:isAuthenticated:" + isAuthenticated);
 
         return isAuthenticated;
     }
-    
+
     public static bool isAuthenticatediOSAppleGameCenter {
         get {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
             return GameCenterBinding.isPlayerAuthenticated();
+#elif GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+            return true;
 #else
             return false;
 #endif  
         }
     }
-    
+
     public static bool isAuthenticatedAndroidGooglePlay {
         get {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31 
             return PlayGameServices.isSignedIn();
+#elif GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+            return true;
 #else
             return false;
 #endif  
         }
     }
-    
+
     public bool IsThirdPartyNetworkReady(string networkType) {
         bool isReady = false;
-        if (IsThirdPartyNetworkAvailable(networkType)
+        if(IsThirdPartyNetworkAvailable(networkType)
             && IsThirdPartyNetworkUserAuthenticated(networkType)) {
-            isReady = true;         
+            isReady = true;
         }
         return isReady;
     }
-    
+
     // -------------------------------------------------------------------------
     // ACHIEVEMENTS UI      
-    
-    public static void ShowAchievementsOrLogin() {  
-        
+
+    public static void ShowAchievementsOrLogin() {
+
         //LogUtil.Log("ShowAchievementsOrLogin");
 
-        if (Instance != null) {
-            Instance.showAchievementsOrLogin(currentNetwork);
+        if(instance != null) {
+            instance.showAchievementsOrLogin(currentNetwork);
         }
     }
 
-    public static void ShowAchievementsOrLogin(string networkTypeTo) {  
-        
+    public static void ShowAchievementsOrLogin(string networkTypeTo) {
+
         LogUtil.Log("ShowAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
-        if (Instance != null) {
-            Instance.showAchievementsOrLogin(networkTypeTo);
+        if(instance != null) {
+            instance.showAchievementsOrLogin(networkTypeTo);
         }
     }
-    
+
     public void showAchievementsOrLogin(string networkTypeTo) {
-        
+
         Debug.Log("showAchievementsOrLogin:networkTypeTo:" + networkTypeTo);
 
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {
-            
-            if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
+
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 showAchievementsOrLoginiOSAppleGameCenter();
             }
-            else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
                 showAchievementsOrLoginAndroidGooglePlay();
             }
-        }   
+        }
     }
-    
-    public static void showAchievementsOrLoginiOSAppleGameCenter() {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+
+    public void showAchievementsOrLoginiOSAppleGameCenter() {
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         
         //LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
                   //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
@@ -414,11 +479,32 @@ public class GameNetworks : GameObjectBehavior {
                 GameCenterBinding.authenticateLocalPlayer();
             }
         }
-#endif      
+#endif
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        
+        //LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+                  //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
+            
+        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+
+            bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
+                               
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+                  authenticated);
+
+            if(authenticated) {
+                gameNetworkManager.showAchievements();
+            }
+            else {
+                gameNetworkManager.authenticate();
+            }
+        }
+#endif
     }
-    
+
     public static void showAchievementsOrLoginAndroidGooglePlay() {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         
         LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
             GameNetworks.gameNetworkAndroidGooglePlayEnabled);
@@ -437,44 +523,65 @@ public class GameNetworks : GameObjectBehavior {
                 PlayGameServices.authenticate();
             }
         }
-#endif      
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+        
+        LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+            GameNetworks.gameNetworkAndroidGooglePlayEnabled);
+        
+        if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
+        
+            bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
+                               
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+                  authenticated);
+
+            if(authenticated) {
+                gameNetworkManager.showAchievements();
+            }
+            else {
+                gameNetworkManager.authenticate();
+            }
+        }
+#endif
     }
-    
+
     // -------------------------------------------------------------------------
     // LEADERBOARDS UI
-        
-    public static void ShowLeaderboardsOrLogin() {  
-        
+
+    public static void ShowLeaderboardsOrLogin() {
+
         Debug.Log("ShowLeaderboardsOrLogin");
 
-        if (Instance != null) {
-            Instance.showLeaderboardsOrLogin(currentNetwork);
+        if(instance != null) {
+            instance.showLeaderboardsOrLogin(currentNetwork);
         }
     }
 
-    public static void ShowLeaderboardsOrLogin(string networkTypeTo) {  
-        if (Instance != null) {
-            Instance.showLeaderboardsOrLogin(networkTypeTo);
+    public static void ShowLeaderboardsOrLogin(string networkTypeTo) {
+        if(instance != null) {
+            instance.showLeaderboardsOrLogin(networkTypeTo);
         }
     }
-    
+
     public void showLeaderboardsOrLogin(string networkTypeTo) {
-        
+
         Debug.Log("showLeaderboardsOrLogin:networkTypeTo:" + networkTypeTo);
 
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {
-            
-            if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
+
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 showLeaderboardsOrLoginiOSAppleGameCenter();
             }
-            else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
                 showLeaderboardsOrLoginAndroidGooglePlay();
             }
-        }   
+        }
     }
-    
+
     public static void showLeaderboardsOrLoginiOSAppleGameCenter() {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         
         Debug.Log("showLeaderboardsOrLoginiOSAppleGameCenter");
 
@@ -496,10 +603,10 @@ public class GameNetworks : GameObjectBehavior {
         }
 #endif      
     }
-    
+
     public static void showLeaderboardsOrLoginAndroidGooglePlay() {
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
         LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay");
         
@@ -521,91 +628,91 @@ public class GameNetworks : GameObjectBehavior {
             }
 #endif      
     }
-    
+
     // -------------------------------------------------------------------------
     // LEADERBOARDS
 
     public static void SendScore(string key, long keyValue) {
-        if (Instance != null) {
-            Instance.sendScore(key, keyValue);
+        if(instance != null) {
+            instance.sendScore(key, keyValue);
         }
     }
-    
+
     public static void SendScore(string networkTypeTo, string key, long keyValue) {
-        if (Instance != null) {
-            Instance.sendScore(networkTypeTo, key, keyValue);
+        if(instance != null) {
+            instance.sendScore(networkTypeTo, key, keyValue);
         }
     }
-    
-    public void sendScore(string key, long keyValue) {  
-                
+
+    public void sendScore(string key, long keyValue) {
+
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
-        
+
         //LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
-        
-        if (item == null) {
+
+        if(item == null) {
             return;
         }
-        
-        if (item.data == null) {
+
+        if(item.data == null) {
             return;
         }
-        
-        foreach (GameNetworkData networkData in item.data.networks) {
-            
+
+        foreach(GameNetworkData networkData in item.data.networks) {
+
             reportScore(networkData.type, networkData.code, keyValue);
         }
     }
-        
+
     public void sendScore(string networkTypeTo, string key, long keyValue) {
         reportScore(networkTypeTo, key, keyValue);
     }
-        
+
     public static void ReportScore(string key, long keyValue) {
-        if (Instance != null) {
-            Instance.reportScore(currentNetwork, key, keyValue);
+        if(instance != null) {
+            instance.reportScore(currentNetwork, key, keyValue);
         }
     }
 
     public static void ReportScore(string networkTypeTo, string key, long keyValue) {
-        if (Instance != null) {
-            Instance.reportScore(networkTypeTo, key, keyValue);
+        if(instance != null) {
+            instance.reportScore(networkTypeTo, key, keyValue);
         }
     }
-    
+
     public void reportScore(string networkTypeTo, string key, long keyValue) {
-        
+
         //LogUtil.Log("reportScore:" + 
         //            " networkTypeTo:" + networkTypeTo+ 
         //            " key:" + key+ 
         //            " keyValue:" + keyValue);
 
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {  
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 
-            if (key.IndexOf("time-played") > -1) {
+            if(key.IndexOf("time-played") > -1) {
                 keyValue = keyValue * 100;
             }
-            
+
             //LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
             //            " networkTypeTo:" + networkTypeTo+ 
             //            " key:" + key+ 
             //            " keyValue:" + keyValue);
 
-            if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-                if (isAuthenticatediOSAppleGameCenter) {
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+                if(isAuthenticatediOSAppleGameCenter) {
                     reportScoreAppleGameCenter(key, keyValue);
                 }
             }
-            else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-                if (isAuthenticatedAndroidGooglePlay) {
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+                if(isAuthenticatedAndroidGooglePlay) {
                     reportScoreGooglePlay(key, keyValue);
                 }
             }
-        }       
+        }
     }
-    
+
     public static void reportScoreAppleGameCenter(string key, long keyValue) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
                 LogUtil.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue); 
@@ -614,9 +721,9 @@ public class GameNetworks : GameObjectBehavior {
         }
 #endif      
     }
-    
+
     public static void reportScoreGooglePlay(string key, long keyValue) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                 LogUtil.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
@@ -624,14 +731,16 @@ public class GameNetworks : GameObjectBehavior {
             }
         }
 #endif      
-    }   
-    
+    }
+
     // -------------------------------------------------------------------------
     // ACHIEVEMENTS
-    
+
+    #region ACHIEVEMENTS
+
     public static void SendAchievement(string key, bool completed) {
-        if (Instance != null) {
-            Instance.sendAchievement(key, completed);
+        if(instance != null) {
+            instance.sendAchievement(key, completed);
         }
     }
 
@@ -641,74 +750,74 @@ public class GameNetworks : GameObjectBehavior {
     }
 
     public static void SendAchievement(string key, float progress) {
-        if (Instance != null) {
-            Instance.sendAchievement(key, progress);
+        if(instance != null) {
+            instance.sendAchievement(key, progress);
         }
     }
-    
-    public void sendAchievement(string key, float progress) {  
-        
+
+    public void sendAchievement(string key, float progress) {
+
         GameAchievement item = GameAchievements.Instance.GetById(key);
-        
-        if (item == null) {
+
+        if(item == null) {
             return;
         }
-        
-        if (item.data == null) {
+
+        if(item.data == null) {
             return;
         }
-        
-        foreach (GameNetworkData networkData in item.data.networks) {
-            
+
+        foreach(GameNetworkData networkData in item.data.networks) {
+
             reportAchievement(networkData.type, networkData.code, progress);
         }
     }
 
     public static void ReportAchievement(string key, bool completed) {
-        if (Instance != null) {
-            Instance.reportAchievement(currentNetwork, key, completed);
+        if(instance != null) {
+            instance.reportAchievement(currentNetwork, key, completed);
         }
     }
 
     public static void ReportAchievement(string networkTypeTo, string key, bool completed) {
-        if (Instance != null) {
-            Instance.reportAchievement(networkTypeTo, key, completed);
+        if(instance != null) {
+            instance.reportAchievement(networkTypeTo, key, completed);
         }
     }
-    
+
     public void reportAchievement(string networkTypeTo, string key, bool completed) {
         ReportAchievement(networkTypeTo, key, 100.0f);
     }
-    
+
     public static void ReportAchievement(string key, float progress) {
-        if (Instance != null) {
-            Instance.reportAchievement(currentNetwork, key, progress);
+        if(instance != null) {
+            instance.reportAchievement(currentNetwork, key, progress);
         }
     }
 
     public static void ReportAchievement(string networkTypeTo, string key, float progress) {
-        if (Instance != null) {
-            Instance.reportAchievement(networkTypeTo, key, progress);
+        if(instance != null) {
+            instance.reportAchievement(networkTypeTo, key, progress);
         }
     }
-    
+
     public void reportAchievement(string networkTypeTo, string key, float progress) {
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {          
-            if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {                
-                if (isAuthenticatediOSAppleGameCenter) {
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+                if(isAuthenticatediOSAppleGameCenter) {
                     reportAchievementAppleGameCenter(key, progress);
                 }
             }
-            else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-                if (isAuthenticatedAndroidGooglePlay) {
+            else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+                if(isAuthenticatedAndroidGooglePlay) {
                     reportAchievementGooglePlay(key, progress);
                 }
             }
-        }   
+        }
     }
-    
+
     public static void reportAchievementAppleGameCenter(string key, float progress) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
                 LogUtil.Log("reportAchievementAppleGameCenter:" + " key:" + key + " progress:" + progress); 
@@ -717,9 +826,9 @@ public class GameNetworks : GameObjectBehavior {
         }
 #endif      
     }
-    
+
     public static void reportAchievementGooglePlay(string key, float progress) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
                 LogUtil.Log("reportAchievementGooglePlay:" + " key:" + key + " progress:" + progress);
@@ -733,93 +842,55 @@ public class GameNetworks : GameObjectBehavior {
         }
 #endif      
     }
-    
-    // -------------------------------------------------------------------------
-    // NETWORK LOGIN
-    
-    public static void LoginNetwork(string networkTypeTo) {
-        if (Instance != null) {
-            Instance.loginNetwork(networkTypeTo);
-        }
-    }
-    
-    public void loginNetwork(string networkTypeTo) {
-
-        if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER            
-            if(isAvailableiOSAppleGameCenter) {
-                GameCenterBinding.authenticateLocalPlayer();
-                Debug.Log("GameCenter LoginNetwork is available...");
-            }
-            
-        // Check existing achievements and update them if missing
-            
-            LogUtil.Log("GameCenter LoginNetwork...");
-#endif      
-        }
-        else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY            
-            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                PlayGameServices.authenticate();
-            }
-            
-            // Check existing achievements and update them if missing
-            
-            LogUtil.Log("PlayGameServices LoginNetwork...");
-#endif      
-        }
 
 
-    }
-    
-    
     // -------------------------------------------------------------------------
     // ACHIEVEMENT DATA
-    
+
     public static void GetAchievements() {
-        if (Instance != null) {
-            Instance.getAchievements();
+        if(instance != null) {
+            instance.getAchievements();
         }
     }
-    
+
     public void getAchievements() {
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         GameCenterBinding.getAchievements();
             
         LogUtil.Log("GameCenter GetAchievements...");
 #endif  
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         PlayGameServices.reloadAchievementAndLeaderboardData();
         
         //LogUtil.Log("GameCenter GetAchievements...");
 #endif  
 
     }
-    
+
     public static void GetAchievementsMetadata() {
-        if (Instance != null) {
-            Instance.getAchievementsMetadata();
+        if(instance != null) {
+            instance.getAchievementsMetadata();
         }
     }
-    
+
     public void getAchievementsMetadata() {
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         GameCenterBinding.retrieveAchievementMetadata();
             
         //LogUtil.Log("GameCenter GetAchievements...");
 #endif  
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         PlayGameServices.getAllAchievementMetadata();
         
         //LogUtil.Log("PlayGameServices GetAchievements...");
 #endif  
     }
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     
     public static GameCenterAchievement GetGameCenterAchievement(string identifier) {
         if(Instance != null) {
@@ -837,7 +908,7 @@ public class GameNetworks : GameObjectBehavior {
     }
 #endif      
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     public static GameCenterAchievementMetadata GetGameCenterAchievementMetadata(string identifier) {
         if(Instance != null) {
             Instance.getGameCenterAchievementMetadata(identifier);
@@ -856,23 +927,23 @@ public class GameNetworks : GameObjectBehavior {
 #endif  
 
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
 #endif
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
 #endif
 
     public static void CheckAchievementsState() {
-        if (Instance != null) {
-            Instance.checkAchievementsState();
+        if(instance != null) {
+            instance.checkAchievementsState();
         }
     }
-    
+
     public void checkAchievementsState() {
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         // Sync from other devices.
         foreach(GameCenterAchievement achievement in gameCenterAchievementsNetwork) {
             bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(achievement.identifier);
@@ -905,45 +976,87 @@ public class GameNetworks : GameObjectBehavior {
         }
         
         //LogUtil.Log("GameCenter CheckAchievementsState...");
-#endif      
-                
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
 #endif
 
     }
-    
+
+    #endregion
+
+    // -------------------------------------------------------------------------
+    // NETWORK LOGIN
+
+    #region AUTHENTICATION
+
+    public static void LoginNetwork(string networkTypeTo) {
+        if(instance != null) {
+            instance.loginNetwork(networkTypeTo);
+        }
+    }
+
+    public void loginNetwork(string networkTypeTo) {
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31            
+            if(isAvailableiOSAppleGameCenter) {
+                GameCenterBinding.authenticateLocalPlayer();
+                Debug.Log("GameCenter LoginNetwork is available...");
+            }
+            
+        // Check existing achievements and update them if missing
+            
+            LogUtil.Log("GameCenter LoginNetwork...");
+#endif      
+        }
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31            
+            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
+                PlayGameServices.authenticate();
+            }
+            
+            // Check existing achievements and update them if missing
+            
+            LogUtil.Log("PlayGameServices LoginNetwork...");
+#endif      
+        }
+
+
+    }
+
     // -------------------------------------------------------------------------
     // USERNAME
-    
-    
+
+
     public static void SetLocalProfileToNetworkUsername() {
-        if (Instance != null) {
-            Instance.setLocalProfileToNetworkUsername(currentNetwork);
-        }    
+        if(instance != null) {
+            instance.setLocalProfileToNetworkUsername(currentNetwork);
+        }
     }
 
     public static void SetLocalProfileToNetworkUsername(string networkTypeTo) {
-        if (Instance != null) {
-            Instance.setLocalProfileToNetworkUsername(networkTypeTo);
+        if(instance != null) {
+            instance.setLocalProfileToNetworkUsername(networkTypeTo);
         }
     }
-    
+
     public void setLocalProfileToNetworkUsername(string networkTypeTo) {
         LogUtil.Log("setLocalProfileToNetworkUsername");
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {          
-            if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
+            if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 setLocalProfileToNetworkUsernameAppleGameCenter();
             }
-            
-            if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+
+            if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
                 setLocalProfileToNetworkUsernameGooglePlay();
             }
-        }           
+        }
     }
-    
+
     public void setLocalProfileToNetworkUsernameAppleGameCenter() {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
         string networkUsername = GameCenterBinding.playerAlias();
         LogUtil.Log("setLocalProfileToNetworkUsernameiOSAppleGameCenter: " + networkUsername);
         
@@ -956,9 +1069,9 @@ public class GameNetworks : GameObjectBehavior {
         }
 #endif          
     }
-    
+
     public void setLocalProfileToNetworkUsernameGooglePlay() {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         GPGPlayerInfo playerInfo = PlayGameServices.getLocalPlayerInfo();
         string networkUsername = playerInfo.playerId; // name
         LogUtil.Log("setLocalProfileToNetworkUsernameAndroidGooglePlay: " + networkUsername);
@@ -974,54 +1087,54 @@ public class GameNetworks : GameObjectBehavior {
     }
 
     public static string GetNetworkUsername() {
-        if (Instance != null) {
-            return Instance.getNetworkUsername(currentNetwork);
+        if(instance != null) {
+            return instance.getNetworkUsername(currentNetwork);
         }
         return "";
     }
-    
+
     public static string GetNetworkUsername(string networkTypeTo) {
-        if (Instance != null) {
-            return Instance.getNetworkUsername(networkTypeTo);
+        if(instance != null) {
+            return instance.getNetworkUsername(networkTypeTo);
         }
         return "";
     }
-    
+
     public string getNetworkUsername(string networkTypeTo) {
 
         string username = "";
 
-        if (IsThirdPartyNetworkAvailable(networkTypeTo)) {          
-            if (currentNetwork == GameNetworkType.gameNetworkAppleGameCenter) {
+        if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
+            if(currentNetwork == GameNetworkType.gameNetworkAppleGameCenter) {
                 username = getNetworkUsernameiOSAppleGameCenter();
             }
-            else if (currentNetwork == GameNetworkType.gameNetworkGooglePlayServices) {
+            else if(currentNetwork == GameNetworkType.gameNetworkGooglePlayServices) {
                 username = getNetworkUsernameAndroidGooglePlay();
             }
-        }   
-                
+        }
+
         //LogUtil.Log("getNetworkUsername:" + username);
 
         return username;
     }
-        
+
     public string getNetworkUsernameiOSAppleGameCenter() {
         //LogUtil.Log("GetNetworkUsername");
         string networkUser = "";
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
         networkUser = GameCenterBinding.playerAlias();
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
         }
 #endif          
-        return networkUser; 
+        return networkUser;
     }
-    
+
     public string getNetworkUsernameAndroidGooglePlay() {
         //LogUtil.Log("GetNetworkUsername");
         string networkUser = "";
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY 
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31 
         GPGPlayerInfo playerInfo = PlayGameServices.getLocalPlayerInfo();
         networkUser = playerInfo.playerId;// name
         if(networkUser != GameProfiles.Current.username 
@@ -1029,59 +1142,63 @@ public class GameNetworks : GameObjectBehavior {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
         }
 #endif          
-        return networkUser; 
+        return networkUser;
     }
-    
+
+    #endregion
+
     // -------------------------------------------------------------------------
-    // FACEBOOK SCORES
-    
+    // FACEBOOK - SCORES
+
+    #region FACEBOOK
+
     public string facebookOpenGraphUrl = "https://graph.facebook.com/";
-    
+
     public static void PostScoreFacebook(int score) {
-        if (Instance != null) {
-            Instance.postScoreFacebook(score);
+        if(instance != null) {
+            instance.postScoreFacebook(score);
         }
     }
-    
+
     public void postScoreFacebook(int score) {
         //PostScoreFacebook(GameProfiles.Current.GetSocialNetworkUserId(), score);
     }
-    
+
     public static void PostScoreFacebook(string userId, int score) {
-        if (Instance != null) {
-            Instance.postScoreFacebook(userId, score);
+        if(instance != null) {
+            instance.postScoreFacebook(userId, score);
         }
     }
-    
+
     public void postScoreFacebook(string userId, int score) {
-        
+
         Dictionary<string, object> data = new Dictionary<string, object>();
 
         string networkType = SocialNetworkTypes.facebook;
 
         string access_token = GameProfiles.Current.GetNetworkValueToken(networkType);
-        
+
         data.Add("score", score);
         data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
         data.Add("access_token", access_token);//SocialNetworks.faGetSocialNetworkAuthTokenUser());
-        
+
         LogUtil.Log("PostScoreFacebook score:" + score);
         LogUtil.Log("PostScoreFacebook app_access_token:" + SocialNetworks.Instance.appAccessToken);
         LogUtil.Log("PostScoreFacebook access_token:" + access_token);
-        
+
         string url = facebookOpenGraphUrl + userId + "/scores";
-        
+
         LogUtil.Log("PostScoreFacebook url:" + url);
-        
+
         WebRequests.Instance.Request(WebRequests.RequestType.HTTP_POST, url, data, HandlePostScoreFacebookCallback);
     }
-    
+
     void HandlePostScoreFacebookCallback(WebRequests.ResponseObject response) {
         string responseText = response.dataValueText;
         LogUtil.Log("HandlePostScoreFacebookCallback responseText:" + responseText);
         bool success = false;
-        if (bool.TryParse(responseText, out success)) {
-            if (success) {
+        if(bool.TryParse(responseText, out success)) {
+            if(success) {
                 LogUtil.Log("Score post success!");
             }
             else {
@@ -1089,118 +1206,118 @@ public class GameNetworks : GameObjectBehavior {
             }
         }
     }
-    
+
     public static void GetScoresFacebookFriends() {
-        if (Instance != null) {
-            Instance.getScoresFacebookFriends();
+        if(instance != null) {
+            instance.getScoresFacebookFriends();
         }
     }
-    
+
     public void getScoresFacebookFriends() {
-        
+
         Dictionary<string, object> data = new Dictionary<string, object>();
-        
+
         string accessToken = GameProfiles.Current.GetNetworkValueToken(SocialNetworkTypes.facebook);//.GetSocialNetworkAuthTokenUser();
         string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);//GetSocialNetworkUserId();
         string appId = SocialNetworks.Instance.FACEBOOK_APP_ID;
-        
+
         //data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
-        data.Add("access_token", accessToken);      
-        
-        string url = facebookOpenGraphUrl 
+        data.Add("access_token", accessToken);
+
+        string url = facebookOpenGraphUrl
             + userId + "/scores";
-        
+
         LogUtil.Log("GetScoresFacebookFriends access_token:" + accessToken);
         LogUtil.Log("GetScoresFacebookFriends url:" + url);
-        
+
         WebRequests.Instance.Request(
-            WebRequests.RequestType.HTTP_GET, 
-            url, 
-            data, 
+            WebRequests.RequestType.HTTP_GET,
+            url,
+            data,
             HandleGetScoresFacebookFriendsCallback);
     }
-    
+
     void HandleGetScoresFacebookFriendsCallback(WebRequests.ResponseObject response) {
         string responseText = response.dataValueText;
         LogUtil.Log("HandleGetScoresFacebookFriendsCallback responseText:" + responseText);
-        
-        if (string.IsNullOrEmpty(responseText)) {
+
+        if(string.IsNullOrEmpty(responseText)) {
             return;
         }
-        
+
         GameCommunityLeaderboardData leaderboardData = ParseScoresFacebook(responseText);
-        
-        if (leaderboardData != null) {
+
+        if(leaderboardData != null) {
             Messenger<GameCommunityLeaderboardData>.Broadcast(
                 GameCommunityMessages.gameCommunityLeaderboardFriendData, leaderboardData);
         }
-        
+
     }
-    
+
     public static void GetScoresFacebook() {
-        if (Instance != null) {
-            Instance.getScoresFacebook();
+        if(instance != null) {
+            instance.getScoresFacebook();
         }
     }
-    
+
     private void getScoresFacebook() {
-        
+
         Dictionary<string, object> data = new Dictionary<string, object>();
-        
-        string accessToken = 
+
+        string accessToken =
             GameProfiles.Current.GetNetworkValueToken(SocialNetworkTypes.facebook);//GetSocialNetworkAuthTokenUser();
         string appId = SocialNetworks.Instance.FACEBOOK_APP_ID;
-        
+
         //data.Add("app_access_token", SocialNetworks.Instance.appAccessToken);
         data.Add("access_token", accessToken);
-                
-        string url = facebookOpenGraphUrl 
+
+        string url = facebookOpenGraphUrl
             + appId + "/scores";
-        
+
         LogUtil.Log("GetScoresFacebook access_token:" + accessToken);
         LogUtil.Log("GetScoresFacebook url:" + url);
-        
+
         WebRequests.Instance.Request(
-            WebRequests.RequestType.HTTP_GET, 
-            url, 
-            data, 
+            WebRequests.RequestType.HTTP_GET,
+            url,
+            data,
             HandleGetScoresFacebookCallback);
     }
-    
+
     void HandleGetScoresFacebookCallback(Engine.Networking.WebRequests.ResponseObject response) {
         string responseText = response.dataValueText;
         LogUtil.Log("HandleGetScoresFacebookCallback responseText:" + responseText);
-        
-        if (string.IsNullOrEmpty(responseText)) {
+
+        if(string.IsNullOrEmpty(responseText)) {
             return;
         }
-        
+
         GameCommunityLeaderboardData leaderboardData = parseScoresFacebook(responseText);
-        
-        if (leaderboardData != null) {
+
+        if(leaderboardData != null) {
             Messenger<GameCommunityLeaderboardData>.Broadcast(
                 GameCommunityMessages.gameCommunityLeaderboardData, leaderboardData);
         }
     }
-    
+
     public static string testFacebookScoresResult = "";
-    
+
     public static void ParseTestScoresFacebook(string responseText) {
         GameCommunityLeaderboardData leaderboardData = ParseScoresFacebook(responseText);
-        
+
         Messenger<GameCommunityLeaderboardData>.Broadcast(
             GameCommunityMessages.gameCommunityLeaderboardData, leaderboardData);
     }
-    
+
     public static GameCommunityLeaderboardData ParseScoresFacebook(string responseText) {
-        if (Instance != null) {
-            return Instance.parseScoresFacebook(responseText);
+        if(instance != null) {
+            return instance.parseScoresFacebook(responseText);
         }
         return null;
     }
-    
+
     public GameCommunityLeaderboardData parseScoresFacebook(string responseText) {
-        
+
         /*
              * // facebook used 'namespace' in a property so we need to 
              * parse as json object instead of one shot map to object
@@ -1233,68 +1350,68 @@ public class GameNetworks : GameObjectBehavior {
                    ]
                 }
      */
-         
-                
-        
-        
+
+
+
+
         GameCommunityLeaderboardData leaderboardData = new GameCommunityLeaderboardData();
-        
-        if (string.IsNullOrEmpty(responseText)) {
+
+        if(string.IsNullOrEmpty(responseText)) {
             return leaderboardData;
         }
-        
+
         List<GameCommunityLeaderboardItem> leaderboardItems = new List<GameCommunityLeaderboardItem>();
-        
+
         JsonData jsonData = JsonMapper.ToObject(responseText.Replace("\\\"", "\""));
-        
-        if (jsonData != null) {
-            if (jsonData.IsObject) {
-        
+
+        if(jsonData != null) {
+            if(jsonData.IsObject) {
+
                 JsonData dataNode = jsonData["data"];
-                
-                if (dataNode != null) {
-                    if (dataNode.IsArray) {
-                
-                        for (int i = 0; i < dataNode.Count; i++) {
-                            
+
+                if(dataNode != null) {
+                    if(dataNode.IsArray) {
+
+                        for(int i = 0; i < dataNode.Count; i++) {
+
                             GameCommunityLeaderboardItem leaderboardItem = new GameCommunityLeaderboardItem();
-                            
+
                             var data = dataNode[i];
-                                            
+
                             JsonData user = data["user"];
                             JsonData application = data["application"];
                             JsonData score = data["score"];
-                            
-                            if (score != null) {
-                                if (score.IsInt) {
+
+                            if(score != null) {
+                                if(score.IsInt) {
                                     leaderboardItem.value = float.Parse(score.ToString());
-                                    leaderboardItem.valueFormatted = leaderboardItem.value.ToString("N0");                      
+                                    leaderboardItem.valueFormatted = leaderboardItem.value.ToString("N0");
                                 }
                             }
-                            
-                            if (user != null) {
-                                if (user.IsObject) {
-                                    
+
+                            if(user != null) {
+                                if(user.IsObject) {
+
                                     JsonData name = user["name"];
-                                    if (name != null) {
-                                        if (name.IsString) {
+                                    if(name != null) {
+                                        if(name.IsString) {
                                             string nameValue = name.ToString();
-                                            if (!string.IsNullOrEmpty(nameValue)) {
+                                            if(!string.IsNullOrEmpty(nameValue)) {
                                                 leaderboardItem.username = nameValue;
                                             }
                                         }
                                     }
-                                    
+
                                     JsonData id = user["id"];
-                                    if (id != null) {
-                                        if (id.IsString) {
+                                    if(id != null) {
+                                        if(id.IsString) {
                                             string idValue = id.ToString();
-                                            if (!string.IsNullOrEmpty(idValue)) {
+                                            if(!string.IsNullOrEmpty(idValue)) {
                                                 leaderboardItem.userId = idValue;
                                             }
                                         }
                                     }
-                                    
+
                                     leaderboardItem.network = "facebook";
                                     leaderboardItem.name = leaderboardItem.username;
                                     leaderboardItem.type = "int";
@@ -1302,67 +1419,84 @@ public class GameNetworks : GameObjectBehavior {
                                     ;
                                 }
                             }
-                            
-                            if (application != null) {
-                                if (application.IsObject) {
+
+                            if(application != null) {
+                                if(application.IsObject) {
                                     JsonData name = application["name"];
-                                    if (name != null) {
-                                        if (name.IsString) {
+                                    if(name != null) {
+                                        if(name.IsString) {
                                             string nameValue = name.ToString();
-                                            if (!string.IsNullOrEmpty(nameValue)) {
+                                            if(!string.IsNullOrEmpty(nameValue)) {
                                                 leaderboardData.appName = nameValue;
                                             }
                                         }
                                     }
-                                    
+
                                     JsonData namespaceNode = application["name"];
-                                    if (namespaceNode != null) {
-                                        if (namespaceNode.IsString) {
+                                    if(namespaceNode != null) {
+                                        if(namespaceNode.IsString) {
                                             string namespaceValue = namespaceNode.ToString();
-                                            if (!string.IsNullOrEmpty(namespaceValue)) {
+                                            if(!string.IsNullOrEmpty(namespaceValue)) {
                                                 leaderboardData.appNamespace = namespaceValue;
                                             }
                                         }
                                     }
-                                    
+
                                     JsonData appId = application["id"];
-                                    if (appId != null) {
-                                        if (appId.IsString) {
+                                    if(appId != null) {
+                                        if(appId.IsString) {
                                             string appIdValue = appId.ToString();
-                                            if (!string.IsNullOrEmpty(appIdValue)) {
+                                            if(!string.IsNullOrEmpty(appIdValue)) {
                                                 leaderboardData.appId = appIdValue;
                                             }
                                         }
                                     }
                                 }
                             }
-                            
+
                             leaderboardItems.Add(leaderboardItem);
                         }
                     }
                 }
             }
         }
-        
+
         leaderboardData.leaderboards.Add("high-score", leaderboardItems);
-        
+
         return leaderboardData;
     }
-            
+
+    #endregion
+
     // -------------------------------------------------------------------------
     // EVENTS
-    
+
+    #region EVENTS
+
     private void InitEvents(string networkTypeTo) {
-        
-        if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER        
+
+#if GAMENETWORK_USE_UNITY
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+            Messenger<ILocalUser>.AddListener(
+                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
+        }
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            Messenger<ILocalUser>.AddListener(
+                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
+        }
+#endif
+
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31        
             GameCenterManager.playerAuthenticatedEvent += playerAuthenticated;
             GameCenterManager.achievementsLoadedEvent += achievementsLoaded;
             GameCenterManager.achievementMetadataLoadedEvent += achievementMetadataLoaded;
 #endif
         }
-        else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31        
 
             // Fired when authentication succeeds. Includes the user_id
             GPGManager.authenticationSucceededEvent += authenticationSucceededEvent;
@@ -1456,18 +1590,30 @@ public class GameNetworks : GameObjectBehavior {
 #endif
         }
     }
-    
+
     private void RemoveEvents(string networkTypeTo) {
 
-        if (networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+#if GAMENETWORK_USE_UNITY
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+            Messenger<ILocalUser>.RemoveListener(
+                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
+        }
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+            Messenger<ILocalUser>.RemoveListener(
+                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
+        }
+#endif
+
+        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
             GameCenterManager.playerAuthenticatedEvent -= playerAuthenticated;
             GameCenterManager.achievementsLoadedEvent -= achievementsLoaded;
             GameCenterManager.achievementMetadataLoadedEvent -= achievementMetadataLoaded;
 #endif
         }
-        else if (networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY        
+        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31        
         
         // Fired when authentication succeeds. Includes the user_id
             GPGManager.authenticationSucceededEvent -= authenticationSucceededEvent;
@@ -1559,11 +1705,50 @@ public class GameNetworks : GameObjectBehavior {
 #endif        
         }
     }
-    
+
     // -------------------------------------------------------------------------
-    // EVENTS IOS GAME CENTER
+    // EVENTS IOS GAME CENTER UNITY
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+        /*
+    void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
+        LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
+        gameCenterAchievementsNetwork = achievementsNetworkResult;
+        CheckAchievementsState();
+    }
     
-#if GAMENETWORK_IOS_APPLE_GAMECENTER    
+    void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
+        LogUtil.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
+        gameCenterAchievementsMetaNetwork = achievementsMetaNetworkResult;
+        CheckAchievementsState();
+    }
+    */
+
+    void gameNetworkUnityPlayerAuthenticated() {
+        Debug.Log("GameNetworks:GameCenter:playerAuthenticated"); 
+        SetLocalProfileToNetworkUsername();
+        GetAchievements();
+    }
+
+    void onGameNetworkUnityAuthenticated(ILocalUser user) {
+        Debug.Log("GameNetworks:GameCenter:onGameNetworkUnityAuthenticated" + user.userName);
+        gameNetworkUnityPlayerAuthenticated();
+    }
+
+
+#endif
+
+    // -------------------------------------------------------------------------
+    // EVENTS ANDROID GOOGLE PLAY UNITY
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+
+#endif
+
+    // -------------------------------------------------------------------------
+    // EVENTS IOS GAME CENTER PRIME31
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
         LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
         gameCenterAchievementsNetwork = achievementsNetworkResult;
@@ -1581,13 +1766,12 @@ public class GameNetworks : GameObjectBehavior {
         SetLocalProfileToNetworkUsername();
         GetAchievements();
     }
-#endif  
-    
+#endif
 
     // -------------------------------------------------------------------------
-    // EVENTS ANDROID GOOGLE PLAY
+    // EVENTS ANDROID GOOGLE PLAY PRIME31
 
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
     // Fired when authentication succeeds. Includes the user_id
 
     public void authenticationSucceededEvent(string val) {
@@ -1725,7 +1909,10 @@ public class GameNetworks : GameObjectBehavior {
     }
 #endif
 
+    #endregion
 
+
+    #region SCRATCH
     /*
     // Fired when authentication succeeds. Includes the user_id
     public static event Action<string> authenticationSucceededEvent;
@@ -1817,8 +2004,8 @@ public class GameNetworks : GameObjectBehavior {
     
     
     */
-    
-    
+
+
     /*
      PLAY SERVICES DOCS
      
@@ -2000,4 +2187,5 @@ public static event Action<string,string> loadScoresFailedEvent;
 public static event Action<List<GPGScore>> loadScoresSucceededEvent;
      
      */
+    #endregion
 }
