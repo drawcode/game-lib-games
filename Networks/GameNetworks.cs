@@ -121,9 +121,9 @@ public class GameNetworks : GameObjectBehavior {
     //[NonSerialized]
     //public GameCenterEventListener gameCenterEventListener;
     [NonSerialized]
-    public List<GameCenterAchievement> gameCenterAchievementsNetwork;
+    public List<GameCenterAchievement> gameNetworkAchievements;
     [NonSerialized]
-    public List<GameCenterAchievementMetadata> gameCenterAchievementsMetaNetwork;
+    public List<GameCenterAchievementMetadata> gameNetworkAchievementsMeta;
 #endif
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
@@ -132,13 +132,16 @@ public class GameNetworks : GameObjectBehavior {
     [NonSerialized]
     public GPGSEventListener gamePlayServicesEventListener;
     //[NonSerialized]
-    //public List<GPGAchievementMetadata> gamePlayServicesAchievementsNetwork;
+    //public List<GPGAchievementMetadata> gameNetworkAchievements;
     [NonSerialized]
-    public List<GPGAchievementMetadata> gamePlayServicesAchievementsMetaNetwork;
+    public List<GPGAchievementMetadata> gameNetworkAchievementsMeta;
 #endif
 
 #if GAMENETWORK_USE_UNITY
     public GameNetworkUnity gameNetworkManager;
+    public IAchievement[] gameNetworkAchievements;
+    public IAchievementDescription[] gameNetworkAchievementsMeta;
+    public IScore[] gameNetworkLeaderboardScores;
 #endif
 
     public static string currentLoggedInUserNetwork = "";
@@ -174,13 +177,13 @@ public class GameNetworks : GameObjectBehavior {
     void Start() {
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
-        gameCenterAchievementsNetwork = new List<GameCenterAchievement>();
-        gameCenterAchievementsMetaNetwork = new List<GameCenterAchievementMetadata>();
+        gameNetworkAchievements = new List<GameCenterAchievement>();
+        gameNetworkAchievementsMeta = new List<GameCenterAchievementMetadata>();
 #endif
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         //achievementsNetwork = new List<GameCenterAchievement>();
-        gamePlayServicesAchievementsMetaNetwork = new List<GPGAchievementMetadata>();
+        gameNetworkAchievementsMeta = new List<GPGAchievementMetadata>();
 #endif
 
         InvokeRepeating("checkThirdPartyNetworkLoggedInUser", 3, 3);
@@ -310,10 +313,10 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_USE_UNITY
         gameNetworkManager = gameObject.Set<GameNetworkUnity>();
-                
-        InitEvents(currentNetwork);      
-        LoginNetwork(currentNetwork);    
-        
+
+        InitEvents(currentNetwork);
+        LoginNetwork(currentNetwork);
+
         LogUtil.Log("InitNetwork Unity GameNetwork...");
 #endif
 
@@ -482,15 +485,15 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
-        
+
         //LogUtil.Log("showAchievementsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
-                  //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
-            
+        //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
+
         if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
 
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
-                               
-            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" +
                   authenticated);
 
             if(authenticated) {
@@ -900,7 +903,7 @@ public class GameNetworks : GameObjectBehavior {
     }   
     
     public GameCenterAchievement getGameCenterAchievement(string identifier) {      
-        foreach(GameCenterAchievement achievement in gameCenterAchievementsNetwork) {
+        foreach(GameCenterAchievement achievement in gameNetworkAchievements) {
             if(achievement.identifier == identifier)
                 return achievement;
         }
@@ -918,7 +921,7 @@ public class GameNetworks : GameObjectBehavior {
     
     public GameCenterAchievementMetadata getGameCenterAchievementMetadata(string identifier)
     {       
-        foreach(GameCenterAchievementMetadata achievement in gameCenterAchievementsMetaNetwork) {
+        foreach(GameCenterAchievementMetadata achievement in gameNetworkAchievementsMeta) {
             if(achievement.identifier == identifier)
                 return achievement;
         }
@@ -943,9 +946,40 @@ public class GameNetworks : GameObjectBehavior {
 
     public void checkAchievementsState() {
 
+#if GAMENETWORK_USE_UNITY
+        // Sync from other devices.
+        foreach(IAchievement achievement in gameNetworkAchievements) {
+            bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(achievement.id);
+            bool remoteAchievementValue = achievement.completed;
+
+            // If different on local and remote and local is true, set it...
+            if(localAchievementValue != remoteAchievementValue && remoteAchievementValue) {
+                GameProfileAchievements.Current.SetAchievementValue(achievement.id, true);
+            }
+        }
+
+        foreach(IAchievementDescription meta in gameNetworkAchievementsMeta) {
+            // TODO - pull down any new achievements from iTunesConnect
+            LogUtil.Log("UnityAchievementMetadata:" + meta.id);
+        }
+
+        // Sync from local.
+        foreach(GameAchievement meta in GameAchievements.Instance.GetAll()) {
+            ////IAchievement gcAchievement = GetGameCenterAchievement(meta.code);
+            ////if(gcAchievement != null) {
+            ////bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(meta.code);
+            ////bool remoteAchievementValue = gcAchievement.completed;
+
+            ////            // If different on local and remote and remote is false, set it...
+            ////if(localAchievementValue != remoteAchievementValue && !remoteAchievementValue) {
+            ////GameNetworks.SendAchievement(meta.code, true);
+            ////}
+        }
+#endif
+
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         // Sync from other devices.
-        foreach(GameCenterAchievement achievement in gameCenterAchievementsNetwork) {
+        foreach(GameCenterAchievement achievement in gameNetworkAchievements) {
             bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(achievement.identifier);
             bool remoteAchievementValue = achievement.completed;
             
@@ -955,7 +989,7 @@ public class GameNetworks : GameObjectBehavior {
             }
         }
         
-        foreach(GameCenterAchievementMetadata meta in gameCenterAchievementsMetaNetwork) {
+        foreach(GameCenterAchievementMetadata meta in gameNetworkAchievementsMeta) {
             // TODO - pull down any new achievements from iTunesConnect
             LogUtil.Log("GameCenterAchievementMetadata:" + meta.identifier);
         }
@@ -1477,14 +1511,21 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_USE_UNITY
 
-        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-            Messenger<ILocalUser>.AddListener(
-                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
-        }
-        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-            Messenger<ILocalUser>.AddListener(
-                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
-        }
+        Messenger<ILocalUser>.AddListener(
+            GameNetworkUnityMessages.gameNetworkUnityLoggedIn,
+            onGameNetworkUnityAuthenticated);
+
+        Messenger<IAchievement[]>.AddListener(
+            GameNetworkUnityMessages.gameNetworkUnityAchievements,
+            onGameNetworkUnityAchievements);
+
+        Messenger<IAchievementDescription[]>.AddListener(
+            GameNetworkUnityMessages.gameNetworkUnityAchievementDescriptions,
+            onGameNetworkUnityAchievementDescriptions);
+
+        Messenger<IScore[]>.AddListener(
+            GameNetworkUnityMessages.gameNetworkUnityLeaderboardScores,
+            onGameNetworkUnityLeaderboardScores);
 #endif
 
 
@@ -1595,14 +1636,22 @@ public class GameNetworks : GameObjectBehavior {
 
 #if GAMENETWORK_USE_UNITY
 
-        if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-            Messenger<ILocalUser>.RemoveListener(
-                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
-        }
-        else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-            Messenger<ILocalUser>.RemoveListener(
-                GameNetworkUnityMessages.gameNetworkUnityLoggedIn, onGameNetworkUnityAuthenticated);
-        }
+        Messenger<ILocalUser>.RemoveListener(
+            GameNetworkUnityMessages.gameNetworkUnityLoggedIn,
+            onGameNetworkUnityAuthenticated);
+
+        Messenger<IAchievement[]>.RemoveListener(
+            GameNetworkUnityMessages.gameNetworkUnityAchievements,
+            onGameNetworkUnityAchievements);
+
+        Messenger<IAchievementDescription[]>.RemoveListener(
+            GameNetworkUnityMessages.gameNetworkUnityAchievementDescriptions,
+            onGameNetworkUnityAchievementDescriptions);
+
+        Messenger<IScore[]>.RemoveListener(
+            GameNetworkUnityMessages.gameNetworkUnityLeaderboardScores,
+            onGameNetworkUnityLeaderboardScores);
+
 #endif
 
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
@@ -1707,34 +1756,82 @@ public class GameNetworks : GameObjectBehavior {
     }
 
     // -------------------------------------------------------------------------
-    // EVENTS IOS GAME CENTER UNITY
+    // EVENTS UNITY
 
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
-        /*
-    void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
-        LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
-        gameCenterAchievementsNetwork = achievementsNetworkResult;
-        CheckAchievementsState();
-    }
-    
-    void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
-        LogUtil.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
-        gameCenterAchievementsMetaNetwork = achievementsMetaNetworkResult;
-        CheckAchievementsState();
-    }
-    */
+#if GAMENETWORK_USE_UNITY
+
+    //
 
     void gameNetworkUnityPlayerAuthenticated() {
-        Debug.Log("GameNetworks:GameCenter:playerAuthenticated"); 
+        Debug.Log("GameNetworks:gameNetworkUnityPlayerAuthenticated");
         SetLocalProfileToNetworkUsername();
         GetAchievements();
     }
 
     void onGameNetworkUnityAuthenticated(ILocalUser user) {
-        Debug.Log("GameNetworks:GameCenter:onGameNetworkUnityAuthenticated" + user.userName);
+        Debug.Log("GameNetworks:GameCenter:onGameNetworkUnityAuthenticated:" + user.userName);
         gameNetworkUnityPlayerAuthenticated();
     }
 
+    //
+
+    void gameNetworkAchievementsLoaded(IAchievement[] achievements) {
+        LogUtil.Log("GameNetworks:gameNetworkAchievementsLoaded");
+        gameNetworkAchievements = achievements;
+        CheckAchievementsState();
+    }
+
+    void onGameNetworkUnityAchievements(IAchievement[] achievements) {
+        Debug.Log("GameNetworks:onGameNetworkUnityAchievements:" + achievements.Length);
+        gameNetworkAchievementsLoaded(achievements);
+    }
+
+    void gameNetworkAchievementMetadataLoaded(IAchievementDescription[] achievementsMeta) {
+        LogUtil.Log("GameNetworks:gameNetworkAchievementMetadataLoaded");
+        gameNetworkAchievementsMeta = achievementsMeta;
+        CheckAchievementsState();
+    }
+
+    void onGameNetworkUnityAchievementDescriptions(IAchievementDescription[] achievementsMeta) {
+        Debug.Log("GameNetworks:onGameNetworkUnityAchievementDescriptions:" + achievementsMeta.Length);
+        gameNetworkAchievementMetadataLoaded(achievementsMeta);
+    }
+
+    //
+
+    void onGameNetworkUnityLeaderboardScores(IScore[] scores) {
+        Debug.Log("GameNetworks:onGameNetworkUnityLeaderboardScores:" + scores.Length);
+        gameNetworkLeaderboardScoresLoaded(scores);
+    }
+
+    void gameNetworkLeaderboardScoresLoaded(IScore[] scores) {
+        LogUtil.Log("GameNetworks:gameNetworkAchievementMetadataLoaded");
+        gameNetworkLeaderboardScores = scores;
+    }
+
+    //
+
+
+#endif
+
+
+    // -------------------------------------------------------------------------
+    // EVENTS IOS GAME CENTER UNITY
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
+    /*
+void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
+    LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
+    gameNetworkAchievements = achievementsNetworkResult;
+    CheckAchievementsState();
+}
+
+void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
+    LogUtil.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
+    gameNetworkAchievementsMeta = achievementsMetaNetworkResult;
+    CheckAchievementsState();
+}
+*/
 
 #endif
 
@@ -1751,13 +1848,13 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     void achievementsLoaded(List<GameCenterAchievement> achievementsNetworkResult) {
         LogUtil.Log("GameNetworks:GameCenter:achievementsLoaded"); 
-        gameCenterAchievementsNetwork = achievementsNetworkResult;
+        gameNetworkAchievements = achievementsNetworkResult;
         CheckAchievementsState();
     }
     
     void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsMetaNetworkResult) {
         LogUtil.Log("GameNetworks:GameCenter:achievementMetadataLoaded"); 
-        gameCenterAchievementsMetaNetwork = achievementsMetaNetworkResult;
+        gameNetworkAchievementsMeta = achievementsMetaNetworkResult;
         CheckAchievementsState();
     }
     

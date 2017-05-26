@@ -7,6 +7,9 @@ public class GameNetworkUnityMessages {
     
     public static string gameNetworkUnityLoggedIn = "game-network-unity-logged-in";
     public static string gameNetworkUnityAchievements = "game-network-unity-achievements";
+    public static string gameNetworkUnityAchievementDescriptions = "game-network-unity-achievement-descriptions";
+
+    public static string gameNetworkUnityLeaderboardScores = "game-network-unity-leaderboard-scores";
 }
 
 public class GameNetworkUnity : MonoBehaviour {
@@ -104,6 +107,12 @@ public class GameNetworkUnity : MonoBehaviour {
 
     // ------------------------------------------------------------------------
     // ACHIEVEMENTS
+    
+    public void showAchievements() {
+        Social.ShowAchievementsUI();
+    }
+
+    //
 
     public void loadAchievements() {
 
@@ -134,15 +143,76 @@ public class GameNetworkUnity : MonoBehaviour {
         */
     }
 
-    public void showAchievements() {
-        Social.ShowAchievementsUI();
+    //
+
+    public void loadAchievementDescriptions() {
+
+        // Request loaded achievements, and register a callback for processing them
+        Social.LoadAchievementDescriptions(processLoadedAchievementDescriptions);
     }
 
+    // This function gets called when the LoadAchievement call completes
+    void processLoadedAchievementDescriptions(IAchievementDescription[] achievementDescriptions) {
+
+        Messenger<IAchievementDescription[]>.Broadcast(
+            GameNetworkUnityMessages.gameNetworkUnityAchievementDescriptions, achievementDescriptions);
+
+
+        /*
+        if(achievements.Length == 0)
+            Debug.Log("Error: no achievements found");
+        else
+            Debug.Log("Got " + achievements.Length + " achievements");
+
+        // You can also call into the functions like this
+        Social.ReportProgress("Achievement01", 100.0, result => {
+            if(result)
+                Debug.Log("Successfully reported achievement progress");
+            else
+                Debug.Log("Failed to report achievement");
+        });
+        */
+    }
+
+    //
+
+    public void reportProgress(string achievementId, double progress, Action<bool> callback) {
+        Social.ReportProgress(achievementId, progress, callback);
+    }
+    
     // ------------------------------------------------------------------------
     // LEADERBOARDS
 
     public void showLeaderboards() {
         Social.ShowLeaderboardUI();
+    }
+
+    //
+
+    public void reportScore(long score, string board) {
+        reportScore(score, board, onScoreReport);
+    }
+
+    public void reportScore(long score, string board, Action<bool> callback) {
+        Social.ReportScore(score, board, callback);
+    }
+
+    public void onScoreReport(bool success) {
+
+    }
+
+    //
+
+    public void loadScores(string leaderboardId) {
+        loadScores(leaderboardId, onScoresLoad);
+    }
+
+    public void loadScores(string leaderboardId, Action<IScore[]> callback) {
+        Social.LoadScores(leaderboardId, callback);
+    }
+    
+    public void onScoresLoad(IScore[] scores) {
+        Debug.Log("onScoresLoad:" + scores.Length);
     }
 
 
