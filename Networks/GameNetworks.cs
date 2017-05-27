@@ -188,6 +188,21 @@ public class GameNetworks : GameObjectBehavior {
         InvokeRepeating("checkThirdPartyNetworkLoggedInUser", 3, 3);
     }
 
+    void OnEnable() {
+
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
+        InitEvents(GameNetworkType.gameNetworkAppleGameCenter);
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
+        InitEvents(GameNetworkType.gameNetworkGooglePlayServices);
+#endif
+
+#if GAMENETWORK_USE_UNITY
+        InitEvents(currentNetwork);
+#endif
+    }
+
     void OnDisable() {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         RemoveEvents(GameNetworkType.gameNetworkAppleGameCenter);
@@ -293,8 +308,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
         //gameCenterManager = gameObject.Set<GameCenterManager>();
         //gameCenterEventListener = gameObject.Set<GameCenterEventListener>();
-        
-        InitEvents(GameNetworkType.gameNetworkAppleGameCenter);     
+           
         LoginNetwork(GameNetworkType.gameNetworkAppleGameCenter);           
         
         LogUtil.Log("InitNetwork iOS Apple GameCenter init...");
@@ -304,14 +318,12 @@ public class GameNetworks : GameObjectBehavior {
         gamePlayServicesManager = gameObject.Set<GPGManager>();
         gamePlayServicesEventListener = gameObject.Set<GPGSEventListener>();
         
-        InitEvents(GameNetworkType.gameNetworkGooglePlayServices);      
         LoginNetwork(GameNetworkType.gameNetworkGooglePlayServices);    
         
         LogUtil.Log("InitNetwork Android Google Play init...");
 #endif
 
 #if GAMENETWORK_USE_UNITY
-        InitEvents(currentNetwork);
         LoginNetwork(currentNetwork);
 
         LogUtil.Log("InitNetwork Unity GameNetwork...");
