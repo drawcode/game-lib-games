@@ -515,7 +515,7 @@ public class GameNetworks : GameObjectBehavior {
 #endif
     }
 
-    public static void showAchievementsOrLoginAndroidGooglePlay() {
+    public void showAchievementsOrLoginAndroidGooglePlay() {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         
         LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
@@ -766,7 +766,7 @@ public class GameNetworks : GameObjectBehavior {
 #endif
     }
 
-    public static void reportScoreGooglePlay(string key, long keyValue) {
+    public void reportScoreGooglePlay(string key, long keyValue) {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
