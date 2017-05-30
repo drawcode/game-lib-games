@@ -683,7 +683,7 @@ public class GameNetworks : GameObjectBehavior {
 
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
 
-        LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
+        //LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
 
         if(item == null) {
             return;
@@ -717,7 +717,7 @@ public class GameNetworks : GameObjectBehavior {
 
     public void reportScore(string networkTypeTo, string key, long keyValue) {
 
-        LogUtil.Log("reportScore:" + 
+        Debug.Log("reportScore:" + 
                     " networkTypeTo:" + networkTypeTo+ 
                     " key:" + key+ 
                     " keyValue:" + keyValue);
@@ -728,7 +728,7 @@ public class GameNetworks : GameObjectBehavior {
                 keyValue = keyValue * 100;
             }
 
-            LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
+            Debug.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
                         " networkTypeTo:" + networkTypeTo+ 
                         " key:" + key+ 
                         " keyValue:" + keyValue);
@@ -758,7 +758,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
         if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkAppleGameCenter)) {
-                LogUtil.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue);
+                Debug.Log("reportScoreAppleGameCenter:" + " key:" + key + " keyValue:" + keyValue);
                 //GameCenterBinding.reportScore(keyValue, key);
                 gameNetworkManager.reportScore(keyValue, key);
             }

@@ -1368,7 +1368,7 @@ public class BaseGamePlayerProgress {
 
             string key = board.code;
 
-            LogUtil.Log("ProcessProgressLeaderboards:" + " key:" + key);
+            Debug.Log("ProcessProgressLeaderboards:" + " key:" + key);
 
             long keyValueLong = 0;                
 
@@ -1377,11 +1377,11 @@ public class BaseGamePlayerProgress {
 
             keyValueLong = (long)keyValueDouble;
 
-            LogUtil.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+            Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
             if (keyValueLong > 0) {
-                
-                LogUtil.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+
+                Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
                 GameNetworks.SendScore(key, keyValueLong);
             }
