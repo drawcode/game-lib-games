@@ -3800,6 +3800,25 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             GameAssetObjectContextGetSide(data, assetCode, go);
         }
+
+        // CUSTOM GAME WORLD FLOOR
+
+        else if(assetCode == data.codeGameFloor) {
+
+            GameAssetObjectContextGetWorldFloor(data, assetCode, go);
+        }
+        
+        // CUSTOM GAME BLOCK EMPTY
+
+        else if(assetCode == data.codeGameBlockEmpty) {
+
+            GameAssetObjectContextGetBlockEmpty(data, assetCode, go);
+        }
+    }
+
+    public virtual void GameAssetObjectContextGetBlockEmpty(
+        GameObjectInfinteData data, string assetCode, GameObject go) {
+
     }
 
     public virtual void GameAssetObjectContextGetBlock(

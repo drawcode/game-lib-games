@@ -17,6 +17,7 @@ public class GameObjectInfinteData {
     public string codeGameSky = "game-world-sky";   
     public string codeGameWater = "game-world-water";
 
+    public string codeGameBlockEmpty = "game-block-empty";
     public string codeGameBlockFloor = "game-block-floor";
     public string codeGameBlockLow = "game-block-low";
     public string codeGameBlockHigh = "game-block-high";
