@@ -2785,27 +2785,6 @@ List<string> codes = new List<string>();
         }
     }
     
-    // special
-    
-    public static void SetStatSpecial(double val) {
-        SetStatSpecial((float)val);
-    }
-    
-    public static void SetStatSpecial(float val) {
-        if (GamePlayerProgress.Instance != null) {
-            GamePlayerProgress.Instance.setStatSpecial(val);
-        }
-    }
-    
-    float lastSpecialTime = 0;
-    
-    public virtual void setStatSpecial(float val) {
-        if (lastSpecialTime + .05f < Time.time) {
-            lastSpecialTime = Time.time;
-            SetStatTotal(GameStatCodes.special, val);
-        }
-    }
-
     // xp
 
     public static void SetStatXP(double val) {
@@ -3015,9 +2994,72 @@ List<string> codes = new List<string>();
             SetStatTotal(code, val);
         }
     }
-    
+
+    // specials
+
+    public static void SetStatSpecials(double val) {
+        SetStatSpecials((float)val);
+    }
+
+    public static void SetStatSpecials(float val) {
+        if(GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatSpecials(val);
+        }
+    }
+
+    float lastSpecialsTime = 0;
+
+    public virtual void setStatSpecials(float val) {
+        if(lastSpecialsTime + .05f < Time.time) {
+            lastSpecialsTime = Time.time;
+            SetStatTotal(GameStatCodes.specials, val);
+        }
+    }
+
+    // letters
+
+    public static void SetStatLetters(double val) {
+        SetStatLetters((float)val);
+    }
+
+    public static void SetStatLetters(float val) {
+        if(GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatLetters(val);
+        }
+    }
+
+    float lastLettersTime = 0;
+
+    public virtual void setStatLetters(float val) {
+        if(lastLettersTime + .05f < Time.time) {
+            lastLettersTime = Time.time;
+            SetStatTotal(GameStatCodes.letters, val);
+        }
+    }
+
+    // words
+
+    public static void SetStatWords(double val) {
+        SetStatWords((float)val);
+    }
+
+    public static void SetStatWords(float val) {
+        if(GamePlayerProgress.Instance != null) {
+            GamePlayerProgress.Instance.setStatWords(val);
+        }
+    }
+
+    float lastWordsTime = 0;
+
+    public virtual void setStatWords(float val) {
+        if(lastWordsTime + .05f < Time.time) {
+            lastWordsTime = Time.time;
+            SetStatTotal(GameStatCodes.words, val);
+        }
+    }
+
     // custom
-    
+
     public static void SetStatCustom(string code, double val) {
         SetStatCustom(code, (float)val);
     }

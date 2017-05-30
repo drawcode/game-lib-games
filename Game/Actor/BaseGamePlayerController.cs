@@ -815,6 +815,8 @@ public class BaseGamePlayerController : GameActor {
 
                     string val = item.valString;
 
+                    GamePlayerProgress.SetStatLetters(1);
+
                     broadcastEvent = true;
                     broadcastVal = val;
                 }
@@ -822,7 +824,7 @@ public class BaseGamePlayerController : GameActor {
 
                     double val = item.valDouble;
 
-                    GamePlayerProgress.SetStatSpecial(val);
+                    GamePlayerProgress.SetStatSpecials(val);
 
                     HandleItemStateSpecial(val);
 
