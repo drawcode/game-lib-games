@@ -1367,8 +1367,8 @@ public class BaseGamePlayerProgress {
         foreach (GameLeaderboard board in GameLeaderboards.Instance.GetAll()) {
 
             string key = board.code;
-                        
-            //Debug.Log("ProcessProgressLeaderboards:" + " key:" + key);
+
+            LogUtil.Log("ProcessProgressLeaderboards:" + " key:" + key);
 
             long keyValueLong = 0;                
 
@@ -1377,11 +1377,11 @@ public class BaseGamePlayerProgress {
 
             keyValueLong = (long)keyValueDouble;
 
-            //Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+            LogUtil.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
             if (keyValueLong > 0) {
                 
-                //Debug.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
+                LogUtil.Log("ProcessProgressLeaderboards:" + " keyValueLong:" + keyValueLong);
 
                 GameNetworks.SendScore(key, keyValueLong);
             }

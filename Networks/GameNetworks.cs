@@ -683,7 +683,7 @@ public class GameNetworks : GameObjectBehavior {
 
         GameLeaderboard item = GameLeaderboards.Instance.GetById(key);
 
-        //LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
+        LogUtil.Log("sendScore:" + " key:" + key + " keyValue:" + keyValue);
 
         if(item == null) {
             return;
@@ -717,10 +717,10 @@ public class GameNetworks : GameObjectBehavior {
 
     public void reportScore(string networkTypeTo, string key, long keyValue) {
 
-        //LogUtil.Log("reportScore:" + 
-        //            " networkTypeTo:" + networkTypeTo+ 
-        //            " key:" + key+ 
-        //            " keyValue:" + keyValue);
+        LogUtil.Log("reportScore:" + 
+                    " networkTypeTo:" + networkTypeTo+ 
+                    " key:" + key+ 
+                    " keyValue:" + keyValue);
 
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
 
@@ -728,10 +728,10 @@ public class GameNetworks : GameObjectBehavior {
                 keyValue = keyValue * 100;
             }
 
-            //LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
-            //            " networkTypeTo:" + networkTypeTo+ 
-            //            " key:" + key+ 
-            //            " keyValue:" + keyValue);
+            LogUtil.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
+                        " networkTypeTo:" + networkTypeTo+ 
+                        " key:" + key+ 
+                        " keyValue:" + keyValue);
 
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
                 if(isAuthenticatediOSAppleGameCenter) {
@@ -1303,11 +1303,24 @@ public class GameNetworks : GameObjectBehavior {
         return username;
     }
 
+    public string getNetworkUsernameFiltered(string name) {
+
+        if(name.IsNullOrEmpty()) {
+            return ProfileConfigs.defaultPlayerName;
+        }
+
+        if(name.ToLower() == "uninitialized") {
+            return ProfileConfigs.defaultPlayerName;
+        }
+
+        return name;
+    }
+
     public string getNetworkUsernameiOSAppleGameCenter() {
         //LogUtil.Log("GetNetworkUsername");
         string networkUser = "";
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
-        networkUser = GameCenterBinding.playerAlias();
+        networkUser = getNetworkUsernameFiltered(GameCenterBinding.playerAlias());
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
@@ -1315,7 +1328,7 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_UNITY
-        networkUser = gameNetworkManager.currentUser.userName;
+        networkUser = getNetworkUsernameFiltered(gameNetworkManager.currentUser.userName);
         if(networkUser != GameProfiles.Current.username
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);
@@ -1329,14 +1342,14 @@ public class GameNetworks : GameObjectBehavior {
         string networkUser = "";
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         GPGPlayerInfo playerInfo = PlayGameServices.getLocalPlayerInfo();
-        networkUser = playerInfo.playerId;// name
+        networkUser = getNetworkUsernameFiltered(playerInfo.playerId);// name
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
         }
 #endif
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
-        networkUser = gameNetworkManager.currentUser.userName;
+        networkUser = getNetworkUsernameFiltered(gameNetworkManager.currentUser.userName);
         if(networkUser != GameProfiles.Current.username 
             && !string.IsNullOrEmpty(networkUser)) {
             LogUtil.Log("GetNetworkUsername: " + networkUser);          
