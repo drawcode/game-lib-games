@@ -295,8 +295,8 @@ public class BaseGamePlayerControllerData {
 
     public Vector3 moveGamePlayerPositionTo = Vector3.zero;
     public float speedInfinite = 0f;
-    public float speedInfiniteTo = 72f;
-    public float speedInfiniteMax = 86f;
+    public float speedInfiniteTo = 0f;
+    public float speedInfiniteMax = 0f;
 
     public Vector3 moveGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPosition = Vector3.zero;
@@ -310,8 +310,15 @@ public class BaseGamePlayerControllerData {
 
         moveGamePlayerPositionTo = Vector3.zero;
         speedInfinite = 0f;
-        speedInfiniteTo = 72f;
-        speedInfiniteMax = 86f;
+        
+        if(Context.Current.isMobileAndroid) {
+            speedInfiniteTo = 68f;
+            speedInfiniteMax = 84f;
+        }
+        else {
+            speedInfiniteTo = 72f;
+            speedInfiniteMax = 90f;
+        }
 
         moveGamePlayerPosition = Vector3.zero;
         currentGamePlayerPosition = Vector3.zero;
