@@ -3784,14 +3784,14 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         else if (assetCode == data.codeGameBlockLow) {
 
-            GameAssetObjectContextGetLow(data, assetCode, go);
+            GameAssetObjectContextGetBlockLow(data, assetCode, go);
         }
 
         // CUSTOM GAME BLOCK HIGH
 
         else if (assetCode == data.codeGameBlockHigh) {
 
-            GameAssetObjectContextGetHigh(data, assetCode, go);
+            GameAssetObjectContextGetBlockHigh(data, assetCode, go);
         }
 
         // CUSTOM GAME SIDE
@@ -3814,6 +3814,18 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             GameAssetObjectContextGetBlockEmpty(data, assetCode, go);
         }
+
+        // CUSTOM GAME BLOCK FULL
+
+        else if(assetCode == data.codeGameBlockFull) {
+
+            GameAssetObjectContextGetBlockFull(data, assetCode, go);
+        }
+    }
+
+    public virtual void GameAssetObjectContextGetBlockFull(
+        GameObjectInfinteData data, string assetCode, GameObject go) {
+
     }
 
     public virtual void GameAssetObjectContextGetBlockEmpty(
@@ -3892,12 +3904,12 @@ public class BaseGameController : GameObjectTimerBehavior {
         //return go;
     }
 
-    public virtual void GameAssetObjectContextGetLow(
+    public virtual void GameAssetObjectContextGetBlockLow(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
     }
 
-    public virtual void GameAssetObjectContextGetHigh(
+    public virtual void GameAssetObjectContextGetBlockHigh(
         GameObjectInfinteData data, string assetCode, GameObject go) {
 
     }

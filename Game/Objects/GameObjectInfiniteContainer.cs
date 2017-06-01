@@ -21,6 +21,7 @@ public class GameObjectInfinteData {
     public string codeGameBlockFloor = "game-block-floor";
     public string codeGameBlockLow = "game-block-low";
     public string codeGameBlockHigh = "game-block-high";
+    public string codeGameBlockFull = "game-block-full";
 
     //public Dictionary<string, object> positions;
 
