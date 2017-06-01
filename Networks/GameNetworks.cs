@@ -37,7 +37,10 @@ using Engine.Utility;
 #if GAMENETWORK_USE_PRIME31
 using Prime31;
 #endif
-#if GAMENETWORK_USE_UNITY
+#if GAMENETWORK_USE_UNITY 
+#if UNITY_ANDROID
+using GooglePlayGames;
+#endif
 using UnityEngine.SocialPlatforms;
 #endif
 
@@ -324,6 +327,11 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
 #if GAMENETWORK_USE_UNITY
+
+        if(currentNetwork == GameNetworkType.gameNetworkGooglePlayServices) {
+            PlayGamesPlatform.Activate();
+        }
+
         LoginNetwork(currentNetwork);
 
         LogUtil.Log("InitNetwork Unity GameNetwork...");
