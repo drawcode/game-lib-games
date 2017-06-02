@@ -109,6 +109,14 @@ public class BaseGameController : GameObjectTimerBehavior {
     //
     public float runDirectorsDelay = 10f;
 
+    // RENDERING
+
+    public int renderingTargetFramerate = 30;
+    public int renderingTargetFramerateLast = 60;
+
+    public int renderingVSyncCount = 0;
+    public int renderingVSyncCountLast = 2;
+
     // QUEUES
 
     internal List<GameObjectQueueItem> queueGameObjectItems;
@@ -4601,12 +4609,37 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     }
 
+    public virtual void setFramerate(int frameRate) {
+
+        if(renderingTargetFramerateLast != frameRate) {
+
+            renderingTargetFramerate = frameRate;
+
+            setVSyncCount(0);  // VSync must be disabled for target framerate
+            Application.targetFrameRate = renderingTargetFramerate;
+
+            renderingTargetFramerateLast = renderingTargetFramerate;
+        }
+    }
+
+    public virtual void setVSyncCount(int vsyncCount = 0) {
+        if(renderingVSyncCountLast != vsyncCount) {
+            QualitySettings.vSyncCount = renderingVSyncCount;
+            renderingVSyncCountLast = renderingVSyncCount;
+        }
+    }
+
+
     // ------------------------------------------------------------------------
     // UPDATE
 
     // Update is called once per frame
 
     public virtual void Update() {
+
+        if(Application.isEditor) {
+            setFramerate(renderingTargetFramerate);
+        }
 
         // TOOLS
 
