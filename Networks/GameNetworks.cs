@@ -669,7 +669,30 @@ public class GameNetworks : GameObjectBehavior {
                     }
                 }
             }
-#endif      
+#endif
+
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
+
+        Debug.Log("showLeaderboardsOrLoginAndroidGooglePlay");
+
+        //LogUtil.Log("showLeaderboardsOrLoginiOSAppleGameCenter:GameNetworks.gameNetworkiOSAppleGameCenterEnabled:" + 
+        //GameNetworks.gameNetworkiOSAppleGameCenterEnabled);
+
+        if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
+            if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
+                if(IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkGooglePlayServices)) {
+
+                    LogUtil.Log("showLeaderboardsOrLoginAndroidGooglePlay:showLeaderboards::");
+
+                    gameNetworkManager.showLeaderboards();
+                    //GameCenterBinding.showLeaderboardWithTimeScope(GameCenterLeaderboardTimeScope.AllTime);
+                }
+                else {
+                    gameNetworkManager.authenticate();
+                }
+            }
+        }
+#endif
     }
 
     // -------------------------------------------------------------------------
