@@ -2482,7 +2482,7 @@ public class BaseGamePlayerController : GameActor {
 
                             //  if(GameController.IsGameplayWorldTypeStationary()) {
 
-                            float power = .35f;
+                            float power = .1f;
                             runtimeData.health -= power;
 
                             Hit(power);

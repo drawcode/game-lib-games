@@ -8,6 +8,7 @@ using UnityEngine;
 public class BaseGameGameRuntimeData {
     public double currentLevelTime = 0;
     public double timeRemaining = 90;
+    public double timeRemainingDefault = 90;
     public double coins = 0;
     public string levelCode = "";
     public double score = 0;
@@ -33,11 +34,11 @@ public class BaseGameGameRuntimeData {
 
     public virtual void Reset() {
         currentLevelTime = 0;
-        timeRemaining = 90;
         coins = 0;
         levelCode = "";
         score = 0;
         outOfBounds = false;
+
         ResetTimeDefault();
 
         // TYPES
@@ -75,7 +76,7 @@ public class BaseGameGameRuntimeData {
     }
 
     public virtual void ResetTimeDefault() {
-        timeRemaining = 90;
+        timeRemaining = timeRemainingDefault;
     }
 
     public virtual void ResetTime(double timeTo) {

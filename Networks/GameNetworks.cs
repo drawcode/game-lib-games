@@ -1084,7 +1084,16 @@ public class GameNetworks : GameObjectBehavior {
     public void checkAchievementsState() {
 
 #if GAMENETWORK_USE_UNITY
-        // Sync from other devices.
+
+        if(gameNetworkAchievements == null) {
+            return;
+        }
+
+        if(gameNetworkAchievements.Length == 0) {
+            return;
+        }
+
+        // Sync from other devices.GameNetworks:onGameNetworkUnityAchievements:0
         foreach(IAchievement achievement in gameNetworkAchievements) {
             bool localAchievementValue = GameProfileAchievements.Current.GetAchievementValue(achievement.id);
             bool remoteAchievementValue = achievement.completed;
@@ -1093,6 +1102,14 @@ public class GameNetworks : GameObjectBehavior {
             if(localAchievementValue != remoteAchievementValue && remoteAchievementValue) {
                 GameProfileAchievements.Current.SetAchievementValue(achievement.id, true);
             }
+        }
+
+        if(gameNetworkAchievementsMeta == null) {
+            return;
+        }
+
+        if(gameNetworkAchievementsMeta.Length == 0) {
+            return;
         }
 
         foreach(IAchievementDescription meta in gameNetworkAchievementsMeta) {

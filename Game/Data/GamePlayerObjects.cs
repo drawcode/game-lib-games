@@ -310,15 +310,15 @@ public class BaseGamePlayerControllerData {
 
         moveGamePlayerPositionTo = Vector3.zero;
         speedInfinite = 0f;
-        
-        if(Context.Current.isMobileAndroid) {
-            speedInfiniteTo = 68f;
-            speedInfiniteMax = 84f;
-        }
-        else {
-            speedInfiniteTo = 72f;
-            speedInfiniteMax = 90f;
-        }
+
+        //if(Context.Current.isMobileAndroid) {
+        speedInfiniteTo = 72f;
+        speedInfiniteMax = 82f;
+        //}
+        //else {
+        //    speedInfiniteTo = 72f;
+        //    speedInfiniteMax = 90f;
+        //}
 
         moveGamePlayerPosition = Vector3.zero;
         currentGamePlayerPosition = Vector3.zero;

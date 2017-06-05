@@ -4616,6 +4616,7 @@ public class BaseGameController : GameObjectTimerBehavior {
             renderingTargetFramerate = frameRate;
 
             setVSyncCount(0);  // VSync must be disabled for target framerate
+
             Application.targetFrameRate = renderingTargetFramerate;
 
             renderingTargetFramerateLast = renderingTargetFramerate;
@@ -4637,9 +4638,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void Update() {
 
-        if(Application.isEditor) {
-            setFramerate(renderingTargetFramerate);
-        }
+        //if(Application.isEditor) {
+        setFramerate(renderingTargetFramerate);
+        //}
 
         // TOOLS
 
