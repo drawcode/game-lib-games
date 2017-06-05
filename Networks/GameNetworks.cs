@@ -325,13 +325,14 @@ public class GameNetworks : GameObjectBehavior {
         
         LogUtil.Log("InitNetwork Android Google Play init...");
 #endif
-
-#if GAMENETWORK_USE_UNITY
-
+        
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
         if(currentNetwork == GameNetworkType.gameNetworkGooglePlayServices) {
             PlayGamesPlatform.Activate();
         }
+#endif
 
+#if GAMENETWORK_USE_UNITY
         LoginNetwork(currentNetwork);
 
         LogUtil.Log("InitNetwork Unity GameNetwork...");
