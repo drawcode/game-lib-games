@@ -8,7 +8,9 @@ using UnityEngine.UI;
 
 using Engine.Events;
 
+#if ENABLE_FEATURE_AR
 using Vuforia;
+#endif
 
 public class GameUISceneRoot : GameObjectBehavior {
 
@@ -55,11 +57,12 @@ public class GameUISceneRoot : GameObjectBehavior {
     public void OnContentSyncShipContentSuccess(object obj) {
 
 //#if UNITY_ANDROID
-        // Android has to be loaded dynamically after 
-        // copying /syncing files into persistence folder
-        // due to the split binary loading and finding Vuforia 
-        // files /datasets/trackers
+// Android has to be loaded dynamically after 
+// copying /syncing files into persistence folder
+// due to the split binary loading and finding Vuforia 
+// files /datasets/trackers
 
+#if ENABLE_FEATURE_AR
         Debug.Log("OnContentSyncShipContentSuccess");
 
         Debug.Log("OnContentSyncShipContentSuccess::SyncContentList");
@@ -73,6 +76,8 @@ public class GameUISceneRoot : GameObjectBehavior {
         BasicARController.DataSetLoadDynamic(dataSetCode);
 
         Debug.Log("OnContentSyncShipContentSuccess:end:DataSetLoadDynamic:" + dataSetCode);
+
+#endif
 //#endif
 
         loadAsync.LoadLevel("GameSceneDynamic");

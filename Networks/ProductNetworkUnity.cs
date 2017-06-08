@@ -1,9 +1,14 @@
-﻿using System;
+﻿#define PURCHASE_USE_UNITY
+
+using System;
 using System.Collections.Generic;
 using Engine.Events;
 using UnityEngine;
-using UnityEngine.Purchasing;
 
+#if PURCHASE_USE_UNITY
+using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Extension;
+#endif
 
 public class ProductNetworkUnityMessages {
     public static string productNetworkUnitySuccess = "product-network-unity-success";
