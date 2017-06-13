@@ -4,12 +4,16 @@
 //#define PROMO_USE_VUNGLE
 //#define PROMO_USE_CHARTBOOST
 //#define PROMO_USE_TAPJOY
+#define AD_USE_UNITY
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 using UnityEngine;
+#if AD_USE_UNITY
+using UnityEngine.Advertisements;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
@@ -23,6 +27,7 @@ using ChartboostSDK;
 
 public enum AdNetworkType {
     Drawlabs,
+    Unity,
     Admob,
     iAds,
     Chartboost,
