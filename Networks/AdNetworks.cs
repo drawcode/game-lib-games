@@ -176,7 +176,57 @@ public static event Action interstitialAdLoaded;
 
 */
 
+    /*
+
+    UNITY ADS
+
+    using UnityEngine;
+    using UnityEngine.Advertisements;
+
+    public class UnityAdsExample : MonoBehaviour {
+      public void ShowAd() {
+        if (Advertisement.IsReady()) {
+          Advertisement.Show();
+        }
+      }
+    }
+
+    using UnityEngine;
+    using UnityEngine.Advertisements;
+
+    public class UnityAdsExample : MonoBehaviour {
+      public void ShowRewardedAd() {
+        if (Advertisement.IsReady("rewardedVideo")) {
+          var options = new ShowOptions { resultCallback = HandleShowResult };
+          Advertisement.Show("rewardedVideo", options);
+        }
+      }
+
+      private void HandleShowResult(ShowResult result) {
+        switch (result) {
+          case ShowResult.Finished:
+            Debug.Log("The ad was successfully shown.");
+            //
+            // YOUR CODE TO REWARD THE GAMER
+            // Give coins etc.
+            break;
+          case ShowResult.Skipped:
+            Debug.Log("The ad was skipped before reaching the end.");
+            break;
+          case ShowResult.Failed:
+            Debug.LogError("The ad failed to be shown.");
+            break;
+        }
+      }
+    }
+
+    */
+
     void OnEnable() {
+
+#if AD_USE_UNITY
+
+#endif
 
 #if AD_USE_IAD
         // ------------
@@ -189,7 +239,7 @@ public static event Action interstitialAdLoaded;
         AdManager.moviePlaybackCompletedEvent += iadMoviePlaybackCompletedEvent; // Action moviePlaybackCompletedEvent;
 #endif
 
-        
+
 #if PROMO_USE_CHARTBOOST
         // ------------
         // CHARTBOOST
@@ -249,9 +299,13 @@ public static event Action interstitialAdLoaded;
 #endif
 
     }
-    
+
     void OnDisable() {
-        
+
+#if AD_USE_UNITY
+
+#endif
+
 #if AD_USE_IAD
         // ------------
         // iAd     
@@ -322,8 +376,13 @@ public static event Action interstitialAdLoaded;
         TapjoyPlugin.showOffersFailed -= tapjoyHandleShowOffersFailed;
 #endif
     }
-    
-    public void Init() {  
+
+    public void Init() {
+
+#if AD_USE_UNITY
+
+#endif
+
 #if AD_USE_IAD
         Invoke("iadInit", 1);
 #endif
@@ -331,7 +390,7 @@ public static event Action interstitialAdLoaded;
 
 #if AD_USE_ADMOB
         //Invoke("admobInit", 1);
-#endif        
+#endif
 
 #if PROMO_USE_CHARTBOOST
         Invoke("chartboostInit", .5f);
@@ -339,14 +398,14 @@ public static event Action interstitialAdLoaded;
 
 #if PROMO_USE_VUNGLE
         Invoke("vungleInit", .6f);
-#endif  
+#endif
 
 #if PROMO_USE_TAPJOY
         Invoke("tapjoyInit", .8f);
 #endif
     }
-    
-    #if PROMO_USE_TAPJOY
+
+#if PROMO_USE_TAPJOY
     // ----------------------------------------------------------------------
     // TAPJOY - http://prime31.com/docs#comboVungle
     
@@ -488,7 +547,7 @@ public static event Action interstitialAdLoaded;
     }
 #endif
 
-    #if PROMO_USE_VUNGLE   
+#if PROMO_USE_VUNGLE
     
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
@@ -552,11 +611,11 @@ public static event Action interstitialAdLoaded;
 
     public void chartboostInit() {
 
-        #if UNITY_ANDROID
+//#if UNITY_ANDROID
            // ChartboostSDK.Chartboost.init(AppConfigs.publisherIdCharboostAndroid, AppConfigs.publisherSecretCharboostAndroid);
-        #elif UNITY_IPHONE
+//#elif UNITY_IPHONE
             //CBBinding.init(AppConfigs.publisherIdCharboostiOS, AppConfigs.publisherSecretCharboostiOS);
-        #endif
+//#endif
     }
 
     public void chartboostShowInterstitial() {
@@ -815,10 +874,38 @@ public static event Action interstitialAdLoaded;
         return true;
     }
 
+
+    // ----------------------------------------------------------------------
+    // UNITY ADS
+
+#if AD_USE_UNITY
+    public void unityAdsInit() {
+        //Advertisement.Initialize();
+    }
     
+    public void unityShowVideoAd() {
+
+    }
+
+    public void unityShowRewardAd() {
+
+    }
+
+    public bool unityIsAdReady(string code = null) {
+
+        if(code.IsNullOrEmpty()) {
+            return Advertisement.IsReady();
+        }
+        else {
+            return Advertisement.IsReady(code);
+        }
+    }
+
+#endif
+
     // ----------------------------------------------------------------------
     // GOOGLE ADMOB
-    
+
     public void admobInit() {
         LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobiOS..." + 
             AppConfigs.publisherIdAdmobiOS);
@@ -857,8 +944,8 @@ public static event Action interstitialAdLoaded;
         }
     }
 
-#if !UNITY_WEBPLAYER        
-    #if AD_USE_ADMOB
+#if !UNITY_WEBPLAYER
+#if AD_USE_ADMOB
     public AdMobBanner admobGetBanner(AdBanner banner) {
         if (banner == AdBanner.Phone_320x50) {
             return AdMobBanner.Phone_320x50;
@@ -901,8 +988,8 @@ public static event Action interstitialAdLoaded;
     }
 #endif
     
-#if !UNITY_WEBPLAYER   
-    #if AD_USE_ADMOB
+#if !UNITY_WEBPLAYER
+#if AD_USE_ADMOB
     public AdMobLocation admobGetPlacementType(AdPlacementType bannerType) {
         if (bannerType == AdPlacementType.BottomLeft) {
             return AdMobLocation.BottomLeft;
@@ -964,56 +1051,56 @@ public static event Action interstitialAdLoaded;
     // HELPERS
 
     public bool admobShowBannerAd() {
-        #if AD_USE_ADMOB
+#if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
             //AdMob.createBanner(
             //admobGetBannerType(bannerType), 
             //admobGetPosition(placementType)
             //);
-        #endif
+#endif
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
-        #if UNITY_IPHONE
+#if UNITY_IPHONE
             AdMobBinding.createBanner(
                 admobGetBannerType(bannerType), 
                 admobGetPosition(position)
                 );
-        #endif
+#endif
         }
         else {
             // Web player...
-        #if UNITY_WEBPLAYER
+#if UNITY_WEBPLAYER
             //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
-        #endif
+#endif
         }
-        #endif
+#endif
 
         return false;
     }
 
     public bool admobHideBannerAd() {        
         
-        #if AD_USE_ADMOB
+#if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
             AdMob.destroyBanner();
             return true;
-        #endif
+#endif
         }
         else if (Application.platform == RuntimePlatform.IPhonePlayer) {            
-        #if UNITY_IPHONE
+#if UNITY_IPHONE
             AdMobBinding.destroyBanner();
             return true;
-        #endif
+#endif
         }
         else {
             // Web player...
-        #if UNITY_WEBPLAYER
+#if UNITY_WEBPLAYER
             //Application.ExternalCall("if(window.console) window.console.log","web show twitter login");
-        #endif
+#endif
         }
-        #endif
+#endif
 
         return false;
     }
@@ -1100,11 +1187,11 @@ public static event Action interstitialAdLoaded;
         
         bool hasAd = false;
         
-        #if AD_USE_IAD
+#if AD_USE_IAD
         if(!hasAd) {
             hasAd = iadShowBannerAd(bannerType, position);
         }
-        #endif
+#endif
 
         if (!hasAd) {
         
@@ -1120,11 +1207,11 @@ public static event Action interstitialAdLoaded;
     
     public void hideBannerAd() {
         
-        #if AD_USE_IAD
+#if AD_USE_IAD
         iadHideBannerAd();
-        #endif
+#endif
 
-        #if AD_USE_ADMOB
+#if AD_USE_ADMOB
         admobHideBannerAd();
 #endif
     }
@@ -1173,6 +1260,15 @@ public static event Action interstitialAdLoaded;
             vungleDisplayAdvert(true);
         }
 #endif
+
+#if AD_USE_UNITY
+        if(!Advertisement.IsReady()) {
+            Debug.Log("Ads not ready for default placement");
+            return;
+        }
+
+        Advertisement.Show();
+#endif
     }
 
     public static void ShowVideoAd(bool showCloseButtons) {
@@ -1219,9 +1315,9 @@ public static event Action interstitialAdLoaded;
     
     public void showOfferWall() {
         
-        #if PROMO_USE_TAPJOY
+#if PROMO_USE_TAPJOY
         tapjoyShowOffers();
-        #endif
+#endif
     }
     
     public static void ShowDisplayAd() {
@@ -1232,9 +1328,9 @@ public static event Action interstitialAdLoaded;
     
     public void showDisplayAd() {
         
-        #if PROMO_USE_TAPJOY
+#if PROMO_USE_TAPJOY
         tapjoyShowDisplayAd();
-        #endif
+#endif
     }
 
     // FULLSCREEN ADS
@@ -1247,9 +1343,9 @@ public static event Action interstitialAdLoaded;
     
     public void showFullscreenAd() {
         
-        #if PROMO_USE_TAPJOY
+#if PROMO_USE_TAPJOY
         tapjoyShowFullscreenAd();
-        #endif
+#endif
     }
 
     // MORE APPS
@@ -1262,10 +1358,10 @@ public static event Action interstitialAdLoaded;
     
     public void showMoreApps() {
         
-        #if PROMO_USE_CHARTBOOST
+#if PROMO_USE_CHARTBOOST
         CBLocation location = CBLocation.LevelStart;
         chartboostShowMoreApps(location);
-        #endif
+#endif
     }
     
     public static void ShowInterstitial() {
@@ -1276,29 +1372,29 @@ public static event Action interstitialAdLoaded;
     
     public void showInterstitial() {
         
-        #if PROMO_USE_CHARTBOOST
+#if PROMO_USE_CHARTBOOST
         chartboostShowInterstitial();
-        #endif
+#endif
     }
     
     
     // ----------------------------------------------------------------------
 
     public static void HandleAdUpdate() {        
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
-        #if PROMO_USE_CHARTBOOST
+#if PROMO_USE_CHARTBOOST
                 //if (Chartboost..onBackPressed())
                 //    return;
                 //else
                     Application.Quit();
-        #else 
+#else
                 Application.Quit();
-        #endif
+#endif
             }
         }
-        #endif
+#endif
     }
     
 }
