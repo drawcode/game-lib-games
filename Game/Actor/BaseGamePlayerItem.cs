@@ -391,7 +391,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         //Debug.DrawRay(contact.point, contact.normal, Color.white);
         //LogUtil.Log("GamePlayerItem:OnCollisionEnter:", contact.otherCollider.transform.name);
 
-        return;
+        //return;
 
         if (!GameConfigs.isGameRunning) {
             return;
@@ -410,7 +410,7 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
                 if(gamePlayerController != null) {
                     if(gamePlayerController.controllerState == GamePlayerControllerState.ControllerPlayer) {
                         // If player collect this
-                        //CollectContent();
+                        CollectContent();
                     }
                 }
             }

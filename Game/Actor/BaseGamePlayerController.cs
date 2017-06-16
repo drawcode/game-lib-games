@@ -261,8 +261,13 @@ public class BaseGamePlayerController : GameActor {
                 }
 
                 //if(axisInput.x != 0 || axisInput.y != 0) {
-                Debug.Log("axisInput x:" + axisInput.x + " y:" + axisInput.y);
+                //Debug.Log("axisInput x:" + axisInput.x + " y:" + axisInput.y);
                 //}
+
+
+                if(axisInput.x != 0 || axisInput.y != 0) {
+                    //Debug.Log("axisInput x:" + axisInput.x + " y:" + axisInput.y);
+                }
 
                 //if(!GameController.isFingerNavigating) {
                 HandleThirdPersonControllerAxis(axisInput);
@@ -391,6 +396,10 @@ public class BaseGamePlayerController : GameActor {
 
             currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
             currentControllerData.thirdPersonController.verticalInput = axisInput.y;
+
+            if(axisInput.x != 0 && axisInput.y != 0) {
+                Debug.Log("HandleThirdPersonControllerAxis: axisInput.x:" + axisInput.x + " axisInput.y:" + axisInput.y);
+            }
         }
     }
 
@@ -1597,7 +1606,7 @@ public class BaseGamePlayerController : GameActor {
             if(currentControllerData.navMeshAgent != null) {
 
                 if(currentControllerData.navMeshAgent.isActiveAndEnabled) {
-                    currentControllerData.navMeshAgent.Stop();
+                    currentControllerData.navMeshAgent.isStopped = true;
                 }
                 //navMeshAgent.enabled = false;
             }
@@ -1605,7 +1614,7 @@ public class BaseGamePlayerController : GameActor {
         else if(controllerState == GamePlayerControllerState.ControllerNetwork) {
             if(currentControllerData.navMeshAgent != null) {
                 if(currentControllerData.navMeshAgent.isActiveAndEnabled) {
-                    currentControllerData.navMeshAgent.Stop();
+                    currentControllerData.navMeshAgent.isStopped = true;
                 }
                 //navMeshAgent.enabled = false;
             }
@@ -1614,7 +1623,7 @@ public class BaseGamePlayerController : GameActor {
         else if(controllerState == GamePlayerControllerState.ControllerUI) {
             if(currentControllerData.navMeshAgent != null) {
                 if(currentControllerData.navMeshAgent.isActiveAndEnabled) {
-                    currentControllerData.navMeshAgent.Stop();
+                    currentControllerData.navMeshAgent.isStopped = true;
                 }
                 //navMeshAgent.enabled = false;  
                 if(currentControllerData.thirdPersonController != null) {
@@ -4128,10 +4137,15 @@ public class BaseGamePlayerController : GameActor {
             float amount = Mathf.Abs(dist);
 
             if(currentControllerData.gamePlayerEffectAim != null) {
+                
+                ParticleSystem.MainModule main = currentControllerData.gamePlayerEffectAim.main;
+                main.startLifetime = amount / 400f;
+                main.startSpeed = amount;
+
                 currentControllerData.gamePlayerEffectAim.EnableEmission(true);
                 currentControllerData.gamePlayerEffectAim.SetEmissionRate(amount * 2);
-                currentControllerData.gamePlayerEffectAim.startLifetime = amount / 400f;
-                currentControllerData.gamePlayerEffectAim.startSpeed = amount;
+                //currentControllerData.gamePlayerEffectAim.startLifetime = amount / 400f;
+                //currentControllerData.gamePlayerEffectAim.startSpeed = amount;
                 currentControllerData.gamePlayerEffectAim.Play();
             }
 
@@ -4870,20 +4884,20 @@ public class BaseGamePlayerController : GameActor {
                  || contextState == GamePlayerContextState.ContextInputVehicle
                  || contextState == GamePlayerContextState.ContextFollowInput) {
             if(currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                currentControllerData.navMeshAgent.isStopped = true;
                 //navMeshAgent.enabled = false;
             }
         }
         else if(contextState == GamePlayerContextState.ContextNetwork) {
             if(currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                currentControllerData.navMeshAgent.isStopped = true;
                 //navMeshAgent.enabled = false;
             }
             currentControllerData.thirdPersonController.isNetworked = true;
         }
         else if(contextState == GamePlayerContextState.ContextUI) {
             if(currentControllerData.navMeshAgent != null) {
-                currentControllerData.navMeshAgent.Stop();
+                currentControllerData.navMeshAgent.isStopped = true;
                 //navMeshAgent.enabled = false;
             }
         }
@@ -5814,7 +5828,7 @@ public class BaseGamePlayerController : GameActor {
             if(currentControllerData.thirdPersonController.IsJumping()) {
                 if(currentControllerData.navMeshAgent != null) {
                     if(currentControllerData.navMeshAgent.enabled) {
-                        currentControllerData.navMeshAgent.Stop();
+                        currentControllerData.navMeshAgent.isStopped = true;
                     }
                 }
 
@@ -5827,7 +5841,7 @@ public class BaseGamePlayerController : GameActor {
                     if(!currentControllerData.navMeshAgent.enabled) {
                         currentControllerData.navMeshAgent.enabled = true;
                     }
-                    currentControllerData.navMeshAgent.Resume();
+                    currentControllerData.navMeshAgent.isStopped = false;
                 }
 
                 if(gamePlayerShadow != null) {

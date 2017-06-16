@@ -110,7 +110,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
             RaycastHit hit;
             if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
-                Debug.Log("hit:" + hit.transform.gameObject.name);
+                //Debug.Log("hit:" + hit.transform.gameObject.name);
 
                 hitObject = hit.transform.gameObject;
 
@@ -135,9 +135,6 @@ public class GameTouchInputAxis : GameObjectBehavior {
                 inUse = false;
                 anchorPoint = Vector3.zero;
             }
-            else {
-
-            }
 
             if(controlsMoveable) {
 
@@ -152,16 +149,16 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
                     Vector3 viewportPoint = collisionCamera.ScreenToViewportPoint(point);
 
-                    Debug.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
+                    //Debug.Log("viewportPoint:" + " viewportPoint:" + viewportPoint);
 
                     Vector3 worldPoint = collisionCamera.ViewportToWorldPoint(viewportPoint);
 
-                    Debug.Log("worldPoint:" + " worldPoint:" + worldPoint);
+                    //Debug.Log("worldPoint:" + " worldPoint:" + worldPoint);
 
                     viewportPoint.z = -10;
                     worldPoint.z = -10;
 
-                    Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
+                    //Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
 
                     if(hitPad) {
 
@@ -178,7 +175,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         axisInput.x = deltaPos.x;
                         axisInput.y = deltaPos.y;
 
-                        Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        //Debug.Log("axisInput:" + " axisInput:" + axisInput);
+
+                        if(axisInput.x != 0 || axisInput.y != 0) {
+                            Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        }
 
                         GameController.SendInputAxisMessage(axisName, axisInput);
 
@@ -237,12 +238,12 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool downPressed = InputSystem.isDownPress;
 
         if(axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
-            Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
-             + " rightPressed:" + rightPressed.ToString()
-             + " upPressed:" + upPressed.ToString()
-                      + " downPressed:" + downPressed.ToString()
-                      + " touchPressed:" + touchPressed.ToString()
-                      + " mousePressed:" + mousePressed.ToString());
+            //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
+            // + " rightPressed:" + rightPressed.ToString()
+            // + " upPressed:" + upPressed.ToString()
+            //          + " downPressed:" + downPressed.ToString()
+            //          + " touchPressed:" + touchPressed.ToString()
+            //          + " mousePressed:" + mousePressed.ToString());
         }
 
         bool handled = false;

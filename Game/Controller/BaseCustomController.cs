@@ -521,7 +521,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
         GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
         
-        int randomColor = UnityEngine.Random.Range(0, 8);
+        //int randomColor = UnityEngine.Random.Range(0, 8);
         
         /*
         if (randomColor == 1) {

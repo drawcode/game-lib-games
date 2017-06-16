@@ -249,7 +249,8 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
     public void ClearItems(bool removeCached = false) {
 
-        bool cached = GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
+        //bool cached = GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
+        GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
 
         //foreach (PoolGameObject item in gameObject.GetList<PoolGameObject>()) {
         //    item.gameObject.DestroyGameObject();

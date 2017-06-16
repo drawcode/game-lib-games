@@ -3141,9 +3141,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                 if (updateFingerNavigate) {
 
                     handled = true;
-
-                    //LogUtil.Log("updateFingerNavigate::directionNormal.y" + directionNormal.y);
-                    //LogUtil.Log("updateFingerNavigate::directionNormal.x" + directionNormal.x);
+                    
+                    Debug.Log("updateFingerNavigate: directionNormal.x" + directionNormal.x + " directionNormal.y:" + directionNormal.y);
 
                     sendInputAxisMoveMessage(directionNormal.x, directionNormal.y);
                 }

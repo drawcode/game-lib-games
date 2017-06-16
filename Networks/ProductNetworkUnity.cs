@@ -67,7 +67,7 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
 
             // check type then add based on type
 
-            string purchaseType = typeNonConsumable;
+            //string purchaseType = typeNonConsumable;
 
             if(product.data != null) {
                 if(product.data.meta != null && product.data.meta.Count > 0) {
