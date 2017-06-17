@@ -121,7 +121,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         if(axisPadObject.gameTouchInputAxis.axisName == axisName) {
                             hitPad = true;
 
-                            Debug.Log("PointHitTest:" + " hitPad:" + hitPad.ToString() + " axisPadName:" + axisName);
+                            //Debug.Log("PointHitTest:" + " hitPad:" + hitPad.ToString() + " axisPadName:" + axisName);
                             // }
                         }
                     }
@@ -177,9 +177,9 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
                         //Debug.Log("axisInput:" + " axisInput:" + axisInput);
 
-                        if(axisInput.x != 0 || axisInput.y != 0) {
-                            Debug.Log("axisInput:" + " axisInput:" + axisInput);
-                        }
+                        //if(axisInput.x != 0 || axisInput.y != 0) {
+                            //Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        //}
 
                         GameController.SendInputAxisMessage(axisName, axisInput);
 

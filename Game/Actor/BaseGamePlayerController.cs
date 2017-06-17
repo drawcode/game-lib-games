@@ -397,9 +397,9 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
             currentControllerData.thirdPersonController.verticalInput = axisInput.y;
 
-            if(axisInput.x != 0 && axisInput.y != 0) {
-                Debug.Log("HandleThirdPersonControllerAxis: axisInput.x:" + axisInput.x + " axisInput.y:" + axisInput.y);
-            }
+            //if(axisInput.x != 0 && axisInput.y != 0) {
+            //    Debug.Log("HandleThirdPersonControllerAxis: axisInput.x:" + axisInput.x + " axisInput.y:" + axisInput.y);
+            //}
         }
     }
 
@@ -1410,11 +1410,11 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void HandlePlayerAliveStateLate() {
 
-        UpdatePhysicsState();
+        //UpdatePhysicsState();
     }
 
     public virtual void HandlePlayerAliveStateFixed() {
-
+        //UpdatePhysicsState();
     }
 
     public virtual void HandlePlayerInactionState() {
@@ -4525,7 +4525,8 @@ public class BaseGamePlayerController : GameActor {
                     (float)(-.01f * Mathf.Clamp(force / 10f, .3f, 1f)));
             }
         }
-        //LogUtil.Log("AddImpact:name:", transform.name + "currentControllerData.impact:" + currentControllerData.impact.x);
+
+        Debug.Log("AddImpact:name:" + transform.name + "currentControllerData.impact:" + currentControllerData.impact);
     }
 
     // call this function to add an currentControllerData.impact force:
@@ -4651,16 +4652,18 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        //if (GameController.IsGameplayType(GameplayType.gameDasher)) {
+        if(GameController.IsGameplayType(GameplayType.gameDasher)) {
 
-        if(currentControllerData.characterController.enabled) {
-            currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
+            if(currentControllerData.characterController.enabled) {
+                currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
+            }
+
+            // consumes the currentControllerData.impact energy each cycle:
+            currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+            //}
+
+            //Debug.Log("UpdatePhysicStateCo:currentControllerData.impact:" + currentControllerData.impact);
         }
-
-        // consumes the currentControllerData.impact energy each cycle:
-        currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
-        //}
-        //}
 
         UpdatePlayerEffectsState();
 
@@ -4674,12 +4677,16 @@ public class BaseGamePlayerController : GameActor {
         //if (currentControllerData.characterController.enabled) {
         //    currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
         // }
+        if(currentControllerData.characterController.enabled) {
+            currentControllerData.characterController.Move(currentControllerData.impact * 3 * Time.deltaTime);
+        }
 
         // consumes the currentControllerData.impact energy each cycle:
-        //currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+        currentControllerData.impact = Vector3.Lerp(currentControllerData.impact, Vector3.zero, 5 * Time.deltaTime);
+
         //}
 
-        //UpdatePlayerEffectsState();
+        UpdatePlayerEffectsState();
 
         yield return null;
         //new WaitForFixedUpdate();
@@ -6186,6 +6193,8 @@ public class BaseGamePlayerController : GameActor {
         }
 
         UpdateStationary();
+
+        UpdatePhysicsState();
 
         if(!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {

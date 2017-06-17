@@ -206,13 +206,13 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         movementDirection = targetDirection;
         aimingDirection = Vector3.zero;
 
-        if(horizontalInput != 0 || verticalInput != 0) {
-            Debug.Log("UpdateSmoothedMovementDirection: verticalInput:" + verticalInput + " horizontalInput:" + horizontalInput);
-        }
+        //if(horizontalInput != 0 || verticalInput != 0) {
+        //    Debug.Log("UpdateSmoothedMovementDirection: verticalInput:" + verticalInput + " horizontalInput:" + horizontalInput);
+        //}
 
-            if(horizontalInput2 != 0 || verticalInput2 != 0) {
+        if(horizontalInput2 != 0 || verticalInput2 != 0) {
             aimingDirection = horizontalInput2 * right + verticalInput2 * forward;
-            Debug.Log("UpdateSmoothedMovementDirection: verticalInput2:" + verticalInput2 + " horizontalInput2:" + horizontalInput2);
+        //    Debug.Log("UpdateSmoothedMovementDirection: verticalInput2:" + verticalInput2 + " horizontalInput2:" + horizontalInput2);
         }
         else {
             aimingDirection = targetDirection;
