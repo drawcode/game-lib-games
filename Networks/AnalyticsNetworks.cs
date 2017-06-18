@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using UnityEngine;
+#if ANALYTICS_UNITY
+using UnityEngine.Analytics;
+#endif
 
 using Engine.Data.Json;
 using Engine.Events;
@@ -18,6 +21,7 @@ using GameAnalyticsSDK;
 #endif
 
 public enum AnalyticsNetworkType {
+    Unity,
     GameAnalytics,
     Google
 }
@@ -158,12 +162,13 @@ public class AnalyticsNetworks : GameObjectBehavior {
     
     public bool isSupported() {
 
-        #if ANALYTICS_GAMEANALYTICS
+#if ANALYTICS_UNITY
         return true;
-        #else
-
+#elif ANALYTICS_GAMEANALYTICS
+        return true;
+#else
         return false;
-        #endif
+#endif
     }
         
     // LOG AREA 

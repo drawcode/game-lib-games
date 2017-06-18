@@ -138,7 +138,7 @@ public class UINotificationDisplayTip
         
         Instance = this;
         
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
     
     public void Start() {   
