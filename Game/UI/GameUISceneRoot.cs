@@ -115,7 +115,7 @@ public class GameUISceneRoot : GameObjectBehavior {
 
         }
 
-        //Application.LoadLevel("GameUISceneSplash");   
+        //UnityEngine.SceneManagement.SceneManager.LoadScene("GameUISceneSplash");   
 
         yield return null;
 

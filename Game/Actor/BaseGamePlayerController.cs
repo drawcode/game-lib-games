@@ -4654,7 +4654,7 @@ public class BaseGamePlayerController : GameActor {
 
         if(GameController.IsGameplayType(GameplayType.gameDasher)) {
 
-            if(currentControllerData.characterController.enabled) {
+            if(currentControllerData.characterController.enabled) { 
                 currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
             }
 

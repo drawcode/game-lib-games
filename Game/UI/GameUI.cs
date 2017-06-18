@@ -57,7 +57,7 @@ public class GameUI : GameObjectBehavior {
 
         buttonMeta.SetButton("buttonUIToggle", ref buttonUIToggle, delegate () {
             ToggleGameUI();
-            //Application.LoadLevel("GameSceneDynamic");
+            //UnityEngine.SceneManagement.SceneManager.LoadScene("GameSceneDynamic");
             LogUtil.Log("buttonUIToggle:");
         });
 

@@ -14,6 +14,8 @@ public class GameObjectInfiniteController : GameObjectBehavior {
 
     public void Init() {
 
+        containersInfinite = new Dictionary<string, GameObjectInfiniteContainer>();
+
         UpdateContainers();
     }
     
@@ -22,6 +24,14 @@ public class GameObjectInfiniteController : GameObjectBehavior {
         foreach (GameObjectInfiniteContainer container in gameObject.GetList<GameObjectInfiniteContainer>()) {
             containersInfinite.Set(container.data.code, container);
         }
+
+        int containersCount = 0;
+
+        if(containersInfinite != null) {
+            containersCount = containersInfinite.Count;
+        }
+
+        Debug.Log("UpdateContainers: count:" + containersCount);
     }
 
 }

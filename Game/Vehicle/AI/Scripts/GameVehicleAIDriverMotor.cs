@@ -1,4 +1,4 @@
-//#pragma warning disable 0414
+#pragma warning disable 0414
 
 using UnityEngine;
 using System.Collections;
