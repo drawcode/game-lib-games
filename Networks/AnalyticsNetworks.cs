@@ -166,7 +166,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         return true;
 #elif ANALYTICS_GAMEANALYTICS
         return true;
-#else
+#else 
         return false;
 #endif
     }
@@ -227,7 +227,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         if (Instance != null) {
             Instance.logEvent(eventName, args);
         }
-    }
+    } 
     
     public void logEvent(string eventName, params object[] args) {
       
