@@ -28,7 +28,7 @@ public class GameCustomPlayer : BaseGameCustom {
     }
     
     void OnCustomizationColorsPlayerChangedHandler() {
-        //UpdatePlayer();
+        UpdatePlayer();
     }
 
     void OnCustomizationCharacterDisplayChangedHandler() {

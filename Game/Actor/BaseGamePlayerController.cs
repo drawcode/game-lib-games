@@ -3343,6 +3343,8 @@ public class BaseGamePlayerController : GameActor {
         if(gamePlayerEffectSkill != null) {
             gamePlayerEffectSkill.Emit(1);
         }
+
+        Debug.Log("GamePlayerController:Jump");
     }
 
     public virtual void JumpStop() {
@@ -4526,7 +4528,7 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        Debug.Log("AddImpact:name:" + transform.name + "currentControllerData.impact:" + currentControllerData.impact);
+        //Debug.Log("AddImpact:name:" + transform.name + "currentControllerData.impact:" + currentControllerData.impact);
     }
 
     // call this function to add an currentControllerData.impact force:
@@ -5686,6 +5688,7 @@ public class BaseGamePlayerController : GameActor {
         currentFPS = FPSDisplay.GetCurrentFPS();
 
         if(InputSystem.isMouseSecondaryPressed) {
+            Debug.Log("UpdateCommonState:InputSystem.isMouseSecondaryPressed:" + InputSystem.isMouseSecondaryPressed);
             Jump();
         }
 

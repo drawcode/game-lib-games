@@ -4,7 +4,7 @@
 //#define PROMO_USE_VUNGLE
 //#define PROMO_USE_CHARTBOOST
 //#define PROMO_USE_TAPJOY
-#define AD_USE_UNITY
+//#define AD_USE_UNITY
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,9 @@ using System.Text;
 
 using UnityEngine;
 #if AD_USE_UNITY
+#if UNITY_IPHONE || UNITY_ANDROID
 using UnityEngine.Advertisements;
+#endif
 #endif
 
 using Engine.Data.Json;
@@ -96,8 +98,8 @@ public class AdNetworksMessages {
 }
 
 public class AdNetworks : GameObjectBehavior {
-    #if AD_USE_ADMOB
-#if UNITY_EDITOR    
+#if AD_USE_ADMOB
+#if UNITY_EDITOR
 #elif UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
 #elif UNITY_ANDROID
@@ -827,7 +829,7 @@ public static event Action interstitialAdLoaded;
         AdBinding.playMovieWithPrerollAd(videoPathOrUrl);        
     }
 
-    #endif
+#endif
 
     // HELPERS
 
@@ -865,11 +867,11 @@ public static event Action interstitialAdLoaded;
     
     public bool iadHideBannerAd() {        
         
-        #if AD_USE_IAD
-        #if UNITY_IPHONE
+#if AD_USE_IAD
+#if UNITY_IPHONE
             iadDestroyAdBanner();
-        #endif
-        #endif
+#endif
+#endif
         
         return true;
     }
