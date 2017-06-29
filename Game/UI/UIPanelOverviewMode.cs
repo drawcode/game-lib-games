@@ -52,9 +52,10 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public AppOverviewFlowState flowState = AppOverviewFlowState.Mode;
 
-    public void Awake() {
+    public override void Awake() {
+        base.Awake();
 
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -67,7 +68,7 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
@@ -119,10 +120,10 @@ public class UIPanelOverviewMode : UIPanelBase {
     string lastTipObjectName = "";
 
     void OnTipsCycleHandler(string objName) {
-        if (objName != lastTipObjectName) {
+        if(objName != lastTipObjectName) {
             lastTipObjectName = objName;
 
-            if (flowState == AppOverviewFlowState.GameplayTips) {
+            if(flowState == AppOverviewFlowState.GameplayTips) {
                 ChangeTipsState(AppOverviewFlowState.Mode);
             }
             else {
@@ -135,16 +136,16 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
             Ready();
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewMode, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewMode, buttonName)) {
             ChangeTipsState(AppOverviewFlowState.Mode);
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewTutorial, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewTutorial, buttonName)) {
             ShowTutorial();
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewTips, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewTips, buttonName)) {
             ChangeTipsState(AppOverviewFlowState.GameplayTips);
         }
     }
@@ -171,7 +172,7 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void UpdateTipsStates() {
 
-        if (flowState == AppOverviewFlowState.GameplayTips) {
+        if(flowState == AppOverviewFlowState.GameplayTips) {
             ShowTipsObjectGameplay();
         }
         else {
@@ -193,8 +194,8 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public void HideTipsObjects() {
-        if (containerTips != null) {
-            foreach (UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
+        if(containerTips != null) {
+            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
                 tips.gameObject.Hide();
 
                 TweenUtil.FadeToObject(tips.gameObject, 0f, .4f, 0f);
@@ -206,13 +207,13 @@ public class UIPanelOverviewMode : UIPanelBase {
 
     public void ShowTipsObject(string objName) {
 
-        if (containerTips != null) {
+        if(containerTips != null) {
 
             HideTipsObjects();
 
-            foreach (UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
+            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
 
-                if (!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
+                if(!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
                     tips.gameObject.Show();
 
                     TweenUtil.FadeToObject(tips.gameObject, 0f, 0f, 0f);
@@ -286,7 +287,7 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         //LogUtil.Log("OnGameLevelItemsLoadedHandler");
 
-        if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
+        if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
             //LogUtil.Log("OnGameLevelItemsLoadedHandler2");
         }
@@ -296,24 +297,24 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         GameWorld gameWorld = GameWorlds.Current;
 
-        if (gameWorld == null) {
+        if(gameWorld == null) {
             return;
         }
 
-        foreach (GameObjectInactive obj in containerOverview.GetList<GameObjectInactive>()) {
+        foreach(GameObjectInactive obj in containerOverview.GetList<GameObjectInactive>()) {
 
-            if (obj.type == BaseDataObjectKeys.overview
+            if(obj.type == BaseDataObjectKeys.overview
                 && obj.code == BaseDataObjectKeys.world) {
 
-                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
-                    if (world.type == BaseDataObjectKeys.world) {
+                foreach(GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+                    if(world.type == BaseDataObjectKeys.world) {
                         TweenUtil.HideObjectBottom(world.gameObject);
                     }
                 }
 
-                foreach (GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
+                foreach(GameObjectInactive world in containerOverview.GetList<GameObjectInactive>()) {
 
-                    if (world.code.IsEqualLowercase(gameWorld.code)) {
+                    if(world.code.IsEqualLowercase(gameWorld.code)) {
                         TweenUtil.ShowObjectBottom(world.gameObject);
                     }
                 }
@@ -340,13 +341,13 @@ public class UIPanelOverviewMode : UIPanelBase {
 
         GameCustomController.BroadcastCustomSync();
 
-        foreach (GameCustomPlayer customPlayer in gameObject.GetList<GameCustomPlayer>()) {
+        foreach(GameCustomPlayer customPlayer in gameObject.GetList<GameCustomPlayer>()) {
 
-            if (customPlayer.isActorTypeEnemy) {
+            if(customPlayer.isActorTypeEnemy) {
 
                 GameTeam team = GameTeams.Current;
 
-                if (team != null) {
+                if(team != null) {
 
                     UIUtil.SetLabelValue(labelOverviewTeamEnemy, team.display_name);
 
@@ -393,13 +394,13 @@ public class UIPanelOverviewMode : UIPanelBase {
     // SHOW/LOAD
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
@@ -409,7 +410,7 @@ public class UIPanelOverviewMode : UIPanelBase {
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }

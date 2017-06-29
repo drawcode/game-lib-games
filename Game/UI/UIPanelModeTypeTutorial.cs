@@ -14,7 +14,7 @@ using Engine.Events;
 
 public class UIPanelModeTypeTutorial : UIPanelBase {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-    
+
     // OVERVIEW
 
     public UILabel labelOverviewTip;
@@ -161,38 +161,39 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     bool isCorrect = true;
 
-	public void Awake() {
-		
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-		
-        Instance = this;	
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}	
-	
-	public override void Init() {
-		//base.Init();
 
-		//loadData();
-	}	
-	
-	public override void Start() {
-		//Init();
-	}
+        Instance = this;
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Init() {
+        //base.Init();
+
+        //loadData();
+    }
+
+    public override void Start() {
+        //Init();
+    }
 
     // EVENTS
-	
+
     public override void OnEnable() {
 
         base.OnEnable();
@@ -207,7 +208,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -422,7 +423,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
             // Process next question
         }
         else if(appContentChoicesData.choices.Count == choices.Count) {
-           // && appContentChoiceData.(correctOnly)) {
+            // && appContentChoiceData.(correctOnly)) {
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResults);
         }
     }
@@ -541,7 +542,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
             //AppContentChoice choice = GetCurrentChoice();
 
-           // LogUtil.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
+            // LogUtil.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
 
             /*
             foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
@@ -618,7 +619,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
     public void LoadLevelAssets() {
 
-       // GameController.LoadLevelAssets(AppContentStates.Current.code);
+        // GameController.LoadLevelAssets(AppContentStates.Current.code);
         GameController.LoadLevelAssets(GameLevels.Current.code);
     }
 
@@ -665,7 +666,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
             string choiceTitle = "Loading...";
             string choiceQuestion = "Loading...";
-    
+
             if(choice != null) {
                 choiceTitle = "Question";
                 choiceQuestion = choice.display_name;
@@ -962,11 +963,11 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
         //ResetChoiceItem();
     }
 
-	public static void LoadData() {
-		if(Instance != null) {
-			Instance.loadData();
-		}
-	}
+    public static void LoadData() {
+        if(Instance != null) {
+            Instance.loadData();
+        }
+    }
 
     public void loadDataChoice() {
         LogUtil.Log("UIPanelModeTypeChoice:loadDataChoice");
@@ -977,7 +978,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
 
         // load list item
 
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             yield return new WaitForEndOfFrame();
 
             listGridRoot.DestroyChildren();
@@ -998,7 +999,7 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     public void loadData() {
         LogUtil.Log("UIPanelModeTypeChoice:loadData");
     }
-    
+
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
     }
@@ -1043,5 +1044,4 @@ public class UIPanelModeTypeTutorial : UIPanelBase {
     public void Update() {
 
     }
-	
 }

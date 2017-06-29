@@ -12,7 +12,7 @@ using UnityEngine.UI;
 using Engine.Events;
 
 public class BaseGameUIPanelResults : GameUIPanelBase {
-    
+
     public static GameUIPanelResults Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -22,11 +22,11 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 #endif
 
     public GameObject listItemPrefab;
-	
+
     public GameObject containerModes;
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {
@@ -77,44 +77,44 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-	public static bool isInst {
-		get {
-			if(GameUIPanelResults.Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}
-		 
+
+    public static bool isInst {
+        get {
+            if(GameUIPanelResults.Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-	}
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+    }
 
     public virtual void ShowContentState() {
 
         if(containerModes != null) {
 
-            foreach (GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
-                if (inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
+            foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+                if(inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
                     inactive.gameObject.Hide();
                 }
             }
 
-            foreach (GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+            foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
                 if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()
                     && inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
                     inactive.gameObject.Show();
@@ -122,7 +122,7 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
             }
         }
     }
-	
+
     public virtual void UpdateDisplay(GamePlayerRuntimeData runtimeData, float timeTotal) {
 
         ShowContentState();
@@ -162,24 +162,24 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
                 result.UpdateDisplay(runtimeData, timeTotal);
             }
         }
-	}
-	
-	public static void LoadData() {
+    }
+
+    public static void LoadData() {
         if(GameUIPanelResults.Instance != null) {
             GameUIPanelResults.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
 
         ShowContentState();
-	}
+    }
 
     public virtual void HandleItems() {
 
@@ -187,29 +187,29 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         string codeWorld = GameWorlds.Current.code;
 
-        if (codeWorld.IsNullOrEmpty()) {
+        if(codeWorld.IsNullOrEmpty()) {
             return;
         }
 
-        foreach (GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
+        foreach(GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
 
-            if (container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
+            if(container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
 
-                foreach (GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
+                foreach(GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
 
-                    if (item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)
+                    if(item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)
                         && !item.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
                         item.gameObject.HideChildren();
                     }
-                }    
+                }
 
-                foreach (GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
+                foreach(GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
 
                     Dictionary<string, object> data = dataItem.ToDictionary();
 
                     string val = data.Get<string>(BaseDataObjectKeys.world);
 
-                    if (val.IsEqualLowercase(codeWorld)) {
+                    if(val.IsEqualLowercase(codeWorld)) {
 
                         dataItem.gameObject.Show();
                     }
@@ -217,10 +217,10 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
             }
         }
     }
-    
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
         adDisplayState = UIPanelAdDisplayState.BannerBottom;
         characterDisplayState = UIPanelCharacterDisplayState.Character;
@@ -232,20 +232,19 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         HandleItems();
 
-        loadData();        
-        
+        loadData();
+
         GameCommunity.ShowSharesCenter();
 
         Messenger.Broadcast(GameMessages.gameResultsStart);
     }
-        
+
     public override void AnimateOut() {
 
         base.AnimateOut();
 
         Messenger.Broadcast(GameMessages.gameResultsEnd);
-                
+
         GameCommunity.HideSharesCenter();
     }
-	
 }

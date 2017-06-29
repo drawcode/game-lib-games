@@ -9,11 +9,11 @@ using Engine.Events;
 #if ENABLE_FEATURE_NETWORKING
 
 public class BaseGameUIPanelGameModeMultiplayer : GameUIPanelBase {
-    
+
     public static GameUIPanelGameModeMultiplayer Instance;
-	
+
     public GameObject listItemPrefab;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -22,20 +22,20 @@ public class BaseGameUIPanelGameModeMultiplayer : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
 
     public override void OnEnable() {
 
@@ -85,28 +85,27 @@ public class BaseGameUIPanelGameModeMultiplayer : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-    public override void OnButtonClickEventHandler(string buttonName) {		
+
+    public override void OnButtonClickEventHandler(string buttonName) {
         //
-	}	
-	
-	public static void LoadData() {
+    }
+
+    public static void LoadData() {
         if(GameUIPanelGameModeMultiplayer.Instance != null) {
             GameUIPanelGameModeMultiplayer.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
 }
 #endif

@@ -9,13 +9,12 @@ using Engine.Networking;
 using Gameverses;
 
 public class BaseGameUIPanelBase : UIPanelBase {
-    
-    public virtual void Awake() {
-        
-    }
-    		
-	public override void Start() {
-		base.Start();		
-	}
-}
 
+    public override void Awake() {
+        base.Awake();
+    }
+
+    public override void Start() {
+        base.Start();
+    }
+}

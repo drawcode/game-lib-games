@@ -50,7 +50,7 @@ public class UIPanelTutorial : UIPanelBase {
     public GameObject containerOverview;
     public GameObject containerOverviewGameplayTips;
     public GameObject containerTutorial;
-    
+
     public GameObject containerTips;
     public GameObject containerTipsMode;
     public GameObject containerTipsGameplay;
@@ -61,40 +61,41 @@ public class UIPanelTutorial : UIPanelBase {
 
     public AppOverviewFlowState flowState = AppOverviewFlowState.Mode;
 
-    public void Awake() {
-        
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-        
-        Instance = this;    
+
+        Instance = this;
 
         panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
     }
-    
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
+
     public override void Init() {
         base.Init();
 
         Ready();
     }
-    
+
     public override void Start() {
         Init();
     }
 
     // EVENTS
-    
+
     public override void OnEnable() {
 
         base.OnEnable();
@@ -105,7 +106,7 @@ public class UIPanelTutorial : UIPanelBase {
 
         Messenger<string>.AddListener(UIPanelTipsMessages.tipsCycle, OnTipsCycleHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -122,11 +123,11 @@ public class UIPanelTutorial : UIPanelBase {
     void OnTipsCycleHandler(string objName) {
         if(objName != lastTipObjectName) {
             lastTipObjectName = objName;
-            
+
             if(flowState == AppOverviewFlowState.GameplayTips) {
                 ChangeTipsState(AppOverviewFlowState.Mode);
             }
-            else {            
+            else {
                 ChangeTipsState(AppOverviewFlowState.GameplayTips);
             }
 
@@ -134,24 +135,24 @@ public class UIPanelTutorial : UIPanelBase {
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonOverviewReady, buttonName)) {
             Ready();
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewMode, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewMode, buttonName)) {
             ChangeTipsState(AppOverviewFlowState.Mode);
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewTutorial, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewTutorial, buttonName)) {
             ShowTutorial();
         }
-        else if (UIUtil.IsButtonClicked(buttonOverviewTips, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonOverviewTips, buttonName)) {
             ChangeTipsState(AppOverviewFlowState.GameplayTips);
         }
     }
-        
+
     public void ContentPause() {
         GameController.GameRunningStateContent();
     }
-    
+
     public void ContentRun() {
         GameController.GameRunningStateRun();
     }
@@ -166,19 +167,19 @@ public class UIPanelTutorial : UIPanelBase {
     }
 
     public void UpdateTipsStates() {
-    
+
         if(flowState == AppOverviewFlowState.GameplayTips) {
             ShowTipsObjectGameplay();
         }
-        else {            
-            ShowTipsObjectMode();  
+        else {
+            ShowTipsObjectMode();
         }
     }
-    
+
     public void ShowTipsObjectGameplay() {
         UIUtil.HideButton(buttonOverviewTips);
         UIUtil.ShowButton(buttonOverviewMode);
-        ShowTipsObject("gameplay");    
+        ShowTipsObject("gameplay");
     }
 
     public void ShowTipsObjectMode() {
@@ -188,16 +189,16 @@ public class UIPanelTutorial : UIPanelBase {
         ShowTipsObject(currentAppContentState);
     }
 
-    public void HideTipsObjects() {        
-        if(containerTips != null) {            
-            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {   
+    public void HideTipsObjects() {
+        if(containerTips != null) {
+            foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
                 tips.gameObject.Hide();
 
                 TweenUtil.FadeToObject(tips.gameObject, 0f, .4f, 0f);
 
                 //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .4f, 0f, 0f);
             }
-        }    
+        }
     }
 
     public void ShowTipsObject(string objName) {
@@ -207,7 +208,7 @@ public class UIPanelTutorial : UIPanelBase {
             HideTipsObjects();
 
             foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
-                
+
                 if(!string.IsNullOrEmpty(objName) && tips.name.Contains(objName)) {
                     tips.gameObject.Show();
 
@@ -220,61 +221,61 @@ public class UIPanelTutorial : UIPanelBase {
                     //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .5f, .6f, 1f);
 
                 }
-            }   
+            }
         }
     }
-    
+
     public void ShowTutorial() {
-        
+
         HideStates();
 
         flowState = AppOverviewFlowState.Tutorial;
-        
+
         UIPanelDialogBackground.ShowDefault();
-        
+
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
-        
+
         //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
-        
+
         AnimateInBottom(containerTutorial);
-        
+
         ContentPause();
-        
+
         UIColors.UpdateColors();
 
     }
-    
+
     public void HideTutorial() {
-        
+
         AnimateOutBottom(containerOverview, 0f, 0f);
-        
+
         ContentRun();
     }
-    
+
     public void ShowTips() {
 
         HideStates();
 
         flowState = AppOverviewFlowState.GameplayTips;
-        
+
         UIPanelDialogBackground.ShowDefault();
-        
+
         UIUtil.SetLabelValue(labelOverviewType, AppContentStates.Current.display_name);
-        
+
         //LogUtil.Log("UIPanelModeTypeChoice:ShowOverview:flowState:" + flowState);
-        
+
         AnimateInBottom(containerOverviewGameplayTips);
-        
+
         ContentPause();
-        
+
         UIColors.UpdateColors();
 
     }
-    
+
     public void HideTips() {
-        
+
         AnimateOutBottom(containerOverview, 0f, 0f);
-        
+
         ContentRun();
     }
 
@@ -282,7 +283,7 @@ public class UIPanelTutorial : UIPanelBase {
 
         LogUtil.Log("OnGameLevelItemsLoadedHandler");
 
-        if (AppModeTypes.Instance.isAppModeTypeGameChoice) {
+        if(AppModeTypes.Instance.isAppModeTypeGameChoice) {
 
             LogUtil.Log("OnGameLevelItemsLoadedHandler2");
         }
@@ -312,14 +313,14 @@ public class UIPanelTutorial : UIPanelBase {
         ContentRun();
     }
 
-    public void ShowCurrentState() {        
+    public void ShowCurrentState() {
         ShowOverview();
     }
-    
-    public void HideStates() {        
+
+    public void HideStates() {
 
         UIPanelDialogBackground.HideAll();
-        
+
         UIPanelDialogRPGHealth.HideAll();
         UIPanelDialogRPGEnergy.HideAll();
 
@@ -331,13 +332,13 @@ public class UIPanelTutorial : UIPanelBase {
     // SHOW/LOAD
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
@@ -347,7 +348,7 @@ public class UIPanelTutorial : UIPanelBase {
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
@@ -358,7 +359,7 @@ public class UIPanelTutorial : UIPanelBase {
     }
 
     bool initialized = false;
-    
+
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
 
@@ -367,10 +368,10 @@ public class UIPanelTutorial : UIPanelBase {
         if(!initialized) {
             initialized = true;
         }
-        else {            
-            
+        else {
+
             ShowCurrentState();
-            
+
             UpdateTipsStates();
         }
     }
@@ -390,5 +391,4 @@ public class UIPanelTutorial : UIPanelBase {
     public void Update() {
 
     }
-    
 }

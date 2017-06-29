@@ -11,13 +11,13 @@ using Engine.Events;
 public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
 
     public static GameUIPanelGameModeTrainingMode Instance;
-		
+
     public GameObject listItemPrefab;
-	
+
     public UIImageButton buttonGamePlayChoiceQuiz; // quiz
     public UIImageButton buttonGamePlayCollectionSmarts; // concussions,
     public UIImageButton buttonGamePlayCollectionSafety; // equipment
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -26,20 +26,20 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
 
         loadData();
-	}	
+    }
 
     public override void OnEnable() {
 
@@ -89,7 +89,7 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
 
@@ -116,27 +116,25 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
     }
 
     public override void AnimateIn() {
-       // base.AnimateIn();
-        
+        // base.AnimateIn();
+
         GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingChoiceQuiz);
         GameUIController.ShowGameModeTrainingModeChoiceQuiz();
     }
-	
-	public static void LoadData() {
+
+    public static void LoadData() {
         if(GameUIPanelGameModeTrainingMode.Instance != null) {
             GameUIPanelGameModeTrainingMode.Instance.loadData();
-		}
-	}
-	
-    public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
-}
+        }
+    }
 
+    public virtual void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
+}
 #endif

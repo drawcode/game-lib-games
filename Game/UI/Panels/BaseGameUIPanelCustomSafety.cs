@@ -9,16 +9,16 @@ using Engine.Events;
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
 public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
-    
+
     public static GameUIPanelCustomSafety Instance;
-	
+
     public GameObject listItemPrefab;
-	
-	public GameObject helmetObject;
-	public GameObject helmetObjectRotator;
-	
+
+    public GameObject helmetObject;
+    public GameObject helmetObjectRotator;
+
     public UIImageButton buttonClose;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -27,11 +27,11 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
+
     public override void OnEnable() {
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
@@ -80,73 +80,73 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}
-	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
+
     public virtual void LoadDefault() {
-		LoadData();
-	}	
-	
-	public static void ShowDefault() {
+        LoadData();
+    }
+
+    public static void ShowDefault() {
         if(GameUIPanelCustomSafety.Instance != null) {
             GameUIPanelCustomSafety.Instance.AnimateIn();
             GameUIPanelCustomSafety.Instance.LoadDefault();
-		}
-	}
-	 
+        }
+    }
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);	
-	}
-		
-	public static void LoadData() {
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);	
+    }
+
+    public static void LoadData() {
         if(GameUIPanelCustomSafety.Instance != null) {
             GameUIPanelCustomSafety.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
 
         InputSystem.Instance.currentDraggableGameObject = helmetObjectRotator;
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
-	public static void HideAll() {
+
+        yield return new WaitForSeconds(1f);
+    }
+
+    public static void HideAll() {
         if(GameUIPanelCustomSafety.Instance != null) {
             GameUIPanelCustomSafety.Instance.AnimateOut();
-		}
-	}			
-	
-	public override void AnimateIn() {
-				
-		base.AnimateIn();		
-		
-		//ShowPanelDefault();
-	}		
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
+        }
+    }
+
+    public override void AnimateIn() {
+
+        base.AnimateIn();
+
+        //ShowPanelDefault();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
 
         InputSystem.Instance.currentDraggableGameObject = null;
-		
-		//HidePanelDefault();
-	}
+
+        //HidePanelDefault();
+    }
 
     public virtual void Update() {
 
@@ -158,7 +158,5 @@ public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
             return;
         }
     }
-	
 }
-
 #endif

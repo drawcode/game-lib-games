@@ -10,8 +10,8 @@ using Engine.Events;
 
 public class UIPanelCommunityBase : UIPanelBase {
 
-    public virtual void Awake() {
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void Init() {
@@ -24,14 +24,14 @@ public class UIPanelCommunityBase : UIPanelBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -47,7 +47,7 @@ public class UIPanelCommunityBase : UIPanelBase {
 
         GameCommunity.HideGameCommunity();
 
-        UIPanelCommunityBackground.ShowBackground();  
+        UIPanelCommunityBackground.ShowBackground();
 
         if(GameController.Instance.gameRunningState == GameRunningState.RUNNING) {
             GameController.GameRunningStateOverlay();
@@ -55,9 +55,9 @@ public class UIPanelCommunityBase : UIPanelBase {
     }
 
     public virtual void hideDialog() {
-        
-        UIPanelCommunityBackground.HideBackground();  
-        
+
+        UIPanelCommunityBackground.HideBackground();
+
         if(GameController.Instance.gameRunningState != GameRunningState.RUNNING
            && GameController.Instance.gameState == GameStateGlobal.GameOverlay) {
             GameController.GameRunningStateRun();
@@ -70,5 +70,5 @@ public class UIPanelCommunityBase : UIPanelBase {
 
     public virtual void Update() {
         //base.Update();
-    } 
+    }
 }

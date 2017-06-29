@@ -32,47 +32,48 @@ public class UIPanelDialogRPGXP : UIPanelBase {
 
     public GameObject containerContent;
 
- public void Awake() {
-     
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-     
-        Instance = this; 
-        
-        panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
- }
- 
- public static bool isInst {
-     get {
-         if(Instance != null) {
-             return true;
-         }
-         return false;
-     }
- }   
- 
- public override void Init() {
-     base.Init();
 
-     //loadData();
- }   
- 
- public override void Start() {
-     Init();
- }
+        Instance = this;
+
+        panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Init() {
+        base.Init();
+
+        //loadData();
+    }
+
+    public override void Start() {
+        Init();
+    }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -138,5 +139,4 @@ public class UIPanelDialogRPGXP : UIPanelBase {
     public void Update() {
 
     }
- 
 }

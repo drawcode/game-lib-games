@@ -415,13 +415,16 @@ public class BaseUIController : GameObjectBehavior {
     public void showUIPanel(string objName, string panelCode, string title) {
 
         //if (currentPanel == panelCode) {
-            // Don't reload
-            //return;
+        // Don't reload
+        //return;
         //}
 
         //if (currentPanel != panelCode) {
         //
         //}
+
+
+        //Debug.Log("<color=#ffa500ff>GameUIController:showUIPanel():</color> objName:" + objName + " panelCode:" + panelCode);
 
         currentPanel = panelCode;
 

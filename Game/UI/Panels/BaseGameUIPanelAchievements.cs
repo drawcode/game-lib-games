@@ -10,9 +10,10 @@ public class BaseGameUIPanelAchievements : GameUIPanelBase {
 		
     public GameObject listItemAchievementPrefab;
     
-    public static GameUIPanelAchievements Instance; 
-    
-    public virtual void Awake() {
+    public static GameUIPanelAchievements Instance;
+
+    public override void Awake() {
+        base.Awake();
 
     }
     

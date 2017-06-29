@@ -5,65 +5,67 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UIPanelDialogEditMeta : UIAppPanel {
-	
-	
+
+
     public GameObject listItemPrefab;
-	
-	public UIInput inputName;
-	public UIInput inputAmmo;
-	
-	public static UIPanelDialogEditMeta Instance;
-	
-	void Awake() {
-		if (Instance != null && this != Instance) {
+
+    public UIInput inputName;
+    public UIInput inputAmmo;
+
+    public static UIPanelDialogEditMeta Instance;
+
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
         }
-		
+
         Instance = this;
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		LoadData();
-	}
-	
-	public void LoadData() {
-		StartCoroutine(LoadDataCo());
-	}
-	
-	IEnumerator LoadDataCo() {
-		
-		GameLevel currentLevel = GameLevels.Current;
-		
-		if(inputName != null) {
-			inputName.text = currentLevel.display_name;
-		}
-		
-		
-		if(inputAmmo != null) {
-			inputAmmo.text = "90";//currentLevel.display_name;
-		}
-		
-		
-		
-		yield break;
-		/*
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        LoadData();
+    }
+
+    public void LoadData() {
+        StartCoroutine(LoadDataCo());
+    }
+
+    IEnumerator LoadDataCo() {
+
+        GameLevel currentLevel = GameLevels.Current;
+
+        if(inputName != null) {
+            inputName.text = currentLevel.display_name;
+        }
+
+
+        if(inputAmmo != null) {
+            inputAmmo.text = "90";//currentLevel.display_name;
+        }
+
+
+
+        yield break;
+        /*
 		
 		LogUtil.Log("Load GameWorlds: LoadDataCo");
 		
@@ -116,6 +118,5 @@ public class UIPanelDialogEditMeta : UIAppPanel {
 			
         }
         */
-	}
-	
+    }
 }

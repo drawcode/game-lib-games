@@ -91,8 +91,8 @@ public class BaseGameHUD : GameUIPanelBase {
         }
     }
 
-    public virtual void Awake() {
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void Start() {

@@ -12,16 +12,16 @@ using Engine.Events;
 
 #if ENABLE_FEATURE_SETTINGS_PROFILE
 
-public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {	
-    
+public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
+
     public static GameUIPanelSettingsProfile Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-	
-	public UIImageButton buttonProfileFacebook;	
-	public UIImageButton buttonProfileTwitter;	
-	public UIImageButton buttonProfileGameNetwork;	
-	
+
+    public UIImageButton buttonProfileFacebook;
+    public UIImageButton buttonProfileTwitter;
+    public UIImageButton buttonProfileGameNetwork;
+
     public UIInput inputProfileName;
 #else
 
@@ -33,7 +33,7 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 #endif
 
     public GameObject listItemPrefab;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -42,20 +42,20 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
 
     public override void OnEnable() {
 
@@ -109,46 +109,44 @@ public class BaseGameUIPanelSettingsProfile : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-	public virtual void OnProfileInputChanged(string controlName, string data) {
-		
-		if(inputProfileName != null 
+
+    public virtual void OnProfileInputChanged(string controlName, string data) {
+
+        if(inputProfileName != null
            && controlName == inputProfileName.name) {
-			ChangeUsername(data);
-		}
-	}
-	
+            ChangeUsername(data);
+        }
+    }
+
     public virtual void ChangeUsername(string username) {
-		if(inputProfileName == null) {
-			return;
-		}
-		
-		UIUtil.SetInputValue(inputProfileName, username);
-		GameProfiles.Current.ChangeUser(username);
-		GameProfiles.Current.username = username;
-		GameState.SaveProfile();
-    }   
+        if(inputProfileName == null) {
+            return;
+        }
+
+        UIUtil.SetInputValue(inputProfileName, username);
+        GameProfiles.Current.ChangeUser(username);
+        GameProfiles.Current.username = username;
+        GameState.SaveProfile();
+    }
 
     public override void HandleShow() {
         base.HandleShow();
-        
+
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
-	
-    public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		//ChangeUsername(GameProfiles.Current.username);
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
-}
 
+    public virtual void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        //ChangeUsername(GameProfiles.Current.username);
+
+        yield return new WaitForSeconds(1f);
+    }
+}
 #endif

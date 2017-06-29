@@ -26,30 +26,30 @@ public class GameUIPanelFooterButtonsSections {
 }
 
 public class BaseGameUIPanelFooter : GameUIPanelBase {
-    
-    public static GameUIPanelFooter Instance;      
+
+    public static GameUIPanelFooter Instance;
 
     public GameObject containerButtons;
-			    
+
     public GameObject containerButtonsSettings;
-    public GameObject containerButtonsCustomize;   
-    
-    public GameObject containerButtonsCharacter;   
-    public GameObject containerButtonsCharacterLarge;   
-    public GameObject containerButtonsCharacterTools;   
-	
-    public GameObject containerButtonsGameNetworks;    
-    public GameObject containerButtonsProgression;    
-    public GameObject containerButtonsCharacterHelp; 
+    public GameObject containerButtonsCustomize;
+
+    public GameObject containerButtonsCharacter;
+    public GameObject containerButtonsCharacterLarge;
+    public GameObject containerButtonsCharacterTools;
+
+    public GameObject containerButtonsGameNetworks;
+    public GameObject containerButtonsProgression;
+    public GameObject containerButtonsCharacterHelp;
     public GameObject containerButtonsCharacterCustomize;
 
     public GameObject containerButtonsProducts;
-    
+
     public GameObject containerButtonsProgressionAchievements;
-    public GameObject containerButtonsProgressionStatistics;  
+    public GameObject containerButtonsProgressionStatistics;
 
     public bool optionsVisible = false;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -58,49 +58,49 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		loadData();
-        
-        AnimateIn();   
-	}
-	
-	public override void AnimateIn() {
-		
-		base.AnimateIn();
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+        loadData();
+
+        AnimateIn();
+    }
+
+    public override void AnimateIn() {
+
+        base.AnimateIn();
 
         showNone();
-	}
-    	
-	public virtual void AnimateInMain() {
-		
-		AnimateIn();
-		
-		showMain();
-	}
-	
-	public virtual void AnimateInInternal() {
-		
-		AnimateIn();
-		
-		showFull();
-	}
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-		
-		showNone();
-	}
+    }
+
+    public virtual void AnimateInMain() {
+
+        AnimateIn();
+
+        showMain();
+    }
+
+    public virtual void AnimateInInternal() {
+
+        AnimateIn();
+
+        showFull();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
+
+        showNone();
+    }
 
     public override void OnEnable() {
 
@@ -150,66 +150,66 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
     }
-	
+
     public virtual void HideContainerDelayed() {
-		StartCoroutine(HideContainerDelayedCo());
-	}
-	
-	IEnumerator HideContainerDelayedCo() {
-		yield return new WaitForSeconds(2f);
-		//HideOptionsContainer();
+        StartCoroutine(HideContainerDelayedCo());
     }
-    
+
+    IEnumerator HideContainerDelayedCo() {
+        yield return new WaitForSeconds(2f);
+        //HideOptionsContainer();
+    }
+
     public static void ShowFull() {
         if(isInst) {
             Instance.showFull();
         }
     }
-	
+
     public virtual void showFull() {
-		showMain();
-    }	
+        showMain();
+    }
 
     public static void ShowMain() {
         if(isInst) {
             Instance.showMain();
         }
     }
-	
+
     public virtual void showMain() {
         showButtonSettings();
         showButtonCustomize();
-	}
-	
+    }
+
     public virtual void showNone() {
 
         hideButtonSettings();
         hideButtonCustomize();
 
         HideAllButtons();
-  	}   
+    }
 
     //
 
     string currentButtonCode = "";
 
     public virtual void ShowButtons(string code, bool hideCurrent = true) {
-        
+
         AnimateIn();
 
-        if (containerButtons == null) {
+        if(containerButtons == null) {
             return;
         }
-                
-        foreach(GameObjectShowItem item in 
+
+        foreach(GameObjectShowItem item in
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
 
             if(item.code == code) {
@@ -222,18 +222,18 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             }
         }
     }
-    
+
     public virtual void ShowButtonsCurrent() {
         ShowButtons(currentButtonCode, false);
     }
 
     public virtual void HideAllButtons() {
 
-        if (containerButtons == null) {
+        if(containerButtons == null) {
             return;
         }
 
-        foreach (GameObjectShowItem item in
+        foreach(GameObjectShowItem item in
                 containerButtons.GetComponentsInChildren<GameObjectShowItem>(true)) {
             TweenUtil.HideObjectBottom(item.gameObject);
             item.gameObject.HideObjectDelayed(.5f);
@@ -241,21 +241,21 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
 
     public virtual void HideAndShowButtonsWithDelay(float delay) {
-    
+
         StartCoroutine(HideAndShowButtonsWithDelayCo(delay));
     }
 
     IEnumerator HideAndShowButtonsWithDelayCo(float delay) {
-        
+
         HideAllButtons();
 
         yield return new WaitForSeconds(delay);
-        
+
         ShowButtonsCurrent();
     }
 
     // HIDE/SHOW
-    
+
     // ------------------------------------------------------
     // BUTTONS SETTINGS
 
@@ -263,25 +263,25 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 
         AnimateInLeftBottom(containerButtonsSettings);
     }
-        
+
     public virtual void hideButtonSettings() {
-        
+
         AnimateOutLeftBottom(containerButtonsSettings);
     }
-    
+
     // ------------------------------------------------------
     // BUTTONS CUSTOMIZE
-        
+
     public virtual void showButtonCustomize() {
-                
+
         AnimateInRightBottom(containerButtonsCustomize);
     }
-            
+
     public virtual void hideButtonCustomize() {
-                
+
         AnimateOutRightBottom(containerButtonsCustomize);
     }
-        
+
     // ------------------------------------------------------
     // BUTTONS GAME NETWORKS
 
@@ -294,14 +294,14 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     public virtual void showButtonGameNetworks() {
 
         AnimateIn();
-        
-        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) { 
-            
-            AnimateInRightBottom(containerButtonsGameNetworks);           
+
+        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled) {
+
+            AnimateInRightBottom(containerButtonsGameNetworks);
             showButtonGameNetworkGameCenter();
         }
         else if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
-            
+
             AnimateInRightBottom(containerButtonsGameNetworks);
             showButtonGameNetworkPlayServices();
         }
@@ -309,23 +309,23 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             ShowButtonsProgression();
         }
     }
-        
+
     public virtual void hideButtonGameNetworks() {
-        
+
         AnimateOutRightBottom(containerButtonsGameNetworks);
     }
 
     // BUTTON GAME NETWORKS
-        
-    public virtual void showButtonGameNetworkGameCenter() {                
+
+    public virtual void showButtonGameNetworkGameCenter() {
         ShowButtonsGameNetwork(GameNetworkType.gameNetworkAppleGameCenter);
-    }    
-    
-    public virtual void showButtonGameNetworkPlayServices() {                
+    }
+
+    public virtual void showButtonGameNetworkPlayServices() {
         ShowButtonsGameNetwork(GameNetworkType.gameNetworkGooglePlayServices);
     }
 
-	
+
     // BUTTONS
 
     public virtual void ShowButtonsGameNetwork() {
@@ -337,7 +337,7 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
 
             ShowButtonsGameNetwork();
 
-            foreach(GameObjectInactive item in 
+            foreach(GameObjectInactive item in
                     containerButtonsGameNetworks.GetComponentsInChildren<GameObjectInactive>(true)) {
                 if(item.name == networkTypeTo || item.code == networkTypeTo) {
                     item.gameObject.Show();
@@ -348,67 +348,67 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             }
         }
     }
-    
+
     public virtual void HideButtonsGameNetworks() {
         if(containerButtonsGameNetworks != null) {
-            foreach(GameObjectInactive item in 
+            foreach(GameObjectInactive item in
                     containerButtonsGameNetworks.GetComponentsInChildren<GameObjectInactive>(true)) {
                 item.gameObject.Hide();
             }
         }
-    }    
-    
+    }
+
     // ------------------------------------------------------
     // BUTTONS CHARACTERS
-          
+
     public static void ShowButtonsCharacterCustomize() {
         if(isInst) {
             Instance.showButtonsCharacterCustomize();
         }
     }
-    
-    public virtual void showButtonsCharacterCustomize() {        
+
+    public virtual void showButtonsCharacterCustomize() {
         ShowButtons(GameUIPanelFooterButtons.characterCustomize);
     }
-    
+
     //
-    
+
     public static void ShowButtonsCharacter() {
         if(isInst) {
             Instance.showButtonsCharacter();
         }
     }
-    
-    public virtual void showButtonsCharacter() {        
+
+    public virtual void showButtonsCharacter() {
         ShowButtons(GameUIPanelFooterButtons.character);
     }
-    
+
     //
-    
+
     public static void ShowButtonsCharacterLarge() {
         if(isInst) {
             Instance.showButtonsCharacterLarge();
         }
     }
-    
-    public virtual void showButtonsCharacterLarge() {        
+
+    public virtual void showButtonsCharacterLarge() {
         ShowButtons(GameUIPanelFooterButtons.characterLarge);
     }
 
     //
-    
+
     public static void ShowButtonsCharacterTools() {
         if(isInst) {
             Instance.showButtonsCharacterTools();
         }
     }
-    
-    public virtual void showButtonsCharacterTools() {        
+
+    public virtual void showButtonsCharacterTools() {
         ShowButtons(GameUIPanelFooterButtons.characterTools);
     }
 
     //
-    
+
     public static void ShowButtonsCharacterHelp() {
         if(isInst) {
             Instance.showButtonsCharacterHelp();
@@ -427,50 +427,50 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             Instance.showButtonsProgression();
         }
     }
-    
-    public virtual void showButtonsProgression() {        
+
+    public virtual void showButtonsProgression() {
         ShowButtons(GameUIPanelFooterButtons.progression);
     }
-    
+
     public static void ShowButtonsStatistics() {
         if(isInst) {
             Instance.showButtonsStatistics();
         }
     }
-    
-    public virtual void showButtonsStatistics() {        
+
+    public virtual void showButtonsStatistics() {
         ShowButtons(GameUIPanelFooterButtons.statistics);
     }
-    
+
     public static void ShowButtonsAchievements() {
         if(isInst) {
             Instance.showButtonsAchievements();
         }
     }
-    
-    public virtual void showButtonsAchievements() {        
+
+    public virtual void showButtonsAchievements() {
         ShowButtons(GameUIPanelFooterButtons.achievements);
     }
-        
+
     // ------------------------------------------------------
     // BUTTONS PRODUCTS
-    
+
     public static void ShowButtonProducts() {
         if(isInst) {
             Instance.showButtonProducts();
         }
     }
-    
+
     public virtual void showButtonProducts() {
-        
+
         AnimateIn();
 
         // Just show products sections for now
         ShowButtonsProducts();
     }
-    
+
     public virtual void hideButtonProducts() {
-        
+
         AnimateOutRightBottom(containerButtonsProducts);
     }
 
@@ -479,23 +479,23 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             Instance.showButtonsProductsSections();
         }
     }
-    
-    public virtual void showButtonsProductsSections() {                
+
+    public virtual void showButtonsProductsSections() {
         ShowButtonsProducts(GameUIPanelFooterButtonsSections.productSections);
-    }        
-    
+    }
+
     // BUTTONS
-    
+
     public virtual void ShowButtonsProducts() {
         ShowButtons(GameUIPanelFooterButtons.products);
     }
-    
+
     public virtual void ShowButtonsProducts(string productTypeTo) {
         if(containerButtonsProducts != null) {
-            
+
             ShowButtonsProducts();
-            
-            foreach(GameObjectInactive item in 
+
+            foreach(GameObjectInactive item in
                     containerButtonsProducts.GetComponentsInChildren<GameObjectInactive>(true)) {
                 if(item.name == productTypeTo || item.code == productTypeTo) {
                     item.gameObject.Show();
@@ -506,10 +506,10 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
             }
         }
     }
-    
+
     public virtual void HideButtonsProducts() {
         if(containerButtonsProducts != null) {
-            foreach(GameObjectInactive item in 
+            foreach(GameObjectInactive item in
                     containerButtonsProducts.GetComponentsInChildren<GameObjectInactive>(true)) {
                 item.gameObject.Hide();
             }
@@ -517,16 +517,16 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
     }
 
     //
-	
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
-    
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
+
     /*
     public static void HideOptionsContainer() {
         if(Instance != null) {
@@ -613,5 +613,4 @@ public class BaseGameUIPanelFooter : GameUIPanelBase {
         //}
     }
  */
-	
 }

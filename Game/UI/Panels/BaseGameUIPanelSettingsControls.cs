@@ -8,17 +8,17 @@ using Engine.Events;
 
 #if ENABLE_FEATURE_SETTINGS_AUDIO
 
-public class BaseGameUIPanelSettingsControls : GameUIPanelBase {	
-    
-    public static GameUIPanelSettingsControls Instance; 
-	
+public class BaseGameUIPanelSettingsControls : GameUIPanelBase {
+
+    public static GameUIPanelSettingsControls Instance;
+
     public GameObject listItemPrefab;
-		
-	public UICheckbox checkboxControlsHandedRight;
-	public UICheckbox checkboxControlsHandedLeft;
-	
+
+    public UICheckbox checkboxControlsHandedRight;
+    public UICheckbox checkboxControlsHandedLeft;
+
     public UICheckbox checkboxControlsVibrate;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -27,20 +27,20 @@ public class BaseGameUIPanelSettingsControls : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		SyncCheckedState();
-		loadData();
-	}
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+        SyncCheckedState();
+        loadData();
+    }
 
     public override void OnEnable() {
 
@@ -94,80 +94,78 @@ public class BaseGameUIPanelSettingsControls : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-    
+
     public override void OnButtonClickEventHandler(string buttonName) {
-        
+
     }
 
-	public virtual void ChangeCheckedState(UICheckbox box, bool selected) {
-		if(box != null) {
-			box.isChecked = selected;
-		}
-	}
+    public virtual void ChangeCheckedState(UICheckbox box, bool selected) {
+        if(box != null) {
+            box.isChecked = selected;
+        }
+    }
 
     public virtual void SyncCheckedState() {
 
-		bool vibrate = GameProfiles.Current.GetControlVibrate();
-		ProfileControlHanded controlHanded = GameProfiles.Current.GetControlHanded();
+        bool vibrate = GameProfiles.Current.GetControlVibrate();
+        ProfileControlHanded controlHanded = GameProfiles.Current.GetControlHanded();
 
-		if(controlHanded == ProfileControlHanded.LEFT) {
-			ChangeCheckedState(checkboxControlsHandedRight, false);
-			ChangeCheckedState(checkboxControlsHandedLeft, true);
-		}
-		else if(controlHanded == ProfileControlHanded.RIGHT) {
-			ChangeCheckedState(checkboxControlsHandedRight, true);
-			ChangeCheckedState(checkboxControlsHandedLeft, false);
-		}
+        if(controlHanded == ProfileControlHanded.LEFT) {
+            ChangeCheckedState(checkboxControlsHandedRight, false);
+            ChangeCheckedState(checkboxControlsHandedLeft, true);
+        }
+        else if(controlHanded == ProfileControlHanded.RIGHT) {
+            ChangeCheckedState(checkboxControlsHandedRight, true);
+            ChangeCheckedState(checkboxControlsHandedLeft, false);
+        }
 
-		ChangeCheckedState(checkboxControlsVibrate, vibrate);
-	}
-	
+        ChangeCheckedState(checkboxControlsVibrate, vibrate);
+    }
+
     public virtual void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
         //LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected );
-        
+
         // Change appstate
-        
+
         if(checkboxName == checkboxControlsHandedRight.name) {
-			if(selected) {
-				GameProfiles.Current.SetControlHanded(
-					ProfileControlHanded.RIGHT);
-				ChangeCheckedState(checkboxControlsHandedLeft, false);
-			}
+            if(selected) {
+                GameProfiles.Current.SetControlHanded(
+                    ProfileControlHanded.RIGHT);
+                ChangeCheckedState(checkboxControlsHandedLeft, false);
+            }
         }
         else if(checkboxName == checkboxControlsHandedLeft.name) {
-			if(selected) {
-				GameProfiles.Current.SetControlHanded(
-					ProfileControlHanded.LEFT);
-				ChangeCheckedState(checkboxControlsHandedRight, false);
-			}
+            if(selected) {
+                GameProfiles.Current.SetControlHanded(
+                    ProfileControlHanded.LEFT);
+                ChangeCheckedState(checkboxControlsHandedRight, false);
+            }
         }
         else if(checkboxName == checkboxControlsVibrate.name) {
-			GameProfiles.Current.SetControlVibrate(selected);
+            GameProfiles.Current.SetControlVibrate(selected);
         }
 
-		SyncCheckedState();
-		GameState.SaveProfile();
-		
+        SyncCheckedState();
+        GameState.SaveProfile();
+
     }
-    
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
-	
-	public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
-}
 
+    public virtual void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
+}
 #endif

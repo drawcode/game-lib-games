@@ -14,7 +14,7 @@ public class UIPanelPause : UIPanelBase {
     public GameObject listItemPrefab;
 
     public GameObject containerPause;
-    
+
     /*
 #if USE_UI_NGUI_2_7
 #endif
@@ -43,55 +43,56 @@ public class UIPanelPause : UIPanelBase {
     public Slider sliderEffectsVolume;
 #endif
 
-    public void Awake() {
-		
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-		
-        Instance = this;	
-        
+
+        Instance = this;
+
         panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}	
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}	
-	
-	public override void Start() {
-		Init();
-	}
-	
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
+
+    public override void Start() {
+        Init();
+    }
+
     public override void OnEnable() {
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-		Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
+        Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
 
         Messenger<string>.AddListener(GameMessages.gameLevelPause, OnGameLevelPauseHandler);
         Messenger<string>.AddListener(GameMessages.gameLevelResume, OnGameLevelResumeHandler);
         Messenger<string>.AddListener(GameMessages.gameLevelQuit, OnGameLevelQuitHandler);
 
     }
-    
+
     public override void OnDisable() {
         base.OnDisable();
 
-		Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-		Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
+        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
 
         Messenger<string>.RemoveListener(GameMessages.gameLevelPause, OnGameLevelPauseHandler);
         Messenger<string>.RemoveListener(GameMessages.gameLevelResume, OnGameLevelResumeHandler);
@@ -102,7 +103,7 @@ public class UIPanelPause : UIPanelBase {
         //TweenUtil.ShowObjectRight(containerPause);
         AnimateIn();
     }
-    
+
     void OnGameLevelResumeHandler(string levelCode) {
         //TweenUtil.HideObjectRight(containerPause);
         AnimateOut();
@@ -116,36 +117,36 @@ public class UIPanelPause : UIPanelBase {
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
-	}
-	
+    }
+
     void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
 
         //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
-		
-		bool changeAudio = true;
-		
+
+        bool changeAudio = true;
+
 #if DEV
-		if(Application.isEditor) {
+        if(Application.isEditor) {
             //GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditor);
             //GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditor);
-			//changeAudio = false;
-		}
+            //changeAudio = false;
+        }
 #endif
-		
-		if(!changeAudio) {
-			return;
-		}
+
+        if(!changeAudio) {
+            return;
+        }
 
 
         if(sliderEffectsVolume != null) {
-            if (sliderName == sliderEffectsVolume.name) {
-    			//GameAudio.SetProfileEffectsVolume(sliderValue);
+            if(sliderName == sliderEffectsVolume.name) {
+                //GameAudio.SetProfileEffectsVolume(sliderValue);
             }
         }
 
         if(sliderMusicVolume != null) {
-            if (sliderName == sliderMusicVolume.name) {
-			    //GameAudio.SetProfileAmbienceVolume(sliderValue);
+            if(sliderName == sliderMusicVolume.name) {
+                //GameAudio.SetProfileAmbienceVolume(sliderValue);
             }
         }
     }
@@ -161,53 +162,53 @@ public class UIPanelPause : UIPanelBase {
             Instance.AnimateOut();
         }
     }
-	
-	public static void LoadData() {
-		if(Instance != null) {
-			Instance.loadData();
-		}
-	}
+
+    public static void LoadData() {
+        if(Instance != null) {
+            Instance.loadData();
+        }
+    }
 
     public void UpdateAudioValues() {
 
         float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
         float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
-        
+
         if(sliderMusicVolume != null) {
             UIUtil.SetSliderValue(sliderMusicVolume, musicVolume);
             //sliderMusicVolume.ForceUpdate();
 
             GameAudio.SetProfileEffectsVolume(musicVolume);
         }
-        
+
         if(sliderEffectsVolume != null) {
             UIUtil.SetSliderValue(sliderEffectsVolume, effectsVolume);
             //sliderEffectsVolume.ForceUpdate();
-        
+
             GameAudio.SetProfileAmbienceVolume(effectsVolume);
         }
     }
- 
+
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
+
     IEnumerator loadDataCo() {
-    
+
         yield return new WaitForSeconds(1f);
-    
+
         //UpdateAudioValues();
     }
 
     public override void AnimateIn() {
         base.AnimateIn();
-        
+
         TweenUtil.ShowObjectRight(containerPause, TweenCoord.local, true, .5f, 0f);
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
-        
+
         TweenUtil.HideObjectRight(containerPause, TweenCoord.local, true, .5f, 0f);
     }
 }

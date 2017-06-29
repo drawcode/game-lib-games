@@ -11,14 +11,14 @@ using UnityEngine.UI;
 using Engine.Events;
 
 public class BaseGameUIPanelEquipment : GameUIPanelBase {
-    
+
     public static GameUIPanelEquipment Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-	public UIImageButton buttonEquipmentPowerups;
-	public UIImageButton buttonStatistics;
-	public UIImageButton buttonAchievements;
-	public UIImageButton buttonCustomize;	
+    public UIImageButton buttonEquipmentPowerups;
+    public UIImageButton buttonStatistics;
+    public UIImageButton buttonAchievements;
+    public UIImageButton buttonCustomize;
     public UIImageButton buttonClose;
 #else
     public Button buttonEquipmentPowerups;
@@ -27,7 +27,7 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
     public Button buttonCustomize;
     public Button buttonClose;
 #endif
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -36,18 +36,18 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-	}
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+    }
 
     public override void OnEnable() {
 
@@ -97,48 +97,48 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-		
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		
-		if(UIUtil.IsButtonClicked(buttonAchievements, buttonName)) {
-			GameUIController.ShowAchievements();
-		}
-		else if(UIUtil.IsButtonClicked(buttonStatistics, buttonName)) {
-			GameUIController.ShowStatistics();
-		}
+
+        if(UIUtil.IsButtonClicked(buttonAchievements, buttonName)) {
+            GameUIController.ShowAchievements();
+        }
+        else if(UIUtil.IsButtonClicked(buttonStatistics, buttonName)) {
+            GameUIController.ShowStatistics();
+        }
 #if ENABLE_FEATURE_PRODUCTS
         else if(UIUtil.IsButtonClicked(buttonEquipmentPowerups, buttonName)) {
-			GameUIController.ShowProducts();
-		}
+            GameUIController.ShowProducts();
+        }
 #endif
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
-		else if(UIUtil.IsButtonClicked(buttonCustomize, buttonName)) {
-			GameUIController.ShowCustomize();
-		}		
+        else if(UIUtil.IsButtonClicked(buttonCustomize, buttonName)) {
+            GameUIController.ShowCustomize();
+        }
 #endif
     }
-    
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
-		
-	public override void AnimateIn() {
-		
-		base.AnimateIn();	
-	}
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-	}
+
+    public override void AnimateIn() {
+
+        base.AnimateIn();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
+    }
 
     public virtual void Update() {
 
@@ -150,5 +150,4 @@ public class BaseGameUIPanelEquipment : GameUIPanelBase {
             return;
         }
     }
-	
 }

@@ -20,9 +20,9 @@ public class BaseGameUIPanelCustomizeCharacterColors : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 	
 	public override void Start() {

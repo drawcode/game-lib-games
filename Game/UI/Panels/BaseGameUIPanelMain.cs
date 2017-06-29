@@ -23,7 +23,7 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public Button buttonPlayerUCFObject;
     public Button buttonPlayerBUObject;
 #endif
-    
+
     public GameObject listItemPrefab;
     public GameObject listItemSetPrefab;
     public GameObject containerObject;
@@ -33,18 +33,18 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public GameObject containerPlayerObjectBU;
     public GameObject containerAppRate;
     public GameObject containerStartObject;
-    
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {
@@ -82,55 +82,55 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             //
         }
     }
-    
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
-        base.Init();    
-        
+        base.Init();
+
         //LoadData();
         //AnimateIn();
 
-        if (containerAppRate != null) {
-            if (Context.Current.isWeb) {
+        if(containerAppRate != null) {
+            if(Context.Current.isWeb) {
                 containerAppRate.Hide();
             }
         }
     }
-    
+
     public void LoadData() {
         StartCoroutine(LoadDataCo());
     }
-    
+
     IEnumerator LoadDataCo() {
         yield break;
     }
-        
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.None;
         backgroundDisplayState = UIPanelBackgroundDisplayState.None;
-        
+
         GameCommunity.HideBroadcastRecordPlayShare();
     }
 
@@ -162,30 +162,30 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
     public virtual void AnimateInDelayed() {
 
         GameUIPanelFooter.ShowMain();
-        
+
         GameCommunity.HideBroadcastRecordPlayShare();
-        
+
         GameCommunity.ShowActionAppRate();
     }
-    
+
     public virtual void AnimateStartCharacter() {
-        
-        if (containerStartObject != null) {
+
+        if(containerStartObject != null) {
 
             TweenUtil.FadeToObject(
-                containerStartObject, .5f, 2f, 0f, true, 
+                containerStartObject, .5f, 2f, 0f, true,
                 TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
 
             //UITweenerUtil.FadeTo(containerStartObject,
             //    UITweener.Method.EaseInOut, UITweener.Style.PingPong, 2f, 0f, .5f);
-        }       
-        
+        }
+
         /*
         if(buttonPlayerGlowObject != null) {
             UITweenerUtil.FadeTo(buttonPlayerGlowObject.gameObject,
                 UITweener.Method.EaseInOut, UITweener.Style.PingPong, 2f, 0f, .1f);
         }
-  */      
+  */
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -232,16 +232,16 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
         else 
         */
 
-        if (UIUtil.IsButtonClicked(buttonPlayerDefaultObject, buttonName)) {
-            loadCharacter = true; 
+        if(UIUtil.IsButtonClicked(buttonPlayerDefaultObject, buttonName)) {
+            loadCharacter = true;
         }
 
-        if (loadCharacter) {
-            LogUtil.Log("Player Clicked: " + buttonName);                 
-            
+        if(loadCharacter) {
+            LogUtil.Log("Player Clicked: " + buttonName);
+
             GameController.LoadCurrentProfileCharacter();
 #if ENABLE_FEATURE_GAME_MODE
-            GameUIController.ShowGameMode();   
+            GameUIController.ShowGameMode();
 #endif
         }
     }

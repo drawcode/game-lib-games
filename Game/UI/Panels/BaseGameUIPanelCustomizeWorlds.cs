@@ -9,31 +9,31 @@ using Engine.Events;
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
 public class BaseGameUIPanelCustomizeWorlds : GameUIPanelBase {
-    
+
     public static GameUIPanelCustomizeWorlds Instance;
     public Camera cameraCustomize;
     public int currentSelectedItem = 0;
     public GameObject playerObject;
     public GameObject playerContainerObject;
     public UICustomizeProfileCharacters customProfileCharacters;
-        
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-        
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
         base.Init();
 
@@ -55,7 +55,7 @@ public class BaseGameUIPanelCustomizeWorlds : GameUIPanelBase {
         Messenger<string, string>.AddListener(
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
-        
+
         Messenger<string, int>.AddListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
 
@@ -79,133 +79,133 @@ public class BaseGameUIPanelCustomizeWorlds : GameUIPanelBase {
     }
 
     void OnInputClicked(string controlName, int data) {
-        
+
         Debug.Log("OnInputClicked:" + " controlName:" + controlName + " data:" + data);
 
-        if (customProfileCharacters == null) {            
+        if(customProfileCharacters == null) {
             customProfileCharacters = GetComponentInChildren<UICustomizeProfileCharacters>();
         }
 
-        if (customProfileCharacters == null) {
+        if(customProfileCharacters == null) {
             return;
         }
-        
-        if (customProfileCharacters.inputCurrentDisplayName != null 
+
+        if(customProfileCharacters.inputCurrentDisplayName != null
             && controlName == customProfileCharacters.inputCurrentDisplayName.name) {
-            
+
             GameUIPanelHeader.CharacterLargeZoomIn();
             GameUIPanelHeader.CharacterLargeShowBack();
         }
-        else if (customProfileCharacters.inputCurrentDisplayCode != null 
+        else if(customProfileCharacters.inputCurrentDisplayCode != null
             && controlName == customProfileCharacters.inputCurrentDisplayCode.name) {
-            
+
             GameUIPanelHeader.CharacterLargeZoomIn();
             GameUIPanelHeader.CharacterLargeShowFront();
         }
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             //
         }
     }
-        
+
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
     }
-    
+
     public virtual void OnCheckboxChangedEventHandler(string buttonName, bool selected) {
 
     }
-    
+
     public virtual void UpdateControls() {
 
     }
-    
+
     public static void LoadData() {
-        if (GameUIPanelCustomizeCharacter.Instance != null) {
+        if(GameUIPanelCustomizeCharacter.Instance != null) {
             GameUIPanelCustomizeCharacter.Instance.loadData();
         }
     }
-    
+
     public virtual void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
-    IEnumerator loadDataCo() {      
-        
+
+    IEnumerator loadDataCo() {
+
         LogUtil.Log("LoadDataCo");
-        
-        if (listGridRoot != null) {
+
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
-            
+
             yield return new WaitForEndOfFrame();
-                    
+
             //loadDataPowerups();
-            
+
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
-            yield return new WaitForEndOfFrame();               
+            yield return new WaitForEndOfFrame();
         }
     }
-        
+
     public virtual void ClearList() {
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
         }
-    }    
-    
+    }
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         buttonDisplayState = UIPanelButtonsDisplayState.None;
         characterDisplayState = UIPanelCharacterDisplayState.CharacterLarge;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
-            }
+    }
 
     public override void HandleHide() {
         base.HandleHide();
     }
-        
+
     public override void AnimateIn() {
-                
+
         base.AnimateIn();
-        
+
         loadData();
     }
-    
+
     public override void AnimateOut() {
-        
-        base.AnimateOut();      
+
+        base.AnimateOut();
         ClearList();
     }
 
     public virtual void Update() {
 
-        if (GameConfigs.isGameRunning) {
+        if(GameConfigs.isGameRunning) {
             return;
         }
 
-        if (!isVisible) {
+        if(!isVisible) {
             return;
         }
 
-        if (cameraCustomize == null) {
+        if(cameraCustomize == null) {
             return;
         }
-        
+
         /*
         if(Input.GetMouseButtonDown(0)) {
             Ray screenRay = cameraCustomize.ScreenPointToRay(Input.mousePosition);
@@ -235,12 +235,10 @@ public class BaseGameUIPanelCustomizeWorlds : GameUIPanelBase {
     }
 
     public virtual void LateUpdate() {
-        
-        //if (playerContainerObject) {
-            //playerContainerObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
-        //}
-    }   
-    
-}
 
+        //if (playerContainerObject) {
+        //playerContainerObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
+        //}
+    }
+}
 #endif

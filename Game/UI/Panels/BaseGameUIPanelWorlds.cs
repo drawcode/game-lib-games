@@ -23,7 +23,7 @@ public class GameWorldsMessages {
 }
 
 public class BaseGameUIPanelWorlds : GameUIPanelBase {
-    
+
     public static GameUIPanelWorlds Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -60,24 +60,24 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-    
+
     public override void Start() {
         Init();
-    } 
-    
+    }
+
     public override void Init() {
-        base.Init();    
-        
+        base.Init();
+
         loadData();
 
         ChangeState(GameWorldsState.selection);
@@ -100,10 +100,10 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         Messenger<string, string>.AddListener(
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
-        
+
         Messenger.AddListener(UIControllerMessages.uiShow, OnUIControllerShowHandler);
         Messenger.AddListener(UIControllerMessages.uiHide, OnUIControllerHideHandler);
-        
+
         Messenger.AddListener(GameWorldsMessages.gameWorldNext, OnGameWorldNext);
         Messenger.AddListener(GameWorldsMessages.gameWorldPrevious, OnGameWorldPrevious);
         Messenger.AddListener(GameWorldsMessages.gameWorldSelect, OnGameWorldSelect);
@@ -126,19 +126,19 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         Messenger<string, string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateType,
             OnUIControllerPanelAnimateType);
-        
+
         Messenger.RemoveListener(UIControllerMessages.uiShow, OnUIControllerShowHandler);
         Messenger.RemoveListener(UIControllerMessages.uiHide, OnUIControllerHideHandler);
-        
+
         Messenger.RemoveListener(GameWorldsMessages.gameWorldNext, OnGameWorldNext);
         Messenger.RemoveListener(GameWorldsMessages.gameWorldPrevious, OnGameWorldPrevious);
         Messenger.RemoveListener(GameWorldsMessages.gameWorldSelect, OnGameWorldSelect);
     }
-    
+
     public void OnUIControllerShowHandler() {
         GameUIPanelWorlds.Instance.ShowWorldsContainer();
     }
-    
+
     public void OnUIControllerHideHandler() {
         //if (GameUIPanelSettings.isInst) {
         GameUIPanelWorlds.Instance.HideWorldsContainer();
@@ -146,19 +146,19 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             //
         }
     }
@@ -166,13 +166,13 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void OnGameWorldNext() {
         ChangeState(GameWorldsState.selection);
     }
-    
+
     public virtual void OnGameWorldPrevious() {
         ChangeState(GameWorldsState.selection);
     }
-    
+
     public virtual void OnGameWorldSelect() {
-        ChangeState(GameWorldsState.missions); 
+        ChangeState(GameWorldsState.missions);
 
         //UpdateMeta();
     }
@@ -182,7 +182,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         loadData();
     }
 
-    public virtual void UpdateMetaLabels() {        
+    public virtual void UpdateMetaLabels() {
         UIUtil.SetLabelValue(labelWorldTitle, GameWorlds.Current.display_name);
         UIUtil.SetLabelValue(labelWorldDescription, GameWorlds.Current.description);
     }
@@ -194,11 +194,11 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     }
 
     public virtual void HandleStateChange() {
-        if (gameWorldsState == GameWorldsState.selection) {
+        if(gameWorldsState == GameWorldsState.selection) {
             HideSelect();
             ShowButtons();
         }
-        else if (gameWorldsState == GameWorldsState.missions) {
+        else if(gameWorldsState == GameWorldsState.missions) {
             ShowSelect();
             HideButtons();
         }
@@ -206,9 +206,9 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
     public virtual void ShowWorldsContainer() {
         containerWorlds.Show();
-        TweenUtil.ShowObjectBottom(containerWorlds);    
+        TweenUtil.ShowObjectBottom(containerWorlds);
     }
-    
+
     public virtual void HideWorldsContainer() {
         TweenUtil.HideObjectBottom(containerWorlds);
         containerWorlds.HideObjectDelayed(.5f);
@@ -221,98 +221,98 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
     public virtual void HideSelect() {
         TweenUtil.HideObjectBottom(containerMissions);
     }
-    
+
     public virtual void ShowButtons() {
         TweenUtil.ShowObjectBottom(containerButtons);
     }
-    
+
     public virtual void HideButtons() {
         TweenUtil.HideObjectBottom(containerButtons);
     }
-    
-    public override void OnButtonClickEventHandler(string buttonName) {     
-        if (UIUtil.IsButtonClicked(buttonWorldNext, buttonName)) {            
+
+    public override void OnButtonClickEventHandler(string buttonName) {
+        if(UIUtil.IsButtonClicked(buttonWorldNext, buttonName)) {
             Messenger.Broadcast(GameWorldsMessages.gameWorldNext);
         }
-        else if (UIUtil.IsButtonClicked(buttonWorldPrevious, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonWorldPrevious, buttonName)) {
             Messenger.Broadcast(GameWorldsMessages.gameWorldPrevious);
         }
-        else if (UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {
             Messenger.Broadcast(GameWorldsMessages.gameWorldSelect);
-        }   
+        }
     }
-        
+
     public virtual void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
-    IEnumerator loadDataCo() {      
-        
+
+    IEnumerator loadDataCo() {
+
         LogUtil.Log("LoadDataCo");
-        
-        if (listGridRoot != null) {
+
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
-            
+
             yield return new WaitForEndOfFrame();
-            
+
             loadDataMissions();
-            
+
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
-            yield return new WaitForEndOfFrame();               
+            yield return new WaitForEndOfFrame();
         }
     }
-    
+
     public virtual void loadDataMissions() {
 
         LogUtil.Log("Load Missions:");
-        
+
         int i = 0;
-        
+
         double scoreTotal = 0;
 
         string worldCode = GameWorlds.Current.code;
 
         UpdateMetaLabels();
 
-        foreach (AppContentCollect mission in 
+        foreach(AppContentCollect mission in
                  AppContentCollects.GetMissionsByWorld(worldCode)) {
 
             double scoreMission = 0;
-            
+
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "MissionItem" + i;
-            
+
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelName", mission.display_name);
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelDescription", mission.description);
-                        
+
             string actionType = BaseDataObjectKeys.mission;
             string appContentState = AppContentStates.Current.code;
             string appState = AppStates.Current.code;
             string missionCode = mission.code;
 
             // Update button action
-                        
+
             Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
-            if (buttonObject != null) {
+            if(buttonObject != null) {
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
-                if (button != null) {
+                if(button != null) {
 
 
                     GameObjectData objData = button.gameObject.Get<GameObjectData>();
 
-                    if (objData == null) {
+                    if(objData == null) {
                         objData = button.gameObject.AddComponent<GameObjectData>();
                     }
 
-                    if (objData != null) {
+                    if(objData != null) {
                         objData.Set(BaseDataObjectKeys.type, actionType);
                         objData.Set(BaseDataObjectKeys.app_content_state, appContentState);
                         objData.Set(BaseDataObjectKeys.app_state, appState);
                         objData.Set(BaseDataObjectKeys.code, missionCode);
                     }
 
-                    button.name = BaseUIButtonNames.buttonGamePlay + 
+                    button.name = BaseUIButtonNames.buttonGamePlay +
                         "$" + appContentState + "$" + missionCode;
                 }
             }
@@ -320,35 +320,35 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             // hide actions
 
             string currentType = BaseDataObjectKeys.action;
-            
-            foreach (GameObjectInactive obj in 
+
+            foreach(GameObjectInactive obj in
                      item.GetComponentsInChildren<GameObjectInactive>(true)) {
-                if (obj.type == currentType) {
+                if(obj.type == currentType) {
                     obj.gameObject.Hide();
                 }
             }
 
             // fill in action content and stars
-            
+
             int j = 0;
 
-            foreach (AppContentCollectItem action in mission.GetItemsData()) {
-                            
-                foreach (GameObjectInactive obj in 
+            foreach(AppContentCollectItem action in mission.GetItemsData()) {
+
+                foreach(GameObjectInactive obj in
                          item.GetComponentsInChildren<GameObjectInactive>(true)) {
 
-                    if (obj.type == currentType) {
+                    if(obj.type == currentType) {
 
                         string index = (j + 1).ToString();
 
                         string currentActionItem = currentType + "-" + index;
 
-                        if (obj.code == currentActionItem) {
-                            
+                        if(obj.code == currentActionItem) {
+
                             //Debug.Log("action.data.display_name:" + action.data.display_name);
 
                             obj.gameObject.Show();
-                                                        
+
                             UIUtil.UpdateLabelObject(
                                 obj.gameObject, "LabelDescription", action.data.display_name);
 
@@ -356,40 +356,40 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
                             string collectType = BaseDataObjectKeys.mission;
 
-                            string collectKey = 
+                            string collectKey =
                                 GameProfileModes.GetAppContentCollectItemKey(
                                     appState,
                                     appContentState,
                                     worldCode,
                                     BaseDataObjectKeys.all,
                                    mission.code, action.uid);
-                            
+
                             bool complete = GameProfileModes.Current.GetContentCollectValue<bool>(
                                 collectType, collectKey, BaseDataObjectKeys.complete);
-                                                        
+
                             double points = GameProfileModes.Current.GetContentCollectValue<double>(
                                 collectType, collectKey, BaseDataObjectKeys.points);
 
-                            if(points == 0) {                                
+                            if(points == 0) {
                                 points = GameProfileModes.Current.GetContentCollectValue<int>(
                                     collectType, collectKey, BaseDataObjectKeys.points);
                             }
 
 
-                            if(complete) {                                
+                            if(complete) {
                                 // figure score                                
                                 scoreMission += points;
                             }
 
                             // STARS LIST
-                                                        
+
                             SetStars(obj.gameObject, complete);
 
                             // STARS STAR CONTAINER
 
                             GameObject starObject = null;
-                            
-                            foreach (GameObjectInactive starItem in 
+
+                            foreach(GameObjectInactive starItem in
                                      item.GetComponentsInChildren<GameObjectInactive>(true)) {
                                 if(starItem.code == "stars-star-" + index.ToString()) {
                                     starObject = starItem.gameObject;
@@ -401,24 +401,24 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                             SetStars(starObject, complete);
                         }
                     }
-                }                
-                
+                }
+
                 j++;
-            }                
-                
+            }
+
             // fill score
-                
+
             scoreTotal += scoreMission;
-            
+
             Transform scoreObject = item.transform.Find("Container/Stars");
             if(scoreObject != null) {
                 UIUtil.UpdateLabelObject(
                     scoreObject.gameObject, "LabelScore", scoreMission.ToString("N0"));
             }
-            
+
             i++;
         }
-                
+
         //Transform scoreTotalObject = item.transform.FindChild("Container/ScoreTotal");
         //if(scoreObject != null) {
         //    UIUtil.UpdateLabelObject(
@@ -432,15 +432,15 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         if(starObject == null) {
             return;
         }
-        
+
         if(starObject != null) {
             // find start complete and incomplete
             GameObject starCompleteObject = null;
             GameObject starIncompleteObject = null;
-            
-            foreach(GameObjectInactive objStarState 
+
+            foreach(GameObjectInactive objStarState
                     in starObject.GetComponentsInChildren<GameObjectInactive>(true)) {
-                
+
                 if(objStarState.code == BaseDataObjectKeys.complete) {
                     starCompleteObject = objStarState.gameObject;
                     //Debug.Log("Worlds:loadDataMissions::starCompleteObject Found");
@@ -450,43 +450,43 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
                     //Debug.Log("Worlds:loadDataMissions::starIncompleteObject Found");
                 }
             }
-            
+
             if(starCompleteObject != null
                && starIncompleteObject != null) {
-                
+
                 if(isCompleted) {
                     starCompleteObject.Show();
                     starIncompleteObject.Hide();
-                                        
+
                     //Debug.Log("Worlds:loadDataMissions::Set Completed");
                 }
                 else {
                     starCompleteObject.Hide();
-                    starIncompleteObject.Show();   
-                    
+                    starIncompleteObject.Show();
+
                     //Debug.Log("Worlds:loadDataMissions::Set Incompleted");
-                }                                
+                }
             }
         }
     }
 
     public virtual void ClearList() {
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
         }
     }
-    
+
     public override void AnimateIn() {
-        
-        base.AnimateIn();        
-        
+
+        base.AnimateIn();
+
         loadData();
     }
-    
+
     public override void AnimateOut() {
-        
+
         base.AnimateOut();
-        
+
         ClearList();
-    }   
+    }
 }

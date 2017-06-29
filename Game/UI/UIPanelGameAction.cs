@@ -68,8 +68,8 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 
     bool deferTap = false;
 
-    public void Awake() {
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {
@@ -103,19 +103,19 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
-        if (UIUtil.IsButtonClicked(buttonNext, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonNext, buttonName)) {
             //
-            if (isVisible && actionsMode != GameActionsMode.Loading) {
+            if(isVisible && actionsMode != GameActionsMode.Loading) {
                 ShowActionsNext();
             }
         }
-        else if (UIUtil.IsButtonClicked(buttonBack, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonBack, buttonName)) {
             //
-            if (isVisible && actionsMode != GameActionsMode.Loading) {
+            if(isVisible && actionsMode != GameActionsMode.Loading) {
                 ShowActionsPrevious();
             }
         }
-        else if (UIUtil.IsButtonClicked(buttonClose, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonClose, buttonName)) {
             AnimateOut();
         }
     }
@@ -138,14 +138,14 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         //  return;
         //}
 
-        if (gesture.Direction == FingerGestures.SwipeDirection.Right
+        if(gesture.Direction == FingerGestures.SwipeDirection.Right
            || gesture.Direction == FingerGestures.SwipeDirection.UpperRightDiagonal
            || gesture.Direction == FingerGestures.SwipeDirection.Down) {
             deferTap = true;
             ShowActionsPrevious();
 
         }
-        else if (gesture.Direction == FingerGestures.SwipeDirection.Left
+        else if(gesture.Direction == FingerGestures.SwipeDirection.Left
                 || gesture.Direction == FingerGestures.SwipeDirection.LowerLeftDiagonal
                 || gesture.Direction == FingerGestures.SwipeDirection.Up) {
             deferTap = true;
@@ -159,12 +159,12 @@ public class UIPanelGameAction : UIAppPanelBaseList {
         //if(!isVisible) {
         //  return;
         //}
-        if (deferTap) {
+        if(deferTap) {
             deferTap = false;
             return;
         }
 
-        if (gesture.Taps > 0) {
+        if(gesture.Taps > 0) {
 
             ShowActionsNext();
 
@@ -240,7 +240,7 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
 
     public void ShowActionsFirst() {
-        if (actionsMode == GameActionsMode.Loading) {
+        if(actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
@@ -249,14 +249,14 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
 
     public void ShowActionsRandomNext() {
-        if (actionsCenterContainer != null) {
+        if(actionsCenterContainer != null) {
             actionsTotal = actionsCenterContainer.transform.childCount;
             ShowAction(UnityEngine.Random.Range(0, actionsTotal - 1));
         }
     }
 
     public void ShowActionsNext() {
-        if (actionsMode == GameActionsMode.Loading) {
+        if(actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
@@ -265,7 +265,7 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
 
     public void ShowActionsPrevious() {
-        if (actionsMode == GameActionsMode.Loading) {
+        if(actionsMode == GameActionsMode.Loading) {
             ShowActionsRandomNext();
         }
         else {
@@ -279,12 +279,12 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 
         actionsTotal = actionsCenterContainer.transform.childCount;
 
-        if (index > actionsTotal - 1) {
+        if(index > actionsTotal - 1) {
             Messenger<string>.Broadcast(UIPanelGameActionMessages.actionsCycle, gameObject.name);
             index = 0;
         }
 
-        if (index < 0) {
+        if(index < 0) {
             index = actionsTotal - 1;
         }
 
@@ -292,7 +292,7 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 
         HideAllActionContainers();
 
-        if (gameObject.activeSelf && gameObject.activeInHierarchy) {
+        if(gameObject.activeSelf && gameObject.activeInHierarchy) {
             StartCoroutine(ShowCurrentActionObjectsCo());
         }
     }
@@ -351,17 +351,17 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 
     IEnumerator ShowContainerCo(GameObject container, string actionCode) {
 
-        if (container != null) {
+        if(container != null) {
             container.HideChildren(true);
 
-            foreach (GameObjectInactive inactive in container.GetComponentsInChildren<GameObjectInactive>(true)) {
+            foreach(GameObjectInactive inactive in container.GetComponentsInChildren<GameObjectInactive>(true)) {
 
-                if (inactive.name == actionCode ||
+                if(inactive.name == actionCode ||
                    inactive.name.IndexOf(actionCode + "-") > -1) {
                     inactive.gameObject.Show();
 
                     var animate = inactive.gameObject.GetComponent<GameObjectBouncy>();
-                    if (animate != null) {
+                    if(animate != null) {
                         animate.Animate();
                     }
 
@@ -385,8 +385,8 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
 
     public void HideContainer(GameObject container) {
-        if (container != null) {
-            if (!gameObject.activeSelf || !gameObject.activeInHierarchy
+        if(container != null) {
+            if(!gameObject.activeSelf || !gameObject.activeInHierarchy
                || !container.activeSelf || !container.activeInHierarchy) {
                 container.HideChildren(true);
             }
@@ -397,13 +397,13 @@ public class UIPanelGameAction : UIAppPanelBaseList {
     }
 
     IEnumerator HideContainerCo(GameObject container) {
-        if (container != null) {
+        if(container != null) {
             container.HideChildren(true);
         }
 
         yield return new WaitForSeconds(.1f);
 
-        if (container != null) {
+        if(container != null) {
             //container.HideChildren(true);
         }
     }
@@ -455,8 +455,8 @@ public class UIPanelGameAction : UIAppPanelBaseList {
 
     void Update() {
         currentChangeDelay -= Time.deltaTime;
-        if (currentChangeDelay <= 0) {
-            if (GameUIController.Instance.uiVisible
+        if(currentChangeDelay <= 0) {
+            if(GameUIController.Instance.uiVisible
                && actionsMode == GameActionsMode.Loading) {
                 //ShowActionsRandomNext();
             }

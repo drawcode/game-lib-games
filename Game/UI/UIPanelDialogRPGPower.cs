@@ -26,9 +26,10 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     public static UIPanelDialogRPGPower Instance;
     public GameObject containerContent;
 
-    public void Awake() {
+    public override void Awake() {
+        base.Awake();
 
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -41,7 +42,7 @@ public class UIPanelDialogRPGPower : UIPanelBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
@@ -59,14 +60,14 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -93,13 +94,13 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     // SHOW/LOAD
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
@@ -109,7 +110,7 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
@@ -131,5 +132,4 @@ public class UIPanelDialogRPGPower : UIPanelBase {
     public void Update() {
 
     }
- 
 }

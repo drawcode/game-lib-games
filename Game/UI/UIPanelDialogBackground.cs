@@ -11,62 +11,63 @@ public class UIPanelDialogBackground : UIPanelBase {
 
     public static UIPanelDialogBackground Instance;
 
-    public void Awake() {
-        
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-        
-        Instance = this;    
+
+        Instance = this;
     }
-    
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
+
     public override void Init() {
         base.Init();
 
         loadData();
     }
-    
+
     public override void Start() {
         Init();
     }
-    
+
     public override void OnEnable() {
 
     }
-    
+
     public override void OnDisable() {
 
     }
-    
+
     public override void OnButtonClickEventHandler(string buttonName) {
 
     }
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
@@ -74,9 +75,8 @@ public class UIPanelDialogBackground : UIPanelBase {
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
+
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
     }
-    
 }

@@ -13,7 +13,7 @@ using Engine.Events;
 #if ENABLE_FEATURE_PRODUCT_CURRENCY
 
 public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
-    
+
     public static GameUIPanelProductCurrency Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -22,7 +22,7 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
     public UIImageButton buttonGameBuyCurrency;
     public UIImageButton buttonGameBuyCurrencyFeature1;
     public UIImageButton buttonGameBuyCurrencyFeature2;
-    
+
     public UIImageButton buttonGameBuyCurrencyTier1;
     public UIImageButton buttonGameBuyCurrencyTier2;
     public UIImageButton buttonGameBuyCurrencyTier3;
@@ -66,18 +66,18 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-	}
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+    }
 
     public override void OnEnable() {
 
@@ -127,7 +127,7 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
 
@@ -139,28 +139,28 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
         else if(UIUtil.IsButtonClicked(buttonGameBuyCurrency, buttonName)) {
             GameUIController.ShowProducts(GameProductType.currency);
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier1, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier1, buttonName)) {
             // action_coin_pack_1
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier2, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier2, buttonName)) {
             // action_coin_pack_2
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier3, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier3, buttonName)) {
             // action_coin_pack_3
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier5, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier5, buttonName)) {
             // action_coin_pack_5
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier10, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier10, buttonName)) {
             // action_coin_pack_10
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier20, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier20, buttonName)) {
             // action_coin_pack_20
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier50, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyTier50, buttonName)) {
             // action_coin_pack_50
         }
-        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyFeature1, buttonName)) {            
+        else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyFeature1, buttonName)) {
 
         }
         else if(UIUtil.IsButtonClicked(buttonGameBuyCurrencyFeature2, buttonName)) {
@@ -171,43 +171,40 @@ public class BaseGameUIPanelProductCurrency : GameUIPanelBase {
         }
     }
 
-	
-	public static void LoadData() {
+
+    public static void LoadData() {
         if(GameUIPanelProductCurrency.Instance != null) {
             GameUIPanelProductCurrency.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
 
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		LogUtil.Log("LoadDataCo");
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        LogUtil.Log("LoadDataCo");
 
         yield return new WaitForEndOfFrame();
 
     }
-    
+
     public override void HandleShow() {
         base.HandleShow();
 
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
 
-	public override void AnimateIn() {
-		
-		base.AnimateIn();
-	}
+    public override void AnimateIn() {
 
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-	}
-	
-	
+        base.AnimateIn();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
+    }
 }
-
 #endif

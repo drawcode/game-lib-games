@@ -6,12 +6,12 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class BaseGameUIPanelProgress : GameUIPanelBase {	
-    
+public class BaseGameUIPanelProgress : GameUIPanelBase {
+
     public static GameUIPanelProgress Instance;
-	
+
     public GameObject listItemPrefab;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -20,9 +20,9 @@ public class BaseGameUIPanelProgress : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {
@@ -44,7 +44,7 @@ public class BaseGameUIPanelProgress : GameUIPanelBase {
 
     public override void OnDisable() {
 
-       //Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        //Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -73,37 +73,36 @@ public class BaseGameUIPanelProgress : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-    
+
     public virtual void OnButtonClickHandler(string buttonName) {
-        
+
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}
-	
-	public static void LoadData() {
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
+
+    public static void LoadData() {
         if(GameUIPanelProgress.Instance != null) {
             GameUIPanelProgress.Instance.loadData();
-		}
-	}
-	
-	public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
+        }
+    }
+
+    public virtual void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
 }

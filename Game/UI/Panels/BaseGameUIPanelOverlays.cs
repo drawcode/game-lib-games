@@ -27,8 +27,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
         }
     }
 
-    public virtual void Awake() {
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {

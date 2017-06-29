@@ -31,6 +31,10 @@ public class UIAppPanel : GameObjectBehavior {
             _isVisible = value;
         }
     }
+
+    public virtual void Awake() {
+        GetClassName(this);
+    }
     
     public virtual void Start() {
         Init();

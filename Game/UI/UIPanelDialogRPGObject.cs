@@ -41,8 +41,8 @@ public class UIPanelDialogRPGObject : UIPanelBase {
 
     public GameObject containerContent;
 
-    public virtual void Awake() {        
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void Init() {
@@ -56,14 +56,14 @@ public class UIPanelDialogRPGObject : UIPanelBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -121,5 +121,4 @@ public class UIPanelDialogRPGObject : UIPanelBase {
     public virtual void Update() {
 
     }
- 
 }

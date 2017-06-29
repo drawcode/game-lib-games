@@ -8,18 +8,18 @@ using Engine.Events;
 
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
-public class BaseGameUIPanelCustomize : GameUIPanelBase { 
-    
-    public static GameUIPanelCustomize Instance;    
+public class BaseGameUIPanelCustomize : GameUIPanelBase {
 
-	public Camera cameraCustomize;	
-	
-	public GameDataItemRPG currentRPG;
-	public int currentUpgradesAvailable = 0;
-	
-	public UIImageButton buttonCustomizeCharacterColors;
-	public UIImageButton buttonCustomizeCharacterRPG;
-    
+    public static GameUIPanelCustomize Instance;
+
+    public Camera cameraCustomize;
+
+    public GameDataItemRPG currentRPG;
+    public int currentUpgradesAvailable = 0;
+
+    public UIImageButton buttonCustomizeCharacterColors;
+    public UIImageButton buttonCustomizeCharacterRPG;
+
     public UIInput inputCurrentDisplayCode;
     public UIInput inputCurrentDisplayName;
 
@@ -31,22 +31,22 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
 
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		currentRPG = new GameDataItemRPG();
-		
-		//currentColors = GameProfiles.Current.GetCustomColorsRunner();
-		UpdateControls();
-	}
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+        currentRPG = new GameDataItemRPG();
+
+        //currentColors = GameProfiles.Current.GetCustomColorsRunner();
+        UpdateControls();
+    }
 
     public override void OnEnable() {
 
@@ -96,51 +96,51 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-		
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
     }
-		
+
     public virtual void UpdateControls() {
-		
-	}
-	
-	public static void LoadData() {
-		if(GameUIPanelCustomize.Instance != null) {
+
+    }
+
+    public static void LoadData() {
+        if(GameUIPanelCustomize.Instance != null) {
             GameUIPanelCustomize.Instance.loadData();
-		}
-	}
-	
-	public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {		
-		
-		//LogUtil.Log("LoadDataCo");
-		
-		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
-			
-	        yield return new WaitForEndOfFrame();
-					
-			//loadDataPowerups();
-			
-	        yield return new WaitForEndOfFrame();
-	        listGridRoot.GetComponent<UIGrid>().Reposition();
-	        yield return new WaitForEndOfFrame();				
         }
-	}
-		
+    }
+
+    public virtual void loadData() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        //LogUtil.Log("LoadDataCo");
+
+        if(listGridRoot != null) {
+            listGridRoot.DestroyChildren();
+
+            yield return new WaitForEndOfFrame();
+
+            //loadDataPowerups();
+
+            yield return new WaitForEndOfFrame();
+            listGridRoot.GetComponent<UIGrid>().Reposition();
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public virtual void ClearList() {
-		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
-		}
-	}
-    
+        if(listGridRoot != null) {
+            listGridRoot.DestroyChildren();
+        }
+    }
+
     public override void HandleShow() {
         base.HandleShow();
 
@@ -148,20 +148,18 @@ public class BaseGameUIPanelCustomize : GameUIPanelBase {
         characterDisplayState = UIPanelCharacterDisplayState.Character;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
     }
-		
-	public override void AnimateIn() {
-		
-        base.AnimateIn();
-		
-		loadData();
-	}
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();		
-		ClearList();
-	}
-	
-}
 
+    public override void AnimateIn() {
+
+        base.AnimateIn();
+
+        loadData();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
+        ClearList();
+    }
+}
 #endif

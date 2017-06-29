@@ -9,15 +9,15 @@ using Engine.Events;
 #if ENABLE_FEATURE_GAME_MODE_MISSIONS
 
 public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
-    
+
     public static GameUIPanelGameModeMission Instance;
-	
+
     public GameObject listItemPrefab;
-	    
+
     public UIImageButton buttonGamePlayEpisode1;
     public UIImageButton buttonGamePlayEpisode2;
     public UIImageButton buttonGamePlayEpisode3;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -26,20 +26,20 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
 
     public override void OnEnable() {
 
@@ -89,76 +89,76 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-    public override void OnButtonClickEventHandler(string buttonName) {		
-		//if(UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {
-		
+
+    public override void OnButtonClickEventHandler(string buttonName) {
+        //if(UIUtil.IsButtonClicked(buttonGamePlay, buttonName)) {
+
         //}
-	}	
+    }
 
     public static void LoadData() {
         if(GameUIPanelGameModeMission.Instance != null) {
             GameUIPanelGameModeMission.Instance.loadData();
         }
     }
-    
+
     public virtual void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
-    IEnumerator loadDataCo() {      
-        
+
+    IEnumerator loadDataCo() {
+
         LogUtil.Log("LoadDataCo");
-        
-        if (listGridRoot != null) {
+
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
-            
+
             yield return new WaitForEndOfFrame();
-            
+
             loadDataMissions();
-            
+
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
-            yield return new WaitForEndOfFrame();               
+            yield return new WaitForEndOfFrame();
         }
     }
-    
+
     public virtual void loadDataMissions() {
-        
+
         LogUtil.Log("Load Achievements:");
-        
-        List<GameAchievement> achievements = GameAchievements.Instance.GetAll();    
-        
+
+        List<GameAchievement> achievements = GameAchievements.Instance.GetAll();
+
         LogUtil.Log("Load Achievements: achievements.Count: " + achievements.Count);
-        
+
         int i = 0;
-        
+
         //int totalPoints = 0;
-        
+
         foreach(AppContentCollect mission in AppContentCollects.GetMissions()) {
 
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
             item.name = "MissionItem" + i;
-            
+
             UIUtil.UpdateLabelObject(item, "Container/LabelName", mission.display_name);
             UIUtil.UpdateLabelObject(item, "Container/LabelDescription", mission.description);
 
             //GameObject iconObject = item.transform.FindChild("Container/Icon").gameObject;  
             //UISprite iconSprite = iconObject.GetComponent<UISprite>();            
-            
+
             //bool completed = false;
-            
+
             //bool hasValue = GameProfileAchievements.Current.CheckIfAttributeExists(achievement.code);
-            
+
             //if(hasValue) {
-                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code);
+            //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code);
             //}
-            
+
             //if(!hasValue) {
-                //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code + "_" + achievement.pack_code);
+            //completed = GameProfileAchievements.Current.GetAchievementValue(achievement.code + "_" + achievement.pack_code);
             //}
 
             /*
@@ -186,39 +186,37 @@ public class BaseGameUIPanelGameModeMission : GameUIPanelBase {
                 //item.transform.FindChild("Container/ContainerComplete").gameObject.Hide(); 
             }
             */
-            
+
             //item.transform.FindChild("Container/LabelPoints").GetComponent<UILabel>().text = points;                
-            
+
             // Get trophy icon
-            
+
             i++;
         }
-        
+
         //if(labelPoints != null) {
         //  labelPoints.text = totalPoints.ToString("N0");
         //}
     }
-    
+
     public virtual void ClearList() {
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
         }
     }
-    
+
     public override void AnimateIn() {
-        
-        base.AnimateIn();        
-        
+
+        base.AnimateIn();
+
         loadData();
     }
-    
+
     public override void AnimateOut() {
-        
+
         base.AnimateOut();
-        
+
         ClearList();
     }
-	
 }
-
 #endif

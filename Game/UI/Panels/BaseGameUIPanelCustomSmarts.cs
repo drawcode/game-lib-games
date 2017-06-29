@@ -14,16 +14,16 @@ using Engine.Events;
 #if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
 
 public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
-    
+
     public static GameUIPanelCustomSmarts Instance;
-	
+
     public GameObject listItemPrefab;
-	
-	public GameObject helmetObject;
-	public GameObject helmetObjectRotator;
+
+    public GameObject helmetObject;
+    public GameObject helmetObjectRotator;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-    public UIImageButton buttonClose;	
+    public UIImageButton buttonClose;
     public UILabel labelPlaySmartScore;
 #else
     public Button buttonClose;	
@@ -37,10 +37,10 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
             }
             return false;
         }
-    }   
-    
-    public virtual void Awake() {
-        
+    }
+
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void OnEnable() {
@@ -91,81 +91,81 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-		
-		double score = GameProfileRPGs.Current.GetGamePlayerProgressXP();
-		
-		SetScore(score);
-	}
-	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+
+        double score = GameProfileRPGs.Current.GetGamePlayerProgressXP();
+
+        SetScore(score);
+    }
+
     public virtual void LoadDefault() {
-		LoadData();
-	}	
-	
-	public static void ShowDefault() {
+        LoadData();
+    }
+
+    public static void ShowDefault() {
         if(GameUIPanelCustomSmarts.Instance != null) {
             GameUIPanelCustomSmarts.Instance.AnimateIn();
             GameUIPanelCustomSmarts.Instance.LoadDefault();
-		}
-	}
-	 	 
+        }
+    }
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
-	}
-	
-	public static void LoadData() {
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+    }
+
+    public static void LoadData() {
         if(GameUIPanelCustomSmarts.Instance != null) {
             GameUIPanelCustomSmarts.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
 
         InputSystem.Instance.currentDraggableGameObject = helmetObjectRotator;
-		
-		yield return new WaitForSeconds(1f);
-	}
-	
-	public static void HideAll() {
+
+        yield return new WaitForSeconds(1f);
+    }
+
+    public static void HideAll() {
         if(GameUIPanelCustomSmarts.Instance != null) {
             GameUIPanelCustomSmarts.Instance.AnimateOut();
-		}
-	}			
-	
+        }
+    }
+
     public virtual void SetScore(double score) {
-		UIUtil.SetLabelValue(labelPlaySmartScore, score.ToString("N0"));
-	}
-	
-	public override void AnimateIn() {
-				
-		base.AnimateIn();		
-		
-		//ShowPanelDefault();
-	}		
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
+        UIUtil.SetLabelValue(labelPlaySmartScore, score.ToString("N0"));
+    }
+
+    public override void AnimateIn() {
+
+        base.AnimateIn();
+
+        //ShowPanelDefault();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
 
         InputSystem.Instance.currentDraggableGameObject = null;
-		
-		//HidePanelDefault();
-	}
+
+        //HidePanelDefault();
+    }
 
     public virtual void Update() {
 
@@ -177,7 +177,5 @@ public class BaseGameUIPanelCustomSmarts : GameUIPanelBase {
             return;
         }
     }
-	
 }
-
 #endif

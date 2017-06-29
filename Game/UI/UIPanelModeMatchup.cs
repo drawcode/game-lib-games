@@ -9,49 +9,50 @@ using Engine.Events;
 
 public class UIPanelModeMatchup : UIPanelBase {
 
-	public static UIPanelModeMatchup Instance;
+    public static UIPanelModeMatchup Instance;
 
-	public void Awake() {
-		
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-		
-        Instance = this;	
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}	
-	
-	public override void Init() {
-		base.Init();
 
-		loadData();
-	}	
-	
-	public override void Start() {
-		Init();
-	}
- 
+        Instance = this;
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
+
+    public override void Start() {
+        Init();
+    }
+
     public override void OnEnable() {
         base.OnEnable();
     }
-    
+
     public override void OnDisable() {
         base.OnDisable();
     }
-	
+
     public override void OnButtonClickEventHandler(string buttonName) {
 
-	}
+    }
 
     public static void ShowDefault() {
         if(isInst) {
@@ -65,18 +66,17 @@ public class UIPanelModeMatchup : UIPanelBase {
         }
     }
 
-	public static void LoadData() {
-		if(Instance != null) {
-			Instance.loadData();
-		}
-	}
+    public static void LoadData() {
+        if(Instance != null) {
+            Instance.loadData();
+        }
+    }
 
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
+
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
     }
-	
 }

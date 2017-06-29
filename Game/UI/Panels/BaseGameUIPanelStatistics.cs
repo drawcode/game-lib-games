@@ -6,12 +6,12 @@ using UnityEngine;
 
 using Engine.Events;
 
-public class BaseGameUIPanelStatistics : GameUIPanelBase {	
-    
+public class BaseGameUIPanelStatistics : GameUIPanelBase {
+
     public static GameUIPanelStatistics Instance;
-	
+
     public GameObject listItemStatisticPrefab;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -20,18 +20,18 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-	}
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+    }
 
     public override void OnEnable() {
 
@@ -81,96 +81,94 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
-		
+
     public override void OnButtonClickEventHandler(string buttonName) {
-		//LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
+        //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
     }
 
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {		
-		
-		LogUtil.Log("LoadDataCo");
-		
-		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
-			
-	        yield return new WaitForEndOfFrame();
-					
-			loadDataStatistics();
-			
-	        yield return new WaitForEndOfFrame();
-	        listGridRoot.GetComponent<UIGrid>().Reposition();
-	        yield return new WaitForEndOfFrame();				
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        LogUtil.Log("LoadDataCo");
+
+        if(listGridRoot != null) {
+            listGridRoot.DestroyChildren();
+
+            yield return new WaitForEndOfFrame();
+
+            loadDataStatistics();
+
+            yield return new WaitForEndOfFrame();
+            listGridRoot.GetComponent<UIGrid>().Reposition();
+            yield return new WaitForEndOfFrame();
         }
-	}
-	
-		
+    }
+
+
     public virtual void loadDataStatistics() {
-		
-		LogUtil.Log("Load Statistics:");
-				
-		List<GameStatistic> statistics = GameStatistics.Instance.GetAll();
-	
+
+        LogUtil.Log("Load Statistics:");
+
+        List<GameStatistic> statistics = GameStatistics.Instance.GetAll();
+
         LogUtil.Log("Load statistics: statistics.Count: " + statistics.Count);
-		
-		int i = 0;
-		
+
+        int i = 0;
+
         foreach(GameStatistic statistic in statistics) {
 
-         double statValue = GameProfileStatistics.Current.GetStatisticValue(statistic.code);
-         string displayValue = GameStatistics.Instance.GetStatisticDisplayValue(statistic, statValue);
+            double statValue = GameProfileStatistics.Current.GetStatisticValue(statistic.code);
+            string displayValue = GameStatistics.Instance.GetStatisticDisplayValue(statistic, statValue);
 
             //if(statValue > .1) {
 
-                GameObject item = NGUITools.AddChild(listGridRoot, listItemStatisticPrefab);
-                item.name = "StatisticItem" + i;
-                item.transform.Find("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
-                item.transform.Find("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
-    
-    			
-    			item.transform.Find("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;				
-    							
-    			i++;
+            GameObject item = NGUITools.AddChild(listGridRoot, listItemStatisticPrefab);
+            item.name = "StatisticItem" + i;
+            item.transform.Find("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
+            item.transform.Find("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
+
+
+            item.transform.Find("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;
+
+            i++;
             //}
         }
-	}
-	
-    public virtual void ClearList() {
-		if (listGridRoot != null) {
-			listGridRoot.DestroyChildren();
-		}
     }
-    
+
+    public virtual void ClearList() {
+        if(listGridRoot != null) {
+            listGridRoot.DestroyChildren();
+        }
+    }
+
     public override void HandleShow() {
         base.HandleShow();
-        
+
         buttonDisplayState = UIPanelButtonsDisplayState.GameNetworks;
         characterDisplayState = UIPanelCharacterDisplayState.Character;
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
         adDisplayState = UIPanelAdDisplayState.BannerBottom;
     }
-			
-	public override void AnimateIn() {
-		
+
+    public override void AnimateIn() {
+
         base.AnimateIn();
-        
+
         UIPanelCommunityBroadcast.HideBroadcastRecordPlayShare();
-		
-		loadData();
-	}
-	
-	public override void AnimateOut() {
-		
-		base.AnimateOut();
-		
-		ClearList();
-	}
-	
-	
+
+        loadData();
+    }
+
+    public override void AnimateOut() {
+
+        base.AnimateOut();
+
+        ClearList();
+    }
 }

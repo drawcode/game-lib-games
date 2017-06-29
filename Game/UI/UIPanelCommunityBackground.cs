@@ -14,9 +14,10 @@ public class UIPanelCommunityBackground : UIPanelBase {
 
     public GameObject panelBackground;
 
-    public void Awake() {
+    public override void Awake() {
+        base.Awake();
 
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -27,7 +28,7 @@ public class UIPanelCommunityBackground : UIPanelBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
@@ -43,14 +44,14 @@ public class UIPanelCommunityBackground : UIPanelBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -61,45 +62,45 @@ public class UIPanelCommunityBackground : UIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {
 
     }
-    
+
     //
-    
+
     public static void ShowBackground() {
-        if (isInst) {
+        if(isInst) {
             Instance.showBackground();
         }
     }
-    
-    public void showBackground() { 
+
+    public void showBackground() {
         AnimateInBottom(panelBackground);
 
         //Debug.Log("ShowBackground:");
     }
-    
+
     public static void HideBackground() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideBackground();
         }
     }
-    
+
     public void hideBackground() {
         AnimateOutBottom(panelBackground);
     }
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
@@ -109,21 +110,21 @@ public class UIPanelCommunityBackground : UIPanelBase {
     }
 
     public static void ShowDialog() {
-        if (isInst) {
+        if(isInst) {
             Instance.showDialog();
         }
     }
-    
+
     public void showDialog() {
         ShowBackground();
     }
-        
+
     public static void ShowNone() {
-        if (isInst) {
+        if(isInst) {
             Instance.showNone();
         }
     }
-    
+
     public void showNone() {
         HideBackground();
     }
@@ -139,7 +140,6 @@ public class UIPanelCommunityBackground : UIPanelBase {
     }
 
     //public void Update() {
-        //base.Update();
+    //base.Update();
     //}
- 
 }

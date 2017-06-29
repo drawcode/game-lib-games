@@ -34,15 +34,15 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
 
-    public virtual void Awake() {
-
+    public override void Awake() {
+        base.Awake();
     }
 
     public override void Start() {
@@ -90,19 +90,19 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
     }
 
     public override void OnUIControllerPanelAnimateIn(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateIn();
         }
     }
 
     public override void OnUIControllerPanelAnimateOut(string classNameTo) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             AnimateOut();
         }
     }
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
-        if (className == classNameTo) {
+        if(className == classNameTo) {
             //
         }
     }
@@ -110,7 +110,7 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {
         //LogUtil.Log("OnButtonClickEventHandler: " + buttonName);
 
-        if (UIUtil.IsButtonClicked(buttonSettingsAudio, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonSettingsAudio, buttonName)) {
 
 #if ENABLE_FEATURE_SETTINGS_AUDIO
             GameUIController.ShowSettingsAudio();
@@ -158,5 +158,4 @@ public class BaseGameUIPanelSettings : GameUIPanelBase {
         yield return new WaitForSeconds(1f);
     }
 }
-
 #endif

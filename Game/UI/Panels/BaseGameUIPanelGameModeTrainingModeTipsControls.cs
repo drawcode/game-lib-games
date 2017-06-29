@@ -9,11 +9,11 @@ using Engine.Events;
 #if ENABLE_FEATURE_TRAINING
 
 public class BaseGameUIPanelGameModeTrainingModeTipsControls : GameUIPanelBase {
-    
+
     public static GameUIPanelGameModeTrainingModeTipsControls Instance;
-	
+
     public GameObject listItemPrefab;
-    
+
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -22,20 +22,20 @@ public class BaseGameUIPanelGameModeTrainingModeTipsControls : GameUIPanelBase {
             return false;
         }
     }
-    
-    public virtual void Awake() {
-        
+
+    public override void Awake() {
+        base.Awake();
     }
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		loadData();
-	}	
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        loadData();
+    }
 
     public override void OnEnable() {
 
@@ -85,49 +85,47 @@ public class BaseGameUIPanelGameModeTrainingModeTipsControls : GameUIPanelBase {
 
     public override void OnUIControllerPanelAnimateType(string classNameTo, string code) {
         if(className == classNameTo) {
-           //
+            //
         }
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
         //
     }
-	
-	public static void LoadData() {
+
+    public static void LoadData() {
         if(GameUIPanelGameModeTrainingModeTipsControls.Instance != null) {
             GameUIPanelGameModeTrainingModeTipsControls.Instance.loadData();
-		}
-	}
-	
+        }
+    }
+
     public virtual void loadData() {
-		StartCoroutine(loadDataCo());
-	}
-	
-	IEnumerator loadDataCo() {
-		
-		yield return new WaitForSeconds(1f);
-	}
- 
+        StartCoroutine(loadDataCo());
+    }
+
+    IEnumerator loadDataCo() {
+
+        yield return new WaitForSeconds(1f);
+    }
+
     public virtual void ClearList() {
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             listGridRoot.DestroyChildren();
         }
     }
-    
+
     public override void AnimateIn() {
-    
+
         base.AnimateIn();
-    
+
         loadData();
     }
-    
+
     public override void AnimateOut() {
-    
+
         base.AnimateOut();
-    
+
         ClearList();
     }
-	
 }
-
 #endif

@@ -160,38 +160,39 @@ public class UIPanelModeTypeChoice : UIPanelBase {
     bool isCorrect = true;
     bool chosen = false;
 
-	public void Awake() {
-		
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-		
-        Instance = this;	
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}	
-	
-	public override void Init() {
-		base.Init();
 
-		//loadData();
-	}	
-	
-	public override void Start() {
-		Init();
-	}
+        Instance = this;
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Init() {
+        base.Init();
+
+        //loadData();
+    }
+
+    public override void Start() {
+        Init();
+    }
 
     // EVENTS
-	
+
     public override void OnEnable() {
 
         base.OnEnable();
@@ -205,7 +206,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         Messenger.AddListener(GameDraggableEditorMessages.GameLevelItemsLoaded, OnGameLevelItemsLoadedHandler);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -424,7 +425,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
             // Process next question
         }
         else if(appContentChoicesData.choices.Count == choices.Count) {
-           // && appContentChoiceData.(correctOnly)) {
+            // && appContentChoiceData.(correctOnly)) {
             ChangeState(AppModeTypeChoiceFlowState.AppModeTypeChoiceResults);
         }
     }
@@ -543,7 +544,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             //AppContentChoice choice = GetCurrentChoice();
 
-           // LogUtil.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
+            // LogUtil.Log("OnGameLevelItemsLoadedHandler:-choice:" + choice.code);
 
             /*
             foreach(Transform t in GameController.Instance.levelItemsContainerObject.transform) {
@@ -620,7 +621,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public void LoadLevelAssets() {
 
-       // GameController.LoadLevelAssets(AppContentStates.Current.code);
+        // GameController.LoadLevelAssets(AppContentStates.Current.code);
         GameController.LoadLevelAssets(GameLevels.Current.code);
     }
 
@@ -667,7 +668,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
             string choiceTitle = "Loading...";
             string choiceQuestion = "Loading...";
-    
+
             if(choice != null) {
                 choiceTitle = "Question";
                 choiceQuestion = choice.display_name;
@@ -754,7 +755,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         UIColors.UpdateColors();
 
         UIUtil.SetLabelValue(labelResultsStatus, "Results");
-                
+
         GameAudioController.PlaySoundPlayerActionGood();
 
         //double timeCompleted = 30; // TODO
@@ -935,7 +936,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         //LogUtil.Log("UIPanelModeTypeChoice:ShowResults:flowState:" + flowState);
         AnimateInBottom(containerChoiceResults);
         ContentPause();
-        
+
         Messenger.Broadcast(GameMessages.gameResultsStart);
     }
 
@@ -968,11 +969,11 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         ResetChoiceItem();
     }
 
-	public static void LoadData() {
-		if(Instance != null) {
-			Instance.loadData();
-		}
-	}
+    public static void LoadData() {
+        if(Instance != null) {
+            Instance.loadData();
+        }
+    }
 
     public void loadDataChoice() {
         LogUtil.Log("UIPanelModeTypeChoice:loadDataChoice");
@@ -983,7 +984,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
         // load list item
 
-        if (listGridRoot != null) {
+        if(listGridRoot != null) {
             yield return new WaitForEndOfFrame();
 
             listGridRoot.DestroyChildren();
@@ -1005,7 +1006,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         LogUtil.Log("UIPanelModeTypeChoice:loadData");
         StartCoroutine(loadDataCo());
     }
-    
+
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
 
@@ -1016,23 +1017,23 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
     public Color GetColor(int index) {
         if(index == 0) {
-            return UIColors.colorGreen; 
+            return UIColors.colorGreen;
             //Color.red;
         }
         else if(index == 1) {
-            return UIColors.colorBlue;  
+            return UIColors.colorBlue;
             //Color.blue;
         }
         else if(index == 2) {
-            return UIColors.colorOrange;    
+            return UIColors.colorOrange;
             //Color.yellow;
         }
         else if(index == 3) {
-            return UIColors.colorPurple;    
+            return UIColors.colorPurple;
             //Color.red;
-        }   
+        }
         else if(index == 4) {
-            return UIColors.colorRed;   
+            return UIColors.colorRed;
             //Color.red;
         }
 
@@ -1044,7 +1045,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
         LogUtil.Log("loadDataChoiceItems");
 
         int i = 0;
-     
+
         LogUtil.Log("loadDataChoiceItems:" + i);
 
         AppContentChoice choice = GetCurrentChoice();
@@ -1080,12 +1081,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
                         prefabLevelItem);
                     itemLevel.name = levelNameItem;
-    
+
                     GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
-    
+
                     if(choiceObjectLevel != null) {
                         choiceObjectLevel.LoadChoiceItem(choice, choiceItem, GetColor(i));
-    
+
                         GamePlayerIndicator indicator = GamePlayerIndicator.AddIndicator(
                             itemLevel, GamePlayerIndicatorType.choice, GetColor(i));
 
@@ -1093,12 +1094,12 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                             indicator.SetIndicatorColorEffects(GetColor(i));
                         }
                     }
-    
+
                     choiceObjectLevel.transform.position =
-                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(20, 60)*1)).WithZ(UnityEngine.Random.Range(-30, 30));
+                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(20, 60) * 1)).WithZ(UnityEngine.Random.Range(-30, 30));
                 }
 
-               i++;
+                i++;
 
             }
         }
@@ -1140,5 +1141,4 @@ public class UIPanelModeTypeChoice : UIPanelBase {
             BroadcastAppContentChoiceItem(item);
         }
     }
-	
 }

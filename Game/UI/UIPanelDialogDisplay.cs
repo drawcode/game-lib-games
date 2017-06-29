@@ -30,26 +30,27 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
     public static UIPanelDialogDisplay Instance;
 
-    public void Awake() {
-        
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
         }
-        
-        Instance = this;    
+
+        Instance = this;
     }
-    
+
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
         }
     }
-    
+
     public override void Init() {
         base.Init();
 
@@ -57,7 +58,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
         loadData();
     }
-    
+
     public override void Start() {
         Init();
     }
@@ -69,89 +70,89 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
         HideAllButtons();
     }
-    
+
     public override void OnEnable() {
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
     }
-    
+
     public override void OnDisable() {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
     }
-    
+
     public override void OnButtonClickEventHandler(string buttonName) {
-        if (UIUtil.IsButtonClicked(buttonDialogOk, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonDialogOk, buttonName)) {
             HideAll();
             GameController.GameRunningStateRun();
         }
-        else if (UIUtil.IsButtonClicked(buttonDialogGo, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonDialogGo, buttonName)) {
             HideAll();
             GameController.GameRunningStateRun();
         }
-        else if (UIUtil.IsButtonClicked(buttonDialogCancel, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonDialogCancel, buttonName)) {
             HideAll();
             GameController.GameRunningStateRun();
         }
     }
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
             Instance.loadData();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
 
     public static void ShowButtonOk() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonOk();
         }
     }
 
     public static void ShowButtonCancel() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonCancel();
         }
     }
 
     public static void ShowButtonGo() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonGo();
         }
     }
 
     public static void HideButtonOk() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonOk();
         }
     }
 
     public static void HideButtonCancel() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonCancel();
         }
     }
 
     public static void HideButtonGo() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonGo();
         }
     }
 
     public static void HideButtonNext() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonNext();
         }
     }
 
     public static void HideAllButtons() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideAllButtons();
         }
     }
@@ -194,9 +195,9 @@ public class UIPanelDialogDisplay : UIPanelBase {
         HideButtonGo();
         HideButtonCancel();
     }
-    
+
     public static void SetTitle(string titleTo) {
-        if (isInst) {
+        if(isInst) {
             Instance.setTitle(titleTo);
         }
     }
@@ -206,7 +207,7 @@ public class UIPanelDialogDisplay : UIPanelBase {
     }
 
     public static void SetDescription(string descriptionTo) {
-        if (isInst) {
+        if(isInst) {
             Instance.setDescription(descriptionTo);
         }
     }
@@ -216,20 +217,19 @@ public class UIPanelDialogDisplay : UIPanelBase {
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
- 
+
     public void loadData() {
         StartCoroutine(loadDataCo());
     }
-    
+
     IEnumerator loadDataCo() {
-    
+
         yield return new WaitForSeconds(1f);
 
         HideAllButtons();
     }
-    
 }

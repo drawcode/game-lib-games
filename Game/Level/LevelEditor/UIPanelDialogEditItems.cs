@@ -12,114 +12,116 @@ public class UIPanelDialogEditItemsFilter {
 }
 
 public class UIPanelDialogEditItems : UIAppPanelBaseList {
-	
-	
+
+
     public GameObject listItemPrefab;
-	
-	public static UIPanelDialogEditItems Instance;
-	
-	public string filterType = UIPanelDialogEditItemsFilter.all;
-	
-	void Awake() {
-		if (Instance != null && this != Instance) {
+
+    public static UIPanelDialogEditItems Instance;
+
+    public string filterType = UIPanelDialogEditItemsFilter.all;
+
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
         }
-		
+
         Instance = this;
-	}
-	
-	public static bool isInst {
-		get {
-			if(Instance != null) {
-				return true;
-			}
-			return false;
-		}
-	}
-	
-	public override void Start() {
-		Init();
-	}
-	
-	public override void Init() {
-		base.Init();	
-		
-		LoadData();
-	}
-	
-	public void LoadData(string levelAssetKey) {
-		filterType = levelAssetKey;
-		LoadData();
-	}
-	
-	public void LoadData() {
-		StartCoroutine(LoadDataCo());
-	}
-	
-	IEnumerator LoadDataCo() {
-		
-		yield return new WaitForSeconds(.1f);
-		
-		if (listGridRoot != null) {
-            foreach (Transform item in listGridRoot.transform) {
+    }
+
+    public static bool isInst {
+        get {
+            if(Instance != null) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public override void Start() {
+        Init();
+    }
+
+    public override void Init() {
+        base.Init();
+
+        LoadData();
+    }
+
+    public void LoadData(string levelAssetKey) {
+        filterType = levelAssetKey;
+        LoadData();
+    }
+
+    public void LoadData() {
+        StartCoroutine(LoadDataCo());
+    }
+
+    IEnumerator LoadDataCo() {
+
+        yield return new WaitForSeconds(.1f);
+
+        if(listGridRoot != null) {
+            foreach(Transform item in listGridRoot.transform) {
                 Destroy(item.gameObject);
             }
-		
-			List<AppContentAsset> assets = AppContentAssets.Instance.GetAll();
-		
-	        LogUtil.Log("Load AppContentAsset: assets.Count: " + assets.Count);
-			
-			int i = 0;
-			
-			//int totalPoints = 0;
-			
-	        foreach(AppContentAsset asset in assets) {
-				
-				if(filterType != UIPanelDialogEditItemsFilter.all) {
-					if(asset.key != filterType) {
-						continue;
-					}
-				}
-				
-	            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-	            item.name = "AssetItem" + i;
-	            item.transform.Find("LabelName").GetComponent<UILabel>().text = asset.display_name;
-	            //item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = achievement.description;
-				
-				GameObject gameLevelItemObject = item.transform.Find("GameLevelItemObject").gameObject;	
-				
-				// clear current items
-				
-				foreach(Transform t in gameLevelItemObject.transform) {
-					Destroy(t.gameObject);
-				}
-				
-	        	//LogUtil.Log("Load AppContentAsset: gameLevelItemObject.transform: " + gameLevelItemObject.transform.childCount);
-				
-				if(GameDraggableEditor.Instance == null) {
-					yield break;
-				}
-				//
-	        	//LogUtil.Log("Load AppContentAsset: GameDraggableEditor: " + true);
-				
-				string assetCode = asset.code;
-				if(assetCode.Contains("portal-")) {
-					assetCode = assetCode + "-sm";
-				}
-				
-				GameObject go = GameDraggableEditor.LoadSpriteUI(
-					gameLevelItemObject, assetCode, Vector3.one);
-				
-				gameLevelItemObject.ChangeLayersRecursively("UIEditor");
-				
-	        	//LogUtil.Log("Load AppContentAsset: go: " + go);
-				
-				float maxSize = .8f;
-				
-				if(go != null) {
-					/*PackedSprite sprite = go.GetComponent<PackedSprite>();
+
+            List<AppContentAsset> assets = AppContentAssets.Instance.GetAll();
+
+            LogUtil.Log("Load AppContentAsset: assets.Count: " + assets.Count);
+
+            int i = 0;
+
+            //int totalPoints = 0;
+
+            foreach(AppContentAsset asset in assets) {
+
+                if(filterType != UIPanelDialogEditItemsFilter.all) {
+                    if(asset.key != filterType) {
+                        continue;
+                    }
+                }
+
+                GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+                item.name = "AssetItem" + i;
+                item.transform.Find("LabelName").GetComponent<UILabel>().text = asset.display_name;
+                //item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = achievement.description;
+
+                GameObject gameLevelItemObject = item.transform.Find("GameLevelItemObject").gameObject;
+
+                // clear current items
+
+                foreach(Transform t in gameLevelItemObject.transform) {
+                    Destroy(t.gameObject);
+                }
+
+                //LogUtil.Log("Load AppContentAsset: gameLevelItemObject.transform: " + gameLevelItemObject.transform.childCount);
+
+                if(GameDraggableEditor.Instance == null) {
+                    yield break;
+                }
+                //
+                //LogUtil.Log("Load AppContentAsset: GameDraggableEditor: " + true);
+
+                string assetCode = asset.code;
+                if(assetCode.Contains("portal-")) {
+                    assetCode = assetCode + "-sm";
+                }
+
+                GameObject go = GameDraggableEditor.LoadSpriteUI(
+                    gameLevelItemObject, assetCode, Vector3.one);
+
+                gameLevelItemObject.ChangeLayersRecursively("UIEditor");
+
+                //LogUtil.Log("Load AppContentAsset: go: " + go);
+
+                float maxSize = .8f;
+
+                if(go != null) {
+                    /*PackedSprite sprite = go.GetComponent<PackedSprite>();
 					if(sprite != null) {
 						
 						float adjust = 1;
@@ -139,44 +141,43 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
 					}
 					else {
 						*/
-						float adjust = 1;
-						
-						Collider col = go.GetComponent<Collider>();
-						if(col != null) {
-							Bounds bounds = col.bounds;
-					
-							if(bounds.size.x > bounds.size.y) {
-								if(bounds.size.y > maxSize) {
-									adjust = maxSize/bounds.size.x;
-								}
-							}
-							else {
-								if(bounds.size.x > maxSize) {
-									adjust = maxSize/bounds.size.y;
-								}
-							}
-						}
-						adjust = adjust/2;
-						go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
-					//}
-					
-				}
-				
-				item.transform.Find("ButtonGameLevelItemObject").GetComponent<UIButton>().name 
-						= "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
-				
-				if(filterType == UIPanelDialogEditItemsFilter.all) {
-					
-				}
-				
-				i++;
-	        }
-			
-	        yield return new WaitForEndOfFrame();
-	        listGridRoot.GetComponent<UIGrid>().Reposition();
-	        yield return new WaitForEndOfFrame();	
-			
+                    float adjust = 1;
+
+                    Collider col = go.GetComponent<Collider>();
+                    if(col != null) {
+                        Bounds bounds = col.bounds;
+
+                        if(bounds.size.x > bounds.size.y) {
+                            if(bounds.size.y > maxSize) {
+                                adjust = maxSize / bounds.size.x;
+                            }
+                        }
+                        else {
+                            if(bounds.size.x > maxSize) {
+                                adjust = maxSize / bounds.size.y;
+                            }
+                        }
+                    }
+                    adjust = adjust / 2;
+                    go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
+                    //}
+
+                }
+
+                item.transform.Find("ButtonGameLevelItemObject").GetComponent<UIButton>().name
+                        = "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
+
+                if(filterType == UIPanelDialogEditItemsFilter.all) {
+
+                }
+
+                i++;
+            }
+
+            yield return new WaitForEndOfFrame();
+            listGridRoot.GetComponent<UIGrid>().Reposition();
+            yield return new WaitForEndOfFrame();
+
         }
-	}
-	
+    }
 }

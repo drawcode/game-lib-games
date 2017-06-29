@@ -22,28 +22,28 @@ public class UIPanelEditAsset : UIAppPanel {
     public static UIPanelEditAsset Instance;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-	public UIImageButton buttonGameEditAssetDelete;
-	public UIImageButton buttonGameEditAssetDeselect;
-	public UIImageButton buttonGameEditAssetSave;
-	public UIImageButton buttonGameEditAssetSprite;
-	public UIImageButton buttonGameEditAssetSpriteEffect;
-	
-	public UICheckbox checkboxEditAssetDestructable;
-	public UICheckbox checkboxEditAssetKinematic;
-	public UICheckbox checkboxEditAssetReactive;
-	public UICheckbox checkboxEditAssetGravity;
-	
-	public UIInput inputSprite;
-	public UIInput inputSpriteEffect;
-	
-	public UILabel labelAssetEdit;
-	public UILabel labelGameEditAssetSprite;
-	public UILabel labelGameEditAssetSpriteEffect;
-    
-	// Rotation
-	public UIInput inputRotationSpeed;
-	public UISlider sliderRotationSpeed;
-	public UIImageButton buttonGameEditAssetRotationReset;
+    public UIImageButton buttonGameEditAssetDelete;
+    public UIImageButton buttonGameEditAssetDeselect;
+    public UIImageButton buttonGameEditAssetSave;
+    public UIImageButton buttonGameEditAssetSprite;
+    public UIImageButton buttonGameEditAssetSpriteEffect;
+
+    public UICheckbox checkboxEditAssetDestructable;
+    public UICheckbox checkboxEditAssetKinematic;
+    public UICheckbox checkboxEditAssetReactive;
+    public UICheckbox checkboxEditAssetGravity;
+
+    public UIInput inputSprite;
+    public UIInput inputSpriteEffect;
+
+    public UILabel labelAssetEdit;
+    public UILabel labelGameEditAssetSprite;
+    public UILabel labelGameEditAssetSpriteEffect;
+
+    // Rotation
+    public UIInput inputRotationSpeed;
+    public UISlider sliderRotationSpeed;
+    public UIImageButton buttonGameEditAssetRotationReset;
 #else
     public Button buttonGameEditAssetDelete;
     public Button buttonGameEditAssetDeselect;
@@ -80,8 +80,10 @@ public class UIPanelEditAsset : UIAppPanel {
 
     public GameLevelItemAsset itemAsset;
 
-    void Awake() {
-        if (Instance != null && this != Instance) {
+    public override void Awake() {
+        base.Awake();
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
@@ -132,7 +134,7 @@ public class UIPanelEditAsset : UIAppPanel {
 
         SyncCurrenItemAsset();
 
-        if (itemAsset != null) {
+        if(itemAsset != null) {
             //UIUtil.SetLabelValue(labelAssetEdit, itemAsset.asset_code);
             UIUtil.SetInputValue(inputSprite, itemAsset.code);
             UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.code));
@@ -151,8 +153,8 @@ public class UIPanelEditAsset : UIAppPanel {
     }
 
     void UpdateDisplay() {
-        if (itemAsset != null) {
-            if (itemAsset.destructable) {
+        if(itemAsset != null) {
+            if(itemAsset.destructable) {
                 UIUtil.ShowInput(inputSpriteEffect);
                 UIUtil.ShowLabel(labelGameEditAssetSpriteEffect);
                 UIUtil.ShowButton(buttonGameEditAssetSpriteEffect);
@@ -170,21 +172,21 @@ public class UIPanelEditAsset : UIAppPanel {
     }
 
     public void UpdateRotation(float val, bool deferSlider, bool deferInput) {
-        if (itemAsset != null) {
+        if(itemAsset != null) {
 
             val = Mathf.Clamp(val, MIN_ROTATION_SPEED, MAX_ROTATION_SPEED);
             float sliderVal = NormalizeRotationSlider(val);
 
-            if (!deferInput) {
+            if(!deferInput) {
                 UIUtil.SetInputValue(inputRotationSpeed, val.ToString());
             }
-            if (!deferSlider) {
+            if(!deferSlider) {
                 UIUtil.SetSliderValue(sliderRotationSpeed, sliderVal);
             }
 
             Vector3 posFrom = Vector3.zero;
 
-            if (GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
+            if(GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
                 posFrom = posFrom.WithZ(-val);
             }
             else {
@@ -223,21 +225,21 @@ public class UIPanelEditAsset : UIAppPanel {
     }
 
     public void UpdateSprite(string assetCode) {
-        if (itemAsset != null) {
+        if(itemAsset != null) {
             itemAsset.code = assetCode;
             UIUtil.SetInputValue(inputSprite, itemAsset.code);
             UIUtil.SetLabelValue(labelAssetEdit, itemAsset.code);
             UIUtil.SetLabelValue(labelGameEditAssetSprite, GetItemAssetDisplayName(itemAsset.code));
 
             GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
-            if (levelItem != null) {
+            if(levelItem != null) {
                 levelItem.LoadSprite(itemAsset.code);
             }
         }
     }
 
     public void UpdateSpriteEffect(string assetCode) {
-        if (itemAsset != null) {
+        if(itemAsset != null) {
             itemAsset.destroy_effect_code = assetCode;
             UIUtil.SetInputValue(inputSpriteEffect, itemAsset.destroy_effect_code);
             UIUtil.SetLabelValue(labelGameEditAssetSpriteEffect, GetItemAssetDisplayName(itemAsset.destroy_effect_code));
@@ -245,7 +247,7 @@ public class UIPanelEditAsset : UIAppPanel {
     }
 
     public void SyncCurrenItemAsset() {
-        if (GameDraggableEditor.Instance != null) {
+        if(GameDraggableEditor.Instance != null) {
             itemAsset = GameDraggableEditor.GetCurrentLevelItemAsset();
         }
     }
@@ -254,14 +256,14 @@ public class UIPanelEditAsset : UIAppPanel {
 
         SyncCurrenItemAsset();
 
-        if (itemAsset != null) {
+        if(itemAsset != null) {
             itemAsset.destroy_effect_code = UIUtil.GetInputValue(inputSpriteEffect);
             itemAsset.code = UIUtil.GetInputValue(inputSprite);
 
             float rotationSpeed = -float.Parse(UIUtil.GetInputValue(inputRotationSpeed));
             Vector3 vectorSpeed = Vector3.zero;
 
-            if (GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
+            if(GameDraggableEditor.GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
                 vectorSpeed = Vector3.zero.WithZ(rotationSpeed);
             }
             else {
@@ -279,7 +281,7 @@ public class UIPanelEditAsset : UIAppPanel {
 
     public string GetItemAssetDisplayName(string code) {
         AppContentAsset asset = AppContentAssets.Instance.GetById(code);
-        if (asset != null) {
+        if(asset != null) {
             return asset.display_name;
         }
         return code;
@@ -363,11 +365,11 @@ public class UIPanelEditAsset : UIAppPanel {
     void OnInputClickEventHandler(string inputName, int cam) {
         LogUtil.Log("OnInputClickEventHandler: inputName:" + inputName);
 
-        if (inputName == inputSprite.name) {
+        if(inputName == inputSprite.name) {
             actionState = UIPanelEditAssetActionState.SELECT_ITEM;
             GameDraggableEditor.ShowUIPanelDialogItems();
         }
-        else if (inputName == inputSpriteEffect.name) {
+        else if(inputName == inputSpriteEffect.name) {
             actionState = UIPanelEditAssetActionState.SELECT_EFFECT;
             GameDraggableEditor.ShowUIPanelDialogItems();
         }
@@ -376,19 +378,19 @@ public class UIPanelEditAsset : UIAppPanel {
     void OnInputChangeEventHandler(string inputName, string val) {
         LogUtil.Log("OnInputChangeEventHandler: val:" + val);
 
-        if (itemAsset != null) {
-            if (inputName == inputRotationSpeed.name) {
+        if(itemAsset != null) {
+            if(inputName == inputRotationSpeed.name) {
 
                 float rotationValue = 0f;
                 string inputValue = UIUtil.GetInputValue(inputRotationSpeed);
-                if (!string.IsNullOrEmpty(inputValue)) {
+                if(!string.IsNullOrEmpty(inputValue)) {
                     bool converted = float.TryParse(inputValue, out rotationValue);
-                    if (!converted) {
+                    if(!converted) {
                         rotationValue = 0f;
                     }
                 }
 
-                if (itemAsset != null) {
+                if(itemAsset != null) {
                     UpdateRotation(rotationValue, false, false);
                 }
             }
@@ -398,8 +400,8 @@ public class UIPanelEditAsset : UIAppPanel {
     void OnSliderChangeEventHandler(string sliderName, float val) {
         //LogUtil.Log("SliderEvents:OnSliderChange: sliderName: " + sliderName + " changeValue:" + val);
 
-        if (itemAsset != null) {
-            if (sliderName == sliderRotationSpeed.name) {
+        if(itemAsset != null) {
+            if(sliderName == sliderRotationSpeed.name) {
                 UpdateRotation(DenormalizeRotationSlider(val), true, false);
             }
         }
@@ -408,25 +410,25 @@ public class UIPanelEditAsset : UIAppPanel {
     void OnCheckboxChangeEventHandler(string checkboxName, bool selected) {
         LogUtil.Log("OnCheckboxChangeEventHandler: checkboxName:" + checkboxName + " selected:" + selected);
 
-        if (itemAsset != null) {
-            if (checkboxName == checkboxEditAssetDestructable.name) {
-                if (itemAsset != null) {
+        if(itemAsset != null) {
+            if(checkboxName == checkboxEditAssetDestructable.name) {
+                if(itemAsset != null) {
                     itemAsset.destructable = selected;
                     UpdateDisplay();
                 }
             }
-            else if (checkboxName == checkboxEditAssetKinematic.name) {
-                if (itemAsset != null) {
+            else if(checkboxName == checkboxEditAssetKinematic.name) {
+                if(itemAsset != null) {
                     itemAsset.kinematic = selected;
                 }
             }
-            else if (checkboxName == checkboxEditAssetReactive.name) {
-                if (itemAsset != null) {
+            else if(checkboxName == checkboxEditAssetReactive.name) {
+                if(itemAsset != null) {
                     itemAsset.reactive = selected;
                 }
             }
-            else if (checkboxName == checkboxEditAssetGravity.name) {
-                if (itemAsset != null) {
+            else if(checkboxName == checkboxEditAssetGravity.name) {
+                if(itemAsset != null) {
                     itemAsset.gravity = selected;
                 }
             }
@@ -435,36 +437,36 @@ public class UIPanelEditAsset : UIAppPanel {
 
     void OnButtonClickEventHandler(string buttonName) {
 
-        if (itemAsset != null) {
-            if (buttonName == buttonGameEditAssetSave.name) {
+        if(itemAsset != null) {
+            if(buttonName == buttonGameEditAssetSave.name) {
                 SaveDataAsset();
                 ////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
                 actionState = UIPanelEditAssetActionState.NONE;
             }
-            else if (buttonName == buttonGameEditAssetDelete.name) {
+            else if(buttonName == buttonGameEditAssetDelete.name) {
 
                 GameDraggableLevelItem levelItem = GameDraggableEditor.GetCurrentDraggableLevelItem();
-                if (levelItem != null) {
+                if(levelItem != null) {
                     levelItem.DestroyMeAnimated();
                 }
 
                 ////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
                 actionState = UIPanelEditAssetActionState.NONE;
             }
-            else if (buttonName == buttonGameEditAssetDeselect.name) {
+            else if(buttonName == buttonGameEditAssetDeselect.name) {
                 ////GameDraggableEditor.ResetAssetPanelRemoveDeselect();
                 actionState = UIPanelEditAssetActionState.NONE;
             }
-            else if (buttonName == buttonGameEditAssetSprite.name) {
+            else if(buttonName == buttonGameEditAssetSprite.name) {
                 actionState = UIPanelEditAssetActionState.SELECT_ITEM;
                 GameDraggableEditor.ShowUIPanelDialogItems();
             }
-            else if (buttonName == buttonGameEditAssetSpriteEffect.name) {
+            else if(buttonName == buttonGameEditAssetSpriteEffect.name) {
                 actionState = UIPanelEditAssetActionState.SELECT_EFFECT;
                 GameDraggableEditor.ShowUIPanelDialogItems();
             }
 
-            else if (buttonName == buttonGameEditAssetRotationReset.name) {
+            else if(buttonName == buttonGameEditAssetRotationReset.name) {
                 UpdateRotation(0f, false, false);
             }
         }
