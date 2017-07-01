@@ -114,7 +114,7 @@ public class AdNetworks : GameObjectBehavior {
     //public AdMobEventListener admobEventListener;
 #endif
 #endif
-    
+
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
     public bool tapjoyOpeningFullScreenAd = false;
@@ -122,18 +122,18 @@ public class AdNetworks : GameObjectBehavior {
 
     public static AdNetworks Instance {
         get {
-            if (!_instance) {
-                
+            if(!_instance) {
+
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(AdNetworks)) as AdNetworks;
-                
+
                 // nope, create a new one
-                if (!_instance) {
+                if(!_instance) {
                     var obj = new GameObject("_AdNetworks");
                     _instance = obj.AddComponent<AdNetworks>();
                 }
             }
-            
+
             return _instance;
         }
     }
@@ -142,41 +142,6 @@ public class AdNetworks : GameObjectBehavior {
         Init();
     }
 
-
-    /*
- * 
- * iAd
-// Starts up iAd either on the top or bottom of the screen
-public static void createAdBanner( bool bannerOnBottom );
-
-// Destroys the ad banner and removes it from view
-public static void destroyAdBanner()
-
-// Sets whether or not adDidShow events should be fired or not
-public static void fireHideShowEvents( bool shouldFire )
-
-// Starts loading a new interstitial ad.  Returns false when interstitials are not supported.
-public static bool initializeInterstitial()
-
-// Checks to see if an interstitial ad is loaded.
-public static bool isInterstitalLoaded()
-
-// Shows an interstitial ad.  Will return false if it isn't loaded.
-public static bool showInterstitial()
-
-*/
-    /*
- * iAd Manager
-// Fired when the adView is either shown or hidden
-public static event Action<bool> adViewDidChange;
-
-// Fired when an interstial ad fails to load or show
-public static event Action<string> interstitalAdFailed;
-
-// Fired when an interstitial ad is loaded and ready to show
-public static event Action interstitialAdLoaded;
-
-*/
 
     /*
 
@@ -406,10 +371,12 @@ public static event Action interstitialAdLoaded;
         Invoke("tapjoyInit", .8f);
 #endif
     }
-
-#if PROMO_USE_TAPJOY
     // ----------------------------------------------------------------------
     // TAPJOY - http://prime31.com/docs#comboVungle
+
+    #region TAPJOY
+
+#if PROMO_USE_TAPJOY
     
     public void tapjoyInit() {
 
@@ -549,10 +516,14 @@ public static event Action interstitialAdLoaded;
     }
 #endif
 
-#if PROMO_USE_VUNGLE
-    
+    #endregion
+
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
+
+    #region VUNGLE
+
+#if PROMO_USE_VUNGLE
 
     public void vungleInit() {
         LogUtil.Log("vungleInit");
@@ -607,9 +578,14 @@ public static event Action interstitialAdLoaded;
     }
 #endif
 
-#if PROMO_USE_CHARTBOOST
+    #endregion
+
     // ----------------------------------------------------------------------
     // CHARTBOOST
+
+    #region CHARTBOOST
+
+#if PROMO_USE_CHARTBOOST
 
     public void chartboostInit() {
 
@@ -733,7 +709,11 @@ public static event Action interstitialAdLoaded;
     }
 #endif
 
+    #endregion
+
     public bool interstitialReady = false;
+
+    #region IAD
 
 #if AD_USE_IAD
     // ----------------------------------------------------------------------
@@ -835,9 +815,9 @@ public static event Action interstitialAdLoaded;
 
     public bool iadShowBannerAd(AdDisplayType bannerType, AdPosition position) {
         // Try to get each typeof ad then show it
-        
+
         bool hasAd = false;
-        
+
 #if AD_USE_IAD
         
         if(bannerType == AdDisplayType.Banner) {
@@ -864,18 +844,19 @@ public static event Action interstitialAdLoaded;
 
         return hasAd;
     }
-    
-    public bool iadHideBannerAd() {        
-        
+
+    public bool iadHideBannerAd() {
+
 #if AD_USE_IAD
 #if UNITY_IPHONE
             iadDestroyAdBanner();
 #endif
 #endif
-        
+
         return true;
     }
 
+    #endregion
 
     // ----------------------------------------------------------------------
     // UNITY ADS
@@ -884,7 +865,7 @@ public static event Action interstitialAdLoaded;
     public void unityAdsInit() {
         //Advertisement.Initialize();
     }
-    
+
     public void unityShowVideoAd() {
 
     }
@@ -906,19 +887,22 @@ public static event Action interstitialAdLoaded;
 #endif
 
     // ----------------------------------------------------------------------
+
     // GOOGLE ADMOB
 
+    #region ADMOB
+
     public void admobInit() {
-        LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobiOS..." + 
+        LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobiOS..." +
             AppConfigs.publisherIdAdmobiOS);
-        LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobAndroid..." + 
+        LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobAndroid..." +
             AppConfigs.publisherIdAdmobAndroid);
 
 
         // Enable networks
 
         // Social Network Prime31
-        if (Application.platform == RuntimePlatform.Android) {
+        if(Application.platform == RuntimePlatform.Android) {
             //LogUtil.Log("InitAdmob RuntimePlatform.Android..." + 
             //Application.platform);          
 #if UNITY_ANDROID
@@ -926,7 +910,7 @@ public static event Action interstitialAdLoaded;
             //LogUtil.Log("InitAdmob Admob init..." + AppConfigs.publisherIdAdmobAndroid);
 #endif
         }
-        else if (Application.platform == RuntimePlatform.IPhonePlayer) {
+        else if(Application.platform == RuntimePlatform.IPhonePlayer) {
 #if UNITY_IPHONE
             
             //AdMob.setTestDevices(AppConfigs.adTestDeviceIdsiOS);
@@ -939,7 +923,7 @@ public static event Action interstitialAdLoaded;
         }
         else {
             // Web player...
-            
+
 #if UNITY_WEBPLAYER
             //Application.ExternalCall("if(window.console) window.console.log","web facebook init");
 #endif
@@ -989,7 +973,7 @@ public static event Action interstitialAdLoaded;
         }
     }
 #endif
-    
+
 #if !UNITY_WEBPLAYER
 #if AD_USE_ADMOB
     public AdMobLocation admobGetPlacementType(AdPlacementType bannerType) {
@@ -1020,7 +1004,7 @@ public static event Action interstitialAdLoaded;
     }
 #endif
 #endif
-    
+
 #if !UNITY_ANDROID && !UNITY_WEBPLAYER && AD_USE_ADMOB
     public AdMobAdPosition admobGetPosition(AdPosition position) {
         if (position == AdPosition.BottomLeft) {
@@ -1081,8 +1065,8 @@ public static event Action interstitialAdLoaded;
         return false;
     }
 
-    public bool admobHideBannerAd() {        
-        
+    public bool admobHideBannerAd() {
+
 #if AD_USE_ADMOB
         if (Application.platform == RuntimePlatform.Android) {
 #if UNITY_ANDROID
@@ -1106,14 +1090,16 @@ public static event Action interstitialAdLoaded;
 
         return false;
     }
-    
+
+    #endregion
+
     // ----------------------------------------------------------------------
 
     // GENERIC CALLS
 
-    
+
     // ----------------------------------------------------------------------
-    
+
     // ADS
 
     //!CBBinding.isImpressionVisible(); 
@@ -1123,37 +1109,37 @@ public static event Action interstitialAdLoaded;
     //        Instance.showAd();
     //    }
     //}
-    
+
     public static void ShowAd(
-        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
 
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showAd(bannerType, position);
         }
     }
-    
+
     public void showAd() {
         showAd(AdDisplayType.Banner, AdPosition.BottomCenter);
     }
-    
+
     public void showAd(
-        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
 
-        if (bannerType == AdDisplayType.Banner) {
+        if(bannerType == AdDisplayType.Banner) {
             showBannerAd(bannerType, position);
         }
-        else if (bannerType == AdDisplayType.Interstitial) {
+        else if(bannerType == AdDisplayType.Interstitial) {
         }
     }
-    
+
     public static void HideAd() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.hideAd();
         }
     }
-    
+
     public void hideAd() {
         // TODO current ad and ad queue
 
@@ -1161,54 +1147,54 @@ public static event Action interstitialAdLoaded;
     }
 
     // ----------------------------------------------------------------------
-    
+
     // BANNERS
-    
+
     //public static void ShowBannerAd() {
     //    if (Instance != null) {
     //        Instance.showBannerAd();
     //    }
     //}
-    
+
     public static void ShowBannerAd(
-        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
-        
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.showBannerAd(bannerType, position);
         }
     }
-    
+
     public void showBannerAd() {
         showAd(AdDisplayType.SmartBannerLandscape, AdPosition.BottomCenter);
     }
-    
+
     public void showBannerAd(
-        AdDisplayType bannerType = AdDisplayType.Banner, 
+        AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
-        
+
         bool hasAd = false;
-        
+
 #if AD_USE_IAD
         if(!hasAd) {
             hasAd = iadShowBannerAd(bannerType, position);
         }
 #endif
 
-        if (!hasAd) {
-        
+        if(!hasAd) {
+
         }
 
     }
-    
+
     public static void HideBannerAd() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.hideBannerAd();
         }
     }
-    
+
     public void hideBannerAd() {
-        
+
 #if AD_USE_IAD
         iadHideBannerAd();
 #endif
@@ -1217,25 +1203,25 @@ public static event Action interstitialAdLoaded;
         admobHideBannerAd();
 #endif
     }
-    
+
     // ----------------------------------------------------------------------
-    
+
     // VIDEO ADS
 
     public static void SetVideoAdSoundEnabled(bool isEnabled) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.setVideoAdSoundEnabled(isEnabled);
         }
     }
-    
+
     public void setVideoAdSoundEnabled(bool isEnabled) {
 #if PROMO_USE_VUNGLE
         vungleSetSoundEnabled(isEnabled);
 #endif
     }
-    
+
     public static void IsVideoAdAvailable() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.isVideoAdAvailable();
         }
     }
@@ -1248,9 +1234,9 @@ public static event Action interstitialAdLoaded;
         return false;
 #endif
     }
-    
+
     public static void ShowVideoAd() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showVideoAd();
         }
     }
@@ -1274,11 +1260,11 @@ public static event Action interstitialAdLoaded;
     }
 
     public static void ShowVideoAd(bool showCloseButtons) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showVideoAd(showCloseButtons);
         }
     }
-    
+
     public void showVideoAd(bool showCloseButtons) {
 
 #if PROMO_USE_VUNGLE
@@ -1287,13 +1273,13 @@ public static event Action interstitialAdLoaded;
         }
 #endif
     }
-    
+
     public static void ShowVideoAdIncentivized(bool showCloseButton, string user) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showVideoAdIncentivized(showCloseButton, user);
         }
     }
-    
+
     public void showVideoAdIncentivized(bool showCloseButton, string user) {
 
 #if PROMO_USE_VUNGLE
@@ -1303,89 +1289,94 @@ public static event Action interstitialAdLoaded;
 #endif
     }
 
-    
     // ----------------------------------------------------------------------
-    
+
     // OFFERS
 
-    
     public static void ShowOfferWall() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showOfferWall();
         }
     }
-    
+
     public void showOfferWall() {
-        
+
 #if PROMO_USE_TAPJOY
         tapjoyShowOffers();
 #endif
     }
-    
+
+    // ----------------------------------------------------------------------
+    // DISPLAY AD
+
+
     public static void ShowDisplayAd() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showDisplayAd();
         }
     }
-    
+
     public void showDisplayAd() {
-        
+
 #if PROMO_USE_TAPJOY
         tapjoyShowDisplayAd();
 #endif
     }
 
+    // ----------------------------------------------------------------------
+
     // FULLSCREEN ADS
-    
+
     public static void ShowFullscreenAd() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showFullscreenAd();
         }
     }
-    
+
     public void showFullscreenAd() {
-        
+
 #if PROMO_USE_TAPJOY
         tapjoyShowFullscreenAd();
 #endif
     }
 
+    // ----------------------------------------------------------------------
+
     // MORE APPS
-    
+
     public static void ShowMoreApps() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showMoreApps();
         }
     }
-    
+
     public void showMoreApps() {
-        
+
 #if PROMO_USE_CHARTBOOST
         CBLocation location = CBLocation.LevelStart;
         chartboostShowMoreApps(location);
 #endif
     }
-    
+
     public static void ShowInterstitial() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.showInterstitial();
         }
     }
-    
+
     public void showInterstitial() {
-        
+
 #if PROMO_USE_CHARTBOOST
         chartboostShowInterstitial();
 #endif
     }
-    
-    
+
     // ----------------------------------------------------------------------
 
-    public static void HandleAdUpdate() {        
+    public static void HandleAdUpdate() {
 #if UNITY_ANDROID
-        if (Application.platform == RuntimePlatform.Android) {
-            if (Input.GetKeyUp(KeyCode.Escape)) {
+        if(Application.platform == RuntimePlatform.Android) {
+            if(Input.GetKeyUp(KeyCode.Escape)) {
 #if PROMO_USE_CHARTBOOST
                 //if (Chartboost..onBackPressed())
                 //    return;
@@ -1398,9 +1389,7 @@ public static event Action interstitialAdLoaded;
         }
 #endif
     }
-    
 }
-
 
 // ----------------------------------------------------------------------
 // DOCS
@@ -1695,9 +1684,4 @@ public static event Action interstitialDidUnloadEvent;
 // Fired when movie playback completes
 public static event Action moviePlaybackCompletedEvent;
 
-
-
-
-
 */
-
