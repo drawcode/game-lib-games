@@ -1,6 +1,6 @@
 //#define ANALYTICS_GAMEANALYTICS
 //#define ANALYTICS_GOOGLE
-#define ANALYTICS_UNITY
+//#define ANALYTICS_UNITY
 
 using System;
 using System.Collections;
@@ -43,42 +43,42 @@ public class AnalyticsNetworksMessages {
 
 public class AnalyticsNetworks : GameObjectBehavior {
 
-    #if ANALYTICS_GAMEANALYTICS
+#if ANALYTICS_GAMEANALYTICS
     public GameAnalytics analyticsGameAnalytics;
-    #endif
-    
+#endif
+
     public static bool analyticsNetworksEnabled = AppConfigs.analyticsNetworkEnabled;
     public static bool analyticsNetworksTestingEnabled = AppConfigs.analyticsNetworkTestingEnabled;
-    
+
     // Only one AnalyticsNetworks can exist. We use a singleton pattern to enforce this.
     private static AnalyticsNetworks _instance = null;
-    
+
     public static AnalyticsNetworks Instance {
         get {
-            if (!_instance) {
-                
+            if(!_instance) {
+
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(AnalyticsNetworks)) as AnalyticsNetworks;
-                
+
                 // nope, create a new one
-                if (!_instance) {
+                if(!_instance) {
                     var obj = new GameObject("_AnalyticsNetworks");
                     _instance = obj.AddComponent<AnalyticsNetworks>();
                 }
             }
-            
+
             return _instance;
         }
     }
-    
+
     void Start() {
         Init();
     }
-    
+
     void OnEnable() {
-        
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+
+#if ANALYTICS_GAMEANALYTICS
         // ------------
         // GAME ANALYTICS
         
@@ -86,15 +86,15 @@ public class AnalyticsNetworks : GameObjectBehavior {
         //Everyplay.SharedInstance.RecordingStopped += everyplayRecordingStoppedDelegate;
         //Everyplay.SharedInstance.ThumbnailReadyAtFilePath += everyplayThumbnailReadyAtFilePathDelegate;
         
-        #endif
-        
-        
+#endif
+
+
     }
 
     void OnDisable() {
-        
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+
+#if ANALYTICS_GAMEANALYTICS
         // ------------
         // GAME ANALYTICS
         
@@ -105,18 +105,18 @@ public class AnalyticsNetworks : GameObjectBehavior {
         //Everyplay.SharedInstance.RecordingStarted -= everyplayRecordingStartedDelegate;
         //Everyplay.SharedInstance.RecordingStopped -= everyplayRecordingStoppedDelegate;
         
-        #endif
-        
+#endif
+
     }
-    
-    public void Init() {  
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+    public void Init() {
+
+#if ANALYTICS_GAMEANALYTICS
         Invoke("gameAnalyticsInit", 1);
-        #endif       
+#endif
     }
-    
-    #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
     // ----------------------------------------------------------------------
     // GA - http://support.gameanalytics.com/hc/en-us/articles/200841396-Tips#customArea
     
@@ -139,27 +139,27 @@ public class AnalyticsNetworks : GameObjectBehavior {
         
     }
         
-    #endif
-    
-    
+#endif
+
+
     // ----------------------------------------------------------------------
-    
+
     // GENERIC CALLS
-    
-    
+
+
     // ----------------------------------------------------------------------
-    
+
     // analytics
-    
+
     // IS SUPPORTED
-    
+
     public static bool IsSupported() {
-        if (Instance != null) {
+        if(Instance != null) {
             return Instance.isSupported();
         }
         return false;
     }
-    
+
     public bool isSupported() {
 
 #if ANALYTICS_UNITY
@@ -170,68 +170,68 @@ public class AnalyticsNetworks : GameObjectBehavior {
         return false;
 #endif
     }
-        
+
     // LOG AREA 
-    
+
     public static void ChangeArea(string areaName) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.changeArea(areaName);
         }
     }
-    
+
     public void changeArea(string areaName) {
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
         // TODO Analytics update version
         //GA.SettingsGA.SetCustomArea(areaName);
-        #endif
+#endif
     }
 
-    
+
     // LOG AREA 
-    
+
     public static void Log(object data) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.log(data);
         }
     }
-    
+
     public void log(object data) {
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
         // TODO Analytics update version
         //GA.Log(data);
         //analyticsGameAnalytics.
-        #endif
+#endif
     }
-    
+
     // CHANGE USER
-    
+
     public static void ChangeUser(string userId) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.changeUser(userId);
         }
     }
-    
+
     public void changeUser(string userId) {
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
         // TODO Analytics update version
         //GA.SettingsGA.SetCustomUserID(userId);
-        #endif
+#endif
     }
 
     // LOG EVENTS
 
     public static void LogEvent(string eventName, params object[] args) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEvent(eventName, args);
         }
-    } 
-    
+    }
+
     public void logEvent(string eventName, params object[] args) {
-      
-        #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
 
         StringBuilder sb = new StringBuilder();
         sb.Append("GAME:");
@@ -245,19 +245,19 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
         // TODO Analytics update version
         //GA.API.Design.NewEvent(sb.ToString(), 1);
-        #endif
+#endif
     }
 
     // LOG EVENTS
 
     // SCENE CHANGE
-    
+
     public static void LogEventSceneChange(string val, string title) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventSceneChange(val, title);
         }
     }
-    
+
     public void logEventSceneChange(string val, string title) {
 
         AnalyticsNetworks.ChangeArea(val);
@@ -266,77 +266,77 @@ public class AnalyticsNetworks : GameObjectBehavior {
     }
 
     // LEVEL START
-    
+
     public static void LogEventLevelStart(string val, string title) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelStart(val, title);
         }
     }
-    
+
     public void logEventLevelStart(string val, string title) {
-        
+
         logEvent(AnalyticMessages.analyticsEventLevelStarted, val, title);
     }
-    
+
     // LEVEL RESULTS
-    
+
     public static void LogEventLevelResults(string val, string title) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelResults(val, title);
         }
     }
-    
+
     public void logEventLevelResults(string val, string title) {
-        
+
         logEvent(AnalyticMessages.analyticsEventLevelResults, val, title);
     }
-    
+
     // LEVEL QUIT
-    
+
     public static void LogEventLevelQuit(string val, string title) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelQuit(val, title);
         }
     }
-    
+
     public void logEventLevelQuit(string val, string title) {
-        
+
         logEvent(AnalyticMessages.analyticsEventLevelQuit, val, title);
     }
 
     // LEVEL EVENT GENERIC DATA
-    
-    public static void LogEvent(string key, object  val) {
-        if (Instance != null) {
+
+    public static void LogEvent(string key, object val) {
+        if(Instance != null) {
             Instance.logEvent(key, val);
         }
     }
-    
-    public void logEvent(string key, object  val) {
-        
+
+    public void logEvent(string key, object val) {
+
         logEvent(AnalyticMessages.analyticsEvent, key, val);
     }
 
-    
+
     // FLUSH/SEND
-    
+
     public static void Send() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.send();
         }
     }
-    
+
     public void send() {
-        
-        #if ANALYTICS_GAMEANALYTICS
+
+#if ANALYTICS_GAMEANALYTICS
         // TODO Analytics update version
         ////GA.GA_Queue.ForceSubmit();
-        #endif
-    }    
-    
+#endif
+    }
+
     // ----------------------------------------------------------------------
-    
-    public static void HandleUpdate() {        
+
+    public static void HandleUpdate() {
         /*
         #if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
@@ -354,7 +354,4 @@ public class AnalyticsNetworks : GameObjectBehavior {
         #endif
         */
     }
-    
 }
-
-

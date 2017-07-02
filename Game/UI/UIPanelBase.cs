@@ -35,6 +35,7 @@ public enum UIPanelAdDisplayState {
     BannerTop,
     BannerBottom,
     Video,
+    VideoIncentivized,
     Interstitial
 }
 
@@ -782,12 +783,28 @@ public class UIPanelBase : UIAppPanel {
         // handle character display
 
         if (adDisplayState ==
-            UIPanelAdDisplayState.BannerBottom
-            || adDisplayState ==
+            UIPanelAdDisplayState.BannerBottom) {
+            
+            AdNetworks.ShowAd(
+                AdDisplayType.Banner, AdPosition.BottomCenter);
+        }
+        else if(adDisplayState ==
             UIPanelAdDisplayState.BannerTop) {
 
-            // TODO handle types...
-            AdNetworks.ShowAd();
+            AdNetworks.ShowAd(
+                AdDisplayType.Banner, AdPosition.TopCenter);
+        }
+        else if(adDisplayState ==
+            UIPanelAdDisplayState.Video) {
+
+            AdNetworks.ShowAd(
+                AdDisplayType.Video, AdPosition.Full);
+        }
+        else if(adDisplayState ==
+            UIPanelAdDisplayState.Video) {
+
+            AdNetworks.ShowAd(
+                AdDisplayType.VideoIncentivized, AdPosition.Full);
         }
         else {
 

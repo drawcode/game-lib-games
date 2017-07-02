@@ -56,6 +56,7 @@ public enum AdDisplayType {
     SmartBannerLandscape,
     Banner,
     Video,
+    VideoIncentivized,
     Interstitial,
     Full
 }
@@ -141,53 +142,6 @@ public class AdNetworks : GameObjectBehavior {
     void Start() {
         Init();
     }
-
-
-    /*
-
-    UNITY ADS
-
-    using UnityEngine;
-    using UnityEngine.Advertisements;
-
-    public class UnityAdsExample : MonoBehaviour {
-      public void ShowAd() {
-        if (Advertisement.IsReady()) {
-          Advertisement.Show();
-        }
-      }
-    }
-
-    using UnityEngine;
-    using UnityEngine.Advertisements;
-
-    public class UnityAdsExample : MonoBehaviour {
-      public void ShowRewardedAd() {
-        if (Advertisement.IsReady("rewardedVideo")) {
-          var options = new ShowOptions { resultCallback = HandleShowResult };
-          Advertisement.Show("rewardedVideo", options);
-        }
-      }
-
-      private void HandleShowResult(ShowResult result) {
-        switch (result) {
-          case ShowResult.Finished:
-            Debug.Log("The ad was successfully shown.");
-            //
-            // YOUR CODE TO REWARD THE GAMER
-            // Give coins etc.
-            break;
-          case ShowResult.Skipped:
-            Debug.Log("The ad was skipped before reaching the end.");
-            break;
-          case ShowResult.Failed:
-            Debug.LogError("The ad failed to be shown.");
-            break;
-        }
-      }
-    }
-
-    */
 
     void OnEnable() {
 
@@ -347,7 +301,7 @@ public class AdNetworks : GameObjectBehavior {
     public void Init() {
 
 #if AD_USE_UNITY
-
+        unityAdsInit();
 #endif
 
 #if AD_USE_IAD
@@ -862,16 +816,31 @@ public class AdNetworks : GameObjectBehavior {
     // UNITY ADS
 
 #if AD_USE_UNITY
+
+    const string unityRewardedPlacementId = "rewardedVideo";
+
     public void unityAdsInit() {
-        //Advertisement.Initialize();
+        if(!Advertisement.isInitialized) {
+#if UNITY_IOS
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdiOS, 
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_ANDROID
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#endif
+        }
     }
 
     public void unityShowVideoAd() {
 
+        unityAdShow();
     }
 
-    public void unityShowRewardAd() {
+    public void unityShowRewardAd(string code = "rewardedVideo") {
 
+        unityAdShow(code);
     }
 
     public bool unityIsAdReady(string code = null) {
@@ -881,6 +850,44 @@ public class AdNetworks : GameObjectBehavior {
         }
         else {
             return Advertisement.IsReady(code);
+        }
+    }
+
+    public void unityAdShow(string code = null) {
+
+        if(!unityIsAdReady()) {
+            return;
+        }
+
+        var options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
+
+        if(code.IsNullOrEmpty()) {
+            Advertisement.Show(options);
+        }
+        else {
+            Advertisement.Show(code, options);
+        }
+    }
+
+    public void unityIsAdShowCompleted(ShowResult result) {
+
+        switch(result) {
+            case ShowResult.Finished:
+                Debug.Log("The ad was successfully shown.");
+
+                Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
+
+                break;
+
+            case ShowResult.Skipped:
+                Debug.Log("The ad was skipped before reaching the end.");
+
+                Messenger<double>.Broadcast(AdNetworksMessages.videoAd, .5f);
+                break;
+
+            case ShowResult.Failed:
+                Debug.LogError("The ad failed to be shown.");
+                break;
         }
     }
 
@@ -1111,11 +1118,11 @@ public class AdNetworks : GameObjectBehavior {
     //}
 
     public static void ShowAd(
-        AdDisplayType bannerType = AdDisplayType.Banner,
-        AdPosition position = AdPosition.BottomCenter) {
+        AdDisplayType adDisplayType = AdDisplayType.Banner,
+        AdPosition adPosition = AdPosition.BottomCenter) {
 
         if(Instance != null) {
-            Instance.showAd(bannerType, position);
+            Instance.showAd(adDisplayType, adPosition);
         }
     }
 
@@ -1124,13 +1131,15 @@ public class AdNetworks : GameObjectBehavior {
     }
 
     public void showAd(
-        AdDisplayType bannerType = AdDisplayType.Banner,
-        AdPosition position = AdPosition.BottomCenter) {
+        AdDisplayType adDisplayType = AdDisplayType.Banner,
+        AdPosition adPosition = AdPosition.BottomCenter) {
 
-        if(bannerType == AdDisplayType.Banner) {
-            showBannerAd(bannerType, position);
+        if(adDisplayType == AdDisplayType.Banner) {
+            showBannerAd(adDisplayType, adPosition);
         }
-        else if(bannerType == AdDisplayType.Interstitial) {
+        else if(adDisplayType == AdDisplayType.Interstitial) {
+        }
+        else if(adDisplayType == AdDisplayType.Interstitial) {
         }
     }
 
@@ -1220,6 +1229,8 @@ public class AdNetworks : GameObjectBehavior {
 #endif
     }
 
+    //
+
     public static void IsVideoAdAvailable() {
         if(Instance != null) {
             Instance.isVideoAdAvailable();
@@ -1231,60 +1242,64 @@ public class AdNetworks : GameObjectBehavior {
 #if PROMO_USE_VUNGLE
         return vungleIsAdvertAvailable();
 #else
-        return false;
+        return unityIsAdReady();
 #endif
     }
 
-    public static void ShowVideoAd() {
-        if(Instance != null) {
-            Instance.showVideoAd();
-        }
-    }
+    //
 
-    public void showVideoAd() {
-
-#if PROMO_USE_VUNGLE
-        if (vungleIsAdvertAvailable()) {
-            vungleDisplayAdvert(true);
-        }
-#endif
-
-#if AD_USE_UNITY
-        if(!Advertisement.IsReady()) {
-            Debug.Log("Ads not ready for default placement");
-            return;
-        }
-
-        Advertisement.Show();
-#endif
-    }
-
-    public static void ShowVideoAd(bool showCloseButtons) {
+    public static void ShowVideoAd(bool showCloseButtons = true, string code = null) {
         if(Instance != null) {
             Instance.showVideoAd(showCloseButtons);
         }
     }
 
-    public void showVideoAd(bool showCloseButtons) {
+    public void showVideoAd(bool showCloseButtons = true, string code = null) {
 
 #if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
             vungleDisplayAdvert(showCloseButtons);
         }
 #endif
+
+#if AD_USE_UNITY
+
+        if(showCloseButtons) {
+            if(code.IsNullOrEmpty()) {
+                unityShowRewardAd();
+            }
+            else {
+                unityShowRewardAd(code);
+            }
+        }
+        else {
+            unityShowVideoAd();
+        }
+#endif
     }
 
-    public static void ShowVideoAdIncentivized(bool showCloseButton, string user) {
+    //
+
+    public static void ShowVideoAdIncentivized(bool showCloseButtons = true, string code = null, string user = null) {
         if(Instance != null) {
-            Instance.showVideoAdIncentivized(showCloseButton, user);
+            Instance.showVideoAdIncentivized(showCloseButtons, code, user);
         }
     }
 
-    public void showVideoAdIncentivized(bool showCloseButton, string user) {
+    public void showVideoAdIncentivized(bool showCloseButtons = true, string code = null, string user = null) {
 
 #if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
             vungleDisplayIncentivizedAdvert(showCloseButton, user);
+        }
+#endif
+
+#if AD_USE_UNITY
+        if(code.IsNullOrEmpty()) {
+            unityShowRewardAd();
+        }
+        else {
+            unityShowRewardAd(code);
         }
 #endif
     }
@@ -1394,6 +1409,54 @@ public class AdNetworks : GameObjectBehavior {
 // ----------------------------------------------------------------------
 // DOCS
 
+
+
+/*
+
+// ----------------------------------------------------------------------
+UNITY ADS
+
+using UnityEngine;
+using UnityEngine.Advertisements;
+
+public class UnityAdsExample : MonoBehaviour {
+  public void ShowAd() {
+    if (Advertisement.IsReady()) {
+      Advertisement.Show();
+    }
+  }
+}
+
+using UnityEngine;
+using UnityEngine.Advertisements;
+
+public class UnityAdsExample : MonoBehaviour {
+  public void ShowRewardedAd() {
+    if (Advertisement.IsReady("rewardedVideo")) {
+      var options = new ShowOptions { resultCallback = HandleShowResult };
+      Advertisement.Show("rewardedVideo", options);
+    }
+  }
+
+  private void HandleShowResult(ShowResult result) {
+    switch (result) {
+      case ShowResult.Finished:
+        Debug.Log("The ad was successfully shown.");
+        //
+        // YOUR CODE TO REWARD THE GAMER
+        // Give coins etc.
+        break;
+      case ShowResult.Skipped:
+        Debug.Log("The ad was skipped before reaching the end.");
+        break;
+      case ShowResult.Failed:
+        Debug.LogError("The ad failed to be shown.");
+        break;
+    }
+  }
+}
+
+*/
 
 // ----------------------------------------------------------------------
 // CHARTBOOST

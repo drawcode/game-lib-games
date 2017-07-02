@@ -222,7 +222,7 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         base.HandleShow();
 
         backgroundDisplayState = UIPanelBackgroundDisplayState.PanelBacker;
-        adDisplayState = UIPanelAdDisplayState.BannerBottom;
+        adDisplayState = UIPanelAdDisplayState.Video;
         characterDisplayState = UIPanelCharacterDisplayState.Character;
         buttonDisplayState = UIPanelButtonsDisplayState.GameNetworks;
     }

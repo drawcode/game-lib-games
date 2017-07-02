@@ -168,7 +168,7 @@ public class BaseGameUIPanelProductCurrencyEarn : GameUIPanelBase {
 
             LogUtil.Log("buttonEarnVideoAds: " + buttonName);
 
-            AdNetworks.ShowVideoAd();
+            AdNetworks.ShowVideoAdIncentivized();
         }
         else if(UIUtil.IsButtonClicked(buttonEarnOffers, buttonName)) {
 
