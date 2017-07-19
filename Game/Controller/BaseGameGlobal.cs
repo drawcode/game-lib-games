@@ -495,7 +495,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                     + "-" + (screenshotCount++).ToString() + ".png";
                 }
-                Application.CaptureScreenshot(filename);
+                ScreenCapture.CaptureScreenshot(filename);
             }
         }
 
