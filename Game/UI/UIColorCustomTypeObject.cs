@@ -16,19 +16,19 @@ public enum UIColorType {
 }
 
 public class UIColorCustomType : GameDataObject {
-	public static string colorForeground = "ui-light";
-	public static string colorForegroundFade = "ui-light-fade";
+    public static string colorForeground = "ui-light";
+    public static string colorForegroundFade = "ui-light-fade";
     public static string colorBackground = "ui-dark";
-	
-	public static string colorOverviewTitle = "ui-overview-title";
-	public static string colorOverviewText = "ui-overview-text";
+
+    public static string colorOverviewTitle = "ui-overview-title";
+    public static string colorOverviewText = "ui-overview-text";
 
     public UIColorCustomType() {
         this["colorForeground"] = UIColorCustomType.colorForeground;
-		this["colorBackground"] = UIColorCustomType.colorBackground;
-		this["colorForegroundFade"] = UIColorCustomType.colorForegroundFade;
-		this["colorOverviewTitle"] = UIColorCustomType.colorOverviewTitle;
-		this["colorOverviewText"] = UIColorCustomType.colorOverviewText;
+        this["colorBackground"] = UIColorCustomType.colorBackground;
+        this["colorForegroundFade"] = UIColorCustomType.colorForegroundFade;
+        this["colorOverviewTitle"] = UIColorCustomType.colorOverviewTitle;
+        this["colorOverviewText"] = UIColorCustomType.colorOverviewText;
     }
 }
 
@@ -38,27 +38,27 @@ public class UIColorCustomTypeObject : UIColorObject {
     public UIColorType colorType = UIColorType.colorForeground;
     string colorKey = UIColorCustomType.colorForeground;
     public float colorAlpha = 1f;
-    
+
     public override void Awake() {
 
     }
-    
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
         SyncColors();
     }
-    
+
     void OnEnable() {
         Messenger.AddListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
-    
+
     void OnDisable() {
         Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
-    
+
     void OnColorsUpdateHandler() {
         SyncColors();
     }
@@ -68,31 +68,31 @@ public class UIColorCustomTypeObject : UIColorObject {
         colorAlpha = alpha;
         SyncColors();
     }
-    
+
     public override void SyncColors() {
 
         string colorTypeString = colorType.ToString();
 
-        if (colorCustomTypes == null) {
+        if(colorCustomTypes == null) {
             colorCustomTypes = new UIColorCustomType();
         }
 
-        if (colorCustomTypes.ContainsKey(colorTypeString)) {
+        if(colorCustomTypes.ContainsKey(colorTypeString)) {
 
             colorKey = colorCustomTypes.Get<string>(colorType.ToString());
 
-            if (!string.IsNullOrEmpty(colorKey)) {
+            if(!string.IsNullOrEmpty(colorKey)) {
 
                 AppColor appColor = AppColors.Instance.GetById(colorKey);
 
-                if (appColor != null) {
+                if(appColor != null) {
 
                     Color colorTo = appColor.GetColor();
                     colorTo.a = colorAlpha;
                     UIColors.ColorTo(
                         gameObject, colorTo);
 
-                    foreach (Transform t in gameObject.transform) {
+                    foreach(Transform t in gameObject.transform) {
                         UIColors.ColorTo(
                             t.gameObject, colorTo);
                     }

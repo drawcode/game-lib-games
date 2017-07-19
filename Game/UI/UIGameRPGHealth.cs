@@ -26,7 +26,7 @@ public class UIGameRPGHealth : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if (lastTime > 3f) {
+        if(lastTime > 3f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -36,7 +36,7 @@ public class UIGameRPGHealth : UIGameRPGObject {
 
         lastTime += Time.deltaTime;
 
-        if (updateTimeInterval) {
+        if(updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -47,10 +47,10 @@ public class UIGameRPGHealth : UIGameRPGObject {
 
         HandleUpdate(true);
 
-        if (UIGameKeyCodes.isActionHealthAdd) {
+        if(UIGameKeyCodes.isActionHealthAdd) {
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(incrementValue);
         }
-        else if (UIGameKeyCodes.isActionHealthSubtract) {
+        else if(UIGameKeyCodes.isActionHealthSubtract) {
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressHealth(-incrementValue);
         }
     }

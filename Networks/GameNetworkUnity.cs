@@ -63,7 +63,7 @@ public class GameNetworkUnity : MonoBehaviour {
     }
 
     public void authenticate(Action<ILocalUser> callback = null) {
-        
+
         Social.localUser.Authenticate(success => {
             if(success) {
                 Debug.Log("Authentication successful");
@@ -107,7 +107,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     // ------------------------------------------------------------------------
     // ACHIEVEMENTS
-    
+
     public void showAchievements() {
 
         if(!isAuthenticated()) {
@@ -196,7 +196,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
         Social.ReportProgress(achievementId, progress, callback);
     }
-    
+
     // ------------------------------------------------------------------------
     // LEADERBOARDS
 
@@ -241,10 +241,8 @@ public class GameNetworkUnity : MonoBehaviour {
         }
         Social.LoadScores(leaderboardId, callback);
     }
-    
+
     public void onScoresLoad(IScore[] scores) {
         Debug.Log("onScoresLoad:" + scores.Length);
     }
-
-
 }

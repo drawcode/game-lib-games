@@ -17,7 +17,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     public GameObject overlayBlackSolid;
     public GameObject overlayWhiteSolid;
     public GameObject overlayWhiteSolidStatic;
-
+    
     public static bool isInst {
         get {
             if(Instance != null) {
@@ -29,6 +29,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 
     public override void Awake() {
         base.Awake();
+
+        HideCamera();
     }
 
     public override void OnEnable() {
@@ -119,6 +121,7 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     public virtual void ShowOverlayWhiteFlashOut() {
         //LogUtil.Log("ShowOverlayWhiteFlashOut");		
         //DeviceUtil.Vibrate();		
+
         ShowOverlayWhite();
     }
 
@@ -135,6 +138,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 
     public virtual void ShowOverlayWhite(float time, float delay) {
 
+        ShowCamera();
+
         TweenUtil.ShowObjectBottom(overlayWhiteSolid, TweenCoord.local, true, time, delay);
     }
 
@@ -143,8 +148,10 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhite(float time, float delay) {
-
+        
         TweenUtil.HideObjectBottom(overlayWhiteSolid, TweenCoord.local, true, time, delay);
+
+        HideCamera(delay);
     }
 
     // OVERLAY WHITE STATIC 
@@ -155,6 +162,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 
     public virtual void ShowOverlayWhiteStatic(float time, float delay) {
 
+        ShowCamera();
+
         TweenUtil.ShowObjectBottom(overlayWhiteSolidStatic, TweenCoord.local, true, time, delay);
     }
 
@@ -163,8 +172,10 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhiteStatic(float time, float delay) {
-
+        
         TweenUtil.HideObjectBottom(overlayWhiteSolidStatic, TweenCoord.local, true, time, delay);
+
+        HideCamera(delay);
     }
 
     // OVERLAY WHITE RADIAL
@@ -175,6 +186,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 
     public virtual void ShowOverlayWhiteRadial(float time, float delay) {
 
+        ShowCamera();
+
         TweenUtil.ShowObjectBottom(overlayWhiteRadial, TweenCoord.local, true, time, delay);
     }
 
@@ -183,8 +196,10 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayWhiteRadial(float time, float delay) {
-
+        
         TweenUtil.HideObjectBottom(overlayWhiteRadial, TweenCoord.local, true, time, delay);
+
+        HideCamera(delay);
     }
 
     // OVERLAY BLACK 
@@ -195,6 +210,8 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
 
     public virtual void ShowOverlayBlack(float time, float delay) {
 
+        ShowCamera();
+
         TweenUtil.ShowObjectBottom(overlayBlackSolid, TweenCoord.local, true, time, delay);
     }
 
@@ -203,8 +220,10 @@ public class BaseGameUIPanelOverlays : GameUIPanelBase {
     }
 
     public virtual void HideOverlayBlack(float time, float delay) {
-
+        
         TweenUtil.HideObjectBottom(overlayBlackSolid, TweenCoord.local, true, time, delay);
+
+        HideCamera(delay);
     }
 
     // OVERLAY HIDE ALL

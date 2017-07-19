@@ -18,10 +18,10 @@ public class SwitchOAMode : GameObjectBehavior {
     void OnTriggerEnter(Collider other) {
 
         //if (other.gameObject.transform.root.gameObject.tag == tagName)    //2013-08-02
-        if (other.gameObject.transform.root.gameObject.CompareTag(tagName)) { //2013-08-02
+        if(other.gameObject.transform.root.gameObject.CompareTag(tagName)) { //2013-08-02
             GameVehicleAIDriverController aIDriverController =
                 other.gameObject.transform.root.gameObject.GetComponentInChildren<GameVehicleAIDriverController>();
-            if (aIDriverController != null) {
+            if(aIDriverController != null) {
                 //aIDriverController.useObstacleAvoidance = switchUseOaTo;
                 aIDriverController.SwitchOaMode(switchUseOaTo);
             }

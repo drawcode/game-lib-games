@@ -77,6 +77,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         }
 
         Instance = this;
+        
+        HideCamera();
 
         panelTypes.Add(UIPanelBaseTypes.typeDialogHUD);
     }
@@ -201,11 +203,13 @@ public class UIPanelOverlayPrepare : UIPanelBase {
         if(containerTips != null) {
             foreach(UIPanelTips tips in containerTips.GetComponentsInChildren<UIPanelTips>(true)) {
                 tips.gameObject.Hide();
-
+                                
                 TweenUtil.FadeToObject(tips.gameObject, 0f, .4f, 0f);
 
                 //UITweenerUtil.FadeTo(tips.gameObject, UITweener.Method.Linear, UITweener.Style.Once, .4f, 0f, 0f);
             }
+            
+            HideCamera();
         }
     }
 
@@ -230,10 +234,14 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
                 }
             }
+
+            ShowCamera();
         }
     }
 
     public void ShowTutorial() {
+
+        ShowCamera();
 
         HideStates();
 
@@ -254,9 +262,13 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public void HideTutorial() {
 
         AnimateOutBottom(containerOverview, 0f, 0f);
+
+        HideCamera();
     }
 
     public void ShowTips() {
+
+        ShowCamera();
 
         HideStates();
 
@@ -277,6 +289,8 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     public void HideTips() {
 
         AnimateOutBottom(containerOverview, 0f, 0f);
+
+        HideCamera();
     }
 
     public void OnGameLevelItemsLoadedHandler() {
@@ -309,14 +323,21 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     }
 
     public void ShowLoader() {
+
+        ShowCamera();
+
         containerLoader.Show();
     }
 
     public void HideLoader() {
+
         containerLoader.Hide();
+
+        HideCamera();
     }
 
     public void ShowLoaderSpinner() {
+        
         containerLoaderSpinner.Show();
     }
 
@@ -355,7 +376,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
 
     public void ShowOverview() {
-
+        
         HideStates();
 
         containerOverview.Show();

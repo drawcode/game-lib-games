@@ -13,7 +13,7 @@ public enum AppViewerUIPanelContext {
 }
 
 public class UIAppPanelBase : UIPanelBase {
-    
+
     /*
     public GameObject listGridRoot;
     
@@ -59,10 +59,9 @@ public class UIAppPanelBase : UIPanelBase {
 
     public override void Init() {
         base.Init();
-     
+
         // hide all panels
-     
+
         HideAllPanelsNow();
     }
-     
 }

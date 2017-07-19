@@ -15,13 +15,13 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
     public override void OnEnable() {
         base.OnEnable();
     }
-    
+
     public override void OnDisable() {
         base.OnDisable();
     }
 
     public override void Start() {
-        Load();   
+        Load();
     }
 
     public override void Load() {
@@ -30,10 +30,10 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
-        if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
             ChangePresetNext();
         }
-        else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetPrevious();
         }
     }
@@ -48,30 +48,30 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public void ChangePreset(int index) {
 
-        int countPresets = 
+        int countPresets =
             AppContentAssetTexturePresets.Instance.GetListByType(type).Count;
 
-        
-        if (index < -1) {
-            index = countPresets - 1;    
+
+        if(index < -1) {
+            index = countPresets - 1;
         }
-        
-        if (index > countPresets - 1) {
+
+        if(index > countPresets - 1) {
             index = -1;
         }
-        
+
         currentIndex = index;
-        
-        if (index > -2 && index < countPresets) {
-            
-            if (initialProfileCustomItem == null) {
+
+        if(index > -2 && index < countPresets) {
+
+            if(initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
             }
-            
+
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
-            
-            if (index == -1) {
-                
+
+            if(index == -1) {
+
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Uniform");
 
                 GameCustomController.UpdateTexturePresetObject(
@@ -79,12 +79,12 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
             }
             else {
 
-                AppContentAssetTexturePreset preset = 
+                AppContentAssetTexturePreset preset =
                     AppContentAssetTexturePresets.Instance.GetListByType(type)[currentIndex];
 
                 // change character to currently selected texture preset
 
-                currentProfileCustomItem = 
+                currentProfileCustomItem =
                     GameCustomController.UpdateTexturePresetObject(
                         currentProfileCustomItem, currentObject, preset);
 
@@ -94,8 +94,8 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
             }
         }
     }
-    
+
     public override void Update() {
-        
+
     }
 }

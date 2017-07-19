@@ -62,7 +62,7 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
         List<GameProduct> products = GameProducts.Instance.GetAll();
-        
+
         foreach(GameProduct product in products) {
 
             // check type then add based on type

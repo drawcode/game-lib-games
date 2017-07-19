@@ -65,56 +65,56 @@ public class UIGameNotification
     GameNotificationState notificationState = GameNotificationState.Hidden;
     public bool paused = false;
     Queue<GameNotificationItem> notificationQueue = new Queue<GameNotificationItem>();
-    
+
     public bool IsHidden {
         get {
-            if (notificationState == GameNotificationState.Hidden)
+            if(notificationState == GameNotificationState.Hidden)
                 return true;
-                
+
             return false;
         }
     }
-    
+
     public void Awake() {
-        
-        if (Instance != null && this != Instance) {
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
         }
-        
+
         Instance = this;
-        
+
         DontDestroyOnLoad(gameObject);
     }
-    
-    public void Start() {   
+
+    public void Start() {
         notificationState = GameNotificationState.Hidden;
         HideDialog();
     }
-    
+
     public void QueueAchievement(string code) {
-    
+
         SetAchievementContent(code);
     }
-                
-    public bool SetAchievementContent(string achievementCode) {     
+
+    public bool SetAchievementContent(string achievementCode) {
         GameAchievement achievementMeta = GameAchievements.Instance.GetById(achievementCode);
-        
-        if (achievementMeta == null) {
+
+        if(achievementMeta == null) {
             string tempCode = achievementCode.Replace("_" + GamePacks.Current.code, "");
             achievementMeta = GameAchievements.Instance.GetById(tempCode);
         }
-        
-        if (achievementMeta != null) {          
-            
+
+        if(achievementMeta != null) {
+
             GameNotificationItem item = new GameNotificationItem();
             item.title = achievementMeta.display_name;
             item.description = FormatUtil.GetStringTrimmedWithBreaks(achievementMeta.description, 40);
             item.score = "+" + achievementMeta.data.points.ToString();
             item.notificationType = GameNotificationType.Achievement;
             QueueNotification(item);
-            
+
             return true;
         }
         else {
@@ -122,24 +122,24 @@ public class UIGameNotification
             return false;
         }
     }
-    
-    public void QueueNotification(string title, string description, GameNotificationType notificationType) {        
+
+    public void QueueNotification(string title, string description, GameNotificationType notificationType) {
         GameNotificationItem notification = new GameNotificationItem();
         notification.title = title;
         notification.description = description;
         notification.notificationType = notificationType;
         UIGameNotification.Instance.QueueNotification(notification);
     }
-    
+
     public void QueueNotification(GameNotificationItem notification) {
         notificationQueue.Enqueue(notification);
         LogUtil.Log("Notification Queue(" + notificationQueue.Count + ") Notification Added :" + notification.title);
-        ProcessNotifications();     
+        ProcessNotifications();
         GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
     }
-        
+
     public void ToggleDialog() {
-        if (notificationState == GameNotificationState.Hidden) {
+        if(notificationState == GameNotificationState.Hidden) {
             // Show
             ShowDialog();
         }
@@ -148,59 +148,59 @@ public class UIGameNotification
             HideDialog();
         }
     }
-    
+
     public void ShowDialog() {
         float openPos = positionYOpenInGame;
-        
+
         LogUtil.Log("ShowDialog:" + openPos);
-        
+
         Vector3 temp = notificationPanel.transform.position;
         temp.y = openPos;
 
         TweenUtil.MoveToObject(notificationPanel, temp, .5f, 0f);
 
         //UITweenerUtil.MoveTo(notificationPanel, UITweener.Method.EaseIn, UITweener.Style.Once, .5f, 0f, temp);
-        
+
         Invoke("HideDialog", 4f);
 
         SetStateShowing();
     }
-    
+
     public void HideDialog() {
-        if (notificationPanel == null) {
+        if(notificationPanel == null) {
             return;
         }
-        
+
         float closedPos = positionYClosedInGame;
-        
-        LogUtil.Log("HideDialog:" + closedPos);     
-        
+
+        LogUtil.Log("HideDialog:" + closedPos);
+
         Vector3 temp = notificationPanel.transform.position;
         temp.y = closedPos;
 
         TweenUtil.MoveToObject(notificationPanel, temp, .6f, .9f);
 
         //UITweenerUtil.MoveTo(notificationPanel, UITweener.Method.EaseIn, UITweener.Style.Once, .6f, .9f, temp);
-        
+
         Invoke("DisplayNextNotification", 1);
     }
-    
+
     public void DisplayNextNotification() {
         SetStateHidden();
         ProcessNotifications();
     }
-    
+
     public void Update() {
-        
-        if (Application.isEditor && Input.GetKeyDown(KeyCode.Space)) {
+
+        if(Application.isEditor && Input.GetKeyDown(KeyCode.Space)) {
             //achievementNumber++;
             QueueAchievement("achieve_win_3");
             QueueAchievement("SOME CODE NOT FOUND");
             QueueAchievement("achieve_win_1");
         }
-        
+
     }
-    
+
     public bool Paused {
         get {
             return false;
@@ -209,62 +209,62 @@ public class UIGameNotification
             paused = value;
         }
     }
-    
+
     public void ProcessNotifications() {
-        if (!Paused) {
-            if (notificationQueue.Count > 0)
-            if (notificationState == GameNotificationState.Hidden)
-                ProcessNextNotification();
+        if(!Paused) {
+            if(notificationQueue.Count > 0)
+                if(notificationState == GameNotificationState.Hidden)
+                    ProcessNextNotification();
         }
     }
-    
+
     public void ProcessNextNotification() {
-        if (Paused) {
+        if(Paused) {
             return;
         }
-                
-        if (notificationQueue.Count > 0) {
+
+        if(notificationQueue.Count > 0) {
             GameNotificationItem notificationItem = notificationQueue.Dequeue();
-            
+
             UIUtil.SetLabelValue(labelDisplayName, notificationItem.title);
             UIUtil.SetLabelValue(labelDescription, notificationItem.description);
             UIUtil.SetLabelValue(labelScore, notificationItem.score);
-            
-            if (notificationItem.notificationType == GameNotificationType.Achievement) {                
+
+            if(notificationItem.notificationType == GameNotificationType.Achievement) {
                 UIUtil.SetLabelValue(labelTitle, "ACHIEVEMENT");
                 UIUtil.ShowLabel(labelScore);
-                if (iconObject != null) {
+                if(iconObject != null) {
                     iconObject.Show();
                 }
             }
-            else if (notificationItem.notificationType == GameNotificationType.Info) {              
+            else if(notificationItem.notificationType == GameNotificationType.Info) {
                 UIUtil.SetLabelValue(labelTitle, "INFORMATION");
                 UIUtil.HideLabel(labelScore);
-                if (iconObject != null) {
+                if(iconObject != null) {
                     iconObject.Hide();
                 }
             }
-            else if (notificationItem.notificationType == GameNotificationType.Tip) {               
+            else if(notificationItem.notificationType == GameNotificationType.Tip) {
                 UIUtil.SetLabelValue(labelTitle, "TIP");
                 UIUtil.HideLabel(labelScore);
-                if (iconObject != null) {
+                if(iconObject != null) {
                     iconObject.Hide();
                 }
             }
-            else if (notificationItem.notificationType == GameNotificationType.Error) {             
+            else if(notificationItem.notificationType == GameNotificationType.Error) {
                 UIUtil.SetLabelValue(labelTitle, "ERROR");
                 UIUtil.HideLabel(labelScore);
-                if (iconObject != null) {
+                if(iconObject != null) {
                     iconObject.Hide();
                 }
             }
-            
-            LogUtil.Log("Notification Queue(" + notificationQueue.Count + ") Notification Removed :" + notificationItem.title);             
+
+            LogUtil.Log("Notification Queue(" + notificationQueue.Count + ") Notification Removed :" + notificationItem.title);
 
             ShowDialog();
         }
     }
-    
+
     /*
     public void EnablePanelRender(bool enabled) {
         //achievementPanel.SetActive(enabled);
@@ -383,13 +383,12 @@ public class UIGameNotification
         }
     }
     */
-    
+
     public void SetStateShowing() {
         notificationState = GameNotificationState.Showing;
     }
-    
+
     public void SetStateHidden() {
         notificationState = GameNotificationState.Hidden;
     }
 }
-

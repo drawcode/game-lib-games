@@ -37,7 +37,7 @@ public class AnalyticMessages {
 }
 
 public class AnalyticsNetworksMessages {
-    
+
     public static string analyticsTrackScene = "analytics-track-scene";
 }
 

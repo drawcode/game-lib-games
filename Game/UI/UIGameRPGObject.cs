@@ -54,7 +54,7 @@ public class UIGameRPGObject : GameObjectBehavior {
     }
 
     public virtual void UpdateInterval() {
-        if (lastTime > 1f) {
+        if(lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -62,27 +62,27 @@ public class UIGameRPGObject : GameObjectBehavior {
 
     public virtual void HandleUpdate(bool updateIntervalBase) {
 
-        if (updateIntervalBase) {
+        if(updateIntervalBase) {
             lastTime += Time.deltaTime;
             UpdateInterval();
         }
 
-        if (lastValue > profileValue) {
+        if(lastValue > profileValue) {
 
             double differenceValue = lastValue - profileValue;
 
-            if (Math.Abs(differenceValue) > 50) {
+            if(Math.Abs(differenceValue) > 50) {
                 lastValue -= (Math.Round(Math.Abs(differenceValue) / 4)) * incrementValue;
             }
             else {
                 lastValue -= incrementValue;
             }
         }
-        else if (profileValue > lastValue) {
+        else if(profileValue > lastValue) {
 
             double differenceValue = lastValue - profileValue;
 
-            if (Math.Abs(differenceValue) > 50) {
+            if(Math.Abs(differenceValue) > 50) {
                 lastValue += (Math.Round(Math.Abs(differenceValue) / 4)) * incrementValue;
             }
             else {
@@ -90,14 +90,14 @@ public class UIGameRPGObject : GameObjectBehavior {
             }
         }
 
-        if (incrementValue < .1) {
+        if(incrementValue < .1) {
             lastValue = Math.Round(lastValue, 2);
         }
         else {
             lastValue = Math.Round(lastValue, 1);
         }
 
-        if (lastValue < 0) {
+        if(lastValue < 0) {
             lastValue = 0;
         }
 

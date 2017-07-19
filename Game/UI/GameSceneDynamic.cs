@@ -10,31 +10,31 @@ using Engine.UI;
 using Engine.Utility;
 
 public class GameSceneDynamic : GameUIScene {
-    
+
     public static GameSceneDynamic Instance;
     public float currentTimeBlock = 0.0f;
     public float actionInterval = 1.0f;
-            
+
     public void Awake() {
-        
-        if (Instance != null && this != Instance) {
+
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
             return;
         }
-                
+
         Instance = this;
-        
-        if (GameGlobal.Instance == null) {
+
+        if(GameGlobal.Instance == null) {
             Context.Current.ApplicationLoadLevelByName("GameUISceneRoot");
         }
-                
+
     }
-        
+
     void Start() {
         Init();
     }
-    
+
     public override void Init() {
         base.Init();
         InitEvents();
@@ -56,6 +56,4 @@ public class GameSceneDynamic : GameUIScene {
             }
         }
     }
-
 }
-

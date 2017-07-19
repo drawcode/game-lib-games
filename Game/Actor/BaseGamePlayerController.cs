@@ -1209,9 +1209,9 @@ public class BaseGamePlayerController : GameActor {
             }
         }
         else if(GameController.IsGameplayTypeDasher()) {
-            GamePlayerModelHolderEaseOut(5f, .1f, 0f);
+            GamePlayerModelHolderEaseOut(10f, .1f, 0f);
             if(!IsPlayerControlled) {
-                GamePlayerModelHolderEaseIn(0, .3f, .3f);
+                GamePlayerModelHolderEaseIn(0, 1f, 1f);
             }
         }
     }
@@ -1225,7 +1225,7 @@ public class BaseGamePlayerController : GameActor {
         }
         else if(GameController.IsGameplayTypeDasher()) {
             //if(IsPlayerControlled) {
-            GamePlayerModelHolderEaseIn(0, .3f, .3f);
+            GamePlayerModelHolderEaseIn(0, 1f, 1f);
             //}
         }
     }
@@ -1238,7 +1238,7 @@ public class BaseGamePlayerController : GameActor {
         }
         else if(GameController.IsGameplayTypeDasher()) {
 
-            GamePlayerModelHolderEaseOut(5, .1f, 0);
+            GamePlayerModelHolderEaseOut(10, 1f, 0);
         }
     }
 

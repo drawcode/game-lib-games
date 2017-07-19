@@ -25,7 +25,7 @@ public class UIGameRPGXP : UIGameRPGObject {
     }
 
     public override void UpdateInterval() {
-        if (lastTime > 1f) {
+        if(lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -35,7 +35,7 @@ public class UIGameRPGXP : UIGameRPGObject {
 
         lastTime += Time.deltaTime;
 
-        if (updateTimeInterval) {
+        if(updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -46,11 +46,11 @@ public class UIGameRPGXP : UIGameRPGObject {
 
         HandleUpdate(true);
 
-        if (UIGameKeyCodes.isActionXPAdd) {
+        if(UIGameKeyCodes.isActionXPAdd) {
             LogUtil.Log("isActionXPAdd:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(incrementValue * 100);
         }
-        else if (UIGameKeyCodes.isActionXPSubtract) {
+        else if(UIGameKeyCodes.isActionXPSubtract) {
             LogUtil.Log("isActionXPSubtract:currentXP:" + GameProfileCharacters.currentProgress.GetGamePlayerProgressXP());
             GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(-incrementValue * 100);
         }

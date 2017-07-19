@@ -25,7 +25,7 @@ public class AlertDialogResultMessages {
     public static string DIALOG_RESULT_NO = "dg-result-no";
 }
 
-public class AlertDialog : GameObjectBehavior { 
+public class AlertDialog : GameObjectBehavior {
     public static AlertDialog Instance;
     public GameObject dialogObject;
     public GameObject dialogBackgroundObject;
@@ -43,83 +43,83 @@ public class AlertDialog : GameObjectBehavior {
     public UILabel labelMessage;
     public string dialogMessage = "Are you sure you want to quit and step down from Supa Supa Fame?";
     public string currentDialogCode = AlertDialogMessages.DIALOG_QUIT;
-    
+
     void Awake() {
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(this);
             return;
         }
-        
+
         Instance = this;
-        
+
         DontDestroyOnLoad(gameObject);
-        
+
         LoadControls();
     }
-    
+
     public static bool IsActive {
         get {
-            if (AlertDialog.Instance.IsReady()) {
+            if(AlertDialog.Instance.IsReady()) {
                 return AlertDialog.Instance.alertActive;
             }
             return false;
         }
     }
-    
+
     public void ShowAlertQuitDialog() {
-        ShowAlert(AlertDialogMessages.DIALOG_QUIT, 
-                  AlertDialogType.DIALOG_YES_NO, 
+        ShowAlert(AlertDialogMessages.DIALOG_QUIT,
+                  AlertDialogType.DIALOG_YES_NO,
                   "Are you sure you want to quit and step down from Supa Supa Fame?");
     }
-    
+
     public void ShowAlertClearData() {
-        ShowAlert(AlertDialogMessages.DIALOG_CLEAR_DATA, 
-                  AlertDialogType.DIALOG_YES_NO, 
+        ShowAlert(AlertDialogMessages.DIALOG_CLEAR_DATA,
+                  AlertDialogType.DIALOG_YES_NO,
                   "Are you sure you want to clear your series races?");
     }
-    
+
     public void ShowAlert(string dialogCode, AlertDialogType dialogType, string message) {
         SetupAlert(dialogCode, dialogType, message);
-        
+
         //iTween.Stop(dialogObject);
         //iTween.Stop(dialogBackgroundObject);
-        
+
         //Tweens.Instance.FadeToObject(dialogObject, 1f, .5f, 0f);
         //Tweens.Instance.FadeToObject(dialogBackgroundObject, .8f, .5f, 0f);
-        
+
         Invoke("StopTime", .6f);
-        
+
         alertActive = true;
     }
-    
+
     public void HideAlert() {
-        
+
         //iTween.Stop(dialogObject);
         //iTween.Stop(dialogBackgroundObject);
-        
+
         //Tweens.Instance.FadeToObject(dialogObject, 0f, .5f, 0f);
         //Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, .5f, 0f);
-        
+
         Invoke("StartTime", .6f);
-        
+
         alertActive = false;
     }
-    
+
     public void SetupAlert(string dialogCode, AlertDialogType dialogType, string message) {
-        if (labelMessage) {
+        if(labelMessage) {
             currentDialogCode = dialogCode;
             dialogMessage = message;
             alertDialogType = dialogType;
             labelMessage.text = dialogMessage;
         }
     }
-    
-    void LoadControls() {       
-        
+
+    void LoadControls() {
+
         //Tweens.Instance.FadeToObject(dialogObject, 0f, 0f, 0f);
         //Tweens.Instance.FadeToObject(dialogBackgroundObject, 0f, 0f, 0f);
-        
+
         /*
         if(buttonYes != null) {
             buttonYesPosition = buttonYes.transform.localPosition;
@@ -182,36 +182,33 @@ public class AlertDialog : GameObjectBehavior {
         }
         */
     }
-    
+
     public void LateUpdate() {
-        
+
         ResetButtons();
     }
-    
+
     public void ResetButtons() {
-                
-        if (buttonYes) {
+
+        if(buttonYes) {
             buttonYes.transform.localPosition = buttonYesPosition;
         }
-        if (buttonNo) {
+        if(buttonNo) {
             buttonNo.transform.localPosition = buttonNoPosition;
         }
     }
-    
+
     public void StopTime() {
         SetTimeScale(0f);
         AudioListener.pause = true;
     }
-    
+
     public void StartTime() {
         SetTimeScale(1f);
         AudioListener.pause = false;
     }
-    
+
     public void SetTimeScale(float timeScale) {
         Time.timeScale = timeScale;
     }
-    
 }
-
-

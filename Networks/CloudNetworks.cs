@@ -27,128 +27,128 @@ public class CloudMessages {
 
 public class CloudNetworks : GameObjectBehavior {
 
-	public static bool cloudNetworksEnabled = AppConfigs.cloudNetworksEnabled;
-	public static bool cloudNetworksTestingEnabled = AppConfigs.cloudNetworksTestingEnabled;
-	
-	// Only one CloudNetworks can exist. We use a singleton pattern to enforce this.
-	private static CloudNetworks _instance = null;
-	
-	public static CloudNetworks Instance {
-		get {
-			if (!_instance) {
-				
-				// check if an ObjectPoolManager is already available in the scene graph
-				_instance = FindObjectOfType(typeof(CloudNetworks)) as CloudNetworks;
-				
-				// nope, create a new one
-				if (!_instance) {
-					var obj = new GameObject("_CloudNetworks");
-					_instance = obj.AddComponent<CloudNetworks>();
-				}
-			}
-			
-			return _instance;
-		}
-	}
-	
-	void Start() {
-		Init();
-	}
-	
-	void OnEnable() {
+    public static bool cloudNetworksEnabled = AppConfigs.cloudNetworksEnabled;
+    public static bool cloudNetworksTestingEnabled = AppConfigs.cloudNetworksTestingEnabled;
 
-	}
-	
-	void OnDisable() {
+    // Only one CloudNetworks can exist. We use a singleton pattern to enforce this.
+    private static CloudNetworks _instance = null;
 
-	}
-	
-	public void Init() {  
+    public static CloudNetworks Instance {
+        get {
+            if(!_instance) {
+
+                // check if an ObjectPoolManager is already available in the scene graph
+                _instance = FindObjectOfType(typeof(CloudNetworks)) as CloudNetworks;
+
+                // nope, create a new one
+                if(!_instance) {
+                    var obj = new GameObject("_CloudNetworks");
+                    _instance = obj.AddComponent<CloudNetworks>();
+                }
+            }
+
+            return _instance;
+        }
+    }
+
+    void Start() {
+        Init();
+    }
+
+    void OnEnable() {
+
+    }
+
+    void OnDisable() {
+
+    }
+
+    public void Init() {
+
+#if CLOUD_SYNCHRONO
+        Invoke("synchronoInit", 1);
+#endif
+    }
+
+#if CLOUD_SYNCHRONO
+    // ----------------------------------------------------------------------
+    // GA - http://support.gameanalytics.com/hc/en-us/articles/200841396-Tips#customArea
+
+    public void synchronoInit() {
+
+        //if(analyticsGameAnalytics == null) {
+
+        //	analyticsGameAnalytics = FindObjectOfType(typeof(GA_SystemTracker)) as GA_SystemTracker;
+
+        //	if (!analyticsGameAnalytics) {
+        //		var obj = new GameObject("_analyticsGameAnalytics");
+        //		analyticsGameAnalytics = obj.AddComponent<GA_SystemTracker>();
+        //		DontDestroyOnLoad(analyticsGameAnalytics);
+        //	}
+        //}
+
+        //analyticsEveryplay.clientId = AppConfigs.analyticsEveryplayClientId;
+        //analyticsEveryplay.clientSecret = AppConfigs.analyticsEveryplayClientSecret;
+        //analyticsEveryplay.redirectURI = AppConfigs.analyticsEveryplayAuthUrl;
+
+    }
+
+#endif
+
+
+    // ----------------------------------------------------------------------
+
+    // GENERIC CALLS
+
+
+    // ----------------------------------------------------------------------
+
+    // cloud Synchrono
+
+    // IS READY
+
+    public static bool IsReady() {
+        if(Instance != null) {
+            return Instance.isReady();
+        }
+        return false;
+    }
+
+    public bool isReady() {
+
+#if CLOUD_SYNCHRONO
+        return true;
+#else
 		
-		#if CLOUD_SYNCHRONO
-		Invoke("synchronoInit", 1);
-		#endif       
-	}
-	
-	#if CLOUD_SYNCHRONO
-	// ----------------------------------------------------------------------
-	// GA - http://support.gameanalytics.com/hc/en-us/articles/200841396-Tips#customArea
-	
-	public void synchronoInit() {
-		
-		//if(analyticsGameAnalytics == null) {
-			
-		//	analyticsGameAnalytics = FindObjectOfType(typeof(GA_SystemTracker)) as GA_SystemTracker;
-			
-		//	if (!analyticsGameAnalytics) {
-		//		var obj = new GameObject("_analyticsGameAnalytics");
-		//		analyticsGameAnalytics = obj.AddComponent<GA_SystemTracker>();
-		//		DontDestroyOnLoad(analyticsGameAnalytics);
-		//	}
-		//}
-		
-		//analyticsEveryplay.clientId = AppConfigs.analyticsEveryplayClientId;
-		//analyticsEveryplay.clientSecret = AppConfigs.analyticsEveryplayClientSecret;
-		//analyticsEveryplay.redirectURI = AppConfigs.analyticsEveryplayAuthUrl;
-		
-	}
-	
-	#endif
-	
-	
-	// ----------------------------------------------------------------------
-	
-	// GENERIC CALLS
-	
-	
-	// ----------------------------------------------------------------------
-	
-	// cloud Synchrono
-	
-	// IS READY
-	
-	public static bool IsReady() {
-		if (Instance != null) {
-			return Instance.isReady();
-		}
 		return false;
-	}
-	
-	public bool isReady() {
-		
-		#if CLOUD_SYNCHRONO
-		return true;
-		#else
-		
-		return false;
-		#endif
-	}
+#endif
+    }
 
-	// UPLOAD
+    // UPLOAD
 
-	public void Upload(string uuid, string url, Dictionary<string,object> args, byte[] data) {
-	
-	}
+    public void Upload(string uuid, string url, Dictionary<string, object> args, byte[] data) {
 
-	public void OnUploadSuccess() {
-	
-	}
+    }
 
-	public void OnUploadError() {
-	
-	}
+    public void OnUploadSuccess() {
 
-	// DOWNLOAD
+    }
 
-	public void Download(string uuid, string url, Dictionary<string,object> args) {
-	
-	}
-	
-	public void OnDownloadSuccess() {
-		
-	}
-	
-	public void OnDownloadError() {
-		
-	}
+    public void OnUploadError() {
+
+    }
+
+    // DOWNLOAD
+
+    public void Download(string uuid, string url, Dictionary<string, object> args) {
+
+    }
+
+    public void OnDownloadSuccess() {
+
+    }
+
+    public void OnDownloadError() {
+
+    }
 }

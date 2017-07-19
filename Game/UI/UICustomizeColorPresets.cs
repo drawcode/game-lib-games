@@ -72,10 +72,10 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         checkboxes = new Dictionary<string, Toggle>();
 #endif
 
-        foreach (AppContentAssetCustomItem customItem
+        foreach(AppContentAssetCustomItem customItem
                 in AppContentAssetCustomItems.Instance.GetListByType(type)) {
 
-            foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
+            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 checkboxes.Add(prop.code, gameObject.Get<UICheckbox>(prop.code));
@@ -92,26 +92,26 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
 
         currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
-        foreach (AppContentAssetCustomItem customItem
+        foreach(AppContentAssetCustomItem customItem
                 in AppContentAssetCustomItems.Instance.GetListByType(type)) {
 
             Dictionary<string, Color> colors = new Dictionary<string, Color>();
 
-            foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
+            foreach(AppContentAssetCustomItemProperty prop in customItem.properties) {
 
                 bool update = false;
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-                foreach (KeyValuePair<string,UICheckbox> pair in checkboxes) {
+                foreach(KeyValuePair<string, UICheckbox> pair in checkboxes) {
 #else
                 foreach (KeyValuePair<string, Toggle> pair in checkboxes) {
 #endif
-                    if (pair.Value == null) {
+                    if(pair.Value == null) {
                         LogUtil.Log("Checkbox not found:" + pair.Key);
                         continue;
                     }
 
-                    if (UIUtil.IsCheckboxChecked(pair.Value)//.isChecked 
+                    if(UIUtil.IsCheckboxChecked(pair.Value)//.isChecked 
                         && prop.code == pair.Key) {
                         update = true;
                     }
@@ -119,7 +119,7 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
 
                 Color colorTo = currentProfileCustomItem.GetCustomColor(prop.code);
 
-                if (update) {
+                if(update) {
                     color.a = 1;
                     colorTo = color;
                 }
@@ -137,10 +137,10 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
-        if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
             ChangePresetPrevious();
         }
-        else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetNext();
         }
     }
@@ -153,14 +153,14 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
     void OnCheckboxChangedEventHandler(string checkboxName, bool selected) {
 
         //LogUtil.Log("OnCheckboxChangedEventHandler:", " checkboxName:" + checkboxName + " selected:" + selected);
-        if (checkboxes != null) {
+        if(checkboxes != null) {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-            foreach (KeyValuePair<string,UICheckbox> pair in checkboxes) {
+            foreach(KeyValuePair<string, UICheckbox> pair in checkboxes) {
 #else
             foreach (KeyValuePair<string, Toggle> pair in checkboxes) {
 #endif
-                if (UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
+                if(UIUtil.IsCheckboxChecked(pair.Value, checkboxName)) {
                     UIUtil.SetCheckboxValue(checkboxes[pair.Key], selected);
                 }
             }
@@ -180,25 +180,25 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         int countPresets =
             AppColorPresets.Instance.GetListByType(type).Count;
 
-        if (index < -1) {
+        if(index < -1) {
             index = countPresets - 1;
         }
 
-        if (index > countPresets - 1) {
+        if(index > countPresets - 1) {
             index = -1;
         }
 
         currentIndex = index;
 
-        if (index > -2 && index < countPresets) {
+        if(index > -2 && index < countPresets) {
 
-            if (initialProfileCustomItem == null) {
+            if(initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
             }
 
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
 
-            if (index == -1) {
+            if(index == -1) {
 
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "My Previous Colors");
 

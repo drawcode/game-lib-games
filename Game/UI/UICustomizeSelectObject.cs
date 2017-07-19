@@ -39,8 +39,8 @@ public class UICustomizeSelectObject : UICustomizeObject {
     public override void Load() {
 
     }
-    
+
     public override void Update() {
-       
+
     }
 }

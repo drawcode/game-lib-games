@@ -33,23 +33,23 @@ public class UIButtonMetaItem {
     public Vector3 buttonPositionCurrent;
     public Vector3 buttonPositionCurrentDown;
     public Vector3 buttonPosition;
-        
+
     //public EZInputDelegate inputDelegate;
     //public EZValueChangedDelegate changedDelegate;
-        
+
     public UIButtonEventTap buttonEventTap;
 }
 
-public class UIButtonMeta {     
-        
+public class UIButtonMeta {
+
     public UIButtonMetaItem currentButton;
     public bool isStoreOnly = false;
     public Dictionary<string, UIButtonMetaItem> buttons = new Dictionary<string, UIButtonMetaItem>();
-        
+
     public void SetButton(string key, ref UIButton button) {
-                
+
         //LogUtil.Log("isStoreOnly:" + isStoreOnly);
-                
+
         /*
                 if(button != null) {
                         if(buttons.ContainsKey(key)) {
@@ -71,7 +71,7 @@ public class UIButtonMeta {
                 }
                 */
     }
-        
+
     /*
         public void SetInputDelegate(string key, EZInputDelegate inputDelegate) {
                 if(buttons.ContainsKey(key)) {  
@@ -80,22 +80,22 @@ public class UIButtonMeta {
                 }
         }
         */
-        
+
     public bool IsEventReady {
         get {
             bool ready = true;
-                        
+
             //if(AlertDialog.IsActive) {
             //      ready = false;
             //}
             //else if(!isStoreOnly && GameStore.IsActive) {                         
             //      ready = false;  
             //}
-                        
-            return ready;                   
+
+            return ready;
         }
     }
-        
+
     /*
         public void SetInputDelegateDefault(string key) {
                 if(buttons.ContainsKey(key)) {  
@@ -143,30 +143,30 @@ public class UIButtonMeta {
                 }
         }
         */
-        
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public void SetButton(string key, ref UIButton button, UIButtonEventTap tapEvent) {
         SetButton(key, ref button);
         SetTapDelegate(key, tapEvent);
     }
 #endif
-        
+
     public void SetTapDelegate(string key, UIButtonEventTap tapEvent) {
-        if (buttons.ContainsKey(key)) {  
+        if(buttons.ContainsKey(key)) {
             //buttons[key].buttonEventTap = tapEvent;
             //SetInputDelegateDefault(key);
         }
     }
-        
+
     public void EventButtonTap(string key) {
-        if (buttons.ContainsKey(key)) {  
-            UIButtonMetaItem item = buttons[key];                   
+        if(buttons.ContainsKey(key)) {
+            UIButtonMetaItem item = buttons[key];
             item.button.transform.localPosition = item.buttonPosition;
         }
     }
-        
+
     public void EventButtonPress(string key) {
-        if (buttons.ContainsKey(key)) {  
+        if(buttons.ContainsKey(key)) {
             //UIButtonMetaItem item = buttons[key];
             //if(item.button.UILabel) {
             //      Vector3 temp = item.button.UILabel.gameObject.transform.localPosition;
@@ -175,9 +175,9 @@ public class UIButtonMeta {
             //}
         }
     }
-        
+
     public void EventButtonRelease(string key) {
-        if (buttons.ContainsKey(key)) {  
+        if(buttons.ContainsKey(key)) {
             //UIButtonMetaItem item = buttons[key];
             /*
                         if(item.button.UILabel) {
@@ -189,10 +189,10 @@ public class UIButtonMeta {
                         */
         }
     }
-        
+
     public void SetButtonEnable(string key, bool enable) {
-        if (buttons.ContainsKey(key)) {                  
-            currentButton = buttons[key];                   
+        if(buttons.ContainsKey(key)) {
+            currentButton = buttons[key];
             //SetButtonEnable(currentButton.button, enable);
         }
     }
@@ -205,17 +205,17 @@ public class UIButtonMeta {
     }
 #endif
     public void SetButtonEnable(Button button, bool enable) {
-        if (button != null) {
+        if(button != null) {
             UIUtil.UIButtonEnable(button, enable);
         }
     }
 
     public void SetButtonsDialogState() {
-        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
-            SetButtonDialogState(buttonItem.Key);   
+        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+            SetButtonDialogState(buttonItem.Key);
         }
     }
-        
+
     public void SetButtonDialogState(string key) {
         //if(AlertDialog.IsActive) {
         SetButtonEnable(key, false);
@@ -224,46 +224,46 @@ public class UIButtonMeta {
         SetButtonEnable(key, true);
         //}
     }
-        
+
     public void SetButtonsAlertState() {
-        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
-            SetButtonAlertState(buttonItem.Key);    
+        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+            SetButtonAlertState(buttonItem.Key);
         }
     }
-        
+
     public void SetButtonAlertState(string key) {
-        if (!IsEventReady) {
+        if(!IsEventReady) {
             SetButtonEnable(key, false);
         }
         else {
             SetButtonEnable(key, true);
         }
     }
-        
+
     public void SetButtonStoreState(string key) {
-        if (!IsEventReady) {
+        if(!IsEventReady) {
             SetButtonEnable(key, false);
         }
         else {
             SetButtonEnable(key, true);
         }
     }
-        
+
     public void ResetButtons() {
-        foreach (KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
-            ResetButton(buttonItem.Key);    
+        foreach(KeyValuePair<string, UIButtonMetaItem> buttonItem in buttons) {
+            ResetButton(buttonItem.Key);
         }
     }
-        
+
     public void ResetButton(string key) {
-        if (buttons.ContainsKey(key)) {                  
-            currentButton = buttons[key];                   
+        if(buttons.ContainsKey(key)) {
+            currentButton = buttons[key];
             ResetButton(currentButton);
         }
     }
-        
+
     public void ResetButton(UIButtonMetaItem buttonItem) {
-        if (buttonItem.button) {
+        if(buttonItem.button) {
             buttonItem.button.transform.localPosition = buttonItem.buttonPosition;
         }
     }

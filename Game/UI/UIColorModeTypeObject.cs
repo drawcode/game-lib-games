@@ -12,7 +12,7 @@ public class UIColorModeTypeObject : UIColorObject {
     public override void Awake() {
         //SyncColors();
     }
-    
+
     public override void Start() {
         Init();
     }
@@ -36,15 +36,15 @@ public class UIColorModeTypeObject : UIColorObject {
     public override void SyncColors() {
         // Set initial color by mode
 
-        if (AppModes.Instance.isAppModeGameTraining) {
+        if(AppModes.Instance.isAppModeGameTraining) {
             // purple
             UIColors.ColorToPurple(gameObject);
         }
-        else if (AppModes.Instance.isAppModeGameChallenge) {
+        else if(AppModes.Instance.isAppModeGameChallenge) {
             // blue
             UIColors.ColorToBlue(gameObject);
         }
-        else if (AppModes.Instance.isAppModeGameArcade) {
+        else if(AppModes.Instance.isAppModeGameArcade) {
             // green
             UIColors.ColorToOrange(gameObject);
         }

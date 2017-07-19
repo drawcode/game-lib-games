@@ -45,7 +45,7 @@ public class UILocalizedLabel : GameObjectBehavior {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 
-        if(labelLocalized == null) {            
+        if(labelLocalized == null) {
             labelLocalized = gameObject.Get<UILabel>();
         }
 #else
@@ -76,14 +76,14 @@ public class UILocalizedLabel : GameObjectBehavior {
 
     public void UpdateContent() {
 
-        if (string.IsNullOrEmpty(gameLocalizationCode)) {
+        if(string.IsNullOrEmpty(gameLocalizationCode)) {
             return;
         }
 
         // Get from code
         string content = Locos.GetString(gameLocalizationCode);
 
-        if (string.IsNullOrEmpty(content)) {
+        if(string.IsNullOrEmpty(content)) {
 
             // try lookup from current content
             string currentContent = GetContent();
@@ -92,7 +92,7 @@ public class UILocalizedLabel : GameObjectBehavior {
             content = Locos.GetString(currentContentCode);
         }
 
-        if (!string.IsNullOrEmpty(content)) {
+        if(!string.IsNullOrEmpty(content)) {
             SetContent(content);
         }
     }

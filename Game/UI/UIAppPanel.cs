@@ -16,7 +16,7 @@ public class UIAppPanelMessages {
 }
 
 public class UIAppPanel : GameObjectBehavior {
-    
+
     public UIAppPanelMode panelMode = UIAppPanelMode.ModeMain;
     public bool _isVisible = false;
     public string className = "";
@@ -25,7 +25,7 @@ public class UIAppPanel : GameObjectBehavior {
 
     public virtual bool isVisible {
         get {
-            return _isVisible; 
+            return _isVisible;
         }
         set {
             _isVisible = value;
@@ -35,23 +35,37 @@ public class UIAppPanel : GameObjectBehavior {
     public virtual void Awake() {
         GetClassName(this);
     }
-    
+
     public virtual void Start() {
         Init();
     }
-    
+
     public virtual void Init() {
-        if (GameGlobal.Instance == null) {
+
+        if(GameGlobal.Instance == null) {
+
             Context.Current.ApplicationLoadLevelByName("GameUISceneRoot");
         }
         else {
+
             GetClassName(this);
+
+            FindCameraAbove();
         }
     }
-        
+
+    public Camera FindCameraAbove() {
+
+        panelCamera = gameObject.FindTypeAboveRecursive<Camera>();
+
+        return panelCamera;
+    }
+
     public string GetClassName(object item) {
+
         className = item.GetType().Name;
         //LogUtil.Log("CLASS NAME:" + className);
+
         return className;
     }
 
@@ -62,11 +76,21 @@ public class UIAppPanel : GameObjectBehavior {
         }
     }
 
+    public void HideCamera(float delay) {
+        StartCoroutine(HideCameraCo(delay));
+    }
+
+    IEnumerator HideCameraCo(float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        HideCamera();
+    }
+
     public void HideCamera() {
-        
+
         if(panelCamera != null) {
             panelCamera.HideCameraFadeOut();
         }
     }
-
 }

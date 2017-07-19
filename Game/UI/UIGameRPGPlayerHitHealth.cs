@@ -21,17 +21,17 @@ public class UIGameRPGPlayerHitHealth : UIGameRPGPlayerObject {
         if(gamePlayerController == null) {
             return;
         }
-        
+
         if(gamePlayerController.runtimeData == null) {
             return;
         }
 
         profileValue = gamePlayerController.runtimeData.hitHealthRemaining;
-                
+
     }
 
     public override void UpdateInterval() {
-        if (lastTime > 1f) {
+        if(lastTime > 1f) {
             lastTime = 0f;
             UpdateValue();
         }
@@ -41,7 +41,7 @@ public class UIGameRPGPlayerHitHealth : UIGameRPGPlayerObject {
 
         lastTime += Time.deltaTime;
 
-        if (updateTimeInterval) {
+        if(updateTimeInterval) {
             UpdateInterval();
         }
 
@@ -52,11 +52,11 @@ public class UIGameRPGPlayerHitHealth : UIGameRPGPlayerObject {
 
         HandleUpdate(true);
 
-        if (UIGameKeyCodes.isActionPlayerHitAdd) {
+        if(UIGameKeyCodes.isActionPlayerHitAdd) {
             LogUtil.Log("PlayerHitAdd:" + incrementValue);
             //gamePlayerController.Hit(1);
         }
-        else if (UIGameKeyCodes.isActionPlayerHitSubtract) {
+        else if(UIGameKeyCodes.isActionPlayerHitSubtract) {
             LogUtil.Log("PlayerHitSubtract:" + incrementValue);
             //gamePlayerController.Hit(-1);
         }

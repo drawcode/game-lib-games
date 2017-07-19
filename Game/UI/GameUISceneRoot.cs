@@ -56,11 +56,11 @@ public class GameUISceneRoot : GameObjectBehavior {
 
     public void OnContentSyncShipContentSuccess(object obj) {
 
-//#if UNITY_ANDROID
-// Android has to be loaded dynamically after 
-// copying /syncing files into persistence folder
-// due to the split binary loading and finding Vuforia 
-// files /datasets/trackers
+        //#if UNITY_ANDROID
+        // Android has to be loaded dynamically after 
+        // copying /syncing files into persistence folder
+        // due to the split binary loading and finding Vuforia 
+        // files /datasets/trackers
 
 #if ENABLE_FEATURE_AR
         Debug.Log("OnContentSyncShipContentSuccess");
@@ -78,7 +78,7 @@ public class GameUISceneRoot : GameObjectBehavior {
         Debug.Log("OnContentSyncShipContentSuccess:end:DataSetLoadDynamic:" + dataSetCode);
 
 #endif
-//#endif
+        //#endif
 
         loadAsync.LoadLevel("GameSceneDynamic");
     }

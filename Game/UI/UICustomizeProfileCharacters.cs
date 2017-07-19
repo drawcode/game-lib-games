@@ -27,39 +27,39 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
     public override void OnEnable() {
         base.OnEnable();
-        
+
         Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
         //Messenger<string, string>.AddListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
-    
+
     public override void OnDisable() {
         base.OnDisable();
-        
+
         Messenger<string, string>.RemoveListener(InputEvents.EVENT_ITEM_CHANGE, OnInputChanged);
         //Messenger<string, string>.RemoveListener(InputEvents.EVENT_ITEM_CLICK, OnInputClicked);
     }
-    
+
     void OnInputChanged(string controlName, string data) {
 
         Debug.Log("OnInputChanged:" + " controlName:" + controlName + " data:" + data);
-        
-        if(inputCurrentDisplayName != null 
+
+        if(inputCurrentDisplayName != null
            && controlName == inputCurrentDisplayName.name) {
 
             ChangeCharacterDisplayName(data);
         }
-        else if(inputCurrentDisplayCode != null 
+        else if(inputCurrentDisplayCode != null
                 && controlName == inputCurrentDisplayCode.name) {
-            
+
             ChangeCharacterDisplayCode(data);
         }
     }
 
     void OnInputClicked(string controlName, string data) {
-        
+
         //Debug.Log("OnInputClicked:" + " controlName:" + controlName + " data:" + data);
-        
-        
+
+
         //if(inputCurrentDisplayName != null 
         //   && controlName == inputCurrentDisplayName.name) {
         //
@@ -71,7 +71,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     }
 
     public override void Start() {
-        Load();   
+        Load();
     }
 
     public override void Load() {
@@ -81,17 +81,17 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     }
 
     public void ShowCurrentProfileCharacter() {
-        
+
         GameProfileCharacterItems gameProfileCharacterItems =
             GameProfileCharacters.Current.GetCharacters();
-        
+
         int countPresets = gameProfileCharacterItems.items.Count;
         int index = 0;
-        
-        string currentCharacterCode = 
+
+        string currentCharacterCode =
             GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
-        
-        foreach(GameProfileCharacterItem gameProfileCharacterItem 
+
+        foreach(GameProfileCharacterItem gameProfileCharacterItem
                 in gameProfileCharacterItems.items) {
             if(gameProfileCharacterItem.code == currentCharacterCode) {
                 ChangePreset(index);
@@ -108,10 +108,10 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
     public override void OnButtonClickEventHandler(string buttonName) {
 
-        if (UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
+        if(UIUtil.IsButtonClicked(buttonCycleLeft, buttonName)) {
             ChangePresetPrevious();
         }
-        else if (UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
+        else if(UIUtil.IsButtonClicked(buttonCycleRight, buttonName)) {
             ChangePresetNext();
         }
         else if(UIUtil.IsButtonClicked(buttonSave, buttonName)) {
@@ -127,20 +127,20 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     }
 
     public virtual void SaveCharacterDisplayNameInput() {
-        
+
         if(inputCurrentDisplayName == null) {
             return;
-        } 
+        }
 
         ChangeCharacterDisplayName(inputCurrentDisplayName.text);
     }
 
-    public virtual void SaveCharacterDisplayCodeInput() {        
-        
+    public virtual void SaveCharacterDisplayCodeInput() {
+
         if(inputCurrentDisplayCode == null) {
             return;
-        } 
-        
+        }
+
         ChangeCharacterDisplayCode(inputCurrentDisplayCode.text);
     }
 
@@ -148,11 +148,11 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
         if(inputCurrentDisplayName == null) {
             return;
-        }        
-        
+        }
+
         if(profileCharacterItem == null) {
             return;
-        }        
+        }
 
         if(string.IsNullOrEmpty(val)) {
             return;
@@ -165,18 +165,18 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
         profileCharacterItem.characterDisplayName = val;
         GameProfileCharacters.Current.SetCharacter(profileCharacterItem);
 
-        GameState.SaveProfile();            
+        GameState.SaveProfile();
     }
-    
+
     public virtual void ChangeCharacterDisplayCode(string val) {
-        
+
         if(inputCurrentDisplayCode == null) {
             return;
-        }        
+        }
 
         if(profileCharacterItem == null) {
             return;
-        }        
+        }
 
         if(string.IsNullOrEmpty(val)) {
             return;
@@ -188,7 +188,7 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
 
         profileCharacterItem.characterDisplayCode = val;
         GameProfileCharacters.Current.SetCharacter(profileCharacterItem);
-                
+
         GameState.SaveProfile();
     }
 
@@ -201,32 +201,32 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
     }
 
     public void ChangePreset(int index) {
-        
-        GameProfileCharacterItems gameProfileCharacterItems 
+
+        GameProfileCharacterItems gameProfileCharacterItems
             = GameProfileCharacters.Current.GetCharacters();
 
         int countPresets = gameProfileCharacterItems.items.Count;
 
-        if (index < 0) {
-            index = countPresets - 1;    
+        if(index < 0) {
+            index = countPresets - 1;
         }
-        
-        if (index > countPresets - 1) {
+
+        if(index > countPresets - 1) {
             index = 0;
         }
-        
+
         currentIndex = index;
 
-        if (index > -1 && index < countPresets) {
-            
-            if (initialProfileCustomItem == null) {
+        if(index > -1 && index < countPresets) {
+
+            if(initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
             }
-            
+
             currentProfileCustomItem = GameProfileCharacters.currentCustom;
-            
-            if (index == -1) {
-                
+
+            if(index == -1) {
+
                 UIUtil.SetLabelValue(labelCurrentDisplayName, "Previous");
                 UIUtil.SetLabelValue(labelCurrentType, "");
 
@@ -236,13 +236,13 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
             }
             else {
 
-                profileCharacterItem = 
+                profileCharacterItem =
                     gameProfileCharacterItems.items[currentIndex];
 
                 //GameCustomController.SaveCustomItem(currentProfileCustomItem);
 
                 GameProfileCharacters.Current.SetCurrentCharacterProfileCode(profileCharacterItem.code);
-                                
+
                 Messenger<string>.Broadcast(
                     GameCustomMessages.customCharacterPlayerChanged, profileCharacterItem.code);
 
@@ -252,19 +252,19 @@ public class UICustomizeProfileCharacters : UICustomizeSelectObject {
                     characterType = gameCharacter.display_name;
                     characterType = "- TYPE: " + characterType + " -";
                 }
-                
+
                 UIUtil.SetInputValue(inputCurrentDisplayName, profileCharacterItem.characterDisplayName);
                 UIUtil.SetLabelValue(labelCurrentDisplayName, profileCharacterItem.characterDisplayName);
                 UIUtil.SetLabelValue(labelCurrentType, characterType);
-                
+
                 UIUtil.SetInputValue(inputCurrentDisplayCode, profileCharacterItem.characterDisplayCode);
 
                 UIUtil.SetLabelValue(labelCurrentStatus, string.Format("{0}/{1}", index + 1, countPresets));
             }
         }
     }
-    
+
     public override void Update() {
-        
+
     }
 }

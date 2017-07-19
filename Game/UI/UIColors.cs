@@ -42,44 +42,44 @@ public class UIColors {
         }
     }
 
-    public static Color colorYellow {    
-        get {        
-            return AppColors.GetColor("ui-yellow");            
+    public static Color colorYellow {
+        get {
+            return AppColors.GetColor("ui-yellow");
             //ColorHelper.FromRGB(229, 213, 2);
         }
     }
 
-    public static Color colorGreen {      
-        get {      
-            return AppColors.GetColor("ui-green");            
+    public static Color colorGreen {
+        get {
+            return AppColors.GetColor("ui-green");
             //ColorHelper.FromRGB(98, 184, 0);
         }
     }
 
-    public static Color colorPurple {    
-        get {        
-            return AppColors.GetColor("ui-purple");            
+    public static Color colorPurple {
+        get {
+            return AppColors.GetColor("ui-purple");
             //ColorHelper.FromRGB(124, 12, 232);
         }
     }
 
-    public static Color colorDark {      
-        get {      
-            return AppColors.GetColor("ui-dark");            
+    public static Color colorDark {
+        get {
+            return AppColors.GetColor("ui-dark");
             //ColorHelper.FromRGB(10, 10, 10);
         }
     }
 
-    public static Color colorLight {       
-        get {     
-            return AppColors.GetColor("ui-light");            
+    public static Color colorLight {
+        get {
+            return AppColors.GetColor("ui-light");
             //ColorHelper.FromRGB(200, 200, 200);
         }
     }
 
-    public static Color colorWhite {          
+    public static Color colorWhite {
         get {
-            return AppColors.GetColor("ui-white");            
+            return AppColors.GetColor("ui-white");
             //ColorHelper.FromRGB(255, 255, 255);
         }
     }
@@ -119,7 +119,7 @@ public class UIColors {
     }
 
     public static void AnimateColor(GameObject go, Color colorTo) {
-        
+
         TweenUtil.ColorToObject(go, colorTo, 1f, .5f);
 
         //UITweenerUtil.ColorTo(go, UITweener.Method.Linear, UITweener.Style.Once, 1f, .5f, colorTo);
@@ -164,9 +164,8 @@ public class UIColors {
     }
 
     public static void UpdateColor(GameObject go, Color colorTo) {
-        foreach (UIColorModeTypeObject uiColorModeTypeObject in go.GetList<UIColorModeTypeObject>()) {
+        foreach(UIColorModeTypeObject uiColorModeTypeObject in go.GetList<UIColorModeTypeObject>()) {
             uiColorModeTypeObject.ColorTo(uiColorModeTypeObject.gameObject, colorTo);
         }
     }
-
 }

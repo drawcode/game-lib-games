@@ -24,77 +24,77 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     public GameObject objectRecordStatusLight;
 
     public void Awake() {
-        
+
     }
 
-    public  void Init() {
+    public void Init() {
         UpdateBroadcastStatus(BroadcastNetworksMessages.broadcastRecordingStop);
     }
-    
+
     public void Start() {
         Init();
     }
-    
+
     public void OnEnable() {
-        
+
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         Messenger<string>.AddListener(
-            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged,
             OnBroadcastRecordStatusChanged);
     }
-    
+
     public void OnDisable() {
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        
+
         Messenger<string>.RemoveListener(
-            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged,
             OnBroadcastRecordStatusChanged);
     }
-    
+
     void OnButtonClickEventHandler(string buttonName) {
-        
+
     }
-    
+
     void OnBroadcastRecordStatusChanged(string broadcastStatus) {
-        
+
         UpdateBroadcastStatus(broadcastStatus);
     }
 
     public void UpdateBroadcastStatus(string broadcastStatus) {
-        
+
         UIUtil.SetLabelValue(labelStatus, "NOT RECORDING...");
         UIUtil.SetLabelValue(labelStatusAction, "TAP TO START");
-        
+
         if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
             RecordingObjectPingPong();
-            
+
             UIUtil.SetLabelValue(labelStatus, "RECORDING...");
             UIUtil.SetLabelValue(labelStatusAction, "TAP TO STOP");
         }
-        else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStop) {            
+        else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStop) {
             RecordingObjectStop();
-        }        
+        }
         else if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingPlayback) {
-            
+
             RecordingObjectStop();
         }
         else {
-            
+
             RecordingObjectStop();
         }
     }
-        
+
     public virtual void RecordingObjectPingPong() {
 
         AnimateObjectPingPongRecursive(objectRecordStatusLight);
     }
-    
+
     public virtual void RecordingObjectStop() {
         AnimateObjectFadeOutRecursive(objectRecordStatusLight);
     }
 
-    
+
     public virtual void AnimateObjectPingPongRecursive(GameObject go) {
 
         AnimateObjectPingPong(go);
@@ -105,21 +105,21 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
     }
 
     public virtual void AnimateObjectFadeOutRecursive(GameObject go) {
-        
+
         AnimateObjectFadeOut(go);
-        
+
         foreach(Transform t in go.transform) {
             AnimateObjectFadeOutRecursive(t.gameObject);
         }
     }
-    
+
     public virtual void AnimateObjectPingPong(GameObject go) {
-        
-        if (go != null) {
-            
+
+        if(go != null) {
+
             TweenUtil.FadeToObject(go, 1f, .5f, 0f);
 
-            TweenUtil.FadeToObject(go, .4f, .5f, .5f, false, 
+            TweenUtil.FadeToObject(go, .4f, .5f, .5f, false,
                 TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
 
             //UITweenerUtil.FadeTo(
@@ -133,12 +133,12 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
             //    UITweener.Method.EaseInOut, 
             //    UITweener.Style.PingPong, 
             //    .5f, .5f, .4f);
-        }   
+        }
     }
 
     public virtual void AnimateObjectFadeOut(GameObject go) {
-        
-        if (go != null) {
+
+        if(go != null) {
 
             TweenUtil.FadeToObject(go, 0f, 2f, 0f);
 
@@ -147,8 +147,6 @@ public class UIBroadcastRecordStatus : GameObjectBehavior {
             //    UITweener.Method.EaseInOut, 
             //    UITweener.Style.Once, 
             //    2f, 0f, 0f);
-        }   
+        }
     }
-
 }
-

@@ -400,87 +400,84 @@ public class GameRPGMonitor {
 }
 
 public class GameRPG : GameObjectBehavior {
-    
+
     public static GameRPG Instance;
     public UILabel labelXPValue;
     public GameRPGMonitor rpgMonitor = GameRPGMonitor.Instance;
-    
+
     void Awake() {
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(this);
             return;
         }
-        
+
         Instance = this;
-        
+
         DontDestroyOnLoad(gameObject);
-        
+
         Init();
     }
-    
+
     public void Init() {
         GameRPGMonitor.Instance.InitCurrentXP();
         SetXPDisplay(GameRPGMonitor.Instance.lastTotalScore);
     }
-    
+
     public static void IncrementXP(double amount) {
-        if (GameRPGMonitor.Instance != null) {
+        if(GameRPGMonitor.Instance != null) {
             GameRPGMonitor.Instance.SetIncrementXP(amount);
         }
     }
-    
+
     public void SyncTotalScore() {
         rpgMonitor.SyncTotalScore();
         UpdateXPDisplay();
     }
-    
+
     public void SetXPDisplay(double score) {
-        if (labelXPValue) {         
+        if(labelXPValue) {
             labelXPValue.text = score.ToString("#,##0");
         }
-        
+
         //LogUtil.Log("GameRPG:SetXPDisplay: score:" + score);
     }
-    
+
     public void UpdateXPDisplay() {
-        if (labelXPValue
-            && !rpgMonitor.scoreUpdating) { 
-            
-            
+        if(labelXPValue
+            && !rpgMonitor.scoreUpdating) {
+
+
             //LogUtil.Log("GameRPG:UpdateXPDisplay: scoreUpdating:" + scoreUpdating);
             //LogUtil.Log("GameRPG:UpdateXPDisplay: labelXPValue:" + labelXPValue);
-            
+
             int lastScoreInt = Convert.ToInt32(rpgMonitor.lastTotalScore);
             int currentScoreInt = Convert.ToInt32(rpgMonitor.currentTotalScore);
-            
-            if ((lastScoreInt + 1) == currentScoreInt) {
+
+            if((lastScoreInt + 1) == currentScoreInt) {
                 rpgMonitor.lastTotalScore += 1;
                 SetXPDisplay(rpgMonitor.lastTotalScore);
             }
-            else if ((lastScoreInt - 1) == currentScoreInt) {
+            else if((lastScoreInt - 1) == currentScoreInt) {
                 rpgMonitor.lastTotalScore -= 1;
                 SetXPDisplay(rpgMonitor.lastTotalScore);
             }
             else {
-                if (currentScoreInt != lastScoreInt
-                    && lastScoreInt < currentScoreInt) {                
+                if(currentScoreInt != lastScoreInt
+                    && lastScoreInt < currentScoreInt) {
                     rpgMonitor.lastTotalScore += 1;
                     SetXPDisplay(rpgMonitor.lastTotalScore);
                 }
-                else if (currentScoreInt != lastScoreInt
-                    && lastScoreInt > currentScoreInt) {                
+                else if(currentScoreInt != lastScoreInt
+                    && lastScoreInt > currentScoreInt) {
                     rpgMonitor.lastTotalScore -= 1;
                     SetXPDisplay(rpgMonitor.lastTotalScore);
                 }
             }
         }
     }
-    
+
     void LateUpdate() {
         UpdateXPDisplay();
     }
-        
-    
 }
-

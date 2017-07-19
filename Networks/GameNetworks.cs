@@ -105,7 +105,7 @@ public class GameNetworks : GameObjectBehavior {
 #else
     public static bool gameNetworkAndroidSamsungEnabled = false;
 #endif
-    
+
 #if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
     //[NonSerialized]
     //public GameCenterManager gameCenterManager;
@@ -325,7 +325,7 @@ public class GameNetworks : GameObjectBehavior {
         
         LogUtil.Log("InitNetwork Android Google Play init...");
 #endif
-        
+
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
         if(currentNetwork == GameNetworkType.gameNetworkGooglePlayServices) {
             PlayGamesPlatform.Activate();
@@ -749,9 +749,9 @@ public class GameNetworks : GameObjectBehavior {
 
     public void reportScore(string networkTypeTo, string key, long keyValue) {
 
-        Debug.Log("reportScore:" + 
-                    " networkTypeTo:" + networkTypeTo+ 
-                    " key:" + key+ 
+        Debug.Log("reportScore:" +
+                    " networkTypeTo:" + networkTypeTo +
+                    " key:" + key +
                     " keyValue:" + keyValue);
 
         if(IsThirdPartyNetworkAvailable(networkTypeTo)) {
@@ -760,9 +760,9 @@ public class GameNetworks : GameObjectBehavior {
                 keyValue = keyValue * 100;
             }
 
-            Debug.Log("reportScore:IsThirdPartyNetworkAvailable:" + 
-                        " networkTypeTo:" + networkTypeTo+ 
-                        " key:" + key+ 
+            Debug.Log("reportScore:IsThirdPartyNetworkAvailable:" +
+                        " networkTypeTo:" + networkTypeTo +
+                        " key:" + key +
                         " keyValue:" + keyValue);
 
             if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
@@ -2233,7 +2233,7 @@ void achievementMetadataLoaded(List<GameCenterAchievementMetadata> achievementsM
 #endif
 
     #endregion
-    
+
     #region SCRATCH
     /*
     // Fired when authentication succeeds. Includes the user_id

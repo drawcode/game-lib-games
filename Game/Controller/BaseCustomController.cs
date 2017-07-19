@@ -226,7 +226,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
             //return profileCustomItem;
         }
         
-        profileCustomItem.SetCustomColorPreset(type);
+        profileCustomItem.SetCustomColorPreset(type);     
         
         if (go != null) {
             

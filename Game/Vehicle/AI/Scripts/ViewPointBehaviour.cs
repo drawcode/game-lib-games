@@ -9,10 +9,10 @@ public class ViewPointBehaviour : GameObjectBehavior {
     GameVehicleAIDriverController aiDriverController;
 
     public void OnDrawGizmos() {
-        if (!Application.isPlaying) {
+        if(!Application.isPlaying) {
             aiDriver = gameObject.transform.parent.GetComponent<GameVehicleAIDriver>() as GameVehicleAIDriver;
-            if (aiDriver != null) {
-                if (aiDriver.useObstacleAvoidance) {
+            if(aiDriver != null) {
+                if(aiDriver.useObstacleAvoidance) {
                     Gizmos.color = Color.green;
                     Gizmos.DrawWireSphere(gameObject.transform.position, 0.1f);
                 }
@@ -20,8 +20,8 @@ public class ViewPointBehaviour : GameObjectBehavior {
             else {
                 aiDriverController =
                     gameObject.transform.parent.GetComponent<GameVehicleAIDriverController>() as GameVehicleAIDriverController;
-                if (aiDriverController != null) {
-                    if (aiDriverController.useObstacleAvoidance) {
+                if(aiDriverController != null) {
+                    if(aiDriverController.useObstacleAvoidance) {
                         Gizmos.color = Color.cyan;
                         Gizmos.DrawWireSphere(gameObject.transform.position, 0.1f);
                     }

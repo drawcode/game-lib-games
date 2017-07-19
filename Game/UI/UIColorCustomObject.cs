@@ -11,27 +11,27 @@ public class UIColorCustomObject : UIColorObject {
 
     public string colorKey = "";
     public float colorAlpha = 1f;
-    
+
     public override void Awake() {
         SyncColors();
     }
-    
+
     public override void Start() {
         Init();
     }
-    
+
     public override void Init() {
         SyncColors();
     }
-    
+
     void OnEnable() {
         Messenger.AddListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
-    
+
     void OnDisable() {
         Messenger.RemoveListener(UIColorsMessages.uiColorsUpdate, OnColorsUpdateHandler);
     }
-    
+
     void OnColorsUpdateHandler() {
         SyncColors();
     }
@@ -41,10 +41,10 @@ public class UIColorCustomObject : UIColorObject {
         colorAlpha = alpha;
         SyncColors();
     }
-    
+
     public override void SyncColors() {
 
-        if (!string.IsNullOrEmpty(colorKey)) {
+        if(!string.IsNullOrEmpty(colorKey)) {
 
             Color colorTo = GameProfileCharacters.currentCustom.GetCustomColor(colorKey);
             colorTo.a = colorAlpha;
