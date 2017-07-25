@@ -131,7 +131,7 @@ public class UINotificationDisplay
         }
     }
 
-    public void Awake() {
+    public override void Awake() {
 
         if(Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -144,7 +144,7 @@ public class UINotificationDisplay
         //DontDestroyOnLoad(gameObject);
     }
 
-    public void Start() {
+    public override void Start() {
         notificationState = UINotificationState.Hidden;
         HideDialog();
     }

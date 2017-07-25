@@ -128,7 +128,7 @@ public class UINotificationDisplayTip
         }
     }
 
-    public void Awake() {
+    public override void Awake() {
 
         if(Instance != null && this != Instance) {
             //There is already a copy of this script running
@@ -141,7 +141,7 @@ public class UINotificationDisplayTip
         //DontDestroyOnLoad(gameObject);
     }
 
-    public void Start() {
+    public override void Start() {
         notificationState = UINotificationTipState.Hidden;
         HideDialog();
     }
