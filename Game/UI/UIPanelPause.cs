@@ -100,19 +100,15 @@ public class UIPanelPause : UIPanelBase {
     }
 
     void OnGameLevelPauseHandler(string levelCode) {
-        //TweenUtil.ShowObjectRight(containerPause);
-        AnimateIn();
+        showDefault();
     }
 
     void OnGameLevelResumeHandler(string levelCode) {
-        //TweenUtil.HideObjectRight(containerPause);
-        AnimateOut();
+        hideAll();
     }
 
     void OnGameLevelQuitHandler(string levelCode) {
-        //TweenUtil.HideObjectRight(containerPause);
-
-        AnimateOut();
+        hideAll();
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -153,14 +149,31 @@ public class UIPanelPause : UIPanelBase {
 
     public static void ShowDefault() {
         if(isInst) {
-            Instance.AnimateIn();
+
+            Instance.showDefault();
         }
+    }
+
+    public void showDefault() {
+
+        ShowCamera();
+
+        AnimateIn();
     }
 
     public static void HideAll() {
         if(isInst) {
-            Instance.AnimateOut();
+
+            Instance.hideAll();
         }
+    }
+
+    public void hideAll() {
+
+        AnimateOut();
+
+        HideCamera(.5f);
+
     }
 
     public static void LoadData() {
@@ -203,12 +216,12 @@ public class UIPanelPause : UIPanelBase {
     public override void AnimateIn() {
         base.AnimateIn();
 
-        TweenUtil.ShowObjectRight(containerPause, TweenCoord.local, true, .5f, 0f);
+        TweenUtil.ShowObjectRight(containerPause, TweenCoord.local, true, .5f);
     }
 
     public override void AnimateOut() {
         base.AnimateOut();
 
-        TweenUtil.HideObjectRight(containerPause, TweenCoord.local, true, .5f, 0f);
+        TweenUtil.HideObjectRight(containerPause, TweenCoord.local, true, .5f);
     }
 }
