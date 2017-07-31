@@ -402,7 +402,7 @@ public class UIPanelOverviewMode : UIPanelBase {
     public static void HideAll() {
         if(isInst) {
             Instance.AnimateOut();
-        }
+        } 
     }
 
     public void Reset() {

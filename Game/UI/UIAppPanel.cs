@@ -69,6 +69,17 @@ public class UIAppPanel : GameObjectBehavior {
         return className;
     }
 
+    public void ShowCamera(float delay) {
+        StartCoroutine(ShowCameraaCo(delay));
+    }
+
+    IEnumerator ShowCameraaCo(float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        ShowCamera();
+    }
+
     public void ShowCamera() {
 
         if(panelCamera != null) {

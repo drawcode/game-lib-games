@@ -133,6 +133,8 @@ public class UINotificationDisplay
 
     public override void Awake() {
 
+        base.Awake();
+
         if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
@@ -145,6 +147,9 @@ public class UINotificationDisplay
     }
 
     public override void Start() {
+
+        base.Start();
+
         notificationState = UINotificationState.Hidden;
         HideDialog();
     }
@@ -375,9 +380,9 @@ public class UINotificationDisplay
 
     public void ShowDialog() {
 
-        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYOpenInGame), .6f, 0f);
+        ShowCamera();
 
-        //UITweenerUtil.MoveTo(notificationPanel, .6f, 0f, Vector3.zero.WithY(positionYOpenInGame));
+        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYOpenInGame), .6f, 0f);
 
         Invoke("HideDialog", 4.5f);
 
@@ -402,9 +407,7 @@ public class UINotificationDisplay
         }
 
         if(audioPlaySuccess) {
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_1);
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_2);
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_3);
+            GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
         }
 
         currentItem = null;
@@ -414,48 +417,49 @@ public class UINotificationDisplay
 
         TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYClosedInGame), .2f, 0f);
 
-        //UITweenerUtil.MoveTo(notificationPanel, .2f, 0f, Vector3.zero.WithY(positionYClosedInGame));
-
         Invoke("DisplayNextNotification", 1);
     }
 
     public void DisplayNextNotification() {
+
+        HideCamera();
+
         SetStateHidden();
         ProcessNotifications();
     }
 
-    public void Update() {
+    /*
+public void Update() {
 
-        /*
-                if(Input.GetKeyDown(KeyCode.Alpha1)) {
-                    //achievementNumber++;
-                    QueueAchievement("achieve_test1");
-                    //QueueAchievement("achieve_find_first");
-                    QueueAchievement("Achievement here", "This is an achievement", 10);
-                }
+            if(Input.GetKeyDown(KeyCode.Alpha1)) {
+                //achievementNumber++;
+                QueueAchievement("achieve_test1");
+                //QueueAchievement("achieve_find_first");
+                QueueAchievement("Achievement here", "This is an achievement", 10);
+            }
 
-                if(Input.GetKeyDown(KeyCode.Alpha2)) {
-                    //achievementNumber++;
-                    QueueError("Error Here", "This is an error, oh snap!");
-                }       
+            if(Input.GetKeyDown(KeyCode.Alpha2)) {
+                //achievementNumber++;
+                QueueError("Error Here", "This is an error, oh snap!");
+            }       
 
-                if(Input.GetKeyDown(KeyCode.Alpha3)) {
-                    //achievementNumber++;
-                    QueueInfo("Info Here", "This is an info, just an FYI!");
-                }
+            if(Input.GetKeyDown(KeyCode.Alpha3)) {
+                //achievementNumber++;
+                QueueInfo("Info Here", "This is an info, just an FYI!");
+            }
 
-                if(Input.GetKeyDown(KeyCode.Alpha4)) {
-                    //achievementNumber++;
-                    QueueTip("Tip Here", "This is an tip, do better!");
-                }
+            if(Input.GetKeyDown(KeyCode.Alpha4)) {
+                //achievementNumber++;
+                QueueTip("Tip Here", "This is an tip, do better!");
+            }
 
-                if(Input.GetKeyDown(KeyCode.Alpha5)) {
-                    //achievementNumber++;
-                    QueuePoint("Point Here", "This is an point, do better!", 1);
-                }
-          */
+            if(Input.GetKeyDown(KeyCode.Alpha5)) {
+                //achievementNumber++;
+                QueuePoint("Point Here", "This is an point, do better!", 1);
+            }
 
-    }
+
+}      */
 
     public bool Paused {
         get {

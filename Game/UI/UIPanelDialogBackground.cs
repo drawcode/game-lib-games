@@ -56,14 +56,28 @@ public class UIPanelDialogBackground : UIPanelBase {
 
     public static void ShowDefault() {
         if(isInst) {
-            Instance.AnimateIn();
+            Instance.showDefault();
+        }
+    }
+    public void showDefault() {
+
+        ShowCamera();
+
+        AnimateIn();
+        loadData();
+    }
+    
+    public static void HideAll() {
+        if(isInst) {
+            Instance.hideAll();
         }
     }
 
-    public static void HideAll() {
-        if(isInst) {
-            Instance.AnimateOut();
-        }
+    public void hideAll() {
+
+        AnimateOut();
+
+        HideCamera();
     }
 
     public static void LoadData() {
@@ -79,4 +93,16 @@ public class UIPanelDialogBackground : UIPanelBase {
     IEnumerator loadDataCo() {
         yield return new WaitForSeconds(1f);
     }
+
+    /*
+    public override void AnimateIn() {
+        ShowCamera(.45f);
+        base.AnimateIn();
+    }
+
+    public override void AnimateOut() {
+        base.AnimateOut();
+        HideCamera();
+    }
+    */
 }

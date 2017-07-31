@@ -261,7 +261,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public void HideTutorial() {
 
-        AnimateOutBottom(containerOverview, 0f, 0f);
+        AnimateOutBottom(containerOverview);
 
         HideCamera();
     }
@@ -288,7 +288,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public void HideTips() {
 
-        AnimateOutBottom(containerOverview, 0f, 0f);
+        AnimateOutBottom(containerOverview);
 
         HideCamera();
     }
@@ -437,7 +437,7 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public void HideOverview() {
 
-        AnimateOutBottom(containerOverview, 0f, 0f);
+        AnimateOutBottom(containerOverview);
 
         containerOverview.Hide();
 
@@ -470,15 +470,23 @@ public class UIPanelOverlayPrepare : UIPanelBase {
 
     public static void ShowDefault() {
         if(isInst) {
-            Instance.AnimateIn();
+            Instance.showDefault();
         }
+    }
+
+    public void showDefault() {
+        AnimateIn();
     }
 
     public static void HideAll() {
         if(isInst) {
-            Instance.AnimateOut();
-            Instance.HideStates();
+            Instance.hideAll();
         }
+    }
+
+    public void hideAll() {
+        AnimateOut();
+        HideStates();
     }
 
     public void Reset() {
@@ -514,14 +522,10 @@ public class UIPanelOverlayPrepare : UIPanelBase {
     }
 
     public override void AnimateOut() {
-        //base.AnimateOut();
+        base.AnimateOut();
 
         //HideStates();
 
         //HideCamera();
-    }
-
-    public void Update() {
-
     }
 }

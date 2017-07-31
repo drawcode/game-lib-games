@@ -98,15 +98,26 @@ public class UIPanelDialogDisplay : UIPanelBase {
 
     public static void ShowDefault() {
         if(isInst) {
-            Instance.AnimateIn();
-            Instance.loadData();
+            Instance.showDefault();
         }
     }
+
+    public void showDefault() {
+        
+        AnimateIn();
+        loadData();
+    }
+
 
     public static void HideAll() {
         if(isInst) {
             Instance.AnimateOut();
         }
+    }
+
+    public void hideAll() {
+        
+        AnimateOut();
     }
 
     public static void ShowButtonOk() {

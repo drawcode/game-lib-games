@@ -56,14 +56,29 @@ public class UIPanelModeTypeCollection : UIPanelBase {
 
     public static void ShowDefault() {
         if(isInst) {
-            Instance.AnimateIn();
+            Instance.showDefault();
         }
     }
 
     public static void HideAll() {
         if(isInst) {
-            Instance.AnimateOut();
+            Instance.hideAll();
         }
+    }
+    
+    public void showDefault() {
+
+        ShowCamera();
+
+        AnimateIn();
+        loadData();
+    }
+    
+    public void hideAll() {
+
+        AnimateOut();
+
+        HideCamera(.5f);
     }
 
     public static void LoadData() {

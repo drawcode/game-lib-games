@@ -2721,6 +2721,7 @@ public class BaseUIController : GameObjectBehavior {
 
             GameCommunity.HideGameCommunity();
 
+            // TODO MOVE
             UIPanelOverlayPrepare.HideAll();
 
             GameController.InitLevelFinish();

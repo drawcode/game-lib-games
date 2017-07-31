@@ -1260,11 +1260,14 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         UIPanelOverlayPrepare.HideAll();
 
+        //UIPanelOverlayPrepare.Instance.HideStates();
+        //UIPanelOverlayPrepare.Instance.HideCamera();
+
         Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
 
         Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
 
-        //UIPanelOverviewMode.ShowDefault();
+        UIPanelOverviewMode.ShowDefault();
 
         levelInitializing = false;
     }
@@ -2234,12 +2237,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             UIPanelDialogDisplay.ShowDefault();
         }
         else if (contentDisplayCode == GameContentDisplayTypes.gameEnergy) {
+            UIPanelDialogBackground.ShowDefault();
             handleContentDialogEnergy();
         }
         else if (contentDisplayCode == GameContentDisplayTypes.gameHealth) {
+            UIPanelDialogBackground.ShowDefault();
             handleContentDialogHealth();
         }
         else if (contentDisplayCode == GameContentDisplayTypes.gameXP) {
+            UIPanelDialogBackground.ShowDefault();
             handleContentDialogXP();
         }
         else {

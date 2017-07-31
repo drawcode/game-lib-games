@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Engine.Utility;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #else
 using UnityEngine.UI;
@@ -130,6 +131,8 @@ public class UINotificationDisplayTip
 
     public override void Awake() {
 
+        base.Awake();
+
         if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(this);
@@ -142,6 +145,9 @@ public class UINotificationDisplayTip
     }
 
     public override void Start() {
+
+        base.Start();
+
         notificationState = UINotificationTipState.Hidden;
         HideDialog();
     }
@@ -331,22 +337,11 @@ public class UINotificationDisplayTip
         }
     }
 
-    public UITweener FindTweener() {
-        UITweener twn = UnityObjectUtil.FindObject<UITweener>();
-        if(twn != null) {
-            twn.method = UITweener.Method.EaseInOut;
-            twn.style = UITweener.Style.Once;
-        }
-        return twn;
-    }
-
     public void ShowDialog() {
 
-        FindTweener();
-        TweenPosition.Begin(
-            notificationPanel,
-            .6f,
-            Vector3.zero.WithY(positionYOpenInGame));
+        ShowCamera();
+
+        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYOpenInGame), .6f, 0f);
 
         Invoke("HideDialog", 3.0f);
 
@@ -375,24 +370,21 @@ public class UINotificationDisplayTip
         }
 
         if(audioPlaySuccess) {
-            GameAudio.PlayEffect(GameAudioEffects.audio_effect_ui_button_1);
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_2);
-            //GameAudio.PlayEffect(GameAudioEffects.audio_effect_achievement_3);
+            GameAudio.PlayEffect(GameAudioEffects.audio_effect_pickup_1);
         }
     }
 
     public void HideDialog() {
 
-        FindTweener();
-        TweenPosition.Begin(
-            notificationPanel,
-            .2f,
-            Vector3.zero.WithY(positionYClosedInGame));
+        TweenUtil.MoveToObject(notificationPanel, Vector3.zero.WithY(positionYClosedInGame), .2f, 0f);
 
         Invoke("DisplayNextNotification", 1);
     }
 
     public void DisplayNextNotification() {
+
+        HideCamera();
+
         SetStateHidden();
         ProcessNotifications();
     }
