@@ -9,7 +9,7 @@ using Engine.Events;
 
 public class BaseGameLevelSprite : GameObjectBehavior {
 
-    BoxCollider boxCollider;
+    //BoxCollider boxCollider;
     public GameDraggableLevelItem gameDraggableLevelItem;
     public int hitsAllowed = 5;
     //public bool shakOnHit = true;
@@ -82,11 +82,12 @@ public class BaseGameLevelSprite : GameObjectBehavior {
         }
 
         if(collider == null) {
-            boxCollider = gameObject.AddComponent<BoxCollider>();
-            boxCollider.isTrigger = true;//gameDraggableLevelItem.gameLevelItemAsset.destructable;
-            boxCollider.size = boxCollider.size.WithX(4.2f).WithY(4.2f).WithZ(4.2f);
-            boxCollider.center = boxCollider.size.WithY(2.1f);
-            boxCollider.material = MaterialUtil.LoadPhysicMaterialFromResources("materials/ArcadeBounce");
+            // TODO 2D
+            //boxCollider = gameObject.AddComponent<BoxCollider>();
+            //boxCollider.isTrigger = true;//gameDraggableLevelItem.gameLevelItemAsset.destructable;
+            //boxCollider.size = boxCollider.size.WithX(4.2f).WithY(4.2f).WithZ(4.2f);
+            //boxCollider.center = boxCollider.size.WithY(2.1f);
+            //boxCollider.material = MaterialUtil.LoadPhysicMaterialFromResources("materials/ArcadeBounce");
         }
     }
 

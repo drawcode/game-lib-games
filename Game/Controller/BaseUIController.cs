@@ -2606,6 +2606,10 @@ public class BaseUIController : GameObjectBehavior {
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
             GameCommunity.HideGameCommunity();
+
+            if(GameConfigs.isGamePaused || GameConfigs.isGameContentDisplay) {
+                GameController.ResumeGame();
+            }
         }
 
         // COMMUNITY - BROADCAST

@@ -1253,7 +1253,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         yield return new WaitForSeconds(1f);
 
         if (currentGamePlayerController != null) {
-            currentGamePlayerController.PlayerEffectWarpFadeOut();
+            currentGamePlayerController.PlayerEffectWarpFadeIn();
         }
 
         GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
@@ -2467,10 +2467,28 @@ public class BaseGameController : GameObjectTimerBehavior {
             onGamePrepare(true);
         }
     }
-
+     
     public bool isGameRunning {
         get {
             if (gameState == GameStateGlobal.GameStarted) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public bool isGamePaused {
+        get {
+            if(gameState == GameStateGlobal.GamePause) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public bool isGameContentDisplay {
+        get {
+            if(gameState == GameStateGlobal.GameContentDisplay) {
                 return true;
             }
             return false;

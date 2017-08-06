@@ -385,8 +385,11 @@ public class UITweenerUtil {
                     if(valNumeric > 0f) {
                         valNumeric = valNumeric / 100f;
 
+                        float currentDuration = duration + .05f;
+                        float currentDelay = duration + delay;
+
                         FadeTo(t.gameObject, UITweener.Method.Linear, UITweener.Style.Once,
-                            duration + .05f, duration + delay, valNumeric);
+                           currentDuration, currentDelay, valNumeric);
                     }
                 }
             }

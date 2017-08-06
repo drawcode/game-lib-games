@@ -246,6 +246,16 @@ public class AnalyticsNetworks : GameObjectBehavior {
         // TODO Analytics update version
         //GA.API.Design.NewEvent(sb.ToString(), 1);
 #endif
+
+#if ANALYTICS_UNITY
+        int totalPotions = 5;
+        int totalCoins = 100;
+        Analytics.CustomEvent(eventName, new Dictionary<string, object>
+        {
+            { "potions", totalPotions },
+            { "coins", totalCoins }
+        });
+#endif
     }
 
     // LOG EVENTS
@@ -338,20 +348,20 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     public static void HandleUpdate() {
         /*
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
-                #if PROMO_USE_CHARTBOOST
+#if PROMO_USE_CHARTBOOST
                 if (CBBinding.onBackPressed())
                     return;
                 else
                     Application.Quit();
-                #else 
+#else
                 Application.Quit();
-                #endif
+#endif
             }
         }
-        #endif
+#endif
         */
     }
 }

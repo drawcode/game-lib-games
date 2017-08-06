@@ -162,6 +162,7 @@ public class BaseGamePlayerControllerData {
     public float effectWarpEnd = 200f;
     public float effectWarpCurrent = 0f;
     public float effectWarpFadeSpeed = 50f;
+    public Vector3 effectWarpPosition = Vector3.zero;
 
     // effects - lines
 
