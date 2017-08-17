@@ -26,6 +26,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     internal bool isAdvancing = false;
     //
     public GameStateGlobal gameState = GameStateGlobal.GameNotStarted;
+    public GameStateGlobal lastGameState = GameStateGlobal.GameNotStarted;
     //
     public UnityEngine.Object prefabDraggableContainer;
     //
@@ -2135,7 +2136,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // -------------------------------------------------------
     // GAME STATES / HANDLERS
-
+    
     public virtual void gameSetTimeScale(float timeScale) {
         Time.timeScale = timeScale;
     }
@@ -2149,6 +2150,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void gameRunningStateStopped(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.STOPPED;
+        lastGameState = gameState;
         gameState = GameStateGlobal.GameNotStarted;
     }
 
@@ -2172,6 +2174,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void gameRunningStatePause(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.PAUSED;
+        lastGameState = gameState;
         gameState = GameStateGlobal.GamePause;
     }
 
@@ -2184,6 +2187,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void gameRunningStateRun(float timeScale) {
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.RUNNING;
+        lastGameState = gameState;
         gameState = GameStateGlobal.GameStarted;
     }
 
@@ -2195,6 +2199,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void gameRunningStateContent(float timeScale) {
         gameRunningState = GameRunningState.PAUSED;
+        lastGameState = gameState;
         gameState = GameStateGlobal.GameContentDisplay;
         gameSetTimeScale(timeScale);
     }
@@ -2207,6 +2212,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void gameRunningStateOverlay(float timeScale) {
         gameRunningState = GameRunningState.PAUSED;
+        lastGameState = gameState;
         gameState = GameStateGlobal.GameOverlay;
         gameSetTimeScale(timeScale);
     }
@@ -2435,6 +2441,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
+        lastGameState = gameState;
         gameState = gameStateTo;
 
         Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
@@ -2770,6 +2777,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //LogUtil.Log("GamePlayerOutOfBoundsDelayed:runtimeData.outOfBounds:" + runtimeData.outOfBounds);
 
+        lastGameState = gameState;
         gameState = GameStateGlobal.GameStarted;
 
         //LogUtil.Log("GamePlayerOutOfBoundsDelayed:gameState:" + gameState);

@@ -6175,7 +6175,7 @@ public class BaseGamePlayerController : GameActor {
             // allows player to protect rescue bots/sidekicks/co-bot that are on auto.
 
             Vector3 posBack = Vector3.zero;
-            posBack.z = -Mathf.Clamp(currentSpeed / 3, 1.3f, 4.5f);
+            posBack.z = -Mathf.Clamp(currentSpeed / 3, 3f, 4.5f);
 
             if(gamePlayerEnemyTarget != null) {
                 gamePlayerEnemyTarget.transform.localPosition = pos;

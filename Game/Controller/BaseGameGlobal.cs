@@ -303,10 +303,10 @@ public class BaseGameGlobal : GameObjectBehavior {
         }
         
 #if DEV
-        if (Application.isEditor) {
-            UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
-
-        }
+        //if (Application.isEditor) {
+        //    UpdateAudio(GameGlobal.volumeEditorMusic, GameGlobal.volumeEditorEffects);
+        //
+        //}
 #endif
 
         LogUtil.Log("GameGlobal InitAudio init...");

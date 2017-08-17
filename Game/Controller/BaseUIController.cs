@@ -2606,8 +2606,12 @@ public class BaseUIController : GameObjectBehavior {
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
             GameCommunity.HideGameCommunity();
-
-            if(GameConfigs.isGamePaused || GameConfigs.isGameContentDisplay) {
+            
+            if(GameController.LastGameStateGlobalGet == GameStateGlobal.GameStarted
+                && GameConfigs.isGameContentDisplay) {
+                // In prepare state...
+            }
+            else {
                 GameController.ResumeGame();
             }
         }

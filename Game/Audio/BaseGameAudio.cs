@@ -5,10 +5,17 @@ using UnityEngine;
 using Engine.Data.Json;
 using Engine.Utility;
 
+
+public class GameAudioMessages {
+
+    public static string eventAudioEffectsChanged = "audio-effects-changed";
+    public static string eventAudioMusicChanged = "audio-music-changed";
+}
+
 public class BaseGameAudioEffects {
-	
-	// UI sounds
-	public static string audio_loop_intro_1 = "audio-loop-intro-1";
+    
+    // UI sounds
+    public static string audio_loop_intro_1 = "audio-loop-intro-1";
 	public static string audio_loop_main_1 = "audio-loop-main-1";
 
 	public static string audio_effect_splash = "audio_effect_splash";
