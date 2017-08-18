@@ -69,6 +69,8 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
             }
 
             Vector3 targetPosition = transform.position;
+            Vector3 targetPositionFiltered = targetPosition;
+
             float distance = 0f;
 
             if (targetFollow == null) {
@@ -101,8 +103,14 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
                     targetPosition = targetFollow.position;
                 }
                 
-                if (distance < agentDistance) {  
-                    transform.LookAt(targetPosition);
+                if (distance < agentDistance) {
+
+                    targetPositionFiltered = targetPosition;
+
+                    // Only rotate on y
+                    targetPositionFiltered.y = gameObject.transform.position.y;
+
+                    transform.LookAt(targetPositionFiltered);
                 }
             }
 
