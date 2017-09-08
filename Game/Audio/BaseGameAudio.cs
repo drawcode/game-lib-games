@@ -6,10 +6,14 @@ using Engine.Data.Json;
 using Engine.Utility;
 
 
+public class GameAudioData {
+    public string code = "";
+    public double volume = 0;
+}  
+
 public class GameAudioMessages {
 
-    public static string eventAudioEffectsChanged = "audio-effects-changed";
-    public static string eventAudioMusicChanged = "audio-music-changed";
+    public static string eventAudioVolumeChanged = "audio-volume-changed";
 }
 
 public class BaseGameAudioEffects {
@@ -44,12 +48,7 @@ public class BaseGameAudioEffects {
 	public static string audio_effect_bike_1 = "audio_effect_bike_1";
 }
 
-public enum AudioMusicState {
-	Playing = 0,
-	Muted = 1
-}
-
-public enum AudioEffectsState {
+public enum AudioPlayingState {
 	Playing = 0,
 	Muted = 1
 }
@@ -59,8 +58,8 @@ public class BaseGameAudio {
     private static volatile BaseGameAudio instance;
     private static System.Object syncRoot = new System.Object();
 
-    public static AudioMusicState currentAudioMusicState = AudioMusicState.Playing;
-    public static AudioEffectsState currentAudioEffectsState = AudioEffectsState.Playing;
+    public static AudioPlayingState currentAudioMusicState = AudioPlayingState.Playing;
+    public static AudioPlayingState currentAudioEffectsState = AudioPlayingState.Playing;
 
     public static BaseGameAudio BaseInstance {
         get {
@@ -77,7 +76,7 @@ public class BaseGameAudio {
     public BaseGameAudio() {
 
     }
-
+        
     public static string GetFileName(string key) {
         return key + ".wav"; // all currently saved as wav for high quality and on SD/persistence so room to.
     }

@@ -33,16 +33,6 @@ public class UIPanelPause : UIPanelBase {
 
     public static UIPanelPause Instance;
 
-#if USE_UI_NGUI_2_7
-#endif
-#if USE_UI_NGUI_3
-	public UISlider sliderMusicVolume;
-	public UISlider sliderEffectsVolume;	
-#else
-    public Slider sliderMusicVolume;
-    public Slider sliderEffectsVolume;
-#endif
-
     public override void Awake() {
         base.Awake();
 
@@ -80,19 +70,16 @@ public class UIPanelPause : UIPanelBase {
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
 
         Messenger<string>.AddListener(GameMessages.gameLevelPause, OnGameLevelPauseHandler);
         Messenger<string>.AddListener(GameMessages.gameLevelResume, OnGameLevelResumeHandler);
         Messenger<string>.AddListener(GameMessages.gameLevelQuit, OnGameLevelQuitHandler);
-
     }
 
     public override void OnDisable() {
         base.OnDisable();
 
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
-        Messenger<string, float>.RemoveListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
 
         Messenger<string>.RemoveListener(GameMessages.gameLevelPause, OnGameLevelPauseHandler);
         Messenger<string>.RemoveListener(GameMessages.gameLevelResume, OnGameLevelResumeHandler);
@@ -114,39 +101,7 @@ public class UIPanelPause : UIPanelBase {
     public override void OnButtonClickEventHandler(string buttonName) {
 
     }
-
-    void OnSliderChangeEventHandler(string sliderName, float sliderValue) {
-
-        //LogUtil.Log("OnSliderChangeEventHandler: sliderName:" + sliderName + " sliderValue:" + sliderValue );
-
-        bool changeAudio = true;
-
-#if DEV
-        if(Application.isEditor) {
-            //GameProfiles.Current.SetAudioMusicVolume(GameGlobal.volumeEditor);
-            //GameProfiles.Current.SetAudioEffectsVolume(GameGlobal.volumeEditor);
-            //changeAudio = false;
-        }
-#endif
-
-        if(!changeAudio) {
-            return;
-        }
-
-
-        if(sliderEffectsVolume != null) {
-            if(sliderName == sliderEffectsVolume.name) {
-                //GameAudio.SetProfileEffectsVolume(sliderValue);
-            }
-        }
-
-        if(sliderMusicVolume != null) {
-            if(sliderName == sliderMusicVolume.name) {
-                //GameAudio.SetProfileAmbienceVolume(sliderValue);
-            }
-        }
-    }
-
+    
     public static void ShowDefault() {
         if(isInst) {
 
@@ -181,27 +136,7 @@ public class UIPanelPause : UIPanelBase {
             Instance.loadData();
         }
     }
-
-    public void UpdateAudioValues() {
-
-        float effectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-        float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
-
-        if(sliderMusicVolume != null) {
-            UIUtil.SetSliderValue(sliderMusicVolume, musicVolume);
-            //sliderMusicVolume.ForceUpdate();
-
-            GameAudio.SetProfileEffectsVolume(musicVolume);
-        }
-
-        if(sliderEffectsVolume != null) {
-            UIUtil.SetSliderValue(sliderEffectsVolume, effectsVolume);
-            //sliderEffectsVolume.ForceUpdate();
-
-            GameAudio.SetProfileAmbienceVolume(effectsVolume);
-        }
-    }
-
+    
     public void loadData() {
         StartCoroutine(loadDataCo());
     }

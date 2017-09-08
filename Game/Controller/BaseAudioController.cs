@@ -63,14 +63,35 @@ public class BaseAudioController : GameObjectBehavior {
     public virtual void Init() {
 
         items = new Dictionary<string, GameAudioDataItem>();
-
+        
         //GameGlobal.Instance.UpdateAudio(
         //    GameProfiles.Current.GetAudioMusicVolume(),
         //    GameProfiles.Current.GetAudioEffectsVolume());
     }
 
+    public void OnEnable() {
+
+        Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
+    }
+
+    public void OnDisable() {
+
+        Messenger<GameAudioData>.RemoveListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
+
+    }
+    
+    void OnAudioVolumeChangeEventHandler(GameAudioData gameAudioData) {
+
+        if(gameAudioData.code == BaseDataObjectKeys.effects) {
+            GameAudio.SetProfileEffectsVolume(gameAudioData.volume);
+        }
+        else if(gameAudioData.code == BaseDataObjectKeys.music) {
+            GameAudio.SetProfileAmbienceVolume(gameAudioData.volume);
+        }
+    }
+
     // MUSIC
-        
+
     public GameObject lastUIIntro;
     public GameObject lastUILoop;
     public GameObject lastGameLoop;
