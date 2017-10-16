@@ -14,13 +14,14 @@ public class SliderEvents : GameObjectBehavior {
     void Start() {
         currentObj = GetComponent<UISlider>();
         if (currentObj != null) {
-            //currentObj.functionName = "OnSliderChange";
-            //currentObj.eventReceiver = gameObject;
+            currentObj.functionName = "OnSliderChange";
+            currentObj.eventReceiver = gameObject;
         }
         
-        LoadData();
+        //LoadData();
     }
     
+    /*
     void LoadData() {
         
         string sliderName = transform.name;
@@ -39,8 +40,8 @@ public class SliderEvents : GameObjectBehavior {
         if (currentObj != null) {
             currentObj.sliderValue = sliderValue;
         }
-    
     }
+    */
     
     void OnClick() {
         Messenger<string,int>.Broadcast(SliderEvents.EVENT_ITEM_CLICK, transform.name, UICamera.currentTouchID);

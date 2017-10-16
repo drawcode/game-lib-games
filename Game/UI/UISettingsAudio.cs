@@ -27,11 +27,11 @@ public class UISettingsAudio : GameObjectBehavior {
     
     public  void Init() {
         
-        loadData();
+        //loadData();
     }
     
     public void Start() {
-        Init();
+        //Init();
     }
     
     public void OnEnable() {
@@ -40,6 +40,8 @@ public class UISettingsAudio : GameObjectBehavior {
         Messenger<string, float>.AddListener(SliderEvents.EVENT_ITEM_CHANGE, OnSliderChangeEventHandler);
 
         Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
+
+        UpdateAudioValues();
     }
     
     public void OnDisable() {

@@ -190,6 +190,8 @@ public class BaseGamePlayerController : GameActor {
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
 
+        Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
+
     }
 
     public override void OnDisable() {
@@ -222,6 +224,27 @@ public class BaseGamePlayerController : GameActor {
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
 
+        Messenger<GameAudioData>.RemoveListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
+
+    }
+
+    void OnAudioVolumeChangeEventHandler(GameAudioData gameAudioData) {
+
+        if(gameAudioData.code == BaseDataObjectKeys.effects) {
+
+            if(currentControllerData == null) {
+                return;
+            }
+
+            if(currentControllerData.audioObjectFootstepsSource == null) {
+                return;
+            }
+
+            currentControllerData.audioObjectFootstepsSource.volume = (float)gameAudioData.volume;
+
+        }
+        else if(gameAudioData.code == BaseDataObjectKeys.music) {
+        }
     }
 
     public virtual void OnInputAxis(string name, Vector3 axisInput) {
@@ -1754,6 +1777,28 @@ public class BaseGamePlayerController : GameActor {
         }
     }
 
+    public void UpdateCharacterSounds(double volume) {
+        if(currentControllerData == null) {
+            return;
+        }
+
+        if(currentControllerData.audioObjectFootstepsSource == null) {
+            return;
+        }
+
+        currentControllerData.audioObjectFootstepsSource.volume = (float)volume;
+
+        if(gamePlayerMoveSpeed > .1f) {
+            ////currentControllerData.audioObjectFootstepsSource.volume = 1f;
+            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + .8f;
+            //LogUtil.Log("playSpeed", playSpeed);
+            currentControllerData.audioObjectFootstepsSource.pitch = playSpeed;
+        }
+        else {
+            currentControllerData.audioObjectFootstepsSource.pitch = 0f;
+        }
+    }
+
     public virtual void HandleCharacterAttachedSounds() {
 
         if(!GameConfigs.isGameRunning) {
@@ -1767,21 +1812,7 @@ public class BaseGamePlayerController : GameActor {
 
         LoadCharacterAttachedSounds();
 
-        if(currentControllerData.audioObjectFootstepsSource == null) {
-            return;
-        }
-
-        currentControllerData.audioObjectFootstepsSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
-
-        if(gamePlayerMoveSpeed > .1f) {
-            ////currentControllerData.audioObjectFootstepsSource.volume = 1f;
-            float playSpeed = Mathf.InverseLerp(0, initialMaxRunSpeed, gamePlayerMoveSpeed) + .8f;
-            //LogUtil.Log("playSpeed", playSpeed);
-            currentControllerData.audioObjectFootstepsSource.pitch = playSpeed;
-        }
-        else {
-            currentControllerData.audioObjectFootstepsSource.pitch = 0f;
-        }
+        UpdateCharacterSounds(GameProfiles.Current.GetAudioEffectsVolume());
     }
 
     public virtual bool isCharacterLoaded {

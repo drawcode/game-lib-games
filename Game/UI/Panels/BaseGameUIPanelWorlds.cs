@@ -272,7 +272,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         double scoreTotal = 0;
 
         string worldCode = GameWorlds.Current.code;
-
+        
         UpdateMetaLabels();
 
         foreach(AppContentCollect mission in
