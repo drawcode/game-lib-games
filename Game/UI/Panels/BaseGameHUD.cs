@@ -113,7 +113,7 @@ public class BaseGameHUD : GameUIPanelBase {
     }
 
     public virtual void HandleInput() {
-        if(Application.isWebPlayer || Application.isEditor) {
+        if(Context.Current.isWebGL || Application.isEditor) {
             // hide left virtual pad
             //HideInputLeftObject(.5f, 0f);
         }

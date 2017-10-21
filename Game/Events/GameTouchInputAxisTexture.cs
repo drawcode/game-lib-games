@@ -81,7 +81,7 @@ public class GameTouchInputAxisTextured : GameObjectBehavior {
     }
     
     public void HandleInputRenderWebDesktop() {   
-        if (Application.isWebPlayer || Application.isEditor) {
+        if (Context.Current.isWebGL || Application.isEditor) {
             if (controlsVisible) {
                 HideInputObject(.5f, 0f);
             }
