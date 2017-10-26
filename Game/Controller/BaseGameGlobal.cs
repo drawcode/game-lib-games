@@ -246,6 +246,8 @@ public class BaseGameGlobal : GameObjectBehavior {
             state = GameState.Instance;
             LogUtil.Log("GameGlobal InitState init...");
 
+            //GameWorlds.Instance.LoadState();
+
             //gameversesGameObject = gameObject.AddComponent<Gameverses.GameversesGameObject>();
             //socialGame = gameObject.AddComponent<GameSocialGame>();           
         }
