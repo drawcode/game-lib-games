@@ -574,8 +574,10 @@ public class BaseAudioController : GameObjectBehavior {
         if(gameWorld != null) {
             GameDataObjectItem data = gameWorld.data;
 
-            foreach(GameDataSound sound in data.GetSoundListByType(type)) {
-                dataItems.Add(sound);
+            if(data != null) {
+				foreach (GameDataSound sound in data.GetSoundListByType(type)) {
+					dataItems.Add(sound);
+				}
             }
         }
 

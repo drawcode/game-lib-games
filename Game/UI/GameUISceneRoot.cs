@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Engine.Events;
 
 #if ENABLE_FEATURE_AR
-using Vuforia;
+//using Vuforia;
 #endif
 
 public class GameUISceneRoot : GameObjectBehavior {
