@@ -388,6 +388,11 @@ public class BaseStoreController : GameObjectBehavior {
                 GameStoreController.HandleAccessPurchase(itemPurchasing.product, itemPurchasing.quantity);
             }
 
+            // ANALYTICS
+
+            ////AnalyticsNetworks.LogEventStorePurchase(product.code, product.GetProductInfoByLocale
+
+
             ResetPurchase(itemPurchasing.product.code);
         }
     }

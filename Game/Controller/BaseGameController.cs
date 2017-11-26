@@ -2362,8 +2362,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         gameRunningStateRun();
 
         GameUIController.ShowGameCanvas();
-
-        AnalyticsNetworks.LogEventLevelStart(GameLevels.Current.code, GameLevels.Current.display_name);
+        
+        AnalyticsNetworks.LogEventLevelStart();
 
         runDirectorsDelayed(runDirectorsDelay);
 
@@ -2388,7 +2388,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameDraggableEditor.HideAllEditDialogs();
         GameDraggableEditor.HideAllUIEditPanels();
 
-        AnalyticsNetworks.LogEventLevelQuit(GameLevels.Current.code, GameLevels.Current.display_name);
+        AnalyticsNetworks.LogEventLevelQuit();
 
         Messenger<string>.Broadcast(GameMessages.gameLevelQuit, GameLevels.Current.code);
 
@@ -2437,7 +2437,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         stopGame();
 
-        AnalyticsNetworks.LogEventLevelResults(GameLevels.Current.code, GameLevels.Current.display_name);
+        // TODO log actions/scores
+
+        //Dictionary<string, object> data = new Dictionary<string, object>();
+        //data.
+
+        AnalyticsNetworks.LogEventLevelResults();
     }
 
     public virtual void changeGameState(GameStateGlobal gameStateTo) {

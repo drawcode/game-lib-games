@@ -1,6 +1,6 @@
 //#define ANALYTICS_GAMEANALYTICS
 //#define ANALYTICS_GOOGLE
-//#define ANALYTICS_UNITY
+#define ANALYTICS_UNITY
 
 using System;
 using System.Collections;
@@ -34,6 +34,8 @@ public class AnalyticMessages {
     public static string analyticsEventLevelResults = "analytics-event-level-results";
     public static string analyticsEventLevelQuit = "analytics-event-level-quit";
     public static string analyticsQuitApp = "analytics-quit-app";
+    public static string analyticsEventStoreThirdPartyPurchase = "analytics-event-store-third-party-purchase";
+    public static string analyticsEventStorePurchase = "analytics-event-store-purchase";
 }
 
 public class AnalyticsNetworksMessages {
@@ -88,23 +90,37 @@ public class AnalyticsNetworks : GameObjectBehavior {
         
 #endif
 
+#if ANALYTICS_UNITY
+        Debug.Log("AnalyticsNetworks: ANALYTICS_UNITY Start   " +
+            AnalyticsSessionInfo.userId + " " +
+            AnalyticsSessionInfo.sessionState + " " +
+            AnalyticsSessionInfo.sessionId + " " +
+            AnalyticsSessionInfo.sessionElapsedTime);
+
+        AnalyticsSessionInfo.sessionStateChanged += unityAnalyticsOnSessionStateChanged;
+#endif
+
 
     }
 
     void OnDisable() {
-
 
 #if ANALYTICS_GAMEANALYTICS
         // ------------
         // GAME ANALYTICS
         
         // TODO Analytics update version
-        //GA.SettingsGA.AllowRoaming = true;
+        //GA.SettingsGA.AllowRoaming = true;        
+#endif
 
-        //Everyplay.SharedInstance.ThumbnailReadyAtFilePath -= everyplayThumbnailReadyAtFilePathDelegate;
-        //Everyplay.SharedInstance.RecordingStarted -= everyplayRecordingStartedDelegate;
-        //Everyplay.SharedInstance.RecordingStopped -= everyplayRecordingStoppedDelegate;
-        
+#if ANALYTICS_UNITY
+        Debug.Log("AnalyticsNetworks: ANALYTICS_UNITY End   " +
+            AnalyticsSessionInfo.userId + " " +
+            AnalyticsSessionInfo.sessionState + " " +
+            AnalyticsSessionInfo.sessionId + " " +
+            AnalyticsSessionInfo.sessionElapsedTime);
+
+        AnalyticsSessionInfo.sessionStateChanged -= unityAnalyticsOnSessionStateChanged;
 #endif
 
     }
@@ -141,6 +157,23 @@ public class AnalyticsNetworks : GameObjectBehavior {
         
 #endif
 
+#if ANALYTICS_UNITY
+    // ----------------------------------------------------------------------
+    // UNITY - https://docs.unity3d.com/ScriptReference/Analytics.Analytics.html
+    void unityAnalyticsOnSessionStateChanged(
+        AnalyticsSessionState sessionState,
+        long sessionId,
+        long sessionElapsedTime,
+        bool sessionChanged) {
+
+        Debug.Log("AnalyticsNetworks: ANALYTICS_UNITY unityAnalyticsOnSessionStateChanged: " +
+            " userId:" + AnalyticsSessionInfo.userId + " " +
+            " sessionState:" + sessionState + " " +
+            " sessionId:" + sessionId + " " +
+            " sessionElapsedTime:" + sessionElapsedTime + " " +
+            " sessionChanged:" + sessionChanged);
+    }
+#endif
 
     // ----------------------------------------------------------------------
 
@@ -173,23 +206,6 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     // LOG AREA 
 
-    public static void ChangeArea(string areaName) {
-        if(Instance != null) {
-            Instance.changeArea(areaName);
-        }
-    }
-
-    public void changeArea(string areaName) {
-
-#if ANALYTICS_GAMEANALYTICS
-        // TODO Analytics update version
-        //GA.SettingsGA.SetCustomArea(areaName);
-#endif
-    }
-
-
-    // LOG AREA 
-
     public static void Log(object data) {
         if(Instance != null) {
             Instance.log(data);
@@ -203,33 +219,79 @@ public class AnalyticsNetworks : GameObjectBehavior {
         //GA.Log(data);
         //analyticsGameAnalytics.
 #endif
+
+#if ANALYTICS_UNITY
+        AnalyticsTracker.print(data);
+#endif
     }
 
-    // CHANGE USER
+    // SET USER ID
 
-    public static void ChangeUser(string userId) {
+    public static void SetUserId(string userId) {
         if(Instance != null) {
-            Instance.changeUser(userId);
+            Instance.setUserId(userId);
         }
     }
 
-    public void changeUser(string userId) {
+    public void setUserId(string userId) {
 
 #if ANALYTICS_GAMEANALYTICS
         // TODO Analytics update version
         //GA.SettingsGA.SetCustomUserID(userId);
 #endif
+
+#if ANALYTICS_UNITY
+        Analytics.SetUserId(userId);
+#endif
+    }
+
+    // SET USER GENDER
+
+    public static void SetUserGender(Gender gender) {
+        if(Instance != null) {
+            Instance.setUserGender(gender);
+        }
+    }
+
+    public void setUserGender(Gender gender) {
+
+#if ANALYTICS_GAMEANALYTICS
+        // NOOP
+#endif
+
+#if ANALYTICS_UNITY
+        Analytics.SetUserGender(gender);
+#endif
+    }
+
+    // SET USER BIRTH YEAR
+
+    public static void SetUserBirthYear(int birthYear) {
+        if(Instance != null) {
+            Instance.setUserBirthYear(birthYear);
+        }
+    }
+
+    public void setUserBirthYear(int birthYear) {
+
+#if ANALYTICS_GAMEANALYTICS
+        // NOOP
+#endif
+
+#if ANALYTICS_UNITY
+        Analytics.SetUserBirthYear(birthYear);
+#endif
     }
 
     // LOG EVENTS
 
-    public static void LogEvent(string eventName, params object[] args) {
+    public static void LogEvent(string eventName, Dictionary<string, object> data) {
         if(Instance != null) {
-            Instance.logEvent(eventName, args);
+            Instance.logEvent(eventName, data);
         }
     }
 
-    public void logEvent(string eventName, params object[] args) {
+    public void logEvent(string eventName, Dictionary<string, object> data) {
 
 #if ANALYTICS_GAMEANALYTICS
 
@@ -248,13 +310,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 #endif
 
 #if ANALYTICS_UNITY
-        int totalPotions = 5;
-        int totalCoins = 100;
-        Analytics.CustomEvent(eventName, new Dictionary<string, object>
-        {
-            { "potions", totalPotions },
-            { "coins", totalCoins }
-        });
+        Analytics.CustomEvent(eventName, data);
 #endif
     }
 
@@ -262,71 +318,192 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     // SCENE CHANGE
 
-    public static void LogEventSceneChange(string val, string title) {
+    public static void LogEventSceneChange(string val, string title,
+        Dictionary<string, object> data = null) {
         if(Instance != null) {
-            Instance.logEventSceneChange(val, title);
+            Instance.logEventSceneChange(val, title, data);
         }
     }
 
-    public void logEventSceneChange(string val, string title) {
+    public void logEventSceneChange(string val, string title,
+        Dictionary<string, object> data = null) {
 
-        AnalyticsNetworks.ChangeArea(val);
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
 
-        logEvent(AnalyticMessages.analyticsEventSceneChange, val, title);
+        data.Set(BaseDataObjectKeys.val, val);
+        data.Set(BaseDataObjectKeys.title, title);
+
+        logEvent(AnalyticMessages.analyticsEventSceneChange, data);
+    }
+
+    // STORE PURCHASES THIRD PARTY
+
+    public static void LogEventStoreThirdPartyPurchase(
+        string productCode,
+        int quantity,
+        string productThirdPartyCode,
+        decimal amount,
+        string currency,
+        string receiptPurchaseData,
+        string signature,
+        Dictionary<string, object> data = null) {
+
+        if(Instance != null) {
+
+            Instance.logEventStoreThirdPartyPurchase(
+                productCode, quantity, productThirdPartyCode, 
+                amount, currency, receiptPurchaseData, signature, data);
+        }
+    }
+
+    public void logEventStoreThirdPartyPurchase(
+        string productCode,
+        int quantity,
+        string productThirdPartyCode,
+        decimal amount,
+        string currency,
+        string receiptPurchaseData,
+        string signature,
+        Dictionary<string, object> data = null) {
+
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
+
+        data.Set(BaseDataObjectKeys.code, productCode);
+        data.Set(BaseDataObjectKeys.quantity, quantity);
+        data.Set(BaseDataObjectKeys.codeThirdParty, productThirdPartyCode);
+        data.Set(BaseDataObjectKeys.amount, amount);
+        data.Set(BaseDataObjectKeys.currency, currency);
+        data.Set(BaseDataObjectKeys.receipt, receiptPurchaseData);
+        data.Set(BaseDataObjectKeys.signature, signature);
+
+#if ANALYTICS_UNITY
+        data.Set("usingIAPService", true);
+        Analytics.Transaction(productCode, amount, currency, receiptPurchaseData, signature, true);
+#endif
+
+        logEvent(AnalyticMessages.analyticsEventStoreThirdPartyPurchase, data);
+    }
+    
+    // STORE PURCHASES VIRTUAL
+
+    public static void LogEventStorePurchase(
+        string productCode,
+        int quantity,
+        decimal amount,
+        string currency,
+        Dictionary<string, object> data = null) {
+
+        if(Instance != null) {
+
+            Instance.logEventStorePurchase(
+                productCode, quantity, amount, currency, data);
+        }
+    }
+
+    public void logEventStorePurchase(
+        string productCode,
+        int quantity,
+        decimal amount,
+        string currency,
+        Dictionary<string, object> data = null) {
+
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
+
+        data.Set(BaseDataObjectKeys.code, productCode);
+        data.Set(BaseDataObjectKeys.amount, amount);
+        data.Set(BaseDataObjectKeys.currency, currency);
+
+        logEvent(AnalyticMessages.analyticsEventStorePurchase, data);
     }
 
     // LEVEL START
 
-    public static void LogEventLevelStart(string val, string title) {
+    public static void LogEventLevelStart(Dictionary<string, object> data = null) {
         if(Instance != null) {
-            Instance.logEventLevelStart(val, title);
+            Instance.logEventLevelStart(data);
         }
     }
 
-    public void logEventLevelStart(string val, string title) {
+    public void logEventLevelStart(Dictionary<string, object> data = null) {
 
-        logEvent(AnalyticMessages.analyticsEventLevelStarted, val, title);
+        data = updateEventDataGame(data);
+
+        logEvent(AnalyticMessages.analyticsEventLevelStarted, data);
     }
 
     // LEVEL RESULTS
 
-    public static void LogEventLevelResults(string val, string title) {
+    public static void LogEventLevelResults(Dictionary<string, object> data = null) {
         if(Instance != null) {
-            Instance.logEventLevelResults(val, title);
+            Instance.logEventLevelResults(data);
         }
     }
 
-    public void logEventLevelResults(string val, string title) {
+    public void logEventLevelResults(Dictionary<string, object> data = null) {
 
-        logEvent(AnalyticMessages.analyticsEventLevelResults, val, title);
+        data = updateEventDataGame(data);
+
+        logEvent(AnalyticMessages.analyticsEventLevelResults, data);
     }
 
     // LEVEL QUIT
 
-    public static void LogEventLevelQuit(string val, string title) {
+    public static void LogEventLevelQuit(Dictionary<string, object> data = null) {
         if(Instance != null) {
-            Instance.logEventLevelQuit(val, title);
+            Instance.logEventLevelQuit(data);
         }
     }
 
-    public void logEventLevelQuit(string val, string title) {
+    public void logEventLevelQuit(Dictionary<string, object> data = null) {
 
-        logEvent(AnalyticMessages.analyticsEventLevelQuit, val, title);
+        data = updateEventDataGame(data);
+
+        logEvent(AnalyticMessages.analyticsEventLevelResults, data);
+    }
+
+    public Dictionary<string, object> updateEventDataGame(
+        Dictionary<string, object> data = null) {
+
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
+
+        data.Set(BaseDataObjectKeys.world_code, GameWorlds.Current.code);
+        data.Set(BaseDataObjectKeys.world, GameWorlds.Current.display_name);
+        data.Set(BaseDataObjectKeys.level_code, GameLevels.Current.code);
+        data.Set(BaseDataObjectKeys.level, GameLevels.Current.display_name);
+
+        return data;
     }
 
     // LEVEL EVENT GENERIC DATA
 
-    public static void LogEvent(string key, object val) {
+    public static void LogEvent(string key, object val,
+        Dictionary<string, object> data = null) {
         if(Instance != null) {
-            Instance.logEvent(key, val);
+            Instance.logEvent(key, val, data);
         }
     }
 
-    public void logEvent(string key, object val) {
+    public void logEvent(string key, object val,
+        Dictionary<string, object> data = null) {
 
-        logEvent(AnalyticMessages.analyticsEvent, key, val);
+
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
+
+        data.Set(BaseDataObjectKeys.key, key);
+        data.Set(BaseDataObjectKeys.val, val);
+
+        logEvent(AnalyticMessages.analyticsEvent, data);
     }
-
 
     // FLUSH/SEND
 
@@ -342,6 +519,14 @@ public class AnalyticsNetworks : GameObjectBehavior {
         // TODO Analytics update version
         ////GA.GA_Queue.ForceSubmit();
 #endif
+
+#if ANALYTICS_UNITY
+        Analytics.FlushEvents();
+#endif
+    }
+
+    private void OnApplicationQuit() {
+        AnalyticsNetworks.Send();
     }
 
     // ----------------------------------------------------------------------
