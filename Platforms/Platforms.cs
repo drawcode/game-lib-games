@@ -1,3 +1,5 @@
+//#define USE_FEATURE_ETCETERA
+
 using System;
 using UnityEngine;
 
@@ -62,7 +64,7 @@ public class Platforms {
 
 #if UNITY_EDITOR
         Application.OpenURL(url);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.showWebView(url);
 #elif UNITY_IPHONE      
         EtceteraBinding.showWebPage(url, false);
@@ -70,7 +72,7 @@ public class Platforms {
         Application.OpenURL(url);
 #endif
     }
-    
+
     public static void PlayMovie(string url, bool showControls, bool supportLandscape, bool supportPortrait) {
         Instance.playMovie(url, showControls, supportLandscape, supportPortrait);
     }
@@ -104,7 +106,7 @@ public class Platforms {
     }
     
     public void askForReview(string appName, string bundleId) {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.askForReviewNow("Review " + appName + "!", "Review " + appName + " if you like it.");
 #elif UNITY_IPHONE  
         //EtceteraBinding.openAppStoreReviewPage(AppConfigs.pu
@@ -117,12 +119,12 @@ public class Platforms {
     }
     
     public void showReviewPage() {
-        #if UNITY_ANDROID
+#if UNITY_ANDROID && USE_FEATURE_ETCETERA
         bool isAmazon = AppConfigs.platformIsAmazon;
         EtceteraAndroid.openReviewPageInPlayStore( isAmazon );
-        #elif UNITY_IPHONE  
+#elif UNITY_IPHONE
         EtceteraBinding.openAppStoreReviewPage(AppConfigs.appStoreId);
-        #endif      
+#endif
     }
 
     public static void AskForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {
@@ -130,14 +132,14 @@ public class Platforms {
     }
     
     public void askForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {
-        #if UNITY_ANDROID
+#if UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
-        #elif UNITY_IPHONE  
+#elif UNITY_IPHONE
         EtceteraBinding.askForReview(launchCount, hoursBetweenPrompts, 
                                      "Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
-        #endif      
+#endif
     }
-    
+
     public static void ShowEmailView(string to, string subject, string body, bool isHtml) {
         Instance.showEmailView(to, subject, body, isHtml);
     }
@@ -150,7 +152,7 @@ public class Platforms {
         else {
             EtceteraBinding.showWebPage("mailto:" + to, false);
         }
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.showEmailComposer(to, subject, body + " -- Sent From Android", isHtml);
 #else
         Application.OpenURL("mailto:" + to);
@@ -164,7 +166,7 @@ public class Platforms {
     public void saveImageToLibrary(string name, string fileToSave) {
 #if UNITY_IPHONE
         EtceteraBinding.saveImageToPhotoAlbum(fileToSave);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.saveImageToGallery(fileToSave, name);
 #else
         // TODO save to server on web
