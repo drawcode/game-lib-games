@@ -266,6 +266,8 @@ public class GameNetworks : GameObjectBehavior {
                 LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: changed: " + GameProfiles.Current.username);
                 GameState.ChangeUser(currentLoggedInUserNetwork);
                 LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: GameProfiles.Current.username: " + GameProfiles.Current.username);
+
+                AnalyticsNetworks.LogEventGameNetworkUser(currentLoggedInUserNetwork, networkType, null);
             }
         }
     }

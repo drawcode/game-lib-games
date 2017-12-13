@@ -330,10 +330,30 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (data == null)
             return;
-
+        
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(data.productId);
 
         if (itemPurchasing != null) {
+
+            GameProduct product = itemPurchasing.product;
+
+            GameProductInfo gameProductInfo = product.GetCurrentProductInfoByLocale();
+
+            decimal cost = 0;
+            decimal.TryParse(gameProductInfo.cost, out cost);
+
+            int quantity = 1;
+            quantity = Convert.ToInt32(itemPurchasing.quantity);
+
+            Dictionary<string, object> dataDict = data.ToDataObject<Dictionary<string, object>>();
+            
+            AnalyticsNetworks.LogEventStorePurchase(
+                product.code,
+                quantity,
+                cost,
+                gameProductInfo.currency,
+                dataDict);
+            
             ResetPurchase(itemPurchasing.product.code);
         }
 
@@ -390,9 +410,36 @@ public class BaseStoreController : GameObjectBehavior {
 
             // ANALYTICS
 
-            ////AnalyticsNetworks.LogEventStorePurchase(product.code, product.GetProductInfoByLocale
+            GameProductInfo gameProductInfo = product.GetCurrentProductInfoByLocale();
+            
+            decimal cost = 0;
+            decimal.TryParse(gameProductInfo.cost, out cost);
 
+            int quantity = 1;
+            quantity = Convert.ToInt32(itemPurchasing.quantity);
 
+            Dictionary<string, object> dataDict = data.ToDataObject<Dictionary<string, object>>();
+
+            // TODO LOCALIZE CURRENCY 
+            
+            string currency = gameProductInfo.currency;
+
+            if(currency.IsNotNullOrEmpty()) {
+                if(currency == "$") {
+                    currency = "USD";
+                }
+            }
+
+            AnalyticsNetworks.LogEventStoreThirdPartyPurchase(
+                product.code,
+                quantity,
+                product.GetPlatformProductCode(),
+                cost,
+                currency, 
+                data.receipt, 
+                null,
+                dataDict);
+                
             ResetPurchase(itemPurchasing.product.code);
         }
     }

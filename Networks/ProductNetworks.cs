@@ -805,7 +805,7 @@ public class ProductNetworks : GameObjectBehavior {
 
         string networkStoreType = unityNetworkStoreTypeGet();
         string productPurchaseType = unityProductPurchaseTypeGet(productType);
-
+        
         LogUtil.LogProduct("SCREEN purchased product: " + productId + ", quantity: " + quantity);
         //transaction.base64EncodedTransactionReceipt
         SetContentAccessPermissions(productId);

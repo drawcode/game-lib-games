@@ -36,6 +36,7 @@ public class AnalyticMessages {
     public static string analyticsQuitApp = "analytics-quit-app";
     public static string analyticsEventStoreThirdPartyPurchase = "analytics-event-store-third-party-purchase";
     public static string analyticsEventStorePurchase = "analytics-event-store-purchase";
+    public static string analyticsEventGameNetworkUser = "analytics-event-game-network-user";
 }
 
 public class AnalyticsNetworksMessages {
@@ -336,6 +337,28 @@ public class AnalyticsNetworks : GameObjectBehavior {
         data.Set(BaseDataObjectKeys.title, title);
 
         logEvent(AnalyticMessages.analyticsEventSceneChange, data);
+    }
+
+    // GAME NETOWRK USER CHANGE
+
+    public static void LogEventGameNetworkUser(string username, string network,
+        Dictionary<string, object> data = null) {
+        if(Instance != null) {
+            Instance.logEventGameNetworkUser(username, network, data);
+        }
+    }
+
+    public void logEventGameNetworkUser(string username, string network,
+        Dictionary<string, object> data = null) {
+
+        if(data == null) {
+            data = new Dictionary<string, object>();
+        }
+
+        data.Set(BaseDataObjectKeys.username, username);
+        data.Set(BaseDataObjectKeys.network, network);
+
+        logEvent(AnalyticMessages.analyticsEventGameNetworkUser, data);
     }
 
     // STORE PURCHASES THIRD PARTY
