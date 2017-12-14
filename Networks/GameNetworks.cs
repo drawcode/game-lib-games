@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Engine.Data.Json;
+// using Engine.Data.Json;
 using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
@@ -1626,104 +1626,159 @@ public class GameNetworks : GameObjectBehavior {
 
         List<GameCommunityLeaderboardItem> leaderboardItems = new List<GameCommunityLeaderboardItem>();
 
-        JsonData jsonData = JsonMapper.ToObject(responseText.Replace("\\\"", "\""));
+        string json = responseText.Replace("\\\"", "\"");
 
-        if(jsonData != null) {
-            if(jsonData.IsObject) {
+        Dictionary<string, object> jsonData = json.FromJson<Dictionary<string, object>>();
 
-                JsonData dataNode = jsonData["data"];
+        if(jsonData != null && jsonData.Count > 0) {
 
-                if(dataNode != null) {
-                    if(dataNode.IsArray) {
+            List<Dictionary<string, object>> dataNode = jsonData.Get<List<Dictionary<string, object>>>("data");
 
-                        for(int i = 0; i < dataNode.Count; i++) {
+            if(dataNode != null && dataNode.Count > 0) {
 
-                            GameCommunityLeaderboardItem leaderboardItem = new GameCommunityLeaderboardItem();
+                for(int i = 0; i < dataNode.Count; i++) {
 
-                            var data = dataNode[i];
+                    GameCommunityLeaderboardItem leaderboardItem = new GameCommunityLeaderboardItem();
 
-                            JsonData user = data["user"];
-                            JsonData application = data["application"];
-                            JsonData score = data["score"];
+                    Dictionary<string, object> data = dataNode[i];
 
-                            if(score != null) {
-                                if(score.IsInt) {
-                                    leaderboardItem.value = float.Parse(score.ToString());
-                                    leaderboardItem.valueFormatted = leaderboardItem.value.ToString("N0");
-                                }
-                            }
+                    Dictionary<string, object> user = data.Get<Dictionary<string, object>>("user");
+                    Dictionary<string, object> application = data.Get<Dictionary<string, object>>("application");
+                    double score = data.Get<double>("score");
 
-                            if(user != null) {
-                                if(user.IsObject) {
+                    leaderboardItem.value = float.Parse(score.ToString());
+                    leaderboardItem.valueFormatted = leaderboardItem.value.ToString("N0");
 
-                                    JsonData name = user["name"];
-                                    if(name != null) {
-                                        if(name.IsString) {
-                                            string nameValue = name.ToString();
-                                            if(!string.IsNullOrEmpty(nameValue)) {
-                                                leaderboardItem.username = nameValue;
-                                            }
-                                        }
-                                    }
+                    if(user != null && user.Count > 0) {
 
-                                    JsonData id = user["id"];
-                                    if(id != null) {
-                                        if(id.IsString) {
-                                            string idValue = id.ToString();
-                                            if(!string.IsNullOrEmpty(idValue)) {
-                                                leaderboardItem.userId = idValue;
-                                            }
-                                        }
-                                    }
+                        string name = user.Get<string>("name");
+                        leaderboardItem.username = name;
 
-                                    leaderboardItem.network = "facebook";
-                                    leaderboardItem.name = leaderboardItem.username;
-                                    leaderboardItem.type = "int";
-                                    leaderboardItem.urlImage = String.Format("http://graph.facebook.com/{0}/picture", leaderboardItem.username);
-                                    ;
-                                }
-                            }
+                        string id = user.Get<string>("id");
+                        leaderboardItem.userId = id;
 
-                            if(application != null) {
-                                if(application.IsObject) {
-                                    JsonData name = application["name"];
-                                    if(name != null) {
-                                        if(name.IsString) {
-                                            string nameValue = name.ToString();
-                                            if(!string.IsNullOrEmpty(nameValue)) {
-                                                leaderboardData.appName = nameValue;
-                                            }
-                                        }
-                                    }
-
-                                    JsonData namespaceNode = application["name"];
-                                    if(namespaceNode != null) {
-                                        if(namespaceNode.IsString) {
-                                            string namespaceValue = namespaceNode.ToString();
-                                            if(!string.IsNullOrEmpty(namespaceValue)) {
-                                                leaderboardData.appNamespace = namespaceValue;
-                                            }
-                                        }
-                                    }
-
-                                    JsonData appId = application["id"];
-                                    if(appId != null) {
-                                        if(appId.IsString) {
-                                            string appIdValue = appId.ToString();
-                                            if(!string.IsNullOrEmpty(appIdValue)) {
-                                                leaderboardData.appId = appIdValue;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            leaderboardItems.Add(leaderboardItem);
-                        }
+                        leaderboardItem.network = "facebook";
+                        leaderboardItem.name = leaderboardItem.username;
+                        leaderboardItem.type = "int";
+                        leaderboardItem.urlImage = String.Format("http://graph.facebook.com/{0}/picture", leaderboardItem.username);
                     }
+
+                    if(application != null && application.Count > 0) {
+
+                        string name = user.Get<string>("name");
+                        leaderboardData.appName = name;
+
+                        string namespaceNode = user.Get<string>("namespace");
+                        leaderboardData.appName = namespaceNode;
+
+                        string id = user.Get<string>("id");
+                        leaderboardData.appId = id;
+                    }
+
+                    leaderboardItems.Add(leaderboardItem);
                 }
             }
         }
+        
+
+        //JsonData jsonData = JsonMapper.ToObject(responseText.Replace("\\\"", "\""));
+
+        //if(jsonData != null) {
+        //    if(jsonData.IsObject) {
+
+        //        JsonData dataNode = jsonData["data"];
+
+        //        if(dataNode != null) {
+        //            if(dataNode.IsArray) {
+
+        //                for(int i = 0; i < dataNode.Count; i++) {
+
+        //                    GameCommunityLeaderboardItem leaderboardItem = new GameCommunityLeaderboardItem();
+
+        //                    var data = dataNode[i];
+
+        //                    JsonData user = data["user"];
+        //                    JsonData application = data["application"];
+        //                    JsonData score = data["score"];
+
+        //                    if(score != null) {
+        //                        if(score.IsInt) {
+        //                            leaderboardItem.value = float.Parse(score.ToString());
+        //                            leaderboardItem.valueFormatted = leaderboardItem.value.ToString("N0");
+        //                        }
+        //                    }
+
+        //                    if(user != null) {
+        //                        if(user.IsObject) {
+
+        //                            JsonData name = user["name"];
+        //                            if(name != null) {
+        //                                if(name.IsString) {
+        //                                    string nameValue = name.ToString();
+        //                                    if(!string.IsNullOrEmpty(nameValue)) {
+        //                                        leaderboardItem.username = nameValue;
+        //                                    }
+        //                                }
+        //                            }
+
+        //                            JsonData id = user["id"];
+        //                            if(id != null) {
+        //                                if(id.IsString) {
+        //                                    string idValue = id.ToString();
+        //                                    if(!string.IsNullOrEmpty(idValue)) {
+        //                                        leaderboardItem.userId = idValue;
+        //                                    }
+        //                                }
+        //                            }
+
+        //                            leaderboardItem.network = "facebook";
+        //                            leaderboardItem.name = leaderboardItem.username;
+        //                            leaderboardItem.type = "int";
+        //                            leaderboardItem.urlImage = String.Format("http://graph.facebook.com/{0}/picture", leaderboardItem.username);
+        //                            ;
+        //                        }
+        //                    }
+
+        //                    if(application != null) {
+        //                        if(application.IsObject) {
+        //                            JsonData name = application["name"];
+        //                            if(name != null) {
+        //                                if(name.IsString) {
+        //                                    string nameValue = name.ToString();
+        //                                    if(!string.IsNullOrEmpty(nameValue)) {
+        //                                        leaderboardData.appName = nameValue;
+        //                                    }
+        //                                }
+        //                            }
+
+        //                            JsonData namespaceNode = application["name"];
+        //                            if(namespaceNode != null) {
+        //                                if(namespaceNode.IsString) {
+        //                                    string namespaceValue = namespaceNode.ToString();
+        //                                    if(!string.IsNullOrEmpty(namespaceValue)) {
+        //                                        leaderboardData.appNamespace = namespaceValue;
+        //                                    }
+        //                                }
+        //                            }
+
+        //                            JsonData appId = application["id"];
+        //                            if(appId != null) {
+        //                                if(appId.IsString) {
+        //                                    string appIdValue = appId.ToString();
+        //                                    if(!string.IsNullOrEmpty(appIdValue)) {
+        //                                        leaderboardData.appId = appIdValue;
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+
+        //                    leaderboardItems.Add(leaderboardItem);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         leaderboardData.leaderboards.Add("high-score", leaderboardItems);
 
