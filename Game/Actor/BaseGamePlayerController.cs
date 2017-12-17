@@ -105,9 +105,9 @@ public class BaseGamePlayerController : GameActor {
     public float initialMaxExtraJumpHeight = 1f;
     public float characterSlopeLimit = 45;
     public float characterStepOffset = .3f;
-    public float characterRadius = 1f;
-    public float characterHeight = 2.5f;
-    public Vector3 characterCenter = new Vector3(0f, 0f, 0f);
+    public float characterRadius = 1.88f;
+    public float characterHeight = 4.88f;
+    public Vector3 characterCenter = new Vector3(0f, 2.39f, 0f);
     GameObject gameObjectLoad = null;
 
     // weapons
@@ -5547,9 +5547,9 @@ public class BaseGamePlayerController : GameActor {
 
         currentControllerData.characterController.slopeLimit = 45;
         currentControllerData.characterController.stepOffset = .3f;
-        currentControllerData.characterController.radius = 1.67f;
-        currentControllerData.characterController.height = 2.42f;
-        currentControllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
+        currentControllerData.characterController.radius = characterRadius;
+        currentControllerData.characterController.height = characterHeight;
+        currentControllerData.characterController.center = characterCenter;//        new Vector3(0f, 2.39f, 0f);
         //currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
 
         //
