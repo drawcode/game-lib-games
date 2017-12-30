@@ -1928,7 +1928,7 @@ public class BaseGamePlayerController : GameActor {
             gameObjectLoad = AppContentAssets.LoadAsset(prefabCode);
 
             if(gameObjectLoad != null) {
-
+                
                 // Wire up custom objects
 
                 gameCustomPlayer = gameObjectLoad.Set<GameCustomPlayer>();
@@ -1956,7 +1956,14 @@ public class BaseGamePlayerController : GameActor {
                     }
 
                     gameCustomPlayer.SetActorEnemy();
+
                 }
+
+                // Update character styles
+
+                HandleModelStyles(gameObjectLoad);
+                
+                // Update tea data
 
                 if(!IsPlayerControlled
                     && GameAIController.generateType == GameAICharacterGenerateType.team) {
@@ -2070,6 +2077,29 @@ public class BaseGamePlayerController : GameActor {
         }
 
         LoadEnterExitState();
+    }
+
+    // ------------------------------------------------------------------------
+    // MODEL STYLES
+
+    public virtual void HandleModelStyles(GameObject go) {
+        // Set up shader styles
+
+        // Tune outline shader style and color for type
+
+        if(IsPlayerControlled) {
+            // current color
+            //go.SetMaterialValue<float>("", "", 1.1f);
+        }
+        else if(IsSidekickControlled) {
+            // green
+            //go.SetMaterialValue<float>("", "", 1.1f);
+        }
+        else if(IsAgentControlled) {
+            // red
+
+            //go.SetMaterialValue<float>("", "", 1.1f);
+        }
     }
 
     // ------------------------------------------------------------------------
