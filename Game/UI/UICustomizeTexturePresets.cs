@@ -47,9 +47,33 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
     }
 
     public void ChangePreset(int index) {
+        
+        GameProfileCharacterItem gameProfileCharacterItem = 
+            GameProfileCharacters.Current.GetCurrentCharacter();
 
-        int countPresets =
-            AppContentAssetTexturePresets.Instance.GetListByType(type).Count;
+        GameCharacter gameCharacter = 
+            GameCharacters.Instance.GetById(gameProfileCharacterItem.characterCode);
+
+        if (gameCharacter == null) {
+            return;
+        }
+
+        GameDataModel gameDataModel = gameCharacter.data.GetModel();
+
+        if (gameDataModel == null) {
+            return;
+        }
+
+        string characterModelCode = gameDataModel.code;
+
+        List<AppContentAssetTexturePreset> assetTexturePresets =
+            AppContentAssetTexturePresets.Instance.GetListLike(BaseDataObjectKeys.code, characterModelCode);
+
+        if(assetTexturePresets == null || assetTexturePresets.Count == 0) {
+            return;
+        }
+
+        int countPresets = assetTexturePresets.Count;
 
 
         if(index < -1) {
@@ -80,7 +104,7 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
             else {
 
                 AppContentAssetTexturePreset preset =
-                    AppContentAssetTexturePresets.Instance.GetListByType(type)[currentIndex];
+                    assetTexturePresets[currentIndex];
 
                 // change character to currently selected texture preset
 
@@ -95,7 +119,7 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         }
     }
 
-    public override void Update() {
-
-    }
+    //public override void Update() {
+    //
+    //}
 }
