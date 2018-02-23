@@ -118,6 +118,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     public int renderingVSyncCount = 0;
     public int renderingVSyncCountLast = 2;
 
+    public double renderingVisualDistance = 50;
+
     // QUEUES
 
     internal List<GameObjectQueueItem> queueGameObjectItems;
@@ -706,6 +708,14 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         return false;
+    }
+
+    public float getGamePlayerControllerDistanceToCurrent(GameObject go) {
+        return currentPlayerController.gameObject.Distance(go);
+    }
+
+    public bool isGamePlayerControllerWithinRenderDistanceToCurrent(GameObject go) {
+        return getGamePlayerControllerDistanceToCurrent(go) < renderingVisualDistance;
     }
 
     // ----------------------------------------------------------------------

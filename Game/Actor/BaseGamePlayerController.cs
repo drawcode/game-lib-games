@@ -1739,6 +1739,14 @@ public class BaseGamePlayerController : GameActor {
         return null;
     }
 
+    public virtual float GetDistanceToGamePlayerCurrent() {
+        return GameController.GetGamePlayerControllerDistanceToCurrent(gameObject);
+    }
+
+    public virtual bool IsWithinRenderDistanceToGamePlayerCurrent() {
+        return GameController.IsGamePlayerControllerWithinRenderDistanceToCurrent(gameObject);
+    }
+
     // ------------------------------------------------------------------------
     // CHARACTER
 
