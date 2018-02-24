@@ -5724,14 +5724,17 @@ public class BaseGamePlayerController : GameActor {
         // 
         // SHADOW
 
-        actorShadow = gameObject.GetOrSet<ActorShadow>();
+        if (GameConfigs.useShadowStatic) {
+         
+            actorShadow = gameObject.GetOrSet<ActorShadow>();
 
-        if(actorShadow != null) {
+            if (actorShadow != null) {
 
-            actorShadow.objectParent = gamePlayerModelHolderModel;
+                actorShadow.objectParent = gamePlayerModelHolderModel;
 
-            if(gamePlayerShadow != null) {
-                actorShadow.objectShadow = gamePlayerShadow;
+                if (gamePlayerShadow != null) {
+                    actorShadow.objectShadow = gamePlayerShadow;
+                }
             }
         }
     }
@@ -6063,16 +6066,20 @@ public class BaseGamePlayerController : GameActor {
             }
         }
 
-        if(isCharacterLoaded) {
-            if(!shadowActive) {
-                actorShadow.gameObject.Show();
-                shadowActive = true;
-            }
-        }
-        else {
-            if(shadowActive) {
-                actorShadow.gameObject.Hide();
-                shadowActive = false;
+        if (GameConfigs.useShadowStatic) {
+            if (actorShadow != null) {
+                if (isCharacterLoaded) {
+                    if (!shadowActive) {
+                        actorShadow.gameObject.Show();
+                        shadowActive = true;
+                    }
+                }
+                else {
+                    if (shadowActive) {
+                        actorShadow.gameObject.Hide();
+                        shadowActive = false;
+                    }
+                }
             }
         }
 

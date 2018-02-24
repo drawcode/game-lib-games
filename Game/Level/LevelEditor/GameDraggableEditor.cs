@@ -1503,7 +1503,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 
             foreach (GameLevelItemAsset item in gameLevelItemAssets) {
 
-                //LogUtil.Log("loadLevelItemsCo:" + item.asset_code);
+                //Debug.Log("loadLevelItemsCo:" + item.ToJson());
 
                 LoadLevelItem(item);
             }
