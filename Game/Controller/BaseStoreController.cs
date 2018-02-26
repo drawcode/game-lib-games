@@ -25,6 +25,7 @@ public class GameStoreMessages {
 public class GameStorePurchaseRecord : DataObjectItem {
     public bool successful = false;
     public object data;
+    public string dataType;
     public string receipt = "";
     public DateTime datePurchased;
     public string messageTitle = "";
@@ -40,6 +41,7 @@ public class GameStorePurchaseRecord : DataObjectItem {
         base.Reset();
         successful = false;
         data = null;
+        dataType = "object";
         receipt = "";
         datePurchased = DateTime.Now;
         messageTitle = "";
@@ -51,6 +53,7 @@ public class GameStorePurchaseRecord : DataObjectItem {
     public static GameStorePurchaseRecord Create(
         bool success,
         object data,
+        string dataType,
         string receipt,
         string title,
         string message,
@@ -60,6 +63,7 @@ public class GameStorePurchaseRecord : DataObjectItem {
         GameStorePurchaseRecord record = new GameStorePurchaseRecord();
         record.successful = success;
         record.data = data;
+        record.dataType = dataType;
         record.receipt = receipt;
         record.datePurchased = DateTime.Now;
         record.messageTitle = title;
@@ -135,13 +139,23 @@ public class BaseStoreController : GameObjectBehavior {
         Messenger<ProductNetworkRecord>.AddListener(
             ProductNetworkMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
-        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
+        Messenger<GameStorePurchaseData>.AddListener(
+            GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
+        
+        Messenger<GameStorePurchaseRecord>.AddListener(
+            GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
+        
+        Messenger<GameStorePurchaseRecord>.AddListener(
+            GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
 
-        Messenger<GameStorePurchaseData>.AddListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.AddListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
+        Messenger<GameStorePurchaseData>.AddListener(
+            GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
+        
+        Messenger<GameStorePurchaseRecord>.AddListener(
+            GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
+        
+        Messenger<GameStorePurchaseRecord>.AddListener(
+            GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
 
     public virtual void OnDisable() {
@@ -155,13 +169,23 @@ public class BaseStoreController : GameObjectBehavior {
         Messenger<ProductNetworkRecord>.RemoveListener(
             ProductNetworkMessages.productPurchaseCancelled, onProductPurchaseCancelled);
 
-        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
+        Messenger<GameStorePurchaseData>.RemoveListener(
+            GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
+        
+        Messenger<GameStorePurchaseRecord>.RemoveListener(
+            GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
+        
+        Messenger<GameStorePurchaseRecord>.RemoveListener(
+            GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
 
-        Messenger<GameStorePurchaseData>.RemoveListener(GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
-        Messenger<GameStorePurchaseRecord>.RemoveListener(GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
+        Messenger<GameStorePurchaseData>.RemoveListener(
+            GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
+        
+        Messenger<GameStorePurchaseRecord>.RemoveListener(
+            GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
+        
+        Messenger<GameStorePurchaseRecord>.RemoveListener(
+            GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
 
     // QUEUE/PROCESSING
@@ -231,7 +255,9 @@ public class BaseStoreController : GameObjectBehavior {
 
             GameStorePurchaseRecord data =
                 GameStorePurchaseRecord.Create(
-                    true, record.data,
+                    true,
+                    record.data,
+                    record.dataType,
                     record.receipt,
                     "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
@@ -270,7 +296,9 @@ public class BaseStoreController : GameObjectBehavior {
 
             GameStorePurchaseRecord data =
                 GameStorePurchaseRecord.Create(
-                    false, record.data,
+                    false,
+                    record.data,
+                    record.dataType,
                     record.receipt,
                     "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
@@ -309,7 +337,9 @@ public class BaseStoreController : GameObjectBehavior {
 
             GameStorePurchaseRecord data =
                 GameStorePurchaseRecord.Create(
-                    false, record.data,
+                    false,
+                    record.data,
+                    record.dataType,
                     record.receipt,
                     "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
@@ -330,7 +360,7 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (data == null)
             return;
-        
+
         GameStorePurchaseDataItem itemPurchasing = GetItemPurchasing(data.productId);
 
         if (itemPurchasing != null) {
@@ -345,16 +375,18 @@ public class BaseStoreController : GameObjectBehavior {
             int quantity = 1;
             quantity = Convert.ToInt32(itemPurchasing.quantity);
 
-            Dictionary<string, object> dataDict = data.ToDataObject<Dictionary<string, object>>();
-            
+            Dictionary<string, object> dataDict =
+                data.ToDataObject<Dictionary<string, object>>();
+
+            ResetPurchase(itemPurchasing.product.code);
+
             AnalyticsNetworks.LogEventStorePurchase(
                 product.code,
                 quantity,
                 cost,
                 gameProductInfo.currency,
                 dataDict);
-            
-            ResetPurchase(itemPurchasing.product.code);
+
         }
 
         UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
@@ -411,36 +443,36 @@ public class BaseStoreController : GameObjectBehavior {
             // ANALYTICS
 
             GameProductInfo gameProductInfo = product.GetCurrentProductInfoByLocale();
-            
+
             decimal cost = 0;
             decimal.TryParse(gameProductInfo.cost, out cost);
 
             int quantity = 1;
             quantity = Convert.ToInt32(itemPurchasing.quantity);
 
-            Dictionary<string, object> dataDict = data.ToDataObject<Dictionary<string, object>>();
+            Dictionary<string, object> dataDict = data.ToDataObject<Dictionary<string, object>>(false);
 
             // TODO LOCALIZE CURRENCY 
-            
+
             string currency = gameProductInfo.currency;
 
-            if(currency.IsNotNullOrEmpty()) {
-                if(currency == "$") {
+            if (currency.IsNotNullOrEmpty()) {
+                if (currency == "$") {
                     currency = "USD";
                 }
             }
+
+            ResetPurchase(itemPurchasing.product.code);
 
             AnalyticsNetworks.LogEventStoreThirdPartyPurchase(
                 product.code,
                 quantity,
                 product.GetPlatformProductCode(),
                 cost,
-                currency, 
-                data.receipt, 
+                currency,
+                data.receipt,
                 null,
                 dataDict);
-                
-            ResetPurchase(itemPurchasing.product.code);
         }
     }
 
@@ -487,7 +519,7 @@ public class BaseStoreController : GameObjectBehavior {
 
                 if (item.product.type == GameProductType.currency
                     || item.product.type == GameProductType.access) {
- 
+
                     // do third party process and event
 
                     GameStoreController.PurchaseThirdParty(item.product, item.quantity);
@@ -502,11 +534,15 @@ public class BaseStoreController : GameObjectBehavior {
                     else {
 
                         GameStoreController.BroadcastPurchaseFailed(
-                            GameStorePurchaseRecord.Create(false,
-                                data, "",
+                            GameStorePurchaseRecord.Create(
+                                false,
+                                data, 
+                                data.GetType().ToString(),
+                                "",
                                 "Purchase Unsuccessful",
                                 "Not enough coins to purchase. Earn more coins by playing or training.",
-                                                       item.product.code, item.quantity));
+                                item.product.code, 
+                                item.quantity));
 
                     }
                 }
@@ -671,12 +707,16 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (doPurchase) {
             GameStoreController.BroadcastPurchaseSuccess(
-                GameStorePurchaseRecord.Create(true,
-                    gameProduct, "",
+                GameStorePurchaseRecord.Create(
+                    true,
+                    gameProduct,
+                    gameProduct.GetType().ToString(),
+                    "",
                     "Purchase Successful:" +
-                gameProduct.GetCurrentProductInfoByLocale().display_name,
+                    gameProduct.GetCurrentProductInfoByLocale().display_name,
                     gameProduct.GetCurrentProductInfoByLocale().description,
-                                       gameProduct.code, quantity));
+                    gameProduct.code,
+                    quantity));
         }
     }
 

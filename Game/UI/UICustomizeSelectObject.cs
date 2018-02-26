@@ -33,11 +33,13 @@ public class UICustomizeSelectObject : UICustomizeObject {
     public GameProfileCustomItem initialProfileCustomItem;
 
     public override void Start() {
-
+        Load();
     }
 
     public override void Load() {
-
+        currentIndex = -1;
+        initialProfileCustomItem = null;
+        currentProfileCustomItem = null;
     }
 
     public override void Update() {

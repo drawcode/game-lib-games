@@ -68,6 +68,7 @@ public class ProductNetworkMessages {
 public class ProductNetworkRecord : DataObjectItem {
     public bool success = false;
     public object data;
+    public string dataType;
     public string receipt = "";
     public DateTime datePurchased;
     public string code = "";
@@ -87,6 +88,7 @@ public class ProductNetworkRecord : DataObjectItem {
         base.Reset();
         success = false;
         data = null;
+        dataType = "object";
         receipt = "";
         datePurchased = DateTime.Now;
         code = "";
@@ -105,6 +107,7 @@ public class ProductNetworkRecord : DataObjectItem {
         string description,
         bool success,
         object data,
+        string dataType,
         string receipt,
         string productId,
         int productQuantity,
@@ -115,6 +118,7 @@ public class ProductNetworkRecord : DataObjectItem {
         ProductNetworkRecord record = new ProductNetworkRecord();
         record.success = success;
         record.data = data;
+        record.dataType = dataType;
         record.receipt = receipt;
         record.datePurchased = DateTime.Now;
         record.code = code;
@@ -819,6 +823,7 @@ public class ProductNetworks : GameObjectBehavior {
                 "Product purchased:" + productId,
                 true,
                 product.ToJson(),
+                product.GetType().ToString(),
                 productReceipt,
                 productId,
                 quantity,
@@ -864,6 +869,7 @@ public class ProductNetworks : GameObjectBehavior {
                 purchaseFailureReason.ToString(),
                 false,
                 product.ToJson(),
+                product.GetType().ToString(),
                 productReceipt,
                 productId,
                 quantity,

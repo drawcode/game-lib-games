@@ -30,6 +30,7 @@ public class BaseCustomMessages {
 }
 
 public class BaseGameCustomItemNames {
+
 }
 
 public class GameCustomKeys {
@@ -38,16 +39,16 @@ public class GameCustomKeys {
 }
 
 public class BaseGameCustomColors : DataObjectItem {
-    
+
     public static Color colorWhite = Color.white;
     public static Color colorBlack = Color.black;
     public static Color colorGray = Color.gray;
-    
+
     //public static Color colorCardinalsRed = ColorHelper.FromRGB(135,6,25);//.FromHex("870619");
 }
 
-public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomController { 
-        
+public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomController {
+
     public bool runDirector = true;
     public float currentFPS = 0f;
     public float lastPeriodicSeconds = 0f;
@@ -57,7 +58,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     bool save = false;
 
     public virtual void Awake() {
-        
+
     }
 
     public virtual void Start() {
@@ -69,7 +70,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
         GameCustomController.LoadCustomColors();
     }
-        
+
     public virtual void OnEnable() {
         //Messenger<Color>.AddListener(GameCustomMessages.customColorChanged, OnCustomColorChanged);
     }
@@ -90,7 +91,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         AppContentAssetTexturePreset preset = AppContentAssetTexturePresets.Instance.GetByCode(profilePreset);
 
         if (preset != null) {
-            
+
             return updateTexturePresetObject(profileCustomItem, go, preset);
         }
 
@@ -99,7 +100,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
     public virtual GameProfileCustomItem updateTexturePresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
-        foreach (AppContentAssetTexturePreset preset in 
+        foreach (AppContentAssetTexturePreset preset in
                 AppContentAssetTexturePresets.Instance.GetListByType(presetType)) {
             if (presetCode == preset.code) {
                 return updateTexturePresetObject(profileCustomItem, go, preset);
@@ -112,10 +113,10 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         GameProfileCustomItem profileCustomItem, GameObject go, AppContentAssetTexturePreset preset) {
 
         if (preset == null) {
-            return null;    
+            return null;
         }
 
-        if(profileCustomItem.current_texture_preset == preset.code) {
+        if (profileCustomItem.current_texture_preset == preset.code) {
             //return profileCustomItem;
         }
 
@@ -123,18 +124,18 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         profileCustomItem.SetCustomTexturePreset(preset.code);
 
         if (go != null) {
-            
+
             string path = ContentPaths.appCacheVersionSharedMaterials;
-            
+
             //LogUtil.Log("UpdateObject:" + " path:" + path);
-            
-            foreach (AppContentAssetCustomItem customItem in 
+
+            foreach (AppContentAssetCustomItem customItem in
                     AppContentAssetCustomItems.Instance.GetListByType(preset.type)) {
-                                                
+
                 //LogUtil.Log("UpdateObject:" + " customItem:" + customItem.code);
-                
+
                 foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                    
+
                     if (prop.IsTypeTexture()) {
 
                         string codeNew = prop.code + "-" + preset.code;
@@ -160,18 +161,18 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
     public virtual GameProfileCustomItem updateColorPresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string type) {
-               
+
         Dictionary<string, Color> colors = new Dictionary<string, Color>();
 
-        foreach (AppContentAssetCustomItem customItem in 
+        foreach (AppContentAssetCustomItem customItem in
                 AppContentAssetCustomItems.Instance.GetListByType(type)) {
 
             //if(customItem.customCode != customCode) {
             //    continue;
             //}
-            
+
             foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                                                
+
                 Color colorTo = profileCustomItem.GetCustomColor(prop.code);
                 colors.Add(prop.code, colorTo);
             }
@@ -183,10 +184,10 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
         return updateColorPresetObject(profileCustomItem, go, type, colors);
     }
-        
+
     public virtual GameProfileCustomItem updateColorPresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string presetType, string presetCode) {
-        foreach (AppColorPreset preset in 
+        foreach (AppColorPreset preset in
                 AppColorPresets.Instance.GetListByType(presetType)) {
             if (presetCode == preset.code) {
                 return updateColorPresetObject(profileCustomItem, go, preset);
@@ -194,55 +195,55 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         }
         return profileCustomItem;
     }
-    
+
     public virtual GameProfileCustomItem updateColorPresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, AppColorPreset preset) {
-        
+
         if (preset == null) {
             return profileCustomItem;
         }
-        
+
         Dictionary<string, Color> colors = new Dictionary<string, Color>();
-        
-        foreach (KeyValuePair<string,string> pair in preset.data) {
+
+        foreach (KeyValuePair<string, string> pair in preset.data) {
             colors.Add(pair.Key, AppColors.GetColor(pair.Value));
         }
-        
+
         if (colors.Count > 0) {
             return updateColorPresetObject(profileCustomItem, go, preset.type, colors);
         }
-        
+
         return profileCustomItem;
     }
-    
+
     public virtual GameProfileCustomItem updateColorPresetObject(
         GameProfileCustomItem profileCustomItem, GameObject go, string type, Dictionary<string, Color> colors) {
-        
+
         if (colors == null) {
             return profileCustomItem;
         }
-        
-        if(profileCustomItem.current_color_preset == type) {
+
+        if (profileCustomItem.current_color_preset == type) {
             //return profileCustomItem;
         }
-        
-        profileCustomItem.SetCustomColorPreset(type);     
-        
+
+        profileCustomItem.SetCustomColorPreset(type);
+
         if (go != null) {
-            
-            foreach (AppContentAssetCustomItem customItem in 
+
+            foreach (AppContentAssetCustomItem customItem in
                      AppContentAssetCustomItems.Instance.GetListByType(type)) {
-                
+
                 //LogUtil.Log("updateColorPresetObject:" + " customItem:" + customItem.code);
-                
+
                 foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                    
+
                     if (prop.IsTypeColor()) {
-                        
+
                         Color colorTo = colors[prop.code];
-                        
+
                         profileCustomItem.SetCustomColor(prop.code, colorTo);
-                        
+
                         go.SetMaterialColor(prop.code, colorTo);
 
                         UIUtil.SetTextColor(go, prop.code, colorTo);
@@ -258,7 +259,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
             //GameCustomController.SetMaterialColors(go, profileCustomItem);
         }
-        
+
         return profileCustomItem;
     }
 
@@ -266,52 +267,52 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
     public virtual void updateProfileCharacterDisplay(GameObject go) {
         updateProfileCharacterDisplayName(go);
-        updateProfileCharacterDisplayCode(go);    
+        updateProfileCharacterDisplayCode(go);
     }
 
-    public virtual void updateProfileCharacterDisplayName(GameObject go) {  
+    public virtual void updateProfileCharacterDisplayName(GameObject go) {
 
         string val = GameProfileCharacters.currentCharacter.characterDisplayName;
-        
-        GameCustomController.UpdateCharacterDisplayName(go, val);
-    }    
 
-    public virtual void updateProfileCharacterDisplayCode(GameObject go) {        
-        
+        GameCustomController.UpdateCharacterDisplayName(go, val);
+    }
+
+    public virtual void updateProfileCharacterDisplayCode(GameObject go) {
+
         string val = GameProfileCharacters.currentCharacter.characterDisplayCode;
 
         GameCustomController.UpdateCharacterDisplayCode(go, val);
     }
 
     // ANY CHARACTER
-    
-    public virtual void updateCharacterDisplay(GameObject go, string valName, string valCode) {    
+
+    public virtual void updateCharacterDisplay(GameObject go, string valName, string valCode) {
         GameCustomController.UpdateCharacterDisplayName(go, valName);
         GameCustomController.UpdateCharacterDisplayCode(go, valCode);
     }
 
-    public virtual void updateCharacterDisplayName(GameObject go, string val) {  
-        
-        string key = 
+    public virtual void updateCharacterDisplayName(GameObject go, string val) {
+
+        string key =
             GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.name;
 
-        if(string.IsNullOrEmpty(val)) {
+        if (string.IsNullOrEmpty(val)) {
             val = ProfileConfigs.defaultGameCharacterDisplayName;
         }
 
-        UIUtil.SetTextValue(go, key, val);  
-    }    
-    
-    public virtual void updateCharacterDisplayCode(GameObject go, string val) {        
-        
-        string key = 
+        UIUtil.SetTextValue(go, key, val);
+    }
+
+    public virtual void updateCharacterDisplayCode(GameObject go, string val) {
+
+        string key =
             GameCustomKeys.profileCharacterDisplay + "-" + BaseDataObjectKeys.code;
-        
-        if(string.IsNullOrEmpty(val)) {
-            val = UnityEngine.Random.Range(0,99).ToString();
+
+        if (string.IsNullOrEmpty(val)) {
+            val = UnityEngine.Random.Range(0, 99).ToString();
         }
-        
-        UIUtil.SetTextValue(go, key, val);  
+
+        UIUtil.SetTextValue(go, key, val);
     }
 
     public virtual GameProfileCustomItem fillDefaultCustomColors(GameProfileCustomItem customItemTo, string type) {
@@ -334,19 +335,19 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         customItemTo = loadColorPresetCustomItem(customItemTo, randomPreset);
 
         //GameCustomController.SaveColors(customItemTo);
-        
+
         return customItemTo;
     }
-    
-    public virtual GameProfileCustomItem loadColorPresetCustomItem(AppColorPreset preset) { 
-        
+
+    public virtual GameProfileCustomItem loadColorPresetCustomItem(AppColorPreset preset) {
+
         GameProfileCustomItem customItem = new GameProfileCustomItem();
         customItem = loadColorPresetCustomItem(customItem, preset);
         return customItem;
     }
 
-    public virtual GameProfileCustomItem loadColorPresetCustomItem(GameProfileCustomItem customItem, AppColorPreset preset) {        
-        foreach (KeyValuePair<string, string> pair in preset.data) {            
+    public virtual GameProfileCustomItem loadColorPresetCustomItem(GameProfileCustomItem customItem, AppColorPreset preset) {
+        foreach (KeyValuePair<string, string> pair in preset.data) {
             customItem.SetCustomColor(pair.Key, AppColors.GetColor(pair.Value));
         }
         return customItem;
@@ -361,7 +362,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     }
 
     //
-    
+
     public virtual bool checkCustomColorPresetExists(string code) {
         return AppColorPresets.Instance.CheckByCode(code);
     }
@@ -371,23 +372,23 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     public virtual void run() {
         runDirector = true;
     }
-    
+
     public virtual void stop() {
         runDirector = false;
     }
-    
+
     public virtual void directCustom() {
-        
-        currentFPS = FPSDisplay.GetCurrentFPS();    
-        
+
+        currentFPS = FPSDisplay.GetCurrentFPS();
+
         if (currentFPS > 20f) {
-            
+
         }
     }
 
     // MESSAGES ALL
 
-    
+
     public virtual void broadcastCustomSync() {
 
         //Debug.Log("GameCustomController::broadcastCustomSync");
@@ -402,85 +403,85 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         GameCustomController.BroadcastCustomCharacterDisplayChanged();
         GameCustomController.BroadcastCustomCharacterDisplayCodeChanged();
         GameCustomController.BroadcastCustomCharacterDisplayNameChanged();
-        
+
         //LogUtil.Log("broadcastCustomColorsSync");
     }
 
     public virtual void broadcastCustomCharacterProfileCodeSync(
         GameProfileCharacterItem profileCharacterItem = null) {
 
-        if(profileCharacterItem == null) {
-            profileCharacterItem = 
-                GameProfileCharacters.Current.GetCurrentCharacter();        
+        if (profileCharacterItem == null) {
+            profileCharacterItem =
+                GameProfileCharacters.Current.GetCurrentCharacter();
         }
-        
-        if(profileCharacterItem != null) {
-            
+
+        if (profileCharacterItem != null) {
+
             Messenger<string>.Broadcast(
-                GameCustomMessages.customCharacterPlayerChanged, 
+                GameCustomMessages.customCharacterPlayerChanged,
                 profileCharacterItem.code);
         }
     }
-    
+
     public virtual void broadcastCustomCharacterDisplayCodeChanged() {
         Messenger.Broadcast(GameCustomMessages.customCharacterDisplayCodeChanged);
     }
-    
+
     public virtual void broadcastCustomCharacterDisplayNameChanged() {
         Messenger.Broadcast(GameCustomMessages.customCharacterDisplayNameChanged);
     }
-    
+
     public virtual void broadcastCustomCharacterDisplayChanged() {
         Messenger.Broadcast(GameCustomMessages.customCharacterDisplayChanged);
     }
 
     // COLORS
-    
+
     public virtual void broadcastCustomColorsSync() {
         GameCustomController.BroadcastCustomColorsChanged();
         GameCustomController.BroadcastCustomColorsPlayerChanged();
 
         //LogUtil.Log("broadcastCustomColorsSync");
     }
-    
+
     public virtual void broadcastCustomColorsChanged() {
         Messenger.Broadcast(GameCustomMessages.customColorsChanged);
     }
-    
+
     public virtual void broadcastCustomColorsPlayerChanged() {
         Messenger.Broadcast(GameCustomMessages.customColorsPlayerChanged);
     }
-        
+
     public virtual void setCustomColorsPlayer(GameObject go) {
-        
+
         GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-        
+
         GameCustomController.SetCustomColorsPlayer(go, customItem);
     }
-        
+
     public virtual void setCustomColorsPlayer(GameObject go, GameProfileCustomItem customItem) {
-        
+
         GameCustomPlayer player = go.GetComponent<GameCustomPlayer>();
-        
+
         if (player == null) {
             GameCustomPlayer[] players = go.GetComponentsInChildren<GameCustomPlayer>(true);
-            
+
             foreach (GameCustomPlayer playerTo in players) {
                 player = playerTo;
                 break;
             }
         }
-        
-        if (player != null) {       
+
+        if (player != null) {
             GameCustomController.SetMaterialColors(go, customItem);
         }
     }
-    
+
     public virtual Color getRandomizedColorFromContextUI() {
         Color colorTo = UIColors.colorWhite;
-        
+
         int randomColor = UnityEngine.Random.Range(0, 9);
-        
+
         if (randomColor == 0) {
             colorTo = UIColors.colorWhite;
         }
@@ -520,9 +521,9 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         Color colorTo = UIColors.colorWhite;
 
         GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-        
+
         //int randomColor = UnityEngine.Random.Range(0, 8);
-        
+
         /*
         if (randomColor == 1) {
             colorTo = customItem.GetCustomColor(GameCustomItemNames.helmet);
@@ -549,48 +550,48 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
         return colorTo;
     }
-        
+
     public virtual Color getRandomizedColorFromContext() {
-        
+
         // Randomize or get customized colors
 
         Color colorTo = UIColors.colorWhite;
-        
+
         int randomColor = UnityEngine.Random.Range(0, 4);
-        
+
         if (randomColor < 2) {
             colorTo = GameCustomController.GetRandomizedColorFromContextCustomized();
         }
         else {
-            colorTo = GameCustomController.GetRandomizedColorFromContextUI();        
+            colorTo = GameCustomController.GetRandomizedColorFromContextUI();
         }
-        
+
         return colorTo;
     }
 
     public virtual Color getRandomizedColorFromContextEffects() {
-        
+
         // Randomize or get customized colors
 
         Color colorTo = UIColors.colorWhite;
-        
+
         int randomColor = UnityEngine.Random.Range(0, 4);
 
         if (randomColor < 1) {
             colorTo = GameCustomController.GetRandomizedColorFromContextCustomized();
         }
         else {
-            colorTo = GameCustomController.GetRandomizedColorFromContextUI();        
+            colorTo = GameCustomController.GetRandomizedColorFromContextUI();
         }
 
         return colorTo;
     }
-            
+
     public virtual void setMaterialColors(GameObject go, GameProfileCustomItem profileCustomItem) {
 
         //LogUtil.Log("setMaterialColors:go null:", go == null);
         //LogUtil.Log("setMaterialColors:profileCustomItem null:", profileCustomItem == null);
-        
+
         if (go == null) {
             return;
         }
@@ -599,7 +600,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
         //LogUtil.Log("setMaterialColors:", profileCustomItem.);
 
         //GameCustomController.SetCustomColorsPlayer(go, profileCustomItem);
-        
+
         TriggerSave();
     }
 
@@ -610,17 +611,17 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     public virtual void saveCustomItem() {
         GameCustomController.SaveCustomItem(GameProfileCharacters.currentCustom);
     }
-    
+
     public virtual void saveCustomItem(GameProfileCustomItem profileCustomItem) {
-        
+
         GameProfileCharacters.Current.SetCharacterCustom(profileCustomItem);
 
         GameState.SaveProfile();
-        
+
         //LogUtil.Log("saveCustomItem:profileCustomItem:" + profileCustomItem);
         //LogUtil.Log("saveCustomItem:profileCustomItem:json:" + profileCustomItem.ToJson());
         //LogUtil.Log("saveCustomItem:currentCustom:json:" + GameProfileCharacters.currentCustom.ToJson());
-        
+
         GameCustomController.BroadcastCustomSync();
     }
 
@@ -689,26 +690,26 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     }
 
     public virtual void handlePeriodic() {
-        
+
         if (Time.time > lastPeriodicSeconds + 3f) {
             lastPeriodicSeconds = Time.time;
             // every second         
-            GameCustomController.DirectCustom();         
-        }       
+            GameCustomController.DirectCustom();
+        }
     }
 
     public virtual void handleUpdate() {
         // do on update always
-        
+
         //currentActorCount = GameController.Instance.characterActorsCount; 
     }
 
     public virtual void handleSave() {
         lastSave += Time.deltaTime;
-        
+
         if (lastSave > 1f) {
             lastSave = 0;
-            
+
             if (save) {
                 save = false;
                 GameCustomController.SaveCustomItem();
@@ -717,20 +718,20 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
     }
 
     public virtual void Update() {
-        
+
         if (!runDirector
             || GameDraggableEditor.isEditing) {
             return;
         }
 
         handleSave();
-        
+
         if (GameController.IsGameRunning) {
-            
+
             GameCustomController.HandlePeriodic();
-            
-            GameCustomController.HandleUpdate();         
-            
+
+            GameCustomController.HandleUpdate();
+
         }
     }
 }

@@ -107,7 +107,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             // TODO REMOVE and make sure initial sets correctly.
 
             if(gameProfileCharacterItem.code == BaseDataObjectKeys.defaultKey) {
-                gameCharacterCode = ProfileConfigs.defaultProfileCharacterCode;
+                gameCharacterCode = ProfileConfigs.defaultGameCharacterCode;
             }
             else {
                 gameCharacterCode = gameProfileCharacterItem.characterCode;

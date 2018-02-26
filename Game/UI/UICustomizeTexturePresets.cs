@@ -12,6 +12,9 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public string type = "character";
 
+    string characterModelCode;
+    string characterModelCodeLast;
+
     public override void OnEnable() {
         base.OnEnable();
     }
@@ -26,6 +29,8 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
 
     public override void Load() {
         base.Load();
+        //characterModelCode = "";
+        //characterModelCodeLast = "changeme";
     }
 
     public override void OnButtonClickEventHandler(string buttonName) {
@@ -64,7 +69,7 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
             return;
         }
 
-        string characterModelCode = gameDataModel.code;
+        characterModelCode = gameDataModel.code;
 
         List<AppContentAssetTexturePreset> assetTexturePresets =
             AppContentAssetTexturePresets.Instance.GetListLike(BaseDataObjectKeys.code, characterModelCode);
@@ -74,7 +79,6 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         }
 
         int countPresets = assetTexturePresets.Count;
-
 
         if(index < -1) {
             index = countPresets - 1;
@@ -87,6 +91,10 @@ public class UICustomizeTexturePresets : UICustomizeSelectObject {
         currentIndex = index;
 
         if(index > -2 && index < countPresets) {
+
+            //if(characterModelCode != characterModelCodeLast) {
+            //    initialProfileCustomItem = null;
+            //}
 
             if(initialProfileCustomItem == null) {
                 initialProfileCustomItem = GameProfileCharacters.currentCustom;
