@@ -406,7 +406,7 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
                 List<GamePresetItem> presetItemsData = preset.data.items;
 
                 foreach (GamePresetItem item in presetItemsData) {
-                    if (item.type == itemType) {
+                    if (item.type == itemType || item.type.IsNullOrEmpty()) {
                         presetItemProbabilities.Add((float)item.probability);
                         presetItemsAppend.Add(item);
                     }
