@@ -32,6 +32,7 @@ public class UISettingsAudio : GameObjectBehavior {
     
     public void Start() {
         //Init();
+        UpdateAudioValues();
     }
     
     public void OnEnable() {
@@ -41,7 +42,6 @@ public class UISettingsAudio : GameObjectBehavior {
 
         Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
 
-        UpdateAudioValues();
     }
     
     public void OnDisable() {

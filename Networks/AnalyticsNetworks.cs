@@ -57,14 +57,15 @@ public class AnalyticsNetworks : GameObjectBehavior {
     private static AnalyticsNetworks _instance = null;
 
     public static AnalyticsNetworks Instance {
+
         get {
-            if (!_instance) {
+            if(!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(AnalyticsNetworks)) as AnalyticsNetworks;
 
                 // nope, create a new one
-                if (!_instance) {
+                if(!_instance) {
                     var obj = new GameObject("_AnalyticsNetworks");
                     _instance = obj.AddComponent<AnalyticsNetworks>();
                 }
@@ -188,9 +189,11 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // IS SUPPORTED
 
     public static bool IsSupported() {
-        if (Instance != null) {
+
+        if(Instance != null) {
             return Instance.isSupported();
         }
+
         return false;
     }
 
@@ -208,7 +211,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // LOG AREA 
 
     public static void Log(object data) {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.log(data);
         }
     }
@@ -229,7 +233,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // SET USER ID
 
     public static void SetUserId(string userId) {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.setUserId(userId);
         }
     }
@@ -249,7 +254,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // SET USER GENDER
 
     public static void SetUserGender(Gender gender) {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.setUserGender(gender);
         }
     }
@@ -268,7 +274,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // SET USER BIRTH YEAR
 
     public static void SetUserBirthYear(int birthYear) {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.setUserBirthYear(birthYear);
         }
     }
@@ -286,13 +293,16 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     // LOG EVENTS
 
-    public static void LogEvent(string eventName, Dictionary<string, object> data) {
-        if (Instance != null) {
+    public static void LogEvent(
+        string eventName, Dictionary<string, object> data) {
+
+        if(Instance != null) {
             Instance.logEvent(eventName, data);
         }
     }
 
-    public void logEvent(string eventName, Dictionary<string, object> data) {
+    public void logEvent(
+        string eventName, Dictionary<string, object> data) {
 
 #if ANALYTICS_GAMEANALYTICS
 
@@ -334,7 +344,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     public static void LogEventSceneChange(string val, string title,
         Dictionary<string, object> data = null) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventSceneChange(val, title, data);
         }
     }
@@ -342,7 +352,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void logEventSceneChange(string val, string title,
         Dictionary<string, object> data = null) {
 
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -356,7 +366,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     public static void LogEventGameNetworkUser(string username, string network,
         Dictionary<string, object> data = null) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventGameNetworkUser(username, network, data);
         }
     }
@@ -364,7 +374,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void logEventGameNetworkUser(string username, string network,
         Dictionary<string, object> data = null) {
 
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -386,7 +396,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         string signature,
         Dictionary<string, object> data = null) {
 
-        if (Instance != null) {
+        if(Instance != null) {
 
             Instance.logEventStoreThirdPartyPurchase(
                 productCode, quantity, productThirdPartyCode,
@@ -404,7 +414,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         string signature,
         Dictionary<string, object> data = null) {
 
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -417,7 +427,9 @@ public class AnalyticsNetworks : GameObjectBehavior {
         data.Set(BaseDataObjectKeys.signature, signature);
 
 #if ANALYTICS_UNITY
+
         data.Set("usingIAPService", true);
+
         Analytics.Transaction(productCode, amount, currency, receiptPurchaseData, signature, true);
 #endif
 
@@ -436,7 +448,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         string currency,
         Dictionary<string, object> data = null) {
 
-        if (Instance != null) {
+        if(Instance != null) {
 
             Instance.logEventStorePurchase(
                 productCode, quantity, amount, currency, data);
@@ -450,7 +462,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         string currency,
         Dictionary<string, object> data = null) {
 
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -467,7 +479,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // LEVEL START
 
     public static void LogEventLevelStart(Dictionary<string, object> data = null) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelStart(data);
         }
     }
@@ -482,7 +494,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // LEVEL RESULTS
 
     public static void LogEventLevelResults(Dictionary<string, object> data = null) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelResults(data);
         }
     }
@@ -497,7 +509,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // LEVEL QUIT
 
     public static void LogEventLevelQuit(Dictionary<string, object> data = null) {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.logEventLevelQuit(data);
         }
     }
@@ -512,7 +524,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public Dictionary<string, object> updateEventDataGame(
         Dictionary<string, object> data = null) {
 
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -528,7 +540,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
 
     public static void LogEvent(string key, object val,
         Dictionary<string, object> data = null) {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.logEvent(key, val, data);
         }
     }
@@ -536,8 +549,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public void logEvent(string key, object val,
         Dictionary<string, object> data = null) {
 
-
-        if (data == null) {
+        if(data == null) {
             data = new Dictionary<string, object>();
         }
 
@@ -550,7 +562,8 @@ public class AnalyticsNetworks : GameObjectBehavior {
     // FLUSH/SEND
 
     public static void Send() {
-        if (Instance != null) {
+
+        if(Instance != null) {
             Instance.send();
         }
     }
@@ -568,6 +581,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
     }
 
     private void OnApplicationQuit() {
+
         AnalyticsNetworks.Send();
     }
 
