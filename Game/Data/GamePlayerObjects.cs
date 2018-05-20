@@ -92,6 +92,7 @@ public class BaseGamePlayerRuntimeData {
 
 [System.Serializable]
 public class BaseGamePlayerControllerData {
+
     public bool loadingCharacter = false;
     public bool gameModelVisible = true;
     public bool paused = true;
@@ -198,7 +199,7 @@ public class BaseGamePlayerControllerData {
     public Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
 
     // RPG
-    public GameProfileRPGItem currentRPGItem;
+    public GameProfileRPGItem currentRPGItem = null;
     public GameProfilePlayerProgressItem currentPlayerProgressItem;
     public double rpgModifierDefault = .4f;
     public float lastRPGModTime = 0f;
@@ -217,7 +218,7 @@ public class BaseGamePlayerControllerData {
     public ParticleSystem gamePlayerEffectAim;
 
     // EVADING
-    public float distanceToPlayerControlledGamePlayer;
+    public float distanceToPlayerControlledGamePlayer = 0;
     public float distanceEvade = 5f;
     public bool isWithinEvadeRange = false;
     public bool lastIsWithinEvadeRange = false;
@@ -233,12 +234,19 @@ public class BaseGamePlayerControllerData {
     public float lastCharacterLoadedCheck = 0f;
     public GameObject currentPrefabNameObjectItem;
     public string currentPrefabNameObject = "";
-    public GamePlayerAttributes gamePlayerAttributes = new GamePlayerAttributes();
+    public GamePlayerAttributes gamePlayerAttributes = null;
 
     // audio
-    public GameObject audioObjectFootsteps;
-    public AudioClip audioObjectFootstepsClip;
-    public AudioSource audioObjectFootstepsSource;
+    public GameObject audioObjectFootsteps = null;
+    public AudioClip audioObjectFootstepsClip = null;
+    public AudioSource audioObjectFootstepsSource = null;
+    public GameDataSound soundAttack = null;
+    public GameDataSound soundHit = null;
+    public GameDataSound soundDie = null;
+    public GameDataSound soundFootsteps = null;
+    public string soundFootstepsCode = "audio_footsteps_default";
+    public AudioSource soundFootstepsAudioObject = null;
+    public float audioPlaySpeed = 0;
 
     // materials
 
@@ -279,14 +287,15 @@ public class BaseGamePlayerControllerData {
     public float modifierItemGoalNextMax = 3.0f;
     public float modifierItemGoalNextLerpTime = 5f;
     public float modifierItemGoalNextLerp = 0f;
-    public Dictionary<string, float> modifiers = new Dictionary<string, float>();
-    public Dictionary<string, Vector3> positions = new Dictionary<string, Vector3>();
+
+    public Dictionary<string, float> modifiers = null;
+    public Dictionary<string, Vector3> positions = null;
 
     // items
-    public GamePlayerItemsData itemsData = new GamePlayerItemsData();
+    public GamePlayerItemsData itemsData = null;
 
     // mounts
-    public GamePlayerMountData mountData = new GamePlayerMountData();
+    public GamePlayerMountData mountData = null;
 
     // rpg
 
@@ -304,6 +313,21 @@ public class BaseGamePlayerControllerData {
     public Vector3 overallGamePlayerPosition = Vector3.zero;
     public Vector3 currentGamePlayerPositionBounce = Vector3.zero;
 
+    public float trailTime = 0;
+
+    public bool shadowActive = false;
+    public bool runUpdate = false;
+    public bool shouldRandomlyDie = false;
+    public float power = 0;
+    public GamePlayerController gamePlayerControllerHit = null;
+    public Vector3 posPlayer = Vector3.zero;
+    public Vector3 posPlayerBack = Vector3.zero;
+    public float playerYFilter = 0;
+    public float currentSpeed = 0;
+
+    public float updateTimeHandlePlayerEffectsObjectTick = 0;
+    public bool immediateHandlePlayerEffectsObjectTick = false;
+
     // Reset runtime values, only reset values that change from life to life
     // some are 
 
@@ -320,11 +344,57 @@ public class BaseGamePlayerControllerData {
         //    speedInfiniteTo = 72f;
         //    speedInfiniteMax = 90f;
         //}
+        runtimeRPGData = new GamePlayerRuntimeRPGData();
+        gamePlayerAttributes = new GamePlayerAttributes();
 
         moveGamePlayerPosition = Vector3.zero;
         currentGamePlayerPosition = Vector3.zero;
         overallGamePlayerPosition = Vector3.zero;
         currentGamePlayerPositionBounce = Vector3.zero;
+
+        modifiers = new Dictionary<string, float>();
+        positions = new Dictionary<string, Vector3>();
+        itemsData = new GamePlayerItemsData();
+        mountData = new GamePlayerMountData();
+
+        currentRPGItem = null;
+        currentPlayerProgressItem = null;
+
+        audioObjectFootsteps = null;
+        audioObjectFootstepsClip = null;
+        audioObjectFootstepsSource = null;
+
+        soundAttack = null;
+        soundHit = null;
+        soundDie = null;
+        soundFootsteps = null;
+
+        trailTime = 0;
+
+        audioObjectFootsteps = null;
+        audioObjectFootstepsClip = null;
+        audioObjectFootstepsSource = null;
+        soundAttack = null;
+        soundHit = null;
+        soundDie = null;
+        soundFootsteps = null;
+        soundFootstepsCode = "audio_footsteps_default";
+        soundFootstepsAudioObject = null;
+        audioPlaySpeed = 0;
+
+        shadowActive = false;
+        runUpdate = false;
+        shouldRandomlyDie = false;
+        power = 0;
+        gamePlayerControllerHit = null;
+        posPlayer = Vector3.zero;
+        posPlayerBack = Vector3.zero;
+        playerYFilter = 0;
+
+        currentSpeed = 0;
+
+        updateTimeHandlePlayerEffectsObjectTick = 0;
+        immediateHandlePlayerEffectsObjectTick = false;
     }
 }
 
