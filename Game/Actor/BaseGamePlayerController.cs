@@ -2004,7 +2004,10 @@ public class BaseGamePlayerController : GameActor {
                     }
                 }
 
+                gameObjectLoad.SetLayerRecursively(gamePlayerModelHolderModel.layer);
+
                 gameObjectLoad.transform.parent = gamePlayerModelHolderModel.transform;
+
                 gameObjectLoad.transform.localScale = Vector3.one;
                 gameObjectLoad.transform.position = Vector3.zero;
                 gameObjectLoad.transform.localPosition = Vector3.zero;
