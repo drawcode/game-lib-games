@@ -34,20 +34,47 @@ public class GameLevelTemplate {
 }
 
 public class GameLevelGridData {
-    public float gridHeight = (float)GameLevels.currentLevelData.grid_height;
-    public float gridWidth = (float)GameLevels.currentLevelData.grid_width;
-    public float gridDepth = (float)GameLevels.currentLevelData.grid_depth;
-    public float gridBoxSize = (float)GameLevels.currentLevelData.grid_box_size;
-    public bool centeredX = GameLevels.currentLevelData.grid_centered_x;
-    public bool centeredY = GameLevels.currentLevelData.grid_centered_y;
-    public bool centeredZ = GameLevels.currentLevelData.grid_centered_z;
-    public List<string> presets = new List<string>();
+
+    public float gridHeight;
+    public float gridWidth;
+    public float gridDepth;
+    public float gridBoxSize;
+
+    public bool centeredX;
+    public bool centeredY;
+    public bool centeredZ;
+
+    public List<string> presets;
     public List<AppContentAsset> assets;
+
     //public string[,,] assetMap;
 
     public Dictionary<string, GameLevelItemAssetData> assetLayoutData;
 
     public GameLevelGridData() {
+
+        presets = new List<string>();
+
+        //gridHeight = (float)GameLevels.currentLevelData.grid_height;
+        //gridWidth = (float)GameLevels.currentLevelData.grid_width;
+        //gridDepth = (float)GameLevels.currentLevelData.grid_depth;
+        //gridBoxSize = (float)GameLevels.currentLevelData.grid_box_size;
+
+        //centeredX = GameLevels.currentLevelData.grid_centered_x;
+        //centeredY = GameLevels.currentLevelData.grid_centered_y;
+        //centeredZ = GameLevels.currentLevelData.grid_centered_z;
+
+        gridHeight = (float)GameLevels.Current.data.level_data.grid_height;
+        gridWidth = (float)GameLevels.Current.data.level_data.grid_width;
+        gridDepth = (float)GameLevels.Current.data.level_data.grid_depth;
+        gridBoxSize = (float)GameLevels.Current.data.level_data.grid_box_size;
+
+        centeredX = GameLevels.Current.data.level_data.grid_centered_x;
+        centeredY = GameLevels.Current.data.level_data.grid_centered_y;
+        centeredZ = GameLevels.Current.data.level_data.grid_centered_z;
+
+        // GameLevels.Current.data
+
         Reset();
     }
 
@@ -311,7 +338,9 @@ public class GameLevelGridData {
             string keyLayout = string.Format("{0}-{1}-{2}", x, y, z);
 
             if(!assetLayoutData.ContainsKey(keyLayout)) {
+
                 Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+
                 SetAssetsInAssetMap(asset.code, asset.type, asset.data_type, asset.display_type, pos);
             }
         }

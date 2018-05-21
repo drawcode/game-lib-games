@@ -18,7 +18,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     bool frozen = false;
     bool visibleEditors = true;
     bool visibleItem = true;
-    bool shouldHideDistance = true;
+    bool shouldHideDistance = false;//true;
 
     float lastUpdate = 0;
 
