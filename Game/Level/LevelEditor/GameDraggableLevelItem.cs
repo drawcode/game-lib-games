@@ -16,7 +16,9 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     public UnityEngine.AI.NavMeshAgent navAgent;
 
     bool frozen = false;
-    bool visible = true;
+    bool visibleEditors = true;
+    bool visibleItem = true;
+    bool shouldHideDistance = true;
 
     float lastUpdate = 0;
 
@@ -34,27 +36,32 @@ public class GameDraggableLevelItem : GameObjectBehavior {
         HideEditObjects();
 
         if(dragColliderObject != null) {
+
             dragColliderObject.tag = "drag";
         }
 
         LoadData();
 
         if(gameLevelItemAsset != null) {
+
             LoadSprite(gameLevelItemAsset.code);
         }
     }
 
     void OnEnable() {
+
         Messenger<GameDraggableEditEnum>.AddListener(
             GameDraggableEditorMessages.EditState, OnEditStateHandler);
     }
 
     void OnDisable() {
+
         Messenger<GameDraggableEditEnum>.RemoveListener(
             GameDraggableEditorMessages.EditState, OnEditStateHandler);
     }
 
     void OnEditStateHandler(GameDraggableEditEnum state) {
+
         if(state == GameDraggableEditEnum.StateEditing) {
 
         }
@@ -64,16 +71,22 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     }
 
     public void ShowAllGameLevelItems() {
+
         if(gameLevelItemObject != null) {
+
             foreach(Transform t in gameLevelItemObject.transform) {
+
                 t.gameObject.Show();
             }
         }
     }
 
     public void HideAllGameLevelItems() {
+
         if(gameLevelItemObject != null) {
+
             foreach(Transform t in gameLevelItemObject.transform) {
+
                 t.gameObject.Hide();
             }
         }
@@ -97,6 +110,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
                 GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
 
                 if(gameLevelSprite != null) {
+
                     gameLevelSprite.gameDraggableLevelItem = this;
 
                     //LogUtil.Log("LoadSprite:gameLevelSprite:" + gameLevelSprite.name);
@@ -108,9 +122,13 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     }
 
     public void RemoveGameLevelItems() {
+
         if(gameLevelItemObject != null) {
+
             // clear current or placeholder...
+
             foreach(Transform t in gameLevelItemObject.transform) {
+
                 Destroy(t.gameObject);
             }
         }
@@ -136,20 +154,27 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     }
 
     public void DestroyGameLevelItemSprite() {
+
         RemoveGameLevelItems();
+
         if(gameLevelItemAsset != null) {
             LoadSpriteEffect(gameLevelItemAsset.destroy_effect_code);
         }
+
         Invoke("DestroyMe", .3f);
     }
 
     public void DestroyMeAnimated() {
+
         DestroyGameLevelItemSprite();
+
         Invoke("DestroyMe", .6f);
     }
 
     public void DestroyMe() {
-        GameLevelItems.Current.level_items.RemoveAll(item => item.uuid == gameLevelItemAsset.uuid);
+
+        GameLevelItems.Current.level_items.RemoveAll(
+            item => item.uuid == gameLevelItemAsset.uuid);
 
         LogUtil.Log("GameDraggableLevelItem:destroying..." + name);
 
@@ -159,46 +184,71 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     }
 
     public void LoadData() {
+
         if(gameLevelItemAsset != null) {
+
             LoadSprite(gameLevelItemAsset.code);
+
+            // TODO change
+
+            if(gameLevelItemAsset.code.Contains(BaseDataObjectKeys.terrain)
+                || gameLevelItemAsset.code.Contains(BaseDataObjectKeys.action)) {
+                shouldHideDistance = false;
+            }
+
+
             //StartCoroutine(LoadDataCo());			
         }
     }
 
     IEnumerator LoadDataCo() {
+
         LoadSprite(gameLevelItemAsset.code);
+
         yield break;
     }
 
 
     public void Freeze() {
+
         if(!frozen) {
+
             frozen = true;
+
             gameObject.FreezeRigidBodies();
         }
     }
 
     public void UnFreeze() {
+
         if(frozen) {
+
             frozen = false;
+
             gameObject.UnFreezeRigidBodies();
         }
     }
 
     void ShowEditObjects() {
 
-        if(!visible) {
+        if(!visibleEditors) {
+
             dragHolder.Show();
+
             dragColliderObject.Show();
-            visible = true;
+
+            visibleEditors = true;
         }
     }
 
     void HideEditObjects() {
 
-        if(visible) {
-            visible = false;
+        if(visibleEditors) {
+
+            visibleEditors = false;
+
             dragHolder.Hide();
+
             dragColliderObject.Hide();
         }
     }
@@ -208,7 +258,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
         if(dragHolder != null) {
             return;
         }
-        
+
         if(GameDraggableEditor.isEditing) {
 
             ShowEditObjects();
@@ -222,6 +272,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     void Update() {
 
         if(lastUpdate + 1 < Time.time) {
+
             lastUpdate = Time.time;
         }
         else {
@@ -233,13 +284,40 @@ public class GameDraggableLevelItem : GameObjectBehavior {
         //}
 
         if(!GameConfigs.isGameRunning) {
+
             if(!GameDraggableEditor.isEditing) {
+
                 Freeze();
             }
+
             return;
         }
         else {
             UnFreeze();
+
+            // Check if isvisible
+
+            if(shouldHideDistance) {
+
+                if(GameController.IsGamePlayerControllerWithinRenderDistanceToCurrent(gameObject)) {
+
+                    if(!visibleItem) {
+
+                        visibleItem = true;
+
+                        gameLevelItemObject.Show();
+                    }
+                }
+                else {
+
+                    if(visibleItem) {
+
+                        visibleItem = false;
+
+                        gameLevelItemObject.Hide();
+                    }
+                }
+            }
         }
 
         HandleEditState();
