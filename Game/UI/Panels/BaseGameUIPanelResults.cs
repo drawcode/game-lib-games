@@ -115,9 +115,11 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
             }
 
             foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
-                if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()
-                    && inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
-                    inactive.gameObject.Show();
+                if(AppContentStates.Current != null && AppContentStates.Current.code != null) {
+                    if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()
+                        && inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
+                        inactive.gameObject.Show();
+                    }
                 }
             }
         }

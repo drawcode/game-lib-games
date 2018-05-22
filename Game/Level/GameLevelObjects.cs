@@ -214,21 +214,21 @@ public class GameLevelGridData {
         return false;
     }
 
-    public void SetAssetsInAssetMap(
-        string code, string type, string dataType, string displayType, Vector3 pos) {
+    //public void SetAssetsInAssetMap(
+    //    string code, string type, string dataType, string displayType, Vector3 pos) {
 
-        GameLevelItemAssetData assetData = new GameLevelItemAssetData();
+    //    GameLevelItemAssetData assetData = new GameLevelItemAssetData();
 
-        assetData.code = code;
-        assetData.type = type;
-        assetData.data_type = dataType;
-        assetData.display_type = displayType;
-        assetData.position_data = new Vector3Data(pos);
-        assetData.SetAssetScaleRange(.7f, 1.2f);
-        assetData.SetAssetRotationRangeY(-180, 180);
+    //    assetData.code = code;
+    //    assetData.type = type;
+    //    assetData.data_type = dataType;
+    //    assetData.display_type = displayType;
+    //    assetData.position_data = new Vector3Data(pos);
+    //    assetData.SetAssetScaleRange(.7f, 1.2f);
+    //    assetData.SetAssetRotationRangeY(-180, 180);
 
-        SetAssetsInAssetMap(assetData);
-    }
+    //    SetAssetsInAssetMap(assetData);
+    //}
 
     public void SetAssetsInAssetMap(
         string code, string type, string dataType, string displayType,
@@ -339,9 +339,94 @@ public class GameLevelGridData {
 
             if(!assetLayoutData.ContainsKey(keyLayout)) {
 
-                Vector3 pos = Vector3.one.WithX(x).WithY(y).WithZ(z);
+                Vector3 posData = Vector3.one.WithX(x).WithY(y).WithZ(z);
 
-                SetAssetsInAssetMap(asset.code, asset.type, asset.data_type, asset.display_type, pos);
+                //
+
+                Vector3 scaleData = MathUtil.RandomRangeConstrain(
+                    .7f, 1.3f);
+                
+                if(asset.ContainsKey(BaseDataObjectKeys.scale_min)
+                    && asset.ContainsKey(BaseDataObjectKeys.scale_max)) {
+
+                    double scaleMin = asset.scale_min;
+                    double scaleMax = asset.scale_max;
+
+                    scaleData = MathUtil.RandomRangeConstrain(
+                        (float)scaleMin, (float)scaleMax);
+
+                }
+                else if(asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
+                    && asset.ContainsKey(BaseDataObjectKeys.scale_data_max)) {
+
+                    Vector3Data scaleDataMin = asset.scale_data_min;
+                    Vector3Data scaleDataMax = asset.scale_data_max;
+
+                    if(scaleDataMin != null && scaleDataMax != null) {
+
+                        scaleData = MathUtil.RandomRangeConstrain(
+                            scaleDataMin.GetVector3().x, scaleDataMax.GetVector3().x);
+
+                        //if(scaleDataMax.x == 1) {
+                        //    scaleData.x = 1;
+                        //}
+
+                        //if(scaleDataMax.y == 1) {
+                        //    scaleData.y = 1;
+                        //}
+                        //if(scaleDataMax.z == 1) {
+                        //    scaleData.z = 1;
+                        //}
+                    }
+                }
+
+                Vector3 rotationData = Vector3.zero.WithY(
+                    MathUtil.RandomRangeY(-180, 180).y);
+
+                if(asset.ContainsKey(BaseDataObjectKeys.rotation_min)
+                    && asset.ContainsKey(BaseDataObjectKeys.rotation_max)) {
+
+                    double rotationMin = asset.rotation_min;
+                    double rotationMax = asset.rotation_max;
+
+                    rotationData = MathUtil.RandomRangeConstrain(
+                        (float)rotationMin, (float)rotationMax);
+
+                }
+                else if(asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
+                    && asset.ContainsKey(BaseDataObjectKeys.scale_data_max)) {
+
+
+                    Vector3Data rotationDataMin = asset.rotation_data_min;
+                    Vector3Data rotationDataMax = asset.rotation_data_max;
+
+                    if(rotationDataMin != null && rotationDataMax != null) {
+
+                        rotationData = MathUtil.RandomRangeConstrain(
+                            rotationDataMin.GetVector3(), rotationDataMax.GetVector3());
+
+                        // TODO rotation 
+
+                        //if(rotationDataMax.x == 0) {
+                        //    rotationData.x = 0;
+                        //}
+
+                        //if(rotationDataMax.y == 0) {
+                        //    rotationData.y = 0;
+                        //}
+
+                        //if(rotationDataMax.z == 0) {
+                        //    rotationData.z = 0;
+                        //}
+                    }
+                }
+
+                //assetData.SetAssetScaleRange(.7f, 1.2f);
+                //assetData.SetAssetRotationRangeY(-180, 180);
+
+                SetAssetsInAssetMap(
+                    asset.code, asset.type, asset.data_type, asset.display_type,
+                    posData, scaleData, rotationData);
             }
         }
     }

@@ -245,29 +245,32 @@ public class GameNetworks : GameObjectBehavior {
         // This helps the final case of when a user changes gamecenter while the app
         // is running and the auth changed event is just not broadcasting.
 
-        if(GameState.Instance != null
-            && GameProfiles.Current != null) {
+        if(GameGlobal.isReady) {
 
-            currentLoggedInUserNetwork = GameProfiles.Current.username;
+            if(GameState.Instance != null
+                && GameProfiles.Current != null) {
 
-            if((gameNetworkiOSAppleGameCenterEnabled
-                || gameNetworkAndroidGooglePlayEnabled)
-                && IsThirdPartyNetworkUserAuthenticated(networkType)) {
+                currentLoggedInUserNetwork = GameProfiles.Current.username;
 
-                string networkName = GetNetworkUsername();
-                if(!string.IsNullOrEmpty(networkName)) {
-                    currentLoggedInUserNetwork = networkName;
+                if((gameNetworkiOSAppleGameCenterEnabled
+                    || gameNetworkAndroidGooglePlayEnabled)
+                    && IsThirdPartyNetworkUserAuthenticated(networkType)) {
+
+                    string networkName = GetNetworkUsername();
+                    if(!string.IsNullOrEmpty(networkName)) {
+                        currentLoggedInUserNetwork = networkName;
+                    }
                 }
-            }
 
-            if(currentLoggedInUserNetwork != GameProfiles.Current.username) {
-                LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: currentLoggedInUserNetwork: " + currentLoggedInUserNetwork);
+                if(currentLoggedInUserNetwork != GameProfiles.Current.username) {
+                    LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: currentLoggedInUserNetwork: " + currentLoggedInUserNetwork);
 
-                LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: changed: " + GameProfiles.Current.username);
-                GameState.ChangeUser(currentLoggedInUserNetwork);
-                LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: GameProfiles.Current.username: " + GameProfiles.Current.username);
+                    LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: changed: " + GameProfiles.Current.username);
+                    GameState.ChangeUser(currentLoggedInUserNetwork);
+                    LogUtil.Log("CheckThirdPartyNetworkLoggedInUser: GameProfiles.Current.username: " + GameProfiles.Current.username);
 
-                AnalyticsNetworks.LogEventGameNetworkUser(currentLoggedInUserNetwork, networkType, null);
+                    AnalyticsNetworks.LogEventGameNetworkUser(currentLoggedInUserNetwork, networkType, null);
+                }
             }
         }
     }
@@ -549,15 +552,15 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
-        
-        LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" + 
+
+        LogUtil.Log("showAchievementsOrLoginAndroidGooglePlay:GameNetworks.gameNetworkAndroidGooglePlayEnabled:" +
             GameNetworks.gameNetworkAndroidGooglePlayEnabled);
-        
+
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
-        
+
             bool authenticated = IsThirdPartyNetworkUserAuthenticated(GameNetworkType.gameNetworkAppleGameCenter);
-                               
-            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" + 
+
+            Debug.Log("showAchievementsOrLoginiOSAppleGameCenter:authenticated:" +
                   authenticated);
 
             if(authenticated) {
@@ -812,7 +815,7 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
         if(GameNetworks.gameNetworkAndroidGooglePlayEnabled) {
             if(IsThirdPartyNetworkAvailable(GameNetworkType.gameNetworkGooglePlayServices)) {
-                LogUtil.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue); 
+                LogUtil.Log("reportScoreGooglePlay:" + " key:" + key + " keyValue:" + keyValue);
                 //PlayGameServices.submitScore(key, keyValue);
                 gameNetworkManager.reportScore(keyValue, key);
             }
@@ -948,7 +951,7 @@ public class GameNetworks : GameObjectBehavior {
                 }
                 else {
                     //PlayGameServices.incrementAchievement(key, (int)progress); 
-                    gameNetworkManager.reportProgress(key, progress, null);               
+                    gameNetworkManager.reportProgress(key, progress, null);
                 }
             }
         }
@@ -1226,9 +1229,9 @@ public class GameNetworks : GameObjectBehavior {
                 gameNetworkManager.authenticate();
                 Debug.Log("Unity PlayGameServices LoginNetwork is available...");
             }
-            
+
             // Check existing achievements and update them if missing
-            
+
             LogUtil.Log("Unity PlayGameServices LoginNetwork...");
 #endif
         }
@@ -1311,12 +1314,12 @@ public class GameNetworks : GameObjectBehavior {
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
         string networkUsername = gameNetworkManager.currentUser.userName;
         LogUtil.Log("setLocalProfileToNetworkUsernameAndroidGooglePlay: " + networkUsername);
-        
+
         if(!string.IsNullOrEmpty(networkUsername)) {
             //GameState.ChangeUser(networkUsername);
             //GameState.Instance.profile.SetThirdPartyNetworkUser(true);
             //GameState.SaveProfile();
-            
+
             //LogUtil.Log("Logging in user GameCenter: " + networkUsername);
         }
 #endif
@@ -1401,9 +1404,9 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 #if GAMENETWORK_ANDROID_GOOGLE_PLAY_UNITY
         networkUser = getNetworkUsernameFiltered(gameNetworkManager.currentUser.userName);
-        if(networkUser != GameProfiles.Current.username 
+        if(networkUser != GameProfiles.Current.username
             && !string.IsNullOrEmpty(networkUser)) {
-            LogUtil.Log("GetNetworkUsername: " + networkUser);          
+            LogUtil.Log("GetNetworkUsername: " + networkUser);
         }
 #endif
         return networkUser;
@@ -1679,7 +1682,7 @@ public class GameNetworks : GameObjectBehavior {
                 }
             }
         }
-        
+
 
         //JsonData jsonData = JsonMapper.ToObject(responseText.Replace("\\\"", "\""));
 
