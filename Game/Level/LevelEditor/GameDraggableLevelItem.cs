@@ -28,6 +28,14 @@ public class GameDraggableLevelItem : GameObjectBehavior {
     }
 
     public virtual void Start() {
+
+#if UNITY_EDITOR
+        shouldHideDistance = true;//true;
+#else
+        shouldHideDistance = true;
+#endif
+
+
         Init();
     }
 
