@@ -27,8 +27,9 @@ public class BaseGamePlayerUI : GameObjectBehavior {
     public float h = 0;
     public float v = 0;
     public float u = 0;
-    
+
     int loops = 0;
+    int loopsLimit = 10;
 
     public bool runOnly = false;
     public bool resetAnimationObject = true;
@@ -52,7 +53,9 @@ public class BaseGamePlayerUI : GameObjectBehavior {
     public virtual void Start() {
 
         if(gameCustomPlayerContainer == null) {
-            gameCustomPlayerContainer = gameObject.GetComponent<GameCustomPlayerContainer>();
+
+            gameCustomPlayerContainer =
+                gameObject.GetComponent<GameCustomPlayerContainer>();
         }
 
         running = false;
@@ -62,16 +65,18 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
         if(gameCustomPlayerContainer != null) {
 
-            foreach(Animation anim in gameObject.GetComponentsInChildren<Animation>()) {
+            foreach(Animation anim in
+                gameObject.GetComponentsInChildren<Animation>()) {
 
-                if(anim.isPlaying && loops < 8) {
+                if(anim.isPlaying && loops < loopsLimit) {
                     loops++;
                     continue;
                 }
 
                 loops = 0;
 
-                gameObject.PlayAnimationBlendRandom(v, 0.5f, 0.7f);
+                //gameObject.PlayAnimationBlendRandom(v, 0.5f, 1f);
+                gameObject.PlayAnimationCrossFadeRandom(v, 1f);
             }
         }
     }
@@ -84,35 +89,43 @@ public class BaseGamePlayerUI : GameObjectBehavior {
         }
         else {
 
-            foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
+            foreach(Animator anim in
+                gameObject.GetComponentsInChildren<Animator>()) {
+
                 anim.SetFloat("speed", .9f);
                 anim.SetFloat("strafe", .05f);
                 anim.SetFloat("jump", .05f);
                 anim.SetFloat("death", 0f);
                 anim.SetFloat("hit", 0f);
                 anim.SetFloat("attack", 0f);
+
                 running = true;
+
                 animateObject = anim.gameObject;
             }
         }
     }
 
     public virtual void RunAnimations() {
-        
+
         if(gameCustomPlayerContainer != null) {
 
             AnimateWithAnimation();
         }
         else {
 
-            foreach(Animator anim in gameObject.GetComponentsInChildren<Animator>()) {
+            foreach(Animator anim in
+                gameObject.GetComponentsInChildren<Animator>()) {
+
                 anim.SetFloat("speed", v);
                 anim.SetFloat("strafe", h);
                 anim.SetFloat("jump", u);
                 anim.SetFloat("death", 0);
                 anim.SetFloat("hit", 0);
                 anim.SetFloat("attack", 0);
+
                 animateObject = anim.gameObject;
+
                 //Avatar avatar = anim.avatar;
                 //RuntimeAnimatorController controller = anim.runtimeAnimatorController;
 
@@ -138,10 +151,12 @@ public class BaseGamePlayerUI : GameObjectBehavior {
         if(resetAnimationObject && animateObject != null) {
 
             animateObject.transform.localPosition =
-                Vector3.Lerp(animateObject.transform.localPosition, Vector3.zero, Time.deltaTime);
+                Vector3.Lerp(animateObject.transform.localPosition,
+                    Vector3.zero, Time.deltaTime);
 
             animateObject.transform.localRotation =
-                Quaternion.Lerp(animateObject.transform.localRotation, Quaternion.identity, Time.deltaTime);
+                Quaternion.Lerp(animateObject.transform.localRotation,
+                    Quaternion.identity, Time.deltaTime);
         }
 
         if(GameConfigs.isGameRunning) {
@@ -177,7 +192,6 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
             //transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, 1);
             //transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, 1);
-
         }
     }
 }
