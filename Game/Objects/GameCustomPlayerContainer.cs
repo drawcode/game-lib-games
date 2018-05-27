@@ -29,6 +29,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
     public bool zoomAdjust = false;
     public double zoomAdjustAmount = 10f;
     public GameProfileCharacterItem gameProfileCharacterItem;
+    public GameCharacter gameCharacter;
 
     bool initialized = false;
 
@@ -114,7 +115,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             }
         }
         
-        GameCharacter gameCharacter = 
+        gameCharacter = 
             GameCharacters.Instance.GetById(gameCharacterCode);
         
         if (gameCharacter == null) {
