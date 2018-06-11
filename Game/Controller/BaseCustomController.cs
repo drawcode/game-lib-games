@@ -138,7 +138,14 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
 
                     if (prop.IsTypeTexture()) {
 
-                        string codeNew = prop.code + "-" + preset.code;
+                        //string codeNew = prop.code + "-" + preset.code;
+                        //string codeNew = preset.code + ".*" + prop.code;
+
+                        string codeFind = prop.code;
+
+                        string codePropFull = preset.data.Get<string>(prop.code);
+                        
+                        string codeNew = codePropFull + "-" + prop.code;
 
                         string pathMaterial = path + codeNew;
 
