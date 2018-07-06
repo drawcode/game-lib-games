@@ -78,13 +78,15 @@ public class GameVehicleDrive : GameObjectBehavior {
     private WheelFrictionCurve flSidewaysFriction = new WheelFrictionCurve();
     private WheelFrictionCurve rrSidewaysFriction = new WheelFrictionCurve();
     private WheelFrictionCurve rlSidewaysFriction = new WheelFrictionCurve();
-    private float oldForwardFriction = 0.00f;
-    private float oldSidewaysFriction = 0.00f;
+    //
+    private float lastForwardFriction = 0.00f;
+    private float lastSidewaysFriction = 0.00f;
     private float brakingForwardFriction = 0.03f;
     private float brakingSidewaysFriction = 0.03f;
     private float brakingSidewaysFrictionBackward = 0.01f;
     private float stopForwardFriction = 1;
     private float stopSidewaysFriction = 1;
+    //
     private AudioSource brakeAudioSource;
     private bool isPlayingSound = false;
 
@@ -102,7 +104,7 @@ public class GameVehicleDrive : GameObjectBehavior {
 
         vehicleDriveData = new GameVehicleDriveData();
 
-        if (inverseWheelTurning) {
+        if(inverseWheelTurning) {
             wheelTurningParameter = -1;
         }
         else {
@@ -111,11 +113,10 @@ public class GameVehicleDrive : GameObjectBehavior {
 
         rigidbody.centerOfMass = new Vector3(0, centerOfMassY, 0);
 
-        oldForwardFriction = frWheelCollider.forwardFriction.stiffness;
-        oldSidewaysFriction = frWheelCollider.sidewaysFriction.stiffness;
+        lastForwardFriction = frWheelCollider.forwardFriction.stiffness;
+        lastSidewaysFriction = frWheelCollider.sidewaysFriction.stiffness;
 
         InitSound();
-
     }
 
     void Start() {
@@ -133,6 +134,8 @@ public class GameVehicleDrive : GameObjectBehavior {
 
     void InitSound() {
 
+        //
+
         brakeAudioSource = gameObject.AddComponent<AudioSource>();
         brakeAudioSource.clip = brakeSound;
         brakeAudioSource.loop = true;
@@ -140,6 +143,7 @@ public class GameVehicleDrive : GameObjectBehavior {
         //brakeAudioSource.rolloffMode = AudioRolloffMode.Linear;
         brakeAudioSource.playOnAwake = false;
 
+        //
 
         turboAudioSource = gameObject.AddComponent<AudioSource>();
         turboAudioSource.clip = turboSound;
@@ -147,6 +151,8 @@ public class GameVehicleDrive : GameObjectBehavior {
         turboAudioSource.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
         //turboAudioSource.rolloffMode = AudioRolloffMode.Linear;
         turboAudioSource.playOnAwake = false;
+
+        //
 
         motorAudioSource = gameObject.AddComponent<AudioSource>();
         motorAudioSource.clip = motorSound;
@@ -157,6 +163,8 @@ public class GameVehicleDrive : GameObjectBehavior {
         //motorAudioSource.rolloffMode = AudioRolloffMode.Linear;
         motorAudioSource.Play();
 
+        //
+
         motorAudioSourceLow = gameObject.AddComponent<AudioSource>();
         motorAudioSourceLow.clip = motorSoundLow;
         motorAudioSourceLow.loop = true;
@@ -166,6 +174,8 @@ public class GameVehicleDrive : GameObjectBehavior {
         //motorAudioSourceLow.rolloffMode = AudioRolloffMode.Linear;
         motorAudioSourceLow.Play();
 
+        //
+
         motorAudioSourceMid = gameObject.AddComponent<AudioSource>();
         motorAudioSourceMid.clip = motorSoundMid;
         motorAudioSourceMid.loop = true;
@@ -174,12 +184,11 @@ public class GameVehicleDrive : GameObjectBehavior {
         motorAudioSourceMid.pitch = 0.1f;
         //motorAudioSourceMid.rolloffMode = AudioRolloffMode.Linear;
         motorAudioSourceMid.Play();
-
     }
 
     void FixedUpdate() {
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
 
             return;
         }
@@ -187,7 +196,7 @@ public class GameVehicleDrive : GameObjectBehavior {
         currentSpeed = (Mathf.PI * 2 * flWheelCollider.radius) * flWheelCollider.rpm * 60 / 1000;
         currentSpeed = Mathf.Round(currentSpeed);
 
-        if (((currentSpeed > 0) && (vehicleDriveData.inputAxisVertical < 0))
+        if(((currentSpeed > 0) && (vehicleDriveData.inputAxisVertical < 0))
             || ((currentSpeed < 0) && (vehicleDriveData.inputAxisVertical > 0))) {
             isBraking = true;
         }
@@ -198,8 +207,8 @@ public class GameVehicleDrive : GameObjectBehavior {
             frWheelCollider.brakeTorque = 0;
         }
 
-        if (isBraking == false) {
-            if ((currentSpeed < maxSpeed) && (currentSpeed > (maxBackwardSpeed * -1))) {
+        if(isBraking == false) {
+            if((currentSpeed < maxSpeed) && (currentSpeed > (maxBackwardSpeed * -1))) {
 
                 flWheelCollider.motorTorque = maxTorque * vehicleDriveData.inputAxisVertical;
                 frWheelCollider.motorTorque = maxTorque * vehicleDriveData.inputAxisVertical;
@@ -217,7 +226,7 @@ public class GameVehicleDrive : GameObjectBehavior {
             frWheelCollider.motorTorque = 0;
         }
 
-        //je hoeher die Geschwindigkeit,  desto geringer der maximale Einschlagwinkel.
+        // the higher the speed, the lower the maximum steering angle.
         float speedProcent = currentSpeed / maxSpeed;
         speedProcent = Mathf.Clamp(speedProcent, 0, 1);
         float speedControlledMaxSteerAngle;
@@ -228,9 +237,9 @@ public class GameVehicleDrive : GameObjectBehavior {
         FullBraking();
 
         SetCurrentGear();
+
         HandleGearSound();
         HandleAboveGround();
-
     }
 
     public void HandleAboveGround() {
@@ -238,19 +247,20 @@ public class GameVehicleDrive : GameObjectBehavior {
         Vector3 currentPosition = transform.position;
 
         // Never let the vehicle go below ground due to collision or physics
-        if (currentPosition.y < .05f) {
-            currentPosition.y = .2f;
+        if(currentPosition.y < -.03f) {
+            currentPosition.y = .0f;
             transform.position = currentPosition;
         }
     }
 
     void FullBraking() {
-        if (vehicleDriveData.inputBrake) {
+
+        if(vehicleDriveData.inputBrake) {
 
             rlWheelCollider.brakeTorque = FullBrakeTorque;
             rrWheelCollider.brakeTorque = FullBrakeTorque;
 
-            if ((Mathf.Abs(rigidbody.velocity.z) > 1) || (Mathf.Abs(rigidbody.velocity.x) > 1)) {
+            if((Mathf.Abs(rigidbody.velocity.z) > 1) || (Mathf.Abs(rigidbody.velocity.x) > 1)) {
 
                 SetFriction(brakingForwardFriction, brakingSidewaysFriction, brakingSidewaysFrictionBackward);
                 SetBrakeEffects(true);
@@ -264,63 +274,64 @@ public class GameVehicleDrive : GameObjectBehavior {
         else {
             rlWheelCollider.brakeTorque = 0;
             rrWheelCollider.brakeTorque = 0;
-            SetFriction(oldForwardFriction, oldSidewaysFriction);
+
+            SetFriction(lastForwardFriction, lastSidewaysFriction);
             SetBrakeEffects(false);
         }
     }
 
-    void SetFriction(float MyForwardFriction, float MySidewaysFriction) {
+    void SetFriction(float inputForwardFriction, float inputSidewaysFriction) {
 
-        frForwardFriction.stiffness = MyForwardFriction;
+        frForwardFriction.stiffness = inputForwardFriction;
         frWheelCollider.forwardFriction = frForwardFriction;
 
-        flForwardFriction.stiffness = MyForwardFriction;
+        flForwardFriction.stiffness = inputForwardFriction;
         flWheelCollider.forwardFriction = flForwardFriction;
 
-        rrForwardFriction.stiffness = MyForwardFriction;
+        rrForwardFriction.stiffness = inputForwardFriction;
         rrWheelCollider.forwardFriction = rrForwardFriction;
 
-        rlForwardFriction.stiffness = MyForwardFriction;
+        rlForwardFriction.stiffness = inputForwardFriction;
         rlWheelCollider.forwardFriction = rlForwardFriction;
 
-        frSidewaysFriction.stiffness = MySidewaysFriction;
+        frSidewaysFriction.stiffness = inputSidewaysFriction;
         frWheelCollider.sidewaysFriction = frSidewaysFriction;
 
-        flSidewaysFriction.stiffness = MySidewaysFriction;
+        flSidewaysFriction.stiffness = inputSidewaysFriction;
         flWheelCollider.sidewaysFriction = flSidewaysFriction;
 
-        rrSidewaysFriction.stiffness = MySidewaysFriction;
+        rrSidewaysFriction.stiffness = inputSidewaysFriction;
         rrWheelCollider.sidewaysFriction = rrSidewaysFriction;
 
-        rlSidewaysFriction.stiffness = MySidewaysFriction;
+        rlSidewaysFriction.stiffness = inputSidewaysFriction;
         rlWheelCollider.sidewaysFriction = rlSidewaysFriction;
 
     }
 
-    void SetFriction(float MyForwardFriction, float MySidewaysFriction, float MySidewaysFrictionBackward) {
+    void SetFriction(float inputForwardFriction, float inputSidewaysFriction, float inputSidewaysFrictionBackward) {
 
-        frForwardFriction.stiffness = MyForwardFriction;
+        frForwardFriction.stiffness = inputForwardFriction;
         frWheelCollider.forwardFriction = frForwardFriction;
 
-        flForwardFriction.stiffness = MyForwardFriction;
+        flForwardFriction.stiffness = inputForwardFriction;
         flWheelCollider.forwardFriction = flForwardFriction;
 
-        rrForwardFriction.stiffness = MyForwardFriction;
+        rrForwardFriction.stiffness = inputForwardFriction;
         rrWheelCollider.forwardFriction = rrForwardFriction;
 
-        rlForwardFriction.stiffness = MyForwardFriction;
+        rlForwardFriction.stiffness = inputForwardFriction;
         rlWheelCollider.forwardFriction = rlForwardFriction;
 
-        frSidewaysFriction.stiffness = MySidewaysFriction;
+        frSidewaysFriction.stiffness = inputSidewaysFriction;
         frWheelCollider.sidewaysFriction = frSidewaysFriction;
 
-        flSidewaysFriction.stiffness = MySidewaysFriction;
+        flSidewaysFriction.stiffness = inputSidewaysFriction;
         flWheelCollider.sidewaysFriction = flSidewaysFriction;
 
-        rrSidewaysFriction.stiffness = MySidewaysFrictionBackward;
+        rrSidewaysFriction.stiffness = inputSidewaysFrictionBackward;
         rrWheelCollider.sidewaysFriction = rrSidewaysFriction;
 
-        rlSidewaysFriction.stiffness = MySidewaysFrictionBackward;
+        rlSidewaysFriction.stiffness = inputSidewaysFrictionBackward;
         rlWheelCollider.sidewaysFriction = rlSidewaysFriction;
 
     }
@@ -335,20 +346,19 @@ public class GameVehicleDrive : GameObjectBehavior {
         ParticleSystem particleEmitterL = DustL.GetComponent<ParticleSystem>();
         ParticleSystem particleEmitterR = DustR.GetComponent<ParticleSystem>();
 
-        if (PlayEffects == true) {
+        if(PlayEffects == true) {
 
             WheelHit hit;
 
-            if (rlWheelCollider.GetGroundHit(out hit)) {
+            if(rlWheelCollider.GetGroundHit(out hit)) {
 
-                particleEmitterL.EnableEmission(true);
+                ////particleEmitterL.EnableEmission(true);
                 isGrounding = true;
                 //Skidmarks
                 skidmarkPos = hit.point;
                 skidmarkPos.y += 0.1f;
 
-
-                if (lastSkidmarkPosL != Vector3.zero) {
+                if(lastSkidmarkPosL != Vector3.zero) {
                     relativePos = lastSkidmarkPosL - skidmarkPos;
                     rotationToLastSkidmark = Quaternion.LookRotation(relativePos);
                     Instantiate(skidmark, skidmarkPos, rotationToLastSkidmark);
@@ -357,19 +367,19 @@ public class GameVehicleDrive : GameObjectBehavior {
             }
             else {
 
-                particleEmitterL.EnableEmission(false);
+                ////particleEmitterL.EnableEmission(false);
                 lastSkidmarkPosL = Vector3.zero;
             }
 
-            if (rrWheelCollider.GetGroundHit(out hit)) {
+            if(rrWheelCollider.GetGroundHit(out hit)) {
 
-                particleEmitterR.EnableEmission(true);
+                //particleEmitterR.EnableEmission(true);
                 isGrounding = true;
                 //Skidmarks
                 skidmarkPos = hit.point;
                 skidmarkPos.y += 0.1f;
 
-                if (lastSkidmarkPosR != Vector3.zero) {
+                if(lastSkidmarkPosR != Vector3.zero) {
                     relativePos = lastSkidmarkPosR - skidmarkPos;
                     rotationToLastSkidmark = Quaternion.LookRotation(relativePos);
                     Instantiate(skidmark, skidmarkPos, rotationToLastSkidmark);
@@ -378,15 +388,15 @@ public class GameVehicleDrive : GameObjectBehavior {
             }
             else {
 
-                particleEmitterR.EnableEmission(false);
+                //particleEmitterR.EnableEmission(false);
                 lastSkidmarkPosR = Vector3.zero;
             }
 
-            if ((isPlayingSound == false) && (isGrounding == true)) {
+            if((isPlayingSound == false) && (isGrounding == true)) {
                 isPlayingSound = true;
                 brakeAudioSource.Play();
             }
-            if (isGrounding == false) {
+            if(isGrounding == false) {
                 isPlayingSound = false;
                 brakeAudioSource.Stop();
             }
@@ -396,8 +406,8 @@ public class GameVehicleDrive : GameObjectBehavior {
             isPlayingSound = false;
             brakeAudioSource.Stop();
 
-            particleEmitterL.EnableEmission(false);
-            particleEmitterR.EnableEmission(false);
+            //particleEmitterL.EnableEmission(false);
+            //particleEmitterR.EnableEmission(false);
             lastSkidmarkPosL = Vector3.zero;
             lastSkidmarkPosR = Vector3.zero;
         }
@@ -405,16 +415,16 @@ public class GameVehicleDrive : GameObjectBehavior {
 
     void Update() {
 
-        if (GameConfigs.isUIRunning) {
+        if(GameConfigs.isUIRunning) {
             return;
         }
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
             return;
         }
 
         RotateWheels();
-        SteelWheels();
+        SteerWheels();
     }
 
     void RotateWheels() {
@@ -424,7 +434,7 @@ public class GameVehicleDrive : GameObjectBehavior {
         rrWheel.Rotate(rrWheelCollider.rpm / 60 * 360 * Time.deltaTime * wheelTurningParameter, 0, 0);
     }
 
-    void SteelWheels() {
+    void SteerWheels() {
 
         flWheel.localEulerAngles =
             new Vector3(flWheel.localEulerAngles.x,
@@ -442,8 +452,8 @@ public class GameVehicleDrive : GameObjectBehavior {
 
         gearNumber = gearSpeed.Count;
 
-        for (var i = 0; i < gearNumber; i++) {
-            if (gearSpeed[i] > currentSpeed) {
+        for(var i = 0; i < gearNumber; i++) {
+            if(gearSpeed[i] > currentSpeed) {
                 currentGear = i;
                 break;
             }
@@ -452,7 +462,7 @@ public class GameVehicleDrive : GameObjectBehavior {
 
     public void HandleGearSound() {
 
-        if (!GameConfigs.isGameRunning) {
+        if(!GameConfigs.isGameRunning) {
 
             motorAudioSource.volume = 0;
             motorAudioSourceLow.volume = 0;
@@ -465,7 +475,7 @@ public class GameVehicleDrive : GameObjectBehavior {
         float tempMaxSpeed = 0.00f;
         float currentPitch = 0.00f;
 
-        switch (currentGear) {
+        switch(currentGear) {
             case 0:
                 tempMinSpeed = 0.00f;
                 tempMaxSpeed = gearSpeed[currentGear];
@@ -479,12 +489,11 @@ public class GameVehicleDrive : GameObjectBehavior {
 
         currentPitch = (float)(((Mathf.Abs(currentSpeed) - tempMinSpeed) / (tempMaxSpeed - tempMinSpeed)) + 0.8);
 
-        if (currentPitch > 2) {
+        if(currentPitch > 2) {
             currentPitch = 2;
         }
-
-
-        if (currentSpeed < 0.1f) {
+        
+        if(currentSpeed < 0.1f) {
             motorAudioSource.volume = 0;
             motorAudioSourceLow.volume = 0;
             motorAudioSourceMid.volume = 0;
