@@ -222,9 +222,9 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         }
     }
 
-    public override void Update() {
-        //if (currentObject) {
-        //    currentObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
-        //}
-    }
+    //public override void Update() {
+    //    //if (currentObject) {
+    //    //    currentObject.transform.Rotate(0f, -50 * Time.deltaTime, 0f);
+    //    //}
+    //}
 }

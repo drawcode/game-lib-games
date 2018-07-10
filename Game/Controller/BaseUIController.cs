@@ -191,84 +191,156 @@ public class BaseHUDButtonNames {
 }
 
 public class BaseUIPanel {
+
+    public static string panelClassNameBlank = "GameUIPanelBlank";
+    public static string panelClassNameInGame = "GameUIPanelInGame";
+    public static string panelClassNameHeader = "GameUIPanelHeader";
+    public static string panelClassNameNavigation = "GameUIPanelNavigation";
+    public static string panelClassNameMenu = "GameUIPanelMenu";
+    public static string panelClassNameMain = "GameUIPanelMain";
+    public static string panelClassNameWorlds = "GameUIPanelWorlds";
+    public static string panelClassNameLevels = "GameUIPanelLevels";
+    public static string panelClassNameLevel = "GameUIPanelLevel";
+    public static string panelClassNameGame = "GameUIPanelGame";
+    public static string panelClassNameHUD = "GameUIPanelHUD";
+    public static string panelClassNameSettings = "GameUIPanelSettings";
+    public static string panelClassNameSettingsAudio = "GameUIPanelSettingsAudio";
+    public static string panelClassNameSettingsControls = "GameUIPanelSettingsControls";
+    public static string panelClassNameSettingsProfile = "GameUIPanelSettingsProfile";
+    public static string panelClassNameSettingsHelp = "GameUIPanelSettingsHelp";
+    public static string panelClassNameSettingsCredits = "GameUIPanelSettingsCredits";
+    public static string panelClassNameGameMode = "GameUIPanelGameMode";
+    public static string panelClassNameGameModeCoop = "GameUIPanelGameModeCoop";
+    public static string panelClassNameGameModeMultiplayer = "GameUIPanelGameModeMultiplayer";
+    public static string panelClassNameGameModeMultiplayerCoop = "GameUIPanelGameModeMultiplayerCoop";
+    public static string panelClassNameGameModeMultiplayerMatchup = "GameUIPanelGameModeMultiplayerMatchup";
+    public static string panelClassNameGameModeMission = "GameUIPanelGameModeMission";
+    public static string panelClassNameGameModeArcade = "GameUIPanelGameModeArcade";
+    public static string panelClassNameGameModeCareer = "GameUIPanelGameModeCareer";
+    public static string panelClassNameGameModeChallenge = "GameUIPanelGameModeChallenge";
+    public static string panelClassNameGameModeCustomize = "GameUIPanelGameModeCustomize";
+    public static string panelClassNameGameModeTraining = "GameUIPanelGameModeTraining";
+    public static string panelClassNameGameModeTrainingMode = "GameUIPanelGameModeTrainingMode";
+    public static string panelClassNameGameModeTrainingModeChoice = "GameUIPanelGameModeTrainingModeChoice";
+    public static string panelClassNameGameModeTrainingModeCollection = "GameUIPanelGameModeTrainingModeCollection";
+    public static string panelClassNameGameModeTrainingModeContent = "GameUIPanelGameModeTrainingModeContent";
+    public static string panelClassNameGameModeTrainingModeRPGHealth = "GameUIPanelGameModeTrainingModeRPGHealth";
+    public static string panelClassNameGameModeTrainingModeRPGEnergy = "GameUIPanelGameModeTrainingModeRPGEnergy";
+
+    public static string panelClassNameBackgrounds = "GameUIPanelBackgrounds";
+
+    public static string panelClassNameStore = "GameUIPanelStore";
+    public static string panelClassNameCredits = "GameUIPanelCredits";
+    public static string panelClassNameSocial = "GameUIPanelSocial";
+    public static string panelClassNameTrophy = "GameUIPanelTrophy";
+    public static string panelClassNameResults = "GameUIPanelResults";
+    public static string panelClassNameTrophyStatistics = "GameUIPanelTrophyStatistics";
+    public static string panelClassNameTrophyAchievements = "GameUIPanelTrophyAchievements";
+    public static string panelClassNameEquipment = "GameUIPanelEquipment";
+    public static string panelClassNameStatistics = "GameUIPanelStatistics";
+    public static string panelClassNameAchievements = "GameUIPanelAchievements";
+    public static string panelClassNameProducts = "GameUIPanelProducts";
+    public static string panelClassNameProductCurrency = "GameUIPanelProductCurrency";
+    public static string panelClassNameProductCurrencyEarn = "GameUIPanelProductCurrencyEarn";
+    public static string panelClassNameCustomize = "GameUIPanelCustomize";
+    public static string panelClassNameCustomizeLevels = "GameUIPanelCustomizeLevels";
+    public static string panelClassNameCustomizeWorlds = "GameUIPanelCustomizeWorlds";
+    public static string panelClassNameCustomizeCharacter = "GameUIPanelCustomizeCharacter";
+    public static string panelClassNameCustomizeCharacterColors = "GameUIPanelCustomizeCharacterColors";
+    public static string panelClassNameCustomizeCharacterRPG = "GameUIPanelCustomizeCharacterRPG";
+    public static string panelClassNameCustomizeAudio = "GameUIPanelCustomizeAudio";
+    public static string panelClassNameCustomSafety = "GameUIPanelCustomSafety";
+    public static string panelClassNameCustomSmarts = "GameUIPanelCustomSmarts";
+    public static string panelClassNameCommunityCamera = "GameUIPanelCommunityCamera";
+    public static string panelClassNameCommunityComment = "GameUIPanelCommunityComment";
+    public static string panelClassNameAR = "GameUIPanelAR";
+    public static string panelClassNameARSettings = "GameUIPanelARSettings";
+    public static string panelClassNameVR = "GameUIPanelVR";
+    public static string panelClassNameVRSettings = "GameUIPanelVRSettings";
+    //public static string panelClassName = "GameUIPanel";
+
     //
-    public static string panelBlank = "PanelBlank";
-    public static string panelInGame = "PanelInGame";
-    public static string panelHeader = "PanelHeader";
-    public static string panelNavigation = "PanelNavigation";
-    public static string panelMenu = "PanelMenu";
-    public static string panelMain = "PanelMain";
-    public static string panelWorlds = "PanelWorlds";
-    public static string panelLevels = "PanelLevels";
-    public static string panelLevel = "PanelLevel";
-    public static string panelGame = "PanelGame";
-    public static string panelHUD = "PanelHUD";
+    public static string panelBlank = "panel-blank";
+    public static string panelBackgrounds = "panel-backgrounds";
+    public static string panelInGame = "panel-in-game";
+    public static string panelHeader = "panel-header";
+    public static string panelFooter = "panel-footer";
+    public static string panelNavigation = "panel-navigation";
+    public static string panelMenu = "panel-menu";
+    public static string panelMain = "panel-main";
+    public static string panelWorlds = "panel-worlds";
+    public static string panelLevels = "panel-levels";
+    public static string panelLevel = "panel-level";
+    public static string panelGame = "panel-game";
+    public static string panelHUD = "panel-hud";
     //
-    public static string panelSettings = "PanelSettings";
-    public static string panelSettingsAudio = "PanelSettingsAudio";
-    public static string panelSettingsControls = "PanelSettingsControls";
-    public static string panelSettingsProfile = "PanelSettingsProfile";
-    public static string panelSettingsHelp = "PanelSettingsHelp";
-    public static string panelSettingsCredits = "PanelSettingsCredits";
+    public static string panelSettings = "panel-settings";
+    public static string panelSettingsAudio = "panel-settings-Audio";
+    public static string panelSettingsControls = "panel-settings-Controls";
+    public static string panelSettingsProfile = "panel-settings-profile";
+    public static string panelSettingsHelp = "panel-settings-help";
+    public static string panelSettingsCredits = "panel-settings-credits";
     //
-    public static string panelGameMode = "PanelGameMode";
-    public static string panelGameModeCoop = "PanelGameModeCoop";
-    public static string panelGameModeMultiplayer = "PanelGameModeMultiplayer";
-    public static string panelGameModeMultiplayerCoop = "PanelGameModeMultiplayerCoop";
-    public static string panelGameModeMultiplayerMatchup = "PanelGameModeMultiplayerMatchup";
-    public static string panelGameModeMissions = "PanelGameModeMissions";
-    public static string panelGameModeArcade = "PanelGameModeArcade";
-    public static string panelGameModeCareer = "PanelGameModeCareer";
-    public static string panelGameModeChallenge = "PanelGameModeChallenge";
+    public static string panelGameMode = "panel-game-mode";
+    public static string panelGameModeCoop = "panel-game-mode-coop";
+    public static string panelGameModeMultiplayer = "panel-game-mode-multiplayer";
+    public static string panelGameModeMultiplayerCoop = "panel-game-mode-multiplayer-coop";
+    public static string panelGameModeMultiplayerMatchup = "panel-game-mode-multiplayer-matchup";
+    public static string panelGameModeMissions = "panel-game-mode-missions";
+    public static string panelGameModeArcade = "panel-game-mode-arcade";
+    public static string panelGameModeCareer = "panel-game-mode-career";
+    public static string panelGameModeChallenge = "panel-game-mode-challenge";
     //
-    public static string panelGameModeCustomize = "PanelGameModeCustomize";
+    public static string panelGameModeCustomize = "panel-game-mode-customize";
     //
-    public static string panelGameModeTraining = "PanelGameModeTraining";
-    public static string panelGameModeTrainingMode = "PanelGameModeTrainingMode";
-    public static string panelGameModeTrainingModeChoice = "PanelGameModeTrainingModeChoice";
-    public static string panelGameModeTrainingModeCollection = "PanelGameModeTrainingModeChoice";
-    public static string panelGameModeTrainingModeContent = "PanelGameModeTrainingModeContent";
-    public static string panelGameModeTrainingModeRPGHealth = "PanelGameModeTrainingModeRPGHealth";
-    public static string panelGameModeTrainingModeRPGEnergy = "PanelGameModeTrainingModeRPGEnergy";
+    public static string panelGameModeTraining = "panel-game-mode-training";
+    public static string panelGameModeTrainingMode = "panel-game-mode-training-mode";
+    public static string panelGameModeTrainingModeChoice = "panel-game-mode-training-mode-choice";
+    public static string panelGameModeTrainingModeCollection = "panel-game-mode-training-mode-choice";
+    public static string panelGameModeTrainingModeContent = "panel-game-mode-training-mode-content";
+    public static string panelGameModeTrainingModeRPGHealth = "panel-game-mode-training-mode-rpg-health";
+    public static string panelGameModeTrainingModeRPGEnergy = "panel-game-mode-training-mode-rpg-energy";
     //
-    public static string panelStore = "PanelStore";
-    public static string panelCredits = "PanelCredits";
-    public static string panelSocial = "PanelSocial";
-    public static string panelTrophy = "PanelTrophy";
-    public static string panelResults = "PanelResults";
-    public static string panelTrophyStatistics = "PanelTrophyStatistics";
-    public static string panelTrophyAchievements = "PanelTrophyAchievements";
-    public static string panelEquipment = "PanelEquipment";
-    public static string panelStatistics = "PanelStatistics";
-    public static string panelAchievements = "PanelAchievements";
-    public static string panelProducts = "PanelProducts";
+    public static string panelStore = "panel-store";
+    public static string panelCredits = "panel-credits";
+    public static string panelSocial = "panel-social";
+    public static string panelTrophy = "panel-trophy";
+    public static string panelResults = "panel-results";
+    public static string panelTrophyStatistics = "panel-trophy-statistics";
+    public static string panelTrophyAchievements = "panel-trophy-achievements";
+    public static string panelEquipment = "panel-equipment";
+    public static string panelStatistics = "panel-statistics";
+    public static string panelAchievements = "panel-achievements";
+    public static string panelProducts = "panel-products";
     //
-    public static string panelProductCurrency = "PanelProductCurrency";
-    public static string panelProductCurrencyEarn = "PanelProductCurrencyEarn";
+    public static string panelProductCurrency = "panel-product-currency";
+    public static string panelProductCurrencyEarn = "panel-product-currency-earn";
     //
-    public static string panelCustomize = "PanelCustomize";
-    public static string panelCustomizeLevels = "PanelCustomizeLevels";
-    public static string panelCustomizeWorlds = "PanelCustomizeWorlds";
-    public static string panelCustomizeCharacter = "PanelCustomizeCharacter";
-    public static string panelCustomizeCharacterColors = "PanelCustomizeCharacterColors";
-    public static string panelCustomizeCharacterRPG = "PanelCustomizeCharacterRPG";
-    public static string panelCustomizeAudio = "PanelCustomizeAudio";
-    public static string panelCustomSafety = "PanelCustomSafety";
-    public static string panelCustomSmarts = "panelCustomSmarts";
+    public static string panelCustomize = "panel-customize";
+    public static string panelCustomizeLevels = "panel-customize-levels";
+    public static string panelCustomizeWorlds = "panel-customize-worlds";
+    public static string panelCustomizeCharacter = "panel-customize-character";
+    public static string panelCustomizeCharacterColors = "panel-customize-character-colors";
+    public static string panelCustomizeCharacterRPG = "panel-customize-character-rpg";
+    public static string panelCustomizeAudio = "panel-customize-audio";
+    public static string panelCustomSafety = "panel-custom-safety";
+    public static string panelCustomSmarts = "panelcustom-smarts";
     //
-    public static string panelCommunityCamera = "PanelCommunityCamera";
-    public static string panelCommunityComment = "PanelCommunityComment";
+    public static string panelCommunityCamera = "panel-community-camera";
+    public static string panelCommunityComment = "panel-community-comment";
     //
     //
-    public static string panelAR = "PanelAR";
-    public static string panelARSettings = "PanelARSettings";
-    public static string panelVR = "PanelVR";
-    public static string panelVRSettings = "PanelVRSettings";
+    public static string panelAR = "panel-ar";
+    public static string panelARSettings = "panel-ar-settings";
+    public static string panelVR = "panel-vr";
+    public static string panelVRSettings = "panel-vr-settings";
     //
-    //public static string panelVR = "PanelVR";
-    //public static string panelVRSettings = "PanelVRSettings";
-    //public static string panelGameModeVR = "PanelGameModeVR";
-    //public static string panelGameModeVRSettings = "PanelGameModeVRSettings";
+    //public static string panelVR = "panel-VR";
+    //public static string panelVRSettings = "panel-VRSettings";
+    //public static string panelGameModeVR = "panel-GameModeVR";
+    //public static string panelGameModeVRSettings = "panel-GameModeVRSettings";
+
+
 }
 
 public class BaseUIController : GameObjectBehavior {
@@ -280,6 +352,7 @@ public class BaseUIController : GameObjectBehavior {
     public bool dialogActive = false;
     public bool hudVisible = false;
     public bool deferTap = false;
+    public GameObject uiContainerObject;
     public GameObject gameContainerObject;
     public GameObject gamePauseDialogObject;
     public GameObject gamePauseButtonObject;
@@ -402,9 +475,71 @@ public class BaseUIController : GameObjectBehavior {
         return false;
     }
 
+    public void syncPanelLoaded(string panelCode) {
+
+        // Check if panel is loaded in the UI container
+
+        // If not load it into the container
+
+        Transform goRoot = uiContainerObject.transform;
+        Transform goAlwaysOn = goRoot.Find("always-on");
+
+
+        if(goRoot.gameObject.ContainsChild(panelCode)
+            || (goAlwaysOn != null && goAlwaysOn.gameObject.ContainsChild(panelCode))) {
+
+            // do nothing already loaded
+
+        }
+        else {
+
+            // Load panel
+
+            GameObject panel = AppContentAssets.LoadAssetUI(panelCode);
+
+            if(panel != null) {
+                panel.transform.parent = uiContainerObject.transform;
+                panel.ResetObject();
+            }
+        }
+
+        StartCoroutine(syncPanelLoadedCleanupCo(panelCode));
+
+        // TODO remove unused screens from loaded
+    }
+
+    public IEnumerator syncPanelLoadedCleanupCo(string panelCode) {
+
+        yield return new WaitForEndOfFrame();
+
+        List<Transform> panels = new List<Transform>();
+
+        foreach(Transform t in uiContainerObject.transform) {
+
+            if(t.name.IsEqualLowercase(uiContainerObject.name)) {
+                continue;
+            }
+
+            panels.Add(t);
+        }
+
+        foreach(Transform t in panels) {
+
+            if(t.name.IsEqualLowercase(panelCode)
+                || t.name.IsEqualLowercase("always-on")) {
+                continue;
+            }
+
+            t.gameObject.DestroyGameObject(0.5f, true);
+        }
+    }
+
     public void showUIPanel(object obj, string panelCode, string title) {
+
         Type objType = obj.GetType();
+
         string objName = objType.Name;
+
         showUIPanel(objName, panelCode, title);
     }
 
@@ -419,14 +554,25 @@ public class BaseUIController : GameObjectBehavior {
         //return;
         //}
 
-        //if (currentPanel != panelCode) {
-        //
-        //}
+        if(currentPanel == panelCode) {
+            return;
+        }
 
+        //  string objName = "";
+
+        currentPanel = panelCode;
+
+        syncPanelLoaded(panelCode);
 
         //Debug.Log("<color=#ffa500ff>GameUIController:showUIPanel():</color> objName:" + objName + " panelCode:" + panelCode);
 
-        currentPanel = panelCode;
+        StartCoroutine(showUIPanelActionsCo(objName, panelCode, title));
+
+    }
+
+    public IEnumerator showUIPanelActionsCo(string objName, string panelCode, string title) {
+
+        yield return new WaitForEndOfFrame();
 
         AnalyticsNetworks.LogEventSceneChange(panelCode, title);
 
@@ -434,22 +580,26 @@ public class BaseUIController : GameObjectBehavior {
         HideAllPanels();
 
         //if(panelCode != BaseUIPanel.panelMain) {
-            broadcastUIMessageAnimateType(
-                "GameUIPanelBackgrounds",
-                UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
+        broadcastUIMessageAnimateType(
+            BaseUIPanel.panelClassNameBackgrounds,
+            UIControllerAnimateTypes.uiPanelAnimateTypeInBetween); // starry
         //}
 
         //GameUIPanelBackgrounds.Instance.AnimateInStarry();
 
         broadcastUIMessageAnimateType(
-            "GameUIPanelHeader",
+            BaseUIPanel.panelClassNameHeader,
             UIControllerAnimateTypes.uiPanelAnimateTypeInternal); // starry
 
         //GameUIPanelHeader.Instance.AnimateInInternal();
 
         GameUIPanelHeader.ShowTitle(title);
 
+        yield return new WaitForEndOfFrame();
+
         broadcastUIMessageAnimateIn(objName); // animate in
+
+        yield return new WaitForEndOfFrame();
 
         // TODO base
         GameCustomController.BroadcastCustomSync();
@@ -839,7 +989,9 @@ public class BaseUIController : GameObjectBehavior {
         showUI();
 
         showUIPanel(
-            typeof(GameUIPanelMain),
+            //typeof(GameUIPanelMain),
+            //"GameUIPanelMain",
+            BaseUIPanel.panelClassNameMain,
             BaseUIPanel.panelMain,
             "PLAY GAMEMODE");
 
@@ -853,7 +1005,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideMain() {
         hideUIPanel(
-            typeof(GameUIPanelMain));
+            BaseUIPanel.panelClassNameMain
+            );
     }
 
     // ------------------------------------------------------------
@@ -873,7 +1026,7 @@ public class BaseUIController : GameObjectBehavior {
         showUI();
 
         showUIPanel(
-            typeof(GameUIPanelGameMode),
+            BaseUIPanel.panelClassNameGameMode,
             BaseUIPanel.panelGameMode,
             "PLAY GAMEMODE");
     }
@@ -885,8 +1038,10 @@ public class BaseUIController : GameObjectBehavior {
     //}
 
     public virtual void hideGameMode() {
+
         hideUIPanel(
-            typeof(GameUIPanelGameMode));
+            BaseUIPanel.panelClassNameGameMode
+            );
     }
 
 #endif
@@ -905,7 +1060,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameModeCoop() {
         showUIPanel(
-            typeof(GameUIPanelGameModeCoop),
+            //typeof(GameUIPanelGameModeCoop),
+            BaseUIPanel.panelClassNameGameModeCoop,
             GameUIPanel.panelGameModeCoop,
             "PLAY COOP");
     }
@@ -918,7 +1074,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameModeCoop() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeCoop));
+            BaseUIPanel.panelClassNameGameModeCoop
+            //typeof(GameUIPanelGameModeCoop)
+            );
     }
 
 #endif
@@ -931,14 +1089,17 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameModeMultiplayer() {
 
         showUIPanel(
-            typeof(GameUIPanelGameModeMultiplayer),
+            //typeof(GameUIPanelGameModeMultiplayer),
+            BaseUIPanel.panelClassNameGameModeMultiplayer,
             BaseUIPanel.panelGameModeMultiplayer,
             "PLAY MULTIPLAYER");
     }
 
     public virtual void hideGameModeMultiplayer() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeMultiplayer));
+            BaseUIPanel.panelClassNameGameModeMultiplayer
+            //typeof(GameUIPanelGameModeMultiplayer)
+            );
     }
 
     // COOP
@@ -946,14 +1107,17 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameModeMultiplayerCoop() {
 
         showUIPanel(
-            typeof(GameUIPanelGameModeMultiplayerCoop),
+            //typeof(GameUIPanelGameModeMultiplayerCoop),
+            BaseUIPanel.panelClassNameGameModeMultiplayerCoop,
             BaseUIPanel.panelGameModeMultiplayerCoop,
             "PLAY MULTIPLAYER CO-OP");
     }
 
     public virtual void hideGameModeMultiplayerCoop() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeMultiplayerCoop));
+            BaseUIPanel.panelClassNameGameModeMultiplayerCoop
+            //typeof(GameUIPanelGameModeMultiplayerCoop)
+            );
     }
 
     // MATCHUP
@@ -961,14 +1125,17 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameModeMultiplayerMatchup() {
 
         showUIPanel(
-            typeof(GameUIPanelGameModeMultiplayerMatchup),
+            //typeof(GameUIPanelGameModeMultiplayerMatchup),
+            BaseUIPanel.panelClassNameGameModeMultiplayerMatchup,
             BaseUIPanel.panelGameModeMultiplayerMatchup,
             "PLAY MULTIPLAYER MATCHUP");
     }
 
     public virtual void hideGameModeMultiplayerMatchup() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeMultiplayerMatchup));
+            BaseUIPanel.panelClassNameGameModeMultiplayerMatchup
+            //typeof(GameUIPanelGameModeMultiplayerMatchup)
+            );
     }
 #endif
 
@@ -979,14 +1146,17 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameModeMission() {
 
         showUIPanel(
-            typeof(GameUIPanelGameModeMission),
+            //typeof(GameUIPanelGameModeMission),
+            BaseUIPanel.panelClassNameGameModeMission,
             BaseUIPanel.panelGameModeMissions,
             "PLAY MISSION");
     }
 
     public virtual void hideGameModeMission() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeMission));
+            BaseUIPanel.panelClassNameGameModeMission
+            //typeof(GameUIPanelGameModeMission)
+            );
     }
 
 #endif
@@ -1004,7 +1174,8 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameWorlds() {
 
         showUIPanel(
-            typeof(GameUIPanelWorlds),
+            //typeof(GameUIPanelWorlds),
+            BaseUIPanel.panelClassNameWorlds,
             BaseUIPanel.panelWorlds,
             "WORLDS");
     }
@@ -1017,7 +1188,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameWorlds() {
         hideUIPanel(
-            typeof(GameUIPanelWorlds));
+            BaseUIPanel.panelClassNameWorlds
+            //typeof(GameUIPanelWorlds)
+            );
     }
 
     // ------------------------------------------------------------
@@ -1032,7 +1205,8 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showGameLevels() {
 
         showUIPanel(
-            typeof(GameUIPanelLevels),
+            //typeof(GameUIPanelLevels),
+            BaseUIPanel.panelClassNameLevels,
             BaseUIPanel.panelLevels,
             "LEVELS");
     }
@@ -1045,7 +1219,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameLevels() {
         hideUIPanel(
-            typeof(GameUIPanelLevels));
+            BaseUIPanel.panelClassNameLevels
+            //typeof(GameUIPanelLevels)
+            );
     }
 
 #endif
@@ -1175,7 +1351,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameModeTraining() {
         showUIPanel(
-            typeof(GameUIPanelGameModeTraining),
+            //typeof(GameUIPanelGameModeTraining),
+            BaseUIPanel.panelClassNameGameModeTraining,
             BaseUIPanel.panelGameModeTraining,
             "PLAY TRAINING");
     }
@@ -1188,7 +1365,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameModeTraining() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeTraining));
+            BaseUIPanel.panelClassNameGameModeTraining
+            //typeof(GameUIPanelGameModeTraining)
+            );
     }
 
     // ------------------------------------------------------------
@@ -1196,14 +1375,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameModeTrainingMode() {
         showUIPanel(
-            typeof(GameUIPanelGameModeTrainingMode),
+            //typeof(GameUIPanelGameModeTrainingMode),
+            BaseUIPanel.panelClassNameGameModeTrainingMode,
             BaseUIPanel.panelGameModeTrainingMode,
             "CHOOSE TRAINING MODE");
     }
 
     public virtual void hideGameModeTrainingMode() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeTrainingMode));
+            BaseUIPanel.panelClassNameGameModeTrainingMode
+            //typeof(GameUIPanelGameModeTrainingMode)
+            );
     }
 
     /*
@@ -1287,7 +1469,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameModeChallenge() {
         showUIPanel(
-            typeof(GameUIPanelGameModeChallenge),
+            //typeof(GameUIPanelGameModeChallenge),
+            BaseUIPanel.panelClassNameGameModeChallenge,
             GameUIPanel.panelGameModeChallenge,
             "PLAY CHALLENGE");
     }
@@ -1300,7 +1483,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameModeChallenge() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeChallenge));
+            BaseUIPanel.panelClassNameGameModeChallenge
+            //typeof(GameUIPanelGameModeChallenge)
+            );
     }
 
 #endif
@@ -1318,7 +1503,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameModeArcade() {
         showUIPanel(
-            typeof(GameUIPanelGameModeArcade),
+            //typeof(GameUIPanelGameModeArcade),
+            BaseUIPanel.panelClassNameGameModeArcade,
             GameUIPanel.panelGameModeArcade,
             "PLAY ARCADE");
     }
@@ -1331,7 +1517,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideGameModeArcade() {
         hideUIPanel(
-            typeof(GameUIPanelGameModeArcade));
+            BaseUIPanel.panelClassNameGameModeArcade
+            //typeof(GameUIPanelGameModeArcade)
+            );
     }
 
 #endif
@@ -1551,7 +1739,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettings() {
         showUIPanel(
-            typeof(GameUIPanelSettings),
+            //typeof(GameUIPanelSettings),
+            BaseUIPanel.panelClassNameSettings,
             GameUIPanel.panelSettings,
             "SETTINGS");
     }
@@ -1564,7 +1753,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideSettings() {
         hideUIPanel(
-            typeof(GameUIPanelSettings));
+            BaseUIPanel.panelClassNameSettings
+            //typeof(GameUIPanelSettings)
+            );
     }
 
 #endif
@@ -1582,7 +1773,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettingsAudio() {
         showUIPanel(
-            typeof(GameUIPanelSettingsAudio),
+            //typeof(GameUIPanelSettingsAudio),
+            BaseUIPanel.panelClassNameSettingsAudio,
             GameUIPanel.panelSettingsAudio,
             "SETTINGS: AUDIO");
     }
@@ -1595,7 +1787,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideSettingsAudio() {
         hideUIPanel(
-            typeof(GameUIPanelSettingsAudio));
+            BaseUIPanel.panelClassNameSettingsAudio
+            //typeof(GameUIPanelSettingsAudio)
+            );
     }
 
 #endif
@@ -1612,7 +1806,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettingsControls() {
         showUIPanel(
-            typeof(GameUIPanelSettingsControls),
+            //typeof(GameUIPanelSettingsControls),
+            BaseUIPanel.panelClassNameSettingsControls,
             GameUIPanel.panelSettingsControls,
             "SETTINGS: CONTROLS");
     }
@@ -1625,7 +1820,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideSettingsControls() {
         hideUIPanel(
-            typeof(GameUIPanelSettingsControls));
+            BaseUIPanel.panelClassNameSettingsControls
+            //typeof(GameUIPanelSettingsControls)
+            );
     }
 
 #endif
@@ -1643,7 +1840,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettingsProfile() {
         showUIPanel(
-            typeof(GameUIPanelSettingsProfile),
+            //typeof(GameUIPanelSettingsProfile),
+            BaseUIPanel.panelClassNameSettingsProfile,
             GameUIPanel.panelSettingsProfile,
             "SETTINGS: PROFILES");
     }
@@ -1656,7 +1854,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideSettingsProfile() {
         hideUIPanel(
-            typeof(GameUIPanelSettingsProfile));
+            BaseUIPanel.panelClassNameSettingsProfile
+            //typeof(GameUIPanelSettingsProfile)
+            );
     }
 
 #endif
@@ -1668,14 +1868,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettingsHelp() {
         showUIPanel(
-            typeof(GameUIPanelSettingsHelp),
+            //typeof(GameUIPanelSettingsHelp),
+            BaseUIPanel.panelClassNameSettingsHelp,
             GameUIPanel.panelSettingsHelp,
             "SETTINGS: HELP");
     }
 
     public virtual void hideSettingsHelp() {
         hideUIPanel(
-            typeof(GameUIPanelSettingsHelp));
+            BaseUIPanel.panelClassNameSettingsHelp
+            //typeof(GameUIPanelSettingsHelp)
+            );
     }
 
 #endif
@@ -1687,14 +1890,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showSettingsCredits() {
         showUIPanel(
-            typeof(GameUIPanelSettingsCredits),
+            //typeof(GameUIPanelSettingsCredits),
+            BaseUIPanel.panelClassNameSettingsCredits,
             GameUIPanel.panelSettingsCredits,
             "SETTINGS: CREDITS");
     }
 
     public virtual void hideSettingsCredits() {
         hideUIPanel(
-            typeof(GameUIPanelSettingsCredits));
+            BaseUIPanel.panelClassNameSettingsCredits
+            //typeof(GameUIPanelSettingsCredits)
+            );
     }
 
 #endif
@@ -1721,7 +1927,8 @@ public class BaseUIController : GameObjectBehavior {
         showUI();
 
         showUIPanel(
-            typeof(GameUIPanelResults),
+            //typeof(GameUIPanelResults),
+            BaseUIPanel.panelClassNameResults,
             GameUIPanel.panelResults,
             "RESULTS");
 
@@ -1738,7 +1945,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideResults() {
         hideUIPanel(
-            typeof(GameUIPanelResults));
+            BaseUIPanel.panelClassNameResults
+            //typeof(GameUIPanelResults)
+            );
     }
 
 
@@ -1753,7 +1962,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showEquipment() {
         showUIPanel(
-            typeof(GameUIPanelEquipment),
+            //typeof(GameUIPanelEquipment),
+            BaseUIPanel.panelClassNameEquipment,
             GameUIPanel.panelEquipment,
             "PLAYER CUSTOMIZE + PROGRESS");
     }
@@ -1766,7 +1976,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideEquipment() {
         hideUIPanel(
-            typeof(GameUIPanelEquipment));
+            BaseUIPanel.panelClassNameEquipment
+            //typeof(GameUIPanelEquipment)
+            );
     }
 
 
@@ -1781,7 +1993,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showStatistics() {
         showUIPanel(
-            typeof(GameUIPanelStatistics),
+            //typeof(GameUIPanelStatistics),
+            BaseUIPanel.panelClassNameStatistics,
             GameUIPanel.panelStatistics,
             "STATISTICS");
     }
@@ -1794,7 +2007,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideStatistics() {
         hideUIPanel(
-            typeof(GameUIPanelStatistics));
+            BaseUIPanel.panelClassNameStatistics
+            //typeof(GameUIPanelStatistics)
+            );
     }
 
 #if ENABLE_FEATURE_PRODUCT_CURRENCY
@@ -1804,14 +2019,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showProductCurrency() {
         showUIPanel(
-            typeof(GameUIPanelProductCurrency),
+            //typeof(GameUIPanelProductCurrency),
+            BaseUIPanel.panelClassNameProductCurrency,
             GameUIPanel.panelProductCurrency,
             "COINS");
     }
 
     public virtual void hideProductCurrency() {
         hideUIPanel(
-            typeof(GameUIPanelProductCurrency));
+            BaseUIPanel.panelClassNameProductCurrency
+            //typeof(GameUIPanelProductCurrency)
+            );
     }
 
     // ------------------------------------------------------------
@@ -1819,14 +2037,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showProductCurrencyEarn() {
         showUIPanel(
-            typeof(GameUIPanelProductCurrencyEarn),
+            //typeof(GameUIPanelProductCurrencyEarn),
+            BaseUIPanel.panelClassNameProductCurrencyEarn,
             GameUIPanel.panelProductCurrencyEarn,
             "COINS");
     }
 
     public virtual void hideProductCurrencyEarn() {
         hideUIPanel(
-            typeof(GameUIPanelProductCurrencyEarn));
+            BaseUIPanel.panelClassNameProductCurrencyEarn
+            //typeof(GameUIPanelProductCurrencyEarn)
+            );
     }
 
 #endif
@@ -1842,7 +2063,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showAchievements() {
         showUIPanel(
-            typeof(GameUIPanelAchievements),
+            //typeof(GameUIPanelAchievements),
+            BaseUIPanel.panelClassNameAchievements,
             GameUIPanel.panelAchievements,
             "ACHIEVEMENTS");
     }
@@ -1855,7 +2077,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideAchievements() {
         hideUIPanel(
-            typeof(GameUIPanelAchievements));
+            BaseUIPanel.panelClassNameAchievements
+            //typeof(GameUIPanelAchievements)
+            );
     }
 
 
@@ -1872,7 +2096,7 @@ public class BaseUIController : GameObjectBehavior {
 
 
     public virtual void showProducts() {
-        GameUIController.ShowProducts("");
+        showProducts("");
     }
 
     public virtual void showProducts(string productType) {
@@ -1880,7 +2104,8 @@ public class BaseUIController : GameObjectBehavior {
         string title = "PRODUCTS";
 
         showUIPanel(
-            typeof(GameUIPanelProducts),
+            //typeof(GameUIPanelProducts),
+            BaseUIPanel.panelClassNameProducts,
             GameUIPanel.panelProducts,
             title);
     }
@@ -1893,7 +2118,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideProducts() {
         hideUIPanel(
-            typeof(GameUIPanelProducts));
+            BaseUIPanel.panelClassNameProducts
+            //typeof(GameUIPanelProducts)
+            );
     }
 
 #endif
@@ -1911,7 +2138,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showCustomize() {
         showUIPanel(
-            typeof(GameUIPanelCustomize),
+            //typeof(GameUIPanelCustomize),
+            BaseUIPanel.panelClassNameCustomize,
             GameUIPanel.panelCustomize,
             "CUSTOMIZE");
     }
@@ -1924,7 +2152,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideCustomize() {
         hideUIPanel(
-            typeof(GameUIPanelCustomize));
+            BaseUIPanel.panelClassNameCustomize
+            //typeof(GameUIPanelCustomize)
+            );
     }
 
     // ------------------------------------------------------------
@@ -1973,7 +2203,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showCustomizeCharacter() {
         showUIPanel(
-            typeof(GameUIPanelCustomizeCharacter),
+            //typeof(GameUIPanelCustomizeCharacter),
+            BaseUIPanel.panelClassNameCustomizeCharacter,
             GameUIPanel.panelCustomizeCharacter,
             "CUSTOMIZE CHARACTER");
     }
@@ -1986,7 +2217,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideCustomizeCharacter() {
         hideUIPanel(
-            typeof(GameUIPanelCustomizeCharacter));
+            BaseUIPanel.panelClassNameCustomizeCharacter
+            //typeof(GameUIPanelCustomizeCharacter)
+            );
     }
 
     // ------------------------------------------------------------
@@ -2000,7 +2233,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showCustomizeCharacterColors() {
         showUIPanel(
-            typeof(GameUIPanelCustomizeCharacterColors),
+            //typeof(GameUIPanelCustomizeCharacterColors),
+            BaseUIPanel.panelClassNameCustomizeCharacterColors,
             GameUIPanel.panelCustomizeCharacterColors,
             "CUSTOMIZE: PLAYER COLORS");
     }
@@ -2013,7 +2247,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideCustomizeCharacterColors() {
         hideUIPanel(
-            typeof(GameUIPanelCustomizeCharacterColors));
+            BaseUIPanel.panelClassNameCustomizeCharacterColors
+            //typeof(GameUIPanelCustomizeCharacterColors)
+            );
     }
 
     // ------------------------------------------------------------
@@ -2027,7 +2263,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showCustomizeCharacterRPG() {
         showUIPanel(
-            typeof(GameUIPanelCustomizeCharacterRPG),
+            //typeof(GameUIPanelCustomizeCharacterRPG),
+            BaseUIPanel.panelClassNameCustomizeCharacterRPG,
             GameUIPanel.panelCustomizeCharacterRPG,
             "CUSTOMIZE: PLAYER SKILLS");
     }
@@ -2040,7 +2277,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideCustomizeCharacterRPG() {
         hideUIPanel(
-            typeof(GameUIPanelCustomizeCharacterRPG));
+            BaseUIPanel.panelClassNameCustomizeCharacterRPG
+            //typeof(GameUIPanelCustomizeCharacterRPG)
+            );
     }
 
 #endif
@@ -2062,6 +2301,9 @@ public class BaseUIController : GameObjectBehavior {
     //}
 
     public virtual void showHeader() {
+
+        syncPanelLoaded(BaseUIPanel.panelHeader);
+
         GameUIPanelHeader.Instance.AnimateIn();
     }
 
@@ -2074,7 +2316,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideHeader() {
         hideUIPanel(
-            typeof(GameUIPanelHeader));
+            BaseUIPanel.panelClassNameHeader
+            //typeof(GameUIPanelHeader)
+            );
     }
 
     // ------------------------------------------------------------
@@ -2606,7 +2850,7 @@ public class BaseUIController : GameObjectBehavior {
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
             GameCommunity.HideGameCommunity();
-            
+
             if(GameController.LastGameStateGlobalGet == GameStateGlobal.GameStarted
                 && GameConfigs.isGameContentDisplay) {
                 // In prepare state...
@@ -2821,7 +3065,7 @@ public class BaseUIController : GameObjectBehavior {
 
             GameStoreController.PurchasesRestore();
         }
-        
+
         // LAST 
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)

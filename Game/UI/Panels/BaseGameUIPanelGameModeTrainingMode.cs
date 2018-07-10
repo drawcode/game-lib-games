@@ -118,8 +118,8 @@ public class BaseGameUIPanelGameModeTrainingMode : GameUIPanelBase {
     public override void AnimateIn() {
         // base.AnimateIn();
 
-        GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingChoiceQuiz);
-        GameUIController.ShowGameModeTrainingModeChoiceQuiz();
+        //GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameTrainingChoiceQuiz);
+        //GameUIController.ShowGameModeTrainingModeChoiceQuiz();
     }
 
     public static void LoadData() {
