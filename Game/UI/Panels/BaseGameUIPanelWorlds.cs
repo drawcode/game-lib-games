@@ -206,12 +206,39 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         }
     }
 
+    public virtual void FindWorlds() {
+        if(containerWorlds == null) {
+            foreach(GameObjectInactive obj in gameObject.GetList<GameObjectInactive>()) {
+                if(obj.name == "Worlds") {
+                    containerWorlds = obj.gameObject;
+                    return;
+                }
+            }
+        }
+    }
+
     public virtual void ShowWorldsContainer() {
+        //StartCoroutine(ShowWorldsContainerCo(1.2f));
+        FindWorlds();
+
+        containerWorlds.Show();
+        TweenUtil.ShowObjectBottom(containerWorlds);
+    }
+
+    public virtual IEnumerator ShowWorldsContainerCo(float delay) {
+
+        yield return new WaitForSeconds(delay);
+
+        FindWorlds();
+
         containerWorlds.Show();
         TweenUtil.ShowObjectBottom(containerWorlds);
     }
 
     public virtual void HideWorldsContainer() {
+
+        FindWorlds();
+
         TweenUtil.HideObjectBottom(containerWorlds);
         containerWorlds.HideObjectDelayed(.5f);
     }
@@ -263,6 +290,10 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             listGridRoot.GetComponent<UIGrid>().Reposition();
             yield return new WaitForEndOfFrame();
         }
+
+        // Find worlds
+
+
     }
 
     public virtual void loadDataMissions() {
@@ -274,7 +305,7 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
         double scoreTotal = 0;
 
         string worldCode = GameWorlds.Current.code;
-        
+
         UpdateMetaLabels();
 
         foreach(AppContentCollect mission in

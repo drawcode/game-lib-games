@@ -187,7 +187,7 @@ public class UICustomizeColorPresets : UICustomizeSelectObject {
         if(index > countPresets - 1) {
             index = -1;
         }
-
+        
         currentIndex = index;
 
         if(index > -2 && index < countPresets) {

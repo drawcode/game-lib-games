@@ -102,15 +102,22 @@ public class BaseGameUIPanelCustomizeCharacterColors : GameUIPanelBase {
 		if(GameUIPanelCustomizeCharacterColors.Instance != null) {
             GameUIPanelCustomizeCharacterColors.Instance.loadData();
 		}
+
 	}
 	
     public virtual void loadData() {
 		StartCoroutine(loadDataCo());
 	}
 	
-	IEnumerator loadDataCo() {		
-		
+	IEnumerator loadDataCo() {
+        
         yield return new WaitForEndOfFrame();
+        
+        // Set currentObject of customizers
+
+        foreach(UICustomizeObject customObject in gameObject.GetList<UICustomizeObject>()) {
+            customObject.currentObject = GameController.CurrentGamePlayerController.gameObject;
+        }
 
         Init();
 	}
