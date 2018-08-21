@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum BaseUIStates {
     NoState,
@@ -2494,7 +2495,9 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showGameCanvas() {
         if(gameContainerObject != null) {
-            TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
+
+            TweenUtil.MoveToObject(gameContainerObject, Vector3.zero.WithY(0), 0.1f);
+            //TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
         }
 
         //gameContainerObject.Show();
@@ -2510,13 +2513,11 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void hideGameCanvas() {
 
         if(gameContainerObject != null) {
-            TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameContainerObject, 0f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameContainerObject, Vector3.zero.WithY(0), 0.1f);
         }
-
         //gameContainerObject.Hide();
-
         //GameController.QuitGameRunning();
-
         //TweenPosition.Begin(gameNavigationObject, .3f, Vector3.zero.WithX(-970));  
     }
 
@@ -2614,7 +2615,6 @@ public class BaseUIController : GameObjectBehavior {
         }
 
         // PROFILE SYNC
-
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProfileGameversesSync, buttonName)) {
             GameState.SyncProfile();
@@ -2849,6 +2849,7 @@ public class BaseUIController : GameObjectBehavior {
         // COMMUNITY
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
+
             GameCommunity.HideGameCommunity();
 
             if(GameController.LastGameStateGlobalGet == GameStateGlobal.GameStarted
@@ -2942,7 +2943,6 @@ public class BaseUIController : GameObjectBehavior {
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCustomizeCharacterBack, buttonName)) {
             GameUIPanelHeader.CharacterLargeShowBack();
         }
-
 
 #if ENABLE_FEATURE_AR
 
@@ -3115,6 +3115,7 @@ public class BaseUIController : GameObjectBehavior {
                             Debug.Log("ACTION:" + " mission:" + code);
 
                             if(appContentCollect.data != null) {
+
                                 string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
                                 levelTo = string.Format("{0}-{1}", worldTo, appContentCollect.GetLevelSuffixRandom());
@@ -3134,6 +3135,7 @@ public class BaseUIController : GameObjectBehavior {
         // BACK BUTTON
 
         else {
+
             if(buttonName == BaseUIButtonNames.buttonBack) {
 
                 GameCommunity.HideGameCommunity();
@@ -3261,7 +3263,9 @@ public class BaseUIController : GameObjectBehavior {
     public bool AllowPress(float lastTime) {
 
         if(lastTime + .1f < Time.time) {
+
             lastTime = Time.time;
+
             return true;
         }
 
@@ -3269,10 +3273,14 @@ public class BaseUIController : GameObjectBehavior {
     }
 
     public virtual void handleNetworkedButtons(string buttonName) {
+
         // handle network state by buttons and areas
         if(AppConfigs.featureEnableNetworking) {
+
             if(UIUtil.IsButtonClickedLike("GameMode", buttonName)) {
+
                 if(UIUtil.IsButtonClicked(UIButtonNames.buttonGameModeCoop, buttonName)) {
+
                     //Gameverses.GameNetworking.Connect();
                 }
                 else {
