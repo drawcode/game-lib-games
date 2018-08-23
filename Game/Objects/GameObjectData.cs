@@ -7,21 +7,32 @@ using System.Collections.Generic;
 public class GameObjectDataItem {
     public string key = "";
     public string val = "";
-
 }
 
 public class GameObjectData : GameObjectBehavior {
-    
+
     // Apply this class to objects needed to be hidden but later found
     // by using GetComponentsInChildren with the inactive flag set without
     // searching recursively through the whole heirarchy of that object.
 
-    public List<GameObjectDataItem> data = new List<GameObjectDataItem>();
+    public List<GameObjectDataItem> _data = null;
+
+    public List<GameObjectDataItem> data {
+
+        get {
+
+            if(_data == null) {
+                _data = new List<GameObjectDataItem>();
+            }
+            return _data;
+        }
+        set {
+            _data = value;
+        }
+    }
         
     void Start() {
-        if(data == null) {
-            data = new List<GameObjectDataItem>();
-        }
+
     }
 
     public void Set(string key, object val) {
@@ -49,6 +60,7 @@ public class GameObjectData : GameObjectBehavior {
     public object Get(string key) {
             
         foreach(GameObjectDataItem item in data) {
+
             if(item.key == key) {
                 return item.val;
             }
@@ -60,6 +72,7 @@ public class GameObjectData : GameObjectBehavior {
     public string GetString(string key) {
         
         foreach(GameObjectDataItem item in data) {
+
             if(item.key == key) {
                 return item.val;
             }
@@ -73,10 +86,13 @@ public class GameObjectData : GameObjectBehavior {
         float valTo = 0f;
         
         foreach(GameObjectDataItem item in data) {
+
             if(item.key == key) {
 
                 if(!string.IsNullOrEmpty(item.val)) {
+
                     float.TryParse(item.val, out valTo);
+
                     return valTo;
                 }
             }
@@ -90,10 +106,13 @@ public class GameObjectData : GameObjectBehavior {
         int valTo = 0;
         
         foreach(GameObjectDataItem item in data) {
+
             if(item.key == key) {
                 
                 if(!string.IsNullOrEmpty(item.val)) {
+
                     int.TryParse(item.val, out valTo);
+
                     return valTo;
                 }
             }
@@ -107,10 +126,13 @@ public class GameObjectData : GameObjectBehavior {
         double valTo = 0;
         
         foreach(GameObjectDataItem item in data) {
+
             if(item.key == key) {
                 
                 if(!string.IsNullOrEmpty(item.val)) {
+
                     double.TryParse(item.val, out valTo);
+
                     return valTo;
                 }
             }
@@ -120,6 +142,7 @@ public class GameObjectData : GameObjectBehavior {
     }
 
     public Dictionary<string,object> ToDictionary() {
+
         Dictionary<string,object> dict = new Dictionary<string, object>();
 
         foreach (GameObjectDataItem dataItem in data) {
