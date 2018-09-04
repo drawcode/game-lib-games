@@ -1,4 +1,4 @@
-﻿ #define PURCHASE_USE_UNITY
+﻿//#define PURCHASE_USE_UNITY
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ public class ProductNetworkUnityMessages {
     public static string productNetworkUnityCancelled = "product-network-unity-cancelled";
 }
 
+#if PURCHASE_USE_UNITY
 // Deriving the Purchaser class from IStoreListener enables it to receive messages from Unity Purchasing.
 public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
 
@@ -204,3 +205,5 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
             ProductNetworkUnityMessages.productNetworkUnityFailed, product, failureReason);
     }
 }
+
+#endif

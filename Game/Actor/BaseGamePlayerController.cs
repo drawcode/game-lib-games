@@ -4999,7 +4999,7 @@ public class BaseGamePlayerController : GameActor {
         FindNetworkContainer(uniqueId);
 
         if(currentNetworkPlayerContainer != null) {
-#if NETWORK_UNITY || NETWORK_PHOTON
+#if NETWORK_USE_UNITY || NETWORK_PHOTON
             currentNetworkPlayerContainer.networkViewObject.observed = currentNetworkPlayerContainer;
 #endif
             currentNetworkPlayerContainer.gamePlayer = gameObject;

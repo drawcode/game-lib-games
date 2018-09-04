@@ -1,4 +1,4 @@
-#define PURCHASE_USE_UNITY
+//#define PURCHASE_USE_UNITY
 //#define PURCHASE_USE_PRIME31
 
 #if UNITY_IPHONE
@@ -489,6 +489,7 @@ public class ProductNetworks : GameObjectBehavior {
                 "Product Purchase",
                 "Product purchased:" + code,
                 true,
+                null,
                 "TODO",
                 "TODO",
                 code,
