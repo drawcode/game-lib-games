@@ -108,7 +108,7 @@ public class Platforms {
     public void askForReview(string appName, string bundleId) {
 #if UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.askForReviewNow("Review " + appName + "!", "Review " + appName + " if you like it.");
-#elif UNITY_IPHONE  
+#elif UNITY_IPHONE && USE_FEATURE_ETCETERA 
         //EtceteraBinding.openAppStoreReviewPage(AppConfigs.pu
         EtceteraBinding.askForReview("Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
 #endif      
@@ -122,7 +122,7 @@ public class Platforms {
 #if UNITY_ANDROID && USE_FEATURE_ETCETERA
         bool isAmazon = AppConfigs.platformIsAmazon;
         EtceteraAndroid.openReviewPageInPlayStore( isAmazon );
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && USE_FEATURE_ETCETERA
         EtceteraBinding.openAppStoreReviewPage(AppConfigs.appStoreId);
 #endif
     }
@@ -134,7 +134,7 @@ public class Platforms {
     public void askForReview(string appName, string bundleId, int launchCount, int hoursBetweenPrompts) {
 #if UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.askForReview(3, 0, 3, "Review " + appName + "!", "Review " + appName + " if you like it.", false);
-#elif UNITY_IPHONE
+#elif UNITY_IPHONE && USE_FEATURE_ETCETERA
         EtceteraBinding.askForReview(launchCount, hoursBetweenPrompts, 
                                      "Review " + appName + "!", "Review " + appName + " if you like it.", bundleId);
 #endif
@@ -145,7 +145,7 @@ public class Platforms {
     }
     
     public void showEmailView(string to, string subject, string body, bool isHtml) {
-#if UNITY_IPHONE
+#if UNITY_IPHONE && USE_FEATURE_ETCETERA
         if(EtceteraBinding.isEmailAvailable()) {
             EtceteraBinding.showMailComposer(to, subject, body + " -- Sent From iOS", isHtml); 
         }
@@ -164,7 +164,7 @@ public class Platforms {
     }
     
     public void saveImageToLibrary(string name, string fileToSave) {
-#if UNITY_IPHONE
+#if UNITY_IPHONE && USE_FEATURE_ETCETERA
         EtceteraBinding.saveImageToPhotoAlbum(fileToSave);
 #elif UNITY_ANDROID && USE_FEATURE_ETCETERA
         EtceteraAndroid.saveImageToGallery(fileToSave, name);
