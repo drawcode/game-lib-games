@@ -15,12 +15,12 @@ public enum GamePlayerControllerAnimationType {
     mecanim
 }
 
-public class GameDataPlayType {
-    public static string loop = "loop";
-    public static string loop_reverse = "loop_reverse";
-    public static string once = "once";
-    public static string once_reverse = "once_reverse";
-}
+//public class GameDataPlayType {
+//    public static string loop = "loop";
+//    public static string loop_reverse = "loop_reverse";
+//    public static string once = "once";
+//    public static string once_reverse = "once_reverse";
+//}
 
 public class GamePlayerAnimationDataItem : GameDataObject {
         
