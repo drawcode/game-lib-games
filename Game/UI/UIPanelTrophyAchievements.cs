@@ -3,14 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 
-
     public GameObject listItemPrefab;
-    public UILabel labelPoints;
 
     public static UIPanelTrophyAchievements Instance;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelPoints;
+#else
+    public GameObject labelPoints;
+#endif
 
     public override void Awake() {
         base.Awake();
@@ -63,14 +68,39 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
 
             foreach(GameAchievement achievement in achievements) {
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-                item.name = "AchievementItem" + i;
-                item.transform.Find("LabelName").GetComponent<UILabel>().text = achievement.display_name;
-                item.transform.Find("LabelDescription").GetComponent<UILabel>().text = achievement.description;
+#else
+                GameObject item = GameObjectHelper.CreateGameObject(listItemPrefab, Vector3.zero, Quaternion.identity, false);// NGUITools.AddChild(listGridRoot, listItemPrefab);
+                item.transform.parent = listGridRoot.transform;
+                item.ResetLocalPosition();
+#endif
+
+                Transform labelItemName = item.transform.Find("LabelName");
+                Transform labelItemDescription = item.transform.Find("LabelDescription");
+                Transform labelItemPoints = item.transform.Find("LabelPoints");
+
+                if(labelItemName != null) {
+                    UIUtil.SetLabelValue(labelItemName.gameObject, achievement.display_name);
+                }
+
+                if(labelItemDescription != null) {
+                    UIUtil.SetLabelValue(labelItemDescription.gameObject, achievement.description);
+                }
 
                 GameObject iconObject = item.transform.Find("Icon").gameObject;
-                UISprite iconSprite = iconObject.GetComponent<UISprite>();
 
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+                UISprite iconSprite = iconObject.GetComponent<UISprite>();
+#else
+                GameObject iconSprite = null;
+
+                if(iconObject.Has<Image>()) {
+                    iconSprite = iconObject.GetComponent<Image>().gameObject;
+                }
+#endif
 
                 bool completed = GameProfiles.Current.CheckIfAttributeExists(achievement.code);
 
@@ -89,16 +119,23 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
                     totalPoints += currentPoints;
                     points = "+" + currentPoints.ToString();
 
-                    if(iconSprite != null) {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                    if(iconSprite != null) {                                                
                         iconSprite.alpha = 1f;
                     }
+#endif
                 }
                 else {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                     if(iconSprite != null) {
                         iconSprite.alpha = .33f;
                     }
+#endif
                 }
-                item.transform.Find("LabelPoints").GetComponent<UILabel>().text = points;
+
+                if(labelItemPoints != null) {
+                    UIUtil.SetLabelValue(labelItemPoints.gameObject, points);
+                }
 
                 // Get trophy icon
 
@@ -106,12 +143,14 @@ public class UIPanelTrophyAchievements : UIAppPanelBaseList {
             }
 
             if(labelPoints != null) {
-                labelPoints.text = totalPoints.ToString("N0");
+                UIUtil.SetLabelValue(labelPoints.gameObject, totalPoints.ToString("N0"));
             }
 
             yield return new WaitForEndOfFrame();
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             listGridRoot.GetComponent<UIGrid>().Reposition();
             yield return new WaitForEndOfFrame();
+#endif
 
         }
     }

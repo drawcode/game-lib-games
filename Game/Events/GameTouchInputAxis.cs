@@ -14,7 +14,7 @@ using Engine.Events;
 using Engine.Utility;
 
 public class GameTouchInputAxis : GameObjectBehavior {
-    
+
     public static bool updateFingerNavigate = false;
     public GameObject objectPlacement;
     public Camera collisionCamera;
@@ -26,7 +26,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
     public bool controlsVisible = true;
     public bool controlsMoveable = false;
     public bool hideOnDesktopWeb = false;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIAnchor anchor;
+#endif
+
     Vector3 originalPlacement = Vector3.zero;
     GameObject hitObject;
     GameTouchInputAxis axisObject;
@@ -178,7 +182,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         //Debug.Log("axisInput:" + " axisInput:" + axisInput);
 
                         //if(axisInput.x != 0 || axisInput.y != 0) {
-                            //Debug.Log("axisInput:" + " axisInput:" + axisInput);
+                        //Debug.Log("axisInput:" + " axisInput:" + axisInput);
                         //}
 
                         GameController.SendInputAxisMessage(axisName, axisInput);
@@ -205,7 +209,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void ResetPad() {
 
-        if(!GameController.touchHandled 
+        if(!GameController.touchHandled
             && axisName.Contains(InputSystemKeys.moveKey)
             || !axisName.Contains(InputSystemKeys.moveKey)) {
             axisInput.x = 0f;

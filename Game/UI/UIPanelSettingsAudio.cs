@@ -12,12 +12,19 @@ public class UIPanelSettingsAudio : UIPanelBase {
 
     public GameObject listItemPrefab;
 
-    public UIImageButton buttonClose;
-
     public static UIPanelSettingsAudio Instance;
 
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIImageButton buttonClose;
     public UISlider sliderMusicVolume;
     public UISlider sliderEffectsVolume;
+#else
+    public GameObject buttonClose;
+    public GameObject sliderMusicVolume;
+    public GameObject sliderEffectsVolume;
+#endif
+
 
     public override void Awake() {
         base.Awake();
@@ -97,15 +104,15 @@ public class UIPanelSettingsAudio : UIPanelBase {
         float musicVolume = (float)GameProfiles.Current.GetAudioMusicVolume();
 
         if(sliderMusicVolume != null) {
-            sliderMusicVolume.sliderValue = musicVolume;
-            sliderMusicVolume.ForceUpdate();
+
+            UIUtil.SetSliderValue(sliderMusicVolume, musicVolume);
 
             GameAudio.SetProfileAmbienceVolume(musicVolume);
         }
 
         if(sliderEffectsVolume != null) {
-            sliderEffectsVolume.sliderValue = effectsVolume;
-            sliderEffectsVolume.ForceUpdate();
+
+            UIUtil.SetSliderValue(sliderMusicVolume, effectsVolume);
 
             GameAudio.SetProfileEffectsVolume(effectsVolume);
         }

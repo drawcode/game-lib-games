@@ -22,6 +22,13 @@ public class GameUI : GameObjectBehavior {
         Instance = this;
     }
 
+    public GameObject containerUIScaled;
+    public GameObject containerUI;
+    public bool gameUIExpanded = true;
+    bool gameLoopsStarted = false;
+
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIButton buttonUIToggle;
 
     /*
@@ -35,17 +42,18 @@ public class GameUI : GameObjectBehavior {
     */
 
     public UIButtonMeta buttonMeta;
-    public GameObject containerUIScaled;
-    public GameObject containerUI;
-    public bool gameUIExpanded = true;
-    bool gameLoopsStarted = false;
+#else
+    public GameObject buttonUIToggle;
+#endif
 
     void Start() {
         Init();
     }
 
     void Init() {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         buttonMeta = new UIButtonMeta();
+#endif
         InitEvents();
         ShowUI();
     }
@@ -150,8 +158,10 @@ public class GameUI : GameObjectBehavior {
     }
 
     void LateUpdate() {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         if(buttonMeta != null) {
             buttonMeta.ResetButtons();
         }
+#endif
     }
 }

@@ -29,20 +29,29 @@ public class AlertDialog : GameObjectBehavior {
     public static AlertDialog Instance;
     public GameObject dialogObject;
     public GameObject dialogBackgroundObject;
-    public UIButton backgroundButton;
+
     public bool alertActive = false;
     public AlertDialogType alertDialogType = AlertDialogType.DIALOG_YES_NO;
-    public UIButton buttonYes;
-    public UIButton buttonNo;
     public Vector3 buttonYesPosition;
     public Vector3 buttonYesCurrent;
     public Vector3 buttonYesCurrentDown;
     public Vector3 buttonNoPosition;
     public Vector3 buttonNoCurrent;
     public Vector3 buttonNoCurrentDown;
-    public UILabel labelMessage;
     public string dialogMessage = "Are you sure you want to quit and step down from Supa Supa Fame?";
     public string currentDialogCode = AlertDialogMessages.DIALOG_QUIT;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UIButton backgroundButton;
+    public UIButton buttonYes;
+    public UIButton buttonNo;
+    public UILabel labelMessage;
+#else
+    public GameObject backgroundButton;
+    public GameObject buttonYes;
+    public GameObject buttonNo;
+    public GameObject labelMessage;
+#endif
 
     void Awake() {
         if(Instance != null && this != Instance) {
@@ -111,7 +120,8 @@ public class AlertDialog : GameObjectBehavior {
             currentDialogCode = dialogCode;
             dialogMessage = message;
             alertDialogType = dialogType;
-            labelMessage.text = dialogMessage;
+
+            UIUtil.SetLabelValue(labelMessage, dialogMessage);
         }
     }
 

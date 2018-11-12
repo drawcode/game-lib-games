@@ -50,8 +50,14 @@ public class AnalyticsNetworks : GameObjectBehavior {
     public GameAnalytics analyticsGameAnalytics;
 #endif
 
+#if USE_CONFIG_APP
     public static bool analyticsNetworksEnabled = AppConfigs.analyticsNetworkEnabled;
     public static bool analyticsNetworksTestingEnabled = AppConfigs.analyticsNetworkTestingEnabled;
+
+#else
+    public static bool analyticsNetworksEnabled = false;
+    public static bool analyticsNetworksTestingEnabled = false;
+#endif
 
     // Only one AnalyticsNetworks can exist. We use a singleton pattern to enforce this.
     private static AnalyticsNetworks _instance = null;
@@ -203,7 +209,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
         return true;
 #elif ANALYTICS_GAMEANALYTICS
         return true;
-#else 
+#else
         return false;
 #endif
     }

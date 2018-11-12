@@ -45,8 +45,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     public Everyplay broadcastEveryplay;
 #endif
 
+
+#if USE_CONFIG_APP
     public static bool broadcastNetworksEnabled = AppConfigs.broadcastNetworksEnabled;
     public static bool broadcastNetworksTestingEnabled = AppConfigs.broadcastNetworksTestingEnabled;
+#else 
+    public static bool broadcastNetworksEnabled = false;
+    public static bool broadcastNetworksTestingEnabled = false;
+#endif
 
     // Only one BroadcastNetworks can exist. We use a singleton pattern to enforce this.
     private static BroadcastNetworks _instance = null;
@@ -1100,20 +1106,20 @@ Everyplay.SetMetadata("score", score)
 
     public static void HandleUpdate() {
         /*
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         if (Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
-                #if PROMO_USE_CHARTBOOST
+#if PROMO_USE_CHARTBOOST
                 if (CBBinding.onBackPressed())
                     return;
                 else
                     Application.Quit();
-                #else 
+#else
                 Application.Quit();
-                #endif
+#endif
             }
         }
-        #endif
+#endif
         */
     }
 

@@ -93,8 +93,13 @@ public class GameDraggableEditor : GameObjectBehavior {
     public static GameObject levelItemsContainerObject;
     public static bool deferTap = false;
     public static bool dialogActive = false;
+    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelButtonGameEdit;
-                
+#else
+    public GameObject labelButtonGameEdit;
+#endif
+
     public void Awake() {
         
         if (Instance != null && this != Instance) {
@@ -958,9 +963,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         GameDraggableEditor.ToggleStateEditing();
         
         if (GameDraggableEditor.isEditing) {
-            if (labelButtonGameEdit != null) {
-                labelButtonGameEdit.text = "PLAY";
-            }
+
+            UIUtil.SetLabelValue(labelButtonGameEdit, "PLAY");
                         
             //HideHUD();
             //HideUIPanelEditButton();
@@ -970,10 +974,9 @@ public class GameDraggableEditor : GameObjectBehavior {
             LogUtil.Log("EditEnable:editingEnabled:", editingEnabled);
         }
         else if (!GameDraggableEditor.isEditing) {
-            if (labelButtonGameEdit != null) {
-                labelButtonGameEdit.text = "EDIT";
-            }
-            
+
+            UIUtil.SetLabelValue(labelButtonGameEdit, "EDIT");
+                        
             GameDraggableEditor.editingEnabled = false;
             HideUIPanelEdit();
             HideAllEditDialogs();

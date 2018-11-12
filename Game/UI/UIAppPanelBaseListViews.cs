@@ -18,6 +18,7 @@ public class UIAppPanelBaseListViews : UIAppPanelBaseList {
     public GameObject prefabContentAppContentState;
     public GameObject prefabContentAppContentStateDetail;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     // app state
     public GameObject contentPanelDefault;
     public UIGrid gridDefault;
@@ -36,6 +37,26 @@ public class UIAppPanelBaseListViews : UIAppPanelBaseList {
     public UIGrid gridAppContentStateDetail;
     public GameObject gridAppContentStateDetailObject;
     public UIPanel panelClippedAppContentStateDetail;
+#else
+    // app state
+    public GameObject contentPanelDefault;
+    public GameObject gridDefault;
+    public GameObject gridDefaultObject;
+    public GameObject panelClippedDefault;
+
+
+    // detail on content state, shows info, trackers and list of actions
+    public GameObject contentPanelAppContentState;
+    public GameObject gridAppContentState;
+    public GameObject gridAppContentStateObject;
+    public GameObject panelClippedAppContentState;
+
+    // app content state
+    public GameObject contentPanelAppContentStateDetail;
+    public GameObject gridAppContentStateDetail;
+    public GameObject gridAppContentStateDetailObject;
+    public GameObject panelClippedAppContentStateDetail;
+#endif
     public UIAppPanelContentState currentState = UIAppPanelContentState.DEFAULT;
 
     public override void OnEnable() {

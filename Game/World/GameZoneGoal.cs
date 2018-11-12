@@ -7,8 +7,13 @@ using Engine.Events;
 public class GameZoneGoal : GameZone {
 
     public string gameEndZoneType = GameZoneKeys.goal_left;
+    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    UILabel labelEndZone;
+#else
+    GameObject labelEndZone;
+#endif
 
-    public UILabel labelEndZone;
     public GameObject spriteEndZone;
 
     public override void Start() {

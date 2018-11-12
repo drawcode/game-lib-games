@@ -27,8 +27,14 @@ public class CloudMessages {
 
 public class CloudNetworks : GameObjectBehavior {
 
+#if USE_CONFIG_APP
     public static bool cloudNetworksEnabled = AppConfigs.cloudNetworksEnabled;
     public static bool cloudNetworksTestingEnabled = AppConfigs.cloudNetworksTestingEnabled;
+
+#else
+    public static bool cloudNetworksEnabled = false;
+    public static bool cloudNetworksTestingEnabled = false;
+#endif
 
     // Only one CloudNetworks can exist. We use a singleton pattern to enforce this.
     private static CloudNetworks _instance = null;

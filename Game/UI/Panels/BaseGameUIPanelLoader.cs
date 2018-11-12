@@ -16,9 +16,17 @@ public class BaseGameUIPanelLoader : GameUIPanelBase {
     public GameObject enemiesObject;
     public GameObject logoObject;
     public GameObject loadingObject;
-    public UILabel labelLoading;
     public GameObject sliderProgressObject;
+    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+    public UILabel labelLoading;
     public UISlider sliderProgress;
+
+#else
+    public GameObject labelLoading;
+    public GameObject sliderProgress;
+#endif
 
     public static bool isInst {
         get {

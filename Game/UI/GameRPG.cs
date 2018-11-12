@@ -402,8 +402,14 @@ public class GameRPGMonitor {
 public class GameRPG : GameObjectBehavior {
 
     public static GameRPG Instance;
-    public UILabel labelXPValue;
     public GameRPGMonitor rpgMonitor = GameRPGMonitor.Instance;
+
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+    public UILabel labelXPValue;
+#else
+    public GameObject labelXPValue;
+#endif
 
     void Awake() {
         if(Instance != null && this != Instance) {
@@ -436,8 +442,11 @@ public class GameRPG : GameObjectBehavior {
     }
 
     public void SetXPDisplay(double score) {
+
         if(labelXPValue) {
-            labelXPValue.text = score.ToString("#,##0");
+
+            UIUtil.SetLabelValue(labelXPValue, score.ToString("#,##0"));
+            //labelXPValue.text = score.ToString("#,##0");
         }
 
         //LogUtil.Log("GameRPG:SetXPDisplay: score:" + score);

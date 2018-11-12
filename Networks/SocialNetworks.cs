@@ -438,7 +438,9 @@ public class SocialNetworks : GameObjectBehavior {
         Facebook.instance.getAppAccessToken(FACEBOOK_APP_ID, FACEBOOK_SECRET, onFacebookAppAccessToken);
 #endif
 
+#if USE_CONFIG_APP
         Debug.Log("LoadSocialLibs Facebook init..." + FACEBOOK_APP_ID);
+#endif
 #endif
 
 #if UNITY_WEBPLAYER
@@ -486,9 +488,11 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginFacebook() {
 
+#if USE_CONFIG_APP
         var permissions = AppConfigs.socialFacebookPermissionsRead;
 
         dumpPermissionsToLog(permissions);
+#endif
 
 #if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         Debug.Log("Logging in facebook");
@@ -881,12 +885,14 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void postScoreFacebook(int score) {
 
+#if USE_GAME_LIB_GAMEVERSES
         string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);
 
         Debug.Log("PostScoreFacebook: userId:" + userId);
         Debug.Log("PostScoreFacebook: score:" + score);
 
         GameNetworks.PostScoreFacebook(score);
+#endif
     }
 
     void completionHandler(string error, object result) {
@@ -906,7 +912,9 @@ public class SocialNetworks : GameObjectBehavior {
                 + " result:" + result
             );
 
+#if SOCIAL_USE_FACEBOOK_PRIME31
             Prime31.Utils.logObject(result);
+#endif
         }
     }
 
@@ -972,7 +980,12 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginOrPostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
 
+#if USE_GAME_LIB_GAMEVERSES
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.facebook);
+#else
+        bool loggedIn = false;
+#endif
+        //bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.facebook);
 
         Debug.Log("SocialNetworks:showLoginOrPostMessageFacebook:"
             + " loggedIn:" + loggedIn
@@ -1002,7 +1015,9 @@ public class SocialNetworks : GameObjectBehavior {
             }
         }
         else {
+#if USE_GAME_LIB_GAMEVERSES
             GameCommunity.Login(SocialNetworkTypes.facebook);
+#endif
         }
     }
 
@@ -1243,8 +1258,11 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginOrPostMessageTwitter(string message) {
         //if (IsLoggedInTwitter()) {
-
+#if USE_GAME_LIB_GAMEVERSES
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+#else
+        bool loggedIn = false;
+#endif
 
         if(loggedIn) {
             postMessageTwitter(message);
@@ -1264,13 +1282,19 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginOrPostMessageTwitter(string message, string pathToImage) {
 
+#if USE_GAME_LIB_GAMEVERSES
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+#else
+        bool loggedIn = false;
+#endif
 
         if(loggedIn) {
             postMessageTwitter(message, pathToImage);
         }
         else {
+#if USE_GAME_LIB_GAMEVERSES
             GameCommunity.Login(SocialNetworkTypes.twitter);
+#endif
         }
     }
 
@@ -1284,7 +1308,11 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginOrComposerTwitter(string message) {
 
+#if USE_GAME_LIB_GAMEVERSES
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+#else
+        bool loggedIn = false;
+#endif
 
         if(loggedIn) {
             showComposerTwitter(message);
@@ -1304,7 +1332,11 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginOrComposerTwitter(string message, string pathToImage) {
 
+#if USE_GAME_LIB_GAMEVERSES
         bool loggedIn = GameCommunity.IsLoggedIn(SocialNetworkTypes.twitter);
+#else
+        bool loggedIn = false;
+#endif
 
         if(loggedIn) {
             showComposerTwitter(message, pathToImage);

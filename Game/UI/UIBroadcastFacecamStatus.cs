@@ -10,7 +10,12 @@ using Engine.Events;
 public class UIBroadcastFacecamStatus : GameObjectBehavior {
 
     public GameObject objectRecordStatusLight;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelStatus;
+#else
+    public GameObject labelStatus;
+#endif
 
     public void Awake() {
 
@@ -34,6 +39,7 @@ public class UIBroadcastFacecamStatus : GameObjectBehavior {
     }
 
     public void OnDisable() {
+
         Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(

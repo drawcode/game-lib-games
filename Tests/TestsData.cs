@@ -740,11 +740,14 @@ public class TestsData {
 
         //
 
+#if USE_GAME_LIB_GAMEVERSES
         bool isLoggedInNetwork = GameCommunity.IsLoggedIn(networkType);
         
         DumpObj(name, "isLoggedInNetwork:", isLoggedInNetwork);
+#endif
 
         GameState.SaveProfile();
+
 
         success = true;
                                                      
