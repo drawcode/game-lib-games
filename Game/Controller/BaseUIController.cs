@@ -1193,6 +1193,7 @@ public class BaseUIController : GameObjectBehavior {
             //typeof(GameUIPanelWorlds)
             );
     }
+#endif
 
     // ------------------------------------------------------------
     // GAME LEVELS
@@ -1224,9 +1225,7 @@ public class BaseUIController : GameObjectBehavior {
             //typeof(GameUIPanelLevels)
             );
     }
-
-#endif
-
+    
 
 #if ENABLE_FEATURE_AR
 
@@ -1337,8 +1336,7 @@ public class BaseUIController : GameObjectBehavior {
     }
 
 #endif
-
-
+    
 #if ENABLE_FEATURE_TRAINING
 
     // ------------------------------------------------------------
@@ -2362,7 +2360,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void showUIPauseButton() {
         if(gamePauseButtonObject != null) {
-            TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gamePauseButtonObject, Vector3.zero.WithY(0), .3f, 0f);
+            //TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(0));
         }
     }
 
@@ -2374,7 +2373,8 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideUIPauseButton() {
         if(gamePauseButtonObject != null) {
-            TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(650));
+            TweenUtil.MoveToObject(gamePauseButtonObject, Vector3.zero.WithY(650), .3f, 0f);
+            //TweenPosition.Begin(gamePauseButtonObject, .3f, Vector3.zero.WithY(650));
         }
     }
 
@@ -2636,7 +2636,9 @@ public class BaseUIController : GameObjectBehavior {
                     string title = data.Get<string>(BaseDataObjectKeys.title);
 
                     if(title.IsNullOrEmpty()) {
+#if USE_CONFIG_APP
                         title = AppConfigs.appGameDisplayName;
+#endif
                     }
 
                     if(!url.IsNullOrEmpty()) {
@@ -2850,7 +2852,9 @@ public class BaseUIController : GameObjectBehavior {
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityClose, buttonName)) {
 
+#if USE_GAME_LIB_GAMEVERSES
             GameCommunity.HideGameCommunity();
+#endif
 
             if(GameController.LastGameStateGlobalGet == GameStateGlobal.GameStarted
                 && GameConfigs.isGameContentDisplay) {
@@ -2904,6 +2908,7 @@ public class BaseUIController : GameObjectBehavior {
 
         // COMMUNITY - CAMERA
 
+#if USE_GAME_LIB_GAMEVERSES
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
             UIPanelCommunityCamera.TakePhoto();
         }
@@ -2916,10 +2921,12 @@ public class BaseUIController : GameObjectBehavior {
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveLibrary, buttonName)) {
             GameCommunitySocialController.SaveImageToLibraryDefault();
         }
+#endif
 
         // COMMUNITY - RESULTS / SHARE
 
 
+#if USE_GAME_LIB_GAMEVERSES
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityShareResultFacebook, buttonName)) {
             //GameCommunitySocialController.PostGameResultsFacebook();
             UIPanelCommunityCamera.TakePhotoGameState();
@@ -2928,6 +2935,7 @@ public class BaseUIController : GameObjectBehavior {
             //GameCommunitySocialController.PostGameResultsTwitter();
             UIPanelCommunityCamera.TakePhotoGameState();
         }
+#endif
 
         // CUSTOMIZE 
 
@@ -2971,7 +2979,9 @@ public class BaseUIController : GameObjectBehavior {
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameInitFinish, buttonName)) {
 
+#if USE_GAME_LIB_GAMEVERSES
             GameCommunity.HideGameCommunity();
+#endif
 
             // TODO MOVE
             UIPanelOverlayPrepare.HideAll();
@@ -3052,8 +3062,11 @@ public class BaseUIController : GameObjectBehavior {
         // COIN / CURRENCY
 
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonProductCurrency, buttonName)) {
-
+        
+#if USE_GAME_LIB_GAMEVERSES
+                // TODO MAKE EVENT
             GameCommunity.HideGameCommunity();
+#endif
 
             showProductCurrency();
         }
@@ -3061,7 +3074,10 @@ public class BaseUIController : GameObjectBehavior {
 #endif
         else if(UIUtil.IsButtonClicked(BaseUIButtonNames.buttonStoreRestorePurchases, buttonName)) {
 
+#if USE_GAME_LIB_GAMEVERSES
+                // TODO MAKE EVENT
             GameCommunity.HideGameCommunity();
+#endif
 
             GameStoreController.PurchasesRestore();
         }
@@ -3126,8 +3142,11 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
 
+#if USE_GAME_LIB_GAMEVERSES
+                // TODO MAKE EVENT
             GameCommunity.HideGameCommunity();
             GameCommunity.HideBroadcastRecordPlayShare();
+#endif
 
             GameController.PlayGame();
         }
@@ -3138,7 +3157,10 @@ public class BaseUIController : GameObjectBehavior {
 
             if(buttonName == BaseUIButtonNames.buttonBack) {
 
+#if USE_GAME_LIB_GAMEVERSES
+                // TODO MAKE EVENT
                 GameCommunity.HideGameCommunity();
+#endif
 
                 NavigateBack(buttonName);
             }
@@ -3274,6 +3296,7 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void handleNetworkedButtons(string buttonName) {
 
+#if USE_GAME_LIB_GAMEVERSES
         // handle network state by buttons and areas
         if(AppConfigs.featureEnableNetworking) {
 
@@ -3288,6 +3311,7 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
         }
+#endif
     }
 
     public virtual void handleHUDButtons(string buttonName) {

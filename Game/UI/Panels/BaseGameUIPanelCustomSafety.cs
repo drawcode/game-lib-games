@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE
+#if ENABLE_FEATURE_CHARACTER_CUSTOMIZE_SAFETY
 
 public class BaseGameUIPanelCustomSafety : GameUIPanelBase {
 

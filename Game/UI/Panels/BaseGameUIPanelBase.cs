@@ -6,7 +6,9 @@ using UnityEngine;
 
 using Engine;
 using Engine.Networking;
+#if USE_LIB_GAMEVERSES
 using Gameverses;
+#endif
 
 public class BaseGameUIPanelBase : UIPanelBase {
 

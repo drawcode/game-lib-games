@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 using Engine.Utility;
+using UnityEngine.UI;
 
 public enum UIPanelBackgroundDisplayState {
     None,
@@ -58,10 +59,21 @@ public class UIPanelBase : UIAppPanel {
     public UIPanelBackgroundDisplayState backgroundDisplayState = UIPanelBackgroundDisplayState.None;
     public UIPanelAdDisplayState adDisplayState = UIPanelAdDisplayState.None;
     public GameObject listGridRoot;
+    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
     public UIGrid listGrid;
     public UIPanel panelClipped;
     public UIDraggablePanel draggablePanel;
     public UIScrollBar draggablePanelScrollbar;
+
+#else
+    // TODO Unity UI
+    public GameObject listGrid;
+    public GameObject panelClipped;
+    public GameObject draggablePanel;
+    public GameObject draggablePanelScrollbar;
+#endif
 
     public GameObject panelLeftObject;
     public GameObject panelLeftBottomObject;
@@ -451,7 +463,9 @@ public class UIPanelBase : UIAppPanel {
 
         yield return new WaitForSeconds(delay);
 
+#if USE_EASING_LEANTWEEN
         LeanTween.cancelAll();
+#endif
     }
 
     public virtual void AnimateIn(float time = .5f, float delay = .5f) {
@@ -599,6 +613,7 @@ public class UIPanelBase : UIAppPanel {
         }
     }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public void PanelScale(UIPanel panel) {
         if(panelClipped != null) {
             Vector4 range = panelClipped.clipRange;
@@ -610,6 +625,20 @@ public class UIPanelBase : UIAppPanel {
             panelClipped.clipRange = range;
         }
     }
+#else
+    public void PanelScale(GameObject panel) {
+        if(panelClipped != null) {
+            //Vector4 range = panelClipped.clipRange;
+            //range.x = 0f;
+            ////range.y = 0f;
+            //range.z = 2500f;
+            ////range.y = 2500f;
+            ////range.w = 380f;
+            //panelClipped.clipRange = range;
+        }
+    }
+
+#endif
 
     public void ListScale(float scaleTo) {
         if(listGridRoot != null) {
@@ -640,13 +669,23 @@ public class UIPanelBase : UIAppPanel {
         }
     }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public void ListReposition(UIGrid grid, GameObject gridObject) {
         increment = 0;
         if(grid != null) {
             RepositionList(grid, gridObject);
         }
     }
+#else
+    public void ListReposition(GameObject grid, GameObject gridObject) {
+        increment = 0;
+        if(grid != null) {
+            RepositionList(grid, gridObject);
+        }
+    }
+#endif
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public void RepositionList(UIGrid grid, GameObject gridObject) {
         if(grid != null) {
             grid.Reposition();
@@ -665,10 +704,36 @@ public class UIPanelBase : UIAppPanel {
             }
         }
     }
+#else
+    // TODO Unity UI
+    public void RepositionList(GameObject grid, GameObject gridObject) {
+        ////if(grid != null) {
+        ////    grid.Reposition();
+        ////    if(gridObject.transform.parent != null) {
+
+        ////        UIDraggablePanel[] dragPanels =
+        ////            gridObject.transform.parent.gameObject.GetComponentsInChildren<UIDraggablePanel>();
+
+        ////        if(dragPanels != null) {
+        ////            foreach(UIDraggablePanel panel
+        ////             in dragPanels) {
+        ////                panel.ResetPosition();
+        ////                break;
+        ////            }
+        ////        }
+        ////    }
+        ////}
+    }
+#endif
 
     public void RepositionListScroll(float scrollValue) {
         if(draggablePanelScrollbar != null) {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             draggablePanelScrollbar.scrollValue = 0;
+#else
+            // TODO Unity UI
+            //UIUtil.SetSc
+#endif
         }
         else if(draggablePanel != null) {
             draggablePanel.ResetPosition();
@@ -694,7 +759,13 @@ public class UIPanelBase : UIAppPanel {
         if(prefabObject == null) {
             return null;
         }
-        GameObject item = NGUITools.AddChild(listObject, prefabObject);
+        
+        //GameObject item = NGUITools.AddChild(listObject, prefabObject);
+
+        GameObject item = GameObjectHelper.CreateGameObject(prefabObject, Vector3.zero, Quaternion.identity, false);
+        item.transform.parent = listObject.transform;
+        item.ResetLocalPosition();
+        // NGUITools.AddChild(listObject, prefabObject);
         item.name = "_" + increment++ + "_" + itemName;
         return item;
     }
@@ -739,22 +810,28 @@ public class UIPanelBase : UIAppPanel {
             return;
         }
 
-        UILabel label = GetItemLabel(item, labelName);
-        if(label != null) {
-            label.text = val;
-        }
+        GameObject label = GetItemLabel(item, labelName);
+
+        UIUtil.SetLabelValue(label, val);
     }
 
-    public UILabel GetItemLabel(GameObject item, string labelName) {
+    public GameObject GetItemLabel(GameObject item, string labelName) {
         if(item == null) {
             return null;
         }
 
         Transform t = item.transform.Find(labelName);
+
         if(t != null) {
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             UILabel label = t.GetComponent<UILabel>();
+#else
+
+            Text label = t.GetComponent<Text>();
+#endif
             if(label != null) {
-                return label;
+                return label.gameObject;
             }
         }
         return null;
@@ -892,9 +969,12 @@ public class UIPanelBase : UIAppPanel {
     }
 
     public virtual void HandleHide() {
+
+#if USE_GAME_LIB_GAMEVERSES
+        // TODO event
         GameCommunity.HideActionAppRate();
         GameCommunity.HideSharesCenter();
-
+#endif
         AdNetworks.HideAd();
     }
 }

@@ -5,7 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if USE_LIB_GAMEVERSES
 using Gameverses;
+#endif
 // using Engine.Data.Json;
 using Engine.Events;
 using Engine.Networking;
@@ -44,6 +46,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     public GameversesGameObject gameversesGameObject;
 #endif
     public AudioRecordObject audioRecorder;
+
+#if USE_LIB_GAMEVERSES
     public GameCommunityController platformController;
     public GameCommunityService platformService;
     public GameCommunityUIController platformAppViewerUIController;
@@ -51,6 +55,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     public GameCommunityTrackingController platformTrackingController;
 
     //public Gameverses.GameversesAPI gameversesAPI;
+
+#endif
 
     public bool ENABLE_PRODUCT_UNLOCKS = true;
     public string currentLevel = "Level1";
@@ -315,6 +321,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public void InitCommunity() {
+
+#if USE_LIB_GAMEVERSES
         platformService = GameCommunityService.Instance;//gameObject.AddComponent<GameCommunityService>();
         platformController = gameObject.AddComponent<GameCommunityController>();
         platformAppViewerUIController = gameObject.AddComponent<GameCommunityUIController>();
@@ -322,6 +330,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         platformTrackingController = gameObject.AddComponent<GameCommunityTrackingController>();
 
         Messenger.Broadcast(GameCommunityMessages.gameCommunityReady);
+#endif
     }
 
     public virtual void InitSocial() {

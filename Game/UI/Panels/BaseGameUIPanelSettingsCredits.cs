@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine.Events;
 
-#if ENABLE_FEATURE_SETTINGS_AUDIO
+#if ENABLE_FEATURE_SETTINGS_CREDITS
 
 public class BaseGameUIPanelSettingsCredits : GameUIPanelBase {
 

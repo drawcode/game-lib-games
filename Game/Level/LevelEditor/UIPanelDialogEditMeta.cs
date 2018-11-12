@@ -3,14 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIPanelDialogEditMeta : UIAppPanel {
 
 
     public GameObject listItemPrefab;
-
+    
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UIInput inputName;
     public UIInput inputAmmo;
+#else
+    public GameObject inputName;
+    public GameObject inputAmmo;
+#endif
 
     public static UIPanelDialogEditMeta Instance;
 
@@ -54,16 +60,16 @@ public class UIPanelDialogEditMeta : UIAppPanel {
         GameLevel currentLevel = GameLevels.Current;
 
         if(inputName != null) {
-            inputName.text = currentLevel.display_name;
+            UIUtil.SetInputValue(inputName, currentLevel.display_name);
+            //inputName.text = currentLevel.display_name;
         }
 
 
         if(inputAmmo != null) {
-            inputAmmo.text = "90";//currentLevel.display_name;
+            UIUtil.SetInputValue(inputAmmo, "90");
+            //inputAmmo.text = "90";//currentLevel.display_name;
         }
-
-
-
+        
         yield break;
         /*
 		

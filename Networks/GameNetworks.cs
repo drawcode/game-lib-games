@@ -1419,6 +1419,7 @@ public class GameNetworks : GameObjectBehavior {
 
     #region FACEBOOK
 
+#if USE_GAME_LIB_GAMEVERSES
     public string facebookOpenGraphUrl = "https://graph.facebook.com/";
 
     public static void PostScoreFacebook(int score) {
@@ -1558,7 +1559,6 @@ public class GameNetworks : GameObjectBehavior {
         if(string.IsNullOrEmpty(responseText)) {
             return;
         }
-
         GameCommunityLeaderboardData leaderboardData = parseScoresFacebook(responseText);
 
         if(leaderboardData != null) {
@@ -1570,6 +1570,7 @@ public class GameNetworks : GameObjectBehavior {
     public static string testFacebookScoresResult = "";
 
     public static void ParseTestScoresFacebook(string responseText) {
+
         GameCommunityLeaderboardData leaderboardData = ParseScoresFacebook(responseText);
 
         Messenger<GameCommunityLeaderboardData>.Broadcast(
@@ -1787,6 +1788,7 @@ public class GameNetworks : GameObjectBehavior {
 
         return leaderboardData;
     }
+#endif
 
     #endregion
 
@@ -1817,14 +1819,14 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31        
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
             GameCenterManager.playerAuthenticatedEvent += playerAuthenticated;
             GameCenterManager.achievementsLoadedEvent += achievementsLoaded;
             GameCenterManager.achievementMetadataLoadedEvent += achievementMetadataLoaded;
 #endif
         }
         else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31        
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
 
             // Fired when authentication succeeds. Includes the user_id
             GPGManager.authenticationSucceededEvent += authenticationSucceededEvent;
@@ -1942,14 +1944,14 @@ public class GameNetworks : GameObjectBehavior {
 #endif
 
         if(networkTypeTo == GameNetworkType.gameNetworkAppleGameCenter) {
-#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31    
+#if GAMENETWORK_IOS_APPLE_GAMECENTER_PRIME31
             GameCenterManager.playerAuthenticatedEvent -= playerAuthenticated;
             GameCenterManager.achievementsLoadedEvent -= achievementsLoaded;
             GameCenterManager.achievementMetadataLoadedEvent -= achievementMetadataLoaded;
 #endif
         }
         else if(networkTypeTo == GameNetworkType.gameNetworkGooglePlayServices) {
-#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31        
+#if GAMENETWORK_ANDROID_GOOGLE_PLAY_PRIME31
         
         // Fired when authentication succeeds. Includes the user_id
             GPGManager.authenticationSucceededEvent -= authenticationSucceededEvent;
@@ -2038,7 +2040,7 @@ public class GameNetworks : GameObjectBehavior {
         // Fires when loading scores succeeds
             GPGManager.loadScoresSucceededEvent -= loadScoresSucceededEvent;
                 
-#endif        
+#endif
         }
     }
 

@@ -115,8 +115,11 @@ public class BaseGamePlayerController : GameActor {
     public GamePlayerWeapon weaponPrimary;
     public GamePlayerWeapon weaponSecondary;
 
+
+#if USE_GAME_LIB_GAMEVERSES
     // network
     public Gameverses.GameNetworkPlayerContainer currentNetworkPlayerContainer;
+#endif
 
     // CAMS
     public GameCameraSmoothFollow gameCameraSmoothFollow;
@@ -175,6 +178,8 @@ public class BaseGamePlayerController : GameActor {
 
         Messenger.AddListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
 
+
+#if USE_GAME_LIB_GAMEVERSES
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
 
@@ -189,6 +194,7 @@ public class BaseGamePlayerController : GameActor {
 
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.AddListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
+#endif
 
         Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
 
@@ -209,6 +215,7 @@ public class BaseGamePlayerController : GameActor {
 
         Messenger.RemoveListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
 
+#if USE_GAME_LIB_GAMEVERSES
         Gameverses.GameMessenger<string, Gameverses.GameNetworkAniStates>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAnimation, OnNetworkPlayerAnimation);
 
@@ -223,6 +230,7 @@ public class BaseGamePlayerController : GameActor {
 
         Gameverses.GameMessenger<Gameverses.GameNetworkingAction, Vector3, Vector3>.RemoveListener(
             Gameverses.GameNetworkingMessages.ActionEvent, OnNetworkActionEvent);
+#endif
 
         Messenger<GameAudioData>.RemoveListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
 
@@ -430,6 +438,7 @@ public class BaseGamePlayerController : GameActor {
 
     }
 
+#if USE_GAME_LIB_GAMEVERSES
     public virtual void OnNetworkActionEvent(Gameverses.GameNetworkingAction actionEvent, Vector3 pos, Vector3 direction) {
 
         if(!GameConfigs.isGameRunning) {
@@ -499,6 +508,7 @@ public class BaseGamePlayerController : GameActor {
             }
         }
     }
+#endif
 
     public override void OnInputDown(InputTouchInfo touchInfo) {
         LogUtil.Log("OnInputDown GameActor");
@@ -1202,12 +1212,17 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void GamePlayerModelHolderEase(float height = 0, float time = .5f, float delay = 0) {
 
+#if USE_EASING_LEANTWEEN
         LeanTween.cancel(gamePlayerModelHolder);
 
         LeanTween
             .moveLocalY(gamePlayerModelHolder, height, time)
                 .setEase(LeanTweenType.easeInOutQuad)
                     .setDelay(delay);
+
+#else
+        gamePlayerModelHolder.transform.localPosition.WithY(height);
+#endif
     }
 
     public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = .5f, float delay = .1f) {
@@ -4988,6 +5003,8 @@ public class BaseGamePlayerController : GameActor {
     // ------------------------------------------------------------------------
     // NETWORK
 
+#if USE_GAME_LIB_GAMEVERSES
+
     public virtual void UpdateNetworkContainer(string uid) {
 
         uniqueId = uid;
@@ -5068,6 +5085,7 @@ public class BaseGamePlayerController : GameActor {
             currentNetworkPlayerContainer.running = true;
         }
     }
+#endif
 
     // ------------------------------------------------------------------------
     // CONTEXT CONTROLLER
@@ -5777,11 +5795,12 @@ public class BaseGamePlayerController : GameActor {
     public virtual void CheckIfShouldRemove() {
         if(IsNetworkPlayerState()) {
             // if network container is gone remove the player...
-
+#if USE_GAME_LIB_GAMEVERSES
             if(HasNetworkContainer(uniqueId)) {
                 // no prob
             }
             else {
+#endif
                 // remove
 
                 if(currentControllerData.thirdPersonController) {
@@ -5791,7 +5810,9 @@ public class BaseGamePlayerController : GameActor {
                 TweenUtil.FadeToObject(gameObject, 0f, .3f, .5f);
 
                 Invoke("RemoveMe", 6);
+#if USE_GAME_LIB_GAMEVERSES
             }
+#endif
         }
     }
 
@@ -5974,7 +5995,10 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
 
+#if USE_GAME_LIB_GAMEVERSES
             UpdateNetworkContainerFromSource(uniqueId);
+#endif
+
         }
         else if(IsPlayerState()) {
             if(currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
@@ -6014,7 +6038,10 @@ public class BaseGamePlayerController : GameActor {
                 Die();
             }
 
+#if USE_GAME_LIB_GAMEVERSES
             UpdateNetworkContainerFromSource(uniqueId);
+#endif
+
         }
         else if(IsUIState()) {
 

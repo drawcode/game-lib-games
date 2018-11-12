@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class UITweenerUtil {
 
+
+#if USE_EASING_NGUI
+
     public static void CameraFade(float amount, float time) {
         //iTween.CameraFadeTo(amount, time);
     }
@@ -435,7 +438,7 @@ public class UITweenerUtil {
 #else
         if(comp == null)
             comp = go.AddComponent<T>();
-#endif      
+#endif
         comp.delay = delay;
         comp.duration = duration;
         comp.method = method;
@@ -446,4 +449,5 @@ public class UITweenerUtil {
         comp.enabled = true;
         return comp;
     }
+#endif
 }

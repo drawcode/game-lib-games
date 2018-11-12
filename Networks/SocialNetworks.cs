@@ -15,7 +15,9 @@ using UnityEngine;
 
 using Engine.Events;
 
+#if USE_PRIME31
 using Prime31;
+#endif
 
 public class SocialNetworksMessages {
     public static string socialLoaded = "social-loaded";
@@ -51,10 +53,13 @@ public class SocialNetworks : GameObjectBehavior {
     public GameObject socialNetworkFacebookAndroid;
     public GameObject socialNetworkTwitterAndroid;
     public GameObject socialNetworkiOS;
+
+#if USE_CONFIG_APP
     public string FACEBOOK_APP_ID = AppConfigs.socialFacebookAppId;
     public string FACEBOOK_SECRET = AppConfigs.socialFacebookSecret;
     public string TWITTER_KEY = AppConfigs.socialTwitterAppId;
     public string TWITTER_SECRET = AppConfigs.socialTwitterSecret;
+#endif
     public static SocialNetworks Instance;
     [NonSerializedAttribute]
     public string
@@ -317,6 +322,8 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public void loadSocialLibs() {
+        
+#if USE_CONFIG_APP
         if(AppConfigs.featureEnableFacebook) {
             initFacebook();
         }
@@ -324,6 +331,7 @@ public class SocialNetworks : GameObjectBehavior {
         if(AppConfigs.featureEnableTwitter) {
             initTwitter();
         }
+#endif
 
         Messenger.Broadcast(SocialNetworksMessages.socialLoaded);
     }
@@ -396,7 +404,9 @@ public class SocialNetworks : GameObjectBehavior {
         Facebook.instance.debugRequests = true;
 #endif
 
+#if USE_CONFIG_APP
         Debug.Log("LoadSocialLibs FACEBOOK_APP_ID..." + FACEBOOK_APP_ID);
+#endif
 
         // Social Network Prime31       
 #if UNITY_ANDROID
@@ -480,7 +490,7 @@ public class SocialNetworks : GameObjectBehavior {
 
         dumpPermissionsToLog(permissions);
 
-#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31        
+#if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
         Debug.Log("Logging in facebook");
         FacebookAndroid.loginWithReadPermissions(permissions);
 #elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
@@ -785,7 +795,7 @@ public class SocialNetworks : GameObjectBehavior {
         string message,
         Action<string, object> completionHandler) {
 
-#if (UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
+#if(UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
 
         Facebook.instance.postMessage(
             message,
@@ -815,7 +825,7 @@ public class SocialNetworks : GameObjectBehavior {
         byte[] bytesImage,
         Action<string, object> completionHandler) {
 
-#if (UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
+#if(UNITY_ANDROID || UNITY_IPHONE) && SOCIAL_USE_FACEBOOK_PRIME31
 
         Facebook.instance.postImage(
             bytesImage, 

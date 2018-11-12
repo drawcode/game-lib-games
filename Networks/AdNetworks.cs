@@ -21,7 +21,7 @@ using UnityEngine.Advertisements;
 using Engine.Events;
 using Engine.Utility;
 
-using Prime31;
+//using Prime31;
 
 #if PROMO_USE_CHARTBOOST
 using ChartboostSDK;
@@ -116,8 +116,13 @@ public class AdNetworks : GameObjectBehavior {
 #endif
 #endif
 
+#if USE_CONFIG_APP
     public static bool adNetworksEnabled = AppConfigs.adNetworksEnabled;
     public static bool adNetworkTestingEnabled = AppConfigs.adNetworkTestingEnabled;
+#else
+    public static bool adNetworksEnabled = false;
+    public static bool adNetworkTestingEnabled = false;
+#endif
     public bool tapjoyOpeningFullScreenAd = false;
     private static AdNetworks _instance = null;
 
@@ -328,7 +333,7 @@ public class AdNetworks : GameObjectBehavior {
     // ----------------------------------------------------------------------
     // TAPJOY - http://prime31.com/docs#comboVungle
 
-    #region TAPJOY
+#region TAPJOY
 
 #if PROMO_USE_TAPJOY
     
@@ -470,12 +475,12 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-    #endregion
+#endregion
 
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
 
-    #region VUNGLE
+#region VUNGLE
 
 #if PROMO_USE_VUNGLE
 
@@ -532,12 +537,12 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-    #endregion
+#endregion
 
     // ----------------------------------------------------------------------
     // CHARTBOOST
 
-    #region CHARTBOOST
+#region CHARTBOOST
 
 #if PROMO_USE_CHARTBOOST
 
@@ -663,11 +668,11 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-    #endregion
+#endregion
 
     public bool interstitialReady = false;
 
-    #region IAD
+#region IAD
 
 #if AD_USE_IAD
     // ----------------------------------------------------------------------
@@ -810,10 +815,10 @@ public class AdNetworks : GameObjectBehavior {
         return true;
     }
 
-    #endregion
+#endregion
 
-    // ----------------------------------------------------------------------
-    // UNITY ADS
+// ----------------------------------------------------------------------
+// UNITY ADS
 
 #if AD_USE_UNITY
 
@@ -893,12 +898,13 @@ public class AdNetworks : GameObjectBehavior {
 
 #endif
 
-    // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
-    // GOOGLE ADMOB
+// GOOGLE ADMOB
 
-    #region ADMOB
+#region ADMOB
 
+#if AD_USE_ADMOB
     public void admobInit() {
         LogUtil.Log("InitAdmob AppConfigs.publisherIdAdmobiOS..." +
             AppConfigs.publisherIdAdmobiOS);
@@ -936,6 +942,8 @@ public class AdNetworks : GameObjectBehavior {
 #endif
         }
     }
+
+#endif
 
 #if !UNITY_WEBPLAYER
 #if AD_USE_ADMOB
@@ -1098,7 +1106,7 @@ public class AdNetworks : GameObjectBehavior {
         return false;
     }
 
-    #endregion
+#endregion
 
     // ----------------------------------------------------------------------
 
@@ -1242,7 +1250,11 @@ public class AdNetworks : GameObjectBehavior {
 #if PROMO_USE_VUNGLE
         return vungleIsAdvertAvailable();
 #else
+#if AD_USE_UNITY
         return unityIsAdReady();
+#else
+        return false;
+#endif
 #endif
     }
 

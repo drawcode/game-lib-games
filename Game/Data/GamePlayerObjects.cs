@@ -194,9 +194,13 @@ public class BaseGamePlayerControllerData {
     // physics
     public Vector3 impact = Vector3.zero;
 
+
+#if USE_GAME_LIB_GAMEVERSES
     // networking
     public Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     public Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
+
+#endif
 
     // RPG
     public GameProfileRPGItem currentRPGItem = null;
