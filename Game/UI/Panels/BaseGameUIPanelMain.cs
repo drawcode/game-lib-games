@@ -49,7 +49,9 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
     public override void OnEnable() {
 
-        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.AddListener(
+            ButtonEvents.EVENT_BUTTON_CLICK,
+            OnButtonClickEventHandler);
 
         Messenger<string>.AddListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -66,7 +68,9 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
     public override void OnDisable() {
 
-        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.RemoveListener(
+            ButtonEvents.EVENT_BUTTON_CLICK,
+            OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -131,14 +135,18 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
         characterDisplayState = UIPanelCharacterDisplayState.None;
         backgroundDisplayState = UIPanelBackgroundDisplayState.None;
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.HideBroadcastRecordPlayShare();
+#endif
     }
 
     public override void HandleHide() {
         base.HandleHide();
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.HideActionAppRate();
         GameCommunity.HideBroadcastRecordPlayShare();
+#endif
     }
 
     public override void AnimateIn() {
@@ -163,9 +171,11 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
         GameUIPanelFooter.ShowMain();
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.HideBroadcastRecordPlayShare();
 
         GameCommunity.ShowActionAppRate();
+#endif
     }
 
     public virtual void AnimateStartCharacter() {
@@ -174,7 +184,9 @@ public class BaseGameUIPanelMain : GameUIPanelBase {
 
             TweenUtil.FadeToObject(
                 containerStartObject, .5f, 2f, 0f, true,
-                TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
+                TweenCoord.local,
+                TweenEaseType.quadEaseInOut,
+                TweenLoopType.pingPong);
 
             //UITweenerUtil.FadeTo(containerStartObject,
             //    UITweener.Method.EaseInOut, UITweener.Style.PingPong, 2f, 0f, .5f);

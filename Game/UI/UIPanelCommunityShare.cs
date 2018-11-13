@@ -118,7 +118,9 @@ public class UIPanelCommunityShare : UIPanelCommunityBase {
             return;
         }
 
+#if USE_GAME_LIB_GAMEVERSES
         ShowShare(GameCommunityUIShares.shareCenter);
+#endif
     }
 
     public static void HideSharesCenter() {

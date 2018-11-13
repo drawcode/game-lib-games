@@ -44,10 +44,12 @@ public class GameObjectCallToAction : GameObjectBehavior {
 
     void AnimateScale() {
 
+#if USE_EASING_LEANTWEEN
         LeanTween.scale(gameObject, Vector3.one * scale, scaleTime)
             .setEase(LeanTweenType.easeInOutQuad)
             .setLoopPingPong()
             .setOnComplete(onScaleComplete);
+#endif
     }
 
     void onScaleComplete() {
@@ -63,11 +65,13 @@ public class GameObjectCallToAction : GameObjectBehavior {
     // rotate
 
     void AnimateRotate() {
-        
+
+#if USE_EASING_LEANTWEEN
         LeanTween.rotateLocal(gameObject, Vector3.zero.WithZ(rotate), rotateTime)
             .setEase(LeanTweenType.easeInOutQuad)
             .setLoopPingPong()
             .setOnComplete(onRotateComplete);
+#endif
     }
 
     void onRotateComplete() {

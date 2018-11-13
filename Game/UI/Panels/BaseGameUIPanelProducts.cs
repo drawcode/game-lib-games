@@ -5,11 +5,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using UnityEngine.UI;
 
 public class BaseGameUIPanelProducts : GameUIPanelBase {
 
     public static GameUIPanelProducts Instance;
+
     public GameObject listItemItemPrefab;
+
     public string currentProductType;
     public string productCodeUse = "";
     public string productTypeUse = "";
@@ -38,7 +41,9 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
     public override void OnEnable() {
 
-        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.AddListener(
+            ButtonEvents.EVENT_BUTTON_CLICK, 
+            OnButtonClickEventHandler);
 
         Messenger<string>.AddListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -55,7 +60,9 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
     public override void OnDisable() {
 
-        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.RemoveListener(
+            ButtonEvents.EVENT_BUTTON_CLICK, 
+            OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -157,12 +164,16 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
             loadDataProducts(productType);
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
         }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
 
         // Reposition scroll for items with less products
         // but keep in place in case user is buying many of one thing 
@@ -209,7 +220,16 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
         foreach(GameProduct product in products) {
 
-            GameObject item = NGUITools.AddChild(listGridRoot, listItemItemPrefab);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(listGridRoot, listItemItemPrefab);
+#else
+            GameObject item = GameObjectHelper.CreateGameObject(
+                listItemItemPrefab, Vector3.zero, Quaternion.identity, false);
+            // NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.transform.parent = listGridRoot.transform;
+            item.ResetLocalPosition();
+#endif
+
             item.name = "WeaponItem" + i;
 
             GameProductInfo info = product.GetDefaultProductInfoByLocale();
@@ -219,13 +239,17 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
             UIUtil.UpdateLabelObject(item.transform, "LabelCost", info.cost);
 
             Transform inventoryItem = item.transform.Find("Container/Inventory");
+
             if(inventoryItem != null) {
 
                 double currentValue = 0;
 
                 if(product.type == GameProductType.rpgUpgrade) {
+
                     currentValue = GameProfileRPGs.Current.GetUpgrades();
-                    UIUtil.UpdateLabelObject(inventoryItem, "LabelCurrentValue", currentValue.ToString("N0"));
+
+                    UIUtil.UpdateLabelObject(
+                        inventoryItem, "LabelCurrentValue", currentValue.ToString("N0"));
                 }
                 else {
                     inventoryItem.gameObject.Hide();
@@ -233,29 +257,48 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
             }
 
             Transform iconTransform = item.transform.Find("Container/Icon");
+
             if(iconTransform != null) {
+
                 GameObject iconObject = iconTransform.gameObject;
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 UISprite iconSprite = iconObject.GetComponent<UISprite>();
+#else
+                GameObject iconSprite = null;
+
+                if(iconObject.Has<SpriteRenderer>()) {
+                    iconSprite = iconObject.Get<SpriteRenderer>().gameObject;
+                }
+#endif
 
                 if(iconSprite != null) {
-                    iconSprite.alpha = 1f;
+
+                    SpriteUtil.SetColorAlpha(iconSprite, 1f);
 
                     // TODO change out image...
                 }
             }
 
             // Update button action
-
-
+            
             Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
+
             if(buttonObject != null) {
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
+#else
+                Button button = buttonObject.gameObject.Get<Button>();
+#endif
+
                 if(button != null) {
 
                     // TODO change to get from character skin
                     string productType = product.type;
                     string productCode = product.code;
-                    string productCharacter = GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
+                    string productCharacter = 
+                        GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
 
                     //productCode = productCode.Replace(productType + "-", "");
 

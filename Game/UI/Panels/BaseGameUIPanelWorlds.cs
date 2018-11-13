@@ -287,12 +287,14 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             loadDataMissions();
 
             yield return new WaitForEndOfFrame();
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             listGridRoot.GetComponent<UIGrid>().Reposition();
             yield return new WaitForEndOfFrame();
+#endif
         }
 
         // Find worlds
-
 
     }
 
@@ -313,7 +315,19 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
 
             double scoreMission = 0;
 
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+#else
+            GameObject item = GameObjectHelper.CreateGameObject(listItemPrefab, Vector3.zero, Quaternion.identity, false);// NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.transform.parent = listGridRoot.transform;
+            item.ResetLocalPosition();
+#endif
+
+            // Update button action
+
+            Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
+
             item.name = "MissionItem" + i;
 
             UIUtil.UpdateLabelObject(item, "Container/Meta/LabelName", mission.display_name);
@@ -323,14 +337,22 @@ public class BaseGameUIPanelWorlds : GameUIPanelBase {
             string appContentState = AppContentStates.Current.code;
             string appState = AppStates.Current.code;
             string missionCode = mission.code;
-
-            // Update button action
-
-            Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
+            
             if(buttonObject != null) {
-                UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
-                if(button != null) {
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
+                UIImageButton button = buttonObject.gameObject.GetComponent<UIImageButton>();
+#else
+
+                GameObject button = null;
+
+                if(buttonObject.gameObject.Has<Button>()) {
+                    button = buttonObject.gameObject.Get<Button>().gameObject;
+                }
+#endif
+
+                if(button != null) {
 
                     GameObjectData objData = button.gameObject.Get<GameObjectData>();
 

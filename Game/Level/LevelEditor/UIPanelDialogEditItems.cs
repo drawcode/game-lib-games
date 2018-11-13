@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIPanelDialogEditItemsFilter {
 	public static string all = "all";
@@ -12,7 +13,6 @@ public class UIPanelDialogEditItemsFilter {
 }
 
 public class UIPanelDialogEditItems : UIAppPanelBaseList {
-
 
     public GameObject listItemPrefab;
 
@@ -85,12 +85,28 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
                     }
                 }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-                item.name = "AssetItem" + i;
-                item.transform.Find("LabelName").GetComponent<UILabel>().text = asset.display_name;
-                //item.transform.FindChild("LabelDescription").GetComponent<UILabel>().text = achievement.description;
+#else
+                GameObject item = GameObjectHelper.CreateGameObject(
+                    listItemPrefab, Vector3.zero, Quaternion.identity, false);
+                // NGUITools.AddChild(listGridRoot, listItemPrefab);
 
-                GameObject gameLevelItemObject = item.transform.Find("GameLevelItemObject").gameObject;
+                item.transform.parent = listGridRoot.transform;
+                item.ResetLocalPosition();
+#endif
+
+                //GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+                item.name = "AssetItem" + i;
+
+                Transform labelItemName = item.transform.Find("LabelName");
+
+                if(labelItemName != null) {
+                    UIUtil.SetLabelValue(labelItemName.gameObject, asset.display_name);
+                }
+
+                GameObject gameLevelItemObject = 
+                    item.transform.Find("GameLevelItemObject").gameObject;
 
                 // clear current items
 
@@ -159,13 +175,27 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
                         }
                     }
                     adjust = adjust / 2;
-                    go.transform.localScale = go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
+
+                    go.transform.localScale = 
+                        go.transform.localScale.WithX(adjust).WithY(adjust).WithZ(adjust);
                     //}
 
                 }
 
-                item.transform.Find("ButtonGameLevelItemObject").GetComponent<UIButton>().name
-                        = "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
+                Transform buttonGameLevelItemObject = item.transform.Find("ButtonGameLevelItemObject");
+
+                if(buttonGameLevelItemObject != null) {
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                    buttonGameLevelItemObject.GetComponent<UIButton>().name
+                            = "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
+#else
+                    if(buttonGameLevelItemObject.gameObject.Has<Button>()) {
+                        buttonGameLevelItemObject.GetComponent<Button>().name
+                                = "ButtonGameLevelItemObject$" + asset.code; ///levels[y].name;
+                    }
+#endif
+                }
 
                 if(filterType == UIPanelDialogEditItemsFilter.all) {
 
@@ -174,8 +204,10 @@ public class UIPanelDialogEditItems : UIAppPanelBaseList {
                 i++;
             }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
 
         }

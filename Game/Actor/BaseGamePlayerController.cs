@@ -5003,7 +5003,7 @@ public class BaseGamePlayerController : GameActor {
     // ------------------------------------------------------------------------
     // NETWORK
 
-#if USE_GAME_LIB_GAMEVERSES
+#if USE_GAME_LIB_GAMEVERSES || ENABLE_FEATURE_NETWORKING
 
     public virtual void UpdateNetworkContainer(string uid) {
 

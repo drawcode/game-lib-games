@@ -149,12 +149,15 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         initCameras();
 
+#if USE_GAME_LIB_GAMEVERSES || ENABLE_FEATURE_NETWORKING
+
         foreach(GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
             if(gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
                 break;
             }
         }
+#endif
 
         initGameWorldBounds();
 
@@ -185,9 +188,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger.AddListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
 
+#if USE_GAME_LIB_GAMEVERSES
         Gameverses.GameMessenger<string>.AddListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
+#endif
 
         Messenger<GameAIDirectorData>.AddListener(
             GameAIDirectorMessages.gameAIDirectorSpawnActor,
@@ -218,9 +223,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger.RemoveListener(GameMessages.gameLevelPlayerReady, OnGameLevelPlayerReady);
 
+#if USE_GAME_LIB_GAMEVERSES
         Gameverses.GameMessenger<string>.RemoveListener(
             Gameverses.GameNetworkPlayerMessages.PlayerAdded,
             OnNetworkPlayerContainerAdded);
+#endif
 
         Messenger<GameAIDirectorData>.RemoveListener(
             GameAIDirectorMessages.gameAIDirectorSpawnActor,
@@ -521,6 +528,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if(playerControllers.Length > 0) {
 
+#if USE_GAME_LIB_GAMEVERSES || ENABLE_FEATURE_NETWORKING
+
             bool found = false;
 
             foreach(GamePlayerController gamePlayerController in playerControllers) {
@@ -556,6 +565,8 @@ public class BaseGameController : GameObjectTimerBehavior {
                     //LogUtil.Log("OnNetworkPlayerContainerAdded:playerControllerOther.uniqueId:" + playerControllerOther.uniqueId);
                 }
             }
+
+#endif
         }
     }
 

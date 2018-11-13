@@ -45,9 +45,11 @@ public class UIPanelCommunityBase : UIPanelBase {
 
     public virtual void showDialog() {
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.HideGameCommunity();
 
         UIPanelCommunityBackground.ShowBackground();
+#endif
 
         if(GameController.Instance.gameRunningState == GameRunningState.RUNNING) {
             GameController.GameRunningStateOverlay();
@@ -56,7 +58,9 @@ public class UIPanelCommunityBase : UIPanelBase {
 
     public virtual void hideDialog() {
 
+#if USE_GAME_LIB_GAMEVERSES
         UIPanelCommunityBackground.HideBackground();
+#endif
 
         if(GameController.Instance.gameRunningState != GameRunningState.RUNNING
            && GameController.Instance.gameState == GameStateGlobal.GameOverlay) {

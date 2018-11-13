@@ -20,6 +20,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 #endif
 
     public static UIPanelCommunityBroadcast Instance;
+
     public GameObject panelBroadcastButton;
     public GameObject panelBroadcastRecord;
     public GameObject panelBroadcastRecordPlayShare;
@@ -38,7 +39,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public override void Awake() {
 
-        if (Instance != null && this != Instance) {
+        if(Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -49,7 +50,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if(Instance != null) {
                 return true;
             }
             return false;
@@ -79,26 +80,26 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     }
 
     // EVENTS
- 
+
     public override void OnEnable() {
 
         base.OnEnable();
 
         Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
         Messenger<string, bool>.AddListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
-        
+
         Messenger<string>.AddListener(
-            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged,
             OnBroadcastRecordStatusChanged);
-        
+
         Messenger<string>.AddListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.AddListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
         Messenger<string>.AddListener(GameMessages.gameLevelQuit, OnGameLevelQuit);
-                
+
         Messenger.AddListener(GameMessages.gameResultsStart, OnGameResultsStart);
         Messenger.AddListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
     }
-    
+
     public override void OnDisable() {
 
         base.OnDisable();
@@ -107,13 +108,13 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         Messenger<string, bool>.RemoveListener(CheckboxEvents.EVENT_ITEM_CHANGE, OnToggleChangedEventHandler);
 
         Messenger<string>.RemoveListener(
-            BroadcastNetworksMessages.broadcastRecordingStatusChanged, 
+            BroadcastNetworksMessages.broadcastRecordingStatusChanged,
             OnBroadcastRecordStatusChanged);
-        
+
         Messenger<string>.RemoveListener(GameMessages.gameLevelStart, OnGameLevelStart);
         Messenger<string>.RemoveListener(GameMessages.gameLevelEnd, OnGameLevelEnd);
         Messenger<string>.RemoveListener(GameMessages.gameLevelQuit, OnGameLevelQuit);
-        
+
         Messenger.RemoveListener(GameMessages.gameResultsStart, OnGameResultsStart);
         Messenger.RemoveListener(GameMessages.gameResultsEnd, OnGameResultsEnd);
     }
@@ -124,16 +125,16 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public void OnToggleChangedEventHandler(string checkboxName, bool selected) {
 
-        if (UIUtil.IsCheckboxChecked(toggleRecordReplaysLevel, checkboxName)) {
+        if(UIUtil.IsCheckboxChecked(toggleRecordReplaysLevel, checkboxName)) {
             Debug.Log("OnToggleChangedEventHandler" + " checkboxName:" + checkboxName + " selected:" + selected.ToString());
-        
+
             GameProfiles.Current.SetBroadcastRecordLevels(selected);
-            GameState.SaveProfile();        
+            GameState.SaveProfile();
         }
     }
-    
+
     public void OnBroadcastRecordStatusChanged(string broadcastStatus) {
-        
+
         UpdateBroadcastStatus(broadcastStatus);
     }
 
@@ -149,58 +150,59 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
         Debug.Log("Broadcast: OnGameLevelStart" + " levelCode:" + levelCode);
 
-        if (BroadcastNetworks.broadcastNetworksEnabled) {
+        if(BroadcastNetworks.broadcastNetworksEnabled) {
 
-            if (GameProfiles.Current.GetBroadcastRecordLevels()) {
-                
+            if(GameProfiles.Current.GetBroadcastRecordLevels()) {
+
                 Debug.Log("OnGameLevelStart" + " record levels:" + GameProfiles.Current.GetBroadcastRecordLevels());
-                
-                if (!BroadcastNetworks.IsRecording()) {
+
+                if(!BroadcastNetworks.IsRecording()) {
                     BroadcastNetworks.StartRecording();
                 }
             }
         }
     }
 
-    public void OnGameLevelEnd(string levelCode) { 
-                
+    public void OnGameLevelEnd(string levelCode) {
+
         Debug.Log("Broadcast: OnGameLevelEnd" + " levelCode:" + levelCode);
 
         BroadcastGameLevelFinishDelayed(3.5f);
     }
 
-    public void OnGameLevelQuit(string levelCode) { 
-        
+    public void OnGameLevelQuit(string levelCode) {
+
         Debug.Log("Broadcast: OnGameLevelQuit" + " levelCode:" + levelCode);
-        
+
         BroadcastGameLevelFinishData(false);
     }
 
     public void BroadcastGameLevelFinishData(bool showReplayCallout) {
         Debug.Log("Broadcast: BroadcastGameLevelFinishData:Starting");
-        
-        if (BroadcastNetworks.broadcastNetworksEnabled) {
-            
-            if (GameProfiles.Current.GetBroadcastRecordLevels()) {
-                
-                if (BroadcastNetworks.IsRecording()) {
 
-                    Debug.Log("BroadcastGameLevelFinishData" + " record levels:" + 
+        if(BroadcastNetworks.broadcastNetworksEnabled) {
+
+            if(GameProfiles.Current.GetBroadcastRecordLevels()) {
+
+                if(BroadcastNetworks.IsRecording()) {
+
+                    Debug.Log("BroadcastGameLevelFinishData" + " record levels:" +
                               GameProfiles.Current.GetBroadcastRecordLevels());
-                    
+
                     BroadcastNetworks.StopRecording();
-                                        
+
                     if(showReplayCallout) {
                         ShowBroadcastRecordPlayShare();
                     }
 
                     GamePlayerRuntimeData runtimeData = new GamePlayerRuntimeData();
                     GamePlayerController gamePlayerController = GameController.CurrentGamePlayerController;
-                    
-                    if (gamePlayerController != null) {
-                        runtimeData = gamePlayerController.runtimeData;                        
+
+                    if(gamePlayerController != null) {
+                        runtimeData = gamePlayerController.runtimeData;
                     }
 
+#if USE_GAME_LIB_GAMEVERSES
                     string word = GameCommunitySocialController.Instance.GetGameAdjective();
                     
                     BroadcastNetworks.SetMetadata("about",
@@ -216,7 +218,8 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
                     BroadcastNetworks.SetMetadata("total_score", runtimeData.totalScoreValue.ToString("N0"));
                     
                     Debug.Log("BroadcastGameLevelFinishData" + " runtimeData.scores:" + runtimeData.scores);
-                    
+#endif
+
                 }
             }
         }
@@ -230,13 +233,13 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         Debug.Log("Broadcast: BroadcastGameLevelFinishDelayedCo" + " delay:" + delay);
 
         yield return new WaitForSeconds(delay);
-        
+
         BroadcastGameLevelFinishData(true);
     }
-    
+
     public void UpdateBroadcastStatus(string broadcastStatus) {
-                
-        if (broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
+
+        if(broadcastStatus == BroadcastNetworksMessages.broadcastRecordingStart) {
             HandleUIBroadcastStart();
         }
         else {
@@ -253,126 +256,126 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         showButtonBroadcastRecordStop();
         hideButtonBroadcastFacecamToggle();
     }
-    
+
     public void HandleUIBroadcastStop() {
-        
+
         showButtonBroadcastOpen();
         showButtonBroadcastShare();
         showButtonBroadcastReplay();
         showButtonBroadcastRecordStart();
         hideButtonBroadcastRecordStop();
 
-        if (isFacecamSupported) {
+        if(isFacecamSupported) {
             showButtonBroadcastFacecamToggle();
         }
     }
 
     //
-    
+
     public static void ShowButtonBroadcastFacecamToggle() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastFacecamToggle();
         }
     }
-    
+
     public void showButtonBroadcastFacecamToggle() {
         buttonBroadcastFacecamToggle.Show();
     }
-    
+
     public static void HideButtonBroadcastFacecamToggle() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastFacecamToggle();
         }
     }
-    
+
     public void hideButtonBroadcastFacecamToggle() {
         buttonBroadcastFacecamToggle.Hide();
     }
 
     //
-    
+
     public static void ShowButtonBroadcastRecordStart() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastRecordStart();
         }
     }
-    
+
     public void showButtonBroadcastRecordStart() {
         buttonBroadcastRecordStart.Show();
     }
-    
+
     public static void HideButtonBroadcastRecordStart() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastRecordStart();
         }
     }
-    
+
     public void hideButtonBroadcastRecordStart() {
         buttonBroadcastRecordStart.Hide();
     }
-    
+
     //
-    
+
     public static void ShowButtonBroadcastRecordStop() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastRecordStop();
         }
     }
-    
+
     public void showButtonBroadcastRecordStop() {
         buttonBroadcastRecordStop.Show();
     }
-    
+
     public static void HideButtonBroadcastRecordStop() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastRecordStop();
         }
     }
-    
+
     public void hideButtonBroadcastRecordStop() {
         buttonBroadcastRecordStop.Hide();
     }
 
     //
-    
+
     public static void ShowButtonBroadcastOpen() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastOpen();
         }
     }
-    
+
     public void showButtonBroadcastOpen() {
         buttonBroadcastOpen.Show();
     }
-    
+
     public static void HideButtonBroadcastOpen() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastOpen();
         }
     }
-    
+
     public void hideButtonBroadcastOpen() {
         buttonBroadcastOpen.Hide();
     }
 
     //
-    
+
     public static void ShowButtonBroadcastReplay() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastReplay();
         }
     }
-    
+
     public void showButtonBroadcastReplay() {
         buttonBroadcastReplay.Show();
     }
-    
+
     public static void HideButtonBroadcastReplay() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastReplay();
         }
     }
-    
+
     public void hideButtonBroadcastReplay() {
         buttonBroadcastReplay.Hide();
     }
@@ -380,7 +383,7 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     //
 
     public static void ShowButtonBroadcastShare() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButtonBroadcastShare();
         }
     }
@@ -388,9 +391,9 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void showButtonBroadcastShare() {
         buttonBroadcastShare.Show();
     }
-    
+
     public static void HideButtonBroadcastShare() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideButtonBroadcastShare();
         }
     }
@@ -403,51 +406,57 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
 
     public void UpdateState() {
 
+#if USE_CONFIG_APP
         isEnabled = AppConfigs.broadcastNetworksEnabled;
+#else
+        isEnabled = false;
+#endif
         isSupported = BroadcastNetworks.IsSupported();
         isRecordingSupported = BroadcastNetworks.IsRecordingSupported();
         isFacecamSupported = BroadcastNetworks.IsFacecamVideoRecordingSupported();
 
-        Debug.Log("UIPanelCommunityBroadcast:" + 
-                  " isEnabled:" + isEnabled + 
-                  " isSuppored:" + isSupported + 
-                  " isRecordingSupported:" + isRecordingSupported + 
+        Debug.Log("UIPanelCommunityBroadcast:" +
+                  " isEnabled:" + isEnabled +
+                  " isSuppored:" + isSupported +
+                  " isRecordingSupported:" + isRecordingSupported +
                   " isFacecamSupported:" + isFacecamSupported);
 
         hideBroadcastRecordPlayShare();
 
         ShowContainerNotSupported();
 
-        if (Application.isEditor) {
+        if(Application.isEditor) {
             isSupported = true;
             isRecordingSupported = true;
             isFacecamSupported = true;
         }
-        
-        if (isSupported) {           
-           
-            if (isRecordingSupported) {
+
+        if(isSupported) {
+
+            if(isRecordingSupported) {
                 ShowContainerSupported();
             }
         }
 
-        if (isFacecamSupported) {
+        if(isFacecamSupported) {
             showButtonBroadcastFacecamToggle();
         }
         else {
             hideButtonBroadcastFacecamToggle();
         }
 
-        if (toggleRecordReplaysLevel != null) {
-            UIUtil.SetCheckboxValue(toggleRecordReplaysLevel, GameProfiles.Current.GetBroadcastRecordLevels());
+        if(toggleRecordReplaysLevel != null) {
+            UIUtil.SetCheckboxValue(
+                toggleRecordReplaysLevel, 
+                GameProfiles.Current.GetBroadcastRecordLevels());
         }
     }
 
     public void ShowContainerSupported() {
         containerSupported.Show();
-        containerNotSupported.Hide();        
+        containerNotSupported.Hide();
     }
-    
+
     public void ShowContainerNotSupported() {
         containerSupported.Hide();
         containerNotSupported.Show();
@@ -461,71 +470,71 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     }
 
     //
-        
+
     public static void ShowBroadcastButton() {
-        if (isInst) {
+        if(isInst) {
             Instance.showBroadcastButton();
         }
     }
 
-    public void showBroadcastButton() { 
+    public void showBroadcastButton() {
         HidePanels();
         AnimateInBottom(panelBroadcastButton);
     }
-    
+
     public static void HideBroadcastButton() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideBroadcastButton();
         }
     }
 
     public void hideBroadcastButton() {
         AnimateOutBottom(panelBroadcastButton);
-    }    
-    
+    }
+
     //
-    
+
     public static void ShowBroadcastRecordPlayShare() {
-        if (isInst) {
+        if(isInst) {
             Instance.showBroadcastRecordPlayShare();
         }
     }
-    
+
     public void showBroadcastRecordPlayShare() {
 
-        if (!isEnabled) {
+        if(!isEnabled) {
             return;
         }
-        
-        if (!isSupported) {
+
+        if(!isSupported) {
             return;
         }
-        
-        if (!isRecordingSupported) {
+
+        if(!isRecordingSupported) {
             return;
-        }        
-        
-        if (!GameProfiles.Current.GetBroadcastRecordLevels()) {
+        }
+
+        if(!GameProfiles.Current.GetBroadcastRecordLevels()) {
             return;
         }
 
         AnimateInTop(panelBroadcastRecordPlayShare);
     }
-    
+
     public static void HideBroadcastRecordPlayShare() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideBroadcastRecordPlayShare();
         }
     }
-    
+
     public void hideBroadcastRecordPlayShare() {
         AnimateOutTop(panelBroadcastRecordPlayShare);
     }
-    
+
     //
-    
+
     public static void ShowBroadcastRecord() {
-        if (isInst) {
+        if(isInst) {
             Instance.showBroadcastRecord();
         }
     }
@@ -534,34 +543,34 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
         HidePanels();
         AnimateInBottom(panelBroadcastRecord);
         UpdateState();
-                
+
         UIPanelCommunityBackground.ShowBackground();
     }
-        
+
     public static void HideBroadcastRecord() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideBroadcastRecord();
         }
     }
-    
+
     public void hideBroadcastRecord() {
         AnimateOutBottom(panelBroadcastRecord);
     }
 
     public static void ShowDefault() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateIn();
         }
     }
 
     public static void HideAll() {
-        if (isInst) {
+        if(isInst) {
             Instance.AnimateOut();
         }
     }
 
     public static void LoadData() {
-        if (Instance != null) {
+        if(Instance != null) {
             Instance.loadData();
         }
     }
@@ -569,9 +578,9 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public void loadData() {
 
     }
-    
+
     public static void ShowButton() {
-        if (isInst) {
+        if(isInst) {
             Instance.showButton();
         }
     }
@@ -582,35 +591,35 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     }
 
     public static void ShowDialog() {
-        if (isInst) {
+        if(isInst) {
             Instance.showDialog();
         }
     }
-    
+
     public override void showDialog() {
         base.showDialog();
         ShowBroadcastRecord();
     }
 
     public static void HideDialog() {
-        if (isInst) {
+        if(isInst) {
             Instance.hideDialog();
         }
     }
-    
+
     public override void hideDialog() {
-        base.hideDialog();        
-        
+        base.hideDialog();
+
         ShowBroadcastButton();
         HideBroadcastRecordPlayShare();
     }
-        
+
     public static void ShowNone() {
-        if (isInst) {
+        if(isInst) {
             Instance.showNone();
         }
     }
-    
+
     public void showNone() {
         HideBroadcastButton();
         HideBroadcastRecord();
@@ -631,5 +640,4 @@ public class UIPanelCommunityBroadcast : UIPanelCommunityBase {
     public override void Update() {
         base.Update();
     }
- 
 }

@@ -108,7 +108,9 @@ public class UIPanelCommunityCamera : UIPanelCommunityBase {
 
         PhotoObjectSize();
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunitySocialController.TakePhoto(photoMaterial);
+#endif
                 
         UINotificationDisplay.QueueInfo("Loading Photo", "Photo just taken is saving.");
 

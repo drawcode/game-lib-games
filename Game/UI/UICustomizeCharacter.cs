@@ -181,8 +181,10 @@ public class UICustomizeCharacter : UIAppPanelBaseList {
 
             loadDataRPG();
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
         }
     }
@@ -209,7 +211,16 @@ public class UICustomizeCharacter : UIAppPanelBaseList {
 
         foreach(string rpgItem in rpgItems) {
 
-            GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+#else
+            GameObject item = GameObjectHelper.CreateGameObject(
+                listItemPrefab, Vector3.zero, Quaternion.identity, false);
+            // NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.transform.parent = listGridRoot.transform;
+            item.ResetLocalPosition();
+#endif
+
             item.name = "AItem" + i;
 
             UICustomizeCharacterRPGItem rpg = item.transform.GetComponent<UICustomizeCharacterRPGItem>();

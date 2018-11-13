@@ -31,7 +31,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     public override void OnEnable() {
 
-        Messenger<string>.AddListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.AddListener(
+            ButtonEvents.EVENT_BUTTON_CLICK,
+            OnButtonClickEventHandler);
 
         Messenger<string>.AddListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -48,7 +50,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
     public override void OnDisable() {
 
-        Messenger<string>.RemoveListener(ButtonEvents.EVENT_BUTTON_CLICK, OnButtonClickEventHandler);
+        Messenger<string>.RemoveListener(
+            ButtonEvents.EVENT_BUTTON_CLICK,
+            OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(
             UIControllerMessages.uiPanelAnimateIn,
@@ -108,16 +112,23 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         if(containerModes != null) {
 
-            foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+            foreach(GameObjectInactive inactive in
+                containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+
                 if(inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
+
                     inactive.gameObject.Hide();
                 }
             }
 
-            foreach(GameObjectInactive inactive in containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+            foreach(GameObjectInactive inactive in
+                containerModes.GetComponentsInChildren<GameObjectInactive>(true)) {
+
                 if(AppContentStates.Current != null && AppContentStates.Current.code != null) {
+
                     if(inactive.code.ToLower() == AppContentStates.Current.code.ToLower()
                         && inactive.type.IsEqualLowercase(BaseDataObjectKeys.app_content_state)) {
+
                         inactive.gameObject.Show();
                     }
                 }
@@ -125,11 +136,13 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
         }
     }
 
-    public virtual void UpdateDisplay(GamePlayerRuntimeData runtimeData, float timeTotal) {
+    public virtual void UpdateDisplay(
+        GamePlayerRuntimeData runtimeData, float timeTotal) {
 
         ShowContentState();
 
-        UIUtil.SetLabelValue(labelContentStateDisplayName, AppContentStates.Current.display_name);
+        UIUtil.SetLabelValue(
+            labelContentStateDisplayName, AppContentStates.Current.display_name);
 
         if(AppContentStates.Instance.isAppContentStateGameChallenge) {
 
@@ -160,14 +173,18 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 #endif
 
         else { // if(AppContentStates.Instance.isAppContentStateGameArcade) {
-            foreach(GameUIPanelResultsArcade result in containerModes.GetComponentsInChildren<GameUIPanelResultsArcade>(true)) {
+            foreach(GameUIPanelResultsArcade result in
+                containerModes.GetComponentsInChildren<GameUIPanelResultsArcade>(true)) {
+
                 result.UpdateDisplay(runtimeData, timeTotal);
             }
         }
     }
 
     public static void LoadData() {
+
         if(GameUIPanelResults.Instance != null) {
+
             GameUIPanelResults.Instance.loadData();
         }
     }
@@ -193,19 +210,23 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
             return;
         }
 
-        foreach(GameObjectInactive container in gameObject.GetList<GameObjectInactive>()) {
+        foreach(GameObjectInactive container in
+            gameObject.GetList<GameObjectInactive>()) {
 
             if(container.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
 
-                foreach(GameObjectInactive item in container.gameObject.GetList<GameObjectInactive>()) {
+                foreach(GameObjectInactive item in
+                    container.gameObject.GetList<GameObjectInactive>()) {
 
                     if(item.type.IsEqualLowercase(BaseDataObjectKeys.display_item)
                         && !item.type.IsEqualLowercase(BaseDataObjectKeys.display_items)) {
+
                         item.gameObject.HideChildren();
                     }
                 }
 
-                foreach(GameObjectData dataItem in container.gameObject.GetList<GameObjectData>()) {
+                foreach(GameObjectData dataItem in
+                    container.gameObject.GetList<GameObjectData>()) {
 
                     Dictionary<string, object> data = dataItem.ToDictionary();
 
@@ -236,7 +257,9 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         loadData();
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.ShowSharesCenter();
+#endif
 
         Messenger.Broadcast(GameMessages.gameResultsStart);
     }
@@ -247,6 +270,8 @@ public class BaseGameUIPanelResults : GameUIPanelBase {
 
         Messenger.Broadcast(GameMessages.gameResultsEnd);
 
+#if USE_GAME_LIB_GAMEVERSES
         GameCommunity.HideSharesCenter();
+#endif
     }
 }

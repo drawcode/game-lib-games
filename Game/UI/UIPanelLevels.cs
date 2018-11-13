@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIPanelLevels : UIAppPanelBaseList {
 
@@ -53,20 +54,51 @@ public class UIPanelLevels : UIAppPanelBaseList {
 
             for(int k = 0; k < (int)panelCount; k++) {
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 GameObject itemSet = NGUITools.AddChild(listGridRoot, listItemSetPrefab);
+#else
+                GameObject itemSet = GameObjectHelper.CreateGameObject(
+                    listItemSetPrefab, Vector3.zero, Quaternion.identity, false);
+                // NGUITools.AddChild(listGridRoot, listItemPrefab);
+                itemSet.transform.parent = listGridRoot.transform;
+                itemSet.ResetLocalPosition();
+#endif
+
                 itemSet.name = "LevelSet" + k;
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 UIGrid listSetGrid = itemSet.transform.Find("LevelContainer").GetComponent<UIGrid>();
+#else
+                Grid listSetGrid = itemSet.transform.Find("LevelContainer").GetComponent<Grid>();
+#endif
+
                 GameObject listSetGridObject = listSetGrid.gameObject;
 
                 for(int y = (k * 20); y < ((20) * (k + 1)); y++) {
 
-                    GameObject item = NGUITools.AddChild(listSetGridObject, listItemPrefab);
+                    //GameObject item = NGUITools.AddChild(listSetGridObject, listItemPrefab);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(listSetGridObject, listItemPrefab);
+#else
+                    GameObject item = GameObjectHelper.CreateGameObject(
+                        listItemPrefab, Vector3.zero, Quaternion.identity, false);
+                    // NGUITools.AddChild(listGridRoot, listItemPrefab);
+                    item.transform.parent = listSetGridObject.transform;
+                    item.ResetLocalPosition();
+#endif
                     item.name = "LevelItem" + y;
-                    item.transform.Find("LabelWorld").GetComponent<UILabel>().text
-                     = (y + 1).ToString();//levels[y].name;
+
+                    UIUtil.UpdateLabelObject(item.transform, "LabelWorld", (y + 1).ToString());
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+
                     item.transform.Find("ButtonPlayLevel").GetComponent<UIImageButton>().name
                      = "ButtonPlayLevel$" + (k + 1).ToString() + "-" + (y + 1).ToString(); ///levels[y].name;
+#else
+
+                    item.transform.Find("ButtonPlayLevel").GetComponent<Button>().name
+                     = "ButtonPlayLevel$" + (k + 1).ToString() + "-" + (y + 1).ToString(); ///levels[y].name;
+#endif
 
                     // TODO find stars/skulls
                     // TODO find play
@@ -74,9 +106,14 @@ public class UIPanelLevels : UIAppPanelBaseList {
 
                 }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 listSetGrid.Reposition();
+#else
+
+#endif
             }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             foreach(UIGrid grid in UnityObjectUtil.FindObjects<UIGrid>()) {
                 //yield return new WaitForEndOfFrame();
                 grid.Reposition();
@@ -85,6 +122,7 @@ public class UIPanelLevels : UIAppPanelBaseList {
 
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
 
         }

@@ -104,8 +104,10 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
 
             loadDataStatistics();
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
         }
     }
@@ -128,13 +130,22 @@ public class BaseGameUIPanelStatistics : GameUIPanelBase {
 
             //if(statValue > .1) {
 
-            GameObject item = NGUITools.AddChild(listGridRoot, listItemStatisticPrefab);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(listGridRoot, listItemStatisticPrefab);
+#else
+            GameObject item = GameObjectHelper.CreateGameObject(
+                listItemStatisticPrefab, Vector3.zero, Quaternion.identity, false);
+            // NGUITools.AddChild(listGridRoot, listItemPrefab);
+            item.transform.parent = listGridRoot.transform;
+            item.ResetLocalPosition();
+#endif
+
             item.name = "StatisticItem" + i;
-            item.transform.Find("Container/LabelName").GetComponent<UILabel>().text = statistic.display_name;
-            item.transform.Find("Container/LabelDescription").GetComponent<UILabel>().text = statistic.description;
 
+            UIUtil.UpdateLabelObject(item.transform, "Container/LabelName", statistic.display_name);
+            UIUtil.UpdateLabelObject(item.transform, "Container/LabelDescription", statistic.description);
 
-            item.transform.Find("Container/LabelPoints").GetComponent<UILabel>().text = displayValue;
+            UIUtil.UpdateLabelObject(item.transform, "Container/LabelPoints", displayValue);
 
             i++;
             //}

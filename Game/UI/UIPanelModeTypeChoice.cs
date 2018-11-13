@@ -1062,7 +1062,16 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
                 if(!listGridRoot.ContainsChild(levelName)) {
 
-                    GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(listGridRoot, prefabListItem);
+#else
+                    GameObject item = GameObjectHelper.CreateGameObject(
+                        prefabListItem, Vector3.zero, Quaternion.identity, false);
+                    // NGUITools.AddChild(listGridRoot, listItemPrefab);
+                    item.transform.parent = listGridRoot.transform;
+                    item.ResetLocalPosition();
+#endif
+
                     item.name = levelName;
 
                     GameObjectChoice choiceObject = item.Get<GameObjectChoice>();
@@ -1078,8 +1087,17 @@ public class UIPanelModeTypeChoice : UIPanelBase {
 
                 if(!GameController.Instance.levelItemsContainerObject.ContainsChild(levelNameItem)) {
 
-                    GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject,
-                        prefabLevelItem);
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+                GameObject item = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject, prefabLevelItem);
+#else
+                    GameObject itemLevel = GameObjectHelper.CreateGameObject(
+                        prefabLevelItem, Vector3.zero, Quaternion.identity, false);
+                    // NGUITools.AddChild(listGridRoot, listItemPrefab);
+                    itemLevel.transform.parent = GameController.Instance.levelItemsContainerObject.transform;
+                    itemLevel.ResetLocalPosition();
+#endif
+
+
                     itemLevel.name = levelNameItem;
 
                     GameObjectChoice choiceObjectLevel = itemLevel.Get<GameObjectChoice>();
@@ -1096,7 +1114,9 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                     }
 
                     choiceObjectLevel.transform.position =
-                        Vector3.zero.WithX(x += (UnityEngine.Random.Range(20, 60) * 1)).WithZ(UnityEngine.Random.Range(-30, 30));
+                        Vector3.zero
+                        .WithX(x += (UnityEngine.Random.Range(20, 60) * 1))
+                        .WithZ(UnityEngine.Random.Range(-30, 30));
                 }
 
                 i++;

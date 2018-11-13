@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Utility;
 
 public enum GameDraggableCanvasType {
     CANVAS_2D,
@@ -1899,7 +1900,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void showUIPanelEditNow() {
         if (gameEditToolsObject != null) {
-            TweenPosition.Begin(gameEditToolsObject, 0f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameEditToolsObject, 0f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(0), 0f);
         }
     }
     
@@ -1911,7 +1913,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void showUIPanelEdit() {
         if (gameEditToolsObject != null) {
-            TweenPosition.Begin(gameEditToolsObject, .3f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameEditToolsObject, .3f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(0), .3f);
         }
         
         //HideHUD();
@@ -1926,7 +1929,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void hideUIPanelEdit() {
         //HideAllEditDialogs();
         if (gameEditToolsObject != null) {
-            TweenPosition.Begin(gameEditToolsObject, .3f, Vector3.zero.WithY(650));
+            //TweenPosition.Begin(gameEditToolsObject, .3f, Vector3.zero.WithY(650));
+            TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(960), .3f);
         }
         
         //ShowHUD();
@@ -1942,7 +1946,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         UIPanelEditAsset.Instance.LoadData();
         
         if (gameEditAssetObject != null) {
-            TweenPosition.Begin(gameEditAssetObject, .3f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameEditAssetObject, .3f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameEditAssetObject, Vector3.zero.WithY(0), .3f);
         }
         HideUIPanelEditAssetButton();
     }
@@ -1967,7 +1972,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void hideUIPanelEditAsset() {
         if (gameEditAssetObject != null) {
-            TweenPosition.Begin(gameEditAssetObject, .3f, Vector3.zero.WithY(-650));
+            //TweenPosition.Begin(gameEditAssetObject, .3f, Vector3.zero.WithY(-650));
+            TweenUtil.MoveToObject(gameEditAssetObject, Vector3.zero.WithY(-960), .3f);
         }
         
         //ShowHUD();
@@ -1982,7 +1988,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void showUIPanelEditAssetButton() {
         //HideAllEditDialogs();
         if (gameEditAssetButtonObject != null) {
-            TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameEditAssetButtonObject, Vector3.zero.WithY(0), .3f);
         }
         
         //HideHUD();
@@ -1996,7 +2003,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void hideUIPanelEditAssetButton() {
         if (gameEditAssetButtonObject != null) {
-            TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(650));
+            //TweenPosition.Begin(gameEditAssetButtonObject, .3f, Vector3.zero.WithY(650));
+            TweenUtil.MoveToObject(gameEditAssetButtonObject, Vector3.zero.WithY(960), .3f);
         }
         
         //ShowHUD();
@@ -2010,7 +2018,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void showUIPanelEditButton() {
         if (gameEditButtonObject != null) {
-            TweenPosition.Begin(gameEditButtonObject, .3f, Vector3.zero.WithY(0));
+            //TweenPosition.Begin(gameEditButtonObject, .3f, Vector3.zero.WithY(0));
+            TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(0), .3f);
         }
         
     }
@@ -2023,7 +2032,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void hideUIPanelEditButton() {
         if (gameEditButtonObject != null) {
-            TweenPosition.Begin(gameEditButtonObject, .3f, Vector3.zero.WithY(650));
+            //TweenPosition.Begin(gameEditButtonObject, .3f, Vector3.zero.WithY(650));
+            TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(960), .3f);
         }
         
     }
@@ -2056,7 +2066,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         //GameDraggableEditor.Ed
         //GameDraggableEditor.HideUIPanelEditAsset();
         if (gameEditDialogMetaObject != null) {
-            TweenPosition.Begin(gameEditDialogMetaObject, .3f, Vector3.zero.WithX(0));
+            //TweenPosition.Begin(gameEditDialogMetaObject, .3f, Vector3.zero.WithX(0));
+            TweenUtil.MoveToObject(gameEditDialogMetaObject, Vector3.zero.WithY(0), .3f);
         }
     }
     
@@ -2068,7 +2079,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void hideUIPanelDialogMeta() {
         if (gameEditDialogMetaObject != null) {
-            TweenPosition.Begin(gameEditDialogMetaObject, 0f, Vector3.zero.WithX(3000));
+            //TweenPosition.Begin(gameEditDialogMetaObject, 0f, Vector3.zero.WithX(3000));
+            TweenUtil.MoveToObject(gameEditDialogMetaObject, Vector3.zero.WithY(3000), 0f);
         }
         SetDialogState(false);
     }
@@ -2101,7 +2113,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             UIPanelDialogEditItems.Instance.LoadData();
         }
         if (gameEditDialogItemsObject != null) {
-            TweenPosition.Begin(gameEditDialogItemsObject, .3f, Vector3.zero.WithX(0));
+            //TweenPosition.Begin(gameEditDialogItemsObject, .3f, Vector3.zero.WithX(0));
+            TweenUtil.MoveToObject(gameEditDialogItemsObject, Vector3.zero.WithY(0), .3f);
         }
     
         HideUIPanelEdit();
@@ -2116,7 +2129,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     
     public void hideUIPanelDialogItems() {
         if (gameEditDialogItemsObject != null) {
-            TweenPosition.Begin(gameEditDialogItemsObject, 0f, Vector3.zero.WithX(3000));
+            //TweenPosition.Begin(gameEditDialogItemsObject, 0f, Vector3.zero.WithX(3000));
+            TweenUtil.MoveToObject(gameEditDialogItemsObject, Vector3.zero.WithY(3000), 0f);
         }
         
         SetDialogState(false);

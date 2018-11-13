@@ -32,15 +32,10 @@ public class UIPanelWorlds : UIAppPanelBaseList {
 
         LogUtil.Log("Load GameWorlds: LoadDataCo");
 
-
-        LogUtil.Log("Load GameWorlds: LoadDataCo 2");
-
         if(listGridRoot != null) {
             foreach(Transform item in listGridRoot.transform) {
                 Destroy(item.gameObject);
             }
-
-            LogUtil.Log("Load GameWorlds: LoadDataCo 3");
 
             List<GameWorld> worlds = GameWorlds.Instance.GetAll();
 
@@ -49,50 +44,33 @@ public class UIPanelWorlds : UIAppPanelBaseList {
             int i = 0;
 
             foreach(GameWorld world in worlds) {
-
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                 GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
-                item.name = "WorldItem" + world.sort_order;
-                item.transform.Find("LabelWorld").GetComponent<UILabel>().text = world.name;
-                item.transform.Find("LabelWorldDisplayName").GetComponent<UILabel>().text = world.display_name;
-                item.transform.Find("LabelWorldDescription").GetComponent<UILabel>().text = world.description;
+#else
+                GameObject item = GameObjectHelper.CreateGameObject(
+                    listItemPrefab, Vector3.zero, Quaternion.identity, false);
+                // NGUITools.AddChild(listGridRoot, listItemPrefab);
+                item.transform.parent = listGridRoot.transform;
+                item.ResetLocalPosition();
+#endif
 
-                //GameObject iconObject = item.transform.FindChild("Icon").gameObject;	
-                //UISprite iconSprite = iconObject.GetComponent<UISprite>();
+                UIUtil.UpdateLabelObject(item.transform, "LabelWorld", world.name);
+                UIUtil.UpdateLabelObject(item.transform, "LabelWorldDisplayName", world.display_name);
+                UIUtil.UpdateLabelObject(item.transform, "LabelWorldDescription", world.description);
 
-
-                //bool completed = GameProfiles.Current.CheckIfAttributeExists(world.code);
-
-                //if(completed) {
-                //	completed = GameProfiles.Current.GetAchievementValue(world.code);
-                //}
-
-                //string points = "";
-
-                /*
-				if(completed) {
-					int currentPoints = achievement.points;
-					totalPoints += currentPoints;
-					points = currentPoints.ToString();
-					
-					if(iconSprite != null) {
-						iconSprite.alpha = 1f;
-					}
-				}	
-				else {
-					if(iconSprite != null) {
-						iconSprite.alpha = .33f;
-					}
-				}
-				
-				item.transform.FindChild("LabelPoints").GetComponent<UILabel>().text = points;				
-				*/
-                // Get trophy icon
+                //GameObject item = NGUITools.AddChild(listGridRoot, listItemPrefab);
+                //item.name = "WorldItem" + world.sort_order;
+                //item.transform.Find("LabelWorld").GetComponent<UILabel>().text = world.name;
+                //item.transform.Find("LabelWorldDisplayName").GetComponent<UILabel>().text = world.display_name;
+                //item.transform.Find("LabelWorldDescription").GetComponent<UILabel>().text = world.description;
 
                 i++;
             }
 
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             //yield return new WaitForEndOfFrame();
             listGridRoot.GetComponent<UIGrid>().Reposition();
+#endif
             yield return new WaitForEndOfFrame();
 
         }
