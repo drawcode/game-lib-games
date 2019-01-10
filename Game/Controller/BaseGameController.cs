@@ -2990,11 +2990,13 @@ public class BaseGameController : GameObjectTimerBehavior {
            || AppModes.Instance.isAppModeGameChallenge
            || AppModes.Instance.isAppModeGameMission) {
 
+#if USE_GAME_LIB_GAMES
             double collectScore = AppContentCollects.Current.ScoreCompleted(
                                       BaseDataObjectKeys.mission, gameRuntimeData, playerRuntimeData);
 
             // CHECK ON ADDING BY ALREADY COMPLETED...
             GameProfileRPGs.Current.AddCurrency(collectScore);
+#endif
         }
     }
 

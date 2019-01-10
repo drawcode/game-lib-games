@@ -79,9 +79,12 @@ public class BaseGamePlayerRuntimeData {
             }
             if(currentController != null) {
                 if(GameController.isInst) {
+
+#if USE_GAME_LIB_GAMES
                     return appContentCollect.IsCompleted(
                         GameController.Instance.runtimeData,
                         currentController.runtimeData);
+#endif
                 }
             }
         }

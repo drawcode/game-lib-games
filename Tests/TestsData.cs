@@ -579,11 +579,13 @@ public class TestsData {
         DumpObj(name, "TestGameProfileContentCollectItems_Get:runtimeData:", playerRuntimeData.ToJson());
 
         AppContentCollects.ChangeCurrent(missionCode);
-                
+
         // Score completed from a sample level progress.
 
+#if USE_GAME_LIB_GAMES
         AppContentCollects.Current.ScoreCompleted(
             collectType, gameRuntimeData, playerRuntimeData);
+#endif
 
         GameState.SaveProfile();
         GameState.LoadProfile();
