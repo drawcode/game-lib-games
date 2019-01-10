@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Engine;
 using Engine.Networking;
-#if USE_LIB_GAMEVERSES
+#if USE_GAME_LIB_GAMEVERSES
 using Gameverses;
 #endif
 

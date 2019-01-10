@@ -42,7 +42,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public override void OnEnable() {
 
         Messenger<string>.AddListener(
-            ButtonEvents.EVENT_BUTTON_CLICK, 
+            ButtonEvents.EVENT_BUTTON_CLICK,
             OnButtonClickEventHandler);
 
         Messenger<string>.AddListener(
@@ -61,7 +61,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
     public override void OnDisable() {
 
         Messenger<string>.RemoveListener(
-            ButtonEvents.EVENT_BUTTON_CLICK, 
+            ButtonEvents.EVENT_BUTTON_CLICK,
             OnButtonClickEventHandler);
 
         Messenger<string>.RemoveListener(
@@ -221,7 +221,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
         foreach(GameProduct product in products) {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-                GameObject item = NGUITools.AddChild(listGridRoot, listItemItemPrefab);
+            GameObject item = NGUITools.AddChild(listGridRoot, listItemItemPrefab);
 #else
             GameObject item = GameObjectHelper.CreateGameObject(
                 listItemItemPrefab, Vector3.zero, Quaternion.identity, false);
@@ -274,14 +274,14 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
 
                 if(iconSprite != null) {
 
-                    SpriteUtil.SetColorAlpha(iconSprite, 1f);
+                    SpriteUtil.SetColorAlpha(iconSprite.gameObject, 1f);
 
                     // TODO change out image...
                 }
             }
 
             // Update button action
-            
+
             Transform buttonObject = item.transform.Find("Container/Button/ButtonAction");
 
             if(buttonObject != null) {
@@ -297,7 +297,7 @@ public class BaseGameUIPanelProducts : GameUIPanelBase {
                     // TODO change to get from character skin
                     string productType = product.type;
                     string productCode = product.code;
-                    string productCharacter = 
+                    string productCharacter =
                         GameProfileCharacters.Current.GetCurrentCharacterProfileCode();
 
                     //productCode = productCode.Replace(productType + "-", "");

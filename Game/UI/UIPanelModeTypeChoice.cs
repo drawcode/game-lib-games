@@ -1088,7 +1088,7 @@ public class UIPanelModeTypeChoice : UIPanelBase {
                 if(!GameController.Instance.levelItemsContainerObject.ContainsChild(levelNameItem)) {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-                GameObject item = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject, prefabLevelItem);
+                GameObject itemLevel = NGUITools.AddChild(GameController.Instance.levelItemsContainerObject, prefabLevelItem);
 #else
                     GameObject itemLevel = GameObjectHelper.CreateGameObject(
                         prefabLevelItem, Vector3.zero, Quaternion.identity, false);
