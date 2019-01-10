@@ -488,7 +488,7 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void showLoginFacebook() {
 
-#if USE_CONFIG_APP
+#if USE_CONFIG_APP && USE_GAME_LIB_GAMEVERSES
         var permissions = AppConfigs.socialFacebookPermissionsRead;
 
         dumpPermissionsToLog(permissions);
