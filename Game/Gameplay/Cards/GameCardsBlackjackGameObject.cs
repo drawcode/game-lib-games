@@ -12,6 +12,13 @@ public class GameCardsBlackjackGameObject : GameObjectBehavior {
 
     public void Start() {
         gameCards = new GameCardBlackjack();
+
+        Debug.Log("gameCards.LoadPlayers:KeyCode.L");
+        Debug.Log("gameCards.DealCards(2):KeyCode.D");
+        Debug.Log("gameCards.HitDealer():KeyCode.Alpha1");
+        Debug.Log("gameCards.HitMe():KeyCode.Alpha2");
+        Debug.Log("gameCards.GameStart():KeyCode.S");
+        Debug.Log("gameCards.GameEnd():KeyCode.E");
     }
 
     public void HandleInput() {
