@@ -5711,6 +5711,8 @@ public class BaseGamePlayerController : GameActor {
                 currentControllerData.navMeshAgentFollowController.agentDistance = 10;
                 currentControllerData.navMeshAgentFollowController.targetAttractRange = 20;
                 currentControllerData.navMeshAgentFollowController.targetLimitRange = 40;
+                //currentControllerData.navMeshAgentFollowController.RunType(GamePlayerFollowAgentType.RangedPursue);
+                currentControllerData.navMeshAgentFollowController.RunType(GamePlayerFollowAgentType.RangedThenAlwaysPursue);
                 currentControllerData.navMeshAgentFollowController.targetFollow =
                     GameController.CurrentGamePlayerController.gamePlayerSidekickTarget.transform;
             }

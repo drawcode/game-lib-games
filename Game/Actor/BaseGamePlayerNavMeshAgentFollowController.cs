@@ -6,11 +6,12 @@ using UnityEngine;
 
 public enum GamePlayerFollowAgentType {
     AlwaysPursue,
-    RangedPursue
+    RangedPursue,
+    RangedThenAlwaysPursue,
 }
 
 public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
-    
+
     public UnityEngine.AI.NavMeshAgent agent;
     public Transform targetFollow;
     public float agentDistance = 4f;
@@ -20,10 +21,22 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
     public GamePlayerController gamePlayerController;
     public GamePlayerFollowAgentType followType = GamePlayerFollowAgentType.AlwaysPursue;
 
+
+    Vector3 targetPosition = Vector3.zero;
+    Vector3 targetPositionFiltered = Vector3.zero;
+
+    //currentControllerData.navMeshAgentFollowController.agentDistance = 10;
+    //currentControllerData.navMeshAgentFollowController.targetAttractRange = 20;
+    //currentControllerData.navMeshAgentFollowController.targetLimitRange = 40;
+    //currentControllerData.navMeshAgentFollowController.targetFollow =
+    //GameController.CurrentGamePlayerController.gamePlayerSidekickTarget.transform;
+
     // Use this for initialization
     public virtual void Start() {
-        
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+
+        if (agent == null) {
+            agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        }
 
         NavigateToDestination();
     }
@@ -43,7 +56,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
             }
         }
     }
-    
+
     public virtual void StartAgent() {
         if (agent != null && agentState != GamePlayerNavMeshAgentState.PURSUE) {
             agentState = GamePlayerNavMeshAgentState.PURSUE;
@@ -51,15 +64,28 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
             NavigateToDestination();
         }
     }
-    
-    public virtual void NavigateToDestination() {   
-        
+
+    public virtual void RunType(GamePlayerFollowAgentType gamePlayerFollowAgentType) {
+        followType = gamePlayerFollowAgentType;
+        ResetTargetPositions();
+        NavigateToDestination();
+    }
+
+    public virtual void ResetTargetPositions() {
+        if (agent.enabled) {
+            agent.destination = transform.position;
+        }
+    }
+
+
+    public virtual void NavigateToDestination() {
+
         if (agent == null) {
             return;
         }
         else {
 
-            if(!agent.isActiveAndEnabled) {
+            if (!agent.isActiveAndEnabled) {
                 return;
             }
 
@@ -68,41 +94,47 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
                 return;
             }
 
-            Vector3 targetPosition = transform.position;
-            Vector3 targetPositionFiltered = targetPosition;
+            targetPosition = transform.position;
+            targetPositionFiltered = targetPosition;
 
             float distance = 0f;
 
             if (targetFollow == null) {
                 // look for main player types                
-                GamePlayerThirdPersonController gamePlayerThirdPersonController = 
+                GamePlayerThirdPersonController gamePlayerThirdPersonController =
                     FindObjectOfType(typeof(GamePlayerThirdPersonController)) as GamePlayerThirdPersonController;
                 if (gamePlayerThirdPersonController != null) {
                     targetFollow = gamePlayerThirdPersonController.gameObject.transform;
                 }
             }
-            
-            if (targetFollow != null) {    
+
+            if (targetFollow != null) {
 
                 distance = Vector3.Distance(agent.destination, targetFollow.position);
 
-                if (followType == GamePlayerFollowAgentType.RangedPursue) {
-                
+                if (followType == GamePlayerFollowAgentType.RangedPursue
+                    || followType == GamePlayerFollowAgentType.RangedThenAlwaysPursue) {
+
                     if (distance <= targetAttractRange
                         || distance <= agentDistance) {
 
                         targetPosition = targetFollow.position;
+
+                        if (followType == GamePlayerFollowAgentType.RangedThenAlwaysPursue) {
+                            // switch to always when in range after first time
+                            RunType(GamePlayerFollowAgentType.AlwaysPursue);
+                        }
 
                     }
                     else if (distance > targetLimitRange) {
                         targetPosition = transform.position;
                     }
                 }
-                else if (followType == GamePlayerFollowAgentType.AlwaysPursue) {  
+                else if (followType == GamePlayerFollowAgentType.AlwaysPursue) {
 
                     targetPosition = targetFollow.position;
                 }
-                
+
                 if (distance < agentDistance) {
 
                     targetPositionFiltered = targetPosition;
@@ -119,7 +151,7 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
             }
         }
     }
-    
+
     // Update is called once per frame
     public virtual void Update() {
 
@@ -132,13 +164,14 @@ public class BaseGamePlayerNavMeshAgentFollowController : GameObjectBehavior {
         }
 
         FindGamePlayer();
-        
+
         if (gamePlayerController != null) {
             if (gamePlayerController.isDead) {
                 StopAgent();
+                return;
             }
         }
-        
+
         if (agent != null) {
             if (agent.enabled) {
                 if (agent.remainingDistance <= 50f || agent.isPathStale) {
