@@ -9,10 +9,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-#else
-using UnityEngine.UI;
 #endif
 
+using UnityEngine.UI;
 
 using Engine.Events;
 
@@ -31,19 +30,8 @@ public class ButtonEvents : GameObjectBehavior {
     public static string EVENT_BUTTON_CLICK_OBJECT = "event-button-click-object";
     public static string EVENT_BUTTON_CLICK_DATA = "event-button-click-data";
 
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-    UIButton btn;
-#else
-    Button btn;
-#endif
-
     void Start() {
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-
-#else
-        btn = gameObject.GetComponent<Button>();
-        btn.onClick.AddListener(OnClick);
-#endif
+        UIUtil.SetButtonHandlerClick(gameObject, OnClick);
     }
 
     void OnClick() {
