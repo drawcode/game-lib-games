@@ -31,7 +31,7 @@ public class ButtonEvents : GameObjectBehavior {
     public static string EVENT_BUTTON_CLICK_DATA = "event-button-click-data";
 
     void Start() {
-        UIUtil.SetButtonHandlerClick(gameObject, OnClick);
+        UIUtil.SetButtonHandlerClick(gameObject, OnClick); 
     }
 
     void OnClick() {

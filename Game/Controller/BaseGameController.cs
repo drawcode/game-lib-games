@@ -15,8 +15,8 @@ public class BaseGameController : GameObjectTimerBehavior {
     public string gameplayType = GameplayType.gameDasher;
     public string gameplayWorldType = GameplayWorldType.gameDefault;
 
-    internal Dictionary<string, GamePlayerController> gamePlayerControllers;
-    internal Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
+   // internal Dictionary<string, GamePlayerController> gamePlayerControllers;
+    //internal Dictionary<string, GamePlayerProjectile> gamePlayerProjectiles;
     internal List<string> gameCharacterTypes = new List<string>();
     int currentCharacterTypeIndex = 0;
     //int lastCharacterTypeIndex = 0;

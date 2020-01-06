@@ -578,7 +578,7 @@ public class TestsData {
 
         DumpObj(name, "TestGameProfileContentCollectItems_Get:runtimeData:", playerRuntimeData.ToJson());
 
-        AppContentCollects.ChangeCurrent(missionCode);
+        AppContentCollects.Instance.ChangeCurrent(missionCode);
 
         // Score completed from a sample level progress.
 

@@ -3126,7 +3126,7 @@ public class BaseUIController : GameObjectBehavior {
 
                         if(appContentCollect != null) {
 
-                            AppContentCollects.ChangeCurrent(code);
+                            AppContentCollects.Instance.ChangeCurrent(code);
 
                             Debug.Log("ACTION:" + " mission:" + code);
 

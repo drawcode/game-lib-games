@@ -232,7 +232,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 #endif
 
 #if ANALYTICS_UNITY
-        AnalyticsTracker.print(data);
+        AnalyticsEventTracker.print(data);
 #endif
     }
 
