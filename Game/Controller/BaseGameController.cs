@@ -4703,10 +4703,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         // TOOLS
 
-        if(UIGameKeyCodes.isActionProfileSave) {
+        if(GameKeyCodes.isActionProfileSave) {
             GameState.SaveProfile();
         }
-        else if(UIGameKeyCodes.isActionProfileSync) {
+        else if(GameKeyCodes.isActionProfileSync) {
             GameState.SyncProfile();
         }
 

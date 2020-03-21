@@ -2298,9 +2298,15 @@ public class BaseGamePlayerController : GameActor {
         go.ResetRotation();
 
         if(GameConfigs.isGameRunning && IsPlayerControlled) {
-            UINotificationDisplayTip.Instance.QueueTip(
+
+            Messenger<string, string>.Broadcast(
+                GameNotificationMessages.gameQueueTipTip,
                 "Weapon Loaded: " + gameWeaponData.display_name,
-                gameWeaponData.description, true);
+                gameWeaponData.description);
+
+            //UINotificationDisplayTip.Instance.QueueTip(
+            //    "Weapon Loaded: " + gameWeaponData.display_name,
+            //    gameWeaponData.description, true);
 
         }
 

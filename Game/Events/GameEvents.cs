@@ -71,6 +71,28 @@ public class GameSpawnType {
 }
 
 
+public class GameNotificationMessages : BaseGameNotificationMessages {
+
+}
+public class BaseGameNotificationMessages {
+    //
+    public static string gameQueueInfo = "game-queue-info";
+    public static string gameQueueError = "game-queue-error";
+    public static string gameQueueAchievement = "game-queue-achievement";
+    public static string gameQueueStatistic = "game-queue-statistic";
+    public static string gameQueuePoint = "game-queue-point";
+    public static string gameQueueTip = "game-queue-tip";
+
+
+    public static string gameQueueTipInfo = "game-queue-tip-info";
+    public static string gameQueueTipError = "game-queue-tip-error";
+    public static string gameQueueTipAchievement = "game-queue-tip-achievement";
+    public static string gameQueueTipStatistic = "game-queue-tip-statistic";
+    public static string gameQueueTipPoint = "game-queue-tip-point";
+    public static string gameQueueTipTip = "game-queue-tip-tip";
+}
+
+
 public class BaseGameMessages {
     //
     public static string gameActionItem = "game-action-item";

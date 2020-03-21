@@ -2319,10 +2319,12 @@ List<string> codes = new List<string>();
     public IEnumerator QueueAchievementCo(string key) {
         yield return null;
         // TODO SEND NOTIFICATION
-        if (UINotificationDisplay.Instance != null) {
-            UINotificationDisplay.Instance.QueueAchievement(key);
-        }
-        Messenger<string>.Broadcast("queue-achievement", key);
+        //if (UINotificationDisplay.Instance != null) {
+        //    UINotificationDisplay.Instance.QueueAchievement(key);
+        //}
+
+        Messenger<string>.Broadcast(GameNotificationMessages.gameQueueAchievement, key);
+        //Messenger<string>.Broadcast("queue-achievement", key);
         yield return null;
     }
     

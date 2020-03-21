@@ -681,7 +681,10 @@ public class BaseUIController : GameObjectBehavior {
 
 
     public virtual void showUITip(string title, string description) {
-        UINotificationDisplayTip.Instance.QueueTip(title, description);
+
+        Messenger<string, string>.Broadcast(
+            GameNotificationMessages.gameQueueTipTip, title, description);
+        //UINotificationDisplayTip.Instance.QueueTip(title, description);
     }
 
     public virtual void ShowMainMenuDelayed() {

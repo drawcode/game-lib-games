@@ -864,7 +864,9 @@ public class AdNetworks : GameObjectBehavior {
             return;
         }
 
-        var options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
+        ShowOptions options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
+        //options.resultCallback.
+        //Advertisement.AddListener(unityIsAdShowCompleted);
 
         if(code.IsNullOrEmpty()) {
             Advertisement.Show(options);

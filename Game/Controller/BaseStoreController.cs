@@ -388,8 +388,10 @@ public class BaseStoreController : GameObjectBehavior {
                 dataDict);
 
         }
+        
+        Messenger<string,string>.Broadcast(GameNotificationMessages.gameQueueInfo, data.messageTitle, data.messageDescription);
 
-        UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
+        //UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
     }
 
     public virtual void onStorePurchaseFailed(GameStorePurchaseRecord data) {
@@ -403,7 +405,8 @@ public class BaseStoreController : GameObjectBehavior {
             ResetPurchase(itemPurchasing.product.code);
         }
 
-        UINotificationDisplay.QueueError(data.messageTitle, data.messageDescription);
+        Messenger<string, string>.Broadcast(GameNotificationMessages.gameQueueError, data.messageTitle, data.messageDescription);
+        //UINotificationDisplay.QueueError(data.messageTitle, data.messageDescription);
     }
 
     // THIRD PARTY
@@ -419,7 +422,9 @@ public class BaseStoreController : GameObjectBehavior {
         if (data != null) {
 
             LogUtil.Log("onStoreThirdPartyPurchaseSuccess: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
+
+            Messenger<string, string>.Broadcast(GameNotificationMessages.gameQueueInfo, data.messageTitle, data.messageDescription);
+            //UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
@@ -480,7 +485,9 @@ public class BaseStoreController : GameObjectBehavior {
 
         if (data != null) {
             LogUtil.Log("onStoreThirdPartyPurchaseFailed: data.messageTitle:" + data.messageTitle);
-            UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
+
+            Messenger<string, string>.Broadcast(GameNotificationMessages.gameQueueInfo, data.messageTitle, data.messageDescription);
+            //UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
         }
 
         GameProduct product = GameProducts.Instance.GetProductByPlaformProductCode(data.productId);
