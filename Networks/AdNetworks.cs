@@ -92,13 +92,19 @@ public class AdNetworksMessages {
     public static string moreGames = "ad-networks-more-games";
 
     // one time
-    
+
     public static string website = "ad-networks-website";
     public static string twitterFollow = "ad-networks-twitter-follow";
     public static string facebookLike = "ad-networks-facebook-like";
 }
 
-public class AdNetworks : GameObjectBehavior {
+public class AdNetworks : GameObjectBehavior
+#if AD_USE_UNITY
+#if UNITY_IPHONE || UNITY_ANDROID
+    , IUnityAdsListener // Implement for the events, annoyingly in an interface now...
+#endif
+#endif
+    {
 #if AD_USE_ADMOB
 #if UNITY_EDITOR
 #elif UNITY_STANDALONE_OSX
@@ -128,13 +134,13 @@ public class AdNetworks : GameObjectBehavior {
 
     public static AdNetworks Instance {
         get {
-            if(!_instance) {
+            if (!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(AdNetworks)) as AdNetworks;
 
                 // nope, create a new one
-                if(!_instance) {
+                if (!_instance) {
                     var obj = new GameObject("_AdNetworks");
                     _instance = obj.AddComponent<AdNetworks>();
                 }
@@ -333,7 +339,7 @@ public class AdNetworks : GameObjectBehavior {
     // ----------------------------------------------------------------------
     // TAPJOY - http://prime31.com/docs#comboVungle
 
-#region TAPJOY
+    #region TAPJOY
 
 #if PROMO_USE_TAPJOY
     
@@ -475,12 +481,12 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-#endregion
+    #endregion
 
     // ----------------------------------------------------------------------
     // VUNGLE - http://prime31.com/docs#comboVungle
 
-#region VUNGLE
+    #region VUNGLE
 
 #if PROMO_USE_VUNGLE
 
@@ -537,12 +543,12 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-#endregion
+    #endregion
 
     // ----------------------------------------------------------------------
     // CHARTBOOST
 
-#region CHARTBOOST
+    #region CHARTBOOST
 
 #if PROMO_USE_CHARTBOOST
 
@@ -668,11 +674,11 @@ public class AdNetworks : GameObjectBehavior {
     }
 #endif
 
-#endregion
+    #endregion
 
     public bool interstitialReady = false;
 
-#region IAD
+    #region IAD
 
 #if AD_USE_IAD
     // ----------------------------------------------------------------------
@@ -815,17 +821,22 @@ public class AdNetworks : GameObjectBehavior {
         return true;
     }
 
-#endregion
+    #endregion
 
-// ----------------------------------------------------------------------
-// UNITY ADS
+    // ----------------------------------------------------------------------
+    // UNITY ADS
 
 #if AD_USE_UNITY
 
     const string unityRewardedPlacementId = "rewardedVideo";
 
     public void unityAdsInit() {
-        if(!Advertisement.isInitialized) {
+
+        if (!Advertisement.isInitialized) {
+
+            // Now that Unity has changed their Ad api for the millionth time...
+            Advertisement.AddListener(this);
+
 #if UNITY_IOS
             Advertisement.Initialize(
                 AppConfigs.adNetworksUnityPublisherIdiOS, 
@@ -850,7 +861,7 @@ public class AdNetworks : GameObjectBehavior {
 
     public bool unityIsAdReady(string code = null) {
 
-        if(code.IsNullOrEmpty()) {
+        if (code.IsNullOrEmpty()) {
             return Advertisement.IsReady();
         }
         else {
@@ -860,51 +871,87 @@ public class AdNetworks : GameObjectBehavior {
 
     public void unityAdShow(string code = null) {
 
-        if(!unityIsAdReady()) {
+        if (!unityIsAdReady()) {
             return;
         }
 
-        ShowOptions options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
+        //ShowOptions options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
         //options.resultCallback.
         //Advertisement.AddListener(unityIsAdShowCompleted);
 
-        if(code.IsNullOrEmpty()) {
-            Advertisement.Show(options);
+        if (code.IsNullOrEmpty()) {
+            Advertisement.Show();
         }
         else {
-            Advertisement.Show(code, options);
+            Advertisement.Show(code);
         }
     }
 
-    public void unityIsAdShowCompleted(ShowResult result) {
+    //public void unityIsAdShowCompleted(ShowResult result) {
 
-        switch(result) {
-            case ShowResult.Finished:
-                Debug.Log("The ad was successfully shown.");
+    //    switch(result) {
+    //        case ShowResult.Finished:
+    //            Debug.Log("The ad was successfully shown.");
 
-                Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
+    //            Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
 
-                break;
+    //            break;
 
-            case ShowResult.Skipped:
-                Debug.Log("The ad was skipped before reaching the end.");
+    //        case ShowResult.Skipped:
+    //            Debug.Log("The ad was skipped before reaching the end.");
 
-                Messenger<double>.Broadcast(AdNetworksMessages.videoAd, .5f);
-                break;
+    //            Messenger<double>.Broadcast(AdNetworksMessages.videoAd, .5f);
+    //            break;
 
-            case ShowResult.Failed:
-                Debug.LogError("The ad failed to be shown.");
-                break;
+    //        case ShowResult.Failed:
+    //            Debug.LogError("The ad failed to be shown.");
+    //            break;
+    //    }
+    //}
+
+    // Implement IUnityAdsListener interface methods:
+    public void OnUnityAdsDidFinish(string placementId, ShowResult showResult) {
+
+        // Define conditional logic for each ad completion status:
+
+        if (showResult == ShowResult.Finished) {
+
+            // Reward the user for watching the ad to completion.
+            Messenger<double>.Broadcast(AdNetworksMessages.videoAd, 1f);
         }
+        else if (showResult == ShowResult.Skipped) {
+
+            // Do not reward the user for skipping the ad.
+
+            Messenger<double>.Broadcast(AdNetworksMessages.videoAd, .5f);
+        }
+        else if (showResult == ShowResult.Failed) {
+            Debug.LogWarning("The ad did not finish due to an error.");
+        }
+    }
+
+    public void OnUnityAdsReady(string placementId) {
+        // If the ready Placement is rewarded, show the ad:
+        //if (placementId == myPlacementId) {
+        //    Advertisement.Show(myPlacementId);
+        //}
+    }
+
+    public void OnUnityAdsDidError(string message) {
+        // Log the error.
+    }
+
+    public void OnUnityAdsDidStart(string placementId) {
+        // Optional actions to take when the end-users triggers an ad.
     }
 
 #endif
 
-// ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
 
-// GOOGLE ADMOB
+    // GOOGLE ADMOB
 
-#region ADMOB
+    #region ADMOB
 
 #if AD_USE_ADMOB
     public void admobInit() {
@@ -1108,7 +1155,7 @@ public class AdNetworks : GameObjectBehavior {
         return false;
     }
 
-#endregion
+    #endregion
 
     // ----------------------------------------------------------------------
 
@@ -1131,7 +1178,7 @@ public class AdNetworks : GameObjectBehavior {
         AdDisplayType adDisplayType = AdDisplayType.Banner,
         AdPosition adPosition = AdPosition.BottomCenter) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showAd(adDisplayType, adPosition);
         }
     }
@@ -1144,17 +1191,17 @@ public class AdNetworks : GameObjectBehavior {
         AdDisplayType adDisplayType = AdDisplayType.Banner,
         AdPosition adPosition = AdPosition.BottomCenter) {
 
-        if(adDisplayType == AdDisplayType.Banner) {
+        if (adDisplayType == AdDisplayType.Banner) {
             showBannerAd(adDisplayType, adPosition);
         }
-        else if(adDisplayType == AdDisplayType.Interstitial) {
+        else if (adDisplayType == AdDisplayType.Interstitial) {
         }
-        else if(adDisplayType == AdDisplayType.Interstitial) {
+        else if (adDisplayType == AdDisplayType.Interstitial) {
         }
     }
 
     public static void HideAd() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.hideAd();
         }
     }
@@ -1179,7 +1226,7 @@ public class AdNetworks : GameObjectBehavior {
         AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showBannerAd(bannerType, position);
         }
     }
@@ -1200,14 +1247,14 @@ public class AdNetworks : GameObjectBehavior {
         }
 #endif
 
-        if(!hasAd) {
+        if (!hasAd) {
 
         }
 
     }
 
     public static void HideBannerAd() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.hideBannerAd();
         }
     }
@@ -1228,7 +1275,7 @@ public class AdNetworks : GameObjectBehavior {
     // VIDEO ADS
 
     public static void SetVideoAdSoundEnabled(bool isEnabled) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setVideoAdSoundEnabled(isEnabled);
         }
     }
@@ -1242,7 +1289,7 @@ public class AdNetworks : GameObjectBehavior {
     //
 
     public static void IsVideoAdAvailable() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.isVideoAdAvailable();
         }
     }
@@ -1263,7 +1310,7 @@ public class AdNetworks : GameObjectBehavior {
     //
 
     public static void ShowVideoAd(bool showCloseButtons = true, string code = null) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showVideoAd(showCloseButtons);
         }
     }
@@ -1278,8 +1325,8 @@ public class AdNetworks : GameObjectBehavior {
 
 #if AD_USE_UNITY
 
-        if(showCloseButtons) {
-            if(code.IsNullOrEmpty()) {
+        if (showCloseButtons) {
+            if (code.IsNullOrEmpty()) {
                 unityShowRewardAd();
             }
             else {
@@ -1295,7 +1342,7 @@ public class AdNetworks : GameObjectBehavior {
     //
 
     public static void ShowVideoAdIncentivized(bool showCloseButtons = true, string code = null, string user = null) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showVideoAdIncentivized(showCloseButtons, code, user);
         }
     }
@@ -1309,7 +1356,7 @@ public class AdNetworks : GameObjectBehavior {
 #endif
 
 #if AD_USE_UNITY
-        if(code.IsNullOrEmpty()) {
+        if (code.IsNullOrEmpty()) {
             unityShowRewardAd();
         }
         else {
@@ -1323,7 +1370,7 @@ public class AdNetworks : GameObjectBehavior {
     // OFFERS
 
     public static void ShowOfferWall() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showOfferWall();
         }
     }
@@ -1340,7 +1387,7 @@ public class AdNetworks : GameObjectBehavior {
 
 
     public static void ShowDisplayAd() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showDisplayAd();
         }
     }
@@ -1357,7 +1404,7 @@ public class AdNetworks : GameObjectBehavior {
     // FULLSCREEN ADS
 
     public static void ShowFullscreenAd() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showFullscreenAd();
         }
     }
@@ -1374,7 +1421,7 @@ public class AdNetworks : GameObjectBehavior {
     // MORE APPS
 
     public static void ShowMoreApps() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showMoreApps();
         }
     }
@@ -1388,7 +1435,7 @@ public class AdNetworks : GameObjectBehavior {
     }
 
     public static void ShowInterstitial() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showInterstitial();
         }
     }
@@ -1404,8 +1451,8 @@ public class AdNetworks : GameObjectBehavior {
 
     public static void HandleAdUpdate() {
 #if UNITY_ANDROID
-        if(Application.platform == RuntimePlatform.Android) {
-            if(Input.GetKeyUp(KeyCode.Escape)) {
+        if (Application.platform == RuntimePlatform.Android) {
+            if (Input.GetKeyUp(KeyCode.Escape)) {
 #if PROMO_USE_CHARTBOOST
                 //if (Chartboost..onBackPressed())
                 //    return;
