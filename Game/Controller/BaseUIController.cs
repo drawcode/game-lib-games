@@ -346,6 +346,9 @@ public class BaseUIPanel {
 
 public class BaseUIController : GameObjectBehavior {
 
+
+#if USE_GAME_LIB_GAMES_UI
+
     public static BaseUIController BaseInstance;
     public bool uiVisible = true;
     public bool hasBeenClicked = false;
@@ -3397,4 +3400,5 @@ public class BaseUIController : GameObjectBehavior {
         GameController.QuitGame();
         GameUIController.ShowMain();
     }
+#endif
 }

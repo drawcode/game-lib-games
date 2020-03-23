@@ -406,6 +406,8 @@ public class BaseGameGlobal : GameObjectBehavior {
     //}
 
     public virtual void OnQuitDialog(string result) {
+
+#if USE_GAME_LIB_GAMES_UI
         if(result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
             QuitGame();
         }
@@ -414,6 +416,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                 AlertDialog.Instance.HideAlert();
             }
         }
+#endif
     }
 
     public virtual void QuitGame() {
@@ -493,9 +496,11 @@ public class BaseGameGlobal : GameObjectBehavior {
 
                 string sceneName = "Panel";
 
+#if USE_GAME_LIB_GAMES_UI
                 if(GameUIController.Instance != null) {
                     sceneName = GameUIController.Instance.currentPanel;
                 }
+#endif
 
                 string filename = "../screenshots/" + sceneName +
                                   "-" + Screen.width.ToString() + "x" + Screen.height.ToString()

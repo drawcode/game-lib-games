@@ -122,8 +122,13 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     public static GamePlayerIndicator AddIndicator(
         GameObject target, string type, string gameIndicatorType) {
 
+        GameObject parentObject = null;
+
+#if USE_GAME_LIB_GAMES_UI
+        parentObject = GameHUD.Instance.containerOffscreenIndicators;
+#endif
         return GamePlayerIndicator.AddIndicator(
-            GameHUD.Instance.containerOffscreenIndicators,
+            parentObject,
             target, type, gameIndicatorType);
     }
 
