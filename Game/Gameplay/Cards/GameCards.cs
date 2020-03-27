@@ -49,7 +49,7 @@ public class GameCard {
 // ---------------------------------------------------------------
 // CARD DECK
 
-public class GameCardDeck { 
+public class GameCardDeck {
 
     // unique deck code
     public string code = "default";
@@ -66,7 +66,7 @@ public class GameCardDeck {
 
         PrepareCards();
     }
-        
+
     public void SetCard(string cardType, string cardValue) {
         GameCard gameCard = new GameCard();
 
@@ -79,7 +79,7 @@ public class GameCardDeck {
     public void SetCard(GameCard gameCard) {
         cards.Add(gameCard);
     }
-    
+
     public void Shuffle() {
         cards.Shuffle();
     }
@@ -87,7 +87,7 @@ public class GameCardDeck {
     public List<GameCard> GetCards() {
         return cards;
     }
-        
+
     public GameCard DealCard() {
 
         if (cardQueue.Count == 0) {
@@ -100,22 +100,22 @@ public class GameCardDeck {
     public void ClearCards() {
         cards.Clear();
     }
-    
+
     public void ClearQueue() {
         cardQueue.Clear();
     }
 
     public void LoadCards(List<GameCard> cardsTo) {
-        ClearCards();   
+        ClearCards();
         cards.AddRange(cardsTo);
         PrepareCards();
     }
-    
+
     public void PrepareCards() {
 
         ClearQueue();
-        
-        Shuffle();   
+
+        Shuffle();
 
         foreach (GameCard gameCard in cards) {
             cardQueue.Enqueue(gameCard);
@@ -127,41 +127,41 @@ public class GameCardDeck {
 // GAME CARD GENERATOR
 
 public class GameCardsGenerator {
-        
+
     static List<string> gameCardTypes;
     static List<string> gameCardValues;
-    
+
     public static List<string> GetStandardCardTypes() {
-        
+
         if (gameCardTypes == null) {
-            gameCardTypes = new List<string>();    
-            
+            gameCardTypes = new List<string>();
+
             gameCardTypes.Add("spade");
             gameCardTypes.Add("heart");
             gameCardTypes.Add("diamond");
             gameCardTypes.Add("clover");
         }
-        
+
         return gameCardTypes;
     }
-    
+
     public static List<string> GetStandardCardValues() {
 
         if (gameCardValues == null) {
-            gameCardValues = new List<string>();    
+            gameCardValues = new List<string>();
         }
 
         gameCardValues.Clear();
 
         for (int i = 0; i < 9; i++) {
-            gameCardValues.Add((i + 1).ToString());            
+            gameCardValues.Add((i + 1).ToString());
         }
-        
+
         gameCardValues.Add("ace");
         gameCardValues.Add("queen");
         gameCardValues.Add("jack");
         gameCardValues.Add("king");
-    
+
         return gameCardValues;
     }
 
@@ -178,22 +178,22 @@ public class GameCardsGenerator {
         List<GameCard> cards = new List<GameCard>();
 
         foreach (string cardType in GetStandardCardTypes()) {
-            
+
             foreach (string cardVal in GetStandardCardValues()) {
-                
+
                 cards.Add(CreateCard(cardType, cardVal));
             }
         }
 
         return cards;
     }
-        
+
     public static GameCard CreateCard(string cardType, string cardValue) {
         GameCard gameCard = new GameCard();
-        
+
         gameCard.type = cardType;
         gameCard.val = cardValue;
-        
+
         return gameCard;
     }
 
@@ -217,14 +217,14 @@ public class GameCardSet {
 
         decks = new List<GameCardDeck>();
         cardQueue = new Queue();
-        currentCard = null;        
+        currentCard = null;
     }
-    
+
     public void LoadDeck(GameCardDeck gameCardDeck) {
 
         decks.Add(gameCardDeck);
     }
-    
+
     public void Shuffle() {
 
         foreach (GameCardDeck deck in decks) {
@@ -235,13 +235,13 @@ public class GameCardSet {
     public void ClearQueue() {
 
         cardQueue.Clear();
-        
+
         foreach (GameCardDeck deck in decks) {
             deck.ClearCards();
         }
     }
 
-    public void PrepareCards() {        
+    public void PrepareCards() {
 
         foreach (GameCardDeck deck in decks) {
             deck.PrepareCards();
@@ -256,11 +256,11 @@ public class GameCardSet {
 
         currentCard = null;
     }
-    
+
     public GameCard CurrentCard() {
         return currentCard;
     }
-        
+
     public GameCard DealCard() {
 
         if (cardQueue.Count == 0) {
@@ -305,17 +305,17 @@ public class GameCards {
     }
 
     public GameCard DealCard() {
-    
+
         currentCard = cardSet.DealCard();
-        
+
         if (currentCard == null) {
             LoadCards(type, deckCount);
-            Debug.Log("DealCard:reloading cards"); 
+            Debug.Log("DealCard:reloading cards");
             currentCard = cardSet.DealCard();
         }
 
         Debug.Log("GameCard:DealCard:" + currentCard.ToJson());
-        
+
         Debug.Log("GameCard:CardQueue:" + cardSet.cardQueue.Count);
 
         return currentCard;
@@ -326,9 +326,9 @@ public class GameCards {
 // GAME CARD TYPE OBJECTS
 
 public class GameCardHand {
-    
+
     public List<GameCard> cards;
-    
+
     public GameCardHand() {
         cards = new List<GameCard>();
     }
@@ -343,51 +343,51 @@ public class GameCardHand {
                 cards[i].type = gameCard.type;
                 cards[i].val = gameCard.val;
                 return;
-            } 
+            }
         }
 
         cards.Add(gameCard);
     }
 
     // GET CARDS
-        
+
     public GameCard GetCard(string uid) {
         for (int i = 0; i < cards.Count; i++) {
             if (cards[i].uid == uid) {
                 return cards[i];
             }
-        }    
+        }
         return null;
     }
-    
+
     public GameCard GetCard(int index) {
-        
+
         if (cards.Count > 0
             && index < cards.Count) {
             return null;
         }
-        
+
         return cards[index];
     }
-    
+
     public GameCard GetCard(GameCard card) {
-        return GetCard(card.uid);   
+        return GetCard(card.uid);
     }
 
     // GET CARD INDEX
 
-    
+
     public int GetCardIndex(string uid) {
         for (int i = 0; i < cards.Count; i++) {
             if (cards[i].uid == uid) {
                 return i;
             }
-        }    
+        }
         return -1;
     }
-        
+
     public int GetCardIndex(GameCard card) {
-        return GetCardIndex(card.uid);   
+        return GetCardIndex(card.uid);
     }
 
     // REMOVE
@@ -399,7 +399,7 @@ public class GameCardHand {
     public void ClearCards() {
         cards.Clear();
     }
-    
+
 }
 
 // ---------------------------------------------------------------
@@ -440,28 +440,28 @@ public class GameCardPlayer : IGameCardPlayer {
             return type == GameCardPlayerType.dealer;
         }
     }
-    
+
     public bool isPlayer {
         get {
             return type == GameCardPlayerType.player;
         }
     }
-    
+
     public GameCardPlayer() {
         uid = UniqueUtil.CreateUUID4();
         type = GameCardPlayerType.player;
         typePlayer = GameCardPlayerType.player;
         ClearCardHands();
     }
-    
-    public void ClearCardHands() {        
+
+    public void ClearCardHands() {
         cardHands = new List<GameCardHand>();
 
         InitCardHands();
     }
 
     public void InitCardHands() {
-        
+
         GameCardHand hand = new GameCardHand();
         cardHands.Add(hand);
     }
@@ -474,7 +474,7 @@ public class GameCardPlayer : IGameCardPlayer {
         }
         return 0;
     }
-    
+
     public int CardCountFirstHand() {
         return CardCountByHand(0);
     }
@@ -495,15 +495,15 @@ public class GameCardPlayer : IGameCardPlayer {
     }
 
     public void DiscardCard(string uid, int handIndex = 0) {
-        
+
         if (cardHands.Count <= handIndex) {
             return;
         }
-        
+
         GameCard gameCard = cardHands[handIndex].GetCard(uid);
 
         if (gameCard != null) {
-            
+
         }
     }
 }
@@ -517,7 +517,7 @@ public class GameCardKeys {
 
 }
 
-public class GameCardGameStates {    
+public class GameCardGameStates {
     public static string gameCardNotReady = "game-card-not-ready";
     public static string gameCardStart = "game-card-start";
     public static string gameCardNextRound = "game-card-next-round";
@@ -531,51 +531,51 @@ public class GameCardGameTypes {
     public static string gameCardTypePoker = GameCardKeys.gameCardGameType + "-poker";
 }
 
-public class GameCardBase<T> where T : GameCardPlayer, new() {    
+public class GameCardBase<T> where T : GameCardPlayer, new() {
 
     public GameCards gameCards;
     public int cardHandLimit = -1;
-    public string gameCardGameType = GameCardGameTypes.gameCardTypeDefault;    
+    public string gameCardGameType = GameCardGameTypes.gameCardTypeDefault;
     public string currentGameState = GameCardGameStates.gameCardNotReady;
     List<T> players;
 
     public GameCardBase() {
         gameCards = new GameCards();
         players = new List<T>();
-    }    
-    
+    }
+
     // STATES / EVENTS
 
     public void SetGameType(string gameTypeTo) {
         gameCardGameType = gameTypeTo;
     }
 
-    
+
     public void SetGameState(string stateTo) {
         if (currentGameState == stateTo) {
             return;
         }
-        
+
         Debug.Log("StateChanged: " + " stateTo:" + stateTo);
-        
+
         currentGameState = stateTo;
     }
-    
+
     public void ChangeState(string stateTo) {
 
         if (currentGameState == stateTo) {
             return;
         }
-        
+
         Debug.Log("StateChanging: " + " stateTo:" + stateTo);
-        
+
         HandleChangeState(stateTo);
     }
-    
+
     public void HandleChangeState(string stateTo) {
 
         SetGameState(stateTo);
-        
+
         Messenger<string>.Broadcast(
             GameCardKeys.gameCardChangeState,
             currentGameState
@@ -587,19 +587,19 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
     public virtual void DisplayCards() {
 
         foreach (T player in players) {
-            
+
             string cards = "";
-            cards += " -> " + player.name + " \r\n"; 
+            cards += " -> " + player.name + " \r\n";
 
             foreach (GameCardHand hand in player.cardHands) {
 
                 foreach (GameCard card in hand.cards) {
-                    cards += " | " + card.val + " - " + 
+                    cards += " | " + card.val + " - " +
                         " " + card.type + " ";
                 }
 
             }
-            
+
             Debug.Log(cards);
         }
     }
@@ -615,7 +615,7 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
             if (players[i].uid == uid) {
                 return players[i];
             }
-        }    
+        }
         return null;
     }
 
@@ -627,9 +627,9 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
 
         return players[playerIndex];
     }
-    
+
     public T GetPlayer(GameCardPlayer gamePlayer) {
-        return GetPlayer(gamePlayer.uid);   
+        return GetPlayer(gamePlayer.uid);
     }
 
     // ADD / SET
@@ -643,9 +643,9 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
 
         SetPlayer(gamePlayer);
     }
-    
+
     public void SetPlayer(T gamePlayer) {
-                
+
         for (int i = 0; i < players.Count; i++) {
             if (players[i].uid == gamePlayer.uid) {
                 players[i].name = gamePlayer.name;
@@ -655,24 +655,24 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
                 return;
             }
         }
-        
+
         players.Add(gamePlayer);
     }
 
     // REMOVE
-    
+
     public void RemovePlayer(T gamePlayer) {
-        
+
         int playerIdx = -1;
-        
+
         for (int i = 0; i < players.Count; i++) {
             if (players[i].uid == gamePlayer.uid) {
                 playerIdx = i;//players.RemoveAt(i);
                 break;
             }
         }
-        
-        if (playerIdx > -1 
+
+        if (playerIdx > -1
             && players.Count > playerIdx) {
             players.RemoveAt(playerIdx);
         }
@@ -682,12 +682,12 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
 
     public void DealPlayerCard(
         T gamePlayer, GameCard gameCard) {
-                
+
         if (gamePlayer != null && gameCard != null) {
             gamePlayer.ReceiveCard(gameCard);
         }
     }
-        
+
     public void DealPlayerCard(string uid) {
         T gamePlayer = GetPlayer(uid);
 
@@ -695,7 +695,7 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
             return;
         }
 
-        GameCard gameCard = gameCards.DealCard(); 
+        GameCard gameCard = gameCards.DealCard();
         DealPlayerCard(gamePlayer, gameCard);
     }
 
@@ -705,8 +705,8 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
         if (gamePlayer == null) {
             return;
         }
-        
-        GameCard gameCard = gameCards.DealCard(); 
+
+        GameCard gameCard = gameCards.DealCard();
         DealPlayerCard(gamePlayer, gameCard);
     }
 
@@ -716,11 +716,11 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
 
         string uidMe = SystemPrefUtil.GetLocalSettingString(
             GameCardPlayerKeys.playerUid);
-        
+
         if (string.IsNullOrEmpty(uidMe)) {
             SystemPrefUtil.SetLocalSettingString(
                 GameCardPlayerKeys.playerUid, System.Guid.NewGuid().ToString());
-            
+
             uidMe = SystemPrefUtil.GetLocalSettingString(
                 GameCardPlayerKeys.playerUid);
         }
@@ -729,11 +729,11 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
     }
 
     //
-        
+
     public virtual void DealCards(int handRoundLimit) {
-        
+
         List<T> playerList = GetPlayers();
-        
+
         for (int i = 0; i < handRoundLimit; i++) {
             for (int j = 0; j < playerList.Count; j++) {
 
@@ -742,8 +742,8 @@ public class GameCardBase<T> where T : GameCardPlayer, new() {
                 }
             }
         }
-        
-        DisplayCards();        
+
+        DisplayCards();
     }
 }
 
@@ -765,7 +765,7 @@ public class GameCardPlayerBlackjackStates : GameCardPlayerStates {
 public class GameCardPlayerBlackjack : GameCardPlayer {
 
     public string currentGamePlayerState = GameCardPlayerBlackjackStates.blackjackPlayerNotStarted;
-    
+
     public GameCardPlayerBlackjack() {
         typePlayer = GameCardPlayerType.player;
         currentGamePlayerState = GameCardPlayerBlackjackStates.blackjackPlayerReady;
@@ -776,7 +776,7 @@ public class GameCardPlayerBlackjack : GameCardPlayer {
     }
 
     public bool IsState(string stateTo) {
-        return currentGamePlayerState == stateTo; 
+        return currentGamePlayerState == stateTo;
     }
 }
 
@@ -809,7 +809,7 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
     }
 
     ~GameCardBlackjack() {
-        
+
         RemoveEvents();
     }
 
@@ -824,9 +824,9 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
         Messenger.AddListener(GameCardBlackjackStates.gameCardNextRound, OnGameNextRound);
 
         //
-        
+
         Messenger.AddListener(GameCardBlackjackStates.blackjackWaitForBets, OnGamePlayerWaitForBets);
-        Messenger<string,int, int>.AddListener(GameCardBlackjackStates.blackjackDealPlayer, OnGamePlayerDeal);
+        Messenger<string, int, int>.AddListener(GameCardBlackjackStates.blackjackDealPlayer, OnGamePlayerDeal);
         Messenger<int, int>.AddListener(GameCardBlackjackStates.blackjackDealAll, OnGamePlayerDealAll);
 
     }
@@ -834,137 +834,137 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
     public void RemoveEvents() {
 
         Messenger<string>.RemoveListener(GameCardKeys.gameCardChangeState, OnGameChangeState);
-        
+
         Messenger.RemoveListener(GameCardBlackjackStates.gameCardStart, OnGameStart);
         Messenger.RemoveListener(GameCardBlackjackStates.gameCardEnd, OnGameEnd);
         Messenger.RemoveListener(GameCardBlackjackStates.gameCardNotReady, OnGameNotReady);
         Messenger.RemoveListener(GameCardBlackjackStates.gameCardNextPlayer, OnGameNextPlayer);
         Messenger.RemoveListener(GameCardBlackjackStates.gameCardNextRound, OnGameNextRound);
-        
+
         //
-        
+
         Messenger.RemoveListener(GameCardBlackjackStates.blackjackWaitForBets, OnGamePlayerWaitForBets);
-        Messenger<string,int, int>.RemoveListener(GameCardBlackjackStates.blackjackDealPlayer, OnGamePlayerDeal);
+        Messenger<string, int, int>.RemoveListener(GameCardBlackjackStates.blackjackDealPlayer, OnGamePlayerDeal);
         Messenger<int, int>.RemoveListener(GameCardBlackjackStates.blackjackDealAll, OnGamePlayerDealAll);
-        
+
     }
 
     // GAME EVENT HANDLERS
-    
+
     public void OnGameChangeState(string stateTo) {
-        
+
         Debug.Log("OnGameChangeState" + " stateTo:" + stateTo);
-        
+
         HandleGameState();
     }
 
     public void OnGameStart() {
-    
+
         Debug.Log("OnGameStart");
 
         HandleGameState();
     }
-    
+
     public void OnGameEnd() {
-        
+
         Debug.Log("OnGameEnd");
-        
+
         HandleGameState();
     }
-    
+
     public void OnGameNotReady() {
-        
+
         Debug.Log("OnGameNotReady");
-        
+
         HandleGameState();
     }
-    
+
     public void OnGameNextPlayer() {
-        
+
         Debug.Log("OnGameNextPlayer");
-        
+
         HandleGameState();
     }
-    
+
     public void OnGameNextRound() {
-        
+
         Debug.Log("OnGameNextRound");
-        
+
         HandleGameState();
     }
 
     // GAME PLAYER EVENT HANDLERS
-    
+
     public void OnGamePlayerWaitForBets() {
-        
+
         Debug.Log("OnGamePlayerWaitForBets");
-        
+
         HandleGamePlayerState();
     }
-    
+
     public void OnGamePlayerDeal(string uid, int handIndex, int cardCount) {
-        
+
         Debug.Log("OnGamePlayerDeal");
-        
+
         HandleGamePlayerState();
     }
-    
+
     public void OnGamePlayerDealAll(int handIndex, int cardCount) {
-        
+
         Debug.Log("OnGamePlayerDealAll");
-        
+
         HandleGamePlayerState();
     }
 
     // STATE HANDLERS
-        
+
     public void HandleGameState() {
-        
-        if(currentGameState == GameCardBlackjackStates.gameCardStart) {
-            
-            
+
+        if (currentGameState == GameCardBlackjackStates.gameCardStart) {
+
+
             // Check if all players ready
-            
+
             List<GameCardPlayerBlackjack> players = GetPlayers();
-            
+
             bool readyToStart = false;
-            
-            for(int i = 0; i < players.Count; i++) {
-                
-                if(!players[i].IsReady()) {
+
+            for (int i = 0; i < players.Count; i++) {
+
+                if (!players[i].IsReady()) {
                     readyToStart = false;
-                    break;                
+                    break;
                 }
                 else {
                     readyToStart = true;
                 }
             }
-            
+
             Debug.Log("HandleGameState" + "readyToStart:" + readyToStart);
-            
-            if(readyToStart) {
+
+            if (readyToStart) {
 
                 GameNextPlayer();
             }
         }
-        
+
     }
-    
+
     public void HandleGamePlayerState() {
-        
+
     }
 
     // PLAYERS
 
     public void LoadPlayers() {
-           
+
         string uidMe = GetPlayerId();
-        
+
         SetPlayer(uidDealer, GameCardPlayerType.dealer, "dealer");
         SetPlayer(uidMe, GameCardPlayerType.player, "me");
-        
+
         Debug.Log("players:" + GetPlayers().ToJson());
-         
+
     }
 
     //
@@ -972,15 +972,15 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
     public void GameStart() {
         ChangeState(GameCardBlackjackStates.gameCardStart);
     }
-        
+
     public void GameEnd() {
         ChangeState(GameCardBlackjackStates.gameCardEnd);
     }
-        
+
     public void GameNextPlayer() {
         ChangeState(GameCardBlackjackStates.gameCardNextPlayer);
     }
-    
+
     public void GameNextRound() {
         ChangeState(GameCardBlackjackStates.gameCardNextRound);
     }
@@ -988,7 +988,7 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
     //
 
     public void HitDealer() {
-        HitPlayer(uidDealer);        
+        HitPlayer(uidDealer);
     }
 
     public void HitMe() {
@@ -1013,7 +1013,7 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
                 || card.val == "queen"
                 || card.val == "king") {
 
-                score += 10;            
+                score += 10;
             }
             else if (card.val == "ace") {
                 // Handle later for multiple values
@@ -1025,7 +1025,7 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
                 score += cardVal;
             }
         }
-                
+
         foreach (GameCard card in cards) {
 
             if (card.val == "ace") {
@@ -1040,18 +1040,18 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
 
         return score;
     }
-    
+
     public override void DisplayCards() {
-        
+
         foreach (GameCardPlayerBlackjack player in GetPlayers()) {
-            
+
             string cards = "";
-            cards += " -> " + player.name + " \r\n"; 
-            
+            cards += " -> " + player.name + " \r\n";
+
             foreach (GameCardHand hand in player.cardHands) {
-                                                
+
                 foreach (GameCard card in hand.cards) {
-                    cards += " | " + card.val + " - " + 
+                    cards += " | " + card.val + " - " +
                         " " + card.type + " ";
                 }
                 int score = GetCardsValue(hand.cards);
@@ -1059,20 +1059,20 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
 
                 if (score > 21) {
                     cards += " | bust ";
-                } 
-                
+                }
+
             }
-            
+
             Debug.Log(cards);
         }
     }
-        
+
     //
-    
+
     public override void DealCards(int handRoundLimit) {
-        
+
         List<GameCardPlayerBlackjack> playerList = GetPlayers();
-        
+
         for (int i = 0; i < handRoundLimit; i++) {
             for (int j = 0; j < playerList.Count; j++) {
                 if (playerList[j].CardCountByHand(0) <= i) {
@@ -1083,7 +1083,7 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
             }
         }
 
-        
+
         for (int i = 0; i < handRoundLimit; i++) {
             for (int j = 0; j < playerList.Count; j++) {
                 if (playerList[j].CardCountByHand(0) <= i) {
@@ -1093,26 +1093,25 @@ public class GameCardBlackjack : GameCardBase<GameCardPlayerBlackjack> {
                 }
             }
         }
-        
-        DisplayCards();        
-    }
 
+        DisplayCards();
+    }
 }
 
 // ---------------------------------------------------------------
 // POKER
 
 public class GameCardPlayerPoker : GameCardPlayer {
-    
+
     public GameCardPlayerPoker() {
         typePlayer = GameCardPlayerType.player;
     }
 }
 
 public class GameCardPoker : GameCardBase<GameCardPlayerPoker> {
-    
+
     public GameCardPoker() {
-        
+
     }
-    
+
 }
