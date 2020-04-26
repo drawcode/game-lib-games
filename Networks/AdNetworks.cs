@@ -12,7 +12,7 @@ using System.Text;
 
 using UnityEngine;
 #if AD_USE_UNITY
-#if UNITY_IPHONE || UNITY_ANDROID
+#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL || UNITY_STANDALONE
 using UnityEngine.Advertisements;
 #endif
 #endif
@@ -100,9 +100,9 @@ public class AdNetworksMessages {
 
 public class AdNetworks : GameObjectBehavior
 #if AD_USE_UNITY
-#if UNITY_IPHONE || UNITY_ANDROID
+//#if UNITY_IPHONE || UNITY_ANDROID  || UNITY_WEBGL
     , IUnityAdsListener // Implement for the events, annoyingly in an interface now...
-#endif
+//#endif
 #endif
     {
 #if AD_USE_ADMOB
@@ -845,7 +845,16 @@ public class AdNetworks : GameObjectBehavior
             Advertisement.Initialize(
                 AppConfigs.adNetworksUnityPublisherIdAndroid,
                 AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_WEBGL
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_STANDALONE
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
 #endif
+
         }
     }
 
