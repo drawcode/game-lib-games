@@ -190,7 +190,7 @@ public class GameVehicleDrive : GameObjectBehavior {
 
         if(!GameConfigs.isGameRunning) {
 
-            return;
+            //return;
         }
 
         currentSpeed = (Mathf.PI * 2 * flWheelCollider.radius) * flWheelCollider.rpm * 60 / 1000;
@@ -416,11 +416,11 @@ public class GameVehicleDrive : GameObjectBehavior {
     void Update() {
 
         if(GameConfigs.isUIRunning) {
-            return;
+            //return;
         }
 
         if(!GameConfigs.isGameRunning) {
-            return;
+            //return;
         }
 
         RotateWheels();
