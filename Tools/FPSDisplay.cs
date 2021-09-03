@@ -25,7 +25,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public static bool isInst {
         get {
-            if(Instance != null) {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -34,7 +34,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public void Awake() {
 
-        if(Instance != null && this != Instance) {
+        if (Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(this);
             return;
@@ -51,14 +51,14 @@ public class FPSDisplay : GameObjectBehavior {
     }
 
     public static float GetCurrentFPS() {
-        if(isInst) {
+        if (isInst) {
             return Instance.lastFPS;
         }
         return 21f;
     }
 
     public static bool IsFPSLessThan(float val) {
-        if(isInst) {
+        if (isInst) {
             return Instance.lastFPS < val;
         }
         return true;
@@ -66,7 +66,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public static bool isUnder15FPS {
         get {
-            if(isInst) {
+            if (isInst) {
                 return IsFPSLessThan(15f);
             }
             return false;
@@ -75,7 +75,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public static bool isUnder20FPS {
         get {
-            if(isInst) {
+            if (isInst) {
                 return IsFPSLessThan(20f);
             }
             return false;
@@ -84,7 +84,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public static bool isUnder25FPS {
         get {
-            if(isInst) {
+            if (isInst) {
                 return IsFPSLessThan(25f);
             }
             return false;
@@ -93,7 +93,7 @@ public class FPSDisplay : GameObjectBehavior {
 
     public static bool isUnder30FPS {
         get {
-            if(isInst) {
+            if (isInst) {
                 return IsFPSLessThan(30f);
             }
             return false;
@@ -107,22 +107,22 @@ public class FPSDisplay : GameObjectBehavior {
         ++frames;
 
         // Interval ended - update GUI text and start new interval
-        if(timeleft <= 0.0) {
+        if (timeleft <= 0.0) {
             // display two fractional digits (f2 format)
             float fps = accum / frames;
             lastFPS = fps;
 
-            if(labelFPS != null) {
+            if (labelFPS != null) {
 
                 string format = System.String.Format("{0:F2} FPS", fps);
 
                 UIUtil.SetLabelValue(labelFPS, format);
 
-                if(fps < 27) {
+                if (fps < 27) {
                     labelFPS.color = Color.Lerp(labelFPS.color, Color.yellow, Time.deltaTime);
                 }
                 else {
-                    if(fps < 10) {
+                    if (fps < 10) {
                         labelFPS.color = Color.Lerp(labelFPS.color, Color.red, Time.deltaTime);
                     }
                     else {
