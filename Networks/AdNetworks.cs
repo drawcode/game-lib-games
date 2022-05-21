@@ -101,7 +101,7 @@ public class AdNetworksMessages {
 public class AdNetworks : GameObjectBehavior
 #if AD_USE_UNITY
 //#if UNITY_IPHONE || UNITY_ANDROID  || UNITY_WEBGL
-    , IUnityAdsListener // Implement for the events, annoyingly in an interface now...
+    //, IUnityAdsListener // Implement for the events, annoyingly in an interface now...
 //#endif
 #endif
     {
@@ -835,7 +835,7 @@ public class AdNetworks : GameObjectBehavior
         if (!Advertisement.isInitialized) {
 
             // Now that Unity has changed their Ad api for the millionth time...
-            Advertisement.AddListener(this);
+            ////Advertisement.AddListener(this);
 
 #if UNITY_IOS
             Advertisement.Initialize(
@@ -871,11 +871,13 @@ public class AdNetworks : GameObjectBehavior
     public bool unityIsAdReady(string code = null) {
 
         if (code.IsNullOrEmpty()) {
-            return Advertisement.IsReady();
+            //return Advertisement.IsReady();
         }
         else {
-            return Advertisement.IsReady(code);
+            //return Advertisement.IsReady(code);
         }
+
+        return false;
     }
 
     public void unityAdShow(string code = null) {
@@ -889,7 +891,7 @@ public class AdNetworks : GameObjectBehavior
         //Advertisement.AddListener(unityIsAdShowCompleted);
 
         if (code.IsNullOrEmpty()) {
-            Advertisement.Show();
+            //Advertisement.Show();
         }
         else {
             Advertisement.Show(code);
