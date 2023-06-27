@@ -255,7 +255,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 #endif
 
 #if ANALYTICS_UNITY
-        Analytics.SetUserId(userId);
+        //Analytics.SetUserId(userId);
 #endif
     }
 
@@ -275,7 +275,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 #endif
 
 #if ANALYTICS_UNITY
-        Analytics.SetUserGender(gender);
+        //Analytics.SetUserGender(gender);
 #endif
     }
 
@@ -295,7 +295,7 @@ public class AnalyticsNetworks : GameObjectBehavior {
 #endif
 
 #if ANALYTICS_UNITY
-        Analytics.SetUserBirthYear(birthYear);
+        //Analytics.SetUserBirthYear(birthYear);
 #endif
     }
 

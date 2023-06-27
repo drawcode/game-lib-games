@@ -4,16 +4,31 @@
 //#define PROMO_USE_VUNGLE
 //#define PROMO_USE_CHARTBOOST
 //#define PROMO_USE_TAPJOY
-//#define AD_USE_UNITY
+#define AD_USE_UNITY
+//#define AD_USE_UNITY_ORIG
+#define AD_USE_UNITY_MEDIATION
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 using UnityEngine;
+
 #if AD_USE_UNITY
-#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL || UNITY_STANDALONE
+#if AD_USE_UNITY_ORIG
+#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL || UNITY_STANDALONE || UNITY_EDITOR
+using UnityEngine.UI;
 using UnityEngine.Advertisements;
+#endif
+#endif
+#endif
+
+#if AD_USE_UNITY
+#if AD_USE_UNITY_MEDIATION
+#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WEBGL || UNITY_STANDALONE || UNITY_EDITOR
+using UnityEngine.UI;
+using UnityEngine.Advertisements;
+#endif
 #endif
 #endif
 
@@ -100,9 +115,9 @@ public class AdNetworksMessages {
 
 public class AdNetworks : GameObjectBehavior
 #if AD_USE_UNITY
-//#if UNITY_IPHONE || UNITY_ANDROID  || UNITY_WEBGL
+    //#if UNITY_IPHONE || UNITY_ANDROID  || UNITY_WEBGL
     //, IUnityAdsListener // Implement for the events, annoyingly in an interface now...
-//#endif
+    //#endif
 #endif
     {
 #if AD_USE_ADMOB
@@ -311,8 +326,12 @@ public class AdNetworks : GameObjectBehavior
 
     public void Init() {
 
-#if AD_USE_UNITY
+#if AD_USE_UNITY && AD_USE_UNITY_ORIG
         unityAdsInit();
+#endif
+
+#if AD_USE_UNITY && AD_USE_UNITY_MEDIATION
+        unityAdsMediationInit();
 #endif
 
 #if AD_USE_IAD
@@ -826,7 +845,7 @@ public class AdNetworks : GameObjectBehavior
     // ----------------------------------------------------------------------
     // UNITY ADS
 
-#if AD_USE_UNITY
+#if AD_USE_UNITY && AD_USE_UNITY_ORIG
 
     const string unityRewardedPlacementId = "rewardedVideo";
 
@@ -954,6 +973,82 @@ public class AdNetworks : GameObjectBehavior
 
     public void OnUnityAdsDidStart(string placementId) {
         // Optional actions to take when the end-users triggers an ad.
+    }
+
+#endif
+
+
+#if AD_USE_UNITY && AD_USE_UNITY_MEDIATION
+
+
+    const string unityRewardedPlacementId = "rewardedVideo";
+
+    public void unityAdsMediationInit() {
+
+        //if (!Advertisement.isInitialized) {
+
+        // Now that Unity has changed their Ad api for the millionth time...
+        ////Advertisement.AddListen
+
+#if UNITY_IOS
+        //Advertisement.Initialize(
+        //   AppConfigs.adNetworksUnityPublisherIdiOS,
+        //    AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_ANDROID
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_WEBGL
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#elif UNITY_STANDALONE
+            Advertisement.Initialize(
+                AppConfigs.adNetworksUnityPublisherIdAndroid,
+                AppConfigs.adNetworksUnityTestModeEnabled);
+#endif
+
+        //}
+    }
+
+    public void unityShowVideoAd() {
+
+        unityAdShow();
+    }
+
+    public void unityShowRewardAd(string code = "rewardedVideo") {
+
+        unityAdShow(code);
+    }
+
+    public bool unityIsAdReady(string code = null) {
+
+        if (code.IsNullOrEmpty()) {
+            //return Advertisement.IsReady();
+        }
+        else {
+            //return Advertisement.IsReady(code);
+        }
+
+        return false;
+    }
+
+    public void unityAdShow(string code = null) {
+
+        if (!unityIsAdReady()) {
+            return;
+        }
+
+        //ShowOptions options = new ShowOptions { resultCallback = unityIsAdShowCompleted };
+        //options.resultCallback.
+        //Advertisement.AddListener(unityIsAdShowCompleted);
+
+        if (code.IsNullOrEmpty()) {
+            //Advertisement.Show();
+        }
+        else {
+            //Advertisement.Show(code);
+        }
     }
 
 #endif
