@@ -1,0 +1,27 @@
+{
+  "name": "com.drawlabs.game-lib-games",
+  "version": "1.0.1",
+  "displayName": "Game Lib Games",
+  "description": "Game Games library",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "documentationUrl": "https://drawlabs.com/products/packages/libs/game-lib-games/",
+  "changelogUrl": "https://drawlabs.com/products/packages/libs/game-lib-games/changelog/",
+  "licensesUrl": "https://drawlabs.com/products/packages/libs/game-lib-games/licensing/",
+  "dependencies": {
+ },
+ "keywords": [
+    "drawlabs",
+    "game",
+    "games",
+    "engine",
+    "tools",
+    "base",
+    "extensions"
+  ],
+  "author": {
+    "name": "Drawlabs Game Studio",
+    "email": "info@drawlabs.com",
+    "url": "https://drawlabs.com"
+  }
+}
