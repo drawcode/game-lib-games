@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Engine.Game.App;
 
 public class GameDamageDirector {   
 

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Engine.Game.App;
+using Engine.Game.App.BaseApp;
 using UnityEngine;
 
 public class BaseGamePlayerSlots {

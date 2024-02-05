@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Engine.Game.App.BaseApp;
 using UnityEngine;
 
 public interface IBaseGameController {

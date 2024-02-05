@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Game.Data;
+using Engine.Game.App.BaseApp;
+using Engine.Game.App;
+using Engine.Content;
 
 // Handles character and level customization overrides on default
 

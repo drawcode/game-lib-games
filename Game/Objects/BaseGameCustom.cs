@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Game.App.BaseApp;
+using Engine.Game.App;
 
 public class GameCustomActorTypes {
     public static string displayType = "display"; // used for customizer, defualt to profile, then allow changes.

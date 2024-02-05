@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Engine.Game.App;
+using Engine.Game.App.BaseApp;
 using UnityEngine;
 
 public interface IBaseGameCustomController {

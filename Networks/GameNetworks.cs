@@ -33,11 +33,13 @@ using UnityEngine;
 using Engine.Events;
 using Engine.Networking;
 using Engine.Utility;
+using Engine.Game.App.BaseApp;
+
 
 #if GAMENETWORK_USE_PRIME31
 using Prime31;
 #endif
-#if GAMENETWORK_USE_UNITY 
+#if GAMENETWORK_USE_UNITY
 #if UNITY_ANDROID
 using GooglePlayGames;
 #endif

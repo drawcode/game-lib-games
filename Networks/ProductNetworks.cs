@@ -35,6 +35,7 @@ using UnityEngine.Purchasing;
 // using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.Data;
 
 public class ProductNetworkType {
     public static string typeLocal = "local";

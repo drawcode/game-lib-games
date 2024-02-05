@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Engine.Game.App;
 
 public interface IBaseItemController {
     void broadcastItemMessage(GameItemData item);

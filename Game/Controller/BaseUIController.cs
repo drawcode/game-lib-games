@@ -7,6 +7,9 @@ using System.IO;
 
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.App;
+using Engine.Game.Data;
+using Engine.Game.App.BaseApp;
 
 public enum BaseUIStates {
     NoState,

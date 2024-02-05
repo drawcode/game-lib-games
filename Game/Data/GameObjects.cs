@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Engine.Game.App;
+using Engine.Game.App.BaseApp;
+using Engine.Game.Data;
 using UnityEngine;
 
-public class GameObjectQueueItem {
+public class GameObjectQueueItem
+{
     public string type = "";
     public string code = "";
     public string data_type = "";
@@ -14,28 +17,34 @@ public class GameObjectQueueItem {
     public Quaternion rot = Quaternion.identity;
 }
 
-public class GameActorDataItem : GameDataObject {
+public class GameActorDataItem : GameDataObject
+{
 
     public bool overrideLoading = false;
 
 
     // RPG
 
-    public virtual GameDataItemRPG rpg {
-        get {
+    public virtual GameDataItemRPG rpg
+    {
+        get
+        {
             return Get<GameDataItemRPG>(BaseDataObjectKeys.rpg, new GameDataItemRPG());
         }
 
-        set {
+        set
+        {
             Set<GameDataItemRPG>(BaseDataObjectKeys.rpg, value);
         }
     }
 
-    public GameActorDataItem() {
+    public GameActorDataItem()
+    {
         Reset();
     }
 
-    public override void Reset() {
+    public override void Reset()
+    {
         base.Reset();
 
         rpg = new GameDataItemRPG();

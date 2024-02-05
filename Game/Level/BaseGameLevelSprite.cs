@@ -6,6 +6,7 @@ using System.IO;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Game.App.BaseApp;
 
 public class BaseGameLevelSprite : GameObjectBehavior {
 
