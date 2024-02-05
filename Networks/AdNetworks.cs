@@ -995,9 +995,9 @@ public class AdNetworks : GameObjectBehavior
         //   AppConfigs.adNetworksUnityPublisherIdiOS,
         //    AppConfigs.adNetworksUnityTestModeEnabled);
 #elif UNITY_ANDROID
-            Advertisement.Initialize(
-                AppConfigs.adNetworksUnityPublisherIdAndroid,
-                AppConfigs.adNetworksUnityTestModeEnabled);
+            // Advertisement.Initialize(
+            //     AppConfigs.adNetworksUnityPublisherIdAndroid,
+            //     AppConfigs.adNetworksUnityTestModeEnabled);
 #elif UNITY_WEBGL
             Advertisement.Initialize(
                 AppConfigs.adNetworksUnityPublisherIdAndroid,
