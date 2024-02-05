@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Engine.Events;
+using Engine.Game.App;
 
 public class GameZoneGoalMarker : GameObjectBehavior {
 

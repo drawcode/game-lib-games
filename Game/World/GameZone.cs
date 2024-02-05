@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Engine.Events;
+using Engine.Game.Data;
 
 public class GameZoneKeys {
     public static string none = "game-zone-none";

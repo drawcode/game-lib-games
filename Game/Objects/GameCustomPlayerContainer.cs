@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Engine.Events;
+using Engine.Game.App.BaseApp;
+using Engine.Game.Data;
+using Engine.Animation;
 
 public class GameCustomPlayerContainer : MonoBehaviour {
             

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Engine.Events;
+using Engine.Game.Data;
+using Engine.Game.App;
 
 public class GameZoneActionAsset : GameZoneAction {
 

@@ -15,6 +15,7 @@ using UnityEngine.Analytics;
 // using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.Data;
 
 #if ANALYTICS_GAMEANALYTICS
 using GameAnalyticsSDK;

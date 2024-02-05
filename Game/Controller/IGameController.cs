@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Engine.Game.App.BaseApp;
 using UnityEngine;
 
-public interface IGameController {
+public interface IGameController
+{
     void Awake();
     void changeGameZone(string zone);
     void checkForGameOver();

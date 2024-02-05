@@ -6,27 +6,34 @@ using System.IO;
 using UnityEngine;
 
 using Engine.Events;
+using Engine.Game.App;
+using Engine.Game.Data;
 
 // This is the Item Director.
 
-public enum GameItemDifficulty {
+public enum GameItemDifficulty
+{
     EASY,
     NORMAL,
     HARD,
     EPIC
 }
 
-public class GameItemDirectorMessages {
+public class GameItemDirectorMessages
+{
     public static string gameItemDirectorSpawnItem = "game-item-director-spawn-item";
 }
 
-public class GameItemData : GameDataObject {
+public class GameItemData : GameDataObject
+{
 
-    public GameItemData() {
+    public GameItemData()
+    {
         Reset();
     }
 
-    public override void Reset() {
+    public override void Reset()
+    {
         base.Reset();
         code = "item-coin";
         type = BaseDataObjectKeys.item;
@@ -37,8 +44,9 @@ public class GameItemData : GameDataObject {
     }
 }
 
-public class BaseItemController : GameObjectBehavior, IBaseItemController {
- 
+public class BaseItemController : GameObjectBehavior, IBaseItemController
+{
+
     public static BaseItemController BaseInstance;
     //
     public bool runDirector = false;
@@ -86,59 +94,71 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     public List<GamePresetItem> presetWeaponsAppend = null;
     public List<float> presetWeaponProbabilities = null;
     //
-    public static bool isBaseInst {
-        get {
-            if (BaseInstance != null) {
+    public static bool isBaseInst
+    {
+        get
+        {
+            if (BaseInstance != null)
+            {
                 return true;
             }
             return false;
         }
     }
 
-    void Awake() {
+    void Awake()
+    {
 
-        if (BaseInstance != null && this != BaseInstance) {
+        if (BaseInstance != null && this != BaseInstance)
+        {
             //There is already a copy of this script running
             Destroy(this);
             return;
         }
-    
+
         BaseInstance = this;
-    
+
         // Init();
     }
 
-    public virtual void Start() {
+    public virtual void Start()
+    {
 
     }
 
-    public virtual void init() {
+    public virtual void init()
+    {
 
     }
-    
+
     // PRELOAD
-    
-    public virtual void preload() {
+
+    public virtual void preload()
+    {
         StartCoroutine(preloadCo());
     }
 
-    public virtual IEnumerator preloadCo() {
-        
+    public virtual IEnumerator preloadCo()
+    {
+
         //yield return new WaitForEndOfFrame();        
-        
+
         GamePreset preset = GamePresets.Instance.GetCurrentPresetDataItem();
-        
-        if (preset == null) {
+
+        if (preset == null)
+        {
             yield break;
         }
-        
+
         List<GamePresetItem> presetItems = preset.data.items;
-        
-        foreach (GamePresetItem item in presetItems) {
-            
-            for (int i = 0; i < item.limit / 3; i++) {
+
+        foreach (GamePresetItem item in presetItems)
+        {
+
+            for (int i = 0; i < item.limit / 3; i++)
+            {
                 //yield return new WaitForEndOfFrame();
-                
+
                 GameItemController.Load(item.code);
             }
         }
@@ -148,28 +168,29 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
         // remove all characters
 
         GameController.ResetLevelActors();
-        
+
         //yield return new WaitForEndOfFrame();
     }
 
-    public virtual void load(string code) {
+    public virtual void load(string code)
+    {
         // Load by character code
-        
+
         //float speed = 1f;
         //float attack = 1f;
         //float scale = 1f;
-        
+
         //speed = UnityEngine.Random.Range(.8f, 1.6f);
         //attack = UnityEngine.Random.Range(.3f, .4f);
         //scale = UnityEngine.Random.Range(.8f, 1.6f);
-        
+
         GameItemData itemData = new GameItemData();
         itemData.code = code;
         //itemData.type = GameActorType.enemy;
         //itemData.speed = speed;
         //itemData.attack = attack;
         //itemData.scale = scale;
-        
+
         GameItemController.LoadItem(itemData);
     }
     // -------------------------------------------------
@@ -178,43 +199,52 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
     // ALL
 
-    public virtual void run(bool run) {
+    public virtual void run(bool run)
+    {
         runDirector = run;
     }
 
-    public virtual void run() {
+    public virtual void run()
+    {
         run(true);
     }
 
-    public virtual void stop() {
+    public virtual void stop()
+    {
         run(false);
     }
 
     // RUN SIDEKICKS
 
-    public virtual void runItems(bool run) {
+    public virtual void runItems(bool run)
+    {
         runDirectorItems = run;
     }
 
-    public virtual void runItems() {
+    public virtual void runItems()
+    {
         runItems(true);
     }
 
-    public virtual void stopItems() {
+    public virtual void stopItems()
+    {
         runItems(false);
     }
 
     // RUN ENEMIES
 
-    public virtual void runWeapons(bool run) {
+    public virtual void runWeapons(bool run)
+    {
         runDirectorWeapons = run;
     }
 
-    public virtual void runWeapons() {
+    public virtual void runWeapons()
+    {
         runWeapons(true);
     }
 
-    public virtual void stopWeapons() {
+    public virtual void stopWeapons()
+    {
         runWeapons(false);
     }
 
@@ -222,49 +252,59 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
     // LEVELS
 
-    public virtual void setDifficultyLevel(GameItemDifficulty difficultyTo) {
+    public virtual void setDifficultyLevel(GameItemDifficulty difficultyTo)
+    {
         difficultyLevelEnum = difficultyTo;
     }
- 
+
     //
 
-    public virtual void setDifficultyLevel(float difficultyTo) {
+    public virtual void setDifficultyLevel(float difficultyTo)
+    {
         currentDifficultyLevel = difficultyTo;
     }
- 
+
     //
- 
-    public virtual GameItemDifficulty getDifficultyLevelEnumFromValue(float difficultyCheck) {
-     
+
+    public virtual GameItemDifficulty getDifficultyLevelEnumFromValue(float difficultyCheck)
+    {
+
         GameItemDifficulty difficultyType = GameItemDifficulty.EASY;
-     
-        if (difficultyCheck >= difficultyLevelEpic) {
+
+        if (difficultyCheck >= difficultyLevelEpic)
+        {
             difficultyType = GameItemDifficulty.EPIC;
         }
-        else if (difficultyCheck >= difficultyLevelHard) {
+        else if (difficultyCheck >= difficultyLevelHard)
+        {
             difficultyType = GameItemDifficulty.HARD;
         }
-        else if (difficultyCheck >= difficultyLevelNormal) {
+        else if (difficultyCheck >= difficultyLevelNormal)
+        {
             difficultyType = GameItemDifficulty.NORMAL;
         }
-     
+
         return difficultyType;
     }
- 
+
     //
- 
-    public virtual float getDifficultyLevelValueFromEnum(float difficultyCheck) {
-     
-        if (difficultyLevelEnum == GameItemDifficulty.EPIC) {
+
+    public virtual float getDifficultyLevelValueFromEnum(float difficultyCheck)
+    {
+
+        if (difficultyLevelEnum == GameItemDifficulty.EPIC)
+        {
             return difficultyLevelEpic;
         }
-        else if (difficultyLevelEnum == GameItemDifficulty.HARD) {
+        else if (difficultyLevelEnum == GameItemDifficulty.HARD)
+        {
             return difficultyLevelHard;
         }
-        else if (difficultyLevelEnum == GameItemDifficulty.NORMAL) {
+        else if (difficultyLevelEnum == GameItemDifficulty.NORMAL)
+        {
             return difficultyLevelNormal;
         }
-     
+
         return .3f;
     }
 
@@ -273,17 +313,21 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     // DIRECTION
 
 
-    public virtual void direct() {
+    public virtual void direct()
+    {
 
-        if (!runDirector) {
+        if (!runDirector)
+        {
             return;
         }
 
-        if (runDirectorItems) {        
+        if (runDirectorItems)
+        {
             directItems();
         }
 
-        if (runDirectorWeapons) {        
+        if (runDirectorWeapons)
+        {
             directWeapons();
         }
     }
@@ -332,102 +376,124 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     */
 
     public virtual void directItems(
-        string itemType, 
-        double spawnCount, 
-        double spawnMin,  
+        string itemType,
+        double spawnCount,
+        double spawnMin,
         double spawnLimit,
-        bool limitFps = true) {
+        bool limitFps = true)
+    {
 
-        currentFPS = FPSDisplay.GetCurrentFPS();  
+        currentFPS = FPSDisplay.GetCurrentFPS();
 
         // DIRECT ENEMIES
 
         if ((spawnCount < spawnLimit
             && (currentFPS > 20f || !limitFps))
-            || spawnCount < spawnMin) {
+            || spawnCount < spawnMin)
+        {
 
             // do some spawning
 
-            if (spawnCount < spawnMin * 2) {
+            if (spawnCount < spawnMin * 2)
+            {
                 //spawnAmount = 1;
             }
 
-            if (presetItems == null) {
+            if (presetItems == null)
+            {
                 presetItems = new List<GameDataItemPreset>();
             }
-            else {
+            else
+            {
                 presetItems.Clear();
             }
 
             if (GameLevels.Current.data != null
-                && GameLevels.Current.data.HasItemPresets()) {
+                && GameLevels.Current.data.HasItemPresets())
+            {
 
-                foreach (GameDataItemPreset itemPreset 
-                    in GameLevels.Current.data.item_presets) {
-                    if (itemPreset.type == itemType) {
+                foreach (GameDataItemPreset itemPreset
+                    in GameLevels.Current.data.item_presets)
+                {
+                    if (itemPreset.type == itemType)
+                    {
                         presetItems.Add(itemPreset);
                     }
                 }
             }
             else if (GameWorlds.Current.data != null
-                     && GameWorlds.Current.data.HasItemPresets()) {
+                     && GameWorlds.Current.data.HasItemPresets())
+            {
 
-                foreach (GameDataItemPreset itemPreset 
-                    in GameWorlds.Current.data.item_presets) {
-                    if (itemPreset.type == itemType) {
+                foreach (GameDataItemPreset itemPreset
+                    in GameWorlds.Current.data.item_presets)
+                {
+                    if (itemPreset.type == itemType)
+                    {
                         presetItems.Add(itemPreset);
                     }
                 }
             }
 
-            if (presetItemsAppend == null) {
+            if (presetItemsAppend == null)
+            {
                 presetItemsAppend = new List<GamePresetItem>();
             }
-            else {
+            else
+            {
                 presetItemsAppend.Clear();
             }
 
-            if (presetItemProbabilities == null) {
+            if (presetItemProbabilities == null)
+            {
                 presetItemProbabilities = new List<float>();
             }
-            else {
+            else
+            {
                 presetItemProbabilities.Clear();
             }
 
-            foreach (GameDataItemPreset itemPreset in presetItems) {
+            foreach (GameDataItemPreset itemPreset in presetItems)
+            {
 
                 GamePreset preset = GamePresets.Get(itemPreset.code);
                 //GamePresets.Instance.GetCurrentPresetDataCharacter();
 
-                if (preset == null) {
+                if (preset == null)
+                {
                     return;
                 }
 
                 List<GamePresetItem> presetItemsData = preset.data.items;
 
-                foreach (GamePresetItem item in presetItemsData) {
-                    if (item.type == itemType || item.type.IsNullOrEmpty()) {
+                foreach (GamePresetItem item in presetItemsData)
+                {
+                    if (item.type == itemType || item.type.IsNullOrEmpty())
+                    {
                         presetItemProbabilities.Add((float)item.probability);
                         presetItemsAppend.Add(item);
                     }
                 }
             }
 
-            if(presetItemsAppend == null 
-                || presetItemProbabilities == null) {
+            if (presetItemsAppend == null
+                || presetItemProbabilities == null)
+            {
                 return;
             }
 
-            if(presetItemsAppend.Count == 0 
-                || presetItemProbabilities.Count == 0) {
+            if (presetItemsAppend.Count == 0
+                || presetItemProbabilities.Count == 0)
+            {
                 return;
             }
 
-            GamePresetItem selectByProbabilityItem = 
+            GamePresetItem selectByProbabilityItem =
                 MathUtil.ChooseProbability<GamePresetItem>(
-                    presetItemsAppend, presetItemProbabilities); 
+                    presetItemsAppend, presetItemProbabilities);
 
-            if (selectByProbabilityItem == null) {
+            if (selectByProbabilityItem == null)
+            {
                 return;
             }
 
@@ -437,92 +503,110 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
         }
     }
 
-    public virtual void directItems() {
+    public virtual void directItems()
+    {
 
         directItems(
-            GameItemType.item, 
-            spawnItemCount, 
-            spawnItemMin, 
+            GameItemType.item,
+            spawnItemCount,
+            spawnItemMin,
             spawnItemLimit, true);
     }
 
     public virtual void directWeapons(
-        string itemType, 
-        double spawnCount, 
-        double spawnMin,  
+        string itemType,
+        double spawnCount,
+        double spawnMin,
         double spawnLimit,
-        bool limitFps = true) {
+        bool limitFps = true)
+    {
 
-        currentFPS = FPSDisplay.GetCurrentFPS();  
+        currentFPS = FPSDisplay.GetCurrentFPS();
 
         // DIRECT ENEMIES
 
         if ((spawnCount < spawnLimit
             && (currentFPS > 20f || !limitFps))
-            || spawnCount < spawnMin) {
+            || spawnCount < spawnMin)
+        {
 
             // do some spawning
 
-            if (spawnCount < spawnMin * 2) {
+            if (spawnCount < spawnMin * 2)
+            {
                 //spawnAmount = 1;
             }
 
-            if (presetWeapons == null) {
+            if (presetWeapons == null)
+            {
                 presetWeapons = new List<GameDataWeaponPreset>();
             }
-            else {
+            else
+            {
                 presetWeapons.Clear();
             }
 
             //Debug.Log("directWeapons"); 
 
             if (GameLevels.Current.data != null
-                && GameLevels.Current.data.HasWeaponPresets()) {
+                && GameLevels.Current.data.HasWeaponPresets())
+            {
 
                 //Debug.Log("directWeapons:HasWeaponPresets:level"); 
 
-                foreach (GameDataWeaponPreset weaponPreset 
-                    in GameLevels.Current.data.weapon_presets) {
-                    if (weaponPreset.type == itemType) {
+                foreach (GameDataWeaponPreset weaponPreset
+                    in GameLevels.Current.data.weapon_presets)
+                {
+                    if (weaponPreset.type == itemType)
+                    {
                         presetWeapons.Add(weaponPreset);
                     }
                 }
             }
             else if (GameWorlds.Current.data != null
-                && GameWorlds.Current.data.HasWeaponPresets()) {
+                && GameWorlds.Current.data.HasWeaponPresets())
+            {
 
                 //Debug.Log("directWeapons:HasWeaponPresets:world"); 
 
-                foreach (GameDataWeaponPreset weaponPreset 
-                    in GameWorlds.Current.data.weapon_presets) {
-                    if (weaponPreset.type == itemType) {
+                foreach (GameDataWeaponPreset weaponPreset
+                    in GameWorlds.Current.data.weapon_presets)
+                {
+                    if (weaponPreset.type == itemType)
+                    {
                         presetWeapons.Add(weaponPreset);
                     }
                 }
             }
 
-            if (presetWeaponsAppend == null) {
+            if (presetWeaponsAppend == null)
+            {
                 presetWeaponsAppend = new List<GamePresetItem>();
             }
-            else {
+            else
+            {
                 presetWeaponsAppend.Clear();
             }
 
-            if (presetWeaponProbabilities == null) {
+            if (presetWeaponProbabilities == null)
+            {
                 presetWeaponProbabilities = new List<float>();
             }
-            else {
+            else
+            {
                 presetWeaponProbabilities.Clear();
             }
 
-            foreach (GameDataWeaponPreset itemPreset in presetWeapons) {
-                
+            foreach (GameDataWeaponPreset itemPreset in presetWeapons)
+            {
+
                 //Debug.Log("directWeapons:GameDataWeaponPreset: " + itemPreset.code); 
 
                 GamePreset preset = GamePresets.Get(itemPreset.code);
                 //GamePresets.Instance.GetCurrentPresetDataCharacter();
 
-                if (preset == null) {
+                if (preset == null)
+                {
                     return;
                 }
 
@@ -532,13 +616,15 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
                 List<GamePresetItem> presetItemsData = preset.data.items;
 
-                foreach (GamePresetItem item in presetItemsData) {
-                    
+                foreach (GamePresetItem item in presetItemsData)
+                {
+
                     //Debug.Log("directWeapons:GamePresetItem:code: " + item.code); 
                     //Debug.Log("directWeapons:GamePresetItem:type: " + item.type); 
                     //Debug.Log("directWeapons:GamePresetItem:data: " + item.ToJson()); 
 
-                    if (itemPreset.type == itemType) {
+                    if (itemPreset.type == itemType)
+                    {
                         presetWeaponProbabilities.Add((float)item.probability);
                         presetWeaponsAppend.Add(item);
 
@@ -547,25 +633,28 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
                 }
             }
 
-            if(presetWeaponsAppend == null 
-                || presetWeaponProbabilities == null) {
+            if (presetWeaponsAppend == null
+                || presetWeaponProbabilities == null)
+            {
 
                 //Debug.Log("directWeapons:presetWeaponProbabilities:null ");
                 return;
             }
 
-            if(presetWeaponsAppend.Count == 0 
-                || presetWeaponProbabilities.Count == 0) {
+            if (presetWeaponsAppend.Count == 0
+                || presetWeaponProbabilities.Count == 0)
+            {
 
                 //Debug.Log("directWeapons:presetWeaponProbabilities:empty ");
                 return;
             }
-                   
-            GamePresetItem selectByProbabilityItem = 
-                MathUtil.ChooseProbability<GamePresetItem>(
-                    presetWeaponsAppend, presetWeaponProbabilities); 
 
-            if (selectByProbabilityItem == null) {
+            GamePresetItem selectByProbabilityItem =
+                MathUtil.ChooseProbability<GamePresetItem>(
+                    presetWeaponsAppend, presetWeaponProbabilities);
+
+            if (selectByProbabilityItem == null)
+            {
 
                 //Debug.Log("directWeapons:selectByProbabilityItem:null ");
                 return;
@@ -574,18 +663,19 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
             string code = selectByProbabilityItem.code;
 
             //Debug.Log("directWeapons:selectByProbabilityItem:code: " + 
-                //code); 
+            //code); 
 
             GameItemController.Load(code);//, itemType);
         }
     }
 
-    public virtual void directWeapons() {
+    public virtual void directWeapons()
+    {
 
         directWeapons(
-            GameItemType.weapon, 
-            spawnWeaponCount, 
-            spawnWeaponMin, 
+            GameItemType.weapon,
+            spawnWeaponCount,
+            spawnWeaponMin,
             spawnWeaponLimit, false);
     }
 
@@ -669,52 +759,62 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
         //GameEnemyZombie
     }
     */
- 
+
     //public virtual void spawnItem(GamePlayerItemType type) {
-          
+
     // Position
-     
+
     // Get boundaries
-     
+
     //Vector3
     //
-     
+
     //}
 
     // MESSAGING
 
-    public virtual void broadcastItemMessage(GameItemData item) {
+    public virtual void broadcastItemMessage(GameItemData item)
+    {
         Messenger<GameItemData>.Broadcast(GameItemDirectorMessages.gameItemDirectorSpawnItem, item);
     }
 
-    public virtual void loadItem(GameItemData item) {
+    public virtual void loadItem(GameItemData item)
+    {
         GameItemController.BroadcastItemMessage(item);
     }
 
     // DATA
-    
-    public virtual void updateDirector(GameDataDirector director) {
-        
-        if (director != null) {
-            
-            if (director.code == GameDataDirectorType.item) {
-                if (director.min > 0) {
-                    spawnItemMin = director.min;                        
+
+    public virtual void updateDirector(GameDataDirector director)
+    {
+
+        if (director != null)
+        {
+
+            if (director.code == GameDataDirectorType.item)
+            {
+                if (director.min > 0)
+                {
+                    spawnItemMin = director.min;
                 }
-                
-                if (director.max > 0) {
-                    spawnItemLimit = director.max;                        
+
+                if (director.max > 0)
+                {
+                    spawnItemLimit = director.max;
                 }
 
                 runDirectorItems = director.run;
             }
-            else if (director.code == GameDataDirectorType.weapon) {
-                if (director.min > 0) {
-                    spawnWeaponMin = director.min;                        
+            else if (director.code == GameDataDirectorType.weapon)
+            {
+                if (director.min > 0)
+                {
+                    spawnWeaponMin = director.min;
                 }
 
-                if (director.max > 0) {
-                    spawnWeaponLimit = director.max;                        
+                if (director.max > 0)
+                {
+                    spawnWeaponLimit = director.max;
                 }
 
                 runDirectorWeapons = director.run;
@@ -722,60 +822,72 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
         }
     }
 
-    public virtual void incrementRoundsCompleted() {
+    public virtual void incrementRoundsCompleted()
+    {
         roundsCompleted += 1;
     }
 
     // UPDATE/TICK
 
-    public virtual void handlePeriodic() {
+    public virtual void handlePeriodic()
+    {
 
-        if (Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
+        if (Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15))
+        {
             lastPeriodicSeconds = Time.time;
             // every second
             GameItemController.Direct();
         }
     }
 
-    public virtual void handleUpdate() {
+    public virtual void handleUpdate()
+    {
         // do on update always
-    
+
         spawnItemCount = GameController.Instance.itemsCount;
         spawnWeaponCount = GameController.Instance.itemWeaponsCount;
     }
 
-    public virtual void Update() {
+    public virtual void Update()
+    {
 
-        if (!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning)
+        {
             return;
         }
 
-        if (Input.GetKey(KeyCode.RightControl)) {
-            if (Input.GetKey(KeyCode.G)) {
+        if (Input.GetKey(KeyCode.RightControl))
+        {
+            if (Input.GetKey(KeyCode.G))
+            {
                 runDirector = false;
             }
-            else if (Input.GetKey(KeyCode.H)) {
+            else if (Input.GetKey(KeyCode.H))
+            {
                 runDirector = true;
             }
-            else if (Input.GetKey(KeyCode.J)) {
+            else if (Input.GetKey(KeyCode.J))
+            {
                 // kill all enemies
 
                 GameController.Instance.levelItemsContainerObject.DestroyChildren();
             }
         }
-            
+
         if (!runDirector
-            || GameDraggableEditor.isEditing) {
+            || GameDraggableEditor.isEditing)
+        {
             return;
         }
-    
-        if (GameController.IsGameRunning) {
+
+        if (GameController.IsGameRunning)
+        {
             // if game running spawn and direct characters and events
-    
+
             GameItemController.HandlePeriodic();
-    
+
             GameItemController.HandleUpdate();
-    
+
         }
     }
 

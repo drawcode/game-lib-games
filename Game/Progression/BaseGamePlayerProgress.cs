@@ -9,6 +9,8 @@ using Engine;
 using Engine.Data;
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.Data;
+using Engine.Game.App;
 
 public class BaseGamePlayerProgressRuntimeData {
     

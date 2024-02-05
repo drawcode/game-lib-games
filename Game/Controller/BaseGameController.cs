@@ -7,6 +7,10 @@ using UnityEngine;
 
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.App.BaseApp;
+using Engine.Game.App;
+using Engine.Content;
+using Engine.Game.Data;
 
 public class BaseGameController : GameObjectTimerBehavior {
 

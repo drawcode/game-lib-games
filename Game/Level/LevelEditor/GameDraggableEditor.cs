@@ -8,6 +8,10 @@ using UnityEngine;
 
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.App.BaseApp;
+using Engine.Content;
+using Engine.Game.Data;
+using Engine.Game.App;
 
 public enum GameDraggableCanvasType {
     CANVAS_2D,

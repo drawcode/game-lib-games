@@ -17,6 +17,7 @@ using UnityEngine;
 // using Engine.Data.Json;
 using Engine.Events;
 using Engine.Utility;
+using Engine.Game.App.BaseApp;
 
 public enum BroadcastNetworkType { 
     Everplay,

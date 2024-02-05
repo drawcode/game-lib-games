@@ -11,6 +11,9 @@ using Engine.Game;
 using Engine.Game.Actor;
 using Engine.Game.Controllers;
 using Engine.Utility;
+using Engine.Game.Data;
+using Engine.Game.App;
+using Engine.Game.App.BaseApp;
 
 public class BaseGamePlayerController : GameActor {
 
