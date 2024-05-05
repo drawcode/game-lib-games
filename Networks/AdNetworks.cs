@@ -999,13 +999,13 @@ public class AdNetworks : GameObjectBehavior
             //     AppConfigs.adNetworksUnityPublisherIdAndroid,
             //     AppConfigs.adNetworksUnityTestModeEnabled);
 #elif UNITY_WEBGL
-            Advertisement.Initialize(
-                AppConfigs.adNetworksUnityPublisherIdAndroid,
-                AppConfigs.adNetworksUnityTestModeEnabled);
+            // Advertisement.Initialize(
+            //     AppConfigs.adNetworksUnityPublisherIdAndroid,
+            //     AppConfigs.adNetworksUnityTestModeEnabled);
 #elif UNITY_STANDALONE
-            Advertisement.Initialize(
-                AppConfigs.adNetworksUnityPublisherIdAndroid,
-                AppConfigs.adNetworksUnityTestModeEnabled);
+            // Advertisement.Initialize(
+            //     AppConfigs.adNetworksUnityPublisherIdAndroid,
+            //     AppConfigs.adNetworksUnityTestModeEnabled);
 #endif
 
         //}
