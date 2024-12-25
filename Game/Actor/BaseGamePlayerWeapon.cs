@@ -178,7 +178,7 @@ public class BaseGamePlayerWeapon : GameActor {
                         projectileBody = projectileObject.AddComponent<Rigidbody>();
                     }
                     projectileBody.mass = .001f;
-                    projectileBody.angularDrag = .0f;
+                    projectileBody.angularDamping = .0f;
                     projectileBody.useGravity = false;
                     projectileBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 

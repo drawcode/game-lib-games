@@ -74,9 +74,9 @@ public class GrapplingHook : MonoBehaviour {
                     newVel.Normalize();
                     v = Vector3.ClampMagnitude(v, ropeLength);
                     transform.position = hookAnchor.position + v;
-                    float x = Vector3.Dot(newVel, rb.velocity);
+                    float x = Vector3.Dot(newVel, rb.linearVelocity);
                     newVel *= x;
-                    rb.velocity -= newVel;
+                    rb.linearVelocity -= newVel;
                 }
                 //Makes the rope longer
                 if (Input.GetKey(KeyCode.Q)) {
@@ -112,13 +112,13 @@ public class GrapplingHook : MonoBehaviour {
         float z = Input.GetAxis("Vertical") * 1;
         
         if (Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0 || !IsGrounded()) {
-            rb.drag = 0;
+            rb.linearDamping = 0;
         }
         else {
-            rb.drag = 5;
+            rb.linearDamping = 5;
         }
         //Keeps the player's speed under a maximum
-        if (rb.velocity.magnitude < maxVelocity && IsGrounded()) {
+        if (rb.linearVelocity.magnitude < maxVelocity && IsGrounded()) {
             rb.AddForce(transform.forward * z * speed);
             rb.AddForce(transform.right * x * speed);
         }
@@ -126,7 +126,7 @@ public class GrapplingHook : MonoBehaviour {
         //If the player is above the grapple point, he can no longer add more force
         //On the way down however, he can add more, this stops the player from doing a full circle over the grappling anchor without any prior momentum.
         else if (!IsGrounded() && Swinging && transform.position.y <= hookAnchor.position.y) {
-            if (z > 0 && rb.velocity.y < 0f) {
+            if (z > 0 && rb.linearVelocity.y < 0f) {
                 rb.AddForce(-transform.up * z * swingForwardSpeed);
             }
             rb.AddForce(transform.right * x * swingStrafeSpeed);

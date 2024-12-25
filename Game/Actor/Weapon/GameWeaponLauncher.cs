@@ -424,7 +424,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                                     if (gamePlayerController != null 
                                         && gamePlayerController.gameObject.GetRigidbody()) {
 
-                                        rigid.velocity = gamePlayerController.gameObject.GetRigidbody().velocity;
+                                        rigid.linearVelocity = gamePlayerController.gameObject.GetRigidbody().linearVelocity;
                                     }
                                     rigid.AddForce(direction * ForceShoot);  
                                 }

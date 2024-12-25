@@ -53,7 +53,7 @@ public class GameVehicleSmoothFollow : GameObjectBehavior {
         wantedPosition = target.position;
         wantedPosition.y = currentHeight;
 
-        usedDistance = Mathf.SmoothDampAngle(usedDistance, distance + (parentRigidbody.velocity.magnitude * distanceMultiplier), ref zVelocity, distanceSnapTime);
+        usedDistance = Mathf.SmoothDampAngle(usedDistance, distance + (parentRigidbody.linearVelocity.magnitude * distanceMultiplier), ref zVelocity, distanceSnapTime);
 
         wantedPosition += Quaternion.Euler(0, currentRotationAngle, 0) * new Vector3(0, 0, -usedDistance);
 
