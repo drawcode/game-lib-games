@@ -124,26 +124,18 @@ public class BaseAudioController : GameObjectBehavior
     {
         get
         {
-            if (currentUILoop == null)
-            {
-                return false;
-            }
-
-            if (currentUIIntro == null)
-            {
-                return false;
-            }
-
-            if (currentUILoop.IsAudioSourcePlaying())
+            if (currentUILoop != null
+            && currentUILoop.IsAudioSourcePlaying())
             {
                 return true;
             }
 
-            if (currentUIIntro.IsAudioSourcePlaying())
+            if (currentUIIntro != null
+            && currentUIIntro.IsAudioSourcePlaying())
             {
                 return true;
             }
-
+            
             return false;
         }
     }
@@ -170,7 +162,7 @@ public class BaseAudioController : GameObjectBehavior
     {
         get
         {
-            if (isGameMusicPlaying && isUIMusicPlaying)
+            if (isGameMusicPlaying || isUIMusicPlaying)
             {
                 return true;
             }
@@ -318,15 +310,14 @@ public class BaseAudioController : GameObjectBehavior
 
     public virtual void playGameMusic()
     {
+        if (isUIMusicPlaying)
+        {
+            stopUIMusic();
+        }
 
         if (isGameMusicPlaying)
         {
             return;
-        }
-
-        if (isUIMusicPlaying)
-        {
-            stopUIMusic();
         }
 
         StartCoroutine(playGameMusicCo());

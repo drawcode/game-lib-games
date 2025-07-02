@@ -381,8 +381,8 @@ public class BaseGameAudio {
     public static void StartAmbience() {
 
         //if(ambienceDelayed) {
-        GameAudioController.PlayUIMusic();
         GameAudioController.StopGameMusic();
+        GameAudioController.PlayUIMusic();
         //    ambienceDelayed = true;
         //}
         //if(AudioSystem.Instance != null)
