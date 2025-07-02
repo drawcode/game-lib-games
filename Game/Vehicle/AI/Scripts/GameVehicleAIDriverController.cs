@@ -413,7 +413,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
 
     void FixedUpdate() {
 
-        m_currentSpeed = Mathf.Round(rigidbody.velocity.magnitude * 3.6f);
+        m_currentSpeed = Mathf.Round(rigidbody.linearVelocity.magnitude * 3.6f);
 
         if (m_currentSpeed > (m_maxSpeed + 10)) {
             m_isBraking = true;

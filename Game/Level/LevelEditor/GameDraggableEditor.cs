@@ -398,7 +398,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                     | RigidbodyConstraints.FreezeRotationX
                     | RigidbodyConstraints.FreezeRotationZ;
                 rigid.useGravity = false;
-                rigid.angularDrag = 2f;
+                rigid.angularDamping = 2f;
             }
 
             if (Math.Abs(delta.x) > .8f) {

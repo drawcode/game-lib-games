@@ -205,8 +205,8 @@ public class BaseGameVehicleController : GameObjectBehavior {
         rigidbody.mass = GUI.HorizontalSlider(new Rect(margin + txtwidth + 5, linefeed, sliderWidth, 10), rigidbody.mass, 1000, 2000);
         linefeed = linefeed + 20;
         
-        GUI.Label(new Rect(margin, linefeed - 5, txtwidth, 30), "Vehicle Drag: [" + Mathf.Floor(rigidbody.drag * 100) / 100 + "]");
-        rigidbody.drag = GUI.HorizontalSlider(new Rect(margin + txtwidth + 5, linefeed, sliderWidth, 10), rigidbody.drag, 0, 2);
+        GUI.Label(new Rect(margin, linefeed - 5, txtwidth, 30), "Vehicle Drag: [" + Mathf.Floor(rigidbody.linearDamping * 100) / 100 + "]");
+        rigidbody.linearDamping = GUI.HorizontalSlider(new Rect(margin + txtwidth + 5, linefeed, sliderWidth, 10), rigidbody.linearDamping, 0, 2);
         linefeed = linefeed + 20;
         
         if (GUI.Button(new Rect(margin, linefeed, 188, 25), "Save Settings...")) {
@@ -219,7 +219,7 @@ public class BaseGameVehicleController : GameObjectBehavior {
             sw.WriteLine("Tyre Slide/Drift=" + colliderFL.sidewaysFriction.stiffness); 
             sw.WriteLine("Centre Of Gravity (Stablity)=" + rigidbody.centerOfMass.y); 
             sw.WriteLine("Vehicle Mass=" + rigidbody.mass); 
-            sw.WriteLine("Vehicle Drag=" + rigidbody.drag); 
+            sw.WriteLine("Vehicle Drag=" + rigidbody.linearDamping); 
             sw.WriteLine("Wheels Collider Radius=" + colliderFL.radius); 
             sw.Close();
         }

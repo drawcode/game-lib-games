@@ -86,7 +86,7 @@ public class DragObject : GameObjectBehavior {
             return;
         }
 
-        myRigidbody.velocity = Vector3.zero;
+        myRigidbody.linearVelocity = Vector3.zero;
         myRigidbody.angularVelocity = Vector3.zero;
 
         Vector3 pos = myTransform.position;

@@ -47,11 +47,11 @@ public class GameMoverBullet : GameWeaponBase {
             return;
 
         if (!RigidbodyProjectile) {
-            rigbody.velocity = transform.forward * Speed;
+            rigbody.linearVelocity = transform.forward * Speed;
         }
         else {
-            if (rigbody.velocity.normalized != Vector3.zero)
-                this.transform.forward = rigbody.velocity.normalized;    
+            if (rigbody.linearVelocity.normalized != Vector3.zero)
+                this.transform.forward = rigbody.linearVelocity.normalized;    
         }
         
         if (Speed < SpeedMax) {

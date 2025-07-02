@@ -260,7 +260,7 @@ public class GameVehicleDrive : GameObjectBehavior {
             rlWheelCollider.brakeTorque = FullBrakeTorque;
             rrWheelCollider.brakeTorque = FullBrakeTorque;
 
-            if((Mathf.Abs(rigidbody.velocity.z) > 1) || (Mathf.Abs(rigidbody.velocity.x) > 1)) {
+            if((Mathf.Abs(rigidbody.linearVelocity.z) > 1) || (Mathf.Abs(rigidbody.linearVelocity.x) > 1)) {
 
                 SetFriction(brakingForwardFriction, brakingSidewaysFriction, brakingSidewaysFrictionBackward);
                 SetBrakeEffects(true);

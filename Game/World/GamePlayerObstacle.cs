@@ -24,7 +24,7 @@ public class GamePlayerObstacle : GameObjectBehavior {
         if (obstacleBouncyObject.transform.position != positionPlaceholder) {
             if (obstacleBouncyObject.Has<Rigidbody>()) {
                 Rigidbody rigid = obstacleBouncyObject.Get<Rigidbody>();
-                rigid.velocity = Vector3.zero;
+                rigid.linearVelocity = Vector3.zero;
                 rigid.angularVelocity = Vector3.zero;
             }
             obstacleBouncyObject.transform.position = positionPlaceholder;
