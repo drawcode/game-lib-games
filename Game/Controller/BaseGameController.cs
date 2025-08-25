@@ -116,7 +116,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // RENDERING
 
-    public int renderingTargetFramerate = 30;
+    public int renderingTargetFramerate = 60;
     public int renderingTargetFramerateLast = 60;
 
     public int renderingVSyncCount = 0;
