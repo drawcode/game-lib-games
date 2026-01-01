@@ -201,7 +201,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
     }
 
     void Awake() {
-        
+
         //GetWaypointNames();
         //FillWaypointList();
 
@@ -230,7 +230,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             LogUtil.LogError("hsSteerAngle is bigger then aiPreMotor.steerMax. It has to be lower or equal.");
         }
         //ObstacleAvoidance
-        if (useObstacleAvoidance) {            
+        if (useObstacleAvoidance) {
 
             if (ignoreWaypointsForObstacleAvoidanceControl) {
                 m_sqrDistanceToWaypoint = m_sqrDistanceToWpOa;
@@ -240,9 +240,8 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
             }
 
             //unnoetig
-            if (viewPoint == null)
-            {
-                viewPoint = transform.Find("ViewPoint");  
+            if (viewPoint == null) {
+                viewPoint = transform.Find("ViewPoint");
             }
 
             viewPointLeftGO = new GameObject("viewPointLeftGO");
@@ -1092,7 +1091,7 @@ public class GameVehicleAIDriverController : GameObjectBehavior {
         else {
             frontMaxDistance = -1;
         }
-        
+
         return hitsObject;
     }
 

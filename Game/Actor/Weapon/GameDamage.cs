@@ -24,7 +24,7 @@ public class GameDamage : GameDamageBase {
         initialTimeActive = TimeActive;
     }
 
-    private void Reset() {        
+    private void Reset() {
         Explosive = initialExplosive;
         ExplosionRadius = initialExplosiveRadius;
         ExplosionForce = initialExplosiveForce;
@@ -59,8 +59,8 @@ public class GameDamage : GameDamageBase {
     }
 
     public void Active() {
-                
-        if (!GameDamageDirector.AllowExplosion) {           
+
+        if (!GameDamageDirector.AllowExplosion) {
             GameObjectHelper.DestroyGameObject(gameObject);
             return;
         }
@@ -95,15 +95,15 @@ public class GameDamage : GameDamageBase {
     }
 
     private void NormalDamage(GameObject other) {
-        
+
         HandleApplyDamage(other);
     }
-    
+
     GameDamageManager damageManage = null;
 
     public void HandleApplyDamage(GameObject go) {
         if (damageManage == null) {
-            damageManage = go.GetComponent<GameDamageManager>();        
+            damageManage = go.GetComponent<GameDamageManager>();
         }
         if (damageManage != null) {
             if (damageManage.gamePlayerController != null && gamePlayerController != null) {
@@ -116,26 +116,26 @@ public class GameDamage : GameDamageBase {
     }
 
     private void HandleCollisions(GameObject other) {
-        
+
         if (!HitedActive) {
             return;
         }
 
         bool doDamage = false;
-        
+
         if (other.transform.name == "GamePlayerCollider") {
-            GamePlayerCollision gamePlayerCollision = 
+            GamePlayerCollision gamePlayerCollision =
                 other.Get<GamePlayerCollision>();
             if (gamePlayerCollision != null) {
-                
+
                 if (gamePlayerController == null) {
                     return;
                 }
-                
+
                 if (gamePlayerCollision.gamePlayerController == null) {
                     return;
                 }
-                
+
                 if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
                     return;
                 }
@@ -144,14 +144,14 @@ public class GameDamage : GameDamageBase {
                 }
             }
         }
-        
-        if (other.tag != "Particle" && other.tag != "Player" 
+
+        if (other.tag != "Particle" && other.tag != "Player"
             && other.tag != this.gameObject.tag) {
-            
+
             doDamage = true;
         }
-        
-        if (doDamage) {                
+
+        if (doDamage) {
             if (!Explosive) {
                 NormalDamage(other);
             }

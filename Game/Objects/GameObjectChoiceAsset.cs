@@ -21,7 +21,7 @@ public class GameObjectChoiceAsset : GameObjectBehavior {
         if (gameObjectChoiceObject == null) {
             gameObjectChoiceObject = gameObject.FindTypeAboveObject<GameObjectChoice>();
         }
-    
+
         if (gameObjectChoice == null
             && gameObjectChoiceObject != null) {
             gameObjectChoice = gameObjectChoiceObject.GetComponent<GameObjectChoice>();
@@ -54,6 +54,4 @@ public class GameObjectChoiceAsset : GameObjectBehavior {
         */
 
     }
-
-
 }

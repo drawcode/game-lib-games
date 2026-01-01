@@ -24,5 +24,4 @@ public class GameLevelItemObject : GameObjectBehavior {
 		latestPosition = transform.position;
 		//}
 	}
-
 }

@@ -51,9 +51,9 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
         bool cached = GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
 
-        if(!cached || removeCached) {
+        if (!cached || removeCached) {
 
-            foreach(GameObjectInfinitePartItem item in
+            foreach (GameObjectInfinitePartItem item in
                 gameObject.GetList<GameObjectInfinitePartItem>()) {
 
                 item.ClearItems(removeCached);
@@ -72,7 +72,7 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
     void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -80,13 +80,13 @@ public class GameObjectInfinitePart : GameObjectBehavior {
 
         FindController();
 
-        if(container != null) {
+        if (container != null) {
             destroy = MathUtil.IsVector3OutOfRange(
                 gameObject.transform.position,
                 container.data.rangeBoundsMin, container.data.rangeBoundsMax, bounds);
         }
 
-        if(destroy) {
+        if (destroy) {
             DestroyItems();
         }
     }

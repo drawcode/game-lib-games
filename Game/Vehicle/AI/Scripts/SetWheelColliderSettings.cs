@@ -95,7 +95,7 @@ public class SetWheelColliderSettings : GameObjectBehavior {
             }
 
             if (rrWheel != null) {
-               Gizmos.DrawWireCube(rrWheel.position, cubeRear);
+                Gizmos.DrawWireCube(rrWheel.position, cubeRear);
             }
             if (mirrorWheels) {
                 Gizmos.color = Color.red;

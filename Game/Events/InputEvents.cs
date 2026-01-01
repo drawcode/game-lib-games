@@ -24,7 +24,7 @@ public class InputEvents : GameObjectBehavior {
         }
 #endif
 
-        if(currentObj != null) {
+        if (currentObj != null) {
             //currentObj.functionName = "OnActivate";
             //currentObj.eventReceiver = gameObject;
         }

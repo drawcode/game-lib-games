@@ -3,9 +3,9 @@
 
 #if UNITY_STANDALONE_OSX
 #elif UNITY_STANDALONE_WIN
-#elif UNITY_ANDROID    
+#elif UNITY_ANDROID
 #elif UNITY_IPHONE
-    //#define BROADCAST_USE_EVERYPLAY
+//#define BROADCAST_USE_EVERYPLAY
 #endif
 using System;
 using System.Collections;
@@ -19,13 +19,13 @@ using Engine.Events;
 using Engine.Utility;
 using Engine.Game.App.BaseApp;
 
-public enum BroadcastNetworkType { 
+public enum BroadcastNetworkType {
     Everplay,
     Twitch
 }
 
 public class BroadcastNetworksMessages {
-    
+
     public static string broadcastRecordingStatusChanged = "broadcast-recording-status-changed";
     public static string broadcastRecordingStart = "broadcast-recording-start";
     public static string broadcastRecordingStop = "broadcast-recording-stop";
@@ -60,13 +60,13 @@ public class BroadcastNetworks : GameObjectBehavior {
 
     public static BroadcastNetworks Instance {
         get {
-            if(!_instance) {
+            if (!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(BroadcastNetworks)) as BroadcastNetworks;
 
                 // nope, create a new one
-                if(!_instance) {
+                if (!_instance) {
                     var obj = new GameObject("_BroadcastNetworks");
                     _instance = obj.AddComponent<BroadcastNetworks>();
                 }
@@ -275,14 +275,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // OPEN
 
     public static void Open() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.open();
         }
     }
 
     public void open() {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -295,14 +295,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // OPEN MODAL
 
     public static void OpenSharing() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.openSharing();
         }
     }
 
     public void openSharing() {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -316,14 +316,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // METADATA
 
     public static void SetMetadata(string key, object val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setMetadata(key, val);
         }
     }
 
     public void setMetadata(string key, object val) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -334,14 +334,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     }
 
     public static void SetMetadata(string key, Dictionary<string, object> values) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setMetadata(key, values);
         }
     }
 
     public void setMetadata(string key, Dictionary<string, object> values) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -354,7 +354,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     // IS SUPPORTED
 
     public static bool IsSupported() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isSupported();
         }
         return false;
@@ -372,7 +372,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     // IS RECORDING SUPPORTED
 
     public static bool IsRecordingSupported() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isRecordingSupported();
         }
         return false;
@@ -390,7 +390,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     // IS RECORDING    
 
     public static bool IsRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isRecording();
         }
         return false;
@@ -408,7 +408,7 @@ public class BroadcastNetworks : GameObjectBehavior {
     // IS RECORDING    
 
     public static bool IsPaused() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isPaused();
         }
         return false;
@@ -426,17 +426,17 @@ public class BroadcastNetworks : GameObjectBehavior {
     // TOGGLE RECORDING
 
     public static void ToggleRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.toggleRecording();
         }
     }
 
     public void toggleRecording() {
-        if(!IsSupported() || !IsRecordingSupported()) {
+        if (!IsSupported() || !IsRecordingSupported()) {
             return;
         }
 
-        if(IsRecording()) {
+        if (IsRecording()) {
             StopRecording();
         }
         else {
@@ -447,17 +447,17 @@ public class BroadcastNetworks : GameObjectBehavior {
     // START RECORDING
 
     public static void StartRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.startRecording();
         }
     }
 
     public void startRecording() {
-        if(!IsSupported() || !IsRecordingSupported()) {
+        if (!IsSupported() || !IsRecordingSupported()) {
             return;
         }
 
-        if(!IsRecording()) {
+        if (!IsRecording()) {
             SetMaxRecordingMinutesLength(10);
 
             SetMetadata("about", Locos.Get(LocoKeys.social_everyplay_game_explore_message));
@@ -465,7 +465,7 @@ public class BroadcastNetworks : GameObjectBehavior {
             SetMetadata("level", Locos.Get(LocoKeys.game_type_arcade));
             SetMetadata("level_name", Locos.Get(LocoKeys.game_type_arcade_mode));
 
-            if(FPSDisplay.isUnder25FPS) {
+            if (FPSDisplay.isUnder25FPS) {
                 SetLowMemoryDevice(true);
             }
 
@@ -480,17 +480,17 @@ public class BroadcastNetworks : GameObjectBehavior {
     // STOP RECORDING
 
     public static void StopRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.stopRecording();
         }
     }
 
     public void stopRecording() {
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
-        if(IsRecording()) {
+        if (IsRecording()) {
 
 #if BROADCAST_USE_EVERYPLAY
             Everyplay.StopRecording();
@@ -503,17 +503,17 @@ public class BroadcastNetworks : GameObjectBehavior {
     // RESUME RECORDING
 
     public static void ResumeRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.resumeRecording();
         }
     }
 
     public void resumeRecording() {
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
-        if(IsRecording() && IsPaused()) {
+        if (IsRecording() && IsPaused()) {
 
 #if BROADCAST_USE_EVERYPLAY
             Everyplay.ResumeRecording();
@@ -526,17 +526,17 @@ public class BroadcastNetworks : GameObjectBehavior {
     // PAUSE RECORDING
 
     public static void PauseRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.pauseRecording();
         }
     }
 
     public void pauseRecording() {
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
-        if(IsRecording()) {
+        if (IsRecording()) {
 
 #if BROADCAST_USE_EVERYPLAY
             Everyplay.PauseRecording();
@@ -549,14 +549,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // PLAY LAST RECORDING
 
     public static void PlayLastRecording() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.playLastRecording();
         }
     }
 
     public void playLastRecording() {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -571,14 +571,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // TAKE THUMBNAIL
 
     public static void TakeThumbnail() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.takeThumbnail();
         }
     }
 
     public void takeThumbnail() {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -591,14 +591,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // PERFORMANCE
 
     public static void SetLowMemoryDevice(bool isLowMemory) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setLowMemoryDevice(isLowMemory);
         }
     }
 
     public void setLowMemoryDevice(bool isLowMemory) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -611,14 +611,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // PERFORMANCE
 
     public static void SetDisableSingleCoreDevices(bool isLowMemory) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setDisableSingleCoreDevices(isLowMemory);
         }
     }
 
     public void setDisableSingleCoreDevices(bool isLowMemory) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -631,14 +631,14 @@ public class BroadcastNetworks : GameObjectBehavior {
     // PERFORMANCE
 
     public static void SetMaxRecordingMinutesLength(int maxlength) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setMaxRecordingMinutesLength(maxlength);
         }
     }
 
     public void setMaxRecordingMinutesLength(int maxlength) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -683,14 +683,14 @@ public class BroadcastNetworks : GameObjectBehavior {
 
     public static void SetThumbnailWidth(int thumbnailWidth) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.setThumbnailWidth(thumbnailWidth);
         }
     }
 
     public void setThumbnailWidth(int thumbnailWidth) {
 
-        if(!IsSupported()) {
+        if (!IsSupported()) {
             return;
         }
 
@@ -742,7 +742,7 @@ Everyplay.SetMetadata("score", score)
     // IS FACECAM SESSION RUNNING
 
     public static bool IsFacecamSessionRunning() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isFacecamSessionRunning();
         }
         return false;
@@ -760,7 +760,7 @@ Everyplay.SetMetadata("score", score)
     // IS FACECAM SESSION RUNNING
 
     public static bool IsFacecamAudioRecordingSupported() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isFacecamAudioRecordingSupported();
         }
         return false;
@@ -778,7 +778,7 @@ Everyplay.SetMetadata("score", score)
     // IS FACECAM HEADPHONES PLUGGED IN
 
     public static bool IsFacecamHeadphonesPluggedIn() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isFacecamHeadphonesPluggedIn();
         }
         return false;
@@ -796,7 +796,7 @@ Everyplay.SetMetadata("score", score)
     // IS FACECAM RECORDING PERMISSION GRANTED
 
     public static bool IsFacecamRecordingPermissionGranted() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isFacecamRecordingPermissionGranted();
         }
         return false;
@@ -814,7 +814,7 @@ Everyplay.SetMetadata("score", score)
     // IS FACECAM VIDEO RECORDING SUPPORTED 
 
     public static bool IsFacecamVideoRecordingSupported() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isFacecamVideoRecordingSupported();
         }
         return false;
@@ -832,18 +832,18 @@ Everyplay.SetMetadata("score", score)
     // FACECAM START SESSION
 
     public static void FacecamToggle() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.facecamToggle();
         }
     }
 
     public void facecamToggle() {
 
-        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+        if (!IsSupported() || !IsFacecamVideoRecordingSupported()) {
             return;
         }
 
-        if(IsFacecamSessionRunning()) {
+        if (IsFacecamSessionRunning()) {
             FacecamStop();
         }
         else {
@@ -854,20 +854,20 @@ Everyplay.SetMetadata("score", score)
     // FACECAM PERMISSION
 
     public static void FacecamGetPermission() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.facecamGetPermission();
         }
     }
 
     public void facecamGetPermission() {
-        if(!IsSupported() || !IsFacecamVideoRecordingSupported()) {
+        if (!IsSupported() || !IsFacecamVideoRecordingSupported()) {
             return;
         }
 
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamRequestRecordingPermission();
 #else
-            
+
 #endif
     }
 
@@ -875,14 +875,14 @@ Everyplay.SetMetadata("score", score)
     // FACECAM START SESSION
 
     public static void FacecamStart() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.facecamStart();
         }
     }
 
     public void facecamStart() {
 
-        if(!IsFacecamRecordingPermissionGranted()) {
+        if (!IsFacecamRecordingPermissionGranted()) {
             FacecamGetPermission();
         }
         else {
@@ -898,7 +898,7 @@ Everyplay.SetMetadata("score", score)
     // FACECAM STOP SESSION
 
     public static void FacecamStop() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.facecamStop();
         }
     }
@@ -915,7 +915,7 @@ Everyplay.SetMetadata("score", score)
     // FACECAM SETTINGS
 
     public static void FaceCamSetAudioOnly(bool val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetAudioOnly(val);
         }
     }
@@ -932,7 +932,7 @@ Everyplay.SetMetadata("score", score)
     //
 
     public static void FaceCamSetMonitorAudioLevels(bool val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetMonitorAudioLevels(val);
         }
     }
@@ -949,7 +949,7 @@ Everyplay.SetMetadata("score", score)
     //
 
     public static void FaceCamSetPreviewBorderColor(float r, float g, float b, float a) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewBorderColor(r, g, b, a);
         }
     }
@@ -966,7 +966,7 @@ Everyplay.SetMetadata("score", score)
     //
 
     public static void FaceCamSetPreviewBorderWidth(int val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewBorderWidth(val);
         }
     }
@@ -1004,7 +1004,7 @@ Everyplay.SetMetadata("score", score)
     //
 
     public static void FaceCamSetPreviewPositionX(int val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewPositionX(val);
         }
     }
@@ -1021,7 +1021,7 @@ Everyplay.SetMetadata("score", score)
     //
 
     public static void FaceCamSetPreviewPositionY(int val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewPositionY(val);
         }
     }
@@ -1031,14 +1031,14 @@ Everyplay.SetMetadata("score", score)
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetPreviewPositionY(val);
 #else
-        
+
 #endif
     }
 
     //
 
     public static void FaceCamSetPreviewScaleRetina(bool val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewScaleRetina(val);
         }
     }
@@ -1048,14 +1048,14 @@ Everyplay.SetMetadata("score", score)
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetPreviewScaleRetina(val);
 #else
-        
+
 #endif
     }
 
     //
 
     public static void FaceCamSetPreviewSideWidth(int val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewSideWidth(val);
         }
     }
@@ -1065,14 +1065,14 @@ Everyplay.SetMetadata("score", score)
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetPreviewSideWidth(val);
 #else
-        
+
 #endif
     }
 
     //
 
     public static void FaceCamSetPreviewVisible(bool val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetPreviewVisible(val);
         }
     }
@@ -1082,14 +1082,14 @@ Everyplay.SetMetadata("score", score)
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetPreviewVisible(val);
 #else
-        
+
 #endif
     }
 
     //
 
     public static void FaceCamSetTargetTexture(Texture2D val) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.faceCamSetTargetTexture(val);
         }
     }
@@ -1099,7 +1099,7 @@ Everyplay.SetMetadata("score", score)
 #if BROADCAST_USE_EVERYPLAY
         Everyplay.FaceCamSetTargetTexture(val);
 #else
-        
+
 #endif
     }
 
@@ -1125,18 +1125,18 @@ Everyplay.SetMetadata("score", score)
     }
 
     public void Update() {
-        if(Application.isEditor) {
-            if(Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.B)) {
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.B)) {
 
 
-                if(Input.GetKeyDown(KeyCode.I)) {
+                if (Input.GetKeyDown(KeyCode.I)) {
                     // start
 
                     Debug.Log("BroadcastNetworks:" + " test start:");
 
                     BroadcastRecordingStart();
                 }
-                else if(Input.GetKeyDown(KeyCode.O)) {
+                else if (Input.GetKeyDown(KeyCode.O)) {
                     // start
 
                     Debug.Log("BroadcastNetworks:" + " test stop:");

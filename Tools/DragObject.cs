@@ -23,10 +23,10 @@ public class DragObject : GameObjectBehavior {
     void Start() {
         myRigidbody = rigidbody;
         myTransform = transform;
-        if(!cam) {
+        if (!cam) {
             cam = Camera.main;
         }
-        if(!cam) {
+        if (!cam) {
             LogUtil.LogError("Can't find camera tagged MainCamera");
             return;
         }
@@ -48,7 +48,7 @@ public class DragObject : GameObjectBehavior {
         canMove = false;
         myRigidbody.useGravity = gravitySetting;
         myRigidbody.freezeRotation = freezeRotationSetting;
-        if(!myRigidbody.useGravity) {
+        if (!myRigidbody.useGravity) {
             Vector3 pos = myTransform.position;
             //pos.y = yPos-addHeightWhenClicked;
             myTransform.position = pos;
@@ -82,7 +82,7 @@ public class DragObject : GameObjectBehavior {
 		*/
 
 
-        if(!canMove) {
+        if (!canMove) {
             return;
         }
 
@@ -96,10 +96,10 @@ public class DragObject : GameObjectBehavior {
         Vector3 mousePos = Input.mousePosition;
         Vector3 move = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, camTransform.position.y - myTransform.position.y)) - myTransform.position;
         move.z = 0.0f;
-        if(collisionCount > normalCollisionCount) {
+        if (collisionCount > normalCollisionCount) {
             move = move.normalized * collisionMoveFactor;
         }
-        else if(move.sqrMagnitude > sqrMoveLimit) {
+        else if (move.sqrMagnitude > sqrMoveLimit) {
             move = move.normalized * moveLimit;
         }
 

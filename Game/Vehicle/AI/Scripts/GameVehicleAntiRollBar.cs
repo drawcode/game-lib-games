@@ -50,6 +50,5 @@ public class GameVehicleAntiRollBar : GameObjectBehavior {
         if (groundedR)
             rigidbody.AddForceAtPosition(wheelR.transform.up * antiRollForce, wheelR.transform.position);
 
-
     }
 }

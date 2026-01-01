@@ -18,7 +18,7 @@ public class SliderEvents : GameObjectBehavior {
     public static string EVENT_ITEM_CHANGE = "event-slider-item-change";
 
     void Start() {
-        
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         currentObj = GetComponent<UISlider>();
 #else
@@ -28,7 +28,7 @@ public class SliderEvents : GameObjectBehavior {
 #endif
 
 
-        if(currentObj != null) {
+        if (currentObj != null) {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             currentObj.functionName = "OnSliderChange";
             currentObj.eventReceiver = gameObject;

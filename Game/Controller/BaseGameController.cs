@@ -155,8 +155,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if USE_GAME_LIB_GAMEVERSES || ENABLE_FEATURE_NETWORKING
 
-        foreach(GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
-            if(gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
+        foreach (GamePlayerController gamePlayerController in UnityObjectUtil.FindObjects<GamePlayerController>()) {
+            if (gamePlayerController.uniqueId == UniqueUtil.Instance.currentUniqueId) {
                 gamePlayerController.UpdateNetworkContainer(gamePlayerController.uniqueId);
                 break;
             }
@@ -538,8 +538,8 @@ public class BaseGameController : GameObjectTimerBehavior {
 
             bool found = false;
 
-            foreach(GamePlayerController gamePlayerController in playerControllers) {
-                if(gamePlayerController.uniqueId == uid) {
+            foreach (GamePlayerController gamePlayerController in playerControllers) {
+                if (gamePlayerController.uniqueId == uid) {
                     // already added
                     gamePlayerController.uniqueId = uid;
                     gamePlayerController.UpdateNetworkContainer(uid);
@@ -550,7 +550,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                 }
             }
 
-            if(!found) {
+            if (!found) {
                 // create
                 // Prefabs/Characters/GamePlayerObject
 
@@ -559,7 +559,7 @@ public class BaseGameController : GameObjectTimerBehavior {
                                         "GamePlayerObject");
 
                 UnityEngine.Object prefabGameplayer = Resources.Load(pathPlayer);
-                if(prefabGameplayer != null) {
+                if (prefabGameplayer != null) {
                     Vector3 placementPos = Vector3.zero;
                     placementPos.z = -3f;
                     GamePlayerController playerControllerOther =
@@ -1279,7 +1279,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     IEnumerator initLevelFinishCo(string levelCode) {
 
 #if USE_GAME_LIB_GAMES_UI
-        if(UIPanelOverlayPrepare.Instance != null) {
+        if (UIPanelOverlayPrepare.Instance != null) {
             UIPanelOverlayPrepare.Instance.ShowTipsObjectMode();
         }
 #endif

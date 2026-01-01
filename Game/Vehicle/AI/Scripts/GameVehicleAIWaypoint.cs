@@ -26,7 +26,6 @@ public class GameVehicleAIWaypoint : GameObjectBehavior {
                 gameObject.layer = 2;
             }
         }
-
     }
 
     void OnTriggerEnter(Collider other) {
@@ -49,14 +48,9 @@ public class GameVehicleAIWaypoint : GameObjectBehavior {
 
                             }
                         }
-
                     }
-
                 }
-
             }
-
         }
-
     }
 }

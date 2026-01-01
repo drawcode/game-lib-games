@@ -9,7 +9,7 @@ public class GameExplosionObject : MonoBehaviour {
     public AudioClip[] Sounds;
     public float LifeTimeObject = 2;
     public bool RandomScale;
-    
+
     private void Start() {
 
         if (Sounds.Length > 0) {
@@ -18,11 +18,11 @@ public class GameExplosionObject : MonoBehaviour {
         }
         if (Prefab) {
             for (int i = 0; i < Num; i++) {
-                float scaleHalf = Scale/2;
+                float scaleHalf = Scale / 2;
                 Vector3 pos = new Vector3(Random.Range(-scaleHalf, scaleHalf), Random.Range(-scaleHalf, Scale), Random.Range(-scaleHalf, scaleHalf)) / scaleHalf;
                 GameObject obj = GameObjectHelper.CreateGameObject(Prefab, transform.position + pos, transform.rotation, true);
                 GameObjectHelper.DestroyGameObject(obj, LifeTimeObject, true);
-                
+
                 float scale = Scale;
                 if (RandomScale) {
                     scale = Random.Range(1, Scale);

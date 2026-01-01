@@ -51,13 +51,13 @@ public class GameWeaponLauncher : GameWeaponBase {
     [HideInInspector]
     public float
         ReloadingProcess;
-    
+
     private void Start() {
-        
+
         if (!audio) {
             audio = this.GetComponent<AudioSource>();
             if (!audio) {
-                this.gameObject.AddComponent<AudioSource>();    
+                this.gameObject.AddComponent<AudioSource>();
             }
         }
 
@@ -77,19 +77,19 @@ public class GameWeaponLauncher : GameWeaponBase {
         if (Physics.Raycast(transform.position, this.transform.forward, out hit, MaxAimRange)) {
 
             if (Missile != null && hit.collider.tag != Missile.tag) {
-            
+
                 AimPoint = hit.point;
                 AimObject = hit.collider.gameObject;
             }
         }
         else {
-        
+
             AimPoint = this.transform.position + (this.transform.forward * MaxAimRange);
             AimObject = null;
         }
-        
+
     }
-    
+
     void FixedUpdate() {
 
         if (GameConfigs.isGameRunning) {
@@ -100,69 +100,69 @@ public class GameWeaponLauncher : GameWeaponBase {
             rayAiming();
         }
     }
-    
+
     private void Update() {
-        
+
         if (GameConfigs.isGameRunning) {
             return;
         }
 
         if (CurrentCamera == null) {
-            
+
             CurrentCamera = Camera.main;
-            
+
             if (CurrentCamera == null)
                 CurrentCamera = Camera.current;
         }
         if (OnActive) {
 
             if (TorqueObject) {
-            
+
                 TorqueObject.transform.Rotate(torqueTemp * Time.deltaTime);
                 torqueTemp = Vector3.Lerp(torqueTemp, Vector3.zero, Time.deltaTime);
             }
             if (Seeker) {
-            
-                for (int t=0; t<TargetTag.Length; t++) {
-                
+
+                for (int t = 0; t < TargetTag.Length; t++) {
+
                     if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
-                    
+
                         GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
                         float distance = int.MaxValue;
-                        
+
                         if (AimObject != null && AimObject.tag == TargetTag[t]) {
-                        
+
                             float dis = Vector3.Distance(AimObject.transform.position, transform.position);
 
                             if (DistanceLock > dis) {
-                            
+
                                 if (distance > dis) {
-                            
-                                    if (timetolockcount + TimeToLock < Time.time) { 
-                                    
+
+                                    if (timetolockcount + TimeToLock < Time.time) {
+
                                         distance = dis;
                                         target = AimObject;
                                     }
                                 }
-                            }   
+                            }
                         }
                         else {
 
                             for (int i = 0; i < objs.Length; i++) {
-                            
+
                                 if (objs[i]) {
-                                
+
                                     Vector3 dir = (objs[i].transform.position - transform.position).normalized;
                                     float direction = Vector3.Dot(dir, transform.forward);
                                     float dis = Vector3.Distance(objs[i].transform.position, transform.position);
 
                                     if (direction >= AimDirection) {
-                                    
+
                                         if (DistanceLock > dis) {
-                                        
+
                                             if (distance > dis) {
-                                            
-                                                if (timetolockcount + TimeToLock < Time.time) { 
+
+                                                if (timetolockcount + TimeToLock < Time.time) {
                                                     distance = dis;
                                                     target = objs[i];
                                                 }
@@ -177,7 +177,7 @@ public class GameWeaponLauncher : GameWeaponBase {
             }
 
             if (target) {
-            
+
                 float targetdistance = Vector3.Distance(transform.position, target.transform.position);
                 Vector3 dir = (target.transform.position - transform.position).normalized;
                 float direction = Vector3.Dot(dir, transform.forward);
@@ -186,7 +186,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                     Unlock();
                 }
             }
-        
+
             if (Reloading) {
 
                 ReloadingProcess = ((1 / ReloadTime) * (reloadTimeTemp + ReloadTime - Time.time));
@@ -206,7 +206,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                     Unlock();
                     Reloading = true;
                     reloadTimeTemp = Time.time;
-                
+
                     if (SoundReloading) {
                         if (audio) {
                             audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
@@ -223,7 +223,7 @@ public class GameWeaponLauncher : GameWeaponBase {
     private void DrawTargetLockon(Transform aimtarget, bool locked) {
         if (!ShowHUD)
             return;
-        
+
         if (CurrentCamera) {
 
             Vector3 dir = (aimtarget.position - CurrentCamera.transform.position).normalized;
@@ -242,8 +242,8 @@ public class GameWeaponLauncher : GameWeaponBase {
                     //if (TargetLockOnTexture)
                     //    GUI.DrawTexture(new Rect(screenPos.x - TargetLockOnTexture.width / 2, Screen.height - screenPos.y - TargetLockOnTexture.height / 2, TargetLockOnTexture.width, TargetLockOnTexture.height), TargetLockOnTexture);
                 }
-                
-                
+
+
             }
         }
         else {
@@ -256,7 +256,7 @@ public class GameWeaponLauncher : GameWeaponBase {
     private void DrawCrosshair() {
         if (!ShowCrosshair)
             return;
-        
+
         if (CurrentCamera) {
 
             Vector3 screenPosAim = CurrentCamera.WorldToScreenPoint(AimPoint);
@@ -265,7 +265,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
             if (CrosshairTexture) {
                 //GUI.DrawTexture(new Rect(crosshairPos.x - CrosshairTexture.width / 2, Screen.height - crosshairPos.y - CrosshairTexture.height / 2, CrosshairTexture.width, CrosshairTexture.height), CrosshairTexture);
-                
+
             }
         }
     }
@@ -314,37 +314,37 @@ public class GameWeaponLauncher : GameWeaponBase {
         }
 
         if (bullet != null) {
-            foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) { 
+            foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) {
                 if (gamePlayerController == null) {
                     break;
                 }
-                
+
                 if (gamePlayerController.weaponPrimary == null) {
                     break;
                 }
-                
+
                 if (gamePlayerController.weaponPrimary.gameWeaponData == null) {
                     break;
                 }
-                
+
                 particleSystem.name = "projectile-" + gamePlayerController.weaponPrimary.gameWeaponData.code;
             }
         }
     }
-    
+
     private int currentOuter = 0;
 
     public void Shoot() {
 
         if (InfinityAmmo) {
-        
-            Ammo = 1;   
+
+            Ammo = 1;
         }
 
         if (Ammo > 0) {
-        
+
             if (Time.time > nextFireTime + FireRate) {
-            
+
                 nextFireTime = Time.time;
                 torqueTemp = TorqueSpeedAxis;
                 Ammo -= 1;
@@ -353,9 +353,9 @@ public class GameWeaponLauncher : GameWeaponBase {
                 Quaternion missilerotate = this.transform.rotation;
 
                 if (MissileOuter.Length > 0) {
-                
-                    missilerotate = MissileOuter[currentOuter].transform.rotation;  
-                    missileposition = MissileOuter[currentOuter].transform.position;    
+
+                    missilerotate = MissileOuter[currentOuter].transform.rotation;
+                    missileposition = MissileOuter[currentOuter].transform.position;
                 }
 
                 if (MissileOuter.Length > 0) {
@@ -365,9 +365,9 @@ public class GameWeaponLauncher : GameWeaponBase {
                     if (currentOuter >= MissileOuter.Length)
                         currentOuter = 0;
                 }
-            
+
                 if (Muzzle) {
-                    
+
                     GameObject muzzle = GameObjectHelper.CreateGameObject(
                         Muzzle, missileposition, missilerotate, true);
 
@@ -379,20 +379,20 @@ public class GameWeaponLauncher : GameWeaponBase {
                         muzzle.transform.parent = MissileOuter[currentOuter].transform;
                     }
                 }
-                            
+
                 for (int i = 0; i < NumBullet; i++) {
-                
+
                     if (Missile) {
-                    
+
                         Vector3 spread = new Vector3(
-                            Random.Range(-Spread, Spread), 
-                            Random.Range(-Spread, Spread), 
+                            Random.Range(-Spread, Spread),
+                            Random.Range(-Spread, Spread),
                             Random.Range(-Spread, Spread)) / 100;
 
                         Vector3 direction = this.transform.forward + spread;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
-                            Missile, missileposition, missilerotate, true); 
+                            Missile, missileposition, missilerotate, true);
 
                         NameEffect(bullet);
 
@@ -421,15 +421,15 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                                 if (rigid != null) {
 
-                                    if (gamePlayerController != null 
+                                    if (gamePlayerController != null
                                         && gamePlayerController.gameObject.GetRigidbody()) {
 
                                         rigid.linearVelocity = gamePlayerController.gameObject.GetRigidbody().linearVelocity;
                                     }
-                                    rigid.AddForce(direction * ForceShoot);  
+                                    rigid.AddForce(direction * ForceShoot);
                                 }
                             }
-                        }                    
+                        }
                     }
                 }
 
@@ -440,7 +440,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                     if (ShellOuter.Length > 0) {
                         shelloutpos = ShellOuter[currentOuter];
                     }
-                
+
                     GameObject shell = GameObjectHelper.CreateGameObject(
                         Shell, shelloutpos.position, Random.rotation, true);
 
@@ -450,18 +450,18 @@ public class GameWeaponLauncher : GameWeaponBase {
                         shell.Get<Rigidbody>().AddForce(shelloutpos.forward * ShellOutForce);
                     }
                 }
-                
+
                 if (SoundGun.Length > 0) {
                     if (audio) {
                         audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
                         audio.PlayOneShot(SoundGun[Random.Range(0, SoundGun.Length)]);
                     }
                 }
-            
+
                 nextFireTime += FireRate;
             }
-        } 
-        
+        }
+
     }
 
 }

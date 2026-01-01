@@ -13,7 +13,7 @@ public class GameTouchInputAxisPad : GameObjectBehavior {
     public GameTouchInputAxis gameTouchInputAxis;
 
     public void Start() {
-    
+
     }
 
     /*
@@ -24,6 +24,6 @@ public class GameTouchInputAxisPad : GameObjectBehavior {
         }
     }
     */
-  
+
 
 }

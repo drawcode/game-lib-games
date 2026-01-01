@@ -71,16 +71,16 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     public virtual void SetCamera(Camera camToUse) {
         cameraToUse = camToUse;
 
-        if(cameraToUse == null) {
+        if (cameraToUse == null) {
             cam = Camera.main;
         }
         else {
             cam = cameraToUse;
         }
-        if(cam == null)
+        if (cam == null)
             return;
 
-        if(cam.transform != null)
+        if (cam.transform != null)
             camTransform = cam.transform;
     }
 
@@ -153,7 +153,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         //LogUtil.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
 
-        if(prefabIndicator != null) {
+        if (prefabIndicator != null) {
 
             GameObject indicator =
                 GameObjectHelper.CreateGameObject(
@@ -163,14 +163,14 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             indicator.transform.parent = parentObject.transform;
             indicator.ResetPosition();
 
-            if(indicator != null) {
+            if (indicator != null) {
 
                 //LogUtil.Log("AddIndicator:indicator:" + indicator.name);
 
                 GamePlayerIndicator indicatorObj =
                     indicator.GetComponent<GamePlayerIndicator>();
 
-                if(indicatorObj != null) {
+                if (indicatorObj != null) {
 
                     //LogUtil.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
                     //LogUtil.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
@@ -204,7 +204,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         //LogUtil.Log("AddIndicator:prefabIndicator:" + prefabIndicator.name);
 
-        if(prefabIndicator != null) {
+        if (prefabIndicator != null) {
 
             GameObject indicator =
                 GameObjectHelper.CreateGameObject(
@@ -214,14 +214,14 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             indicator.transform.parent = parentObject.transform;
             indicator.ResetPosition();
 
-            if(indicator != null) {
+            if (indicator != null) {
 
                 //LogUtil.Log("AddIndicator:indicator:" + indicator.name);
 
                 GamePlayerIndicator indicatorObj =
                     indicator.GetComponent<GamePlayerIndicator>();
 
-                if(indicatorObj != null) {
+                if (indicatorObj != null) {
 
                     //LogUtil.Log("AddIndicator:indicatorObj:" + indicatorObj.name);
                     //LogUtil.Log("AddIndicator:gameIndicatorType:" + gameIndicatorType);
@@ -247,25 +247,25 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
 
     public static void ResetIndicators(GameObject parentObject) {
-        if(parentObject != null) {
+        if (parentObject != null) {
             parentObject.DestroyChildren(GameConfigs.usePooledIndicators);
         }
     }
 
     public virtual void SetIndicatorColorEffects(Color colorTo) {
-        if(gamePlayerIndicatorItem != null) {
+        if (gamePlayerIndicatorItem != null) {
             gamePlayerIndicatorItem.SetColorValueEffects(colorTo);
         }
     }
 
     public virtual void SetIndicatorColorBackground(Color colorTo) {
-        if(gamePlayerIndicatorItem != null) {
+        if (gamePlayerIndicatorItem != null) {
             gamePlayerIndicatorItem.SetColorValueBackground(colorTo);
         }
     }
 
     public virtual void SetIndicatorColorOutline(Color colorTo) {
-        if(gamePlayerIndicatorItem != null) {
+        if (gamePlayerIndicatorItem != null) {
             gamePlayerIndicatorItem.SetColorValueOutline(colorTo);
         }
     }
@@ -276,14 +276,14 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         gameIndicatorTypeCode = gameIndicatorType;
 
-        if(indicatorObject == null) {
+        if (indicatorObject == null) {
             return;
         }
 
         // Check if there is already an indicator loaded
         // If not load
 
-        if(!indicatorObject.Has<GamePlayerIndicatorItem>()) {
+        if (!indicatorObject.Has<GamePlayerIndicatorItem>()) {
 
             string modelPath =
                 ContentPaths.appCacheVersionSharedPrefabLevelUI +
@@ -295,7 +295,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
             //LogUtil.Log("AddIndicator:prefabIndicatorType:" + prefabIndicatorType.name);
 
-            if(prefabIndicatorType != null) {
+            if (prefabIndicatorType != null) {
 
                 GameObject indicator =
                     GameObjectHelper.CreateGameObject(
@@ -306,9 +306,9 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 indicator.ResetPosition();
                 indicator.transform.localScale = indicator.transform.localScale * .1f;
 
-                if(indicator != null) {
+                if (indicator != null) {
 
-                    if(!indicator.Has<GamePlayerIndicatorItem>()) {
+                    if (!indicator.Has<GamePlayerIndicatorItem>()) {
                         gamePlayerIndicatorItem =
                             indicator.AddComponent<GamePlayerIndicatorItem>();
                     }
@@ -327,7 +327,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         targetNotFoundCycles = 0;
         target = targetTo;
 
-        if(target != null) {
+        if (target != null) {
 
             //if(type == "player") {
             //    gamePlayerController = target.gameObject.Get<GamePlayerController>();
@@ -355,7 +355,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     }
 
     public virtual void ShowIndicator() {
-        if(!visible) {
+        if (!visible) {
             visible = true;
             indicatorObject.Show();
             //LogUtil.Log("ShowIndicator:visible:" + visible);
@@ -369,13 +369,13 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     }
 
     public virtual void HideIndicator(bool destroy) {
-        if(visible) {
-            if(!alwaysVisible) {
+        if (visible) {
+            if (!alwaysVisible) {
                 visible = false;
                 indicatorObject.Hide();
             }
             //LogUtil.Log("HideIndicator:visible:" + visible);
-            if(destroy) {
+            if (destroy) {
                 DestroyMe();
             }
         }
@@ -391,7 +391,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         //Debug.Log("ScaleIndicator:distance:" + distance);
 
-        if(currentDistance >= currentRangeMin
+        if (currentDistance >= currentRangeMin
             && currentDistance <= currentRangeMax) {
 
             float currentDistanceSnapshot =
@@ -407,7 +407,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             //Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
 
 #if USE_EASING_LEANTWEEN
-        // TODO easing
+            // TODO easing
             LeanTween.scale(indicatorObject, indicatorObject.transform.localScale
                 .WithX(scaleTo)
                 .WithY(scaleTo), currentLateTickTime);
@@ -428,7 +428,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
     public virtual void DestroyMe() {
 
-        foreach(Transform t in indicatorObject.transform) {
+        foreach (Transform t in indicatorObject.transform) {
 
             GameObjectHelper.DestroyGameObject(
                 t.gameObject, GameConfigs.usePooledIndicators);
@@ -447,7 +447,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             camTransform.TransformPoint(relativePosition + offset));
         //LogUtil.Log("indicateTemp1viewport:" + indicateTemp);
 
-        if(indicatorType == GamePlayerIndicatorPlacementType.VIEWPORT) {
+        if (indicatorType == GamePlayerIndicatorPlacementType.VIEWPORT) {
 
             indicatorObject.transform.localPosition = indicateTemp;
         }
@@ -473,21 +473,21 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
     public virtual void LateUpdate() {
 
-        if(camTransform == null) {
+        if (camTransform == null) {
             return;
         }
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(!initialized) {
+        if (!initialized) {
             return;
         }
 
         // remove if not found
 
-        if(initialized && target == null) {
+        if (initialized && target == null) {
             initialized = false;
             DestroyMe();
             return;
@@ -495,23 +495,23 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         Vector3 relativePosition = Vector3.zero;
 
-        if(Time.time > lastUpdate + currentLateTickTime) {
+        if (Time.time > lastUpdate + currentLateTickTime) {
 
             lastUpdate = Time.time;
 
-            if(type == GamePlayerIndicatorType.player) {
+            if (type == GamePlayerIndicatorType.player) {
 
-                if(gamePlayerController == null) {
+                if (gamePlayerController == null) {
                     HideIndicator(true);
                     return;
                 }
 
-                if(gamePlayerController != null) {
+                if (gamePlayerController != null) {
 
                     // Hide/show off screen indicator
-                    if(!gamePlayerController.controllerData.visible) {
+                    if (!gamePlayerController.controllerData.visible) {
 
-                        if(gamePlayerController.gameObject.activeInHierarchy) {
+                        if (gamePlayerController.gameObject.activeInHierarchy) {
                             ShowIndicator();
                         }
                         else {
@@ -525,17 +525,17 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                     }
                 }
             }
-            else if(type == GamePlayerIndicatorType.item) {
-                if(gamePlayerItem == null) {
+            else if (type == GamePlayerIndicatorType.item) {
+                if (gamePlayerItem == null) {
                     HideIndicator(true);
                     return;
                 }
 
-                if(gamePlayerItem != null) {
+                if (gamePlayerItem != null) {
                     // Hide/show off screen indicator
-                    if(!gamePlayerItem.gameObject.IsRenderersVisibleByCamera(Camera.main)) {
+                    if (!gamePlayerItem.gameObject.IsRenderersVisibleByCamera(Camera.main)) {
 
-                        if(gamePlayerItem.gameObject.activeInHierarchy) {
+                        if (gamePlayerItem.gameObject.activeInHierarchy) {
                             ShowIndicator();
                         }
                         else {
@@ -550,22 +550,22 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 }
             }
             else {
-                if(gamePlayerController == null
+                if (gamePlayerController == null
                     && gamePlayerItem == null
                     && target == null) {
                     HideIndicator();
                 }
 
-                if(target != null) {
+                if (target != null) {
                     // Hide/show off screen indicator
-                    if(target.gameObject != null
+                    if (target.gameObject != null
                         && GameController.CurrentGamePlayerController != null) {
 
                         currentDistance = Vector3.Distance(
                             target.position,
                             GameController.CurrentGamePlayerController.transform.position);
 
-                        if(target.gameObject.IsRenderersVisibleByCamera()
+                        if (target.gameObject.IsRenderersVisibleByCamera()
                             || currentDistance < currentRangeMin) {
 
                             HideIndicator();
@@ -574,7 +574,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                         }
                         else {
 
-                            if(target.gameObject.activeInHierarchy) {
+                            if (target.gameObject.activeInHierarchy) {
 
                                 ShowIndicator();
                             }
@@ -596,10 +596,10 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         // target check
 
-        if(target == null) {
+        if (target == null) {
             targetNotFoundCycles++;
 
-            if(targetNotFoundCycles > 100) {
+            if (targetNotFoundCycles > 100) {
                 DestroyMe();
             }
 
@@ -609,7 +609,7 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             targetNotFoundCycles = 0;
         }
 
-        if(gamePlayerIndicatorItem != null) {
+        if (gamePlayerIndicatorItem != null) {
 
             gamePlayerIndicatorItem.transform.position =
                              //Vector3.Lerp(gamePlayerIndicatorItem.transform.position, 
@@ -618,14 +618,14 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 (transform.position.y)) * .5f) - 1f);//, currentLateTickTime);
         }
 
-        if(clampToScreen && target != null) {
+        if (clampToScreen && target != null) {
 
             relativePosition = camTransform.InverseTransformPoint(target.position);
             relativePosition.z = Mathf.Max(relativePosition.z, 1.0f);
 
             UpdateIndicator(relativePosition);
 
-            if(indicatorType == GamePlayerIndicatorPlacementType.SCREEN) {
+            if (indicatorType == GamePlayerIndicatorPlacementType.SCREEN) {
 
                 /* maybe lerp periodically...
              indicatorObject.transform.localPosition = Vector3.Lerp (

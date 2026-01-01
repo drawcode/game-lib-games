@@ -15,23 +15,23 @@ public class GameMoverBullet : GameWeaponBase {
     private float initialSpeedMult = 1;
     private int initialLifeTime = 5;
 
-    private void Awake() {        
+    private void Awake() {
         initialSpeed = Speed;
         initialSpeedMax = SpeedMax;
         initialSpeedMult = SpeedMult;
         initialLifeTime = Lifetime;
     }
 
-    private void Start() {        
+    private void Start() {
 
         Reset();
-                
+
         GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
 
         rigbody = this.rigbody;
         hasRigidBody = rigbody ? true : false;
     }
-    
+
     public void Reset() {
 
         gameObject.ResetRigidBodiesVelocity();
@@ -51,9 +51,9 @@ public class GameMoverBullet : GameWeaponBase {
         }
         else {
             if (rigbody.linearVelocity.normalized != Vector3.zero)
-                this.transform.forward = rigbody.linearVelocity.normalized;    
+                this.transform.forward = rigbody.linearVelocity.normalized;
         }
-        
+
         if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;
         }

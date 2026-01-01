@@ -13,16 +13,16 @@ using Engine.Events;
 using Engine.Utility;
 
 public enum CloudNetworkType {
-	Gameverses,
-	Synchrono,
-	Google,
-	Amazon,
-	Apple
+    Gameverses,
+    Synchrono,
+    Google,
+    Amazon,
+    Apple
 }
 
 public class CloudMessages {
-	public static string cloudNetworksStart = "cloud-networks-start";
-	public static string cloudNetworksFileSync = "cloud-networks-file-sync";
+    public static string cloudNetworksStart = "cloud-networks-start";
+    public static string cloudNetworksFileSync = "cloud-networks-file-sync";
 }
 
 public class CloudNetworks : GameObjectBehavior {
@@ -41,13 +41,13 @@ public class CloudNetworks : GameObjectBehavior {
 
     public static CloudNetworks Instance {
         get {
-            if(!_instance) {
+            if (!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(CloudNetworks)) as CloudNetworks;
 
                 // nope, create a new one
-                if(!_instance) {
+                if (!_instance) {
                     var obj = new GameObject("_CloudNetworks");
                     _instance = obj.AddComponent<CloudNetworks>();
                 }
@@ -114,7 +114,7 @@ public class CloudNetworks : GameObjectBehavior {
     // IS READY
 
     public static bool IsReady() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isReady();
         }
         return false;

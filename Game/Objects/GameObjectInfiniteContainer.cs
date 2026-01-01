@@ -15,7 +15,7 @@ public class GameObjectInfinteData {
 
     public string codeGameFloor = "game-world-floor";
     public string codeGameSide = "game-world-side";
-    public string codeGameSky = "game-world-sky";   
+    public string codeGameSky = "game-world-sky";
     public string codeGameWater = "game-world-water";
 
     public string codeGameBlockEmpty = "game-block-empty";
@@ -55,7 +55,7 @@ public class GameObjectInfinteData {
     //public Dictionary<int, GameObjectInfinitePart> parts;
 
     public GameObject parentContainer;
-   
+
     public GameObjectInfinteData() {
         Reset();
     }
@@ -63,7 +63,7 @@ public class GameObjectInfinteData {
     public void Reset() {
         //positions = new Dictionary<string, object>();
         currentLine = 0;
-        
+
         distance = Vector3.zero;
 
         padIndex = 0;
@@ -137,7 +137,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
 
         SwitchLine(data.currentLine);
     }
-    
+
     #region lines
 
     public Vector3 GetCurrentLine() {
@@ -229,7 +229,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             part.transform.position = part.transform.position.WithZ(part.transform.position.z + val);
         }
     }
-    
+
     void LateUpdate() {
 
         if (!GameConfigs.isGameRunning) {
@@ -240,7 +240,7 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
             LoadData();
         }
 
-        if(!initialized) {
+        if (!initialized) {
             return;
         }
 
@@ -257,13 +257,13 @@ public class GameObjectInfiniteContainer : GameObjectBehavior {
         //    item.gameObject.DestroyGameObject();
         //}
 
-        foreach(GameObjectInfinitePartItem partItem in
+        foreach (GameObjectInfinitePartItem partItem in
             gameObject.GetList<GameObjectInfinitePartItem>()) {
 
             partItem.ClearItems(removeCached);
         }
 
-        foreach(GameObjectInfinitePart part in
+        foreach (GameObjectInfinitePart part in
             gameObject.GetList<GameObjectInfinitePart>()) {
 
             part.ClearItems(removeCached);

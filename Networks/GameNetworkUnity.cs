@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
 public class GameNetworkUnityMessages {
-    
+
     public static string gameNetworkUnityLoggedIn = "game-network-unity-logged-in";
     public static string gameNetworkUnityAchievements = "game-network-unity-achievements";
     public static string gameNetworkUnityAchievementDescriptions = "game-network-unity-achievement-descriptions";
@@ -18,13 +18,13 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public static GameNetworkUnity instance {
         get {
-            if(!_instance) {
+            if (!_instance) {
 
                 // check if an ObjectPoolManager is already available in the scene graph
                 _instance = FindObjectOfType(typeof(GameNetworkUnity)) as GameNetworkUnity;
 
                 // nope, create a new one
-                if(!_instance) {
+                if (!_instance) {
                     var obj = new GameObject("_GameNetworkUnity");
                     _instance = obj.AddComponent<GameNetworkUnity>();
                 }
@@ -42,7 +42,7 @@ public class GameNetworkUnity : MonoBehaviour {
     // AUTHENTICATION
 
     public static bool IsAuthenticated() {
-        if(instance != null) {
+        if (instance != null) {
 
             return instance.isAuthenticated();
         }
@@ -56,7 +56,7 @@ public class GameNetworkUnity : MonoBehaviour {
     //
 
     public static void Authenticate() {
-        if(instance != null) {
+        if (instance != null) {
 
             instance.authenticate();
         }
@@ -65,14 +65,14 @@ public class GameNetworkUnity : MonoBehaviour {
     public void authenticate(Action<ILocalUser> callback = null) {
 
         Social.localUser.Authenticate(success => {
-            if(success) {
+            if (success) {
                 Debug.Log("Authentication successful");
                 string userInfo = "Username: " + currentUser.userName +
                     "\nUser ID: " + currentUser.id +
                     "\nIsUnderage: " + currentUser.underage;
                 Debug.Log(userInfo);
 
-                if(callback != null) {
+                if (callback != null) {
                     callback(Social.localUser);
                 }
 
@@ -91,7 +91,7 @@ public class GameNetworkUnity : MonoBehaviour {
     //
 
     public static ILocalUser CurrentUser() {
-        if(instance != null) {
+        if (instance != null) {
 
             return instance.currentUser;
         }
@@ -110,7 +110,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void showAchievements() {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
         }
 
@@ -121,7 +121,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void loadAchievements() {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
         }
         // Request loaded achievements, and register a callback for processing them
@@ -155,7 +155,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void loadAchievementDescriptions() {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
         }
 
@@ -190,7 +190,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void reportProgress(string achievementId, double progress, Action<bool> callback) {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
         }
 
@@ -201,7 +201,7 @@ public class GameNetworkUnity : MonoBehaviour {
     // LEADERBOARDS
 
     public void showLeaderboards() {
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
         }
 
@@ -216,7 +216,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void reportScore(long score, string board, Action<bool> callback) {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
 
         }
@@ -235,7 +235,7 @@ public class GameNetworkUnity : MonoBehaviour {
 
     public void loadScores(string leaderboardId, Action<IScore[]> callback) {
 
-        if(!isAuthenticated()) {
+        if (!isAuthenticated()) {
             return;
 
         }

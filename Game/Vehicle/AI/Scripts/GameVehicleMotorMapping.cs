@@ -34,7 +34,7 @@ public class GameVehicleMotorMapping : GameObjectBehavior {
     ////Unity Car Tutorial -E
 
     void Awake() {
-        if(usingGameVehicleAIDriverMotor) {
+        if (usingGameVehicleAIDriverMotor) {
             aIDriverMotor = this.GetComponent<GameVehicleAIDriverMotor>();
             steerMax = aIDriverMotor.maxSteerAngle;
             speedMax = aIDriverMotor.maxSpeed;
@@ -57,7 +57,7 @@ public class GameVehicleMotorMapping : GameObjectBehavior {
     // Update is called once per frame
     void Update() {
 
-        if(usingGameVehicleAIDriverMotor) {
+        if (usingGameVehicleAIDriverMotor) {
             aIDriverMotor.aiSteerAngle = steerInput;
             aIDriverMotor.aiSpeedPedal = motorInput;
             aIDriverMotor.aiBrakePedal = brakeInput;

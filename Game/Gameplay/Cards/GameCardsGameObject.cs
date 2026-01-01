@@ -16,23 +16,23 @@ public class GameCardsGameObject : GameObjectBehavior {
 
     public void DealCard() {
         GameCard gameCard = gameCards.DealCard();
-        
+
         Debug.Log("DealCard:" + gameCard.ToJson());
     }
 
     public void LoadCards() {
         gameCards.LoadCards();
-        
+
         Debug.Log("LoadCards:" + gameCards.cardSet.cardQueue.Count);
     }
 
     public void HandleInput() {
-        
-        if(Input.GetKeyDown(KeyCode.P)) {
+
+        if (Input.GetKeyDown(KeyCode.P)) {
             LoadCards();
         }
 
-        if(Input.GetKeyDown(KeyCode.U)) {
+        if (Input.GetKeyDown(KeyCode.U)) {
             DealCard();
         }
     }
@@ -41,5 +41,4 @@ public class GameCardsGameObject : GameObjectBehavior {
 
         HandleInput();
     }
-
 }

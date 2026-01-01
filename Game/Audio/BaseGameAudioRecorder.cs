@@ -15,16 +15,16 @@ using UnityEngine.Networking;
 using Engine.Audio;
 
 public class BaseGameAudioRecordItems {
-	
-	// UI sounds
-	
-	public static string audio_effect_ui_button_1 = "audio_effect_ui_button_1";
-	public static string audio_effect_ui_button_2 = "audio_effect_ui_button_2";
-	public static string audio_effect_ui_button_3 = "audio_effect_ui_button_3";
-	public static string audio_effect_ui_button_4 = "audio_effect_ui_button_4";
-	
-	// new
-		
+
+    // UI sounds
+
+    public static string audio_effect_ui_button_1 = "audio_effect_ui_button_1";
+    public static string audio_effect_ui_button_2 = "audio_effect_ui_button_2";
+    public static string audio_effect_ui_button_3 = "audio_effect_ui_button_3";
+    public static string audio_effect_ui_button_4 = "audio_effect_ui_button_4";
+
+    // new
+
 }
 
 public class BaseGameAudioRecorder {

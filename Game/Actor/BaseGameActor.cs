@@ -7,8 +7,8 @@ using Engine.Utility;
 using Engine.Game.Actor;
 
 public class BaseGameActor : BaseGameObjectItem {
-	
-    /*
+
+	/*
 	public GameObject actorModelObject;
 	
 	public bool isMoving = false;
@@ -17,29 +17,29 @@ public class BaseGameActor : BaseGameObjectItem {
 	public bool lastJumping = false;	
 	
 	public bool navigating = false;
- */   
-	
+ */
+
 	public override void Start() {
 		Init();
 	}
-	
-    public override void Init() {
-		base.Init();	
+
+	public override void Init() {
+		base.Init();
 	}
-	
-    public override void OnEnable() {
-        base.OnEnable();
+
+	public override void OnEnable() {
+		base.OnEnable();
 		////MessengerObject<InputTouchInfo>.AddListener(EventMessagesType.OnEventInputDown, OnInputDown);
 		////MessengerObject<InputTouchInfo>.AddListener(GameMessageType.OnEventInputUp, OnInputUp);
 	}
-	
-    public override void OnDisable() {
-        base.OnEnable();
+
+	public override void OnDisable() {
+		base.OnEnable();
 		////MessengerObject<InputTouchInfo>.RemoveListener(GameMessageType.OnEventInputDown, OnInputDown);
 		////MessengerObject<InputTouchInfo>.RemoveListener(GameMessageType.OnEventInputUp, OnInputUp);
 	}
 
-    /*
+	/*
 	
 	public virtual void CheckAnimationState() {
 		if(isJumping != lastJumping) {
@@ -128,6 +128,6 @@ public class BaseGameActor : BaseGameObjectItem {
 	public virtual void PlayIdle() {
 		PlayAnimation("idle", PlayMode.StopSameLayer);
 	}
- */   
+ */
 }
 

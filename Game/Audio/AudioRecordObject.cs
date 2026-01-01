@@ -6,15 +6,14 @@ using UnityEngine;
 
 using Engine.Utility;
 
-public class AudioRecordObject : GameObjectBehavior
-{	
+public class AudioRecordObject : GameObjectBehavior {
 	public static AudioRecordObject Instance;
-	
+
 	public GameObject audioSystem;
 	public GameObject audioManagerObject;
-	public GameObject audioEventListenerObject;	
+	public GameObject audioEventListenerObject;
 	public bool audioSystemAdded = false;
-	
+
 	public bool enableAudioRecording = false;
 
 #if AUDIO_RECORDER_USE_UNITY
@@ -36,7 +35,7 @@ public class AudioRecordObject : GameObjectBehavior
 #endif
 #endif
 
-    public bool EnableAudioRecording {
+	public bool EnableAudioRecording {
 		get {
 			return enableAudioRecording;
 		}
@@ -44,35 +43,35 @@ public class AudioRecordObject : GameObjectBehavior
 			enableAudioRecording = value;
 		}
 	}
-	
-	
-	void Awake() {        
+
+
+	void Awake() {
 		if (Instance != null && this != Instance) {
-            //There is already a copy of this script running
-            Destroy(this);
-            return;
-        }
-		
-        Instance = this;
+			//There is already a copy of this script running
+			Destroy(this);
+			return;
+		}
+
+		Instance = this;
 	}
-	
+
 	void Start() {
 		InitAudioSystem();
 		DontDestroyOnLoad(gameObject);
 	}
-	
+
 	void InitAudioSystem() {
 		// If iOS add the plugin
 		// else do nothing for now
-		
-		if(!audioSystemAdded) {
+
+		if (!audioSystemAdded) {
 			LogUtil.Log("AudioObject::InitAudioSystem ");
-			
+
 			audioSystem = new GameObject("AudioObjectSystem");
 			DontDestroyOnLoad(audioSystem);
 
 #if AUDIO_RECORDER_USE_UNITY
-            
+
 #elif AUDIO_RECORDER_USE_PRIME31
 #if UNITY_IPHONE
 			audioManager = audioSystem.AddComponent<AudioRecorderManager>();				
@@ -95,14 +94,13 @@ public class AudioRecordObject : GameObjectBehavior
 			LogUtil.Log("AudioObject::InitAudioSystem default added...");
 #endif
 #endif
-            if (audioManagerObject != null)
-				DontDestroyOnLoad(audioManagerObject);	
-			
-			if(audioEventListenerObject != null)
-				DontDestroyOnLoad(audioEventListenerObject);	
-			
-			audioSystemAdded = true;
-		}		
-	}	
-}
+			if (audioManagerObject != null)
+				DontDestroyOnLoad(audioManagerObject);
 
+			if (audioEventListenerObject != null)
+				DontDestroyOnLoad(audioEventListenerObject);
+
+			audioSystemAdded = true;
+		}
+	}
+}

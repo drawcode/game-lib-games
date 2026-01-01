@@ -71,7 +71,7 @@ public class SocialNetworks : GameObjectBehavior {
 
     public void Awake() {
 
-        if(Instance != null && this != Instance) {
+        if (Instance != null && this != Instance) {
             //There is already a copy of this script running
             Destroy(gameObject);
             return;
@@ -316,19 +316,19 @@ public class SocialNetworks : GameObjectBehavior {
     // COMMON
 
     public static void LoadSocialLibs() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.loadSocialLibs();
         }
     }
 
     public void loadSocialLibs() {
-        
+
 #if USE_CONFIG_APP
-        if(AppConfigs.featureEnableFacebook) {
+        if (AppConfigs.featureEnableFacebook) {
             initFacebook();
         }
 
-        if(AppConfigs.featureEnableTwitter) {
+        if (AppConfigs.featureEnableTwitter) {
             initTwitter();
         }
 #endif
@@ -343,7 +343,7 @@ public class SocialNetworks : GameObjectBehavior {
         string message,
         Action<string, object> completionHandler = null) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessage(networkType, message, completionHandler);
         }
     }
@@ -353,10 +353,10 @@ public class SocialNetworks : GameObjectBehavior {
         string message,
         Action<string, object> completionHandler = null) {
 
-        if(networkType == SocialNetworkTypes.twitter) {
+        if (networkType == SocialNetworkTypes.twitter) {
             postMessageTwitter(message);
         }
-        else if(networkType == SocialNetworkTypes.facebook) {
+        else if (networkType == SocialNetworkTypes.facebook) {
             postMessageFacebook(message, completionHandler);
         }
     }
@@ -369,7 +369,7 @@ public class SocialNetworks : GameObjectBehavior {
         byte[] bytesImage,
         Action<string, object> completionHandler = null) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessage(networkType, message, bytesImage, completionHandler);
         }
     }
@@ -380,10 +380,10 @@ public class SocialNetworks : GameObjectBehavior {
         byte[] bytesImage,
         Action<string, object> completionHandler = null) {
 
-        if(networkType == SocialNetworkTypes.twitter) {
+        if (networkType == SocialNetworkTypes.twitter) {
             postMessageTwitter(message, bytesImage);
         }
-        else if(networkType == SocialNetworkTypes.facebook) {
+        else if (networkType == SocialNetworkTypes.facebook) {
             postMessageFacebook(message, bytesImage, completionHandler);
         }
     }
@@ -392,7 +392,7 @@ public class SocialNetworks : GameObjectBehavior {
     // FACEBOOK
 
     public static void InitFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.initFacebook();
         }
     }
@@ -450,7 +450,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static bool IsLoggedInFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isLoggedInFacebook();
         }
         return false;
@@ -469,19 +469,19 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static void ShowLoginFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginFacebook();
         }
     }
 
     public void dumpPermissionsToLog(string[] permissions) {
-        if(permissions != null) {
+        if (permissions != null) {
             Debug.Log("asking permissions:" + string.Join(",", permissions));
         }
     }
 
     public void dumpPermissionsToLog(List<string> permissions) {
-        if(permissions != null) {
+        if (permissions != null) {
             Debug.Log("granted permissions:" + string.Join(",", permissions.ToArray()));
         }
     }
@@ -538,7 +538,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static List<object> GetSessionPermissionsFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.getSessionPermissionsFacebook();
         }
         return null;
@@ -555,7 +555,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static void GetProfileDataFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.getProfileDataFacebook();
         }
     }
@@ -636,7 +636,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static void GetPermissionsFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.getPermissionsFacebook();
         }
     }
@@ -658,10 +658,10 @@ public class SocialNetworks : GameObjectBehavior {
     public List<string> getPermissionsFacebookString() {
         List<string> permissions = new List<string>();
         List<object> permissionObjects = getPermissionsFacebook();
-        if(permissionObjects != null) {
-            foreach(var perm in permissionObjects) {
+        if (permissionObjects != null) {
+            foreach (var perm in permissionObjects) {
                 string permission = perm.ToString();
-                if(!permissions.Contains(permission)) {
+                if (!permissions.Contains(permission)) {
                     permissions.Add(perm.ToString());
                 }
             }
@@ -673,7 +673,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static bool CheckPermissionFacebook(string permission) {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.checkPermissionFacebook(permission);
         }
 
@@ -683,8 +683,8 @@ public class SocialNetworks : GameObjectBehavior {
     public bool checkPermissionFacebook(string permission) {
         List<string> permissions = getPermissionsFacebookString();
         dumpPermissionsToLog(permissions);
-        if(permissions != null) {
-            if(permissions.Contains(permission)) {
+        if (permissions != null) {
+            if (permissions.Contains(permission)) {
                 return true;
             }
         }
@@ -692,7 +692,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static string GetAccessTokenAppFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.getAccessTokenAppFacebook();
         }
         return string.Empty;
@@ -703,7 +703,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static string GetAccessTokenUserFacebook() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.getAccessTokenUserFacebook();
         }
         return string.Empty;
@@ -730,7 +730,7 @@ public class SocialNetworks : GameObjectBehavior {
         // -F 'object=OG_OBJECT_URL' \
         // https://graph.facebook.com/[User FB ID]/og.likes
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.likeUrlFacebook(urlLike);
         }
     }
@@ -739,7 +739,7 @@ public class SocialNetworks : GameObjectBehavior {
 
         string userId = GameProfiles.Current.GetNetworkValueId(SocialNetworkTypes.facebook);//GetSocialNetworkUserId();
 
-        if(!string.IsNullOrEmpty(userId) && IsLoggedInFacebook()) {
+        if (!string.IsNullOrEmpty(userId) && IsLoggedInFacebook()) {
 
             Dictionary<string, object> data = new Dictionary<string, object>();
 
@@ -771,8 +771,8 @@ public class SocialNetworks : GameObjectBehavior {
         string responseText = response.dataValueText;
         Debug.Log("HandleLikeUrlFacebookCallback responseText:" + responseText);
         bool success = false;
-        if(bool.TryParse(responseText, out success)) {
-            if(success) {
+        if (bool.TryParse(responseText, out success)) {
+            if (success) {
                 Debug.Log("LIKE success!");
             }
             else {
@@ -790,7 +790,7 @@ public class SocialNetworks : GameObjectBehavior {
         string message,
         Action<string, object> completionHandler) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageFacebook(message, completionHandler);
         }
     }
@@ -819,7 +819,7 @@ public class SocialNetworks : GameObjectBehavior {
         byte[] bytesImage,
         Action<string, object> completionHandler) {
 
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageFacebook(message, bytesImage, completionHandler);
         }
     }
@@ -849,7 +849,7 @@ public class SocialNetworks : GameObjectBehavior {
     // (from FBShareDialogParams) are: link, name, caption, description, picture, friends (array)
 
     public static void PostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageFacebook(message, url, title, linkToImage, caption);
         }
     }
@@ -878,7 +878,7 @@ public class SocialNetworks : GameObjectBehavior {
     // POST SCORE
 
     public static void PostScoreFacebook(int score) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postScoreFacebook(score);
         }
     }
@@ -898,7 +898,7 @@ public class SocialNetworks : GameObjectBehavior {
     void completionHandler(string error, object result) {
 
 
-        if(error != null) {
+        if (error != null) {
 
             Debug.Log("SocialNetworks:completionHandler:"
                 + " error:" + error
@@ -921,7 +921,7 @@ public class SocialNetworks : GameObjectBehavior {
     // COMPOSER
 
     public void ShowComposerFacebook(string message, string url, string title, string linkToImage, string caption) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showComposerFacebook(message, url, title, linkToImage, caption);
         }
     }
@@ -954,7 +954,7 @@ public class SocialNetworks : GameObjectBehavior {
 
     public bool canUseComposer(string networkType) {
 
-        if(networkType == SocialNetworkTypes.facebook) {
+        if (networkType == SocialNetworkTypes.facebook) {
 #if UNITY_ANDROID && SOCIAL_USE_FACEBOOK_PRIME31
             return true;
 #elif UNITY_IPHONE && SOCIAL_USE_FACEBOOK_PRIME31
@@ -973,7 +973,7 @@ public class SocialNetworks : GameObjectBehavior {
     // LOGIN - POST MESSAGE
 
     public static void ShowLoginOrPostMessageFacebook(string message, string url, string title, string linkToImage, string caption) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginOrPostMessageFacebook(message, url, title, linkToImage, caption);
         }
     }
@@ -999,7 +999,7 @@ public class SocialNetworks : GameObjectBehavior {
             + " caption:" + caption
         );
 
-        if(loggedIn) {
+        if (loggedIn) {
 
             bool hasComposer = canUseComposer(SocialNetworkTypes.facebook);
 
@@ -1007,7 +1007,7 @@ public class SocialNetworks : GameObjectBehavior {
                 + " hasComposer:" + hasComposer
             );
 
-            if(hasComposer) {
+            if (hasComposer) {
                 ShowComposerFacebook(message, url, title, linkToImage, caption);
             }
             else {
@@ -1022,7 +1022,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     void onPostScoreFacebook(bool success) {
-        if(!success) {
+        if (!success) {
             Debug.Log("Facebook score submit failed!");
         }
         else {
@@ -1050,7 +1050,7 @@ public class SocialNetworks : GameObjectBehavior {
     // TWITTER
 
     public static void InitTwitter() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.initTwitter();
         }
     }
@@ -1079,7 +1079,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static bool IsTwitterAvailable() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isTwitterAvailable();
         }
         return false;
@@ -1095,7 +1095,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static bool IsLoggedInTwitter() {
-        if(Instance != null) {
+        if (Instance != null) {
             return Instance.isLoggedInTwitter();
         }
         return false;
@@ -1114,7 +1114,7 @@ public class SocialNetworks : GameObjectBehavior {
     }
 
     public static void ShowLoginTwitter() {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginTwitter();
         }
     }
@@ -1133,7 +1133,7 @@ public class SocialNetworks : GameObjectBehavior {
     // POST MESSAGE
 
     public static void PostMessageTwitter(string message) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageTwitter(message);
         }
     }
@@ -1152,7 +1152,7 @@ public class SocialNetworks : GameObjectBehavior {
     // POST MESSAGE - IMAGE PATH
 
     public static void PostMessageTwitter(string message, string pathToImage) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageTwitter(message, pathToImage);
         }
     }
@@ -1171,7 +1171,7 @@ public class SocialNetworks : GameObjectBehavior {
     // POST MESSAGE - WITH IMAGE
 
     public static void PostMessageTwitter(string message, byte[] bytesImage) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.postMessageTwitter(message, bytesImage);
         }
     }
@@ -1191,7 +1191,7 @@ public class SocialNetworks : GameObjectBehavior {
     // COMPOSER
 
     public static void ShowComposerTwitter(string message) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showComposerTwitter(message);
         }
     }
@@ -1211,7 +1211,7 @@ public class SocialNetworks : GameObjectBehavior {
     //
 
     public static void ShowComposerTwitter(string message, string pathToImage) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showComposerTwitter(message, pathToImage);
         }
     }
@@ -1231,7 +1231,7 @@ public class SocialNetworks : GameObjectBehavior {
     //
 
     public static void ShowComposerTwitter(string message, string pathToImage, string link) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showComposerTwitter(message, pathToImage, link);
         }
     }
@@ -1251,7 +1251,7 @@ public class SocialNetworks : GameObjectBehavior {
     // LOGIN - MESSAGE
 
     public static void ShowLoginOrPostMessageTwitter(string message) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginOrPostMessageTwitter(message);
         }
     }
@@ -1264,7 +1264,7 @@ public class SocialNetworks : GameObjectBehavior {
         bool loggedIn = false;
 #endif
 
-        if(loggedIn) {
+        if (loggedIn) {
             postMessageTwitter(message);
         }
         else {
@@ -1275,7 +1275,7 @@ public class SocialNetworks : GameObjectBehavior {
     // LOGIN - MESSAGE - IMAGE PATH
 
     public static void ShowLoginOrPostMessageTwitter(string message, string pathToImage) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginOrPostMessageTwitter(message, pathToImage);
         }
     }
@@ -1288,7 +1288,7 @@ public class SocialNetworks : GameObjectBehavior {
         bool loggedIn = false;
 #endif
 
-        if(loggedIn) {
+        if (loggedIn) {
             postMessageTwitter(message, pathToImage);
         }
         else {
@@ -1301,7 +1301,7 @@ public class SocialNetworks : GameObjectBehavior {
     // LOGIN - COMPOSER
 
     public static void ShowLoginOrComposerTwitter(string message) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginOrComposerTwitter(message);
         }
     }
@@ -1314,7 +1314,7 @@ public class SocialNetworks : GameObjectBehavior {
         bool loggedIn = false;
 #endif
 
-        if(loggedIn) {
+        if (loggedIn) {
             showComposerTwitter(message);
         }
         else {
@@ -1325,7 +1325,7 @@ public class SocialNetworks : GameObjectBehavior {
     // LOGIN - COMPOSER - IMAGE PATH
 
     public static void ShowLoginOrComposerTwitter(string message, string pathToImage) {
-        if(Instance != null) {
+        if (Instance != null) {
             Instance.showLoginOrComposerTwitter(message, pathToImage);
         }
     }
@@ -1338,7 +1338,7 @@ public class SocialNetworks : GameObjectBehavior {
         bool loggedIn = false;
 #endif
 
-        if(loggedIn) {
+        if (loggedIn) {
             showComposerTwitter(message, pathToImage);
         }
         else {

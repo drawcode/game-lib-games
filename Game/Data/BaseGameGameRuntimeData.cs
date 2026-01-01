@@ -55,7 +55,7 @@ public class BaseGameGameRuntimeData {
 
     public virtual bool timeExpired {
         get {
-            if(timeRemaining <= 0) {
+            if (timeRemaining <= 0) {
                 timeRemaining = 0;
                 return true;
             }
@@ -70,7 +70,7 @@ public class BaseGameGameRuntimeData {
     }
 
     public virtual void SubtractTime(double delta) {
-        if(timeRemaining > 0) {
+        if (timeRemaining > 0) {
             timeRemaining -= delta;
         }
     }

@@ -11,10 +11,10 @@ using Engine.Utility;
 public class GameObjectTypeLoader : GameObjectBehavior {
 
     void Start() {
-    
+
     }
 
     public void LoadItem() {
-    
+
     }
 }

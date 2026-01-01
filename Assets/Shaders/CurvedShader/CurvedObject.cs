@@ -27,11 +27,11 @@ public class CurvedObject : MonoBehaviour {
 
     void Update() {
 
-        if(Application.isEditor) {
-            if(Input.GetKey(KeyCode.LeftControl)
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl)
                 || Input.GetKey(KeyCode.RightControl)) {
 
-                if(Input.GetKeyDown(KeyCode.KeypadEnter)) {
+                if (Input.GetKeyDown(KeyCode.KeypadEnter)) {
                     bool curveEnabled = GameController.CurveInfiniteEnabledGet();
                     curveEnabled = curveEnabled ? false : true;
                     GameController.CurveInfiniteEnabledSet(curveEnabled);
@@ -52,17 +52,17 @@ public class CurvedObject : MonoBehaviour {
         //IEnumerator UpdateShaderCo() {
         //yield break;
 
-        if(lastCurveTime + .1f > Time.time) {
+        if (lastCurveTime + .1f > Time.time) {
             //yield break;
         }
 
         lastCurveTime = Time.time;
 
-        if(!running) {
+        if (!running) {
 
             running = true;
 
-            if(!GameController.CurveInfiniteEnabledGet()) {
+            if (!GameController.CurveInfiniteEnabledGet()) {
                 curveAmount = Vector4.zero;
                 curveDistance = 0;
             }
@@ -71,33 +71,33 @@ public class CurvedObject : MonoBehaviour {
                 curveDistance = GameController.CurveInfiniteDistanceGet();
             }
 
-            if(render == null) {
+            if (render == null) {
                 render = GetComponent<Renderer>();
             }
 
-            if(render == null) {
+            if (render == null) {
                 //yield break;
                 return;
             }
 
-            if(render.materials == null || render.materials.Length == 0) {
+            if (render.materials == null || render.materials.Length == 0) {
                 //yield break;
                 return;
             }
 
             int matCount = render.materials.Length;
 
-            if(render.materials.Length == 0) {
+            if (render.materials.Length == 0) {
                 //yield break;
                 return;
             }
 
 
-            if(lastCurveAmount != curveAmount) {
+            if (lastCurveAmount != curveAmount) {
 
-                for(int m = 0; m < matCount; m++) {
+                for (int m = 0; m < matCount; m++) {
 
-                    if(render.materials[m] != null) {
+                    if (render.materials[m] != null) {
                         render.materials[m].SetVector("_QOffset", curveAmount);
                     }
                 }
@@ -105,11 +105,11 @@ public class CurvedObject : MonoBehaviour {
                 lastCurveAmount = curveAmount;
             }
 
-            if(lastCurveDistance != curveDistance) {
+            if (lastCurveDistance != curveDistance) {
 
-                for(int m = 0; m < matCount; m++) {
+                for (int m = 0; m < matCount; m++) {
 
-                    if(render.materials[m] != null) {
+                    if (render.materials[m] != null) {
                         render.materials[m].SetFloat("_Dist", curveDistance);
                     }
                 }

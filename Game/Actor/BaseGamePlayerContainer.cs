@@ -13,7 +13,7 @@ using Engine.Utility;
 public class BaseGamePlayerContainer : GameObjectBehavior {
 
 	//public GamePlayerController gamePlayerController;
-	
+
 	public virtual void Start() {
 		//if(gamePlayerController) {
 		//	gamePlayerController.uuid = UniqueUtil.Instance.currentUniqueId;

@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class RotateObject2 : GameObjectBehavior {
-    
+
     public float RotateSpeedAlongX = 0.0f;
     public float RotateSpeedAlongY = 0.0f;
     public float RotateSpeedAlongZ = 0.0f;

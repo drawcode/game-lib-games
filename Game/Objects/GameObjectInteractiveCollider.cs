@@ -6,8 +6,8 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
 
     public BaseGameObjectInteractive obj;
 
-    public virtual void Awake() { 
-        
+    public virtual void Awake() {
+
     }
 
     public virtual void Start() {
@@ -19,12 +19,12 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
     }
 
     public virtual void FindBase() {
-    
+
         if (obj == null) {
             obj = gameObject.FindTypeAboveRecursive<BaseGameObjectInteractive>();
         }
     }
-        
+
     public virtual void OnCollisionEnter(Collision collision) {
 
         FindBase();
@@ -35,16 +35,15 @@ public class GameObjectInteractiveCollider : GameObjectBehavior {
 
         obj.OnCollisionEnter(collision);
     }
-    
+
     public virtual void OnTriggerEnter(Collider collider) {
 
         FindBase();
-        
+
         if (obj == null) {
             return;
         }
-        
+
         obj.OnTriggerEnter(collider);
     }
-
 }

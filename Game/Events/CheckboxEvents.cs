@@ -14,7 +14,7 @@ public class CheckboxEvents : GameObjectBehavior {
 #endif
     public static string EVENT_ITEM_CLICK = "event-checkbox-item-click";
     public static string EVENT_ITEM_CHANGE = "event-checkbox-item-change";
-    
+
     void Start() {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -25,12 +25,12 @@ public class CheckboxEvents : GameObjectBehavior {
         }
 #endif
 
-        if(currentObj != null) {
+        if (currentObj != null) {
             //currentObj.functionName = "OnActivate";
             //currentObj.eventReceiver = gameObject;
         }
     }
-    
+
     void OnClick() {
 
         int camIndex = 0;

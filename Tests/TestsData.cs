@@ -38,16 +38,16 @@ public class TestsData {
 
         bool success = true;
         string testName = "";
-                
+
         ContentsConfig.contentRootFolder = TestConfigs.contentRootFolder;
         ContentsConfig.contentAppFolder = TestConfigs.contentAppFolder;
         ContentsConfig.contentDefaultPackFolder = TestConfigs.contentDefaultPackFolder;
         ContentsConfig.contentVersion = TestConfigs.contentVersion;
         ContentsConfig.contentIncrement = TestConfigs.contentIncrement;
-        
+
         Advance("Creating Contents cache paths");
         ContentPaths.CreateCachePaths();
-        
+
         Advance("Loading Profile");
         GameState.LoadProfile();
 
@@ -60,29 +60,29 @@ public class TestsData {
 
         //Advance("TestGameCharacterSkinLoadData");
         //TestGameCharacterSkinLoadData();
-        
+
         //Advance("TestGameState_LoadProfile");
         //TestGameState_LoadProfile();
-        
+
         //Advance("TestGameState_SaveProfile");
         //TestGameState_SaveProfile();
 
         //Advance("TestGameProfileCharacter_GetCharacter");
         //TestGameProfileCharacter_GetCharacter();
-        
+
         //Advance("TestGameProfileCharacter_GetCurrentCharacter");
         //TestGameProfileCharacter_GetCurrentCharacter();
-        
+
         //Advance("TestGameProfileCharacter_currentCharacter");
         //TestGameProfileCharacter_currentCharacter();
-                
+
         //Advance("TestGameProfileCharacter_currentProgress");
         //TestGameProfileCharacter_currentProgress();
 
         //testName = "TestGameProfileCharacter_currentCustom";
         //Advance(testName);
         //success = TestGameProfileCharacter_currentCustom(testName);
-        
+
         //if(!CheckTest(success, testName)) { 
         //    return;
         //}
@@ -90,20 +90,20 @@ public class TestsData {
         //testName = "TestAppColors_List";
         //Advance(testName);
         //TestAppColors_List(testName);
-        
+
         //testName = "TestAppColors_Code";
         //Advance(testName);
         //success = TestAppColors_Code(testName);
-        
+
         //Advance("TestAppContentAssetModels_List");
         //TestAppContentAssetModels_List();
-        
+
         //Advance("TestAppContentAssetModels_Load");
         //TestAppContentAssetModels_Load();
-                
+
         //("TestAppContentAssetCustomItems_List");
         //TestAppContentAssetCustomItems_List();
-        
+
         //Advance("TestAppAssetTextures_List");
         //TestAppAssetTextures_List();
 
@@ -114,74 +114,74 @@ public class TestsData {
         //if(!CheckTest(success, testName)) { 
         //    return;
         //}
-        
+
         //testName = "TestAppColorPresets_List";
         //Advance(testName);
         //success = TestAppColorPresets_List(testName);
-        
+
         //Advance("TestGameCharacters_List");
         //TestGameCharacters_List();
-                
+
         //Advance("TestGameCharacters_Load");
         //TestGameCharacters_Load();
 
         //testName = "TestGameWeapons_List";
         //Advance(testName);
         //success = TestGameWeapons_List(testName);
-        
+
         //testName = "TestGameItems_List";
         //Advance(testName);
         //success = TestGameItems_List(testName);
-                
+
         //testName = "TestGameTeams_List";
         //Advance(testName);
         //success = TestGameTeams_List(testName);
-        
+
         //testName = "TestGameItemPresets_List";
         //Advance(testName);
         //success = TestGameItemPresets_List(testName);
-        
+
         //testName = "TestGameTerrainPresets_List";
         //Advance(testName);
         //success = TestGameTerrainPresets_List(testName);
-                
+
         //testName = "TestGamePresets_List";
         //Advance(testName);
         //success = TestGamePresets_List(testName);
-                
+
         //testName = "TestGameAchievements_List";
         //Advance(testName);
         //success = TestGameAchievements_List(testName);
-        
+
         //testName = "TestGameStatistics_List";
         //Advance(testName);
         //success = TestGameStatistics_List(testName);
-                
+
         //testName = "TestGameLeaderboards_List";
         //Advance(testName);
         //success = TestGameLeaderboards_List(testName);
-        
+
         ////testName = "TestGameCharacterPresets_List";
         ////Advance(testName);
         ////success = TestGameCharacterPresets_List(testName);
 
-        
+
         //testName = "TestGameCharacterAnimations_List";
         //Advance(testName);
         //success = TestGameCharacterAnimations_List(testName);
-                
+
         testName = "TestCompress";
         Advance(testName);
         success = TestCompress(testName);
-                
+
         //testName = "TestBase64";
         //Advance(testName);
         //success = TestBase64(testName);
-          
+
         testName = "TestEncrypt";
         Advance(testName);
         success = TestEncrypt(testName);
-        
+
         ////testName = "TestGameStateProfileSync";
         ////Advance(testName);
         ////success = TestGameStateProfileSync(testName);
@@ -189,12 +189,12 @@ public class TestsData {
 
         //
 
-        
+
         //testName = "TestGameLocalization_List";
         //Advance(testName);
         //success = TestGameLocalization_List(testName);
 
-        
+
         //testName = "TestGameLocalization_Code";
         //Advance(testName);
         //success = TestGameLocalization_Code(testName);
@@ -203,31 +203,31 @@ public class TestsData {
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", GameLocalizationKeys.app_display_code);
 
-        
+
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", "game_achievement_times_played_1_display_name");
-        
+
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", "game_achievement_times_played_1_description");
-                
+
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", GameLocalizationKeys.social_facebook_post_message);
-        
+
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "sp", GameLocalizationKeys.social_facebook_post_message);
-          
+
         //testName = "TestAnimationEasing_ValueDecrement";
         //Advance(testName);
         //success = TestAnimationEasing_ValueDecrement(testName);
-                
+
         //testName = "TestAnimationEasing_ValueIncrement";
         //Advance(testName);
         //success = TestAnimationEasing_ValueIncrement(testName);
-                
+
         //testName = "TestGameProfile_NetworkTypes";
         //Advance(testName);
         //success = TestGameProfile_NetworkTypes(testName);
@@ -235,7 +235,7 @@ public class TestsData {
         //testName = "TestGameProfile_NetworkTypes_Data_twitter";
         //Advance(testName);
         //success = TestGameProfile_NetworkTypes_Data(testName, SocialNetworkTypes.twitter);
-        
+
         //testName = "TestGameProfile_NetworkTypes_Data_facebook";
         //Advance(testName);
         //success = TestGameProfile_NetworkTypes_Data(testName, SocialNetworkTypes.facebook);
@@ -246,50 +246,50 @@ public class TestsData {
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", GameLocalizationKeys.social_twitter_disabled_title);
-        
+
         //testName = "TestLoco_Get";
         //Advance(testName);
         //success = TestLoco_Get(testName, "en", LocoKeys.social_twitter_disabled_title);
 
-        
+
         //testName = "TestGameLocalization_Get";
         //Advance(testName);
         //success = TestGameLocalization_Get(testName, "en", GameLocalizationKeys.social_twitter_game_results_message);
-        
+
         //testName = "TestLoco_Get";
         //Advance(testName);
         //success = TestLoco_Get(testName, "en", LocoKeys.social_twitter_game_results_message);
 
         // MISSIONS
-                
+
         //testName = "TestAppContentCollects_Get";
         //Advance(testName);
         //success = TestAppContentCollects_Get(testName);
-        
+
         //testName = "TestAppContentCollects_Get_Missions";
         //Advance(testName);
         //success = TestAppContentCollects_Get_Missions(testName);
-        
+
         //testName = "TestAppContentCollects_Get_Missions_By_World";
         //Advance(testName);
         //success = TestAppContentCollects_Get_Missions_By_World(testName, GameWorlds.Instance.GetAll()[0].code);
 
         // LEVELS
-        
+
         //testName = "TestGameLevels_Get";
         //Advance(testName);
         //success = TestGameLevels_Get(testName);
-        
+
         //testName = "TestGameLevels_Get_By_Id";
         //Advance(testName);
         //success = TestGameLevels_Get_By_Id(testName, GameLevels.Instance.GetAll()[0].code);
-        
+
         //testName = "TestGameLevels_ChangeCurrent";
         //Advance(testName);
         //success = TestGameLevels_ChangeCurrent(testName);
 
         // PROFILE COLLECTION ITEMS
-        
+
         //testName = "TestGameProfileContentCollectItems_Get";
         //Advance(testName);
         //success = TestGameProfileContentCollectItems_Get(testName);
@@ -306,7 +306,7 @@ public class TestsData {
 
         //
 
-        if (!CheckTest(success, testName)) { 
+        if (!CheckTest(success, testName)) {
             return;
         }
         if (success) {
@@ -315,19 +315,19 @@ public class TestsData {
         else {
             Debug.LogError("TESTS WERE IN ERROR!");
         }
-        
+
         Debug.Log("TESTS COMPLETED");
     }
 
     public static bool CheckTest(bool success, string name) {
-        if (!success) {            
+        if (!success) {
             Debug.LogError("TESTS WERE IN ERROR! " + name);
             return success;
         }
         return success;
     }
 
-    public static void DumpObj(string name, string oname, object o) {        
+    public static void DumpObj(string name, string oname, object o) {
         Debug.Log(string.Format("{0} : {1}  : {2} ", name, oname, o));
     }
 
@@ -335,11 +335,11 @@ public class TestsData {
         string dataA = a.ToJson();
         string dataB = b.ToJson();
         bool equal = false;
-        if (dataA == dataB) {            
+        if (dataA == dataB) {
             equal = true;
             Debug.Log(name + ": SUCCESS :" + equal);
         }
-        else {       
+        else {
             Debug.LogError(name + ": FAIL :" + equal);
         }
 
@@ -362,11 +362,11 @@ public class TestsData {
     }
 
     public static bool TestGameDataObject_Sizes() {
-        
+
         bool success = true;
-        
+
         string name = "TestGameDataObject_Sizes";
-        
+
         Debug.Log(name);
 
         //
@@ -378,7 +378,7 @@ public class TestsData {
         DumpObj(name, "size1", size1);
 
         //
-                
+
         GameDataObject obj2 = new GameDataObject();
         obj2.action = "action";
         obj.data_list = new List<string>();
@@ -393,25 +393,25 @@ public class TestsData {
         DataObject obj3 = new DataObject();
 
         long size3 = obj3.GetObjectSize();
-        
+
         DumpObj(name, "size3", size3);
 
         //
-                
-        Dictionary<string,object> obj4 = new Dictionary<string, object>();
+
+        Dictionary<string, object> obj4 = new Dictionary<string, object>();
 
         long size4 = obj4.GetObjectSize();
-        
+
         DumpObj(name, "size4", size4);
-        
+
         //
 
 
-        
+
         TestSizeObject obj5 = new TestSizeObject();
 
         long size5 = obj5.GetObjectSize();
-        
+
         DumpObj(name, "size5", size5);
 
         //
@@ -422,7 +422,7 @@ public class TestsData {
         Debug.Log("TestGameDataObject_Sizes...");
 
         return success;
-        
+
     }
 
     public static void TestGameDataObject_Size_Generic(string name) {
@@ -430,7 +430,7 @@ public class TestsData {
         long stopBytes = 0;
 
         TestSizeObject testFoo;
-        
+
         long startBytes = System.GC.GetTotalMemory(true);
 
         testFoo = new TestSizeObject();
@@ -441,7 +441,7 @@ public class TestsData {
         GC.KeepAlive(testFoo); // This ensure a reference to object keeps object in memory
 
         long sizeTotal = ((long)(stopBytes - startBytes));///.ToString();
-                
+
         DumpObj(name, "sizeTotal", sizeTotal);
     }
 
@@ -450,105 +450,105 @@ public class TestsData {
     public static bool TestGameState_SyncProfile() {
 
         bool success = true;
-        
+
         string name = "TestGameState_SyncProfile";
-        
+
         Debug.Log(name);
-                
+
         GameState.SaveProfile();
-        
+
         string username = GameProfiles.Current.username;
         DumpObj(name, "username", username);
 
         //AssertEquals(name, username, "Player");
-                
+
         Debug.Log("Syncing START...");
 
         GameState.SyncProfile();
-        
+
         return success;
 
     }
-        
+
     public static bool TestGameLevels_Get_By_Id(string name, string code) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         GameLevel item = GameLevels.Instance.GetById(code);
         DumpObj(name, "item", item.ToJson());
-        
-        
-        if(item != null) {
-            Debug.Log("data:item:code:" +  item.code);
-            Debug.Log("data:item:display_name:" +  item.display_name);
+
+
+        if (item != null) {
+            Debug.Log("data:item:code:" + item.code);
+            Debug.Log("data:item:display_name:" + item.display_name);
             Debug.Log("data:item:description:" + item.description);
-            
+
             GameDataObjectItem dataItem = item.data;
 
-            if(dataItem != null) {        
-                Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
-                success = true;            
+            if (dataItem != null) {
+                Debug.Log("data:dataItem:json:" + dataItem.ToJson());
+                success = true;
             }
         }
 
-        return success;
-    }       
-    
-    public static bool TestGameLevels_Get(string name) {
-        
-        bool success = false;
-        
-        Debug.Log(name);
-        
-        List<GameLevel> items = GameLevels.Instance.GetAll();
-        DumpObj(name, "items", items.ToJson());
-                
-        foreach (GameLevel item in items) {
-            
-            Debug.Log("data:item:code:" +  item.code);
-            Debug.Log("data:item:display_name:" +  item.display_name);
-            Debug.Log("data:item:description:" + item.description);
-            
-            GameDataObjectItem dataItem = item.data;
-
-            if(dataItem != null)  {
-                Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
-                success = true;     
-            }
-        }
-         
-        
-        DumpObj(name, "items.Count", items.Count);
-        
         return success;
     }
 
-    
-    public static bool TestGameLevels_ChangeCurrent(string name) {
-        
+    public static bool TestGameLevels_Get(string name) {
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
+        List<GameLevel> items = GameLevels.Instance.GetAll();
+        DumpObj(name, "items", items.ToJson());
+
+        foreach (GameLevel item in items) {
+
+            Debug.Log("data:item:code:" + item.code);
+            Debug.Log("data:item:display_name:" + item.display_name);
+            Debug.Log("data:item:description:" + item.description);
+
+            GameDataObjectItem dataItem = item.data;
+
+            if (dataItem != null) {
+                Debug.Log("data:dataItem:json:" + dataItem.ToJson());
+                success = true;
+            }
+        }
+
+
+        DumpObj(name, "items.Count", items.Count);
+
+        return success;
+    }
+
+
+    public static bool TestGameLevels_ChangeCurrent(string name) {
+
+        bool success = false;
+
+        Debug.Log(name);
+
         GameLevel item1 = GameLevels.Instance.GetById("1-1");
-        GameLevel item2 = GameLevels.Instance.GetById("1-2");;
-        
+        GameLevel item2 = GameLevels.Instance.GetById("1-2"); ;
+
         DumpObj(name, "Current:item1:", item1.ToJson());
 
         GameLevels.Instance.ChangeCurrent(item2.code);
-                
-        DumpObj(name, "Current:item2:", item2.ToJson());        
-        
+
+        DumpObj(name, "Current:item2:", item2.ToJson());
+
         GameLevels.Instance.ChangeCurrent("1-1");
 
         item1 = GameLevels.Current;
-        
+
         DumpObj(name, "Current:item1:", item1.ToJson());
 
         success = true;
-        
+
         return success;
     }
 
@@ -556,23 +556,23 @@ public class TestsData {
 
     //TestGameProfileContentCollectItems_Get
 
-    
+
     public static bool TestGameProfileContentCollectItems_Get(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
 
         string missionCode = "mission-default-1";
         string actionUid = "910c4ce1-a073-48d8-8dda-9edc8d071405";
         string collectType = BaseDataObjectKeys.mission;
-        
+
         string keyItem = GameProfileModes.GetAppContentCollectItemKey(missionCode, actionUid);
-        
+
         AppStates.Instance.ChangeState(AppStateMeta.appStateGame);
         AppContentStates.Instance.ChangeState(AppContentStateMeta.appContentStateGameMissions);
         GameLevels.Instance.ChangeCurrent("1-1");
-        
+
         GameGameRuntimeData gameRuntimeData = new GameGameRuntimeData();
         gameRuntimeData.timeRemaining = 0;
 
@@ -595,160 +595,160 @@ public class TestsData {
         GameState.LoadProfile();
 
         // Fetch completed just scored.
-        
-        GameProfileContentCollectItem collectData = 
+
+        GameProfileContentCollectItem collectData =
             GameProfileModes.Current.GetContentCollectItem(
                 collectType, keyItem);
 
-        if(collectData == null) {
+        if (collectData == null) {
             return false;
         }
 
         DumpObj(name, "TestGameProfileContentCollectItems_Get:collectData:", collectData.ToJson());
 
         success = true;
-        
+
         return success;
     }
 
     // -----------------------------------------------------------------------------------
-    
+
     public static bool TestAppContentCollects_Get_Missions_By_World(string name, string code) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<AppContentCollect> items = AppContentCollects.GetMissionsByWorld(code);
         DumpObj(name, "items", items);
 
-        
+
         foreach (AppContentCollect item in items) {
-                        
-            Debug.Log("data:item:code:" +  item.display_name);
+
+            Debug.Log("data:item:code:" + item.display_name);
             Debug.Log("data:item:code:" + item.description);
-            
-            foreach (AppContentCollectItem dataItem in item.GetItemsData()) {                
-                
-                Debug.Log("data:dataItem:code:" + dataItem.code);         
-                Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
-                success = true;     
+
+            foreach (AppContentCollectItem dataItem in item.GetItemsData()) {
+
+                Debug.Log("data:dataItem:code:" + dataItem.code);
+                Debug.Log("data:dataItem:json:" + dataItem.ToJson());
+                success = true;
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
 
 
-            
+
     public static bool TestAppContentCollects_Get_Missions(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<AppContentCollect> items = AppContentCollects.GetMissions();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentCollect item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (AppContentCollect item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             List<AppContentCollectItem> data = item.data.data;
-            
+
             if (data != null) {
-                
+
                 foreach (AppContentCollectItem dataItem in data) {
-                                        
-                    Debug.Log("data:dataItem:code:" + dataItem.code);         
-                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
-                    success = true;                      
-                                       
-                    
-                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
+
+                    Debug.Log("data:dataItem:code:" + dataItem.code);
+                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());
+                    success = true;
+
+
+                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());
                 }
-                
+
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
 
     public static bool TestAppContentCollects_Get(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<AppContentCollect> items = AppContentCollects.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentCollect item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (AppContentCollect item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             List<AppContentCollectItem> data = item.data.data;
-            
+
             if (data != null) {
 
                 foreach (AppContentCollectItem dataItem in data) {
 
-                    Debug.Log("data:dataItem:code:" + dataItem.code);         
-                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());   
-                    success = true;                      
+                    Debug.Log("data:dataItem:code:" + dataItem.code);
+                    Debug.Log("data:dataItem:json:" + dataItem.ToJson());
+                    success = true;
 
                 }
 
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
 
     //
 
     public static bool TestGameProfile_NetworkTypes_Data(string name, string networkType) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
-        
+
+
         GameProfileNetworkItems gameProfileNetworks = null;
 
         gameProfileNetworks = GameProfiles.Current.GetNetworks();
-        
+
         DumpObj(name, "networkType:", networkType);
-        
+
         DumpObj(name, "gameProfileNetworks:1:", gameProfileNetworks.ToJson());
-                
+
         GameProfiles.Current.SetNetworkValueUsername(networkType, "drawlabs_play");
         GameProfiles.Current.SetNetworkValueId(networkType, "drawlabs_play_id");
         GameProfiles.Current.SetNetworkValueType(networkType, networkType);
 
         //
-        
+
         gameProfileNetworks = GameProfiles.Current.GetNetworks();
-        
+
         DumpObj(name, "gameProfileNetworks:2:", gameProfileNetworks.ToJson());
 
         //
 
 #if USE_GAME_LIB_GAMEVERSES
         bool isLoggedInNetwork = GameCommunity.IsLoggedIn(networkType);
-        
+
         DumpObj(name, "isLoggedInNetwork:", isLoggedInNetwork);
 #endif
 
@@ -756,39 +756,39 @@ public class TestsData {
 
 
         success = true;
-                                                     
+
         return success;
     }
 
     public static bool TestGameProfile_NetworkTypes(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
 
 
         GameProfileNetworkItems gameProfileNetworks = GameProfiles.Current.GetNetworks();
-        
+
         DumpObj(name, "gameProfileNetworks", gameProfileNetworks.ToJson());
 
         success = true;
-        
+
         return success;
     }
 
     public static bool TestAnimationEasing_ValueIncrement(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         AnimationEasing.EaseAdd(
-            "tester", 
-            AnimationEasing.Equations.QuadEaseInOut, 
-            1, 
-            1, 
-            2, 
-            .5, 
+            "tester",
+            AnimationEasing.Equations.QuadEaseInOut,
+            1,
+            1,
+            2,
+            .5,
             .1
         );
 
@@ -798,145 +798,145 @@ public class TestsData {
     }
 
     public static bool TestAnimationEasing_ValueDecrement(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         AnimationEasing.EaseAdd(
-            "tester", 
-            AnimationEasing.Equations.QuadEaseInOut, 
-            1, 
-            1, 
-            0, 
-            .5, 
+            "tester",
+            AnimationEasing.Equations.QuadEaseInOut,
+            1,
+            1,
+            0,
+            .5,
             .1
         );
-        
+
         success = true;
-        
+
         return success;
     }
 
     public static bool TestGameLocalization_Code(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         GameLocalization item = GameLocalizations.Instance.GetByCode("en");
-        
+
         if (item != null) {
-            
+
             Debug.Log("item:code:" + item.code);
             Debug.Log("item:data:" + item.data.ToJson());
-            
+
             success = true;
-            
+
         }
         else {
-            
+
             Debug.Log("code:NOT FOUND:");
         }
-        
+
         return success;
     }
 
     public static bool TestGameLocalization_Get(string name, string locale, string code) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name + " : " + code);
-        
+
         string val = GameLocalizations.GetString(locale, code);
-        
+
         if (val != null) {
-            
+
             Debug.Log("val:code:" + val);
-            
+
             success = true;
-            
+
         }
         else {
-            
+
             Debug.Log("item:NOT FOUND:");
         }
-        
+
         return success;
     }
 
     public static bool TestLoco_Get(string name, string locale, string code) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name + " : " + code);
-        
+
         string val = Locos.Get(locale, code);
-        
+
         if (val != null) {
-            
+
             Debug.Log("val:code:" + val);
-            
+
             success = true;
-            
+
         }
         else {
-            
+
             Debug.Log("item:NOT FOUND:");
         }
-        
+
         return success;
     }
-    
+
     public static bool TestGameLocalization_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameLocalization> items = GameLocalizations.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameLocalization item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameLocalization item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameLocalizationData data = item.data;
-            
+
             if (data != null) {
 
                 if (data.strings != null) {
 
-                    foreach (KeyValuePair<string,GameLocalizationDataItem> dataItem in data.strings) {   
-                        Debug.Log("strings:dataItem:code:" + dataItem.Value.code);         
-                        Debug.Log("strings:dataItem:json:" + dataItem.Value.ToJson());   
-                        success = true;                      
+                    foreach (KeyValuePair<string, GameLocalizationDataItem> dataItem in data.strings) {
+                        Debug.Log("strings:dataItem:code:" + dataItem.Value.code);
+                        Debug.Log("strings:dataItem:json:" + dataItem.Value.ToJson());
+                        success = true;
                     }
                 }
 
                 if (data.images != null) {
 
-                    foreach (KeyValuePair<string,GameLocalizationDataItem> dataItem in data.images) {   
-                        Debug.Log("images:dataItem:code:" + dataItem.Value.code);         
-                        Debug.Log("images:dataItem:json:" + dataItem.Value.ToJson());   
-                        success = true;                          
+                    foreach (KeyValuePair<string, GameLocalizationDataItem> dataItem in data.images) {
+                        Debug.Log("images:dataItem:code:" + dataItem.Value.code);
+                        Debug.Log("images:dataItem:json:" + dataItem.Value.ToJson());
+                        success = true;
                     }
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameStateProfileSync(string name) {
-        
+
         bool success = true;
-        
+
         Debug.Log(name);
 
         GameProfiles.Current.SetAttributeStringValue("tester", "test1");
@@ -946,392 +946,392 @@ public class TestsData {
         GameState.SyncProfile();
 
         //success = AssertEquals(name, dataDecrypted, data);
-        
+
         return success;
     }
 
     public static bool TestEncrypt(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         string data = "ryan";//This is a test of the data system!";
-        
-        Debug.Log("item:data:" + data); 
-        
+
+        Debug.Log("item:data:" + data);
+
         string dataEncrypted = data.ToEncrypted();
-        
-        Debug.Log("item:dataEncrypted:" + dataEncrypted); 
-        
+
+        Debug.Log("item:dataEncrypted:" + dataEncrypted);
+
         string dataDecrypted = dataEncrypted.ToDecrypted();
-        
-        Debug.Log("item:dataDecrypted:" + dataDecrypted);      
-        
+
+        Debug.Log("item:dataDecrypted:" + dataDecrypted);
+
         success = AssertEquals(name, dataDecrypted, data);
-        
+
         return success;
     }
-        
+
     public static bool TestCompress(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
 
         string data = "ryan";//"This is a test of the data system!";
-        
-        Debug.Log("item:data:" + data); 
+
+        Debug.Log("item:data:" + data);
 
         string dataCompressed = data.ToCompressed();
 
-        Debug.Log("item:dataCompressed:" + dataCompressed); 
+        Debug.Log("item:dataCompressed:" + dataCompressed);
 
         string dataUncompressed = dataCompressed.ToDecompressed();
-        
-        Debug.Log("item:dataUncompressed:" + dataUncompressed); 
-        
+
+        Debug.Log("item:dataUncompressed:" + dataUncompressed);
+
         string dataCompressedUn64 = dataCompressed.FromBase64();
-        
-        Debug.Log("item:dataCompressedUn64:" + dataCompressedUn64); 
+
+        Debug.Log("item:dataCompressedUn64:" + dataCompressedUn64);
 
 
         success = AssertEquals(name, dataUncompressed, data);
-                        
+
         return success;
     }
 
     public static bool TestBase64(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         string data = "ryan";//"This is a test of the data system!";
-        
+
         string data64 = data.ToBase64();
-        
-        Debug.Log("item:data64:" + data64); 
-        
+
+        Debug.Log("item:data64:" + data64);
+
         string dataPlain = data.FromBase64();
-        
-        Debug.Log("item:dataPlain:" + dataPlain); 
-        
+
+        Debug.Log("item:dataPlain:" + dataPlain);
+
         success = AssertEquals(name, data, dataPlain);
-        
+
         return success;
     }
-    
+
     public static bool TestGameCharacterAnimations_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameCharacter> items = GameCharacters.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameCharacter item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameCharacter item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameDataObjectItem data = item.data;
-            
+
             if (data != null) {
 
-                GameDataAnimation attackItem = data.GetAnimationByType(GameDataActionKeys.attack);    
-                Debug.Log("attackItem:json:" + attackItem.ToJson()); 
-                
-                GameDataAnimation runItem = data.GetAnimationByType(GameDataActionKeys.run);    
-                Debug.Log("runItem:json:" + runItem.ToJson()); 
-                
-                foreach (GameDataAnimation dataItem in data.animations) {          
-                    Debug.Log("dataItem:code:" + dataItem.code);         
-                    Debug.Log("dataItem:json:" + dataItem.ToJson());   
-                    success = true;                    
+                GameDataAnimation attackItem = data.GetAnimationByType(GameDataActionKeys.attack);
+                Debug.Log("attackItem:json:" + attackItem.ToJson());
+
+                GameDataAnimation runItem = data.GetAnimationByType(GameDataActionKeys.run);
+                Debug.Log("runItem:json:" + runItem.ToJson());
+
+                foreach (GameDataAnimation dataItem in data.animations) {
+                    Debug.Log("dataItem:code:" + dataItem.code);
+                    Debug.Log("dataItem:json:" + dataItem.ToJson());
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameCharacterPresets_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameCharacterPreset> items = GameCharacterPresets.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameCharacterPreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameCharacterPreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameCharacterPresetItems data = item.data;
-            
+
             if (data != null) {
-                
-                foreach (GameCharacterPresetItem preset in data.items) {          
-                    Debug.Log("preset:code:" + preset.code);         
+
+                foreach (GameCharacterPresetItem preset in data.items) {
+                    Debug.Log("preset:code:" + preset.code);
                     Debug.Log("preset:json:" + preset.ToJson());
-                    success = true;                    
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
 
     public static bool TestGameLeaderboards_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameLeaderboard> items = GameLeaderboards.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameLeaderboard item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameLeaderboard item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameLeaderboardData data = item.data;
-            
+
             if (data != null) {
-                
-                foreach (GameNetworkData dataItem in data.networks) {          
-                    Debug.Log("dataItem:code:" + dataItem.code);         
+
+                foreach (GameNetworkData dataItem in data.networks) {
+                    Debug.Log("dataItem:code:" + dataItem.code);
                     Debug.Log("dataItem:json:" + dataItem.ToJson());
-                    success = true;                    
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameAchievements_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameAchievement> items = GameAchievements.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameAchievement item in items) {  
-            
-            Debug.Log("item:code:" + item.code);    
-            Debug.Log("item:display_name:" + item.display_name);    
-            Debug.Log("item:description:" + item.description);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameAchievement item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:display_name:" + item.display_name);
+            Debug.Log("item:description:" + item.description);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameAchievementData data = item.data;
-            
+
             if (data != null) {
-                
-                foreach (GameNetworkData dataItem in data.networks) {          
-                    Debug.Log("dataItem:code:" + dataItem.code);         
+
+                foreach (GameNetworkData dataItem in data.networks) {
+                    Debug.Log("dataItem:code:" + dataItem.code);
                     Debug.Log("dataItem:json:" + dataItem.ToJson());
-                    success = true;                    
+                    success = true;
                 }
-                                
-                foreach (GameFilter dataItem in data.filters) {          
-                    Debug.Log("dataItem:type:" + dataItem.type);            
-                    Debug.Log("dataItem:data:" + dataItem.data);       
+
+                foreach (GameFilter dataItem in data.filters) {
+                    Debug.Log("dataItem:type:" + dataItem.type);
+                    Debug.Log("dataItem:data:" + dataItem.data);
                     Debug.Log("dataItem:json:" + dataItem.ToJson());
 
-                    success = true;                    
+                    success = true;
                 }
             }
 
-            List<GameFilterBase> statisticSingles = item.GetFilterStatisticSingle();        
+            List<GameFilterBase> statisticSingles = item.GetFilterStatisticSingle();
             Debug.Log("item:statisticSingles:" + statisticSingles);
-                        
-            List<GameFilterBase> statisticAll = item.GetFilterStatisticAll();        
+
+            List<GameFilterBase> statisticAll = item.GetFilterStatisticAll();
             Debug.Log("item:statisticAll:" + statisticAll);
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-        
+
     public static bool TestGameStatistics_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameStatistic> items = GameStatistics.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameStatistic item in items) {  
-            
-            Debug.Log("item:code:" + item.code);    
-            Debug.Log("item:display_name:" + item.display_name);    
-            Debug.Log("item:description:" + item.description);               
-            Debug.Log("item:json:" + item.ToJson());  
-            success = true;                    
+
+        foreach (GameStatistic item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:display_name:" + item.display_name);
+            Debug.Log("item:description:" + item.description);
+            Debug.Log("item:json:" + item.ToJson());
+            success = true;
 
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGamePresets_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GamePreset> items = GamePresets.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GamePreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GamePreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GamePresetItems<GamePresetItem> data = item.data;
-            
+
             if (data != null) {
-                
-                foreach (GamePresetItem preset in data.items) {          
-                    Debug.Log("preset:code:" + preset.code);         
+
+                foreach (GamePresetItem preset in data.items) {
+                    Debug.Log("preset:code:" + preset.code);
                     Debug.Log("preset:json:" + preset.ToJson());
-                    success = true;                    
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameTerrainPresets_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GamePreset> items = GamePresets.Instance.GetListByType("terrain");
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GamePreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GamePreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GamePresetItems<GamePresetItem> data = item.data;
-            
+
             if (data != null) {
-                
-                foreach (GamePresetItem preset in data.items) {          
-                    Debug.Log("preset:code:" + preset.code);         
+
+                foreach (GamePresetItem preset in data.items) {
+                    Debug.Log("preset:code:" + preset.code);
                     Debug.Log("preset:json:" + preset.ToJson());
-                    success = true;                    
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
 
     public static bool TestGameItemPresets_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameItemPreset> items = GameItemPresets.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameItemPreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameItemPreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameItemPresetItems data = item.data;
 
             if (data != null) {
 
-                foreach (GameItemPresetItem preset in data.items) {          
-                    Debug.Log("preset:code:" + preset.code);         
+                foreach (GameItemPresetItem preset in data.items) {
+                    Debug.Log("preset:code:" + preset.code);
                     Debug.Log("preset:json:" + preset.ToJson());
-                    success = true;                    
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameItems_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameItem> items = GameItems.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameItem item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameItem item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameDataObjectItem data = item.data;
-            
+
             if (data != null) {
-                foreach (GameDataModel dataItem in data.models) {                    
+                foreach (GameDataModel dataItem in data.models) {
                     Debug.Log("dataItem:models:code:" + dataItem.code);
                     success = true;
                 }
-                
-                foreach (string dataItem in data.roles) {                    
+
+                foreach (string dataItem in data.roles) {
                     Debug.Log("dataItem:roles:code:" + dataItem);
                     success = true;
                 }
-                
-                foreach (GameDataItemRPG dataItem in data.rpgs) {                    
-                    Debug.Log("dataItem:rpgs:code:" + dataItem.code);        
+
+                foreach (GameDataItemRPG dataItem in data.rpgs) {
+                    Debug.Log("dataItem:rpgs:code:" + dataItem.code);
                     Debug.Log("dataItem:rpgs:attack:" + dataItem.attack);
                     Debug.Log("dataItem:rpgs:attack:" + dataItem.attack_speed);
                     Debug.Log("dataItem:rpgs:boost:" + dataItem.boost);
@@ -1346,51 +1346,51 @@ public class TestsData {
                     Debug.Log("dataItem:rpgs:xp:" + dataItem.upgrades_applied);
                     Debug.Log("dataItem:rpgs:xp:" + dataItem.xp);
                     success = true;
-                }                
-                
-                foreach (GameDataItemReward dataItem in data.rewards) {                    
+                }
+
+                foreach (GameDataItemReward dataItem in data.rewards) {
                     Debug.Log("dataItem:rewards:code:" + dataItem.ToJson());
                     success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameWeapons_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameWeapon> items = GameWeapons.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameWeapon item in items) {  
-            
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+        foreach (GameWeapon item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameDataObjectItem data = item.data;
-            
+
             if (data != null) {
-                foreach (GameDataModel dataItem in data.models) {                    
+                foreach (GameDataModel dataItem in data.models) {
                     Debug.Log("dataItem:models:code:" + dataItem.code);
                     success = true;
                 }
-                
-                foreach (string dataItem in data.roles) {                    
+
+                foreach (string dataItem in data.roles) {
                     Debug.Log("dataItem:roles:code:" + dataItem);
                     success = true;
                 }
-                
-                foreach (GameDataItemRPG dataItem in data.rpgs) {                    
-                    Debug.Log("dataItem:rpgs:code:" + dataItem.code);        
+
+                foreach (GameDataItemRPG dataItem in data.rpgs) {
+                    Debug.Log("dataItem:rpgs:code:" + dataItem.code);
                     Debug.Log("dataItem:rpgs:attack:" + dataItem.attack);
                     Debug.Log("dataItem:rpgs:attack:" + dataItem.attack_speed);
                     Debug.Log("dataItem:rpgs:boost:" + dataItem.boost);
@@ -1408,66 +1408,66 @@ public class TestsData {
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-    
+
     public static bool TestGameTeams_List(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         List<GameTeam> items = GameTeams.Instance.GetAll();
         DumpObj(name, "items", items);
-        
-        //AssertEquals(name, username, "Player");
-        
-        foreach (GameTeam item in items) {  
 
-            Debug.Log("item:code:" + item.code);               
-            Debug.Log("item:json:" + item.ToJson());  
-            
+        //AssertEquals(name, username, "Player");
+
+        foreach (GameTeam item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:json:" + item.ToJson());
+
             GameDataObjectItem data = item.data;
-            
+
             if (data != null) {
-                foreach (GameDataModel dataItem in data.models) {                    
+                foreach (GameDataModel dataItem in data.models) {
                     Debug.Log("dataItem:models:code:" + dataItem.code);
                     success = true;
                 }
-                
-                foreach (GameDataColorPreset dataItem in data.color_presets) {                    
+
+                foreach (GameDataColorPreset dataItem in data.color_presets) {
                     Debug.Log("dataItem:color_presets:code:" + dataItem.code);
                     success = true;
                 }
-                
-                foreach (GameDataTexturePreset dataItem in data.texture_presets) {                    
+
+                foreach (GameDataTexturePreset dataItem in data.texture_presets) {
                     Debug.Log("dataItem:texture_presets:code:" + dataItem.code);
                     success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
-        
+
         return success;
     }
-        
+
     public static bool TestGameProfileCharacter_currentCustom(string name) {
-        
+
         bool success = false;
-        
+
         Debug.Log(name);
-        
+
         //string characterCode = "default";
-        
+
         GameProfileCustomItem customItem = GameProfileCharacters.currentCustom;
-        
-        
+
+
         if (customItem == null) {
-            
+
             DumpObj(name, "customItem:NULL", customItem);
         }
         else {
@@ -1475,143 +1475,143 @@ public class TestsData {
             success = true;
 
             DumpObj(name, "customItem:EXISTS", customItem);
-            
+
             DumpObj(name, "customItem:attributes", customItem.attributes.ToJson());
             DumpObj(name, "customItem:current_color_preset", customItem.current_color_preset);
             DumpObj(name, "customItem:current_texture_preset", customItem.current_texture_preset);
         }
-        
+
         DumpObj(name, "customItem", customItem);
-        
+
         return success;
     }
-    
+
     public static bool TestAppAssetTextures_List(string name) {
-        
+
         bool success = false;
 
         Debug.Log(name);
-        
+
         List<AppContentAssetTexture> items = AppContentAssetTextures.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetTexture item in items) {  
-            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppContentAssetTexture item in items) {
+
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:type:" + item.type);
-            
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+            Debug.Log("item:json:" + item.ToJson());
+
             Dictionary<string, string> data = item.data;
-            
+
             if (data != null) {
-                foreach (KeyValuePair<string, string> pair in data) {                    
-                    Debug.Log("pair:Key:" + pair.Key);
-                    Debug.Log("pair:Value:" + pair.Value);    
-                    success = true;
-                }
-            }
-        }
-        
-        DumpObj(name, "items.Count", items.Count);
-
-        return success;
-    }
-        
-    public static bool TestAppAssetTexturePresets_List(string name) {
-
-        bool success = false;
-
-        Debug.Log(name);
-        
-        List<AppContentAssetTexturePreset> items = AppContentAssetTexturePresets.Instance.GetAll();
-        DumpObj(name, "items", items);
-        
-        //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetTexturePreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);         
-            Debug.Log("item:type:" + item.type);
-            
-            Debug.Log("item:json:" + item.ToJson());  
-            
-            Dictionary<string, string> data = item.data;
-            
-            if (data != null) {
-                foreach (KeyValuePair<string, string> pair in data) {                    
+                foreach (KeyValuePair<string, string> pair in data) {
                     Debug.Log("pair:Key:" + pair.Key);
                     Debug.Log("pair:Value:" + pair.Value);
                     success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
 
         return success;
     }
-        
-    public static bool TestAppColorPresets_List(string name) {
+
+    public static bool TestAppAssetTexturePresets_List(string name) {
 
         bool success = false;
-        
+
         Debug.Log(name);
-        
-        List<AppColorPreset> items = AppColorPresets.Instance.GetAll();
+
+        List<AppContentAssetTexturePreset> items = AppContentAssetTexturePresets.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppColorPreset item in items) {  
-            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppContentAssetTexturePreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:type:" + item.type);
-            
-            Debug.Log("item:json:" + item.ToJson());  
-            
+
+            Debug.Log("item:json:" + item.ToJson());
+
             Dictionary<string, string> data = item.data;
-            
+
             if (data != null) {
-                foreach (KeyValuePair<string, string> pair in data) { 
-                    success = true;
+                foreach (KeyValuePair<string, string> pair in data) {
                     Debug.Log("pair:Key:" + pair.Key);
-                    Debug.Log("pair:Value:" + pair.Value);                    
+                    Debug.Log("pair:Value:" + pair.Value);
+                    success = true;
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
 
         return success;
     }
-    
-    public static void TestGameCharacters_List() {
-        
-        string name = "TestGameCharacters_List";
-        
+
+    public static bool TestAppColorPresets_List(string name) {
+
+        bool success = false;
+
         Debug.Log(name);
-        
-        List<GameCharacter> items = GameCharacters.Instance.GetAll();
+
+        List<AppColorPreset> items = AppColorPresets.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (GameCharacter item in items) {  
-            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppColorPreset item in items) {
+
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:type:" + item.type);
 
-            Debug.Log("item:json:" + item.ToJson());  
+            Debug.Log("item:json:" + item.ToJson());
+
+            Dictionary<string, string> data = item.data;
+
+            if (data != null) {
+                foreach (KeyValuePair<string, string> pair in data) {
+                    success = true;
+                    Debug.Log("pair:Key:" + pair.Key);
+                    Debug.Log("pair:Value:" + pair.Value);
+                }
+            }
+        }
+
+        DumpObj(name, "items.Count", items.Count);
+
+        return success;
+    }
+
+    public static void TestGameCharacters_List() {
+
+        string name = "TestGameCharacters_List";
+
+        Debug.Log(name);
+
+        List<GameCharacter> items = GameCharacters.Instance.GetAll();
+        DumpObj(name, "items", items);
+
+        //AssertEquals(name, username, "Player");
+
+        foreach (GameCharacter item in items) {
+
+            Debug.Log("item:code:" + item.code);
+            Debug.Log("item:type:" + item.type);
+
+            Debug.Log("item:json:" + item.ToJson());
 
             GameDataObjectItem data = item.data;
 
             if (data != null) {
                 foreach (GameDataModel model in data.models) {
                     string modelCode = model.code;
-                    
+
                     Debug.Log("model:code:" + model.code);
                     Debug.Log("model:type:" + model.type);
                     Debug.Log("model:textures:" + model.textures);
@@ -1633,110 +1633,110 @@ public class TestsData {
             }
             break;
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
     }
-    
+
     public static void TestGameCharacters_Load() {
-        
+
         string name = "TestGameCharacters_Load";
-        
+
         Debug.Log(name);
-        
+
         List<AppContentAssetModel> items = AppContentAssetModels.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetModel item in items) {            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppContentAssetModel item in items) {
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:display_name:" + item.display_name);
-            
+
             Debug.Log("item:json:" + item.ToJson());
-            
-            if (item.custom_materials != null) {         
-                
+
+            if (item.custom_materials != null) {
+
                 Debug.Log("item.data.custom_materials.Count:" + item.custom_materials.Count);
-                
-                foreach (AppContentAssetCustomItemProperty prop 
+
+                foreach (AppContentAssetCustomItemProperty prop
                         in item.custom_materials) {
-                    
-                    Debug.Log("prop:code:" + prop.code);  
-                    Debug.Log("prop:name:" + prop.name); 
+
+                    Debug.Log("prop:code:" + prop.code);
+                    Debug.Log("prop:name:" + prop.name);
                     foreach (string type in prop.types) {
                         Debug.Log("prop:type:s:" + type);
                     }
                 }
             }
-            else {                
+            else {
                 Debug.Log("data was NULL" + item.ToJson());
             }
-            
+
             AppContentAssetCustomItem customItem = item.GetCustomItems();
-            
+
             Debug.Log("customItem:json:" + customItem.ToJson());
-            
+
             if (customItem != null) {
                 if (customItem.properties != null) {
                     foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                        Debug.Log("prop:code:" + prop.code); 
+                        Debug.Log("prop:code:" + prop.code);
                     }
                 }
             }
-            
+
             item.LoadModel();
-            
+
             break;
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
     }
 
     //
-    
+
     public static void TestAppContentAssetModels_Load() {
-        
+
         string name = "TestAppContentAssetModels_Load";
-        
+
         Debug.Log(name);
 
         List<AppContentAssetModel> items = AppContentAssetModels.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetModel item in items) {            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppContentAssetModel item in items) {
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:display_name:" + item.display_name);
-            
+
             Debug.Log("item:json:" + item.ToJson());
-            
-            if (item.custom_materials != null) {         
-                
+
+            if (item.custom_materials != null) {
+
                 Debug.Log("item.data.custom_materials.Count:" + item.custom_materials.Count);
-                
-                foreach (AppContentAssetCustomItemProperty prop 
+
+                foreach (AppContentAssetCustomItemProperty prop
                         in item.custom_materials) {
-                    
-                    Debug.Log("prop:code:" + prop.code);  
-                    Debug.Log("prop:name:" + prop.name); 
+
+                    Debug.Log("prop:code:" + prop.code);
+                    Debug.Log("prop:name:" + prop.name);
                     foreach (string type in prop.types) {
                         Debug.Log("prop:type:s:" + type);
                     }
                 }
             }
-            else {                
+            else {
                 Debug.Log("data was NULL" + item.ToJson());
             }
-            
+
             AppContentAssetCustomItem customItem = item.GetCustomItems();
-            
+
             Debug.Log("customItem:json:" + customItem.ToJson());
-            
+
             if (customItem != null) {
                 if (customItem.properties != null) {
                     foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                        Debug.Log("prop:code:" + prop.code); 
+                        Debug.Log("prop:code:" + prop.code);
                     }
                 }
             }
@@ -1745,128 +1745,128 @@ public class TestsData {
 
             break;
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
     }
 
     public static void TestAppContentAssetCustomItems_List() {
-        
+
         string name = "TestAppContentAssetCustomItems_List";
-        
+
         Debug.Log(name);
-        
+
         List<AppContentAssetCustomItem> items = AppContentAssetCustomItems.Instance.GetAll();
         DumpObj(name, "items", items);
-        
-        //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetCustomItem item in items) {  
 
-            Debug.Log("item:code:" + item.code);         
+        //AssertEquals(name, username, "Player");
+
+        foreach (AppContentAssetCustomItem item in items) {
+
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:type:" + item.type);
 
-            if (item.properties != null) {         
-                
+            if (item.properties != null) {
+
                 Debug.Log("item.data.properties.Count:" + item.properties.Count);
 
-                foreach (AppContentAssetCustomItemProperty prop 
+                foreach (AppContentAssetCustomItemProperty prop
                         in item.properties) {
-                    
-                    Debug.Log("prop:code:" + prop.code);  
+
+                    Debug.Log("prop:code:" + prop.code);
                     foreach (string type in prop.types) {
                         Debug.Log("prop:type:s:" + type);
                     }
                 }
             }
-            else {                
+            else {
                 Debug.Log("data was NULL" + item.ToJson());
             }
 
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
     }
 
     //
-    
+
     public static void TestAppContentAssetModels_List() {
-        
+
         string name = "TestAppContentAssetModels_List";
-        
+
         Debug.Log(name);
-        
+
         List<AppContentAssetModel> items = AppContentAssetModels.Instance.GetAll();
         DumpObj(name, "items", items);
-        
+
         //AssertEquals(name, username, "Player");
-        
-        foreach (AppContentAssetModel item in items) {            
-            Debug.Log("item:code:" + item.code);         
+
+        foreach (AppContentAssetModel item in items) {
+            Debug.Log("item:code:" + item.code);
             Debug.Log("item:display_name:" + item.display_name);
-            
+
             Debug.Log("item:json:" + item.ToJson());
 
-            if (item.custom_materials != null) {         
-                
+            if (item.custom_materials != null) {
+
                 Debug.Log("item.data.custom_materials.Count:" + item.custom_materials.Count);
-                
-                foreach (AppContentAssetCustomItemProperty prop 
+
+                foreach (AppContentAssetCustomItemProperty prop
                         in item.custom_materials) {
-                    
-                    Debug.Log("prop:code:" + prop.code);  
-                    Debug.Log("prop:name:" + prop.name); 
+
+                    Debug.Log("prop:code:" + prop.code);
+                    Debug.Log("prop:name:" + prop.name);
                     foreach (string type in prop.types) {
                         Debug.Log("prop:type:s:" + type);
                     }
                 }
             }
-            else {                
+            else {
                 Debug.Log("data was NULL" + item.ToJson());
             }
 
             AppContentAssetCustomItem customItem = item.GetCustomItems();
-            
+
             Debug.Log("customItem:json:" + customItem.ToJson());
 
             if (customItem != null) {
                 if (customItem.properties != null) {
                     foreach (AppContentAssetCustomItemProperty prop in customItem.properties) {
-                        Debug.Log("prop:code:" + prop.code); 
+                        Debug.Log("prop:code:" + prop.code);
                     }
                 }
             }
         }
-        
+
         DumpObj(name, "items.Count", items.Count);
     }
-    
+
     public static void TestAppColors_List(string name) {
-                
+
         Debug.Log(name);
-        
+
         List<AppColor> colors = AppColors.Instance.GetAll();
 
         foreach (AppColor color in colors) {
             Color colorTo = ColorHelper.FromRGB(color.color.rgba);
-            
+
             Debug.Log("color:code:" + color.code);
-            
+
             Debug.Log("color:color:" + colorTo);
         }
-                
+
         DumpObj(name, "colors.Count", colors.Count);
     }
-    
+
     public static bool TestAppColors_Code(string name) {
-        
+
         bool success = false;
 
         Debug.Log(name);
-        
+
         AppColor color = AppColors.Instance.GetByCode("game-college-ucf-knights-gold");
 
         if (color != null) {
-        
+
             Debug.Log("color:color:" + color.code);
             Debug.Log("color:color:" + color.GetColor());
 
@@ -1874,7 +1874,7 @@ public class TestsData {
 
         }
         else {
-            
+
             Debug.Log("color:NOT FOUND:");
         }
 
@@ -1882,9 +1882,9 @@ public class TestsData {
     }
 
     public static void TestGameState_LoadProfile() {
-        
+
         string name = "TestGameState_LoadProfile";
-        
+
         Debug.Log(name);
 
         GameState.LoadProfile();
@@ -1896,43 +1896,43 @@ public class TestsData {
     }
 
     public static void TestGameState_SaveProfile() {
-        
+
         string name = "TestGameState_SaveProfile";
-        
+
         Debug.Log(name);
-        
+
         GameState.SaveProfile();
-        
+
         string username = GameProfiles.Current.username;
         DumpObj(name, "username", username);
-        
+
         AssertEquals(name, username, "Player");
     }
-    
+
     public static void TestGameProfileCharacter_GetCharacter() {
-        
+
         string name = "TestGameProfileCharacter_GetCharacter";
-        
+
         Debug.Log(name);
 
         string characterCode = "default";
-                
+
         GameProfileCharacterItem characterItem = GameProfileCharacters.Current.GetCharacter(characterCode);
 
 
         if (characterItem == null) {
-            
+
             DumpObj(name, "characterItem:NULL", characterItem);
         }
         else {
-            
+
             DumpObj(name, "characterItem:EXISTS", characterItem);
-            
+
             DumpObj(name, "characterItem:characterCode", characterItem.characterCode);
             //DumpObj(name, "characterItem:characterCostumeCode", characterItem.characterCostumeCode);
             DumpObj(name, "characterItem:code", characterItem.code);
 
-            DumpObj(name, "characterItem:characterCode.profileRPGItem.GetAttack()", 
+            DumpObj(name, "characterItem:characterCode.profileRPGItem.GetAttack()",
                     characterItem.profileRPGItem.GetAttack());
         }
 
@@ -1940,13 +1940,13 @@ public class TestsData {
 
         //Debug.Break();
     }
-    
+
     public static void TestGameProfileCharacter_GetCurrentCharacter() {
-        
+
         string name = "TestGameProfileCharacter_GetCurrentCharacter";
-        
+
         Debug.Log(name);
-        
+
         //string characterCode = "default";
 
         GameProfileCharacterItem item = GameProfileCharacters.Current.GetCurrentCharacter();
@@ -1956,85 +1956,85 @@ public class TestsData {
         d.code = "ddd";
         item.SetAttribute(d);
 
-        
+
         DataAttribute a = new DataAttribute();
         a.code = "aaa";
         item.SetAttribute(a);
-                
+
         if (item == null) {
-            
+
             DumpObj(name, "item:NULL", item);
         }
         else {
-            
+
             DumpObj(name, "item:EXISTS", item.ToJson());
-            
+
             DumpObj(name, "item:characterCode", item.characterCode);
             //DumpObj(name, "item:characterCostumeCode", item.characterCostumeCode);
             DumpObj(name, "item:code", item.code);
-            
+
             //DumpObj(name, "characterItem:characterCode.profileCustomItem.code", 
             //        characterItem.profileCustomItem.code);
             //DumpObj(name, "characterItem:characterCode.profileRPGItem.GetAttack()", 
             //        characterItem.profileRPGItem.GetAttack());
         }
-        
+
         DumpObj(name, "item", item);
-        
+
         //Debug.Break();        
     }
-    
+
     public static void TestGameProfileCharacter_currentCharacter() {
-        
+
         string name = "TestGameProfileCharacter_currentCharacter";
-        
+
         Debug.Log(name);
-        
+
         //string characterCode = "default";
-        
+
         GameProfileCharacterItem characterItem = GameProfileCharacters.currentCharacter;
-        
-        
+
+
         if (characterItem == null) {
-            
+
             DumpObj(name, "characterItem:NULL", characterItem);
         }
         else {
-            
+
             DumpObj(name, "characterItem:EXISTS", characterItem);
-            
+
             DumpObj(name, "characterItem:characterCode", characterItem.characterCode);
             //DumpObj(name, "characterItem:characterCostumeCode", characterItem.characterCostumeCode);
             DumpObj(name, "characterItem:code", characterItem.code);
-            
+
             //DumpObj(name, "characterItem:characterCode.profileCustomItem.code", 
             //        characterItem.profileCustomItem.code);
             //DumpObj(name, "characterItem:characterCode.profileRPGItem.GetAttack()", 
             //        characterItem.profileRPGItem.GetAttack());
         }
-        
+
         DumpObj(name, "characterItem", characterItem);
-        
+
         //Debug.Break();        
     }
-    
+
     public static void TestGameProfileCharacter_currentProgress() {
-        
+
         string name = "TestGameProfileCharacter_currentCharacter";
-        
+
         Debug.Log(name);
-        
+
         string characterCode = "default";
-        
+
         GameProfilePlayerProgressItem item = GameProfileCharacters.currentProgress;
-        
-        
+
+
         if (item == null) {
-            
+
             DumpObj(name, "item:NULL", item);
         }
         else {
-            
+
             DumpObj(name, "item:EXISTS", item);
 
             //DumpObj(name, "characterItem:characterCode.profileCustomItem.code", 
@@ -2042,11 +2042,11 @@ public class TestsData {
             //DumpObj(name, "characterItem:characterCode.profileRPGItem.GetAttack()", 
             //        characterItem.profileRPGItem.GetAttack());
         }
-        
+
         DumpObj(name, "characterItem", item);
-        
+
         //Debug.Break();
-        
+
     }
 
 
@@ -2056,29 +2056,29 @@ public class TestsData {
     public static void TestGameCharacterSkin() {
 
         string name = "TestGameCharacterSkin";
-        
+
         Debug.Log(name);
-        
+
         GameCharacterSkin obj1 = new GameCharacterSkin();
         GameCharacterSkin obj2 = new GameCharacterSkin();
-        
+
         obj1.active = true;
-        
+
         obj1.display_name = "tester";
 
         string obj1Data = obj1.ToJson();
-                
+
         obj2 = obj1Data.FromJson<GameCharacterSkin>();
 
         string obj2Data = obj1.ToJson();
 
         AssertEquals(name, obj1, obj2);
     }
-    
+
     public static void TestGameCharacterSkinLoadData() {
-        
+
         string name = "TestGameCharacterSkinLoadData";
-        
+
         Debug.Log(name);
 
         try {
@@ -2130,8 +2130,5 @@ public class TestsData {
         AssertEquals("DataKeyedObjectLeaf", leaf, leaf2);
     }
     */
-    
+
 }
-
-
-

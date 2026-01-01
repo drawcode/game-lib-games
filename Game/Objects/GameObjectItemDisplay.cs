@@ -20,11 +20,11 @@ public class GameObjectItemDisplay : GameObjectBehavior {
 
     void Init() {
 
-        if(items == null) {
+        if (items == null) {
             items = new List<GameObjectItemDisplayItem>();
         }
 
-        foreach(GameObjectItemDisplayItem item in
+        foreach (GameObjectItemDisplayItem item in
             gameObject.GetList<GameObjectItemDisplayItem>()) {
 
             items.Add(item);
@@ -55,7 +55,7 @@ public class GameObjectItemDisplay : GameObjectBehavior {
 
     void OnGameActionItem(string code, string type, object val) {
 
-        if(type.IsEqualLowercase(BaseDataObjectKeys.item)
+        if (type.IsEqualLowercase(BaseDataObjectKeys.item)
             || type.IsEqualLowercase(GameDataItemReward.letter)) {
 
             CollectSingle(code);
@@ -64,13 +64,13 @@ public class GameObjectItemDisplay : GameObjectBehavior {
 
     public void CollectSingle(string code) {
 
-        if(code.IsNullOrEmpty()) {
+        if (code.IsNullOrEmpty()) {
             return;
         }
 
-        foreach(GameObjectItemDisplayItem item in items) {
+        foreach (GameObjectItemDisplayItem item in items) {
 
-            if(item.name.IsEqualLowercase(code) && !item.collected) {
+            if (item.name.IsEqualLowercase(code) && !item.collected) {
                 item.collected = true;
                 break;
             }
@@ -94,18 +94,18 @@ public class GameObjectItemDisplay : GameObjectBehavior {
     }
 
     public void Clear() {
-        foreach(GameObjectItemDisplayItem item in items) {
+        foreach (GameObjectItemDisplayItem item in items) {
             item.collected = false;
         }
     }
 
     private void Update() {
-        if(Application.isEditor) {
-            if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) {
                 // TEST LETTERS
-                if(Input.GetKey(KeyCode.L)) {
+                if (Input.GetKey(KeyCode.L)) {
                     // TEST U
-                    if(Input.GetKeyDown(KeyCode.U)) {
+                    if (Input.GetKeyDown(KeyCode.U)) {
                         Messenger<string, string, object>.Broadcast(
                             GameMessages.gameActionItem, "item-letter-u", "letter", "u");// item.type, broadcastVal);
                     }

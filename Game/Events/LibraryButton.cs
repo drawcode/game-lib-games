@@ -7,5 +7,4 @@ public class LibraryButton : GameObjectBehavior {
         //PhotoUploaderController photoController = guiController.GetComponent<PhotoUploaderController>();
         //photoController.saveImageToLibrary();
     }
-
 }
