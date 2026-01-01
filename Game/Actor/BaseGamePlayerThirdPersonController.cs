@@ -11,7 +11,7 @@ using Engine.Networking;
 using Engine.Utility;
 
 public class BaseGamePlayerThirdPersonControllerData {
-    
+
     public bool removing = false;
 }
 
@@ -105,7 +105,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public float touchWallJumpTime = -1.0f;
     public Vector3 inAirVelocity = Vector3.zero;
     public float lastGroundedTime = 0.0f;
-    
+
     //
     public float lastSlideStartHeight = 0.0f;
 
@@ -125,16 +125,16 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public Vector3 targetDirection = Vector3.zero;
     public Vector3 movementDirection = Vector3.zero;
     public Vector3 aimingDirection = Vector3.zero;
- 
+
     //Gameverses.GameNetworkAniStates currentNetworkAniState = Gameverses.GameNetworkAniStates.walk;
     //Gameverses.GameNetworkAniStates lastNetworkAniState = Gameverses.GameNetworkAniStates.run;
 
     public UnityEngine.AI.NavMeshAgent navMeshAgent = null;
- 
+
     public virtual void Awake() {
         moveDirection = transform.TransformDirection(Vector3.forward);
     }
- 
+
     // Update is called once per frame
     public virtual void Start() {
         //base.Start();
@@ -143,21 +143,21 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public virtual void Init() {
         controllerData = new GamePlayerThirdPersonControllerData();
     }
- 
+
     public virtual void UpdateSmoothedMovementDirection() {
-     
-        if(!GameConfigs.isGameRunning) {
+
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(controllerData.removing) {
+        if (controllerData.removing) {
             return;
         }
 
-        if(Camera.main == null || Camera.main.transform == null) {
+        if (Camera.main == null || Camera.main.transform == null) {
             return;
         }
-     
+
         Transform cameraTransform = Camera.main.transform;
         bool grounded = IsGrounded();
 
@@ -170,30 +170,30 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         // Always orthogonal to the forward vector
         Vector3 right = new Vector3(forward.z, 0, -forward.x);
 
-        if(getUserInput) {
+        if (getUserInput) {
             //verticalInput = Input.GetAxisRaw("Vertical");
             //horizontalInput = Input.GetAxisRaw("Horizontal");
         }
         else {
-            if(isNetworked) {
+            if (isNetworked) {
                 // TODO check user context before applying
             }
             else {
                 // TODO check user context before applying
                 //verticalInput = InputSystem.Instance.lastNormalizedTouch.y;
                 //horizontalInput = InputSystem.Instance.lastNormalizedTouch.x;
-             
-                if(verticalInput > 0) {
+
+                if (verticalInput > 0) {
                     //LogUtil.Log("verticalInput:" + verticalInput);
                 }
-                if(horizontalInput > 0) {
+                if (horizontalInput > 0) {
                     //LogUtil.Log("horizontalInput:" + horizontalInput);
                 }
             }
         }
 
         // Are we moving backwards or looking backwards
-        if(verticalInput < -0.2)
+        if (verticalInput < -0.2)
             movingBack = true;
         else
             movingBack = false;
@@ -210,9 +210,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         //    Debug.Log("UpdateSmoothedMovementDirection: verticalInput:" + verticalInput + " horizontalInput:" + horizontalInput);
         //}
 
-        if(horizontalInput2 != 0 || verticalInput2 != 0) {
+        if (horizontalInput2 != 0 || verticalInput2 != 0) {
             aimingDirection = horizontalInput2 * right + verticalInput2 * forward;
-        //    Debug.Log("UpdateSmoothedMovementDirection: verticalInput2:" + verticalInput2 + " horizontalInput2:" + horizontalInput2);
+            //    Debug.Log("UpdateSmoothedMovementDirection: verticalInput2:" + verticalInput2 + " horizontalInput2:" + horizontalInput2);
         }
         else {
             aimingDirection = targetDirection;
@@ -221,16 +221,16 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         //LogUtil.Log("targetDirection:" + targetDirection);
 
         // Grounded controls
-        if(grounded) {
+        if (grounded) {
             // Lock camera for short period when transitioning moving & standing still
             lockCameraTimer += Time.deltaTime;
-            if(isMoving != wasMoving)
+            if (isMoving != wasMoving)
                 lockCameraTimer = 0.0f;
 
             // We store speed and direction seperately,
             // so that when the character stands still we still have a valid forward direction
             // moveDirection is always normalized, and we only update it if there is user input.
-            if(targetDirection != Vector3.zero) {
+            if (targetDirection != Vector3.zero) {
                 // If we are really slow, just snap to the target direction
                 //if(moveSpeed < walkSpeed * 0.9 && grounded) {
                 //   moveDirection = moveDirection.normalized;
@@ -253,10 +253,10 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             var targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 
             // Pick speed modifier
-            if(Input.GetButton("Fire3")) {
+            if (Input.GetButton("Fire3")) {
                 targetSpeed *= runSpeed;
             }
-            else if(Time.time - trotAfterSeconds > walkTimeStart) {
+            else if (Time.time - trotAfterSeconds > walkTimeStart) {
                 targetSpeed *= trotSpeed;
             }
             else {
@@ -266,41 +266,41 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             moveSpeed = Mathf.Lerp(moveSpeed, targetSpeed, curSmooth);
 
             // Reset walk time start when we slow down
-            if(moveSpeed < walkSpeed * 0.3)
+            if (moveSpeed < walkSpeed * 0.3)
                 walkTimeStart = Time.time;
         }
-     // In air controls
+        // In air controls
         else {
             // Lock camera while in air
-            if(jumping)
+            if (jumping)
                 lockCameraTimer = 0.0f;
 
-            if(isMoving)
+            if (isMoving)
                 inAirVelocity += targetDirection.normalized * Time.deltaTime * inAirControlAcceleration;
         }
     }
 
     public virtual void ApplyWallJump() {
         // We must actually jump against a wall for this to work
-        if(!jumping)
+        if (!jumping)
             return;
 
         // Store when we first touched a wall during this jump
-        if(collisionFlags == CollisionFlags.CollidedSides && touchWallJumpTime < 0) {
+        if (collisionFlags == CollisionFlags.CollidedSides && touchWallJumpTime < 0) {
             touchWallJumpTime = Time.time;
         }
 
         // The user can trigger a wall jump by hitting the button shortly before or shortly after hitting the wall the first time.
         var mayJump = lastJumpButtonTime > touchWallJumpTime - wallJumpTimeout && lastJumpButtonTime < touchWallJumpTime + wallJumpTimeout;
-        if(!mayJump)
+        if (!mayJump)
             return;
 
         // Prevent jumping too fast after each other
-        if(lastJumpTime + jumpRepeatTime > Time.time)
+        if (lastJumpTime + jumpRepeatTime > Time.time)
             return;
 
         wallJumpContactNormal.y = 0;
-        if(wallJumpContactNormal != Vector3.zero) {
+        if (wallJumpContactNormal != Vector3.zero) {
             moveDirection = wallJumpContactNormal.normalized;
             // Wall jump gives us at least trotspeed
             moveSpeed = Mathf.Clamp(moveSpeed * 1.5f, trotSpeed, runSpeed);
@@ -316,14 +316,14 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual void ApplyJumping() {
         // Prevent jumping too fast after each other
-        if(lastJumpTime + jumpRepeatTime > Time.time)
+        if (lastJumpTime + jumpRepeatTime > Time.time)
             return;
 
-        if(IsGrounded()) {
+        if (IsGrounded()) {
             // Jump
             // - Only when pressing the button down
             // - With a timeout so you can press the button slightly before landing      
-            if(canJump && Time.time < lastJumpButtonTime + jumpTimeout) {
+            if (canJump && Time.time < lastJumpButtonTime + jumpTimeout) {
                 verticalSpeed = CalculateJumpVerticalSpeed(jumpHeight);
                 Jump();
             }
@@ -346,21 +346,21 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         }
     }
 
-    public virtual void ApplyAttack() {  
+    public virtual void ApplyAttack() {
         bool doAttack = false;
-     
-        if(verticalInput2 != 0f || horizontalInput2 != 0f) {
+
+        if (verticalInput2 != 0f || horizontalInput2 != 0f) {
             doAttack = true;
         }
-     
-        if(doAttack) {           
+
+        if (doAttack) {
             //SendMessage("Attack", SendMessageOptions.DontRequireReceiver);
             SendMessage("Attack", SendMessageOptions.DontRequireReceiver);
         }
     }
- 
+
     public virtual void ApplyDie(bool removeMe) {
-     
+
         /*
      bool doAttack = false;
      
@@ -376,14 +376,14 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual void ApplyGravity() {
         // Apply gravity
-        if(getUserInput)
+        if (getUserInput)
             jumpButton = Input.GetButton("Jump");
 
         // * When falling down we use capeFlyGravity (only when holding down jump)
         var capeFly = canCapeFly && verticalSpeed <= 0.0 && jumpButton && jumping;
 
         // When we reach the apex of the jump we send out a message
-        if(jumping && !jumpingReachedApex && verticalSpeed <= 0.0) {
+        if (jumping && !jumpingReachedApex && verticalSpeed <= 0.0) {
             jumpingReachedApex = true;
             SendMessage("JumpReachApex", SendMessageOptions.DontRequireReceiver);
         }
@@ -392,11 +392,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         //   This gives more control over jump height by pressing the button longer
         var extraPowerJump = IsJumping() && verticalSpeed > 0.0 && jumpButton && transform.position.y < lastJumpStartHeight + extraJumpHeight;
 
-        if(capeFly)
+        if (capeFly)
             verticalSpeed -= capeFlyGravity * Time.deltaTime;
-        else if(extraPowerJump)
+        else if (extraPowerJump)
             return;
-        else if(IsGrounded())
+        else if (IsGrounded())
             verticalSpeed = -gravity * 0.2f;
         else
             verticalSpeed -= gravity * Time.deltaTime;
@@ -416,19 +416,19 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual void Jump(float duration) {
 
-        if(jumpButton) {
+        if (jumpButton) {
             return;
         }
 
         jumpButton = true;
-        
-        if(navMeshAgent == null) {
+
+        if (navMeshAgent == null) {
             navMeshAgent = gameObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
         }
 
         // off while we jump
         navMeshAgent.StopAgent();
-        
+
         jumping = true;
         jumpingReachedApex = false;
         lastJumpTime = Time.time;
@@ -439,11 +439,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         CancelInvoke("JumpStop");
         Invoke("JumpStop", duration);
     }
-        
+
     public virtual void JumpStop() {
         jumpButton = false;
     }
-    
+
     // SLIDE
 
     public virtual void Slide() {
@@ -465,7 +465,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         // off while we slide
         navMeshAgent.StopAgent();
 
-        sliding = true;        
+        sliding = true;
 
         lastSlideTime = Time.time;
         lastSlideStartHeight = transform.position.y;
@@ -481,30 +481,30 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     // Update is called once per frame
     public virtual void Update() {
-        
-        if(!gameObjectTimer.IsTimerPerf(
+
+        if (!gameObjectTimer.IsTimerPerf(
             GameObjectTimerKeys.gameUpdateAll, 1f)) {
             //return;
         }
 
-        if(!GameConfigs.isGameRunning) {
-            return;
-        }
-     
-        //base.Update();
-             
-        if(controllerData.removing) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(getUserInput) {
-            if(Input.GetButtonDown("Jump"))
+        //base.Update();
+
+        if (controllerData.removing) {
+            return;
+        }
+
+        if (getUserInput) {
+            if (Input.GetButtonDown("Jump"))
                 lastJumpButtonTime = Time.time;
             if (Input.GetButtonDown("Slide"))
                 lastSlideButtonTime = Time.time;
         }
         else {
-            if(jumpButton)
+            if (jumpButton)
                 lastJumpButtonTime = Time.time;
             if (slideButton)
                 lastSlideButtonTime = Time.time;
@@ -520,7 +520,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         // Perform a wall jump logic
         // - Make sure we are jumping against wall etc.
         // - Then apply jump in the right direction)
-        if(canWallJump)
+        if (canWallJump)
             ApplyWallJump();
 
         // Apply jumping logic
@@ -537,32 +537,32 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         // Move the controller
         CharacterController controller = GetComponent<CharacterController>();
         wallJumpContactNormal = Vector3.zero;
-     
+
         //if(!isNetworked) {
         collisionFlags = controller.Move(movement);
         //}
-     
+
         // Set rotation to the move direction
-        if(IsGrounded() && moveDirection != Vector3.zero) {
+        if (IsGrounded() && moveDirection != Vector3.zero) {
             transform.rotation = Quaternion.LookRotation(moveDirection);
         }
         else {
             var xzMove = movement;
             xzMove.y = 0;
-            if(xzMove.magnitude > 0.001) {
+            if (xzMove.magnitude > 0.001) {
                 transform.rotation = Quaternion.LookRotation(xzMove);
             }
         }
 
         // We are in jump mode but just became grounded
-        if(IsGrounded()) {
+        if (IsGrounded()) {
             lastGroundedTime = Time.time;
             inAirVelocity = Vector3.zero;
 
             // turn on agent now we are on the mesh
             navMeshAgent.StartAgent();
 
-            if(jumping) {
+            if (jumping) {
                 jumping = false;
                 SendMessage("land", SendMessageOptions.DontRequireReceiver);
                 JumpStop();
@@ -574,12 +574,12 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
                 SlideStop();
             }
         }
-     
+
     }
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit) {
         //   Debug.DrawRay(hit.point, hit.normal);
-        if(hit.moveDirection.y > 0.01)
+        if (hit.moveDirection.y > 0.01)
             return;
         wallJumpContactNormal = hit.normal;
     }
@@ -644,7 +644,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual bool IsCapeFlying() {
         // * When falling down we use capeFlyGravity (only when holding down jump)
-        if(getUserInput)
+        if (getUserInput)
             jumpButton = Input.GetButton("Jump");
         return canCapeFly && verticalSpeed <= 0.0 && jumpButton && jumping;
     }
@@ -653,8 +653,8 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         gameObject.tag = "Player";
         ResetPlayState();
     }
- 
-    public virtual void ResetPlayState() {   
+
+    public virtual void ResetPlayState() {
         enabled = true;
         controllerData.removing = false;
         jumping = false;

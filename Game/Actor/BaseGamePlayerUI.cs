@@ -52,7 +52,7 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
     public virtual void Start() {
 
-        if(gameCustomPlayerContainer == null) {
+        if (gameCustomPlayerContainer == null) {
 
             gameCustomPlayerContainer =
                 gameObject.GetComponent<GameCustomPlayerContainer>();
@@ -63,12 +63,12 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
     public virtual void AnimateWithAnimation() {
 
-        if(gameCustomPlayerContainer != null) {
+        if (gameCustomPlayerContainer != null) {
 
-            foreach(Animation anim in
+            foreach (Animation anim in
                 gameObject.GetComponentsInChildren<Animation>()) {
 
-                if(anim.isPlaying && loops < loopsLimit) {
+                if (anim.isPlaying && loops < loopsLimit) {
                     loops++;
                     continue;
                 }
@@ -83,13 +83,13 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
     public virtual void AnimateRunOnly() {
 
-        if(gameCustomPlayerContainer != null) {
+        if (gameCustomPlayerContainer != null) {
 
             AnimateWithAnimation();
         }
         else {
 
-            foreach(Animator anim in
+            foreach (Animator anim in
                 gameObject.GetComponentsInChildren<Animator>()) {
 
                 anim.SetFloat("speed", .9f);
@@ -108,13 +108,13 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
     public virtual void RunAnimations() {
 
-        if(gameCustomPlayerContainer != null) {
+        if (gameCustomPlayerContainer != null) {
 
             AnimateWithAnimation();
         }
         else {
 
-            foreach(Animator anim in
+            foreach (Animator anim in
                 gameObject.GetComponentsInChildren<Animator>()) {
 
                 anim.SetFloat("speed", v);
@@ -148,7 +148,7 @@ public class BaseGamePlayerUI : GameObjectBehavior {
         //	}
         //}        
 
-        if(resetAnimationObject && animateObject != null) {
+        if (resetAnimationObject && animateObject != null) {
 
             animateObject.transform.localPosition =
                 Vector3.Lerp(animateObject.transform.localPosition,
@@ -159,13 +159,13 @@ public class BaseGamePlayerUI : GameObjectBehavior {
                     Quaternion.identity, Time.deltaTime);
         }
 
-        if(GameConfigs.isGameRunning) {
+        if (GameConfigs.isGameRunning) {
             return;
         }
 
-        if(runOnly) {
+        if (runOnly) {
 
-            if(runOnly && !running) {
+            if (runOnly && !running) {
                 AnimateRunOnly();
                 running = true;
             }
@@ -175,7 +175,7 @@ public class BaseGamePlayerUI : GameObjectBehavior {
 
         currentTimeBlock += Time.deltaTime;
 
-        if(currentTimeBlock > actionInterval) {
+        if (currentTimeBlock > actionInterval) {
 
             actionInterval = UnityEngine.Random.Range(.5f, .5f);
             currentTimeBlock = 0.0f;

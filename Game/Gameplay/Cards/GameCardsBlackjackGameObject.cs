@@ -23,37 +23,32 @@ public class GameCardsBlackjackGameObject : GameObjectBehavior {
 
     public void HandleInput() {
 
-        if(Input.GetKeyDown(KeyCode.L)) {
+        if (Input.GetKeyDown(KeyCode.L)) {
             gameCards.LoadPlayers();
         }
 
-        if(Input.GetKeyDown(KeyCode.D)) {
+        if (Input.GetKeyDown(KeyCode.D)) {
             gameCards.DealCards(2);
         }
 
-        if(Input.GetKeyDown(KeyCode.Alpha1)) {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
             gameCards.HitDealer();
         }
-        
-        if(Input.GetKeyDown(KeyCode.Alpha2)) {
+
+        if (Input.GetKeyDown(KeyCode.Alpha2)) {
             gameCards.HitMe();
         }
 
-        
-        if(Input.GetKeyDown(KeyCode.S)) {
+        if (Input.GetKeyDown(KeyCode.S)) {
             gameCards.GameStart();
         }
-        
-        if(Input.GetKeyDown(KeyCode.E)) {
+
+        if (Input.GetKeyDown(KeyCode.E)) {
             gameCards.GameEnd();
         }
-
-
     }
 
     public void Update() {
-
         HandleInput();
     }
-
 }

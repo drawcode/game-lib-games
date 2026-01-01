@@ -148,7 +148,7 @@ public class BaseGameCustomController : GameObjectBehavior, IBaseGameCustomContr
                         string codeFind = prop.code;
 
                         string codePropFull = preset.data.Get<string>(prop.code);
-                        
+
                         string codeNew = codePropFull + "-" + prop.code;
 
                         string pathMaterial = path + codeNew;

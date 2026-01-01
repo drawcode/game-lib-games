@@ -4,7 +4,7 @@ using System.Collections;
 using Engine.Events;
 
 public class RotateObject : GameObjectBehavior {
-    
+
     public float RotateSpeedAlongX = 0.0f;
     public float RotateSpeedAlongY = 0.0f;
     public float RotateSpeedAlongZ = 0.0f;
@@ -16,11 +16,11 @@ public class RotateObject : GameObjectBehavior {
             return;
         }
 
-//#if USE_GAME_LIB_GAMES_UI
-//        if(GameUIController.Instance != null) {
-//            InputSystem.Instance.currentDraggableUIGameObject = gameObject;
-//        }
-//#endif
+        //#if USE_GAME_LIB_GAMES_UI
+        //        if(GameUIController.Instance != null) {
+        //            InputSystem.Instance.currentDraggableUIGameObject = gameObject;
+        //        }
+        //#endif
 
         transform.Rotate(Vector3.up * Time.deltaTime * RotateSpeedAlongY);
         transform.Rotate(Vector3.forward * Time.deltaTime * RotateSpeedAlongZ);

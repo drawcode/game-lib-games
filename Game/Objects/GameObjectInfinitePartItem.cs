@@ -21,7 +21,7 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
     }
 
     public void ClearItems(bool removeCached = false) {
-        
+
         GameController.ResetLevelAssetCacheItem(gameObject, removeCached);
 
         gameObject.DestroyChildren();
@@ -33,7 +33,7 @@ public class GameObjectInfinitePartItem : GameObjectBehavior {
 
         gameObject.DestroyGameObject();
     }
-    
+
     /*
     void Update() {
 

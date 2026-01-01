@@ -24,7 +24,7 @@ public class GameZoneActionAsset : GameZoneAction {
     public override void Start() {
         base.Start();
 
-        if(loadOnStart) {
+        if (loadOnStart) {
             Load();
         }
     }
@@ -68,7 +68,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetEffectRepairPlayNormalizedFlipped(float val) {
 
-        if(containerEffectsRepair == null) {
+        if (containerEffectsRepair == null) {
             return;
         }
 
@@ -78,7 +78,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetEffectRepairPlay() {
 
-        if(containerEffectsRepair == null) {
+        if (containerEffectsRepair == null) {
             return;
         }
 
@@ -89,7 +89,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetEffectBuildPlayNormalizedFlipped(float val) {
 
-        if(containerEffectsBuild == null) {
+        if (containerEffectsBuild == null) {
             return;
         }
 
@@ -99,7 +99,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetEffectBuildPlay() {
 
-        if(containerEffectsBuild == null) {
+        if (containerEffectsBuild == null) {
             return;
         }
 
@@ -111,7 +111,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetAnimationIdle() {
 
-        if(containerAssets == null) {
+        if (containerAssets == null) {
             return;
         }
 
@@ -120,7 +120,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void AssetAnimationPlayNormalized(float time) {
 
-        if(containerAssets == null) {
+        if (containerAssets == null) {
             return;
         }
 
@@ -161,7 +161,7 @@ public class GameZoneActionAsset : GameZoneAction {
         //containerEffects.Hide();
         //containerEffectsDamage.Hide();
 
-        if(gameZoneType == GameZoneKeys.action_none) {
+        if (gameZoneType == GameZoneKeys.action_none) {
             return;
         }
 
@@ -191,7 +191,7 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void LoadPlayerIndicator() {
-        if(gamePlayerIndicator == null) {
+        if (gamePlayerIndicator == null) {
             gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
             //gamePlayerIndicator.alwaysVisible = true;
         }
@@ -199,7 +199,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadIcons() {
 
-        if(containerIcons == null) {
+        if (containerIcons == null) {
             return;
         }
 
@@ -207,28 +207,28 @@ public class GameZoneActionAsset : GameZoneAction {
 
         string spriteName = "";
 
-        if(isActionCodeSave) {
+        if (isActionCodeSave) {
             spriteName = "icon-arrow-64";
         }
-        else if(isActionCodeRepair) {
+        else if (isActionCodeRepair) {
             spriteName = "icon-wrench-64";
         }
-        else if(isActionCodeBuild) {
+        else if (isActionCodeBuild) {
             spriteName = "icon-magic-64";
         }
-        else if(isActionCodeAttack) {
+        else if (isActionCodeAttack) {
             spriteName = "icon-weapon-64";
         }
-        else if(isActionCodeDefend) {
+        else if (isActionCodeDefend) {
             spriteName = "icon-shield-64";
         }
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 
-        foreach(UISprite spriteIcon in
+        foreach (UISprite spriteIcon in
                 containerIcons.GetList<UISprite>("Icon")) {
-        
-            if(spriteName.IsNotNullOrEmpty()) {
+
+            if (spriteName.IsNotNullOrEmpty()) {
                 spriteIcon.spriteName = spriteName;
             }
         }
@@ -249,20 +249,20 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAsset() {
 
-        if(containerAssets == null) {
+        if (containerAssets == null) {
             return;
         }
 
-        if(isActionCodeSave) {
+        if (isActionCodeSave) {
             return;
         }
 
-        if(assetCode != BaseDataObjectKeys.none
+        if (assetCode != BaseDataObjectKeys.none
             && lastAssetCode != assetCode) {
 
             lastAssetCode = assetCode;
 
-            if(gameCharacter == null) {
+            if (gameCharacter == null) {
                 return;
             }
 
@@ -275,19 +275,19 @@ public class GameZoneActionAsset : GameZoneAction {
             GameObject go = AppContentAssets.LoadAssetLevelAssets(
                 gameCharacter.data.GetModel().code);
 
-            if(go != null) {
+            if (go != null) {
                 containerAssets.DestroyChildren();
                 go.transform.parent = containerAssets.transform;
                 go.TrackObject(containerAssets);
 
 
-                if(isActionCodeAttack || isActionCodeDefend) {
+                if (isActionCodeAttack || isActionCodeDefend) {
 
                     // Add game damage
 
                     Collider goCollider = go.GetOrSet<Collider>();
 
-                    if(goCollider != null) {
+                    if (goCollider != null) {
 
                         gameDamageManager =
                             goCollider.gameObject.GetOrSet<GameDamageManager>();
@@ -308,7 +308,7 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public float GetDamageValue() {
 
-        if(gameDamageManager != null) {
+        if (gameDamageManager != null) {
             return gameDamageManager.HP;
         }
 
@@ -317,18 +317,18 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAssetPlatform() {
 
-        if(containerAssetsPlatforms == null) {
+        if (containerAssetsPlatforms == null) {
             return;
         }
 
-        if(assetPlatformCode != BaseDataObjectKeys.none
+        if (assetPlatformCode != BaseDataObjectKeys.none
             && lastAssetPlatformCode != assetPlatformCode) {
 
             lastAssetPlatformCode = assetPlatformCode;
 
             GameObject go = AppContentAssets.LoadAssetLevelAssets(assetPlatformCode);
 
-            if(go != null) {
+            if (go != null) {
                 containerAssetsPlatforms.DestroyChildren();
                 go.transform.parent = containerAssetsPlatforms.transform;
                 go.TrackObject(containerAssetsPlatforms);
@@ -338,18 +338,18 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAssetEffectProgressRepair() {
 
-        if(containerEffectsRepair == null) {
+        if (containerEffectsRepair == null) {
             return;
         }
 
-        if(assetEffectProgressRepairCode != BaseDataObjectKeys.none
+        if (assetEffectProgressRepairCode != BaseDataObjectKeys.none
             && lastAssetEffectProgressRepairCode != assetEffectProgressRepairCode) {
 
             lastAssetEffectProgressRepairCode = assetEffectProgressRepairCode;
 
             GameObject go = AppContentAssets.LoadAssetEffects(assetEffectProgressRepairCode);
 
-            if(go != null) {
+            if (go != null) {
                 containerEffectsRepair.DestroyChildren();
                 go.transform.parent = containerEffectsRepair.transform;
                 go.TrackObject(containerEffectsRepair);
@@ -359,18 +359,18 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void LoadAssetEffectProgressBuild() {
 
-        if(containerEffectsBuild == null) {
+        if (containerEffectsBuild == null) {
             return;
         }
 
-        if(assetEffectProgressBuildCode != BaseDataObjectKeys.none
+        if (assetEffectProgressBuildCode != BaseDataObjectKeys.none
             && lastAssetEffectProgressBuildCode != assetEffectProgressBuildCode) {
 
             lastAssetEffectProgressBuildCode = assetEffectProgressBuildCode;
 
             GameObject go = AppContentAssets.LoadAssetEffects(assetEffectProgressBuildCode);
 
-            if(go != null) {
+            if (go != null) {
                 containerEffectsBuild.DestroyChildren();
                 go.transform.parent = containerEffectsBuild.transform;
                 go.TrackObject(containerEffectsBuild);
@@ -379,7 +379,7 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void ChangeState(GameZoneActionAssetState stateTo) {
-        if(stateTo != currentCreateState) {
+        if (stateTo != currentCreateState) {
             currentCreateState = stateTo;
         }
     }
@@ -389,7 +389,7 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void ChangeStateCreating() {
-        if(currentCreateState != GameZoneActionAssetState.creating
+        if (currentCreateState != GameZoneActionAssetState.creating
             && (currentCreateState != GameZoneActionAssetState.created
             && currentCreateState != GameZoneActionAssetState.destroyed)) {
             ChangeState(GameZoneActionAssetState.creating);
@@ -397,7 +397,7 @@ public class GameZoneActionAsset : GameZoneAction {
     }
 
     public void ChangeStateDestroying() {
-        if(currentCreateState != GameZoneActionAssetState.destroying
+        if (currentCreateState != GameZoneActionAssetState.destroying
             && (currentCreateState != GameZoneActionAssetState.destroyed
             && currentCreateState != GameZoneActionAssetState.created)) {
             ChangeState(GameZoneActionAssetState.creating);
@@ -406,37 +406,37 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void HandleUpdateState(float power, float time = 1f) {
 
-        if(currentCreateState != GameZoneActionAssetState.created) {
-            if(currentCreateState == GameZoneActionAssetState.creating) {
+        if (currentCreateState != GameZoneActionAssetState.created) {
+            if (currentCreateState == GameZoneActionAssetState.creating) {
                 currentCreateProgress += power * Time.deltaTime;
             }
         }
 
-        if(currentCreateState != GameZoneActionAssetState.destroying) {
-            if(currentCreateState == GameZoneActionAssetState.destroying) {
+        if (currentCreateState != GameZoneActionAssetState.destroying) {
+            if (currentCreateState == GameZoneActionAssetState.destroying) {
                 currentCreateProgress -= power * Time.deltaTime;
             }
         }
     }
 
     public void HandleActionInit() {
-        if(isActionCodeAttack) {
+        if (isActionCodeAttack) {
             currentCreateProgress = 1f;
             assetEffectProgressRepairCode = "effect-fire-smoke-2";
 
-            if(!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
+            if (!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
                 LoadAssetEffectProgressRepair();
             }
         }
-        else if(isActionCodeRepair) {
+        else if (isActionCodeRepair) {
             currentCreateProgress = UnityEngine.Random.Range(0.1f, 0.2f);
             assetEffectProgressRepairCode = "effect-fire-smoke-2";
 
-            if(!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
+            if (!string.IsNullOrEmpty(assetEffectProgressRepairCode)) {
                 LoadAssetEffectProgressRepair();
             }
         }
-        else if(isActionCodeBuild || isActionCodeDefend) {
+        else if (isActionCodeBuild || isActionCodeDefend) {
             currentCreateProgress = 0;
         }
 
@@ -448,15 +448,15 @@ public class GameZoneActionAsset : GameZoneAction {
 
         Mathf.Clamp(currentCreateProgress, 0f, 1f);
 
-        if(!actionCompleted) {
+        if (!actionCompleted) {
 
             bool scoreIt = false;
 
-            if(isActionCodeBuild
+            if (isActionCodeBuild
                 || isActionCodeRepair
                 || isActionCodeDefend) {
 
-                if(currentCreateProgress >= 1) {
+                if (currentCreateProgress >= 1) {
 
                     actionCompleted = true;
 
@@ -464,14 +464,14 @@ public class GameZoneActionAsset : GameZoneAction {
 
                     currentCreateState = GameZoneActionAssetState.created;
 
-                    if(isActionCodeBuild) {
+                    if (isActionCodeBuild) {
 
                         scoreIt = true;
 
                         GameController.CurrentGamePlayerController.ProgressBuild(1);
                     }
 
-                    else if(isActionCodeRepair) {
+                    else if (isActionCodeRepair) {
 
                         scoreIt = true;
 
@@ -480,7 +480,7 @@ public class GameZoneActionAsset : GameZoneAction {
                         GameController.CurrentGamePlayerController.ProgressRepair(1);
                     }
 
-                    else if(isActionCodeDefend) {
+                    else if (isActionCodeDefend) {
 
                         scoreIt = true;
 
@@ -488,7 +488,7 @@ public class GameZoneActionAsset : GameZoneAction {
                     }
                 }
             }
-            else if(isActionCodeAttack) {
+            else if (isActionCodeAttack) {
 
                 float normalizedValue = GetDamageValue() / hitPoints;
                 currentCreateProgress = Mathf.Clamp(normalizedValue, .2f, 1f);
@@ -496,7 +496,7 @@ public class GameZoneActionAsset : GameZoneAction {
                 AssetAnimationPlayNormalized(currentCreateProgress);
                 AssetEffectRepairPlayNormalizedFlipped(normalizedValue);
 
-                if(currentCreateProgress <= 0 || normalizedValue == 0) {
+                if (currentCreateProgress <= 0 || normalizedValue == 0) {
 
                     currentCreateProgress = 0f;
 
@@ -510,23 +510,23 @@ public class GameZoneActionAsset : GameZoneAction {
                 }
             }
 
-            if(scoreIt) {
+            if (scoreIt) {
                 GameController.CurrentGamePlayerController.ProgressScore(1);
                 GameController.CurrentGamePlayerController.ProgressScores(1);
             }
 
-            if(currentCreateProgress != lastCreateProgress) {
+            if (currentCreateProgress != lastCreateProgress) {
 
                 lastCreateProgress = currentCreateProgress;
 
-                if(!actionCompleted) {
+                if (!actionCompleted) {
 
                     AssetAnimationPlayNormalized(currentCreateProgress);
 
-                    if(isActionCodeRepair) {
+                    if (isActionCodeRepair) {
                         AssetEffectRepairPlayNormalizedFlipped(currentCreateProgress);
                     }
-                    else if(isActionCodeAttack) {
+                    else if (isActionCodeAttack) {
                         AssetEffectRepairPlayNormalizedFlipped(currentCreateProgress);
                     }
                 }
@@ -536,25 +536,25 @@ public class GameZoneActionAsset : GameZoneAction {
 
     public void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
         float power = .1f;
 
-        if(Application.isEditor) {
-            if(Input.GetKey(KeyCode.LeftControl)) {
+        if (Application.isEditor) {
+            if (Input.GetKey(KeyCode.LeftControl)) {
 
-                if(Input.GetKey(KeyCode.KeypadPlus)) {
+                if (Input.GetKey(KeyCode.KeypadPlus)) {
                     currentCreateProgress += power * Time.deltaTime;
                 }
 
-                if(Input.GetKey(KeyCode.KeypadMinus)) {
+                if (Input.GetKey(KeyCode.KeypadMinus)) {
 
                     currentCreateProgress -= power * Time.deltaTime;
                 }
 
-                if(Input.GetKeyDown(KeyCode.Slash)) {
+                if (Input.GetKeyDown(KeyCode.Slash)) {
                     //Load(
                     //    GameZoneKeys.action_attack, 
                     //    GameZoneActions.action_attack,
@@ -564,12 +564,11 @@ public class GameZoneActionAsset : GameZoneAction {
             }
         }
 
-        if(!loaded) {
+        if (!loaded) {
             return;
         }
 
-
-        if(isActionCodeNone) {
+        if (isActionCodeNone) {
             return;
         }
 

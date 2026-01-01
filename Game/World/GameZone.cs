@@ -24,7 +24,7 @@ public class GameZoneKeys {
     public static string action_build = "game-zone-action-build";
 }
 
-public class GameZoneActions {    
+public class GameZoneActions {
     public static string action_kill = "action-kill";
     public static string action_collect = "action-collect";
     public static string action_attack = "action-attack";

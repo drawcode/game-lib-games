@@ -49,26 +49,26 @@ public class BaseGameLevelSprite : GameObjectBehavior {
     public virtual void Init() {
         HandleColliderInit();
 
-        if(gameDraggableLevelItem == null) {
+        if (gameDraggableLevelItem == null) {
             return;
         }
 
-        if(gameDraggableLevelItem.gameLevelItemAsset == null) {
+        if (gameDraggableLevelItem.gameLevelItemAsset == null) {
             return;
         }
 
-        if(gameDraggableLevelItem.gameLevelItemAsset.physics_type != GameLevelItemAssetPhysicsType.physicsOnStart) {
+        if (gameDraggableLevelItem.gameLevelItemAsset.physics_type != GameLevelItemAssetPhysicsType.physicsOnStart) {
             HandlePhysicsInit();
         }
     }
 
     public virtual bool isReady {
         get {
-            if(gameDraggableLevelItem == null) {
+            if (gameDraggableLevelItem == null) {
                 return false;
             }
 
-            if(gameDraggableLevelItem.gameLevelItemAsset == null) {
+            if (gameDraggableLevelItem.gameLevelItemAsset == null) {
                 return false;
             }
 
@@ -78,11 +78,11 @@ public class BaseGameLevelSprite : GameObjectBehavior {
 
     public virtual void HandleColliderInit() {
 
-        if(!isReady) {
+        if (!isReady) {
             return;
         }
 
-        if(collider == null) {
+        if (collider == null) {
             // TODO 2D
             //boxCollider = gameObject.AddComponent<BoxCollider>();
             //boxCollider.isTrigger = true;//gameDraggableLevelItem.gameLevelItemAsset.destructable;
@@ -94,16 +94,16 @@ public class BaseGameLevelSprite : GameObjectBehavior {
 
     public virtual void HandlePhysicsInit() {
 
-        if(!isReady) {
+        if (!isReady) {
             return;
         }
 
-        if(physicsActive) {
+        if (physicsActive) {
             return;
         }
 
-        if(gameDraggableLevelItem.gameLevelItemAsset.physics_type != GameLevelItemAssetPhysicsType.physicsStatic) {
-            if(rigidbody == null) {
+        if (gameDraggableLevelItem.gameLevelItemAsset.physics_type != GameLevelItemAssetPhysicsType.physicsStatic) {
+            if (rigidbody == null) {
                 gameObject.AddComponent<Rigidbody>();
                 //rigidbody.freezeRotation = true;
                 rigidbody.isKinematic = gameDraggableLevelItem.gameLevelItemAsset.kinematic;
@@ -116,78 +116,78 @@ public class BaseGameLevelSprite : GameObjectBehavior {
 
     public virtual void OnCollisionEnter(Collision collision) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual void OnCollisionStay(Collision collision) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual void OnCollisionExit(Collision collision) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual void OnTriggerEnter(Collider collider) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual void OnTriggerStay(Collider collider) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual void OnTriggerExit(Collider collider) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(ShouldCountHit(collider)) {
+        if (ShouldCountHit(collider)) {
             Hit();
         }
     }
 
     public virtual bool ShouldCountHit(Collider collider) {
-        if(collider != null) {
+        if (collider != null) {
             string objName = collider.transform.name;
-            if(!objName.Contains("DragColliderObject")
+            if (!objName.Contains("DragColliderObject")
                 && (objName.Contains("GamePlayerObject")
                 || objName.Contains("GamePlayerEnemy"))) {
                 GamePlayerController player = collider.transform.gameObject.GetComponent<GamePlayerController>();
-                if(player != null) {
+                if (player != null) {
                     return true;
                 }
             }
@@ -198,28 +198,28 @@ public class BaseGameLevelSprite : GameObjectBehavior {
 
     public virtual void Hit() {
 
-        if(!isReady) {
+        if (!isReady) {
             return;
         }
 
-        if(!exploding) {
+        if (!exploding) {
 
-            if(gameDraggableLevelItem.gameLevelItemAsset.reactive) {
+            if (gameDraggableLevelItem.gameLevelItemAsset.reactive) {
                 Shake();
             }
 
-            if(GameDraggableEditor.appEditState != GameDraggableEditEnum.StateEditing
+            if (GameDraggableEditor.appEditState != GameDraggableEditEnum.StateEditing
                 && gameDraggableLevelItem.gameLevelItemAsset.destructable) {
 
                 hitsAllowed--;
 
-                if(hitsAllowed == 0) {
+                if (hitsAllowed == 0) {
                     Messenger<double>.Broadcast(GameMessages.gameActionScore, 10);
                     exploding = true;
                     gameDraggableLevelItem.DestroyGameLevelItemSprite();
                     Invoke("DestroyMe", 2f);
 
-                    if(gameDraggableLevelItem.gameLevelItemAsset.physics_type
+                    if (gameDraggableLevelItem.gameLevelItemAsset.physics_type
                         == GameLevelItemAssetPhysicsType.physicsOnCollide) {
                         HandlePhysicsInit();
                     }
@@ -236,7 +236,7 @@ public class BaseGameLevelSprite : GameObjectBehavior {
         //Destroy(gameObject);
         gameObject.Hide();
 
-        if(isReady) {
+        if (isReady) {
             gameDraggableLevelItem.gameLevelItemAsset.destroyed = true;
         }
 
@@ -245,13 +245,13 @@ public class BaseGameLevelSprite : GameObjectBehavior {
 
     public virtual void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
         currentSpeedRotation = gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3();
 
-        if(lastSpeedRotation != currentSpeedRotation
+        if (lastSpeedRotation != currentSpeedRotation
             && currentSpeedRotation != Vector3.zero) {
             transform.Rotate(gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3() * Time.deltaTime);
             lastSpeedRotation = currentSpeedRotation;

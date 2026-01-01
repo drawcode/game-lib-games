@@ -16,7 +16,7 @@ public class GameObjectInteractiveMessages {
 }
 
 public class BaseGameObjectInteractive : GameObjectBehavior {
-    
+
     public string uuid = UniqueUtil.CreateUUID4();
     public string code = "default";
     public GameObjectInteractiveType interactiveType = GameObjectInteractiveType.boost;
@@ -34,8 +34,8 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
     public bool boostProjectiles = false;
     public bool boostGamePlayers = false;
 
-    public virtual void Awake() { 
-        
+    public virtual void Awake() {
+
     }
 
     public virtual void Start() {
@@ -47,30 +47,30 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
     }
 
     public virtual void FixedUpdate() {
-        if (GameDraggableEditor.isEditing 
+        if (GameDraggableEditor.isEditing
             && GameConfigs.isGameRunning) {
 
             if (attractProjectiles) {
                 AttractForce<GameProjectile>();
             }
-            
+
             if (attractGamePlayers) {
                 AttractForce<GamePlayerController>();
             }
         }
     }
-        
+
     public virtual void AttractForce<T>() {
 
         if (!attractProjectiles && !attractGamePlayers) {
             return;
         }
 
-        Collider[] cols = Physics.OverlapSphere(transform.position, attractRange); 
-        
+        Collider[] cols = Physics.OverlapSphere(transform.position, attractRange);
+
         rbs.Clear();
-        
-        foreach (Collider c in cols) {   
+
+        foreach (Collider c in cols) {
             Component[] comps = c.gameObject.GetComponents(typeof(T));
             if (comps != null) {
                 if (comps.Length > 0) {
@@ -96,7 +96,7 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
         if (!boostGamePlayers && !boostProjectiles) {
             return;
         }
-                
+
         LogUtil.Log("Boost:boostGamePlayers", boostGamePlayers);
         LogUtil.Log("Boost:boostProjectiles", boostProjectiles);
 
@@ -113,7 +113,7 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
 
             if (gamePlayerController != null) {
                 if (gamePlayerController.IsPlayerControlled) {
-                    
+
                     LogUtil.Log("Boost:gamePlayerController.IsPlayerControlled", gamePlayerController.IsPlayerControlled);
                     gamePlayerController.Boost(boostForce);
                 }
@@ -121,54 +121,54 @@ public class BaseGameObjectInteractive : GameObjectBehavior {
         }
 
         if (boostProjectiles) {
-            
+
             //GameProjectile projectile = GameController.GetGamePlayerControllerObject(go);
-            
+
             //if(gamePlayerController != null) {
             //    gamePlayerController.Boost();
             //}
         }
 
     }
-    
+
     public virtual void AddForce(GameObject target, float force) {
         Vector3 dir = target.transform.position - transform.position;
         dir = dir.normalized;
         rigidbody.AddForce(dir * force);
     }
-    
+
     public virtual void DestroyMe() {
         LogUtil.Log("Destroying:" + gameObject.name);
         Destroy(gameObject);
     }
-    
+
     public virtual void OnCollisionEnter(Collision collision) {
         if (!GameConfigs.isGameRunning) {
             return;
         }
-        
+
         GameObject target = collision.collider.gameObject;
-        
-        if (target != null) {
-            Boost(target);            
-        }
-    }
-    
-    public virtual void OnTriggerEnter(Collider collider) {
-        if (!GameConfigs.isGameRunning) {
-            return;
-        }
-        
-        GameObject target = collider.gameObject;
-        
+
         if (target != null) {
             Boost(target);
         }
     }
-    
+
+    public virtual void OnTriggerEnter(Collider collider) {
+        if (!GameConfigs.isGameRunning) {
+            return;
+        }
+
+        GameObject target = collider.gameObject;
+
+        if (target != null) {
+            Boost(target);
+        }
+    }
+
     public virtual void Update() {
-        
-        if (!GameConfigs.isGameRunning 
+
+        if (!GameConfigs.isGameRunning
             && !GameDraggableEditor.isEditing) {
             //DestroyMe();
         }

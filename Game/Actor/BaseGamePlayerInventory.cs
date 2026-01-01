@@ -6,22 +6,22 @@ using UnityEngine;
 
 public class BaseGamePlayerInventory : GameActor {
 
-    public Dictionary<string, GamePlayerWeapon> weapons = new Dictionary<string, GamePlayerWeapon>();
+	public Dictionary<string, GamePlayerWeapon> weapons = new Dictionary<string, GamePlayerWeapon>();
 	public Dictionary<string, GamePlayerItem> items = new Dictionary<string, GamePlayerItem>();
-			
+
 	public virtual void Awake() {
-		
+
 	}
-	
+
 	public override void Start() {
 		Init();
 	}
-	
+
 	public override void Init() {
 		base.Init();
 	}
 
-    /*
+	/*
 	void OnTriggerEnter(Collider collider) {
 	
 	}
@@ -46,6 +46,5 @@ public class BaseGamePlayerInventory : GameActor {
 	
 	}
  */
-	
-}
 
+}

@@ -47,17 +47,17 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void Start() {
 
-        if(objectPlacement != null) {
+        if (objectPlacement != null) {
             originalPlacement = objectPlacement.transform.localPosition;
         }
     }
 
     void FindPad() {
-        if(pad == null) {
+        if (pad == null) {
             pad = gameObject.transform.Find("Pad");
         }
 
-        if(hideOnDesktopWeb) {
+        if (hideOnDesktopWeb) {
             //HandleInputRenderWebDesktop();
         }
     }
@@ -87,13 +87,13 @@ public class GameTouchInputAxis : GameObjectBehavior {
     }
 
     public void HandleInputRenderWebDesktop() {
-        if(Context.Current.isWebGL || Application.isEditor) {
-            if(controlsVisible) {
+        if (Context.Current.isWebGL || Application.isEditor) {
+            if (controlsVisible) {
                 HideInputObject(.5f, 0f);
             }
         }
         else {
-            if(!controlsVisible) {
+            if (!controlsVisible) {
                 ShowInputObject(.5f, 0f);
             }
         }
@@ -108,45 +108,45 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool hitPad = false;
         bool hitPlacement = false;
 
-        if(collisionCamera != null) {
+        if (collisionCamera != null) {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
-            if(Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
+            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
 
                 hitObject = hit.transform.gameObject;
 
-                if(hitObject != null) {
+                if (hitObject != null) {
                     axisPadObject = hitObject.Get<GameTouchInputAxisPad>();
-                    if(axisPadObject != null) {
+                    if (axisPadObject != null) {
                         //if(hit.transform.gameObject == gameObject) {
-                        if(axisPadObject.gameTouchInputAxis.axisName == axisName) {
+                        if (axisPadObject.gameTouchInputAxis.axisName == axisName) {
                             hitPad = true;
 
                             //Debug.Log("PointHitTest:" + " hitPad:" + hitPad.ToString() + " axisPadName:" + axisName);
                             // }
                         }
                     }
-                    else if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                    else if (hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                         hitPlacement = true;
                     }
                 }
             }
 
-            if(!hitPad) {
+            if (!hitPad) {
                 inUse = false;
                 anchorPoint = Vector3.zero;
             }
 
-            if(controlsMoveable) {
+            if (controlsMoveable) {
 
-                if(objectPlacement != null) {
+                if (objectPlacement != null) {
 
-                    if(hitObject != null) {
+                    if (hitObject != null) {
                         //LogUtil.Log("hitObject:" + " hitObject:" + hitObject.name);
-                        if(hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
+                        if (hitObject.name.Contains("AxisInputPlacement-" + axisName)) {
                             hitPlacement = true;
                         }
                     }
@@ -164,11 +164,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
                     //Debug.Log("hitPlacement:" + " hitPlacement:" + hitPlacement);
 
-                    if(hitPad) {
+                    if (hitPad) {
 
                         // MOVE PAD with movement
 
-                        if(pad) {
+                        if (pad) {
                             pad.transform.position = worldPoint;
                         }
 
@@ -188,7 +188,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
                         GameController.SendInputAxisMessage(axisName, axisInput);
 
                     }
-                    else if(hitPlacement && !hitPad) {
+                    else if (hitPlacement && !hitPad) {
 
                         // MOVE IT
 
@@ -209,7 +209,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void ResetPad() {
 
-        if(!GameController.touchHandled
+        if (!GameController.touchHandled
             && axisName.Contains(InputSystemKeys.moveKey)
             || !axisName.Contains(InputSystemKeys.moveKey)) {
             axisInput.x = 0f;
@@ -218,7 +218,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
             GameController.SendInputAxisMessage(axisName, axisInput);
         }
 
-        if(pad != null) {
+        if (pad != null) {
             Vector3 padPos = pad.localPosition;
             padPos.x = 0;
             padPos.y = 0;
@@ -229,7 +229,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void Update() {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -241,7 +241,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool upPressed = InputSystem.isUpPress;
         bool downPressed = InputSystem.isDownPress;
 
-        if(axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
             //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
@@ -252,23 +252,23 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         bool handled = false;
 
-        if(touchPressed) {// && controlsVisible) {
-            foreach(Touch touch in Input.touches) {
+        if (touchPressed) {// && controlsVisible) {
+            foreach (Touch touch in Input.touches) {
                 handled = PointHitTest(touch.position);
-                if(handled)
+                if (handled)
                     break;
             }
         }
-        else if(mousePressed) {//  && hideOnDesktopWeb) {
+        else if (mousePressed) {//  && hideOnDesktopWeb) {
             handled = PointHitTest(Input.mousePosition);
         }
         else {
-            if(objectPlacement != null) {
+            if (objectPlacement != null) {
                 objectPlacement.transform.localPosition = originalPlacement;
             }
         }
 
-        if(!handled
+        if (!handled
             && ((leftPressed
             || rightPressed
             || upPressed
@@ -278,23 +278,23 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
             Vector3 axisInput = Vector3.zero;
 
-            if(upPressed) {
+            if (upPressed) {
                 axisInput.y = 0.99f;
             }
 
-            if(leftPressed) {
+            if (leftPressed) {
                 axisInput.x = -0.99f;
             }
 
-            if(downPressed) {
+            if (downPressed) {
                 axisInput.y = -0.99f;
             }
 
-            if(rightPressed) {
+            if (rightPressed) {
                 axisInput.x = 0.99f;
             }
 
-            if(pad != null) {
+            if (pad != null) {
                 Vector3 padPos = pad.localPosition;
                 padPos.x = -axisInput.x;
                 padPos.y = -axisInput.y;
@@ -307,11 +307,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
             handled = true;
         }
 
-        if(axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
             //LogUtil.Log("handled:" + " handled:" + handled.ToString());
         }
 
-        if(!handled) {
+        if (!handled) {
             ResetPad();
         }
     }

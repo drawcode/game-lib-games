@@ -71,15 +71,15 @@ public class BaseGamePlayerRuntimeData {
 
     public bool IsCompletedCollections(AppContentCollect appContentCollect) {
 
-        if(appContentCollect != null) {
+        if (appContentCollect != null) {
 
-            if(currentController == null) {
-                if(GameController.CurrentGamePlayerController != null) {
+            if (currentController == null) {
+                if (GameController.CurrentGamePlayerController != null) {
                     currentController = GameController.CurrentGamePlayerController;
                 }
             }
-            if(currentController != null) {
-                if(GameController.isInst) {
+            if (currentController != null) {
+                if (GameController.isInst) {
 
 #if USE_GAME_LIB_GAMES
                     return appContentCollect.IsCompleted(
@@ -462,7 +462,7 @@ public class BaseGamePlayerMountData {
     public bool isMountedVehicle {
 
         get {
-            if(isMountedVehicleObject) {
+            if (isMountedVehicleObject) {
                 return true;
             }
 
@@ -472,7 +472,7 @@ public class BaseGamePlayerMountData {
 
     public bool isMountedVehicleObject {
         get {
-            if(mountVehicle != null) {
+            if (mountVehicle != null) {
                 return true;
             }
             return false;
@@ -480,33 +480,33 @@ public class BaseGamePlayerMountData {
     }
 
     public void MountVehicle(GameObject go, GameObjectMountVehicle mount) {
-        if(!isMountedVehicleObject) {
+        if (!isMountedVehicleObject) {
             mountVehicle = mount;
             mountVehicle.Mount(go);
         }
     }
 
     public void UnmountVehicle() {
-        if(isMountedVehicleObject) {
+        if (isMountedVehicleObject) {
             mountVehicle.Unmount();
             mountVehicle = null;
         }
     }
 
     public void SetMountVehicleAxis(float h, float v) {
-        if(mountVehicle != null) {
+        if (mountVehicle != null) {
             mountVehicle.SetMountVehicleAxis(h, v);
         }
     }
 
     public void SetMountWeaponRotator(Vector3 rt) {
-        if(mountVehicle != null) {
+        if (mountVehicle != null) {
             mountVehicle.SetMountWeaponRotator(rt);
         }
     }
 
     public void SetMountWeaponRotator(Quaternion qt) {
-        if(mountVehicle != null) {
+        if (mountVehicle != null) {
             mountVehicle.SetMountWeaponRotator(qt);
         }
     }

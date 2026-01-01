@@ -21,9 +21,9 @@ public class GameObjectItemDisplayItem : GameObjectBehavior {
     void Start() {
         UpdateState();
     }
-    
+
     void UpdateState() {
-        
+
         TweenUtil.FadeToObject(gameObject, collected ? 1f : .4f);
     }
 }

@@ -53,7 +53,7 @@ public class GameDraggableEditorButtons {
     public static string buttonEditSave = "ButtonGameEditSave";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
     //ButtonGameLevelItemObject$" + asset.code
-    
+
     public static string buttonGameEditMetaSave = "ButtonGameEditMetaSave";
     public static string buttonGameEditMetaClose = "ButtonGameEditMetaClose";
     public static string buttonGameEditItemsSave = "ButtonGameEditItemsSave";
@@ -342,14 +342,14 @@ public class GameDraggableEditor : GameObjectBehavior {
 
 #if USE_GAME_LIB_GAMES_UI
                 if (UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
-                    
+
                     if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
                         UIPanelEditAsset.Instance.UpdateSprite(assetCodeCreating);
                     }
                     else if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_EFFECT) {
                         UIPanelEditAsset.Instance.UpdateSpriteEffect(assetCodeCreating);
-                    }       
-                    
+                    }
+
                     UIPanelEditAsset.Instance.actionState = UIPanelEditAssetActionState.NONE;
                 }
 #endif
@@ -2119,17 +2119,17 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
 
         if (UIPanelDialogEditItems.isInst) {
-            
+
             if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
                 UIPanelDialogEditItems.Instance.filterType = UIPanelDialogEditItemsFilter.levelAssets;
             }
             else if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
                 UIPanelDialogEditItems.Instance.filterType = UIPanelDialogEditItemsFilter.levelEffect;
             }
-            else {      
+            else {
                 UIPanelDialogEditItems.Instance.filterType = UIPanelDialogEditItemsFilter.all;
             }
-            
+
             UIPanelDialogEditItems.Instance.LoadData();
         }
 #endif

@@ -13,20 +13,18 @@ public class GameTouchInputAxisPlacement : GameObjectBehavior {
     public GameTouchInputAxis axisObject;
 
     void Awake() {
-    
+
     }
 
     void Start() {
-    
+
     }
 
     void OnTriggerEnter(Collider other) {
-    
-        if (axisObject != null) {
 
+        if (axisObject != null) {
 
         }
     }
 
 }
-

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
 
-	public string gameIndicatorTypeCode = "color";
+    public string gameIndicatorTypeCode = "color";
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelValue;
@@ -19,15 +19,15 @@ public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
     public GameObject containerEffects;
     public GameObject backerObject;
     public GameObject outlineObject;
-    
+
     public virtual void Start() {
 
     }
-    
+
     public virtual void SetLabelValue(string val) {
         UIUtil.SetLabelValue(labelValue, val);
     }
-    
+
     public virtual void SetColorValue(Color color) {
         UIUtil.SetSpriteColor(gameObject, color);
     }
@@ -39,9 +39,9 @@ public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
     public virtual void SetColorValueOutline(Color color) {
         UIUtil.SetSpriteColor(outlineObject, color);
     }
-    
+
     public virtual void SetColorValueEffects(Color color) {
-        if(containerEffects != null) {
+        if (containerEffects != null) {
             containerEffects.SetParticleSystemStartColor(color, true);
         }
     }

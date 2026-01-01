@@ -15,26 +15,26 @@ public class GameObjectOrientation : GameObjectBehavior {
 
     public Vector3 scaleLandscape = Vector3.one;
     public Vector3 scalePortrait = Vector3.one;
-    
+
     public DeviceOrientation currentOrientation = DeviceOrientation.Unknown;
-    
+
     void Start() {
-        
+
         HandleOrientation(GetOrientation());
     }
 
     void HandleOrientation(DeviceOrientation orientationTo) {
 
-        if(orientationTo != currentOrientation) {
+        if (orientationTo != currentOrientation) {
 
             currentOrientation = orientationTo;
 
-            if(orientationTo == DeviceOrientation.LandscapeLeft
+            if (orientationTo == DeviceOrientation.LandscapeLeft
             || orientationTo == DeviceOrientation.LandscapeRight) {
 
                 HandleScaleLandscape();
             }
-            else if(orientationTo == DeviceOrientation.Portrait
+            else if (orientationTo == DeviceOrientation.Portrait
                 || orientationTo == DeviceOrientation.PortraitUpsideDown) {
 
                 HandleScalePortrait();
@@ -46,12 +46,12 @@ public class GameObjectOrientation : GameObjectBehavior {
 
         DeviceOrientation orientation = Input.deviceOrientation;
 
-        if(orientation == DeviceOrientation.Unknown) {
+        if (orientation == DeviceOrientation.Unknown) {
 
-            if(Screen.width >= Screen.height) {
+            if (Screen.width >= Screen.height) {
                 orientation = DeviceOrientation.LandscapeLeft;
             }
-            else if(Screen.height > Screen.width) {
+            else if (Screen.height > Screen.width) {
                 orientation = DeviceOrientation.Portrait;
             }
         }
@@ -72,24 +72,21 @@ public class GameObjectOrientation : GameObjectBehavior {
     void Update() {
         HandleOrientation(GetOrientation());
 
-        if(Input.GetKey(KeyCode.LeftControl)
+        if (Input.GetKey(KeyCode.LeftControl)
             || Input.GetKey(KeyCode.LeftControl)) {
 
-            if(Input.GetKey(KeyCode.LeftShift)
+            if (Input.GetKey(KeyCode.LeftShift)
                 || Input.GetKey(KeyCode.RightShift)) {
 
-                if(Input.GetKeyDown(KeyCode.L)) {
+                if (Input.GetKeyDown(KeyCode.L)) {
                     HandleOrientation(DeviceOrientation.LandscapeLeft);
                 }
 
 
-                if(Input.GetKeyDown(KeyCode.P)) {
+                if (Input.GetKeyDown(KeyCode.P)) {
                     HandleOrientation(DeviceOrientation.Portrait);
                 }
-
             }
         }
     }
-
 }
-

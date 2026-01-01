@@ -260,17 +260,17 @@ public class BaseGameGlobal : GameObjectBehavior {
             //gameversesGameObject = gameObject.AddComponent<Gameverses.GameversesGameObject>();
             //socialGame = gameObject.AddComponent<GameSocialGame>();           
         }
-        catch(Exception e) {
+        catch (Exception e) {
             LogUtil.Log("GameGlobal could not be initialized..." + e.Message + e.StackTrace);
         }
     }
 
     public virtual void InitPlayerProgress() {
         gameNetworks = gameObject.AddComponent<GameNetworks>();
-        if(GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {
+        if (GameNetworks.gameNetworkiOSAppleGameCenterEnabled && Context.Current.isMobileiOS) {
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkAppleGameCenter);
         }
-        if(GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {
+        if (GameNetworks.gameNetworkAndroidGooglePlayEnabled && Context.Current.isMobile) {
             gameNetworks.loadNetwork(GameNetworkType.gameNetworkGooglePlayServices);
         }
     }
@@ -309,7 +309,7 @@ public class BaseGameGlobal : GameObjectBehavior {
         currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
         currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
 
-        if(!Application.isEditor) {
+        if (!Application.isEditor) {
             UpdateAudio(currentVolumeEffects, currentVolumeMusic);
         }
 
@@ -411,11 +411,11 @@ public class BaseGameGlobal : GameObjectBehavior {
     public virtual void OnQuitDialog(string result) {
 
 #if USE_GAME_LIB_GAMES_UI
-        if(result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
+        if (result == AlertDialogResultMessages.DIALOG_RESULT_YES) {
             QuitGame();
         }
         else {
-            if(AlertDialog.Instance.IsReady()) {
+            if (AlertDialog.Instance.IsReady()) {
                 AlertDialog.Instance.HideAlert();
             }
         }
@@ -442,12 +442,12 @@ public class BaseGameGlobal : GameObjectBehavior {
         }
 #endif
 
-        if(Application.isEditor) {
+        if (Application.isEditor) {
 
-            if((Input.GetKey(KeyCode.LeftControl)
+            if ((Input.GetKey(KeyCode.LeftControl)
                 || Input.GetKey(KeyCode.RightControl))) {
 
-                if(Input.GetKeyDown(KeyCode.P)) {
+                if (Input.GetKeyDown(KeyCode.P)) {
 
 #if UNITY_EDITOR
                     // Toggle paused
@@ -459,7 +459,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 #endif
 
                 }
-                else if(Input.GetKeyDown(KeyCode.E)
+                else if (Input.GetKeyDown(KeyCode.E)
                          && (Input.GetKeyDown(KeyCode.Plus)
                          || Input.GetKeyDown(KeyCode.KeypadPlus))) {
 
@@ -467,7 +467,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     currentVolumeEffects += currentVolumeInc;
                     UpdateAudio(currentVolumeMusic, currentVolumeEffects);
                 }
-                else if(Input.GetKeyDown(KeyCode.E)
+                else if (Input.GetKeyDown(KeyCode.E)
                          && (Input.GetKeyDown(KeyCode.Minus)
                          || Input.GetKeyDown(KeyCode.KeypadMinus))) {
 
@@ -476,7 +476,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     UpdateAudio(currentVolumeMusic, currentVolumeEffects);
 
                 }
-                else if(Input.GetKeyDown(KeyCode.M)
+                else if (Input.GetKeyDown(KeyCode.M)
                          && (Input.GetKeyDown(KeyCode.Plus)
                          || Input.GetKeyDown(KeyCode.KeypadPlus))) {
 
@@ -485,7 +485,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                     UpdateAudio(currentVolumeMusic, currentVolumeEffects);
 
                 }
-                else if(Input.GetKeyDown(KeyCode.M)
+                else if (Input.GetKeyDown(KeyCode.M)
                          && (Input.GetKeyDown(KeyCode.Minus)
                          || Input.GetKeyDown(KeyCode.KeypadMinus))) {
 
@@ -495,12 +495,12 @@ public class BaseGameGlobal : GameObjectBehavior {
                 }
             }
 
-            if(Input.GetKeyDown(KeyCode.Comma)) {
+            if (Input.GetKeyDown(KeyCode.Comma)) {
 
                 string sceneName = "Panel";
 
 #if USE_GAME_LIB_GAMES_UI
-                if(GameUIController.Instance != null) {
+                if (GameUIController.Instance != null) {
                     sceneName = GameUIController.Instance.currentPanel;
                 }
 #endif
@@ -509,7 +509,7 @@ public class BaseGameGlobal : GameObjectBehavior {
                                   "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                                   + "-" + (screenshotCount++).ToString() + ".png";
 
-                if(GameController.IsGameRunning) {
+                if (GameController.IsGameRunning) {
                     filename = "../screenshots/" + sceneName + "-gameplay-" +
                     "-" + Screen.width.ToString() + "x" + Screen.height.ToString()
                     + "-" + (screenshotCount++).ToString() + ".png";

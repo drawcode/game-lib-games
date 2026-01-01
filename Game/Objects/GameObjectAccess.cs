@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 
 public class GameObjectAccess : GameObjectBehavior {
-    
+
     public string code = "";
     public string type = "";
 
@@ -21,13 +21,13 @@ public class GameObjectAccess : GameObjectBehavior {
 
         return GameProfiles.Current.HasAccessPermission(code);
     }
-    
+
     public void UpdateAccess() {
 
         if (code.IsNullOrEmpty()) {
             return;
         }
-        
+
         if (HasAccessPermission()) {
             containerLocked.Hide();
             containerUnlocked.Show();
@@ -37,5 +37,4 @@ public class GameObjectAccess : GameObjectBehavior {
             containerUnlocked.Hide();
         }
     }
-
 }

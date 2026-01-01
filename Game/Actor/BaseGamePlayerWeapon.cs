@@ -30,21 +30,21 @@ public class BaseGamePlayerWeapon : GameActor {
     public GameWeaponLauncher gameWeaponLauncher;
 
     public virtual void Awake() {
-        
+
     }
-    
+
     public override void Start() {
-        
+
     }
-    
+
     public override void Init() {
-        
+
         if (gamePlayerController == null) {
             gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
-                
+
         Load();
-        
+
         if (currentItems != null) {
             foreach (GameObject go in currentItems) {
                 if (go != null) {
@@ -59,7 +59,7 @@ public class BaseGamePlayerWeapon : GameActor {
             }
         }
     }
-    
+
     public virtual void Load() {
 
 
@@ -69,19 +69,19 @@ public class BaseGamePlayerWeapon : GameActor {
         }
 
         currentItems = new List<GameObject>();
-                
+
         string pathPrefab = System.IO.Path.Combine(
             ContentPaths.appCacheVersionSharedPrefabWeapons,
             "GameProjectile");
 
         GameObject bullet1 = Resources.Load(pathPrefab) as GameObject;
-        currentItems.Add(bullet1);      
+        currentItems.Add(bullet1);
     }
 
     public virtual void LoadProjectiles() {
 
     }
-    
+
     public virtual void PlayParticleSystem(ParticleSystem particles) {
         if (particles != null) {
             //if(!particles.isPlaying) {
@@ -90,17 +90,17 @@ public class BaseGamePlayerWeapon : GameActor {
             //}
         }
     }
-    
+
     public virtual void AttackEffects() {
-                
+
         PlayParticleSystem(particleSystemAttackBlast1);
         PlayParticleSystem(particleSystemAttackBlast2);
         PlayParticleSystem(particleSystemAttackBlast3);
-                
+
         PlayParticleSystem(particleSystemAttackProjectile1);
         PlayParticleSystem(particleSystemAttackProjectile2);
     }
-        
+
     public virtual void Attack() {
 
         if (gameWeaponLauncher != null) {
@@ -111,7 +111,7 @@ public class BaseGamePlayerWeapon : GameActor {
             PlayProjectiles();
 
             AttackEffects();
-            
+
             PlayAttackSounds();
 
         }
@@ -119,24 +119,24 @@ public class BaseGamePlayerWeapon : GameActor {
     }
 
     public virtual void PlayProjectiles() {
-        
+
         if (gameWeaponData.data.HasProjectiles()) {
 
             foreach (GameDataItemProjectile projectile in gameWeaponData.data.projectiles) {
 
-                GameObject projectilePrefab = 
+                GameObject projectilePrefab =
                     AppContentAssets.LoadAssetPrefab("weapon", projectile.code);
 
-                GameObject projectileExplosionPrefab = 
+                GameObject projectileExplosionPrefab =
                     AppContentAssets.LoadAssetPrefab("weapon", "projectile-explosion-star-1");
 
                 if (projectilePrefab != null) {
 
-                    GameObject projectileObject = 
+                    GameObject projectileObject =
                         GameObjectHelper.CreateGameObject(
-                            projectilePrefab, 
-                            containerProjectiles.transform.position, 
-                            containerProjectiles.transform.rotation, 
+                            projectilePrefab,
+                            containerProjectiles.transform.position,
+                            containerProjectiles.transform.rotation,
                             true);
 
                     // TODO add to configs
@@ -146,19 +146,19 @@ public class BaseGamePlayerWeapon : GameActor {
                     if (detachToWorld == null) {
                         detachToWorld = projectileObject.AddComponent<DetachToWorld>();
                     }
-                                        
+
                     DestroyObjectTimed destroyObjectTimed = projectileObject.Get<DestroyObjectTimed>();
                     if (destroyObjectTimed == null) {
                         destroyObjectTimed = projectileObject.AddComponent<DestroyObjectTimed>();
                     }
                     destroyObjectTimed.delay = 5f;
-                    
+
                     SpawnOnContact spawnOnContact = projectileObject.Get<SpawnOnContact>();
                     if (spawnOnContact == null) {
                         spawnOnContact = projectileObject.AddComponent<SpawnOnContact>();
                     }
                     spawnOnContact.objectToCreate = projectileExplosionPrefab;
-                    
+
                     GameObjectMove gameObjectMove = projectileObject.Get<GameObjectMove>();
                     if (gameObjectMove == null) {
                         gameObjectMove = projectileObject.AddComponent<GameObjectMove>();
@@ -167,12 +167,12 @@ public class BaseGamePlayerWeapon : GameActor {
                     gameObjectMove.translationSpeedY = 0f;
                     gameObjectMove.translationSpeedZ = 20f;
                     gameObjectMove.local = true;
-                    
+
                     BoxCollider projectileCollider = projectileObject.Get<BoxCollider>();
                     if (projectileCollider == null) {
                         projectileCollider = projectileObject.AddComponent<BoxCollider>();
                     }
-                    
+
                     Rigidbody projectileBody = projectileObject.Get<Rigidbody>();
                     if (projectileBody == null) {
                         projectileBody = projectileObject.AddComponent<Rigidbody>();
@@ -201,31 +201,31 @@ public class BaseGamePlayerWeapon : GameActor {
     public virtual void PlayAttackPostSounds() {
         GameAudio.PlayEffect(transform, gameWeaponData.data.GetSoundsByTypeLoad().code);
     }
-    
+
     public virtual void AttackPrimary() {
-        
+
         if (gameWeaponLauncher != null) {
             gameWeaponLauncher.Shoot();
         }
         else {
 
             if (!useGameObjectProjectile) {
-        
+
             }
             else {
-            
-            
+
+
                 if (currentItems != null) {
-                
+
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItems:" + currentItems);
-                
+
                     if (currentItems.Count > 0) {
                         // TODO work in other shoot buttons         
-                
+
                         GameObject currentItem = currentItems[0];
-                    
+
                         LogUtil.Log("GamePlayerWeapon::AttackPrimary:currentItem:" + currentItem);
-                    
+
                         Vector3 projectileStartPosition = transform.position;
                         projectileStartPosition.x = projectileStartPosition.x + 2f;
 
@@ -240,16 +240,16 @@ public class BaseGamePlayerWeapon : GameActor {
 
                         GameObject gameObject = currentItem;
                         if (projectile != null) {
-                        
+
                             projectile.transform.parent = null;
-                        
-                        
+
+
                             //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation.eulerAngles:" + gameObject.transform.localRotation.eulerAngles);
                             //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.localRotation:" + gameObject.transform.localRotation);
-                        
+
                             //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation.eulerAngles:" + gameObject.transform.rotation.eulerAngles);
                             //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.rotation:" + gameObject.transform.rotation);
-                        
+
                             /*
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform:" + gameObject.transform);
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.transform.name:" + gameObject.name);
@@ -270,17 +270,17 @@ public class BaseGamePlayerWeapon : GameActor {
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.parent.transform.eulerAngles:" + gameObject.transform.parent.gameObject.transform.eulerAngles);
                     LogUtil.Log("GamePlayerWeapon::AttackPrimary:gameObject.parent.transform.localEulerAngles:" + gameObject.transform.parent.gameObject.transform.localEulerAngles);
                         */
-                        
+
                             projectile.gameObject.transform.position = gameObject.transform.position;
                             projectile.speed = 1f;//currentAcceleration * .1f;
-                        
+
                             if (InputSystem.Instance != null) {
                                 //LogUtil.Log("GamePlayerWeapon::AttackPrimary:gInputSystem.Instance.lastTargetDirection:" + InputSystem.Instance.lastTargetDirection);
                                 //projectile.direction = InputSystem.Instance.lastTargetDirection;
                                 projectile.transform.position = transform.parent.position;
                                 projectile.direction = transform.parent.position;
                             }
-                        
+
                             projectile.projectileObject = currentItem;
                             projectile.Launch();
                         }
@@ -290,7 +290,7 @@ public class BaseGamePlayerWeapon : GameActor {
 
         }
     }
-    
+
     public override void Update() {
 
         if (!GameConfigs.isGameRunning) {
@@ -301,34 +301,33 @@ public class BaseGamePlayerWeapon : GameActor {
             AttackPrimary();
         }
     }
-        
+
     public virtual void FixedUpdate() {
-    
+
     }
 
     public virtual void OnTriggerEnter(Collider collider) {
-    
+
     }
-    
+
     public virtual void OnTriggerStay(Collider collider) {
-    
+
     }
-    
+
     public virtual void OnTriggerExit(Collider collider) {
-    
+
     }
 
     public virtual void OnCollisionEnter(Collision collision) {
-    
-    }
-    
-    public virtual void OnCollisionStay(Collision collision) {
-    
-    }
-        
-    public virtual void OnCollisionExit(Collision collision) {
-    
-    }
-    
-}
 
+    }
+
+    public virtual void OnCollisionStay(Collision collision) {
+
+    }
+
+    public virtual void OnCollisionExit(Collision collision) {
+
+    }
+
+}

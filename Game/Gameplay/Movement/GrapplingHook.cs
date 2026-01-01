@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GrapplingHook : MonoBehaviour {
-    
+
     public float speed = 25f;
     public float maxVelocity = 10f;
     public float swingForwardSpeed = 10f;
@@ -10,16 +10,16 @@ public class GrapplingHook : MonoBehaviour {
     public float initialForce = 15f;
     float distToGround;
     Collider col;
-    
+
     //This should be left as 0 for now.
     //Rope length is set by the inital raycast hit
     //This makes sure that player is always on the outer most part of his swing.
     public float ropeLength = 0f;
-    
+
     //An empty GameObject should be assigned here.
     //Make sure to not child it to anything in the Hierarchy. 
     public Transform hookAnchor;
-    
+
     //Line renderer for a simple representation of a rope.
     public LineRenderer line;
     bool canGrapple = false;
@@ -28,7 +28,7 @@ public class GrapplingHook : MonoBehaviour {
     float dist;
     Vector3 hitPoint;
     Vector3 newVel;
-    
+
     void Awake() {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -37,12 +37,12 @@ public class GrapplingHook : MonoBehaviour {
     void Start() {
         distToGround = col.bounds.extents.y;
     }
-    
+
     void Update() {
-        
+
         RaycastHit hit;
         //RaycastHit lastSight;
-        
+
         //Check to make sure we actually hit something that can be grappled.
         //The Raycast distance can be change to another value to set a certain distance a player can grapple to.
         if (Input.GetButtonDown("Fire1")) {
@@ -58,7 +58,7 @@ public class GrapplingHook : MonoBehaviour {
                 }
             }
         }
-        
+
         //If the mouse button is still held after hitting something, continue to swing.
         if (Input.GetButton("Fire1")) {
             if (canGrapple) {
@@ -102,15 +102,15 @@ public class GrapplingHook : MonoBehaviour {
             Swinging = false;
         }
     }
-    
+
     void FixedUpdate() {
-        
+
         //All the code below is just movement code for the player.
         //The change in drag allows the control of how fast the player stops, while still allowing the use AddForce
         //Movement Speed is Halved in the air for a more realistic feel.
         float x = Input.GetAxis("Horizontal") * 1;
         float z = Input.GetAxis("Vertical") * 1;
-        
+
         if (Mathf.Abs(x) > 0 || Mathf.Abs(z) > 0 || !IsGrounded()) {
             rb.linearDamping = 0;
         }
@@ -135,13 +135,13 @@ public class GrapplingHook : MonoBehaviour {
             rb.AddForce(transform.forward * z * speed / 2);
             rb.AddForce(transform.right * x * speed / 2);
         }
-        
+
         //Jump
         if (Input.GetButtonDown("Jump") && IsGrounded()) {
             rb.AddForce(Vector3.up * 250);
         }
     }
-    
+
     //The isGrounded Check for the player
     bool IsGrounded() {
         return Physics.Raycast(transform.position, -transform.up, distToGround + .05f);

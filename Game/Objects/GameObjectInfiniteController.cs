@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class GameObjectInfiniteController : GameObjectBehavior {
-    
+
     Dictionary<string, GameObjectInfiniteContainer> containersInfinite;
 
     void Start() {
@@ -18,7 +18,7 @@ public class GameObjectInfiniteController : GameObjectBehavior {
 
         UpdateContainers();
     }
-    
+
     public void UpdateContainers() {
 
         foreach (GameObjectInfiniteContainer container in gameObject.GetList<GameObjectInfiniteContainer>()) {
@@ -27,11 +27,10 @@ public class GameObjectInfiniteController : GameObjectBehavior {
 
         int containersCount = 0;
 
-        if(containersInfinite != null) {
+        if (containersInfinite != null) {
             containersCount = containersInfinite.Count;
         }
 
         Debug.Log("UpdateContainers: count:" + containersCount);
     }
-
 }

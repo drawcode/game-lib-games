@@ -17,7 +17,7 @@ public class Draggable : GameObjectBehavior {
 
     public void Awake() {
 
-        if(Instance != null && this != Instance) {
+        if (Instance != null && this != Instance) {
             //There is already a copy of this script running
             //Destroy(gameObject);
             return;
@@ -28,9 +28,9 @@ public class Draggable : GameObjectBehavior {
 
 
     public void Update() {
-        if(ShouldUpdate()) {
+        if (ShouldUpdate()) {
 
-            if(useToggleDrag) {
+            if (useToggleDrag) {
                 UpdateToggleDrag();
             }
             else {
@@ -42,13 +42,13 @@ public class Draggable : GameObjectBehavior {
     GamePlayerThirdPersonController controller = null;
 
     public bool ShouldUpdate() {
-        if(InputSystem.Instance.lastNormalizedTouch.y == 0f
+        if (InputSystem.Instance.lastNormalizedTouch.y == 0f
             && InputSystem.Instance.lastNormalizedTouch.x == 0f) {
 
-            if(controller == null) {
+            if (controller == null) {
                 controller = FindObjectOfType(typeof(GamePlayerThirdPersonController)) as GamePlayerThirdPersonController;
-                if(controller != null) {
-                    if(controller.verticalInput == 0f
+                if (controller != null) {
+                    if (controller.verticalInput == 0f
                         && controller.horizontalInput == 0f
                         && controller.moveSpeed == 0f) {
                         return true;
@@ -67,11 +67,11 @@ public class Draggable : GameObjectBehavior {
 
     // Toggles drag with mouse click
     public void UpdateToggleDrag() {
-        if(Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             Grab();
         }
         else {
-            if(grabbed) {
+            if (grabbed) {
                 Drag();
             }
         }
@@ -79,8 +79,8 @@ public class Draggable : GameObjectBehavior {
 
     // Drags when user holds down button
     public void UpdateHoldDrag() {
-        if(Input.GetMouseButton(0)) {
-            if(grabbed) {
+        if (Input.GetMouseButton(0)) {
+            if (grabbed) {
                 Drag();
             }
             else {
@@ -88,7 +88,7 @@ public class Draggable : GameObjectBehavior {
             }
         }
         else {
-            if(grabbed) {
+            if (grabbed) {
                 //restore the original layermask
                 grabbed.gameObject.layer = grabLayerMask;
             }
@@ -97,23 +97,23 @@ public class Draggable : GameObjectBehavior {
     }
 
     public void Grab() {
-        if(grabbed) {
+        if (grabbed) {
             grabbed = null;
         }
         else {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out hit)) {
+            if (Physics.Raycast(ray, out hit)) {
                 grabbed = hit.transform;
-                if(grabbed.tag == "drag" || grabbed.parent.tag == "drag") {
-                    if(grabbed.parent) {
+                if (grabbed.tag == "drag" || grabbed.parent.tag == "drag") {
+                    if (grabbed.parent) {
                         grabbed = grabbed.parent.transform;
                     }
                     //set the object to ignore raycasts
                     grabLayerMask = grabbed.gameObject.layer;
                     grabbed.gameObject.layer = 2;
                     //now immediately do another raycast to calculate the offset
-                    if(Physics.Raycast(ray, out hit)) {
+                    if (Physics.Raycast(ray, out hit)) {
                         grabOffset = grabbed.position - hit.point;
                     }
                     else {
@@ -132,8 +132,8 @@ public class Draggable : GameObjectBehavior {
     public void Drag() {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if(Physics.Raycast(ray, out hit)) {
-            if(grabbed != null) {
+        if (Physics.Raycast(ray, out hit)) {
+            if (grabbed != null) {
                 float grabbedInitialY = grabbed.position.y;
                 grabbed.position = hit.point + grabOffset;
                 grabbed.position = grabbed.position.WithY(grabbedInitialY);

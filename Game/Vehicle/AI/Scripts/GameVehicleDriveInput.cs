@@ -24,7 +24,7 @@ public class GameVehicleDriveInput : GameObjectBehavior {
     void Start() {
 
     }
-    
+
     void Update() {
 
         vehicleDrive.vehicleDriveData.inputAxisHorizontal = Input.GetAxis("Horizontal");
@@ -35,7 +35,5 @@ public class GameVehicleDriveInput : GameObjectBehavior {
 
         Debug.Log("vehicleDrive.vehicleDriveData.inputAxisVertical:" + vehicleDrive.vehicleDriveData.inputAxisVertical);
         Debug.Log("vehicleDrive.vehicleDriveData.inputAxisHorizontal:" + vehicleDrive.vehicleDriveData.inputAxisHorizontal);
-
     }
-
 }

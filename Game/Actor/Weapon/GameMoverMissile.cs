@@ -29,7 +29,7 @@ public class GameMoverMissile : GameWeaponBase {
     private int initialtimetorock;
 
     private void Start() {
-        
+
         initialDamping = Damping;
         initialSpeed = Speed;
         initialSpeedMax = SpeedMax;
@@ -47,7 +47,7 @@ public class GameMoverMissile : GameWeaponBase {
     }
 
     public void Reset() {
-        
+
         gameObject.ResetRigidBodiesVelocity();
         //gameObject.ResetLocalPosition();
         //gameObject.ResetLocalRotation();
@@ -70,11 +70,11 @@ public class GameMoverMissile : GameWeaponBase {
     }
 
     Rigidbody rigid;
-    
+
     private void FixedUpdate() {
 
         if (rigid == null) {
-            rigid = gameObject.Get<Rigidbody>();        
+            rigid = gameObject.Get<Rigidbody>();
         }
 
         if (rigid == null) {
@@ -82,15 +82,15 @@ public class GameMoverMissile : GameWeaponBase {
         }
 
         rigid.linearVelocity = new Vector3(
-            transform.forward.x * Speed * Time.fixedDeltaTime, 
+            transform.forward.x * Speed * Time.fixedDeltaTime,
             transform.forward.y * Speed * Time.fixedDeltaTime,
             transform.forward.z * Speed * Time.fixedDeltaTime);
 
         rigid.linearVelocity += new Vector3(
-            Random.Range(-Noise.x, Noise.x), 
-            Random.Range(-Noise.y, Noise.y), 
+            Random.Range(-Noise.x, Noise.x),
+            Random.Range(-Noise.y, Noise.y),
             Random.Range(-Noise.z, Noise.z));
-        
+
         if (Speed < SpeedMax) {
             Speed += SpeedMult * Time.fixedDeltaTime;
         }
@@ -107,7 +107,7 @@ public class GameMoverMissile : GameWeaponBase {
                 gameDamageObject.Active();
             }
         }
-        
+
         if (Target) {
             Quaternion rotation = Quaternion.LookRotation(Target.transform.position - transform.transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * Damping);
@@ -117,12 +117,12 @@ public class GameMoverMissile : GameWeaponBase {
                 Target = null;
             }
         }
-        
+
         if (Seeker) {
             if (timetorock > DurationLock) {
                 if (!locked && !Target) {
                     float distance = int.MaxValue;
-                    for (int t=0; t<TargetTag.Length; t++) {
+                    for (int t = 0; t < TargetTag.Length; t++) {
                         if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
                             GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
 
@@ -151,7 +151,7 @@ public class GameMoverMissile : GameWeaponBase {
             }
 
             if (Target) {
-                
+
             }
             else {
                 locked = false;

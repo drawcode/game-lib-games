@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Engine.Game.App;
 
-public class GameDamageDirector {   
+public class GameDamageDirector {
 
     public static float intervalGameDamageExplosionDamage = 0.2f;
     public static float lastGameDamageExplosionDamage = 0;
@@ -10,45 +10,45 @@ public class GameDamageDirector {
     public static float lastGameDamageChainDamage = 0;
     public static float intervalRayShoot = 0.05f;
     public static float lastRayShoot = 0;
-    
+
     public static bool AllowExplosion {
-        
+
         get {
-            
-            if (GameDamageDirector.lastGameDamageExplosionDamage + 
+
+            if (GameDamageDirector.lastGameDamageExplosionDamage +
                 GameDamageDirector.intervalGameDamageExplosionDamage < Time.time) {
                 GameDamageDirector.lastGameDamageExplosionDamage = Time.time;
                 return true;
             }
-            
+
             return false;
         }
     }
 
     public static bool AllowChain {
-        
+
         get {
-            
-            if (GameDamageDirector.lastGameDamageChainDamage + 
+
+            if (GameDamageDirector.lastGameDamageChainDamage +
                 GameDamageDirector.intervalGameDamageChainDamage < Time.time) {
                 GameDamageDirector.lastGameDamageChainDamage = Time.time;
                 return true;
             }
-            
+
             return false;
         }
     }
 
     public static bool AllowRayShoot {
-        
+
         get {
-            
-            if (GameDamageDirector.lastRayShoot + 
+
+            if (GameDamageDirector.lastRayShoot +
                 GameDamageDirector.intervalRayShoot < Time.time) {
                 GameDamageDirector.lastRayShoot = Time.time;
                 return true;
             }
-            
+
             return false;
         }
     }
@@ -68,7 +68,7 @@ public class GameDamageManager : MonoBehaviour {
     }
 
     public void UpdateGameObjects() {
-        
+
         if (string.IsNullOrEmpty(effectDestroy)) {
             //effectDestroy = "effect-explosion";
         }
@@ -80,11 +80,11 @@ public class GameDamageManager : MonoBehaviour {
         gameZoneActionAsset = null;
 
         if (gamePlayerController == null) {
-            gamePlayerController = 
+            gamePlayerController =
                 gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
         if (gameZoneActionAsset == null) {
-            gameZoneActionAsset = 
+            gameZoneActionAsset =
                 gameObject.FindTypeAboveRecursive<GameZoneActionAsset>();
         }
     }
@@ -96,14 +96,14 @@ public class GameDamageManager : MonoBehaviour {
         }
 
         if (gamePlayerController != null) {
-                        
-            if (gamePlayerController.IsPlayerControlled 
+
+            if (gamePlayerController.IsPlayerControlled
                 || gamePlayerController.IsSidekickControlled) {
                 // 1/10th power for friendly fire
                 damage = damage / 10f;
             }
 
-            if (!gamePlayerController.isDead 
+            if (!gamePlayerController.isDead
                 && !gamePlayerController.IsPlayerControlled) {
                 gamePlayerController.Hit(damage / 10);
             }
@@ -112,7 +112,7 @@ public class GameDamageManager : MonoBehaviour {
             if (HP < 0)
                 return;
 
-            if (!string.IsNullOrEmpty(audioHit)) {            
+            if (!string.IsNullOrEmpty(audioHit)) {
                 GameAudio.PlayEffect(audioHit);
             }
 
@@ -124,8 +124,8 @@ public class GameDamageManager : MonoBehaviour {
     }
 
     private void Dead() {
-                
-        if (!string.IsNullOrEmpty(effectDestroy)) {         
+
+        if (!string.IsNullOrEmpty(effectDestroy)) {
             AppContentAssets.LoadAssetEffects(
                 effectDestroy, transform.position, transform.rotation);
         }
@@ -142,16 +142,16 @@ public class GameDamageManager : MonoBehaviour {
             }
         }
     }
-        
+
     public virtual void OnParticleCollision(GameObject other) {
-        
+
         if (gamePlayerController != null) {
 
             //gamePlayerController.OnParticleCollision(other);
         }
         else {
-            
-            if (other.name.Contains("projectile-")) {               
+
+            if (other.name.Contains("projectile-")) {
                 // todo lookup projectile and power to subtract.                    
                 float projectilePower = 3;
                 ApplyDamage(projectilePower);

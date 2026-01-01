@@ -8,7 +8,7 @@ public class GameFlashLight : MonoBehaviour {
     void Update() {
         if (!gameObject.Has<Light>())
             return;
-        
+
         gameObject.Get<Light>().intensity -= LightMult * Time.deltaTime;
     }
 }

@@ -444,44 +444,44 @@ public class BaseGamePlayerController : GameActor {
 #if USE_GAME_LIB_GAMEVERSES
     public virtual void OnNetworkActionEvent(Gameverses.GameNetworkingAction actionEvent, Vector3 pos, Vector3 direction) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(actionEvent.uuidOwner == uniqueId) {
+        if (actionEvent.uuidOwner == uniqueId) {
             AnimatePlayer(actionEvent.code);
         }
     }
 
     public virtual void OnNetworkPlayerAnimation(string uid, Gameverses.GameNetworkAniStates aniState) {
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
-        if(uniqueId == uid && !isMe) {
-            if(currentControllerData.lastNetworkAniState != currentControllerData.currentNetworkAniState) {
+        if (uniqueId == uid && !isMe) {
+            if (currentControllerData.lastNetworkAniState != currentControllerData.currentNetworkAniState) {
                 currentControllerData.lastNetworkAniState = currentControllerData.currentNetworkAniState;
 
-                if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.walk) {
+                if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.walk) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.run) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.run) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack1) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack1) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack2) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.attack2) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.death) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.death) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill1) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill1) {
 
                 }
-                else if(currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill2) {
+                else if (currentControllerData.currentNetworkAniState == Gameverses.GameNetworkAniStates.skill2) {
 
                 }
             }
@@ -489,24 +489,24 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void OnNetworkPlayerInputAxisHorizontal(string uid, float horizontalInput) {
-        if(uniqueId == uid && !isMe) {
-            if(currentControllerData.thirdPersonController != null) {
+        if (uniqueId == uid && !isMe) {
+            if (currentControllerData.thirdPersonController != null) {
                 currentControllerData.thirdPersonController.horizontalInput = horizontalInput;
             }
         }
     }
 
     public virtual void OnNetworkPlayerInputAxisVertical(string uid, float verticalInput) {
-        if(uniqueId == uid && !isMe) {
-            if(currentControllerData.thirdPersonController != null) {
+        if (uniqueId == uid && !isMe) {
+            if (currentControllerData.thirdPersonController != null) {
                 currentControllerData.thirdPersonController.verticalInput = verticalInput;
             }
         }
     }
 
     public virtual void OnNetworkPlayerSpeed(string uid, float speed) {
-        if(uniqueId == uid && !isMe) {
-            if(currentControllerData.thirdPersonController != null) {
+        if (uniqueId == uid && !isMe) {
+            if (currentControllerData.thirdPersonController != null) {
                 currentControllerData.thirdPersonController.moveSpeed = speed;
             }
         }
@@ -5029,18 +5029,18 @@ public class BaseGamePlayerController : GameActor {
 
         uniqueId = uid;
 
-        if(!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
+        if (!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
             return;
         }
 
         FindNetworkContainer(uniqueId);
 
-        if(currentNetworkPlayerContainer != null) {
+        if (currentNetworkPlayerContainer != null) {
 #if NETWORK_USE_UNITY || NETWORK_PHOTON
             currentNetworkPlayerContainer.networkViewObject.observed = currentNetworkPlayerContainer;
 #endif
             currentNetworkPlayerContainer.gamePlayer = gameObject;
-            if(currentControllerData.thirdPersonController != null) {
+            if (currentControllerData.thirdPersonController != null) {
                 currentNetworkPlayerContainer.currentSpeedNetwork = currentControllerData.thirdPersonController.moveSpeed;
                 currentNetworkPlayerContainer.verticalInputNetwork = currentControllerData.thirdPersonController.verticalInput;
                 currentNetworkPlayerContainer.horizontalInputNetwork = currentControllerData.thirdPersonController.horizontalInput;
@@ -5051,22 +5051,22 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual Gameverses.GameNetworkPlayerContainer FindNetworkContainer(string uid) {
 
-        if(!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
+        if (!AppConfigs.featureEnableNetworking || !GameConfigs.useNetworking) {
             return null;
         }
 
-        if(currentNetworkPlayerContainer != null) {
-            if(currentNetworkPlayerContainer.uniqueId == uid) {
+        if (currentNetworkPlayerContainer != null) {
+            if (currentNetworkPlayerContainer.uniqueId == uid) {
                 return currentNetworkPlayerContainer;
             }
         }
 
-        if(Time.time > currentControllerData.lastNetworkContainerFind + 5f) {
+        if (Time.time > currentControllerData.lastNetworkContainerFind + 5f) {
             currentControllerData.lastNetworkContainerFind = Time.time;
-            if(GameController.Instance.gameState == GameStateGlobal.GameStarted) {
-                foreach(Gameverses.GameNetworkPlayerContainer playerContainer
+            if (GameController.Instance.gameState == GameStateGlobal.GameStarted) {
+                foreach (Gameverses.GameNetworkPlayerContainer playerContainer
                          in UnityObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
-                    if(playerContainer.uniqueId == uid) {
+                    if (playerContainer.uniqueId == uid) {
                         currentNetworkPlayerContainer = playerContainer;
                         return currentNetworkPlayerContainer;
                     }
@@ -5079,9 +5079,9 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual bool HasNetworkContainer(string uid) {
 
-        foreach(Gameverses.GameNetworkPlayerContainer playerContainer
+        foreach (Gameverses.GameNetworkPlayerContainer playerContainer
                  in UnityObjectUtil.FindObjects<Gameverses.GameNetworkPlayerContainer>()) {
-            if(playerContainer.uniqueId == uid) {
+            if (playerContainer.uniqueId == uid) {
                 currentNetworkPlayerContainer = playerContainer;
                 return true;
             }
@@ -5096,8 +5096,8 @@ public class BaseGamePlayerController : GameActor {
 
         FindNetworkContainer(uniqueId);
 
-        if(currentNetworkPlayerContainer != null) {
-            if(currentControllerData.thirdPersonController != null) {
+        if (currentNetworkPlayerContainer != null) {
+            if (currentControllerData.thirdPersonController != null) {
                 currentNetworkPlayerContainer.currentSpeedNetwork = currentControllerData.thirdPersonController.moveSpeed;
                 currentNetworkPlayerContainer.verticalInputNetwork = currentControllerData.thirdPersonController.verticalInput;
                 currentNetworkPlayerContainer.horizontalInputNetwork = currentControllerData.thirdPersonController.horizontalInput;
@@ -5818,20 +5818,20 @@ public class BaseGamePlayerController : GameActor {
         if (IsNetworkPlayerState()) {
             // if network container is gone remove the player...
 #if USE_GAME_LIB_GAMEVERSES
-            if(HasNetworkContainer(uniqueId)) {
+            if (HasNetworkContainer(uniqueId)) {
                 // no prob
             }
             else {
 #endif
-            // remove
+                // remove
 
-            if (currentControllerData.thirdPersonController) {
-                currentControllerData.thirdPersonController.ApplyDie(true);
-            }
+                if (currentControllerData.thirdPersonController) {
+                    currentControllerData.thirdPersonController.ApplyDie(true);
+                }
 
-            TweenUtil.FadeToObject(gameObject, 0f, .3f, .5f);
+                TweenUtil.FadeToObject(gameObject, 0f, .3f, .5f);
 
-            Invoke("RemoveMe", 6);
+                Invoke("RemoveMe", 6);
 #if USE_GAME_LIB_GAMEVERSES
             }
 #endif

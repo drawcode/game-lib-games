@@ -49,19 +49,19 @@ public class UITweenerUtil {
     public static void ColorToHandler<T>(
         GameObject go, Color colorTo, float duration, float delay) where T : Component {
 
-        foreach(Transform t in go.transform) {
+        foreach (Transform t in go.transform) {
 
-            if(go.Has<T>()) {
+            if (go.Has<T>()) {
                 string toLook = "-a-";
                 int alphaMarker = t.name.IndexOf(toLook);
 
-                if(alphaMarker > -1) {
+                if (alphaMarker > -1) {
                     string val = t.name.Substring(alphaMarker + toLook.Length);
-                    if(!string.IsNullOrEmpty(val)) {
+                    if (!string.IsNullOrEmpty(val)) {
                         float valNumeric = 0f;
                         float.TryParse(val, out valNumeric);
 
-                        if(valNumeric > 0f) {
+                        if (valNumeric > 0f) {
                             valNumeric = valNumeric / 100f;
                             colorTo.a = valNumeric;
                         }
@@ -76,17 +76,17 @@ public class UITweenerUtil {
     }
 
     public static void ColorToHandler(GameObject go, Color colorTo, float duration, float delay) {
-        foreach(Transform t in go.transform) {
+        foreach (Transform t in go.transform) {
             string toLook = "-a-";
             int alphaMarker = t.name.IndexOf(toLook);
 
-            if(alphaMarker > -1) {
+            if (alphaMarker > -1) {
                 string val = t.name.Substring(alphaMarker + toLook.Length);
-                if(!string.IsNullOrEmpty(val)) {
+                if (!string.IsNullOrEmpty(val)) {
                     float valNumeric = 0f;
                     float.TryParse(val, out valNumeric);
 
-                    if(valNumeric > 0f) {
+                    if (valNumeric > 0f) {
                         valNumeric = valNumeric / 100f;
 
                         colorTo.a = valNumeric;
@@ -161,7 +161,7 @@ public class UITweenerUtil {
 
     public static TweenColor ColorTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Color colorTo) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -170,16 +170,16 @@ public class UITweenerUtil {
 
     public static TweenColor ColorTo(bool reset, GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Color colorTo) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
-        if(reset) {
+        if (reset) {
             //go.RemoveComponent<TweenColor>();
         }
 
         TweenColor comp = UITweenerUtil.Begin<TweenColor>(go, method, style, duration, delay);
-        if(reset) {
+        if (reset) {
             comp = ResetTween(comp);
         }
         comp.from = comp.color;
@@ -187,11 +187,11 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
-        if(!reset) {
+        if (!reset) {
             comp = ResetTween(comp);
         }
         comp.Play(true);
@@ -200,7 +200,7 @@ public class UITweenerUtil {
 
     public static TweenRotation RotateTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Vector3 rotateFrom, Vector3 rotateTo) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -213,7 +213,7 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
@@ -226,7 +226,7 @@ public class UITweenerUtil {
             GameObject go, UITweener.Method method, UITweener.Style style,
             float duration, float delay, Vector3 rotateTo) {
 
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -235,7 +235,7 @@ public class UITweenerUtil {
 
     public static TweenPosition MoveTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Vector3 posFrom, Vector3 posTo) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -248,7 +248,7 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
@@ -264,7 +264,7 @@ public class UITweenerUtil {
 
     public static TweenPosition MoveTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Vector3 pos) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -273,16 +273,16 @@ public class UITweenerUtil {
 
     public static TweenPosition MoveTo(bool reset, GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, Vector3 pos) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
-        if(reset) {
+        if (reset) {
             //go.RemoveComponent<TweenPosition>();
         }
 
         TweenPosition comp = UITweenerUtil.Begin<TweenPosition>(go, method, style, duration, delay);
-        if(reset) {
+        if (reset) {
             comp = ResetTween(comp);
         }
         comp.from = comp.position;
@@ -290,11 +290,11 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
-        if(!reset) {
+        if (!reset) {
             comp = ResetTween(comp);
         }
         comp.Play(true);
@@ -329,7 +329,7 @@ public class UITweenerUtil {
 
     public static TweenAlpha FadeTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, float alpha) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -338,18 +338,18 @@ public class UITweenerUtil {
 
     public static TweenAlpha FadeTo(bool reset, GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, float alpha) {
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
-        if(reset) {
+        if (reset) {
             //go.RemoveComponent<TweenAlpha>();
         }
 
         iTween.Stop(go);
 
         TweenAlpha comp = UITweenerUtil.Begin<TweenAlpha>(go, method, style, duration, delay);
-        if(reset) {
+        if (reset) {
             comp = ResetTween(comp);
         }
         comp.from = comp.alpha;
@@ -357,11 +357,11 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
-        if(!reset) {
+        if (!reset) {
             comp = ResetTween(comp);
         }
         comp.Play(true);
@@ -372,20 +372,20 @@ public class UITweenerUtil {
     }
 
     public static void FadeInHandler(GameObject go, float duration, float delay) {
-        foreach(Transform t in go.transform) {
+        foreach (Transform t in go.transform) {
             string toLook = "-a-";
             int alphaMarker = t.name.IndexOf(toLook);
             //string alphaObject = t.name;
-            if(alphaMarker > -1) {
+            if (alphaMarker > -1) {
                 // Fade it immediately
                 FadeTo(t.gameObject, UITweener.Method.Linear, UITweener.Style.Once, 0f, 0f, 0f);
                 // Fade to the correct value after initial fade in
                 string val = t.name.Substring(alphaMarker + toLook.Length);
-                if(!string.IsNullOrEmpty(val)) {
+                if (!string.IsNullOrEmpty(val)) {
                     float valNumeric = 0f;
                     float.TryParse(val, out valNumeric);
 
-                    if(valNumeric > 0f) {
+                    if (valNumeric > 0f) {
                         valNumeric = valNumeric / 100f;
 
                         float currentDuration = duration + .05f;
@@ -403,7 +403,7 @@ public class UITweenerUtil {
     public static TweenAlpha FadeTo(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay, float alphaFrom, float alphaTo) {
 
-        if(go == null) {
+        if (go == null) {
             return null;
         }
 
@@ -416,7 +416,7 @@ public class UITweenerUtil {
         comp.duration = duration;
         comp.delay = delay;
 
-        if(duration <= 0f) {
+        if (duration <= 0f) {
             comp.Sample(1f, true);
             comp.enabled = false;
         }
@@ -428,7 +428,7 @@ public class UITweenerUtil {
     public static T Begin<T>(GameObject go, UITweener.Method method, UITweener.Style style,
         float duration, float delay) where T : UITweener {
 
-        if(go == null) {
+        if (go == null) {
             return default(T);
         }
 
@@ -436,7 +436,7 @@ public class UITweenerUtil {
 #if UNITY_FLASH
         if ((object)comp == null) comp = (T)go.AddComponent<T>();
 #else
-        if(comp == null)
+        if (comp == null)
             comp = go.AddComponent<T>();
 #endif
         comp.delay = delay;

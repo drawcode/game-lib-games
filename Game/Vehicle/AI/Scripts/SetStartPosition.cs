@@ -25,7 +25,7 @@ public class SetStartPosition : GameObjectBehavior {
             SplinePathWaypoints splinePathWaypoints;
 
             aiDriverController = gameObject.GetComponent("GameVehicleAIDriverController") as GameVehicleAIDriverController;
-            
+
             splinePathWaypoints = gameObject.GetComponent("SplinePathWaypoints") as SplinePathWaypoints;
             if (splinePathWaypoints != null) {
                 //if (splinePathWaypoints.active)

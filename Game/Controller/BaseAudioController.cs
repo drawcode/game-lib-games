@@ -10,35 +10,28 @@ using Engine.Game.App;
 using Engine.Audio;
 using Engine.Game.Data;
 
-public class GameAudioDataItem : GameDataObject
-{
+public class GameAudioDataItem : GameDataObject {
 
     public List<GameDataSound> items;
 
-    public GameAudioDataItem()
-    {
+    public GameAudioDataItem() {
         items = new List<GameDataSound>();
     }
 }
 
-public class BaseAudioController : GameObjectBehavior
-{
+public class BaseAudioController : GameObjectBehavior {
 
     private static GameAudioController _instance = null;
 
-    public static GameAudioController Instance
-    {
-        get
-        {
-            if (!_instance)
-            {
+    public static GameAudioController Instance {
+        get {
+            if (!_instance) {
 
                 // check if an object is already available in the scene graph
                 _instance = FindObjectOfType(typeof(GameAudioController)) as GameAudioController;
 
                 // nope, create a new one
-                if (!_instance)
-                {
+                if (!_instance) {
                     var obj = new GameObject("_GameAudioController");
                     DontDestroyOnLoad(obj);
                     _instance = obj.AddComponent<GameAudioController>();
@@ -50,12 +43,9 @@ public class BaseAudioController : GameObjectBehavior
         }
     }
 
-    public static bool isInst
-    {
-        get
-        {
-            if (Instance != null)
-            {
+    public static bool isInst {
+        get {
+            if (Instance != null) {
                 return true;
             }
             return false;
@@ -64,19 +54,16 @@ public class BaseAudioController : GameObjectBehavior
 
     public Dictionary<string, GameAudioDataItem> items;
 
-    void Awake()
-    {
+    void Awake() {
 
         // Init();
     }
 
-    public virtual void Start()
-    {
+    public virtual void Start() {
         Init();
     }
 
-    public virtual void Init()
-    {
+    public virtual void Init() {
 
         items = new Dictionary<string, GameAudioDataItem>();
 
@@ -85,28 +72,23 @@ public class BaseAudioController : GameObjectBehavior
         //    GameProfiles.Current.GetAudioEffectsVolume());
     }
 
-    public void OnEnable()
-    {
+    public void OnEnable() {
 
         Messenger<GameAudioData>.AddListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
     }
 
-    public void OnDisable()
-    {
+    public void OnDisable() {
 
         Messenger<GameAudioData>.RemoveListener(GameAudioMessages.eventAudioVolumeChanged, OnAudioVolumeChangeEventHandler);
 
     }
 
-    void OnAudioVolumeChangeEventHandler(GameAudioData gameAudioData)
-    {
+    void OnAudioVolumeChangeEventHandler(GameAudioData gameAudioData) {
 
-        if (gameAudioData.code == BaseDataObjectKeys.effects)
-        {
+        if (gameAudioData.code == BaseDataObjectKeys.effects) {
             GameAudio.SetProfileEffectsVolume(gameAudioData.volume);
         }
-        else if (gameAudioData.code == BaseDataObjectKeys.music)
-        {
+        else if (gameAudioData.code == BaseDataObjectKeys.music) {
             GameAudio.SetProfileAmbienceVolume(gameAudioData.volume);
         }
     }
@@ -120,37 +102,29 @@ public class BaseAudioController : GameObjectBehavior
     public GameObject currentUILoop;
     public GameObject currentGameLoop;
 
-    public bool isUIMusicPlaying
-    {
-        get
-        {
+    public bool isUIMusicPlaying {
+        get {
             if (currentUILoop != null
-            && currentUILoop.IsAudioSourcePlaying())
-            {
+            && currentUILoop.IsAudioSourcePlaying()) {
                 return true;
             }
 
             if (currentUIIntro != null
-            && currentUIIntro.IsAudioSourcePlaying())
-            {
+            && currentUIIntro.IsAudioSourcePlaying()) {
                 return true;
             }
-            
+
             return false;
         }
     }
 
-    public bool isGameMusicPlaying
-    {
-        get
-        {
-            if (currentGameLoop == null)
-            {
+    public bool isGameMusicPlaying {
+        get {
+            if (currentGameLoop == null) {
                 return false;
             }
 
-            if (currentGameLoop.IsAudioSourcePlaying())
-            {
+            if (currentGameLoop.IsAudioSourcePlaying()) {
                 return true;
             }
 
@@ -158,12 +132,9 @@ public class BaseAudioController : GameObjectBehavior
         }
     }
 
-    public bool isMusicPlaying
-    {
-        get
-        {
-            if (isGameMusicPlaying || isUIMusicPlaying)
-            {
+    public bool isMusicPlaying {
+        get {
+            if (isGameMusicPlaying || isUIMusicPlaying) {
                 return true;
             }
 
@@ -173,40 +144,31 @@ public class BaseAudioController : GameObjectBehavior
 
     // volume
 
-    public virtual void setVolume(double volume)
-    {
+    public virtual void setVolume(double volume) {
         setVolumeGame(volume);
         setVolumeUI(volume);
     }
 
-    public virtual void setVolumeGame(double volume)
-    {
-        if (currentGameLoop != null)
-        {
+    public virtual void setVolumeGame(double volume) {
+        if (currentGameLoop != null) {
             AudioSource audioSource = currentGameLoop.GetComponent<AudioSource>();
-            if (audioSource != null)
-            {
+            if (audioSource != null) {
                 audioSource.volume = (float)volume;
             }
         }
     }
 
-    public virtual void setVolumeUI(double volume)
-    {
-        if (currentUILoop != null)
-        {
+    public virtual void setVolumeUI(double volume) {
+        if (currentUILoop != null) {
             AudioSource audioSource = currentUILoop.GetComponent<AudioSource>();
-            if (audioSource != null)
-            {
+            if (audioSource != null) {
                 audioSource.volume = (float)volume;
             }
         }
 
-        if (currentUIIntro != null)
-        {
+        if (currentUIIntro != null) {
             AudioSource audioSource = currentUIIntro.GetComponent<AudioSource>();
-            if (audioSource != null)
-            {
+            if (audioSource != null) {
                 audioSource.volume = (float)volume;
             }
         }
@@ -215,39 +177,31 @@ public class BaseAudioController : GameObjectBehavior
 
     // ui play ui
 
-    public virtual void playMusic()
-    {
-        if (GameConfigs.isUIRunning)
-        {
+    public virtual void playMusic() {
+        if (GameConfigs.isUIRunning) {
             playUIMusic();
         }
-        else
-        {
+        else {
             playGameMusicLoop();
         }
     }
 
-    public virtual void playUIMusic()
-    {
+    public virtual void playUIMusic() {
 
-        if (isUIMusicPlaying)
-        {
+        if (isUIMusicPlaying) {
             return;
         }
 
-        if (isGameMusicPlaying)
-        {
+        if (isGameMusicPlaying) {
             stopGameMusic();
         }
 
         StartCoroutine(playUIMusicCo());
     }
 
-    public virtual IEnumerator playUIMusicCo()
-    {
+    public virtual IEnumerator playUIMusicCo() {
 
-        if (!GameConfigs.isUIRunning)
-        {
+        if (!GameConfigs.isUIRunning) {
             yield break;
         }
 
@@ -257,8 +211,7 @@ public class BaseAudioController : GameObjectBehavior
 
         AudioSource audioSource = currentUIIntro.Get<AudioSource>();
 
-        if (audioSource != null)
-        {
+        if (audioSource != null) {
 
             waitTime = audioSource.clip == null ? 0 : audioSource.clip.length;
         }
@@ -268,19 +221,16 @@ public class BaseAudioController : GameObjectBehavior
         playUIMusicLoop();
     }
 
-    public virtual void stopUIMusic()
-    {
+    public virtual void stopUIMusic() {
 
-        if (!isUIMusicPlaying)
-        {
+        if (!isUIMusicPlaying) {
             return;
         }
 
         StartCoroutine(stopUIMusicCo());
     }
 
-    public virtual IEnumerator stopUIMusicCo()
-    {
+    public virtual IEnumerator stopUIMusicCo() {
 
         yield return new WaitForEndOfFrame();
 
@@ -288,19 +238,15 @@ public class BaseAudioController : GameObjectBehavior
         stopUIMusicLoop();
     }
 
-    public virtual void stopUIMusicIntro()
-    {
-        if (currentUIIntro.IsAudioSourcePlaying())
-        {
+    public virtual void stopUIMusicIntro() {
+        if (currentUIIntro.IsAudioSourcePlaying()) {
             currentUIIntro.StopSounds();
             currentUIIntro.GetComponent<AudioSource>().FadeOut(1.5f);
         }
     }
 
-    public virtual void stopUIMusicLoop()
-    {
-        if (currentUILoop.IsAudioSourcePlaying())
-        {
+    public virtual void stopUIMusicLoop() {
+        if (currentUILoop.IsAudioSourcePlaying()) {
             currentUILoop.GetComponent<AudioSource>().FadeOut(1.5f);
         }
     }
@@ -308,79 +254,64 @@ public class BaseAudioController : GameObjectBehavior
     // game music
 
 
-    public virtual void playGameMusic()
-    {
-        if (isUIMusicPlaying)
-        {
+    public virtual void playGameMusic() {
+        if (isUIMusicPlaying) {
             stopUIMusic();
         }
 
-        if (isGameMusicPlaying)
-        {
+        if (isGameMusicPlaying) {
             return;
         }
 
         StartCoroutine(playGameMusicCo());
     }
 
-    public virtual IEnumerator playGameMusicCo()
-    {
+    public virtual IEnumerator playGameMusicCo() {
 
-        if (GameConfigs.isUIRunning)
-        {
+        if (GameConfigs.isUIRunning) {
             yield break;
         }
 
         playGameMusicLoop();
     }
 
-    public virtual void stopGameMusic()
-    {
+    public virtual void stopGameMusic() {
 
-        if (!isGameMusicPlaying)
-        {
+        if (!isGameMusicPlaying) {
             return;
         }
 
         StartCoroutine(stopGameMusicCo());
     }
 
-    public virtual IEnumerator stopGameMusicCo()
-    {
+    public virtual IEnumerator stopGameMusicCo() {
 
         yield return new WaitForEndOfFrame();
 
         stopGameMusicLoop();
     }
 
-    public virtual void stopGameMusicLoop()
-    {
-        if (currentGameLoop.IsAudioSourcePlaying())
-        {
+    public virtual void stopGameMusicLoop() {
+        if (currentGameLoop.IsAudioSourcePlaying()) {
             currentGameLoop.GetComponent<AudioSource>().FadeOut(1.3f);
         }
     }
 
     // ui intro
 
-    public virtual void playUIMusicIntro()
-    {
+    public virtual void playUIMusicIntro() {
 
-        if (!GameConfigs.isUIRunning)
-        {
+        if (!GameConfigs.isUIRunning) {
             return;
         }
 
-        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_intro))
-        {
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_intro)) {
 
             bool handled = false;
 
-            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>())
-            {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
 
-                if (objectAudio.type == GameDataActionKeys.music_ui_intro)
-                {
+                if (objectAudio.type == GameDataActionKeys.music_ui_intro) {
 
                     lastUIIntro = currentUIIntro;
                     currentUIIntro = objectAudio.gameObject;
@@ -388,8 +319,7 @@ public class BaseAudioController : GameObjectBehavior
                 }
             }
 
-            if (!handled)
-            {
+            if (!handled) {
                 lastUIIntro = currentUIIntro;
 
                 currentUIIntro = AudioSystem.Instance.PrepareFromResources(
@@ -399,8 +329,7 @@ public class BaseAudioController : GameObjectBehavior
             break;
         }
 
-        if (currentUIIntro != null)
-        {
+        if (currentUIIntro != null) {
             currentUIIntro.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
@@ -408,24 +337,19 @@ public class BaseAudioController : GameObjectBehavior
 
     // ui loops
 
-    public virtual void playUIMusicLoop()
-    {
+    public virtual void playUIMusicLoop() {
 
-        if (!GameConfigs.isUIRunning)
-        {
+        if (!GameConfigs.isUIRunning) {
             return;
         }
 
-        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_loop))
-        {
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_ui_loop)) {
 
             bool handled = false;
 
-            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>())
-            {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
 
-                if (objectAudio.type == GameDataActionKeys.music_ui_loop)
-                {
+                if (objectAudio.type == GameDataActionKeys.music_ui_loop) {
 
                     lastUILoop = currentUILoop;
                     currentUILoop = objectAudio.gameObject;
@@ -433,8 +357,7 @@ public class BaseAudioController : GameObjectBehavior
                 }
             }
 
-            if (!handled)
-            {
+            if (!handled) {
                 lastUILoop = currentUILoop;
 
                 currentUILoop = AudioSystem.Instance.PrepareFromResources(
@@ -444,35 +367,28 @@ public class BaseAudioController : GameObjectBehavior
             break;
         }
 
-        if (currentUILoop != null)
-        {
+        if (currentUILoop != null) {
             currentUILoop.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 1.7f);
         }
     }
 
     // game loops
-    public virtual void playGameMusicLoop()
-    {
+    public virtual void playGameMusicLoop() {
 
-        if (GameConfigs.isUIRunning)
-        {
+        if (GameConfigs.isUIRunning) {
             return;
         }
 
-        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_game))
-        {
+        foreach (GameDataSound sound in GetSounds(GameDataActionKeys.music_game)) {
 
-            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>())
-            {
+            foreach (GameObjectAudio objectAudio in UnityObjectUtil.FindObjects<GameObjectAudio>()) {
 
-                if (objectAudio.type == GameDataActionKeys.music_game)
-                {
+                if (objectAudio.type == GameDataActionKeys.music_game) {
                     currentGameLoop = objectAudio.gameObject;
                     lastGameLoop = currentGameLoop;
                 }
-                else
-                {
+                else {
                     currentGameLoop = AudioSystem.Instance.PrepareFromResources(
                         sound.type, sound.code, true, 0f);
                     lastGameLoop = currentGameLoop;
@@ -481,8 +397,7 @@ public class BaseAudioController : GameObjectBehavior
             break;
         }
 
-        if (currentGameLoop != null)
-        {
+        if (currentGameLoop != null) {
             currentGameLoop.GetComponent<AudioSource>().FadeIn(
                 (float)GameProfiles.Current.GetAudioMusicVolume(), 2f);
         }
@@ -492,84 +407,72 @@ public class BaseAudioController : GameObjectBehavior
 
     // scores
 
-    public virtual void playSoundScores()
-    {
+    public virtual void playSoundScores() {
 
         playSoundType(GameDataActionKeys.scores);
     }
 
     // goals
 
-    public virtual void playSoundGoalRange1()
-    {
+    public virtual void playSoundGoalRange1() {
 
         playSoundType(GameDataActionKeys.goal_range_1);
     }
 
-    public virtual void playSoundGoalRange2()
-    {
+    public virtual void playSoundGoalRange2() {
 
         playSoundType(GameDataActionKeys.goal_range_2);
     }
 
-    public virtual void playSoundGoalRange3()
-    {
+    public virtual void playSoundGoalRange3() {
 
         playSoundType(GameDataActionKeys.goal_range_3);
     }
 
-    public virtual void playSoundGoalRange4()
-    {
+    public virtual void playSoundGoalRange4() {
 
         playSoundType(GameDataActionKeys.goal_range_4);
     }
 
     // level end
 
-    public virtual void playSoundLevelStart()
-    {
+    public virtual void playSoundLevelStart() {
 
         playSoundType(GameDataActionKeys.level_start);
     }
 
-    public virtual void playSoundLevelEnd()
-    {
+    public virtual void playSoundLevelEnd() {
 
         playSoundType(GameDataActionKeys.level_end);
     }
 
     // player end
 
-    public virtual void playSoundPlayerStart()
-    {
+    public virtual void playSoundPlayerStart() {
 
         playSoundType(GameDataActionKeys.player_start);
     }
 
-    public virtual void playSoundPlayerEnd()
-    {
+    public virtual void playSoundPlayerEnd() {
 
         playSoundType(GameDataActionKeys.player_end);
     }
 
     // player out of bounds
 
-    public virtual void playSoundPlayerOutOfBounds()
-    {
+    public virtual void playSoundPlayerOutOfBounds() {
 
         playSoundType(GameDataActionKeys.player_out_of_bounds);
     }
 
     // player action good
 
-    public virtual void playSoundPlayerActionGood()
-    {
+    public virtual void playSoundPlayerActionGood() {
 
         playSoundType(GameDataActionKeys.player_action_good);
     }
 
-    public virtual void playSoundPlayerActionBad()
-    {
+    public virtual void playSoundPlayerActionBad() {
 
         playSoundType(GameDataActionKeys.player_action_bad);
     }
@@ -578,29 +481,24 @@ public class BaseAudioController : GameObjectBehavior
 
     public Dictionary<string, float> playSoundTypeTimes;
 
-    public virtual void playSoundType(string type)
-    {
+    public virtual void playSoundType(string type) {
 
         // play sound by world, level or character if overidden
         // TODO custom overrides
 
-        if (playSoundTypeTimes == null)
-        {
+        if (playSoundTypeTimes == null) {
             playSoundTypeTimes = new Dictionary<string, float>();
         }
 
-        foreach (GameDataSound sound in GetSounds(type))
-        {
+        foreach (GameDataSound sound in GetSounds(type)) {
 
             float lastPlayed = 0f;
 
-            if (playSoundTypeTimes.ContainsKey(sound.code))
-            {
+            if (playSoundTypeTimes.ContainsKey(sound.code)) {
                 lastPlayed = playSoundTypeTimes.Get(sound.code);
             }
 
-            if (lastPlayed + sound.play_delay < Time.time)
-            {
+            if (lastPlayed + sound.play_delay < Time.time) {
 
                 GameAudio.PlayEffect(
                     sound.code,
@@ -614,22 +512,17 @@ public class BaseAudioController : GameObjectBehavior
 
     // LOADING SOUND DATA
 
-    public List<GameDataSound> GetSounds(string type)
-    {
+    public List<GameDataSound> GetSounds(string type) {
 
         List<GameDataSound> dataItems = new List<GameDataSound>();
 
-        if (items == null)
-        {
+        if (items == null) {
             items = new Dictionary<string, GameAudioDataItem>();
         }
 
-        if (items.Count == 0 || !items.ContainsKey(type))
-        {
-            foreach (GameDataSound obj in GetDataSounds(type))
-            {
-                if (!dataItems.Contains(obj))
-                {
+        if (items.Count == 0 || !items.ContainsKey(type)) {
+            foreach (GameDataSound obj in GetDataSounds(type)) {
+                if (!dataItems.Contains(obj)) {
                     dataItems.Add(obj);
                 }
             }
@@ -643,19 +536,16 @@ public class BaseAudioController : GameObjectBehavior
             items.Set(type, dataItem);
         }
 
-        if (items.ContainsKey(type))
-        {
+        if (items.ContainsKey(type)) {
 
             GameAudioDataItem dataItem = items.Get<GameAudioDataItem>(type);
 
-            if (dataItem.last_update + dataItem.play_delay < Time.time)
-            {
+            if (dataItem.last_update + dataItem.play_delay < Time.time) {
                 dataItem.last_update = Time.time;
 
                 dataItems.Clear();
 
-                foreach (GameDataSound obj in GetDataSounds(type))
-                {
+                foreach (GameDataSound obj in GetDataSounds(type)) {
                     dataItems.Add(obj);
                 }
 
@@ -663,8 +553,7 @@ public class BaseAudioController : GameObjectBehavior
 
                 items.Set(type, dataItem);
             }
-            else
-            {
+            else {
                 dataItems = items.Get(type).items;
             }
         }
@@ -672,21 +561,17 @@ public class BaseAudioController : GameObjectBehavior
         return dataItems;
     }
 
-    public List<GameDataSound> GetDataSounds(string type)
-    {
+    public List<GameDataSound> GetDataSounds(string type) {
 
         List<GameDataSound> dataItems = new List<GameDataSound>();
 
         GameWorld gameWorld = GameWorlds.Current;
 
-        if (gameWorld != null)
-        {
+        if (gameWorld != null) {
             GameDataObjectItem data = gameWorld.data;
 
-            if (data != null)
-            {
-                foreach (GameDataSound sound in data.GetSoundListByType(type))
-                {
+            if (data != null) {
+                foreach (GameDataSound sound in data.GetSoundListByType(type)) {
                     dataItems.Add(sound);
                 }
             }
@@ -697,8 +582,7 @@ public class BaseAudioController : GameObjectBehavior
 
     //
 
-    public virtual void Update()
-    {
+    public virtual void Update() {
 
     }
 }

@@ -45,14 +45,14 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
         HideEditObjects();
 
-        if(dragColliderObject != null) {
+        if (dragColliderObject != null) {
 
             dragColliderObject.tag = "drag";
         }
 
         LoadData();
 
-        if(gameLevelItemAsset != null) {
+        if (gameLevelItemAsset != null) {
 
             LoadSprite(gameLevelItemAsset.code);
         }
@@ -72,19 +72,19 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     void OnEditStateHandler(GameDraggableEditEnum state) {
 
-        if(state == GameDraggableEditEnum.StateEditing) {
+        if (state == GameDraggableEditEnum.StateEditing) {
 
         }
-        else if(state == GameDraggableEditEnum.StateNotEditing) {
+        else if (state == GameDraggableEditEnum.StateNotEditing) {
 
         }
     }
 
     public void ShowAllGameLevelItems() {
 
-        if(gameLevelItemObject != null) {
+        if (gameLevelItemObject != null) {
 
-            foreach(Transform t in gameLevelItemObject.transform) {
+            foreach (Transform t in gameLevelItemObject.transform) {
 
                 t.gameObject.Show();
             }
@@ -93,9 +93,9 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void HideAllGameLevelItems() {
 
-        if(gameLevelItemObject != null) {
+        if (gameLevelItemObject != null) {
 
-            foreach(Transform t in gameLevelItemObject.transform) {
+            foreach (Transform t in gameLevelItemObject.transform) {
 
                 t.gameObject.Hide();
             }
@@ -104,7 +104,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void LoadSprite(string spriteCode) {
 
-        if(gameLevelItemObject != null) {
+        if (gameLevelItemObject != null) {
 
             RemoveGameLevelItems();
 
@@ -113,13 +113,13 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
             //LogUtil.Log("LoadSprite:exists:" + go != null);
 
-            if(go != null) {
+            if (go != null) {
 
                 //LogUtil.Log("LoadSprite:" + go.name);
 
                 GameLevelSprite gameLevelSprite = go.GetComponent<GameLevelSprite>();
 
-                if(gameLevelSprite != null) {
+                if (gameLevelSprite != null) {
 
                     gameLevelSprite.gameDraggableLevelItem = this;
 
@@ -133,11 +133,11 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void RemoveGameLevelItems() {
 
-        if(gameLevelItemObject != null) {
+        if (gameLevelItemObject != null) {
 
             // clear current or placeholder...
 
-            foreach(Transform t in gameLevelItemObject.transform) {
+            foreach (Transform t in gameLevelItemObject.transform) {
 
                 Destroy(t.gameObject);
             }
@@ -146,14 +146,14 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void LoadSpriteEffect(string spriteEffectCode) {
 
-        if(gameLevelItemAsset != null) {
+        if (gameLevelItemAsset != null) {
 
             GameObject go = GameDraggableEditor.LoadSpriteEffect(
                 gameLevelItemObject,
                 gameLevelItemAsset.destroy_effect_code,
                 Vector3.one.WithX(3).WithY(3).WithZ(3) * .1f);
 
-            if(go != null) {
+            if (go != null) {
                 //PackedSprite sprite = go.GetComponent<PackedSprite>();
                 //if(sprite != null) {
                 //	sprite.PlayAnim(0);
@@ -167,7 +167,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
         RemoveGameLevelItems();
 
-        if(gameLevelItemAsset != null) {
+        if (gameLevelItemAsset != null) {
             LoadSpriteEffect(gameLevelItemAsset.destroy_effect_code);
         }
 
@@ -195,13 +195,13 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void LoadData() {
 
-        if(gameLevelItemAsset != null) {
+        if (gameLevelItemAsset != null) {
 
             LoadSprite(gameLevelItemAsset.code);
 
             // TODO change
 
-            if(gameLevelItemAsset.code.Contains(BaseDataObjectKeys.terrain)
+            if (gameLevelItemAsset.code.Contains(BaseDataObjectKeys.terrain)
                 || gameLevelItemAsset.code.Contains(BaseDataObjectKeys.action)) {
                 shouldHideDistance = false;
             }
@@ -221,7 +221,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void Freeze() {
 
-        if(!frozen) {
+        if (!frozen) {
 
             frozen = true;
 
@@ -231,7 +231,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void UnFreeze() {
 
-        if(frozen) {
+        if (frozen) {
 
             frozen = false;
 
@@ -241,7 +241,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     void ShowEditObjects() {
 
-        if(!visibleEditors) {
+        if (!visibleEditors) {
 
             dragHolder.Show();
 
@@ -253,7 +253,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     void HideEditObjects() {
 
-        if(visibleEditors) {
+        if (visibleEditors) {
 
             visibleEditors = false;
 
@@ -265,15 +265,15 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     void HandleEditState() {
 
-        if(dragHolder != null) {
+        if (dragHolder != null) {
             return;
         }
 
-        if(GameDraggableEditor.isEditing) {
+        if (GameDraggableEditor.isEditing) {
 
             ShowEditObjects();
         }
-        else if(!GameDraggableEditor.isEditing) {
+        else if (!GameDraggableEditor.isEditing) {
 
             HideEditObjects();
         }
@@ -281,7 +281,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     void Update() {
 
-        if(lastUpdate + 1 < Time.time) {
+        if (lastUpdate + 1 < Time.time) {
 
             lastUpdate = Time.time;
         }
@@ -293,9 +293,9 @@ public class GameDraggableLevelItem : GameObjectBehavior {
         //    return;
         //}
 
-        if(!GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
 
-            if(!GameDraggableEditor.isEditing) {
+            if (!GameDraggableEditor.isEditing) {
 
                 Freeze();
             }
@@ -307,11 +307,11 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
             // Check if isvisible
 
-            if(shouldHideDistance) {
+            if (shouldHideDistance) {
 
-                if(GameController.IsGamePlayerControllerWithinRenderDistanceToCurrent(gameObject)) {
+                if (GameController.IsGamePlayerControllerWithinRenderDistanceToCurrent(gameObject)) {
 
-                    if(!visibleItem) {
+                    if (!visibleItem) {
 
                         visibleItem = true;
 
@@ -320,7 +320,7 @@ public class GameDraggableLevelItem : GameObjectBehavior {
                 }
                 else {
 
-                    if(visibleItem) {
+                    if (visibleItem) {
 
                         visibleItem = false;
 

@@ -50,7 +50,7 @@ namespace Engine.Game.Actor {
 
 #if USE_GAME_LIB_GAMES
             if (gamePlayerObject == null) {
-            
+
                 gamePlayerObject = gameObject.FindTypeAboveObjectRecursive<GamePlayerController>();
 
                 if (gamePlayerObject != null) {
@@ -61,13 +61,13 @@ namespace Engine.Game.Actor {
                 }
             }
 
-            if(!gamePlayerController.IsWithinRenderDistanceToGamePlayerCurrent()) {
+            if (!gamePlayerController.IsWithinRenderDistanceToGamePlayerCurrent()) {
                 return;
             }
 
 #endif
 
-            if(objectParent != null && objectShadow != null) {
+            if (objectParent != null && objectShadow != null) {
 
                 // Adjust size
 
@@ -109,7 +109,7 @@ namespace Engine.Game.Actor {
                     if (gamePlayerObject.IsRenderersVisibleByCamera(Camera.main)) {
 
                         //if (gamePlayerController.IsAgentState()) {
-                            //Debug.Log("ActorShadow IsRenderersVisibleByCamera:gamePlayerController.IsAgentState:" + gamePlayerController.IsAgentState());
+                        //Debug.Log("ActorShadow IsRenderersVisibleByCamera:gamePlayerController.IsAgentState:" + gamePlayerController.IsAgentState());
                         //}
 
                         // Get location to put shadow at using parent normal and terrain mask

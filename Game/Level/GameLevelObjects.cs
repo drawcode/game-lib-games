@@ -192,14 +192,14 @@ public class GameLevelGridData {
     }
 
     public void SetAssets(string code, int count) {
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             SetAsset(code);
         }
     }
 
     public void SetAsset(string code) {
         AppContentAsset asset = AppContentAssets.Instance.GetByCode(code);
-        if(asset != null) {
+        if (asset != null) {
             //if(!HasAsset(asset.code)) {
             assets.Add(asset);
             //}
@@ -207,8 +207,8 @@ public class GameLevelGridData {
     }
 
     public bool HasAsset(string code) {
-        foreach(AppContentAsset asset in assets) {
-            if(asset.code == code) {
+        foreach (AppContentAsset asset in assets) {
+            if (asset.code == code) {
                 return true;
             }
         }
@@ -271,15 +271,15 @@ public class GameLevelGridData {
 
         Vector3 pos = assetData.position_data.GetVector3();
 
-        if(pos.x > gridWidth - 1) {
+        if (pos.x > gridWidth - 1) {
             pos.x = gridWidth - 1;
         }
 
-        if(pos.y > gridHeight - 1) {
+        if (pos.y > gridHeight - 1) {
             pos.y = gridHeight - 1;
         }
 
-        if(pos.z > gridDepth - 1) {
+        if (pos.z > gridDepth - 1) {
             pos.z = gridDepth - 1;
         }
 
@@ -292,11 +292,11 @@ public class GameLevelGridData {
 
         assetData.position_data.FromVector3(pos);
 
-        if(!assetLayoutData.ContainsKey(keyLayout)) {
+        if (!assetLayoutData.ContainsKey(keyLayout)) {
 
-            if(assetData.code != BaseDataObjectKeys.empty) {
+            if (assetData.code != BaseDataObjectKeys.empty) {
 
-                if(assetData.type == BaseDataObjectKeys.character) {
+                if (assetData.type == BaseDataObjectKeys.character) {
 
                     Debug.Log("SetAssetsIntoMap:keyLayout:" + keyLayout);
                     Debug.Log("SetAssetsIntoMap:assetData:" + assetData.ToJson());
@@ -312,7 +312,7 @@ public class GameLevelGridData {
 
     public void RandomizeAssetsInAssetMap() {
 
-        foreach(AppContentAsset asset in assets) {
+        foreach (AppContentAsset asset in assets) {
 
             int x = 0;
             int y = 0;
@@ -332,14 +332,14 @@ public class GameLevelGridData {
             // TODO switch to area around player to gid out items
             // if spawns on level items
 
-            if((x < (midX + 2)) && (x > (midX - 2))
+            if ((x < (midX + 2)) && (x > (midX - 2))
                 && (z < (midZ + 2)) && (z > (midZ - 2))) {
                 continue;
             }
 
             string keyLayout = string.Format("{0}-{1}-{2}", x, y, z);
 
-            if(!assetLayoutData.ContainsKey(keyLayout)) {
+            if (!assetLayoutData.ContainsKey(keyLayout)) {
 
                 Vector3 posData = Vector3.one.WithX(x).WithY(y).WithZ(z);
 
@@ -347,8 +347,8 @@ public class GameLevelGridData {
 
                 Vector3 scaleData = MathUtil.RandomRangeConstrain(
                     .7f, 1.3f);
-                
-                if(asset.ContainsKey(BaseDataObjectKeys.scale_min)
+
+                if (asset.ContainsKey(BaseDataObjectKeys.scale_min)
                     && asset.ContainsKey(BaseDataObjectKeys.scale_max)) {
 
                     double scaleMin = asset.scale_min;
@@ -358,13 +358,13 @@ public class GameLevelGridData {
                         (float)scaleMin, (float)scaleMax);
 
                 }
-                else if(asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
+                else if (asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
                     && asset.ContainsKey(BaseDataObjectKeys.scale_data_max)) {
 
                     Vector3Data scaleDataMin = asset.scale_data_min;
                     Vector3Data scaleDataMax = asset.scale_data_max;
 
-                    if(scaleDataMin != null && scaleDataMax != null) {
+                    if (scaleDataMin != null && scaleDataMax != null) {
 
                         scaleData = MathUtil.RandomRangeConstrain(
                             scaleDataMin.GetVector3().x, scaleDataMax.GetVector3().x);
@@ -385,7 +385,7 @@ public class GameLevelGridData {
                 Vector3 rotationData = Vector3.zero.WithY(
                     MathUtil.RandomRangeY(-180, 180).y);
 
-                if(asset.ContainsKey(BaseDataObjectKeys.rotation_min)
+                if (asset.ContainsKey(BaseDataObjectKeys.rotation_min)
                     && asset.ContainsKey(BaseDataObjectKeys.rotation_max)) {
 
                     double rotationMin = asset.rotation_min;
@@ -395,14 +395,14 @@ public class GameLevelGridData {
                         (float)rotationMin, (float)rotationMax);
 
                 }
-                else if(asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
+                else if (asset.ContainsKey(BaseDataObjectKeys.scale_data_min)
                     && asset.ContainsKey(BaseDataObjectKeys.scale_data_max)) {
 
 
                     Vector3Data rotationDataMin = asset.rotation_data_min;
                     Vector3Data rotationDataMax = asset.rotation_data_max;
 
-                    if(rotationDataMin != null && rotationDataMax != null) {
+                    if (rotationDataMin != null && rotationDataMax != null) {
 
                         rotationData = MathUtil.RandomRangeConstrain(
                             rotationDataMin.GetVector3(), rotationDataMax.GetVector3());

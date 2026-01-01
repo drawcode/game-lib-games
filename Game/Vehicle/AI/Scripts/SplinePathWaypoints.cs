@@ -11,28 +11,28 @@ public class SplinePathWaypoints : SplinePath {
     private Transform parent;
 
     protected override void Awake() {
-        
+
         if (waypointActive)
             Init();
 
     }
-    
+
     void Start() {
-        
+
         //if(waypointActive)
         //  Init();
 
         if (show && waypointActive) {
             SetRenderer(true);
         }
-        
+
         if (waypointActive && show && Application.isEditor && Application.isPlaying) {
             GetWaypointNames();
             FillPath();
             FillSequence();
         }
     }
-    
+
     protected override void OnDrawGizmos() {
         //if (waypointActive && (!Application.isPlaying || show))
         if (waypointActive && (!Application.isPlaying)) {
@@ -121,7 +121,7 @@ public class SplinePathWaypoints : SplinePath {
         //bc.isTrigger = true;
         //waypoint.layer = path[intOldIndex - 1].gameObject.layer; Die automatische Zuweisung geschieht erst spaeter
         //waypoint.layer = 2;
-        
+
         /*
             BoxCollider bcTest =gameObject.GetComponent<BoxCollider>();
             if (bcTest == null)                                         

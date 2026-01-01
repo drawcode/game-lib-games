@@ -8,9 +8,9 @@ public class GameRayShoot : GameDamageBase {
     public GameObject Explosion;
     public float LifeTime = 1;
     private LineRenderer trail = null;
-    
+
     void Start() {
-                
+
         if (!GameDamageDirector.AllowRayShoot) {
             GameObjectHelper.DestroyGameObject(gameObject);
             return;
@@ -31,7 +31,7 @@ public class GameRayShoot : GameDamageBase {
             AimPoint = this.transform.forward * Range;
             explosion = GameObjectHelper.CreateGameObject(
                 Explosion, AimPoint, this.transform.rotation, true);
-            
+
         }
 
         if (explosion) {
@@ -39,7 +39,7 @@ public class GameRayShoot : GameDamageBase {
             GameDamageBase dmg = explosion.GetComponent<GameDamageBase>();
 
             if (dmg) {
-                dmg.TargetTag = TargetTag;  
+                dmg.TargetTag = TargetTag;
             }
         }
         if (trail) {

@@ -143,19 +143,19 @@ public class BaseStoreController : GameObjectBehavior {
 
         Messenger<GameStorePurchaseData>.AddListener(
             GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
-        
+
         Messenger<GameStorePurchaseRecord>.AddListener(
             GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
-        
+
         Messenger<GameStorePurchaseRecord>.AddListener(
             GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
 
         Messenger<GameStorePurchaseData>.AddListener(
             GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
-        
+
         Messenger<GameStorePurchaseRecord>.AddListener(
             GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
-        
+
         Messenger<GameStorePurchaseRecord>.AddListener(
             GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
@@ -173,19 +173,19 @@ public class BaseStoreController : GameObjectBehavior {
 
         Messenger<GameStorePurchaseData>.RemoveListener(
             GameStoreMessages.purchaseStarted, onStorePurchaseStarted);
-        
+
         Messenger<GameStorePurchaseRecord>.RemoveListener(
             GameStoreMessages.purchaseSuccess, onStorePurchaseSuccess);
-        
+
         Messenger<GameStorePurchaseRecord>.RemoveListener(
             GameStoreMessages.purchaseFailed, onStorePurchaseFailed);
 
         Messenger<GameStorePurchaseData>.RemoveListener(
             GameStoreMessages.purchaseThirdPartyStarted, onStoreThirdPartyPurchaseStarted);
-        
+
         Messenger<GameStorePurchaseRecord>.RemoveListener(
             GameStoreMessages.purchaseThirdPartySuccess, onStoreThirdPartyPurchaseSuccess);
-        
+
         Messenger<GameStorePurchaseRecord>.RemoveListener(
             GameStoreMessages.purchaseThirdPartyFailed, onStoreThirdPartyPurchaseFailed);
     }
@@ -390,8 +390,8 @@ public class BaseStoreController : GameObjectBehavior {
                 dataDict);
 
         }
-        
-        Messenger<string,string>.Broadcast(GameNotificationMessages.gameQueueInfo, data.messageTitle, data.messageDescription);
+
+        Messenger<string, string>.Broadcast(GameNotificationMessages.gameQueueInfo, data.messageTitle, data.messageDescription);
 
         //UINotificationDisplay.QueueInfo(data.messageTitle, data.messageDescription);
     }
@@ -545,12 +545,12 @@ public class BaseStoreController : GameObjectBehavior {
                         GameStoreController.BroadcastPurchaseFailed(
                             GameStorePurchaseRecord.Create(
                                 false,
-                                data, 
+                                data,
                                 data.GetType().ToString(),
                                 "",
                                 "Purchase Unsuccessful",
                                 "Not enough coins to purchase. Earn more coins by playing or training.",
-                                item.product.code, 
+                                item.product.code,
                                 item.quantity));
 
                     }
