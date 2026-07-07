@@ -151,7 +151,7 @@ public class MirrorReflection : GameObjectBehavior {
             if (m_ReflectionTexture)
                 DestroyImmediate(m_ReflectionTexture);
             m_ReflectionTexture = new RenderTexture(m_TextureSize, m_TextureSize, 16);
-            m_ReflectionTexture.name = "__MirrorReflection" + GetInstanceID();
+            m_ReflectionTexture.name = "__MirrorReflection" + GetEntityId();
             m_ReflectionTexture.isPowerOfTwo = true;
             m_ReflectionTexture.hideFlags = HideFlags.DontSave;
             m_OldReflectionTextureSize = m_TextureSize;
@@ -161,7 +161,7 @@ public class MirrorReflection : GameObjectBehavior {
         reflectionCamera = m_ReflectionCameras[currentCamera] as Camera;
         if (!reflectionCamera) // catch both not-in-dictionary and in-dictionary-but-deleted-GO
         {
-            GameObject go = new GameObject("Mirror Refl Camera id" + GetInstanceID() + " for " + currentCamera.GetInstanceID(), typeof(Camera), typeof(Skybox));
+            GameObject go = new GameObject("Mirror Refl Camera id" + GetEntityId() + " for " + currentCamera.GetEntityId(), typeof(Camera), typeof(Skybox));
             reflectionCamera = go.Get<Camera>();
             reflectionCamera.enabled = false;
             reflectionCamera.transform.position = transform.position;
