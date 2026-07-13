@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Engine.Content;
+using Engine.Utility;
 using UnityEngine;
 
 public enum GamePlayerIndicatorPlacementType {
@@ -406,12 +407,16 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
             //Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
 
-#if USE_EASING_LEANTWEEN
-            // TODO easing
-            LeanTween.scale(indicatorObject, indicatorObject.transform.localScale
+            // Re-issued every late tick: the keyed internal backend replaces the
+            // prior scale tween on this target, matching LeanTween's stacking here.
+            TweenMeta scaleMeta = TweenUtil.GetMetaDefault(
+                TweenLib.internalEasing, indicatorObject,
+                currentLateTickTime, 0f, false,
+                TweenCoord.local, TweenEaseType.linear, TweenLoopType.once);
+
+            TweenUtil.ScaleToObject(scaleMeta, indicatorObject.transform.localScale
                 .WithX(scaleTo)
-                .WithY(scaleTo), currentLateTickTime);
-#endif
+                .WithY(scaleTo));
         }
 
     }

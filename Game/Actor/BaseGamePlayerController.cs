@@ -1215,17 +1215,14 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void GamePlayerModelHolderEase(float height = 0, float time = .5f, float delay = 0) {
 
-#if USE_EASING_LEANTWEEN
-        LeanTween.cancel(gamePlayerModelHolder);
+        // Gameplay object (not NGUI UI): explicit internal backend so coexistence
+        // routing never attaches NGUI tweener components to actor transforms.
+        TweenMeta easeMeta = TweenUtil.GetMetaDefault(
+            TweenLib.internalEasing, gamePlayerModelHolder, time, delay, true,
+            TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.once);
 
-        LeanTween
-            .moveLocalY(gamePlayerModelHolder, height, time)
-                .setEase(LeanTweenType.easeInOutQuad)
-                    .setDelay(delay);
-
-#else
-        gamePlayerModelHolder.transform.localPosition.WithY(height);
-#endif
+        TweenUtil.MoveToObject(
+            easeMeta, gamePlayerModelHolder.transform.localPosition.WithY(height));
     }
 
     public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = .5f, float delay = .1f) {
