@@ -279,9 +279,19 @@ public class BaseUIPanel {
     public static string panelHUD = "panel-hud";
     //
     public static string panelSettings = "panel-settings";
-    public static string panelSettingsAudio = "panel-settings-Audio";
-    public static string panelSettingsControls = "panel-settings-Controls";
-    public static string panelSettingsProfile = "panel-settings-profile";
+    // FIX (2026-07-13, tween-flip regression triage): these three codes did not match
+    // their AppContentAsset data/prefab codes ("panel-settings-Audio"/"-Controls" had
+    // stray capitals; "panel-settings-profile" was singular vs the data's plural
+    // "panel-settings-profiles"). AppContentAssets.LoadAssetUI resolves codes via an
+    // exact-match lookup, so every one of these silently returned null and
+    // syncPanelLoaded never parented anything into UIContainer -- the panel was never
+    // instantiated, hence "header + background render, all content absent" for these
+    // three sub-panels specifically. This is a pre-existing (2018-07-10) data bug,
+    // unrelated to the tween backend; verified via a direct runtime LoadAssetUI probe
+    // during this session (see context-tween-backend-design.md gate learning #9).
+    public static string panelSettingsAudio = "panel-settings-audio";
+    public static string panelSettingsControls = "panel-settings-controls";
+    public static string panelSettingsProfile = "panel-settings-profiles";
     public static string panelSettingsHelp = "panel-settings-help";
     public static string panelSettingsCredits = "panel-settings-credits";
     //
