@@ -33,11 +33,8 @@ public class CheckboxEvents : GameObjectBehavior {
 
     void OnClick() {
 
-        int camIndex = 0;
-
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-        camIndex = UICamera.currentTouchID;
-#endif
+        // See InputEvents: pointer identity now comes from the registered UI backend.
+        int camIndex = UIUtil.GetPointerId(gameObject);
 
         Messenger<string, int>.Broadcast(CheckboxEvents.EVENT_ITEM_CLICK, transform.name, camIndex);
     }

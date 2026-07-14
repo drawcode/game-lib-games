@@ -32,11 +32,10 @@ public class InputEvents : GameObjectBehavior {
 
     void OnClick() {
 
-        int camIndex = 0;
-
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-        camIndex = UICamera.currentTouchID;
-#endif
+        // Pointer identity comes from the registered UI backend, not from UICamera directly:
+        // an NGUI widget resolves to UICamera.currentTouchID, a UI Toolkit element to its
+        // pointer id. Same value as before under NGUI; no #if needed at the call site.
+        int camIndex = UIUtil.GetPointerId(gameObject);
 
         Messenger<string, int>.Broadcast(InputEvents.EVENT_ITEM_CLICK, transform.name, camIndex);
 
