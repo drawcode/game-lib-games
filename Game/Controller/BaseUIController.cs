@@ -955,11 +955,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideUI(bool now) {
 
-        //LogUtil.Log("HideUI");  
+        //LogUtil.Log("HideUI");
 
         uiVisible = false;
 
         showGameCanvas();
+
+        // The header lives under always-on, which HideAllPanels deliberately skips — under NGUI
+        // that was harmless because the loading screen drew over it by depth. A toolkit header
+        // draws above ALL cameras, so it must be explicitly put away when gameplay takes over or
+        // it lingers on top of the load screen.
+        GameUIPanelHeader.ShowNone();
 
         if (now) {
             HideAllPanelsNow();
