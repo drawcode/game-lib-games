@@ -3138,6 +3138,25 @@ public class BaseUIController : GameObjectBehavior {
                 }
             }
 
+            // Toolkit bridge fallback (list wave): toolkit list rows carry the play payload
+            // $-encoded in the ELEMENT NAME (ButtonGamePlay$<appContentState>$<missionCode>,
+            // written by loadDataMissionsToolkit) because VisualElements have no
+            // GameObjectData — the name-only click bus is the only channel.
+            if (dataType == null
+                && UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay + "$", buttonName)) {
+
+                string[] segments = buttonName.Split('$');
+
+                if (segments.Length >= 3) {
+
+                    dataType = BaseDataObjectKeys.mission;
+                    dataCode = segments[2];
+                    dataAppContentState = segments[1];
+
+                    GameController.ChangeGameStates(dataAppContentState);
+                }
+            }
+
             if (dataType != null) {
 
                 // COLLECTION LOAD - MISSION
