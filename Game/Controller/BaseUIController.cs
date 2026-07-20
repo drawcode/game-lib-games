@@ -269,6 +269,7 @@ public class BaseUIPanel {
     public static string panelInGame = "panel-in-game";
     public static string panelHeader = "panel-header";
     public static string panelFooter = "panel-footer";
+    public static string panelLoader = "panel-loader";
     public static string panelNavigation = "panel-navigation";
     public static string panelMenu = "panel-menu";
     public static string panelMain = "panel-main";
