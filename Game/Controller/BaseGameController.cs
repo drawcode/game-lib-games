@@ -1206,6 +1206,13 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if USE_GAME_LIB_GAMES_UI
 
+        // Put the toolkit menu chrome (header + previous menu screen) away NOW, before the loader
+        // shows. Toolkit views composite above the whole NGUI camera stack, so the NGUI prepare/
+        // loader overlay below would otherwise be covered by the header + menu until the late
+        // onGameStarted -> HideUI (2026-07-20 user report). Must run BEFORE ShowDefault so it does
+        // not hide the prepare overlay itself.
+        GameUIController.HidePanelsForLevelLoad();
+
         UIPanelOverlayPrepare.ShowDefault();
 
         GameUIPanelOverlays.Instance.ShowOverlayWhite();

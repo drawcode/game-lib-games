@@ -344,6 +344,13 @@ public class BaseUIPanel {
     public static string panelCommunityCamera = "panel-community-camera";
     public static string panelCommunityComment = "panel-community-comment";
     //
+    // 3F dialogs: the pause overlay and the modal dialog family are scene-resident singletons
+    // (UIPanelPause / UIPanelDialogBackground / UIPanelDialogDisplay), not catalog-loaded, so they
+    // had no panel-key. A key is only needed as the toolkit view-key (Resources/ui/views/<key>).
+    public static string panelPause = "panel-pause";
+    public static string panelDialogDisplay = "panel-dialog-display";
+    public static string panelDialogBackground = "panel-dialog-background";
+    //
     //
     public static string panelAR = "panel-ar";
     public static string panelARSettings = "panel-ar-settings";
@@ -650,6 +657,19 @@ public class BaseUIController : GameObjectBehavior {
         foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOut();
         }
+    }
+
+    // Put the toolkit menu chrome (the always-on header + whatever menu screen is up) away EARLY —
+    // the moment the level-load/prepare overlay appears — instead of waiting for the late
+    // onGameStarted -> hideUI. A toolkit view draws above the ENTIRE NGUI camera stack, so the NGUI
+    // UIPanelOverlayPrepare loader would otherwise be COVERED by the still-shown header + menu until
+    // gameplay actually starts (2026-07-20 user report: "header and old screens cover the loader").
+    // This is ONLY the visual hide — no camera teardown, no in-game audio swap, no HUD — so it can't
+    // trip the "Backgrounds inactive" camera-ordering race, and the later hideUI stays idempotent.
+    // Call this BEFORE showing the prepare overlay so the overlay itself isn't hidden by it.
+    public virtual void hidePanelsForLevelLoad() {
+        GameUIPanelHeader.ShowNone();
+        HideAllPanelsNow();
     }
 
     public virtual void HideAllPanelsNow() {

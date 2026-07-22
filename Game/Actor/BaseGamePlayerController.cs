@@ -4876,7 +4876,13 @@ public class BaseGamePlayerController : GameActor {
 
         if (GameController.IsGameplayType(GameplayType.gameDasher)) {
 
-            if (currentControllerData.characterController.enabled) {
+            // The CharacterController can be null/destroyed (e.g. while the game is paused, when the
+            // player actor is being torn down). Accessing .enabled on a destroyed Collider throws a
+            // NullReferenceException EVERY FRAME from Update -> UpdatePhysicsState, spamming the log and
+            // tanking input responsiveness (pre-existing; surfaced as pause lag/hang, 2026-07-20).
+            if (currentControllerData != null
+                && currentControllerData.characterController != null
+                && currentControllerData.characterController.enabled) {
                 currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
             }
 
