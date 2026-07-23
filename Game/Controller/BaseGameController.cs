@@ -2198,6 +2198,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateStopped(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.STOPPED;
         lastGameState = gameState;
@@ -2206,9 +2207,22 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // PAUSED
 
+    // The 1s delay is DELIBERATE: it covers the pause menu's show choreography
+    // (durationDelayShow .5 + durationShow .45 == .95s) so the menu is already on screen when the
+    // freeze lands. Freezing immediately was tried and reverted (2026-07-23) — UIPanelPause now
+    // animates on the UNSCALED clock, so the menu does still slide in at Time.timeScale == 0, but
+    // the player was left staring at a frozen game with NO menu for that ~1s. The unscaled clock
+    // stays: it makes the entrance robust if the freeze ever lands mid-animation.
     public virtual void gameRunningStatePause() {
         gameRunningStatePauseDelayed(1);
     }
+
+    // Bumped every time the running state is (re)decided. A delayed pause captures the value it
+    // was scheduled with, so it can tell whether something SUPERSEDED it (resume/quit/restart, or
+    // another pause) during the delay window. Deliberately NOT a gameState comparison: the pause
+    // flow does not guarantee gameState == GamePause for the whole window, and an over-strict
+    // check silently swallowed the freeze entirely (menu opened, game never paused, 2026-07-23).
+    private int gameRunningStateToken = 0;
 
     public virtual void gameRunningStatePauseDelayed(float delay) {
         StartCoroutine(gameRunningStatePauseDelayedCo(delay));
@@ -2216,7 +2230,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     IEnumerator gameRunningStatePauseDelayedCo(float delay) {
 
+        int token = ++gameRunningStateToken;
+
         yield return new WaitForSeconds(delay);
+
+        // The game can be RESUMED (or quit) inside the delay window, and nothing cancels this
+        // coroutine — without this guard it lands timeScale=0 on an already-resumed game: gameplay
+        // frozen with no pause menu, and the pause button now reads as "resume".
+        // (Surfaced as pause lag/hang/"takes lots of clicks", 2026-07-21.)
+        if (token != gameRunningStateToken) {
+            yield break;
+        }
 
         gameRunningStatePause(0f);
     }
@@ -2235,6 +2259,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateRun(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause (this is the resume path)
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.RUNNING;
         lastGameState = gameState;
@@ -2248,6 +2273,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateContent(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameRunningState = GameRunningState.PAUSED;
         lastGameState = gameState;
         gameState = GameStateGlobal.GameContentDisplay;
@@ -2261,6 +2287,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateOverlay(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameRunningState = GameRunningState.PAUSED;
         lastGameState = gameState;
         gameState = GameStateGlobal.GameOverlay;
