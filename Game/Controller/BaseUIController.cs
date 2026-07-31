@@ -597,7 +597,20 @@ public class BaseUIController : GameObjectBehavior {
 
     public IEnumerator showUIPanelActionsCo(string objName, string panelCode, string title) {
 
+        // This coroutine spans several WaitForEndOfFrame yields, so a level start can land
+        // MID-FLIGHT. Without these checks it goes on to re-show the header (ShowTitle below) and
+        // animate the menu screen back IN — after hidePanelsForLevelLoad, and potentially after
+        // onGameStarted -> hideUI — leaving menu chrome sitting on top of gameplay. Toolkit views
+        // composite above the ENTIRE NGUI camera stack, so that chrome also covered the NGUI
+        // prepare/loader overlay ("header and old screens cover the loader", 2026-07-20).
+        int token = menuChromeToken;
+
         yield return new WaitForEndOfFrame();
+
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
 
         AnalyticsNetworks.LogEventSceneChange(panelCode, title);
 
@@ -622,9 +635,19 @@ public class BaseUIController : GameObjectBehavior {
 
         yield return new WaitForEndOfFrame();
 
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
+
         broadcastUIMessageAnimateIn(objName); // animate in
 
         yield return new WaitForEndOfFrame();
+
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
 
         // TODO base
         GameCustomController.BroadcastCustomSync();
@@ -668,8 +691,24 @@ public class BaseUIController : GameObjectBehavior {
     // trip the "Backgrounds inactive" camera-ordering race, and the later hideUI stays idempotent.
     // Call this BEFORE showing the prepare overlay so the overlay itself isn't hidden by it.
     public virtual void hidePanelsForLevelLoad() {
+        menuChromeToken++;   // aborts any in-flight showUIPanelActionsCo (see there)
         GameUIPanelHeader.ShowNone();
         HideAllPanelsNow();
+    }
+
+    // Bumped whenever menu chrome is put away for a level load. A menu-panel show that was already
+    // in flight compares against it and aborts instead of re-showing chrome over the game.
+    private int menuChromeToken = 0;
+
+    // A level start superseded this menu-panel show. currentPanel was claimed up front in
+    // showUIPanel (before the coroutine ran), and it doubles as the "already showing" dedup guard —
+    // so it has to be released here, or navigating back to the SAME panel after the level would be
+    // silently swallowed and leave the screen blank.
+    private void abortPanelShow(string panelCode) {
+
+        if (currentPanel == panelCode) {
+            currentPanel = "";
+        }
     }
 
     public virtual void HideAllPanelsNow() {
