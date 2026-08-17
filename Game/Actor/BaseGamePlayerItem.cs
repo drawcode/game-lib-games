@@ -40,6 +40,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public bool allowCollect = false;
     public bool isCollecting = false;
     public float collectRange = 8f;
+
+    // How far above or below the player an item may sit and still be collectable.
+    // The collect test is a CYLINDER, not a sphere -- see UpdateCollect.
+    public float collectHeightRange = 6f;
+
+    // Slack between the player's capsule surface and the item's collider surface at
+    // which the item is taken. Both bodies are solid, so a centre-to-centre range
+    // smaller than the sum of their radii can never be satisfied by walking.
+    public float collectPadding = 1f;
     //
     string gamePlayerItemCode = "";
     GameItem gameItem = null;
@@ -251,25 +260,102 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         }
     }
 
+    /// <summary>
+    /// Horizontal half-extent of this item's own collider, in world units, so an
+    /// oversized pickup collider does not push the player out of its own collect range.
+    /// </summary>
+    public virtual float GetCollectItemRadius() {
+
+        Collider itemCollider = collider;
+
+        if (itemCollider == null) {
+            itemCollider = GetComponentInChildren<Collider>();
+        }
+
+        if (itemCollider == null) {
+            return 0f;
+        }
+
+        Vector3 extents = itemCollider.bounds.extents;
+
+        return Mathf.Max(extents.x, extents.z);
+    }
+
+    /// <summary>
+    /// How far apart the player's and the item's CENTRES may be horizontally.
+    ///
+    /// Both bodies are solid: the player capsule is radius 1.88 and the coin/health
+    /// spheres are radius 2 and 3, so physics stops the player 3.88 and 4.88 units from
+    /// the item's centre respectively. An authored collectRange of 3 was therefore
+    /// unreachable on foot -- which is why these had to be jumped on to be picked up.
+    /// Never let the usable range fall below "surfaces touching, plus a little".
+    /// </summary>
+    public virtual float GetCollectReach(GamePlayerController playerController) {
+
+        float playerRadius = 0f;
+
+        if (playerController != null) {
+
+            // Strictly on the actor root -- that is where the controller sets it up, and
+            // Get<T> would otherwise descend into children and find somebody else's.
+            CharacterController characterController
+                = playerController.gameObject.GetComponent<CharacterController>();
+
+            playerRadius = characterController != null
+                ? characterController.radius
+                : playerController.characterRadius;
+        }
+
+        return Mathf.Max(collectRange, playerRadius + GetCollectItemRadius() + collectPadding);
+    }
+
     public virtual void UpdateCollect() {
 
-        GameObject go = GameController.CurrentGamePlayerController.gameObject;
+        if (isCollecting) {
+            return;
+        }
+
+        GamePlayerController currentPlayerController = GameController.CurrentGamePlayerController;
+
+        if (currentPlayerController == null) {
+            return;
+        }
+
+        GameObject go = currentPlayerController.gameObject;
 
         if (go != null) {
 
             Vector3 playerPosition = go.transform.position;
             Vector3 itemPosition = transform.position;
 
-            if (Vector3.Distance(playerPosition, itemPosition) <= collectRange) {
-                //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
+            // Cylinder, not sphere. The old test was a 3D distance, so the item's height
+            // above the player was charged against the same budget as the horizontal
+            // gap. An item resting on the ground sits a full collider-radius up (2 for
+            // the coin, 3 for health) while the player's origin is at their feet, so for
+            // health the vertical offset alone consumed the entire authored range of 3
+            // before any horizontal distance was counted. Jumping was the only way to
+            // shrink that vertical term -- exactly the reported symptom.
 
-                GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+            float horizontalX = playerPosition.x - itemPosition.x;
+            float horizontalZ = playerPosition.z - itemPosition.z;
+            float horizontalDistanceSqr = (horizontalX * horizontalX) + (horizontalZ * horizontalZ);
 
-                if (gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+            float reach = GetCollectReach(currentPlayerController);
 
-                    if (gamePlayerController.IsPlayerControlled) {
-                        CollectContent();
-                    }
+            if (horizontalDistanceSqr > reach * reach) {
+                return;
+            }
+
+            if (Mathf.Abs(playerPosition.y - itemPosition.y) > collectHeightRange) {
+                return;
+            }
+
+            GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+
+            if (gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+
+                if (gamePlayerController.IsPlayerControlled) {
+                    CollectContent();
                 }
             }
         }
