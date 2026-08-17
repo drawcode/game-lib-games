@@ -92,7 +92,11 @@ public class GameWeaponLauncher : GameWeaponBase {
 
     void FixedUpdate() {
 
-        if (GameConfigs.isGameRunning) {
+        // Run WHILE the game is running, like every other gameplay gate in the actor
+        // layer. These two were the only un-negated ones, which left the aim raycast
+        // and the reload timer running only when the game was not being played.
+
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -103,7 +107,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
     private void Update() {
 
-        if (GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -125,9 +129,13 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                 for (int t = 0; t < TargetTag.Length; t++) {
 
-                    if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
+                    // One tag sweep per tag per frame. FindGameObjectsWithTag allocates
+                    // a fresh array on every call and this used to run it twice.
 
-                        GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+                    GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+
+                    if (objs.Length > 0) {
+
                         float distance = int.MaxValue;
 
                         if (AimObject != null && AimObject.tag == TargetTag[t]) {
@@ -307,28 +315,37 @@ public class GameWeaponLauncher : GameWeaponBase {
         target = null;
     }
 
+    private string projectileEffectName = null;
+    private string projectileEffectCode = null;
+
     public void NameEffect(GameObject bullet) {
+
+        if (bullet == null) {
+            return;
+        }
 
         if (gamePlayerController == null) {
             gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
 
-        if (bullet != null) {
-            foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) {
-                if (gamePlayerController == null) {
-                    break;
-                }
+        if (gamePlayerController == null
+            || gamePlayerController.weaponPrimary == null
+            || gamePlayerController.weaponPrimary.gameWeaponData == null) {
+            return;
+        }
 
-                if (gamePlayerController.weaponPrimary == null) {
-                    break;
-                }
+        string code = gamePlayerController.weaponPrimary.gameWeaponData.code;
 
-                if (gamePlayerController.weaponPrimary.gameWeaponData == null) {
-                    break;
-                }
+        // Build the name once per weapon rather than concatenating a fresh string on
+        // every shot of an auto weapon.
 
-                particleSystem.name = "projectile-" + gamePlayerController.weaponPrimary.gameWeaponData.code;
-            }
+        if (projectileEffectName == null || projectileEffectCode != code) {
+            projectileEffectCode = code;
+            projectileEffectName = "projectile-" + code;
+        }
+
+        foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) {
+            particleSystem.name = projectileEffectName;
         }
     }
 
@@ -343,9 +360,13 @@ public class GameWeaponLauncher : GameWeaponBase {
 
         if (Ammo > 0) {
 
-            if (Time.time > nextFireTime + FireRate) {
+            // FireRate is the interval between shots. The old gate compared against
+            // nextFireTime + FireRate and then also added FireRate to nextFireTime,
+            // so every weapon actually fired at half its authored rate.
 
-                nextFireTime = Time.time;
+            if (Time.time >= nextFireTime) {
+
+                nextFireTime = Time.time + FireRate;
                 torqueTemp = TorqueSpeedAxis;
                 Ammo -= 1;
 
@@ -384,12 +405,17 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     if (Missile) {
 
-                        Vector3 spread = new Vector3(
-                            Random.Range(-Spread, Spread),
-                            Random.Range(-Spread, Spread),
-                            Random.Range(-Spread, Spread)) / 100;
+                        // Spread is a cone around the barrel, built from the weapon's
+                        // own right/up axes. The old version offset all three WORLD
+                        // axes, so how much a weapon scattered depended on which way
+                        // the player happened to be facing, and the world-forward
+                        // component only changed the vector's length.
 
-                        Vector3 direction = this.transform.forward + spread;
+                        Vector2 spread = Random.insideUnitCircle * (Spread / 100f);
+
+                        Vector3 direction = (this.transform.forward
+                            + (this.transform.right * spread.x)
+                            + (this.transform.up * spread.y)).normalized;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
                             Missile, missileposition, missilerotate, true);
@@ -401,6 +427,7 @@ public class GameWeaponLauncher : GameWeaponBase {
                         if (damageBase) {
                             damageBase.gamePlayerController = gamePlayerController;
                             damageBase.TargetTag = TargetTag;
+                            damageBase.OnLaunched();
                         }
 
                         GameWeaponBase weaponBase = bullet.GetComponent<GameWeaponBase>();
@@ -420,6 +447,14 @@ public class GameWeaponLauncher : GameWeaponBase {
                                 Rigidbody rigid = bullet.Get<Rigidbody>();
 
                                 if (rigid != null) {
+
+                                    // A pooled bullet arrives carrying whatever velocity
+                                    // it had when it was recycled. Start it at rest, or
+                                    // the impulse below is added to a leftover vector and
+                                    // the shot leaves at an arbitrary angle.
+
+                                    rigid.linearVelocity = Vector3.zero;
+                                    rigid.angularVelocity = Vector3.zero;
 
                                     if (gamePlayerController != null
                                         && gamePlayerController.gameObject.GetRigidbody()) {

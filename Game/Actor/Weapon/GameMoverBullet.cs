@@ -1,4 +1,3 @@
-#pragma warning disable 1717
 using UnityEngine;
 using System.Collections;
 
@@ -24,17 +23,27 @@ public class GameMoverBullet : GameWeaponBase {
 
     private void Start() {
 
+        // The pool re-sends Start on every revive, so everything a fresh bullet needs
+        // has to happen here and not in Awake.
+
+        if (rigbody == null) {
+            rigbody = GetComponent<Rigidbody>();
+            hasRigidBody = rigbody != null;
+        }
+
         Reset();
 
         GameObjectHelper.DestroyGameObject(gameObject, Lifetime);
-
-        rigbody = this.rigbody;
-        hasRigidBody = rigbody ? true : false;
     }
 
     public void Reset() {
 
-        gameObject.ResetRigidBodiesVelocity();
+        // Clear LINEAR velocity too, not just angular. A recycled bullet otherwise
+        // carries the velocity it died with -- after a ricochet or a mid-flight
+        // recycle that is a large vector in an arbitrary direction, and the launcher's
+        // impulse adds to it, sending the next shot off at a wild angle.
+
+        gameObject.ResetRigidBodiesMotion();
 
         Speed = initialSpeed;
         SpeedMax = initialSpeedMax;
@@ -50,7 +59,7 @@ public class GameMoverBullet : GameWeaponBase {
             rigbody.linearVelocity = transform.forward * Speed;
         }
         else {
-            if (rigbody.linearVelocity.normalized != Vector3.zero)
+            if (rigbody.linearVelocity.sqrMagnitude > 0.0001f)
                 this.transform.forward = rigbody.linearVelocity.normalized;
         }
 

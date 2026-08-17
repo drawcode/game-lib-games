@@ -28,7 +28,12 @@ public class GameMoverMissile : GameWeaponBase {
     private bool initiallocked;
     private int initialtimetorock;
 
-    private void Start() {
+    // Snapshot the authored values ONCE. Awake runs on the first instantiate only,
+    // while the pool re-sends Start on every revive -- taking the snapshot in Start
+    // re-captured values that the previous flight had already mutated, so Speed
+    // ratcheted up toward SpeedMax and stayed there for every later reuse.
+
+    private void Awake() {
 
         initialDamping = Damping;
         initialSpeed = Speed;
@@ -42,13 +47,25 @@ public class GameMoverMissile : GameWeaponBase {
         initialLifeTime = LifeTime;
         initiallocked = locked;
         initialtimetorock = timetorock;
+    }
+
+    private void Start() {
+
+        if (rigid == null) {
+            rigid = gameObject.Get<Rigidbody>();
+        }
 
         Reset();
     }
 
     public void Reset() {
 
-        gameObject.ResetRigidBodiesVelocity();
+        // Linear velocity as well as angular -- a recycled missile otherwise starts
+        // its next flight with the velocity it was carrying when it was reclaimed.
+
+        gameObject.ResetRigidBodiesMotion();
+
+        Target = null;
         //gameObject.ResetLocalPosition();
         //gameObject.ResetLocalRotation();
 
@@ -72,10 +89,6 @@ public class GameMoverMissile : GameWeaponBase {
     Rigidbody rigid;
 
     private void FixedUpdate() {
-
-        if (rigid == null) {
-            rigid = gameObject.Get<Rigidbody>();
-        }
 
         if (rigid == null) {
             return;
@@ -123,8 +136,13 @@ public class GameMoverMissile : GameWeaponBase {
                 if (!locked && !Target) {
                     float distance = int.MaxValue;
                     for (int t = 0; t < TargetTag.Length; t++) {
-                        if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
-                            GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+
+                        // One allocating tag sweep per tag, not two. Every seeking
+                        // missile in flight runs this every frame.
+
+                        GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+
+                        if (objs.Length > 0) {
 
                             for (int i = 0; i < objs.Length; i++) {
                                 if (objs[i]) {
