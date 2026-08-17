@@ -1622,11 +1622,26 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual bool IsPlayerControlled {
         get {
+            if (IsPlayerControlledState
+                || uniqueId == UniqueUtil.Instance.currentUniqueId) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    // Player controlled by controller/context state only, ignoring uniqueId.
+    // Actors are pooled and the player shares the GamePlayerObject prefab with
+    // agents, so a recycled instance can still carry the local player's
+    // uniqueId. Identity must be decided from state, or that instance stays
+    // flagged as the player for its whole next life.
+
+    public virtual bool IsPlayerControlledState {
+        get {
             if (controllerState == GamePlayerControllerState.ControllerPlayer
                 || contextState == GamePlayerContextState.ContextInput
                 || contextState == GamePlayerContextState.ContextInputVehicle
-                || contextState == GamePlayerContextState.ContextFollowInput
-                || uniqueId == UniqueUtil.Instance.currentUniqueId) {
+                || contextState == GamePlayerContextState.ContextFollowInput) {
                 return true;
             }
             return false;
@@ -1900,6 +1915,19 @@ public class BaseGamePlayerController : GameActor {
 
         UpdateCharacterRuntimeState();
 
+        // The model, and everything cached from it, is replaced on load. The
+        // old model is pooled rather than destroyed, so a stale reference stays
+        // non-null and would route damage to whichever actor reuses it.
+
+        gameDamageManager = null;
+
+        // Drop anything the previous life scheduled on this instance. A pending
+        // Remove from an earlier death would otherwise fire on the actor that
+        // recycled it.
+
+        CancelInvoke("Remove");
+        CancelInvoke("RemoveMe");
+
         SetControllerData(new GamePlayerControllerData());
     }
 
@@ -2031,25 +2059,27 @@ public class BaseGamePlayerController : GameActor {
 
                 initialScale = transform.localScale;
 
-                // Wire up collision object
+                // Wire up collision objects
 
-                GamePlayerCollision gamePlayerCollision;
+                string collisionTag = "Enemy";
 
-                if (gameObjectLoad.Has<GamePlayerCollision>()) {
-                    gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
+                if (IsPlayerControlled) {
+                    collisionTag = "Player";
+                }
+                else if (IsSidekickControlled) {
+                    collisionTag = "Sidekick";
+                }
 
-                    if (IsPlayerControlled) {
-                        gamePlayerCollision.tag = "Player";
-                        tag = "Player";
-                    }
-                    else if (IsSidekickControlled) {
-                        gamePlayerCollision.tag = "Sidekick";
-                        tag = "Sidekick";
-                    }
-                    else {
-                        gamePlayerCollision.tag = "Enemy";
-                        tag = "Enemy";
-                    }
+                tag = collisionTag;
+
+                // Every hit area has to be wired, not just the first one found.
+                // A character may carry more than one, and an unwired one has no
+                // GameDamageManager and no tag, so hits landing on it are lost.
+
+                foreach (GamePlayerCollision gamePlayerCollision
+                        in gameObjectLoad.GetComponentsInChildren<GamePlayerCollision>(true)) {
+
+                    gamePlayerCollision.tag = collisionTag;
 
                     gamePlayerCollision.UpdateGameObjects();
                 }
@@ -3187,12 +3217,17 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetPosition() {
 
-        foreach (Transform t in gamePlayerModelHolderModel.transform) {
-            t.position.Reset();
-            t.localPosition.Reset();
-            t.rotation.Reset();
-            t.localRotation.Reset();
-            t.rotation = Quaternion.Euler(0f, 0f, 0f);
+        // Reset doubles as Unity's editor Reset callback, so this runs the moment the
+        // component is added in the Inspector, before the holder is assigned.
+
+        if (gamePlayerModelHolderModel != null) {
+            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+                t.position.Reset();
+                t.localPosition.Reset();
+                t.rotation.Reset();
+                t.localRotation.Reset();
+                t.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
 
         if (IsPlayerControlled) {
@@ -3205,8 +3240,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetScale() {
 
-        foreach (Transform t in gamePlayerModelHolderModel.transform) {
-            t.localScale = Vector3.one;
+        if (gamePlayerModelHolderModel != null) {
+            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+                t.localScale = Vector3.one;
+            }
         }
 
         if (IsPlayerControlled) {
@@ -3231,7 +3268,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void Reset() {
 
-        if (IsPlayerControlled) {
+        if (IsPlayerControlledState) {
             uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
         else {

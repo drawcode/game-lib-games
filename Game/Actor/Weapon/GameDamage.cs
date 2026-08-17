@@ -99,12 +99,14 @@ public class GameDamage : GameDamageBase {
         HandleApplyDamage(other);
     }
 
-    GameDamageManager damageManage = null;
-
     public void HandleApplyDamage(GameObject go) {
-        if (damageManage == null) {
-            damageManage = go.GetComponent<GameDamageManager>();
-        }
+
+        // Resolve per target. This object is pooled and reused, and an
+        // explosion applies damage to many targets in one pass, so the
+        // manager must never be cached across calls.
+
+        GameDamageManager damageManage = go.GetComponent<GameDamageManager>();
+
         if (damageManage != null) {
             if (damageManage.gamePlayerController != null && gamePlayerController != null) {
                 if (damageManage.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
@@ -123,25 +125,28 @@ public class GameDamage : GameDamageBase {
 
         bool doDamage = false;
 
-        if (other.transform.name == "GamePlayerCollider") {
-            GamePlayerCollision gamePlayerCollision =
-                other.Get<GamePlayerCollision>();
-            if (gamePlayerCollision != null) {
+        // Detect actor hit areas by component, not by object name. Character
+        // prefabs shared with other games do not always name them
+        // "GamePlayerCollider".
 
-                if (gamePlayerController == null) {
-                    return;
-                }
+        GamePlayerCollision gamePlayerCollision =
+            other.GetComponent<GamePlayerCollision>();
 
-                if (gamePlayerCollision.gamePlayerController == null) {
-                    return;
-                }
+        if (gamePlayerCollision != null) {
 
-                if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
-                    return;
-                }
-                else {
-                    doDamage = true;
-                }
+            if (gamePlayerController == null) {
+                return;
+            }
+
+            if (gamePlayerCollision.gamePlayerController == null) {
+                return;
+            }
+
+            if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                return;
+            }
+            else {
+                doDamage = true;
             }
         }
 
