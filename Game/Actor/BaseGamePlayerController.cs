@@ -4896,6 +4896,31 @@ public class BaseGamePlayerController : GameActor {
     // ------------------------------------------------------------------------
     // UPDATE PHYSICS
 
+    // Below this, an impact has no meaningful motion left in it. It decays by Lerp, which
+    // approaches zero without reaching it, so without a floor it stays "almost zero" forever.
+    public static float impactMoveThreshold = .0001f;
+
+    // CharacterController.Move DEPENETRATES on every call, even for zero motion. Every actor
+    // carries the same oversized capsule, so a call per frame shoves the actor out of whatever
+    // it overlaps. While alive the NavMeshAgent re-pins the transform each frame and hides it;
+    // once dead the agent is disabled and enemies have no gravity (no third person controller),
+    // so the drift accumulates permanently and the corpse creeps off the ground.
+    //
+    // So only move when there is actually an impact to apply, and never for a dead actor.
+
+    public virtual bool ShouldApplyImpactMove() {
+
+        if (currentControllerData == null) {
+            return false;
+        }
+
+        if (isDead || isExiting) {
+            return false;
+        }
+
+        return currentControllerData.impact.sqrMagnitude > impactMoveThreshold;
+    }
+
     public virtual void UpdatePhysicsState() {
 
         if (!controllerReady) {
@@ -4917,7 +4942,7 @@ public class BaseGamePlayerController : GameActor {
             // player actor is being torn down). Accessing .enabled on a destroyed Collider throws a
             // NullReferenceException EVERY FRAME from Update -> UpdatePhysicsState, spamming the log and
             // tanking input responsiveness (pre-existing; surfaced as pause lag/hang, 2026-07-20).
-            if (currentControllerData != null
+            if (ShouldApplyImpactMove()
                 && currentControllerData.characterController != null
                 && currentControllerData.characterController.enabled) {
                 currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
