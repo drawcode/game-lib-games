@@ -137,10 +137,10 @@ public class GameMoverMissile : GameWeaponBase {
                     float distance = int.MaxValue;
                     for (int t = 0; t < TargetTag.Length; t++) {
 
-                        // One allocating tag sweep per tag, not two. Every seeking
-                        // missile in flight runs this every frame.
+                        // Shared per-frame sweep. Every seeking missile in flight ran its
+                        // own allocating FindGameObjectsWithTag here, twice, every frame.
 
-                        GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+                        GameObject[] objs = GameWeaponTargets.GetByTag(TargetTag[t]);
 
                         if (objs.Length > 0) {
 

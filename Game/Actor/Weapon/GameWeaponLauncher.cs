@@ -57,7 +57,10 @@ public class GameWeaponLauncher : GameWeaponBase {
         if (!audio) {
             audio = this.GetComponent<AudioSource>();
             if (!audio) {
-                this.gameObject.AddComponent<AudioSource>();
+                // The result was being discarded, so on a weapon without an AudioSource
+                // this added a fresh one on every Start and still left audio null, which
+                // silenced the gun. [RequireComponent] normally prevents that case.
+                audio = this.gameObject.AddComponent<AudioSource>();
             }
         }
 
@@ -129,10 +132,11 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                 for (int t = 0; t < TargetTag.Length; t++) {
 
-                    // One tag sweep per tag per frame. FindGameObjectsWithTag allocates
-                    // a fresh array on every call and this used to run it twice.
+                    // One tag sweep per tag per FRAME, shared with every other seeker --
+                    // this used to call the allocating FindGameObjectsWithTag twice, per
+                    // weapon, per frame.
 
-                    GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+                    GameObject[] objs = GameWeaponTargets.GetByTag(TargetTag[t]);
 
                     if (objs.Length > 0) {
 

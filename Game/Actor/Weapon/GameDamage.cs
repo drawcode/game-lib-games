@@ -125,11 +125,25 @@ public class GameDamage : GameDamageBase {
         GameObjectHelper.DestroyGameObject(gameObject, 3, true);
     }
 
+    // Reused across explosions so the overlap query stops allocating a fresh array each
+    // time. Sized well above what an explosion radius of a few units can overlap; if it
+    // ever saturates the surplus is reported rather than silently dropped.
+    private static readonly Collider[] explosionHits = new Collider[128];
+
     private void ExplosionDamage() {
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, ExplosionRadius);
-        for (int i = 0; i < hitColliders.Length; i++) {
-            Collider hit = hitColliders[i];
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            transform.position, ExplosionRadius, explosionHits);
+
+        if (hitCount >= explosionHits.Length) {
+            LogUtil.LogWarning(
+                "GameDamage:ExplosionDamage: overlap buffer saturated at "
+                + explosionHits.Length + ", some targets may be missed. Radius: "
+                + ExplosionRadius);
+        }
+
+        for (int i = 0; i < hitCount; i++) {
+            Collider hit = explosionHits[i];
             if (!hit)
                 continue;
 
