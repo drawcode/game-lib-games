@@ -495,7 +495,29 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         bullet.transform.forward = direction;
 
-                        if (RigidbodyProjectile) {
+                        // TWO FIELDS OF THE SAME NAME, ON TWO DIFFERENT OBJECTS. This one -- the
+                        // LAUNCHER's -- decides whether to apply a launch impulse. The bullet's own
+                        // GameMoverBullet.RigidbodyProjectile decides whether physics drives it: when
+                        // that is FALSE the mover overwrites linearVelocity with forward * Speed in
+                        // every FixedUpdate, so an impulse (and the player-velocity inheritance below)
+                        // survives exactly one physics step and can only ever be a TELEPORT.
+                        //
+                        // ForceShoot 20000 / mass 1 with ForceMode.Force is 400 m/s for one 0.02s
+                        // step = 8 m of free travel (measured 8.03 / 7.76 / 6.63), and
+                        // projectile-normal's Rigidbody is Discrete, so that step is not swept:
+                        // every bullet from the minigun and the shotgun skipped the first 8 m and
+                        // passed straight through anything standing in it. Invisible at the old
+                        // ~400 m/s cruise; five steps' worth at the authored 80 m/s.
+                        //
+                        // Weapons whose projectile really is physics-driven (projectile-cannon) or
+                        // has no mover at all (projectile-ray, projectile-grenade) are untouched --
+                        // for them the impulse IS the motion.
+                        GameMoverBullet bulletMover = bullet.GetComponent<GameMoverBullet>();
+
+                        bool bulletIsVelocityDriven
+                            = bulletMover != null && !bulletMover.RigidbodyProjectile;
+
+                        if (RigidbodyProjectile && !bulletIsVelocityDriven) {
 
                             if (bullet.Has<Rigidbody>()) {
 
