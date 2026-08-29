@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -4913,6 +4913,23 @@ public class BaseGameController : GameObjectTimerBehavior {
         else if (GameKeyCodes.isActionProfileSync) {
             GameState.SyncProfile();
         }
+
+        // MEMORY
+
+        // busy has to follow the signal that actually tracks a live level. It was pushed
+        // ONLY from changeGameState, off gameState == GameStarted -- but gameState is
+        // already GameStarted at the MAIN MENU and does not change when a round begins, so
+        // once the first round ended (GameResults -> SetBusy(false)) it never went true
+        // again. Measured live: isGameRunning True for a whole round with busy False and
+        // twelve full collects behind it -- exactly the window MemoryUtil exists to keep
+        // blocking collections out of.
+        //
+        // SetBusy early-returns when the value has not changed, so this costs a bool
+        // compare per frame, and the false edge is still the safe point that services
+        // everything the round queued up. Placed ABOVE the isGameRunning early-return so
+        // the END of a round is seen at all.
+
+        MemoryUtil.SetBusy(GameConfigs.isGameRunning);
 
         // UPDATE
 
