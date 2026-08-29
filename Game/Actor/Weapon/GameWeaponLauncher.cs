@@ -39,6 +39,15 @@ public class GameWeaponLauncher : GameWeaponBase {
     public AudioClip SoundReloaded;
     private float timetolockcount = 0;
     private float nextFireTime = 0;
+
+    // GameProfiles.Current.GetAudioEffectsVolume() walks the profile's attribute
+    // dictionary and boxes a double. It was being called once per shot -- 25 times a
+    // second for the minigun -- purely to set a value that a player changes from a
+    // settings slider. Sample it a few times a second instead.
+
+    private float cachedEffectsVolume = -1f;
+    private float cachedEffectsVolumeTime = -99999f;
+    private const float effectsVolumeRefreshSeconds = 0.5f;
     private GameObject target;
     private Vector3 torqueTemp;
     private float reloadTimeTemp;
@@ -221,7 +230,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     if (SoundReloading) {
                         if (audio) {
-                            audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+                            ApplyEffectsVolume();
                             audio.PlayOneShot(SoundReloading);
                         }
                     }
@@ -348,12 +357,54 @@ public class GameWeaponLauncher : GameWeaponBase {
             projectileEffectName = "projectile-" + code;
         }
 
-        foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) {
-            particleSystem.name = projectileEffectName;
+        // ...and apply it once per pooled bullet rather than once per shot. The old code
+        // allocated a GetComponentsInChildren array and wrote a native name on every
+        // particle system every time the gun fired -- for an object that is recycled and
+        // already carries the name from its last life.
+
+        GameProjectileEffect effect = bullet.GetComponent<GameProjectileEffect>();
+
+        if (effect == null) {
+            effect = bullet.AddComponent<GameProjectileEffect>();
         }
+
+        if (effect.HasName(projectileEffectName)) {
+            return;
+        }
+
+        ParticleSystem[] particles = effect.GetParticles();
+
+        for (int i = 0; i < particles.Length; i++) {
+
+            if (particles[i] != null) {
+                particles[i].name = projectileEffectName;
+            }
+        }
+
+        effect.appliedName = projectileEffectName;
     }
 
     private int currentOuter = 0;
+
+    private void ApplyEffectsVolume() {
+
+        if (audio == null) {
+            return;
+        }
+
+        if (cachedEffectsVolume < 0f
+            || Time.time - cachedEffectsVolumeTime >= effectsVolumeRefreshSeconds) {
+
+            cachedEffectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+            cachedEffectsVolumeTime = Time.time;
+        }
+
+        // AudioSource.volume is a native setter; skip it when nothing moved.
+
+        if (audio.volume != cachedEffectsVolume) {
+            audio.volume = cachedEffectsVolume;
+        }
+    }
 
     public void Shoot() {
 
@@ -492,12 +543,10 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                 if (SoundGun.Length > 0) {
                     if (audio) {
-                        audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+                        ApplyEffectsVolume();
                         audio.PlayOneShot(SoundGun[Random.Range(0, SoundGun.Length)]);
                     }
                 }
-
-                nextFireTime += FireRate;
             }
         }
 
