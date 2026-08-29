@@ -1192,8 +1192,43 @@ public class BaseGameController : GameObjectTimerBehavior {
             // level had been running for minutes, and the level could never end.
             restoreAppContentStateIfUnset();
 
+            loadPlayerCharacterIfUnset();
+
             loadStartLevel();
         }
+    }
+
+    // The player actor is SCENE-RESIDENT (`currentGamePlayerController`, wired in the scene) and
+    // nothing on the level-start path ever initialises it. The only thing that does is tapping the
+    // player object on the main menu -- BaseGameUIPanelMain -> GameController
+    // .LoadCurrentProfileCharacter -> loadProfileCharacter -> changeCharacterModel ->
+    // ChangeCharacter, which is what sets ControllerPlayer + ContextInput and loads the model.
+    //
+    // Any route into a level that does not pass that tap leaves the actor ControllerNotSet /
+    // ContextNotSet with an empty model holder. `IsPlayerControlled` is then false, so
+    // LoadWeapon(code) returns at its own `if (!IsPlayerControlled)` guard and NOBODY IN THE LEVEL
+    // CARRIES A WEAPON -- measured 2026-08-29 in a live arcade level: zero GamePlayerWeapon
+    // components, six actors, all of them agents or sidekicks.
+    //
+    // Only ever fills in an UNINITIALISED player. A character the player chose is already the
+    // profile character this reloads, so a live actor is left alone.
+    public virtual void loadPlayerCharacterIfUnset() {
+
+        if (currentGamePlayerController == null) {
+            return;
+        }
+
+        bool characterLoaded
+            = currentGamePlayerController.gamePlayerModelHolderModel != null
+                && currentGamePlayerController.gamePlayerModelHolderModel.transform.childCount > 0;
+
+        if (currentGamePlayerController.IsPlayerControlled && characterLoaded) {
+            return;
+        }
+
+        LogUtil.Log("playGame: player actor is not initialised, loading the profile character");
+
+        loadCurrentProfileCharacter();
     }
 
     // The product's content state when nothing else has chosen one. Override per game.
