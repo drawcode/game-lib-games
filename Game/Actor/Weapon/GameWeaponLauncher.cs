@@ -1,4 +1,4 @@
-#pragma warning disable 0108
+﻿#pragma warning disable 0108
 using System;
 using UnityEngine;
 using System.Collections;
@@ -48,6 +48,15 @@ public class GameWeaponLauncher : GameWeaponBase {
     private float cachedEffectsVolume = -1f;
     private float cachedEffectsVolumeTime = -99999f;
     private const float effectsVolumeRefreshSeconds = 0.5f;
+
+    // AudioSource.PlayOneShot spawns a voice per call and nothing culls them. At the
+    // minigun's 25 shots/s a 0.3 s clip is ~8 concurrent voices from ONE weapon, and six
+    // firing actors saturate the 32 real voices the mixer has, after which it steals.
+    // Until an automatic weapon gets the fire loop + tail it should have, cap how often a
+    // launcher may START a voice. The bullets still leave at the authored fire rate.
+
+    private float lastGunSoundTime = -99999f;
+    public float gunSoundMinInterval = 0.06f;
     private GameObject target;
     private Vector3 torqueTemp;
     private float reloadTimeTemp;
@@ -564,7 +573,11 @@ public class GameWeaponLauncher : GameWeaponBase {
                 }
 
                 if (SoundGun.Length > 0) {
-                    if (audio) {
+                    if (audio
+                        && Time.time - lastGunSoundTime >= gunSoundMinInterval) {
+
+                        lastGunSoundTime = Time.time;
+
                         ApplyEffectsVolume();
                         audio.PlayOneShot(SoundGun[Random.Range(0, SoundGun.Length)]);
                     }

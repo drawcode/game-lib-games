@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -137,6 +137,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     }
 
     public virtual void CollectContent() {
+
+        // allowCollect is the arming gate RevealCollectCo sets once the item has actually
+        // revealed itself. It was written by Reset/RevealCollectCo and read by NOBODY, so an
+        // item could be taken in the frame it spawned, before its reveal ran. Both collect
+        // paths -- the UpdateCollect cylinder test and OnCollisionEnter -- land here.
+
+        if (!allowCollect) {
+            return;
+        }
 
         if (!isCollecting) {
 

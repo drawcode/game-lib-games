@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using Engine.Game.App;
 
@@ -63,7 +63,24 @@ public class GameDamageManager : MonoBehaviour {
     public GamePlayerController gamePlayerController;
     public GameZoneActionAsset gameZoneActionAsset;
 
+    // The pool revives an object by re-sending Start; Awake runs once, in its first life
+    // only. HP was never re-armed, so a recycled destructible came back on whatever the
+    // previous life spent it down to -- and once it was negative, `if (HP < 0) return;`
+    // in ApplyDamage made it permanently UNDAMAGEABLE. Snapshot the authored value where
+    // it is still authored, restore it per life.
+
+    private float hpAuthored = -1f;
+
+    private void Awake() {
+        hpAuthored = HP;
+    }
+
     private void Start() {
+
+        if (hpAuthored >= 0f) {
+            HP = hpAuthored;
+        }
+
         UpdateGameObjects();
     }
 
