@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -144,6 +144,15 @@ public class BaseGamePlayerController : GameActor {
     public float lastStateEvaded = 0f;
     public float lastCollision = 0f;
     public float intervalCollision = .2f;
+
+    // Contact damage the player takes off a one-unit bar from an enemy body or
+    // a damage obstacle, and the minimum gap between two hits landing on the
+    // same actor. A collision event reports EVERY contact point, so without a
+    // gap a single brush against a dog charged four or five times over.
+
+    public float damageContact = .05f;
+    public float intervalHit = .3f;
+    public float intervalHitPlayer = .4f;
 
     // quality settings
 
@@ -2726,8 +2735,7 @@ public class BaseGamePlayerController : GameActor {
 
                             //  if(GameController.IsGameplayWorldTypeStationary()) {
 
-                            float power = .1f;
-                            runtimeData.health -= power;
+                            float power = damageContact;
 
                             Hit(power);
 
@@ -2808,8 +2816,7 @@ public class BaseGamePlayerController : GameActor {
 
                             // TODO config
 
-                            float power = .1f;
-                            runtimeData.health -= power;
+                            float power = damageContact;
 
                             //GamePlayerProgress.Instance.ProcessProgressSpins
                             //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
@@ -3508,6 +3515,18 @@ public class BaseGamePlayerController : GameActor {
 
         if (IsPlayerControlled) {
 
+            // Only the enemy branch used to be gated, so the player paid for
+            // every contact point of every collision event.
+
+            if (currentControllerData != null) {
+                if (currentControllerData.lastHit + intervalHitPlayer < Time.time) {
+                    currentControllerData.lastHit = Time.time;
+                }
+                else {
+                    return;
+                }
+            }
+
 #if USE_GAME_LIB_GAMES_UI
             GameHUD.Instance.ShowHitOne((float)(1.5 - runtimeData.health));
 #endif
@@ -3517,7 +3536,7 @@ public class BaseGamePlayerController : GameActor {
         else {
             //bool allow = false;
 
-            if (currentControllerData.lastHit + .3f < Time.time) {
+            if (currentControllerData.lastHit + intervalHit < Time.time) {
                 currentControllerData.lastHit = Time.time;
                 //allow = true;
             }
@@ -4027,6 +4046,18 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.impact = Vector3.zero;
 
             currentControllerData.dying = true;
+
+            // Corpse-inert. A dead actor keeps its CharacterController, which depenetrates
+            // against every live capsule it overlaps for the three seconds before Remove()
+            // recycles it -- so bodies shove the player and each other. The PLAYER keeps
+            // its capsule: its death ends the round and the camera still rides it.
+            //
+            // Pooled reuse hands GetOrSet<CharacterController> the same disabled component
+            // back, so InitActorCharacterController re-enables it on character load.
+
+            if (!IsPlayerControlled) {
+                SetControllersState(false);
+            }
         }
 
         if (IsPlayerControlled) {
@@ -5698,6 +5729,12 @@ public class BaseGamePlayerController : GameActor {
         // CHARACTER CONTROLLER
 
         currentControllerData.characterController = gameObject.GetOrSet<CharacterController>();
+
+        // A pooled actor that died with its capsule switched off (see Die) gets the SAME
+        // disabled component back here, and an actor whose capsule never re-enables cannot
+        // be moved or hit. Re-arm per life, before the sizing below.
+
+        currentControllerData.characterController.enabled = true;
 
         // TODO config
 
