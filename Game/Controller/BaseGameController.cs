@@ -1183,8 +1183,45 @@ public class BaseGameController : GameObjectTimerBehavior {
             //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
             //}
 
+            // A level must never start with no app content state. AppModes is driven ONLY from
+            // AppContentStates.ChangeState (it reads the state's `key`), and everything the mode
+            // dispatch guards -- the countdown in checkForGameOver, the health game-over, the
+            // per-mode level items, the results scoring -- is silently skipped when no mode
+            // matches. The mode-select buttons do set it, but any route that reaches PLAY without
+            // passing one leaves it empty. Measured 2026-08-29: 90.000s still remaining after a
+            // level had been running for minutes, and the level could never end.
+            restoreAppContentStateIfUnset();
+
             loadStartLevel();
         }
+    }
+
+    // The product's content state when nothing else has chosen one. Override per game.
+    public virtual string defaultAppContentStateCode {
+        get {
+            return AppContentStateMeta.appContentStateGameArcade;
+        }
+    }
+
+    // Only ever FILLS IN an empty content state -- it never overrides one the player's own
+    // navigation set, so a mode button still wins. The profile has persisted the last state all
+    // along (SetCurrentAppContentState, written from ChangeState) and nothing ever read it back;
+    // this is that read, with defaultAppContentStateCode as the last resort.
+    public virtual void restoreAppContentStateIfUnset() {
+
+        if (!string.IsNullOrEmpty(AppContentStates.Current.code)) {
+            return;
+        }
+
+        string code = GameProfiles.Current.GetCurrentAppContentState(defaultAppContentStateCode);
+
+        if (AppContentStates.Instance.GetByCode(code) == null) {
+            code = defaultAppContentStateCode;
+        }
+
+        LogUtil.Log("playGame: no app content state set, restoring:" + code);
+
+        changeGameStates(code);
     }
 
     public virtual void initLevel(string levelCode) {
