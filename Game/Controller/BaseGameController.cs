@@ -2068,6 +2068,14 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
 
+        // Free the level being left BEFORE the next one's assets land, so the two never
+        // have to be resident at once. This is a loading screen -- a long frame here is
+        // invisible, and it is the cheapest memory the game will ever get. Forced,
+        // because a level load is worth a collection every single time and cannot be
+        // spammed the way a menu transition can.
+
+        MemoryUtil.CollectAtSafePoint("level-prepare-" + levelCode, true);
+
         loadLevelAssets(levelCode);
 
 #if USE_GAME_LIB_GAMES_UI
@@ -2568,6 +2576,25 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
         lastGameState = gameState;
         gameState = gameStateTo;
+
+        // Memory reclamation is driven from the one place that already knows whether a
+        // frame spike would be felt. While the round is live MemoryUtil only slices
+        // incrementally; a full collect and an asset unload wait for a transition, where
+        // a long frame is already hidden behind a screen change.
+
+        bool memoryBusy = gameState == GameStateGlobal.GameStarted
+            || gameState == GameStateGlobal.GameResume;
+
+        MemoryUtil.SetBusy(memoryBusy);
+
+        // GamePrepare is deliberately absent -- prepareGame() already collects, and it
+        // does it BEFORE loading rather than after.
+
+        if (gameState == GameStateGlobal.GameResults
+            || gameState == GameStateGlobal.GameQuit) {
+
+            MemoryUtil.CollectAtSafePoint("game-state-" + gameStateTo);
+        }
 
         Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
 
@@ -3072,9 +3099,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GamePlayerProgress.Instance.ProcessProgressLeaderboards();
 
-        //GC.Collect();
-        //GC.WaitForPendingFinalizers();
-        //yield return new WaitForSeconds(8f);
+        // Do NOT put a GC.Collect() back here. advanceToResults() above lands on
+        // GameStateGlobal.GameResults, and changeGameState hands that to
+        // MemoryUtil.CollectAtSafePoint -- which collects AND unloads, off the
+        // gameplay frame and coalesced against everything else that asked.
     }
 
     //public static void ProcessProgressCollections(

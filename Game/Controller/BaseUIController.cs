@@ -1051,6 +1051,13 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showUI() {
         //LogUtil.Log("ShowUI");
         uiVisible = true;
+
+        // Leaving gameplay for the menus. Cooldown-guarded rather than forced, because
+        // showUI() is also how showMain/showResults get here and a player can bounce
+        // between screens far faster than a collection is worth.
+
+        MemoryUtil.CollectAtSafePoint("ui-show");
+
         hideGameCanvas();
         HandleInUIAudio();
 

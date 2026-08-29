@@ -289,8 +289,11 @@ public class BaseGameAudioRecorder {
 			}
 			
 			www.Dispose();
-			GC.Collect();
-			//Resources.UnloadUnusedAssets();
+			// Was a blocking GC.Collect() -- a full stop-the-world pause on
+			// whatever frame this happened to land on. MemoryUtil coalesces the
+			// request and services it incrementally, or at the next safe point.
+			MemoryUtil.RequestCollect("audio-recorder-vehicle-clip-load");
+			MemoryUtil.RequestUnloadUnusedAssets("audio-recorder-vehicle-clip-load");
 		}
 	
 		if(audioClip != null) {
@@ -335,8 +338,11 @@ public class BaseGameAudioRecorder {
             }
 
             www.Dispose();
-            GC.Collect();
-            //Resources.UnloadUnusedAssets();
+            // Was a blocking GC.Collect() -- a full stop-the-world pause on
+            // whatever frame this happened to land on. MemoryUtil coalesces the
+            // request and services it incrementally, or at the next safe point.
+            MemoryUtil.RequestCollect("audio-recorder-clip-load");
+            MemoryUtil.RequestUnloadUnusedAssets("audio-recorder-clip-load");
         }
 
         if (audioClip != null) {
