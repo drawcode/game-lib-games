@@ -41,6 +41,17 @@ public class GameTouchInputAxis : GameObjectBehavior {
     public Vector3 anchorPoint = Vector3.zero;
     public Vector3 stretchPoint = Vector3.zero;
 
+    // How far the floating pad may travel from where it was authored, in the placement
+    // object's parent-local units. <= 0 derives it from the placement collider's own half
+    // extents -- the zone the pad is meant to live inside.
+    //
+    // Without a limit the pad walks: `objectPlacement.transform.position = worldPoint` had no
+    // bound at all, so dragging the left stick could carry it across the screen and park its
+    // collider on top of the right-hand ButtonInput* buttons, where it wins the raycast and
+    // they stop responding. It stayed there for as long as ANY finger was down, because the
+    // only restore was in the "nothing at all is pressed" branch.
+    public float placementTravelLimit = 0f;
+
     void Awake() {
 
     }
@@ -112,7 +123,12 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
-            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
+
+            // Mask to what this camera actually draws. Unmasked, the nearest collider on ANY
+            // layer answers -- a level collider in front of the HUD plane could make the pad
+            // believe the finger had left it.
+            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity, collisionCamera.cullingMask)
+                && hit.transform != null) {
 
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
 
@@ -190,13 +206,13 @@ public class GameTouchInputAxis : GameObjectBehavior {
                     }
                     else if (hitPlacement && !hitPad) {
 
-                        // MOVE IT
+                        // MOVE IT -- but only within the authored zone.
 
                         ResetPad();
 
                         ////Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);  
 
-                        objectPlacement.transform.position = worldPoint;
+                        MovePlacement(worldPoint);
 
                         anchorPoint = objectPlacement.transform.position;
                     }
@@ -205,6 +221,59 @@ public class GameTouchInputAxis : GameObjectBehavior {
         }
 
         return hitPad;
+    }
+
+    // The placement may only travel inside its own zone, so the pad cannot end up sitting on
+    // another control.
+    Vector2 GetPlacementTravelLimit() {
+
+        if (placementTravelLimit > 0f) {
+            return new Vector2(placementTravelLimit, placementTravelLimit);
+        }
+
+        BoxCollider box = objectPlacement.GetComponent<BoxCollider>();
+
+        if (box != null) {
+            Vector3 scale = objectPlacement.transform.localScale;
+            return new Vector2(
+                Mathf.Abs(box.size.x * scale.x) * .5f,
+                Mathf.Abs(box.size.y * scale.y) * .5f);
+        }
+
+        return Vector2.zero;
+    }
+
+    void MovePlacement(Vector3 worldPoint) {
+
+        if (objectPlacement == null) {
+            return;
+        }
+
+        Transform t = objectPlacement.transform;
+
+        Vector3 local = t.parent != null
+            ? t.parent.InverseTransformPoint(worldPoint)
+            : worldPoint;
+
+        Vector2 limit = GetPlacementTravelLimit();
+
+        if (limit == Vector2.zero) {
+            // Nothing to clamp against -- stay put rather than wander.
+            return;
+        }
+
+        local.x = Mathf.Clamp(local.x, originalPlacement.x - limit.x, originalPlacement.x + limit.x);
+        local.y = Mathf.Clamp(local.y, originalPlacement.y - limit.y, originalPlacement.y + limit.y);
+        local.z = originalPlacement.z;
+
+        t.localPosition = local;
+    }
+
+    void RestorePlacement() {
+
+        if (objectPlacement != null) {
+            objectPlacement.transform.localPosition = originalPlacement;
+        }
     }
 
     void ResetPad() {
@@ -227,11 +296,43 @@ public class GameTouchInputAxis : GameObjectBehavior {
         }
     }
 
+    // True while the not-running release has already been applied, so it runs once per stop.
+    bool releasedForNotRunning = false;
+
     void Update() {
 
         if (!GameConfigs.isGameRunning) {
+
+            // The pad keeps whatever deflection it had when the round ended -- both the art and
+            // the cached axisInput -- because this whole method is behind the gate. Let it go
+            // once so the next round does not open with a stick already pushed over.
+            if (!releasedForNotRunning) {
+                releasedForNotRunning = true;
+
+                inUse = false;
+                anchorPoint = Vector3.zero;
+
+                if (objectPlacement != null) {
+                    objectPlacement.transform.localPosition = originalPlacement;
+                }
+
+                // Not ResetPad(): its move-pad branch is gated on the static
+                // GameController.touchHandled, which is itself frozen at whatever the last
+                // running frame left. Release unconditionally here.
+                axisInput.x = 0f;
+                axisInput.y = 0f;
+
+                GameController.SendInputAxisMessage(axisName, axisInput);
+
+                if (pad != null) {
+                    pad.localPosition = Vector3.zero;
+                }
+            }
+
             return;
         }
+
+        releasedForNotRunning = false;
 
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
@@ -263,9 +364,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
             handled = PointHitTest(Input.mousePosition);
         }
         else {
-            if (objectPlacement != null) {
-                objectPlacement.transform.localPosition = originalPlacement;
-            }
+            RestorePlacement();
         }
 
         if (!handled
@@ -313,6 +412,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         if (!handled) {
             ResetPad();
+
+            // Not just when NOTHING is pressed: a finger on the OTHER pad kept touchPressed
+            // true, so a pad that had been dragged stayed where it was dragged to -- over
+            // whatever it had been carried on top of.
+            RestorePlacement();
         }
     }
 }

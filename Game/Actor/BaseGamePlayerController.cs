@@ -3290,6 +3290,29 @@ public class BaseGamePlayerController : GameActor {
         }
 
         ResetPosition();
+
+        ReleaseMotionState();
+    }
+
+    // The player actor is scene-resident: a replay reuses the same GameObject, the same
+    // CharacterController and the same third person controller. Anything still carrying
+    // motion when the previous round ended therefore applies itself on the first frame of
+    // the new one -- the actor spawns drifting as though something had pushed it. `impact`
+    // only decays inside UpdatePhysicsState, which is itself behind the isGameRunning gate,
+    // so a round that ends mid-knockback keeps that knockback indefinitely.
+    //
+    // Reset() doubles as Unity's editor Reset callback, so nothing here may assume the
+    // runtime data exists yet.
+    public virtual void ReleaseMotionState() {
+
+        if (controllerData != null) {
+
+            controllerData.impact = Vector3.zero;
+
+            if (controllerData.thirdPersonController != null) {
+                controllerData.thirdPersonController.ReleaseInputAndMotion();
+            }
+        }
     }
 
     public virtual void Remove() {

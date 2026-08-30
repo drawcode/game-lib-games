@@ -3365,9 +3365,14 @@ public class BaseGameController : GameObjectTimerBehavior {
                 //touchPos.Normalize();
                 //var touchPosNormalized = touchPos.normalized;
 
+                // VIEWPORT coordinates, 0..1 across the screen. This used to be
+                // `point.normalized` -- a unit vector, which has nothing to do with where on
+                // the screen the touch is, so the corner test below could never fire and
+                // finger-navigate ran over the on-screen controls it exists to avoid.
                 var pointNormalized = point;
-                pointNormalized.Normalize();
-                pointNormalized = pointNormalized.normalized;
+                pointNormalized.x = Screen.width > 0 ? point.x / Screen.width : 0f;
+                pointNormalized.y = Screen.height > 0 ? point.y / Screen.height : 0f;
+                pointNormalized.z = 0f;
 
                 //LogUtil.Log("directionNormal:" + directionNormal);
                 //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);

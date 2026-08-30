@@ -148,6 +148,59 @@ public class BaseGamePlayerControllerAnimationData {
         }
     }
 
+    // SPEED-FOLLOWING ANIMATION CADENCE
+    //
+    // A legacy AnimationState's normalizedSpeed is cycles per second, and it was written as a
+    // CONSTANT here -- runSpeedScale / walkSpeedScale -- so the leg cycle ran at one fixed rate
+    // whatever the actor was actually doing. The controller's speed is not fixed: moveSpeed
+    // lerps up from a standstill and swaps target between walkSpeed and trotSpeed after
+    // trotAfterSeconds, so the feet slid against the ground whenever the two disagreed.
+    //
+    // The cadence is now the authored scale times the ratio of real speed to the speed that
+    // scale describes, clamped so it can neither freeze nor blur into a scribble.
+    public float animationSpeedCycleMin = .45f;
+    public float animationSpeedCycleMax = 1.75f;
+
+    // Set per frame by the update: true when currentSpeed is the third person controller's own
+    // integrated speed, false when the NavMeshAgent branch has replaced it with its 0-or-15
+    // stand-in. Agents have no continuous speed to follow, so their cadence is left alone.
+    public bool speedFromController = false;
+
+    // The speed the authored *SpeedScale values describe. trotSpeed is what the controller
+    // settles at while moving -- walkSpeed only applies for the first trotAfterSeconds -- so
+    // anchoring there leaves sustained movement looking as it does today and changes only the
+    // ramp in and out of it.
+    public float GetSpeedCycleReference() {
+
+        if (thirdPersonController == null) {
+            return 0f;
+        }
+
+        float reference = thirdPersonController.trotSpeed;
+
+        if (reference <= .01f) {
+            reference = thirdPersonController.walkSpeed;
+        }
+
+        return reference;
+    }
+
+    public float GetSpeedCycleScale() {
+
+        if (!speedFromController) {
+            return 1f;
+        }
+
+        float reference = GetSpeedCycleReference();
+
+        if (reference <= .01f) {
+            return 1f;
+        }
+
+        return Mathf.Clamp(
+            currentSpeed / reference, animationSpeedCycleMin, animationSpeedCycleMax);
+    }
+
     // properties / helpers
 
     public string animationCodeIdle {
@@ -1487,9 +1540,11 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         if (animationData.isRunning) {
 
             animationData.currentSpeed = 0f;
+            animationData.speedFromController = false;
 
             if (animationData.thirdPersonController != null) {
                 animationData.currentSpeed = animationData.thirdPersonController.GetSpeed();
+                animationData.speedFromController = true;
             }
 
             if (animationData.gamePlayerController != null) {
@@ -1501,6 +1556,8 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                     if (animationData.navAgent != null) {
                         if (animationData.navAgent.enabled) {
                             //currentSpeed = navAgent.velocity.magnitude + 20;
+
+                            animationData.speedFromController = false;
 
                             if (animationData.navAgent.velocity.magnitude > 0f) {
                                 animationData.currentSpeed = 15f;
@@ -1547,14 +1604,21 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             animationData.currentAnimationJump = animationData.animationCodeJump;
             animationData.currentAnimationSlide = animationData.animationCodeSlide;
 
+            // Cycles per second for this frame: the authored cadence scaled by how fast the
+            // actor is really moving. Constant before -- which is what made the run cycle keep
+            // one pace while the character sped up and slowed down.
+            float speedCycleScale = animationData.GetSpeedCycleScale();
+            float runCycleSpeed = animationData.runSpeedScale * speedCycleScale;
+            float walkCycleSpeed = animationData.walkSpeedScale * speedCycleScale;
+
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (animationData.actorAnimation != null) {
                         if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed = runCycleSpeed;
                         }
                         if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
                         }
                     }
                 }
@@ -1577,7 +1641,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
                                     if (animationData.thirdPersonController == null) {
                                         animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                            animationData.runSpeedScale;
+                                            runCycleSpeed;
                                         //animationData.actor.animation["run"].time = 0f;
                                         animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
                                     }
@@ -1593,11 +1657,11 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
                                             if (animationData.angleTo > 120 && animationData.angleTo < 240) {
                                                 animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    -animationData.runSpeedScale * .9f;
+                                                    -runCycleSpeed * .9f;
                                             }
                                             else {
                                                 animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    animationData.runSpeedScale;
+                                                    runCycleSpeed;
                                             }
 
                                             //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
@@ -1605,7 +1669,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                         }
                                         else {
                                             animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                animationData.runSpeedScale;
+                                                runCycleSpeed;
                                             //animationData.actor.animation["run"].time = 0f;
                                             animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
                                         }
@@ -1664,15 +1728,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                             animationData.thirdPersonController.aimingDirection);
 
                                         if (animationData.angleTo > 120 && animationData.angleTo < 240) {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;
+                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = -walkCycleSpeed * .9f;
                                         }
                                         else {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
                                         }
                                         animationData.actorAnimation.Blend(animationData.currentAnimationWalk);
                                     }
                                     else {
-                                        animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                                        animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
                                         //animationData.actor.animation["run"].time = 0f;
                                         animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
                                     }
