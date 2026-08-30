@@ -2145,6 +2145,13 @@ public class BaseGamePlayerController : GameActor {
 
         currentControllerData.loadingCharacter = false;
 
+        // The capsule is sized in InitActorPlayerController, which can run before this
+        // coroutine has swapped the model in -- and a pooled actor reused for a
+        // different character would otherwise keep the previous life's size. Re-apply
+        // now that characterCode is definitely the character on screen. Idempotent.
+
+        ApplyCharacterCapsule();
+
         ResetPosition();
 
         currentControllerData.initialized = true;
@@ -5736,32 +5743,66 @@ public class BaseGamePlayerController : GameActor {
 
         currentControllerData.characterController.enabled = true;
 
-        // TODO config
+        // slopeLimit and stepOffset had the literals 45 and .3 here while the fields
+        // holding exactly those numbers sat unread three thousand lines up. Read them.
 
-        //public float initialMaxWalkSpeed = 5f;
-        //public float initialMaxTrotSpeed = 15f;
-        //public float initialMaxRunSpeed = 20f;
-        //public float initialMaxJumpHeight = .5f;
-        //public float initialMaxExtraJumpHeight = 1f;
-        //public float characterSlopeLimit = 45;
-        //public float characterStepOffset = .3f;
-        //public float characterRadius = 1f;
-        //public float characterHeight = 2.5f;
+        currentControllerData.characterController.slopeLimit = characterSlopeLimit;
+        currentControllerData.characterController.stepOffset = characterStepOffset;
 
-        currentControllerData.characterController.slopeLimit = 45;
-        currentControllerData.characterController.stepOffset = .3f;
-        currentControllerData.characterController.radius = characterRadius;
-        currentControllerData.characterController.height = characterHeight;
-        currentControllerData.characterController.center = characterCenter;//        new Vector3(0f, 2.39f, 0f);
-        //currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
+        ApplyCharacterCapsule();
+    }
 
-        //
-        //currentControllerData.characterController.slopeLimit = 45;
-        //currentControllerData.characterController.stepOffset = .3f;
-        //currentControllerData.characterController.radius = 2.6f;// 1.67f;
-        //currentControllerData.characterController.height = 2.42f;
-        ////currentControllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
-        //currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
+    // ------------------------------------------------------------------------
+    // CHARACTER CAPSULE
+
+    /// <summary>
+    /// Size the movement capsule for the character this actor is actually wearing.
+    ///
+    /// Every actor used to get the same capsule -- radius 1.88, height 4.88, centre y
+    /// 2.39 -- no matter what was in it. Measured against the shipped models that is
+    /// roughly 4x too big for a droid (0.30 tall in model units, so 1.20 in actor-root
+    /// units) and too short for the boss (1.90 -> 7.60). An oversized capsule is not
+    /// cosmetic: CharacterController depenetrates against it, so a small enemy shoves
+    /// the player from well outside its own silhouette, and every actor's pickup reach
+    /// is derived from this radius in BaseGamePlayerItem.GetCollectReach.
+    ///
+    /// The authored size lives on the character record (capsule_radius/height/center_y)
+    /// and is OPTIONAL: a character with none keeps the serialised defaults, so this is
+    /// additive against data that has not been updated. Read by characterCode rather
+    /// than off the gameCharacter field, because InitControlsCo can run before
+    /// LoadCharacterCo has populated it.
+    /// </summary>
+    public virtual void ApplyCharacterCapsule() {
+
+        if (currentControllerData == null
+            || currentControllerData.characterController == null) {
+            return;
+        }
+
+        float radius = characterRadius;
+        float height = characterHeight;
+        Vector3 center = characterCenter;
+
+        GameCharacter characterData = GameCharacters.Instance.GetById(characterCode);
+
+        if (characterData != null
+            && characterData.data != null
+            && characterData.data.HasCapsule()) {
+
+            radius = (float)characterData.data.capsule_radius;
+            height = (float)characterData.data.capsule_height;
+            center = characterCenter.WithY((float)characterData.data.capsule_center_y);
+        }
+
+        // Unity silently clamps a capsule shorter than its own diameter into a sphere,
+        // which would make an authored "short and wide" actor taller than it asked for
+        // without saying so. Do the clamp here so the value we set is the value we get.
+
+        height = Mathf.Max(height, radius * 2f);
+
+        currentControllerData.characterController.radius = radius;
+        currentControllerData.characterController.height = height;
+        currentControllerData.characterController.center = center;
     }
 
     private void InitActorThirdPersonController() {
