@@ -114,21 +114,30 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     }
 
+    // Set by PointHitTest when a touch landed on this pad's placement zone. The method
+    // returns hitPad, which is FALSE on exactly the frames the placement is being dragged --
+    // so a caller that treats "did not hit the pad" as "this pad is idle" will undo the drag
+    // on every frame and the floating stick can never leave home.
+    public bool hitPlacementLast = false;
+
     public bool PointHitTest(Vector3 point) {
 
         bool hitPad = false;
         bool hitPlacement = false;
+
+        hitPlacementLast = false;
 
         if (collisionCamera != null) {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
             RaycastHit hit;
 
-            // Mask to what this camera actually draws. Unmasked, the nearest collider on ANY
-            // layer answers -- a level collider in front of the HUD plane could make the pad
-            // believe the finger had left it.
-            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity, collisionCamera.cullingMask)
-                && hit.transform != null) {
+            // NOT layer-masked. Masking to collisionCamera.cullingMask looks obviously right
+            // and is not: the mask is only correct if the camera wired into this component is
+            // the one that draws the pad, and if it is not, NOTHING is ever hit and the control
+            // is silently dead. Do not re-add it without first checking, in a live round, that
+            // the mask contains the pad's layer.
+            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
                 //Debug.Log("hit:" + hit.transform.gameObject.name);
 
@@ -214,6 +223,8 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
                         MovePlacement(worldPoint);
 
+                        hitPlacementLast = true;
+
                         anchorPoint = objectPlacement.transform.position;
                     }
                 }
@@ -257,13 +268,19 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         Vector2 limit = GetPlacementTravelLimit();
 
-        if (limit == Vector2.zero) {
-            // Nothing to clamp against -- stay put rather than wander.
-            return;
+        // No limit derivable (objectPlacement carries no BoxCollider of its own) -- move
+        // unclamped, as this always did. Refusing to move would be a dead control, which is
+        // far worse than an unbounded one.
+        if (limit.x > 0f) {
+            local.x = Mathf.Clamp(
+                local.x, originalPlacement.x - limit.x, originalPlacement.x + limit.x);
         }
 
-        local.x = Mathf.Clamp(local.x, originalPlacement.x - limit.x, originalPlacement.x + limit.x);
-        local.y = Mathf.Clamp(local.y, originalPlacement.y - limit.y, originalPlacement.y + limit.y);
+        if (limit.y > 0f) {
+            local.y = Mathf.Clamp(
+                local.y, originalPlacement.y - limit.y, originalPlacement.y + limit.y);
+        }
+
         local.z = originalPlacement.z;
 
         t.localPosition = local;
@@ -353,15 +370,21 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         bool handled = false;
 
+        // Separate from `handled`, which means "this pad is being driven". A finger dragging
+        // the placement zone is using this control too -- it just has not reached the pad yet.
+        bool placementTouched = false;
+
         if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
                 handled = PointHitTest(touch.position);
+                placementTouched = placementTouched || hitPlacementLast;
                 if (handled)
                     break;
             }
         }
         else if (mousePressed) {//  && hideOnDesktopWeb) {
             handled = PointHitTest(Input.mousePosition);
+            placementTouched = hitPlacementLast;
         }
         else {
             RestorePlacement();
@@ -416,7 +439,13 @@ public class GameTouchInputAxis : GameObjectBehavior {
             // Not just when NOTHING is pressed: a finger on the OTHER pad kept touchPressed
             // true, so a pad that had been dragged stayed where it was dragged to -- over
             // whatever it had been carried on top of.
-            RestorePlacement();
+            //
+            // But NOT while this pad's own placement is being dragged. PointHitTest returns
+            // hitPad, which is false on exactly those frames, so restoring here would undo the
+            // drag every frame and the floating stick could never leave home.
+            if (!placementTouched) {
+                RestorePlacement();
+            }
         }
     }
 }
