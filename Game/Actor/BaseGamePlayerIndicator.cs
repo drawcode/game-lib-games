@@ -36,7 +36,9 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
     public bool clampToScreen = true;
     // If true, label will be visible even if object is off screen
     public float clampBorderSize = 0.05f;
-    // How much viewport space to leave at the borders when a label is being clamped
+    // Margin to leave at the screen edge when an indicator is clamped, in the HUD's own
+    // design units (the shipped GamePlayerIndicatorHUD prefab authors 90) -- NOT the
+    // viewport fraction the 0.05 default implies. See UpdateIndicator.
     public Camera cameraToUse;
     public GameObject indicatorObject;
     public GamePlayerIndicatorPlacementType indicatorType = GamePlayerIndicatorPlacementType.SCREEN;
@@ -392,11 +394,20 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
         //Debug.Log("ScaleIndicator:distance:" + distance);
 
-        if (currentDistance >= currentRangeMin
-            && currentDistance <= currentRangeMax) {
+        // Two things were wrong with the gate this replaces.
+        //
+        // The `distance` parameter was ignored -- every caller's value was thrown away
+        // and the currentDistance field read in its place -- and the upper bound meant a
+        // target further away than currentRangeMax fell out of the test entirely, so its
+        // indicator kept whatever scale the previous life or the previous target had left
+        // on it instead of settling at the far size. Clamp into the range and always
+        // scale; the distance is still ignored when nobody has measured one (the player
+        // and item paths never set it, and 0 there means "unknown", not "touching").
+
+        if (distance > 0f) {
 
             float currentDistanceSnapshot =
-                Mathf.Clamp(currentDistance, 0, currentRangeMax);
+                Mathf.Clamp(distance, 0, currentRangeMax);
 
             //Debug.Log("ScaleIndicator:currentDistanceSnapshot:" + currentDistanceSnapshot);
 
@@ -443,37 +454,175 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             gameObject, GameConfigs.usePooledIndicators);
     }
 
+    // The camera that actually renders this indicator, cached. It is NOT the gameplay
+    // camera -- the indicator lives under the HUD, in the HUD camera's space.
+    public Camera indicatorUICamera;
+
+    /// <summary>
+    /// The camera that draws the indicator's layer, i.e. the one whose space the
+    /// indicator's local coordinates mean something in. Cached: resolving it walks
+    /// every camera in the scene.
+    /// </summary>
+    public virtual Camera GetIndicatorUICamera() {
+
+        if (indicatorUICamera != null && indicatorUICamera.isActiveAndEnabled) {
+            return indicatorUICamera;
+        }
+
+        if (indicatorObject == null) {
+            return null;
+        }
+
+        int layerMask = 1 << indicatorObject.layer;
+        Camera found = null;
+
+        foreach (Camera candidate in Camera.allCameras) {
+
+            if ((candidate.cullingMask & layerMask) == 0) {
+                continue;
+            }
+
+            // Topmost wins, the same way the HUD is composited.
+            if (found == null || candidate.depth > found.depth) {
+                found = candidate;
+            }
+        }
+
+        indicatorUICamera = found;
+
+        return found;
+    }
+
+    // The visible screen area expressed in the indicator container's OWN local units,
+    // cached: it only changes when the screen does.
+    public Rect indicatorScreenRect;
+    public int indicatorScreenRectWidth;
+    public int indicatorScreenRectHeight;
+
+    /// <summary>
+    /// Measure the screen, in the units the indicator's localPosition is written in, by
+    /// projecting the viewport corners through the camera that draws it.
+    ///
+    /// Measured against the container the indicator hangs off -- NOT against the
+    /// indicator itself. Reading the plane distance off the object we are about to move
+    /// feeds its own last position back in, and with the HUD camera's transform sitting
+    /// inside the scaled UI hierarchy that runs away by orders of magnitude.
+    /// </summary>
+    public virtual bool TryGetIndicatorScreenRect(out Rect rect) {
+
+        rect = indicatorScreenRect;
+
+        if (indicatorObject == null) {
+            return false;
+        }
+
+        Transform space = indicatorObject.transform.parent;
+
+        if (space == null) {
+            return false;
+        }
+
+        if (indicatorScreenRectWidth == Screen.width
+            && indicatorScreenRectHeight == Screen.height
+            && indicatorScreenRect.width != 0f) {
+
+            return true;
+        }
+
+        Camera uiCamera = GetIndicatorUICamera();
+
+        if (uiCamera == null) {
+            return false;
+        }
+
+        float planeDistance = Mathf.Abs(
+            uiCamera.transform.InverseTransformPoint(space.position).z);
+
+        Vector3 bottomLeft = space.InverseTransformPoint(
+            uiCamera.ViewportToWorldPoint(new Vector3(0f, 0f, planeDistance)));
+
+        Vector3 topRight = space.InverseTransformPoint(
+            uiCamera.ViewportToWorldPoint(new Vector3(1f, 1f, planeDistance)));
+
+        indicatorScreenRect = new Rect(
+            bottomLeft.x, bottomLeft.y,
+            topRight.x - bottomLeft.x, topRight.y - bottomLeft.y);
+
+        indicatorScreenRectWidth = Screen.width;
+        indicatorScreenRectHeight = Screen.height;
+
+        rect = indicatorScreenRect;
+
+        return rect.width != 0f && rect.height != 0f;
+    }
+
     public virtual void UpdateIndicator(Vector3 relativePosition) {
 
-        Vector3 indicateTemp = indicatorObject.transform.position;
-        //LogUtil.Log("indicateTemp1:" + indicateTemp);
-
-        indicateTemp = cam.WorldToViewportPoint(
+        // Where the target is on screen, as a 0..1 viewport point.
+        Vector3 indicateTemp = cam.WorldToViewportPoint(
             camTransform.TransformPoint(relativePosition + offset));
-        //LogUtil.Log("indicateTemp1viewport:" + indicateTemp);
 
         if (indicatorType == GamePlayerIndicatorPlacementType.VIEWPORT) {
 
             indicatorObject.transform.localPosition = indicateTemp;
+
+            return;
         }
-        else { //(cam.WorldToScreenPoint(relativePosition + offset));//camTransform.TransformPoint(relativePosition + offset)) * 1f);//.WithY(0f); 
 
-            indicateTemp.x = indicateTemp.x - .5f;
-            indicateTemp.y = indicateTemp.y - .5f;
-            indicateTemp = cam.ViewportToScreenPoint(indicateTemp);
-            // adjust for HUD
-            //indicateTemp.y = indicateTemp.y / 1000;
-            //indicateTemp.z = 1f;
-            //LogUtil.Log("indicateTemp2:" + indicateTemp);
+        Rect uiRect;
 
-            indicatorObject.transform.localPosition =
-                //    Vector3.Lerp(
-                //indicatorObject.transform.localPosition, 
-                indicateTemp;
-            //, currentLateTickTime);
+        if (!TryGetIndicatorScreenRect(out uiRect)) {
 
-            //UITweenerUtil.MoveTo(indicatorObject, UITweener.Method.Linear, UITweener.Style.Once, .1f, 0f, indicateTemp);
+            // Nothing draws this layer. Fall back to the project's own screen
+            // convention: ScreenUtil is referenced to a 640-unit design height, so
+            // dividing BOTH axes by relativeHeight keeps the aspect instead of
+            // squashing it onto a fixed 960x640.
+
+            float unitsPerPixel = ScreenUtil.relativeHeight;
+
+            if (unitsPerPixel <= 0f) {
+                unitsPerPixel = 1f;
+            }
+
+            float fallbackWidth = Screen.width / unitsPerPixel;
+            float fallbackHeight = Screen.height / unitsPerPixel;
+
+            uiRect = new Rect(
+                -fallbackWidth * .5f, -fallbackHeight * .5f,
+                fallbackWidth, fallbackHeight);
         }
+
+        // uiRect is the visible screen measured in the indicator container's OWN local
+        // units, so the viewport point maps straight onto it with no unit conversion.
+        //
+        // What this replaces: the position was written as raw device PIXELS
+        // (ViewportToScreenPoint) and clamped against Screen.width/2 and Screen.height/2,
+        // into a container whose space is the HUD root's design units. Measured live on a
+        // 2137x1357 screen the visible area is +/-692.5 x +/-320 of those units while the
+        // clamp bounded to +/-1068.5 x +/-678.5, so every indicator was placed about twice
+        // as far out as the screen edge and the whole set sat off screen. The error scaled
+        // with the display, which is why it could look right at one size and vanish at
+        // another.
+
+        float placedX = uiRect.x + (indicateTemp.x * uiRect.width);
+        float placedY = uiRect.y + (indicateTemp.y * uiRect.height);
+
+        // clampBorderSize is in the SAME units as uiRect -- the shipped prefab authors it
+        // as 90, a design-unit margin, not the 0.05 viewport fraction this field's default
+        // and its comment suggest. Clamping it against a 0..1 viewport instead inverts the
+        // bounds, and Mathf.Clamp does not complain when min > max: it just returns min,
+        // which pins every indicator to the same far-off point.
+        //
+        // So bound the border to half the screen. A margin wider than the thing it is
+        // insetting has no sane reading, and silently returning min is how this hid.
+
+        float borderX = Mathf.Clamp(clampBorderSize, 0f, (uiRect.width * .5f) - 1f);
+        float borderY = Mathf.Clamp(clampBorderSize, 0f, (uiRect.height * .5f) - 1f);
+
+        indicatorObject.transform.localPosition = new Vector3(
+            Mathf.Clamp(placedX, uiRect.xMin + borderX, uiRect.xMax - borderX),
+            Mathf.Clamp(placedY, uiRect.yMin + borderY, uiRect.yMax - borderY),
+            indicatorObject.transform.localPosition.z);
     }
 
     public virtual void LateUpdate() {
@@ -630,47 +779,11 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
             UpdateIndicator(relativePosition);
 
-            if (indicatorType == GamePlayerIndicatorPlacementType.SCREEN) {
-
-                /* maybe lerp periodically...
-             indicatorObject.transform.localPosition = Vector3.Lerp (
-                 indicatorObject.transform.localPosition, new Vector3(
-                     Mathf.Clamp(indicatorObject.transform.localPosition.x, -Screen.width/2 + clampBorderSize, Screen.width/2 - clampBorderSize),
-                     Mathf.Clamp(indicatorObject.transform.localPosition.y, -Screen.height/2 + clampBorderSize, Screen.height/2 - clampBorderSize),
-                     indicatorObject.transform.localPosition.z),
-                 Time.deltaTime * .1f);
-                */
-
-                float clampHeight = (clampBorderSize * ScreenUtil.relativeHeight);
-                float clampWidth = (clampBorderSize * ScreenUtil.relativeWidth);
-
-
-                indicatorObject.transform.localPosition =
-                    // Vector3.Lerp(indicatorObject.transform.localPosition, 
-                    new Vector3(
-
-                    Mathf.Clamp(
-                        indicatorObject.transform.localPosition.x,
-                        -Screen.width / 2 + clampWidth,
-                        Screen.width / 2 - clampWidth),
-
-                    Mathf.Clamp(indicatorObject.transform.localPosition.y,
-                        -Screen.height / 2 + clampHeight,
-                        Screen.height / 2 - clampHeight),
-
-                    indicatorObject.transform.localPosition.z);
-                //, currentLateTickTime);
-
-            }
-            else {
-
-                indicatorObject.transform.localPosition =
-                    //Vector3.Lerp(indicatorObject.transform.localPosition, 
-                    new Vector3(
-                    Mathf.Clamp(indicatorObject.transform.localPosition.x, clampBorderSize, 1.0f - clampBorderSize),
-                    Mathf.Clamp(indicatorObject.transform.localPosition.y, clampBorderSize, 1.0f - clampBorderSize),
-                    indicatorObject.transform.localPosition.z);//, currentLateTickTime);
-            }
+            // Clamping now happens inside UpdateIndicator, in viewport space, before the
+            // point is projected into the UI camera. It used to happen here instead,
+            // against raw Screen.width/2 and Screen.height/2 bounds -- device pixels
+            // compared against a position expressed in the HUD root's own units, which are
+            // not pixels. That is what put every indicator off screen.
 
         }
         else {
