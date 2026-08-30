@@ -2620,14 +2620,21 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void OnButtonClickObjectEventHandler(
         GameObject buttonObject) {
 
-        Debug.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
+        // These two were raw Debug.Log on the CLICK path, so they ran in shipping builds: ~0.4ms
+        // each with ScriptOnly stack traces (measured), and the second one built the string by
+        // serialising the button's data dictionary to JSON whether or not anything read it —
+        // argument evaluation happens before the call. LogUtil.Log is gated on loggingEnabled, and
+        // the ToJson now happens inside that gate.
+        LogUtil.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
 
         Dictionary<string, object> data = new Dictionary<string, object>();
 
         if (buttonObject.Has<GameObjectData>()) {
             data = buttonObject.Get<GameObjectData>().ToDictionary();
 
-            Debug.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
+            if (LogUtil.loggingEnabled) {
+                LogUtil.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
+            }
 
             //OnButtonClickDataEventHandler(buttonObject.name, data);
 
