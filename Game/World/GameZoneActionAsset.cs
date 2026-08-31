@@ -183,17 +183,41 @@ public class GameZoneActionAsset : GameZoneAction {
 
         HandleActionInit();
 
-        //if(gamePlayerIndicator == null) {
-        //    gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
-        //}
+        // Load() is where actionCode finally becomes real, so the indicator has to be
+        // (re)applied HERE as well as on gameInitLevelStart -- see LoadPlayerIndicator.
+        LoadPlayerIndicator();
 
         loaded = true;
     }
 
+    // Give this zone its off-screen edge indicator, and keep it in step with the action.
+    //
+    // The action code arrives LATE. A placeholder zone is authored `action-none` and is only
+    // given its real code by GameController.loadLevelActions, which runs a second after the
+    // level items load -- whereas OnGameInitLevelStart fires this at the START of the level
+    // load. Every zone typed on that late path therefore asked for `indicator-none`, which is
+    // not a prefab, so the indicator was created carrying no visual at all; and because both
+    // this method and SetGameIndicatorType only checked "does one already exist", it could
+    // never be corrected afterwards.
+    //
+    // That late path is the DEFAULT branch in loadLevelActions -- "show save/rescue device
+    // action by default" -- which is why the rescue points in particular had no indicator.
     public void LoadPlayerIndicator() {
+
+        if (string.IsNullOrEmpty(actionCode)
+            || actionCode == BaseDataObjectKeys.none
+            || actionCode == GameZoneActions.action_none) {
+            // Still untyped. Load() will call again once it has a real code.
+            return;
+        }
+
         if (gamePlayerIndicator == null) {
             gamePlayerIndicator = GamePlayerIndicator.AddIndicator(gameObject, actionCode);
             //gamePlayerIndicator.alwaysVisible = true;
+        }
+        else {
+            // Already built, possibly for a code this zone no longer has.
+            gamePlayerIndicator.SetGameIndicatorType(actionCode);
         }
     }
 

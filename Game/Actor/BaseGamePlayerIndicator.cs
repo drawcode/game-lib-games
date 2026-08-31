@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Engine.Content;
+using Engine.Game.Data;
 using Engine.Utility;
 using UnityEngine;
 
@@ -283,8 +284,30 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             return;
         }
 
-        // Check if there is already an indicator loaded
-        // If not load
+        // Nothing to show for an untyped target. Creating one anyway resolves
+        // `indicator-none`, which is not a prefab, and leaves a live indicator carrying no
+        // visual at all -- indistinguishable from a missing one.
+        if (string.IsNullOrEmpty(gameIndicatorType)
+            || gameIndicatorType == BaseDataObjectKeys.none) {
+            return;
+        }
+
+        // REPLACE, do not merely fill. The type can arrive -- or change -- after the
+        // indicator exists: a placeholder action zone is authored `action-none` and is only
+        // given its real code by loadLevelActions, about a second after the level items
+        // load, which is AFTER gameInitLevelStart has already built its indicator. Guarding
+        // only on "does an item exist" froze that first, wrong type in place forever.
+        if (gamePlayerIndicatorItem != null) {
+
+            if (gamePlayerIndicatorItem.gameIndicatorTypeCode == gameIndicatorType) {
+                return;
+            }
+
+            GameObjectHelper.DestroyGameObject(
+                gamePlayerIndicatorItem.gameObject, GameConfigs.usePooledIndicators);
+
+            gamePlayerIndicatorItem = null;
+        }
 
         if (!indicatorObject.Has<GamePlayerIndicatorItem>()) {
 
