@@ -36,6 +36,10 @@ metadata:
   walk/run cycle ran at a constant `normalizedSpeed`; it now follows speed, with the
   NavMeshAgent branch excluded. Also flags the `walkSpeed = modifiedRunSpeed` copy-paste and
   the run clip that never plays.
+- [`context-zone-action-indicators.md`](./context-zone-action-indicators.md) — an action
+  zone's off-screen indicator is built from `actionCode` at `gameInitLevelStart`, but a
+  placeholder zone is only typed a second later by `loadLevelActions`, so it resolved
+  `indicator-none`, drew nothing, and could never correct itself.
 - [`context-tween-port-map.md`](./context-tween-port-map.md),
   [`context-progression-runtime-networks.md`](./context-progression-runtime-networks.md).
 
