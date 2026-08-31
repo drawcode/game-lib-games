@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Engine.Content;
+using Engine.Game.App.BaseApp;
 using Engine.Game.Data;
 using Engine.Utility;
 using UnityEngine;
@@ -303,8 +304,18 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 return;
             }
 
+            // Detach BEFORE destroying. `usePooledIndicators` is false, so this is a plain
+            // GameObject.Destroy and the corpse survives until the end of the frame -- and
+            // the pooled path only deactivates. The Has<> guard below searches children
+            // INCLUDING inactive ones, so a still-parented corpse makes it report "there is
+            // already one", the method falls off the end, and the zone is left with NO
+            // indicator at all -- worse than the stale one it replaced.
+            GameObject staleIndicatorObject = gamePlayerIndicatorItem.gameObject;
+
+            staleIndicatorObject.transform.parent = null;
+
             GameObjectHelper.DestroyGameObject(
-                gamePlayerIndicatorItem.gameObject, GameConfigs.usePooledIndicators);
+                staleIndicatorObject, GameConfigs.usePooledIndicators);
 
             gamePlayerIndicatorItem = null;
         }
@@ -438,6 +449,18 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
                 (((currentRangeMax - currentDistanceSnapshot)) / currentRangeMax) * 2f;
 
             scaleTo = Mathf.Clamp(scaleTo, .6f, 4f);
+
+            // Player-facing size dial, on top of the distance-derived size. Defaults to
+            // GameIndicatorConfigs.scale (.9 -- the 10% shrink asked for on device) and is
+            // overridden by the Settings: Controls slider. Applied AFTER the clamp so the
+            // slider can take the dots below the .6 far-size floor, which is the whole point
+            // of a "smaller" setting; the profile read is clamped to [.5, 1.5] at its own end.
+            //
+            // Read straight off the config rather than the profile: this runs for every
+            // indicator on every late tick, and the profile lookup walks an attribute
+            // dictionary. Settings: Controls pushes the player's value into the config, which
+            // also keeps this lib from having to know the app's GameProfiles exists.
+            scaleTo = scaleTo * GameIndicatorConfigs.scale;
 
             //Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
 
@@ -639,8 +662,15 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         // So bound the border to half the screen. A margin wider than the thing it is
         // insetting has no sane reading, and silently returning min is how this hid.
 
-        float borderX = Mathf.Clamp(clampBorderSize, 0f, (uiRect.width * .5f) - 1f);
-        float borderY = Mathf.Clamp(clampBorderSize, 0f, (uiRect.height * .5f) - 1f);
+        // edgeBorderScale multiplies the AUTHORED margin rather than replacing it, so the
+        // prefabs stay the one place the margin is written down. It ships at .5, halving the
+        // authored 90 to 45: the visible area is +/-692.5 x +/-320 container units, so 90 was
+        // holding the top and bottom dots 28% of the half-height in from the edge while the
+        // side dots sat at 13% -- which is why only some of them read as far off the edge.
+        float border = clampBorderSize * GameIndicatorConfigs.edgeBorderScale;
+
+        float borderX = Mathf.Clamp(border, 0f, (uiRect.width * .5f) - 1f);
+        float borderY = Mathf.Clamp(border, 0f, (uiRect.height * .5f) - 1f);
 
         indicatorObject.transform.localPosition = new Vector3(
             Mathf.Clamp(placedX, uiRect.xMin + borderX, uiRect.xMax - borderX),
