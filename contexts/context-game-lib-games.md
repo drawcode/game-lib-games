@@ -40,6 +40,10 @@ metadata:
   zone's off-screen indicator is built from `actionCode` at `gameInitLevelStart`, but a
   placeholder zone is only typed a second later by `loadLevelActions`, so it resolved
   `indicator-none`, drew nothing, and could never correct itself.
+- [`context-offscreen-indicator-dials.md`](./context-offscreen-indicator-dials.md) — the two
+  dials the edge indicators read (`GameIndicatorConfigs.scale`, `edgeBorderScale`), why a flat
+  border insets the top and bottom dots twice as far as the sides, and the deferred-`Destroy`
+  defect in `11c021e`'s stale-indicator replace path.
 - [`context-tween-port-map.md`](./context-tween-port-map.md),
   [`context-progression-runtime-networks.md`](./context-progression-runtime-networks.md).
 
