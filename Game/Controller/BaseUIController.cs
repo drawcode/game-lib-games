@@ -351,6 +351,11 @@ public class BaseUIPanel {
     public static string panelDialogDisplay = "panel-dialog-display";
     public static string panelDialogBackground = "panel-dialog-background";
     //
+    // 3G: the notification toast. Same shape as the three above — UINotificationDisplay is a
+    // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
+    // key exists ONLY to name its toolkit view (Resources/ui/views/panel-notification.uxml).
+    public static string panelNotification = "panel-notification";
+    //
     //
     public static string panelAR = "panel-ar";
     public static string panelARSettings = "panel-ar-settings";

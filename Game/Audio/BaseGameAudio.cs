@@ -336,16 +336,45 @@ public class BaseGameAudio {
             AudioSystem.Instance.PlayEffect(audioEffectName, volume);
     }
 
+    // A FULL profile save costs 50-66 ms on the main thread — it serialises and writes ten
+    // separate JSON blobs (profile, achievement, statistic, character, customization, mode,
+    // product, rpg, team, vehicle) — so it must never run for a write that changes nothing.
+    //
+    // These two setters were doing exactly that. UISettingsAudio.UpdateAudioValues() READS each
+    // volume out of the profile and immediately writes it back through here, so simply opening
+    // the audio settings cost two guaranteed no-op saves; BaseAudioController's volume-change
+    // handler adds two more at boot, and a slider drag broadcasts one per frame. Measured on a
+    // cold boot: 5 of the 8 profile saves came through these two methods, ~250 ms of dropped
+    // frames for zero change on disk.
+    //
+    // The live volume is still applied unconditionally — it is cheap, idempotent, and the audio
+    // system may have been re-created since the profile was written. Only the SAVE is guarded,
+    // and only when the stored value already equals the incoming one, so the bytes on disk are
+    // identical either way.
+    public const double profileVolumeEpsilon = 0.0001;
+
     public static void SetProfileAmbienceVolume(double volume) {
+
+        bool changed = System.Math.Abs(GameProfiles.Current.GetAudioMusicVolume() - volume) > profileVolumeEpsilon;
+
         GameProfiles.Current.SetAudioMusicVolume(volume);
         GameAudio.SetAmbienceVolume(volume);
-        GameState.SaveProfile();
+
+        if (changed) {
+            GameState.SaveProfile();
+        }
     }
 
     public static void SetProfileEffectsVolume(double volume) {
+
+        bool changed = System.Math.Abs(GameProfiles.Current.GetAudioEffectsVolume() - volume) > profileVolumeEpsilon;
+
         GameProfiles.Current.SetAudioEffectsVolume(volume);
         GameAudio.SetEffectsVolume(volume);
-        GameState.SaveProfile();
+
+        if (changed) {
+            GameState.SaveProfile();
+        }
     }
 
     public static void SetAmbienceVolume(double volume) {
