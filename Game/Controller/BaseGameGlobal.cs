@@ -309,8 +309,12 @@ public class BaseGameGlobal : GameObjectBehavior {
         currentVolumeEffects = GameProfiles.Current.GetAudioEffectsVolume();
         currentVolumeMusic = GameProfiles.Current.GetAudioMusicVolume();
 
+        // (music, effects) -- these were passed the other way round, so every non-editor boot
+        // started the game with the music volume set from the effects setting and vice versa.
+        // Editor-only guard is why it survived: it can only be seen on a device. Every other
+        // UpdateAudio call site in this file already passes them in signature order.
         if (!Application.isEditor) {
-            UpdateAudio(currentVolumeEffects, currentVolumeMusic);
+            UpdateAudio(currentVolumeMusic, currentVolumeEffects);
         }
 
 #if DEV
