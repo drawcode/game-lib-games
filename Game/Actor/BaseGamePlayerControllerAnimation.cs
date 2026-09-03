@@ -93,6 +93,10 @@ public class BaseGamePlayerControllerAnimationData {
 
     public Animation actorAnimation;
 
+    // The actor object actorAnimation was resolved from. Used to re-resolve on actor swap
+    // instead of calling GetComponent every frame.
+    public GameObject actorAnimationResolvedFor;
+
     public bool isJumping;
     public bool isSliding;
     public bool isCapeFlying;
@@ -1592,7 +1596,15 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 return;
             }
 
-            animationData.actorAnimation = animationData.actor.GetComponent<Animation>();
+            // Re-resolved only when the ACTOR CHANGED, not every frame. This was an unconditional
+            // GetComponent per frame, per actor. It cannot simply be cached once either: the actor
+            // model is swapped (customisation, pooled reuse), and the old code's one virtue was
+            // that it always matched the current actor. Keying the cache on the actor object keeps
+            // that property at one reference comparison a frame.
+            if (animationData.actorAnimationResolvedFor != animationData.actor) {
+                animationData.actorAnimation = animationData.actor.GetComponent<Animation>();
+                animationData.actorAnimationResolvedFor = animationData.actor;
+            }
 
             if ((animationData.actorAnimation == null && animationData.animator == null)) {
                 ////Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
@@ -1690,7 +1702,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                     SetFloat(GameDataActionKeys.speed, animationData.currentSpeed);
                 }
 
-                SendMessage("SyncAnimation", GameDataActionKeys.run, SendMessageOptions.DontRequireReceiver);
+                SyncAnimationMessage(GameDataActionKeys.run);
             }
             // Fade in walk
             else if (animationData.currentSpeed > 0.1) {
@@ -1741,7 +1753,7 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                                         animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
                                     }
 
-                                    SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
+                                    SyncAnimationMessage(GameDataActionKeys.walk);
                                 }
                             }
                         }
@@ -1853,4 +1865,65 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
         }
         */
+
+    // SendMessage does a reflection lookup for the handler on EVERY call, and the two run/walk
+    // sites below call it once a frame for as long as an actor is moving -- per actor.
+    //
+    // The receivers ("SyncAnimation") are the networking components: NetworkSyncAnimation and
+    // GameNetworkPlayerContainer. Neither is present on a single-player actor, so in the common
+    // case every one of those calls was paying the lookup to find nothing. All the OTHER
+    // SendMessage("SyncAnimation") sites in this class are event driven -- jump, skill, walljump --
+    // and are left as they are; the cost only matters where it repeats per frame.
+    //
+    // Probed by reflection rather than by referencing the types, because the receivers live in
+    // game-lib-engine and game-lib-gameverses and gameverses is behind a compile flag here.
+    private bool syncAnimationReceiverChecked = false;
+    private System.Action<string> syncAnimationCall = null;
+
+    protected virtual void SyncAnimationMessage(string animationValue) {
+
+        if (!syncAnimationReceiverChecked) {
+
+            syncAnimationReceiverChecked = true;
+
+            MonoBehaviour[] behaviours = GetComponents<MonoBehaviour>();
+
+            for (int i = 0; i < behaviours.Length; i++) {
+
+                if (behaviours[i] == null) {
+                    continue;
+                }
+
+                System.Reflection.MethodInfo method = behaviours[i].GetType().GetMethod(
+                    "SyncAnimation",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new System.Type[] { typeof(string) },
+                    null);
+
+                if (method == null) {
+                    continue;
+                }
+
+                // Bound ONCE into a delegate. MethodInfo.Invoke would have to box the argument
+                // into a fresh object[] on every call, which would just trade SendMessage's
+                // per-frame cost for a per-frame allocation.
+                syncAnimationCall = (System.Action<string>)System.Delegate.CreateDelegate(
+                    typeof(System.Action<string>), behaviours[i], method, false);
+
+                if (syncAnimationCall != null) {
+                    break;
+                }
+            }
+        }
+
+        // Nothing on this object handles it -- which is what DontRequireReceiver was papering
+        // over. Skip the call entirely rather than paying the lookup to find nothing.
+        if (syncAnimationCall == null) {
+            return;
+        }
+
+        syncAnimationCall(animationValue);
+    }
+
 }

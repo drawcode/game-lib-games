@@ -70,6 +70,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     // The current x-z move speed
     public float moveSpeed = 0.0f;
 
+    // Resolved once, in the move path below, rather than per frame.
+    private CharacterController characterControllerCached;
+
     // The last collision flags returned from controller.Move
     public CollisionFlags collisionFlags;
 
@@ -548,8 +551,20 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         Vector3 movement = moveDirection * (moveSpeed * (1 - verticalInput2 / 10)) + new Vector3(0, verticalSpeed, 0) + inAirVelocity;
         movement *= Time.deltaTime;
 
-        // Move the controller
-        CharacterController controller = GetComponent<CharacterController>();
+        // Move the controller.
+        //
+        // Cached: this was a GetComponent every frame, per actor. The component is on this same
+        // GameObject and does not change over the actor's life; a pooled actor coming back keeps
+        // the same one. Re-resolved if it is ever missing so a null cache cannot latch.
+        if (characterControllerCached == null) {
+            characterControllerCached = GetComponent<CharacterController>();
+        }
+
+        CharacterController controller = characterControllerCached;
+
+        if (controller == null) {
+            return;
+        }
         wallJumpContactNormal = Vector3.zero;
 
         //if(!isNetworked) {

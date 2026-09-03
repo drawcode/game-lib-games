@@ -160,7 +160,10 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         float distance = int.MaxValue;
 
-                        if (AimObject != null && AimObject.tag == TargetTag[t]) {
+                        // CompareTag, not `.tag ==`: the tag getter marshals a fresh managed
+                        // string out of the engine on every read, and this runs per tag, per
+                        // weapon, per frame.
+                        if (AimObject != null && AimObject.CompareTag(TargetTag[t])) {
 
                             float dis = Vector3.Distance(AimObject.transform.position, transform.position);
 
