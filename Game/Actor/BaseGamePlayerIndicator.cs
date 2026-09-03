@@ -684,19 +684,27 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
             return;
         }
 
-        if (!GameConfigs.isGameRunning) {
-            return;
-        }
-
         if (!initialized) {
             return;
         }
 
         // remove if not found
-
+        //
+        // ABOVE the isGameRunning gate deliberately. isGameRunning is
+        // `GameController.IsGameRunning && !isUIRunning`, so it goes FALSE for any panel opened
+        // during a round, not just at the end of one. With this check below the gate, an indicator
+        // whose target died while a panel was up kept pointing at a corpse for as long as the
+        // panel stayed open. Reclaiming a dead target is cleanup, not gameplay, and is safe to run
+        // whether or not the round is live.
         if (initialized && target == null) {
             initialized = false;
             DestroyMe();
+            return;
+        }
+
+        // Everything below MOVES the indicator, and that is the part that has to hold still while
+        // the game is not running.
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
