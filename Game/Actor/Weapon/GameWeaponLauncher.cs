@@ -489,6 +489,13 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         NameEffect(bullet);
 
+                        // AIM FIRST, THEN say it is launched. This assignment used to come after
+                        // the OnLaunched call below, which is fine for a projectile that flies
+                        // (it reads its own transform later, by which time it is aimed) but wrong
+                        // for a HITSCAN one: GameRayShoot casts its ray inside OnLaunched, so it
+                        // was casting along the pre-spread rotation the pool spawned it with.
+                        bullet.transform.forward = direction;
+
                         GameDamageBase damageBase = bullet.GetComponent<GameDamageBase>();
 
                         if (damageBase) {
@@ -504,8 +511,6 @@ public class GameWeaponLauncher : GameWeaponBase {
                             weaponBase.Target = target;
                             weaponBase.TargetTag = TargetTag;
                         }
-
-                        bullet.transform.forward = direction;
 
                         // TWO FIELDS OF THE SAME NAME, ON TWO DIFFERENT OBJECTS. This one -- the
                         // LAUNCHER's -- decides whether to apply a launch impulse. The bullet's own
