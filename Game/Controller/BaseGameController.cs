@@ -2138,6 +2138,19 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //GameController.Reset();
 
+        // RELEASE THE GAME-OVER LATCH. checkForGameOver does all its work inside `if (!isGameOver)`,
+        // and nothing was clearing the flag: resetRuntimeData() is the only thing that sets it back
+        // to false, it is reached only from reset(), and the two calls to reset() on this path
+        // (here and in startGame) are both commented out. restartGame() calls it, which is why
+        // RESTARTING a level always worked.
+        //
+        // So the first round to end set isGameOver = true and it stayed true for the life of the
+        // process: the SECOND level played through to its end and then simply never asked for
+        // results -- no game over, no panel, the worlds backer left on screen. Exactly one line is
+        // needed here; calling the full reset() would also tear down the level actors and swap the
+        // runtime data, which is what the commented-out call was presumably avoiding.
+        isGameOver = false;
+
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
 
         // Free the level being left BEFORE the next one's assets land, so the two never
