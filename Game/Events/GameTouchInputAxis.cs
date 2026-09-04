@@ -120,6 +120,16 @@ public class GameTouchInputAxis : GameObjectBehavior {
     // on every frame and the floating stick can never leave home.
     public bool hitPlacementLast = false;
 
+    // The HUD's input shields. Named, not layered, because that is the convention already in
+    // use -- InputSystem tests the same substring to decide a tap must not reach the world.
+    private const string ignoreHitName = "Ignore";
+
+    // Reused by PointHitTest so the all-hits raycast does not allocate. This runs per touch,
+    // per axis, per frame. RaycastNonAlloc silently stops filling at the end of the buffer, so
+    // this is a cap rather than a count -- 32 is well clear of anything the HUD stacks in one
+    // place (the deepest cluster is the right-hand controls at 5).
+    private static readonly RaycastHit[] hitBuffer = new RaycastHit[32];
+
     public bool PointHitTest(Vector3 point) {
 
         bool hitPad = false;
@@ -130,20 +140,57 @@ public class GameTouchInputAxis : GameObjectBehavior {
         if (collisionCamera != null) {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
-            RaycastHit hit;
 
             // NOT layer-masked. Masking to collisionCamera.cullingMask looks obviously right
             // and is not: the mask is only correct if the camera wired into this component is
             // the one that draws the pad, and if it is not, NOTHING is ever hit and the control
             // is silently dead. Do not re-add it without first checking, in a live round, that
             // the mask contains the pad's layer.
-            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
+            //
+            // ALL hits, not just the nearest one, so the "Ignore" shields can be stepped over.
+            //
+            // The HUD hangs large colliders named "Ignore" over each control cluster; their job
+            // is to stop a tap on the controls falling through to the world, and InputSystem
+            // honours exactly that by name (`hit.transform.name.Contains("Ignore")` ->
+            // allowedTouch = false). This method never did. It took the single nearest collider
+            // and, if it was not this axis's pad or placement, gave up -- so a shield sitting in
+            // front of the zone it is shielding made the control under it unusable.
+            //
+            // It bit the RIGHT pad hardest: three Ignore boxes (377x353, 263x341, 377x353) hang
+            // directly under InputRight, over an AxisInputPlacement-attack zone that is only
+            // 150x150. Starting the touch further left -- outside the shields -- was the only
+            // way to get the stick to come to the thumb.
+            //
+            // Only the shields are skipped. A real control still blocks the pad, as it should.
+            int hitCount = Physics.RaycastNonAlloc(screenRay, hitBuffer, Mathf.Infinity);
 
-                //Debug.Log("hit:" + hit.transform.gameObject.name);
+            hitObject = null;
 
-                hitObject = hit.transform.gameObject;
+            float nearestDistance = float.MaxValue;
 
-                if (hitObject != null) {
+            for (int h = 0; h < hitCount; h++) {
+
+                Transform hitTransform = hitBuffer[h].transform;
+
+                if (hitTransform == null) {
+                    continue;
+                }
+
+                if (hitTransform.name.Contains(ignoreHitName)) {
+                    continue;
+                }
+
+                if (hitBuffer[h].distance < nearestDistance) {
+                    nearestDistance = hitBuffer[h].distance;
+                    hitObject = hitTransform.gameObject;
+                }
+            }
+
+            if (hitObject != null) {
+
+                //Debug.Log("hit:" + hitObject.name);
+
+                {
                     axisPadObject = hitObject.Get<GameTouchInputAxisPad>();
                     if (axisPadObject != null) {
                         //if(hit.transform.gameObject == gameObject) {

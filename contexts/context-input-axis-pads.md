@@ -1,6 +1,6 @@
 ---
 name: context-input-axis-pads
-description: GameTouchInputAxis — the virtual pads are FLOATING sticks whose placement object carries its own collider and gets moved to the finger; PointHitTest returns hitPad, which is false while the placement is being dragged; and the isGameRunning gate latches input into the next round.
+description: GameTouchInputAxis — the virtual pads are FLOATING sticks whose placement object carries its own collider and gets moved to the finger; PointHitTest took only the NEAREST collider, so the HUD's own "Ignore" input shields blocked the right pad; it returns hitPad, which is false while the placement is being dragged; and the isGameRunning gate latches input into the next round.
 metadata:
   type: repo
   repo: game-lib-games
@@ -87,3 +87,58 @@ route into the same actor; `InputSystem.checkIfAllowedTouch` is what stops a tap
 containing `ButtonInput` / `Axis` / `Ignore` / `Pad` from also steering the player.
 Title-specific measurements and the device reports are in the Action Bots workspace context
 `context-input-pads-and-round-reset`.
+
+## 4. The hit test must step over the HUD's own "Ignore" shields
+
+Device report (2026-09-04): *"something is wrong on the right d-pad, you can't place it or move
+to shoot easily unless you start to the left. It seems maybe a touch collision or something
+blocking on right/lower side."*
+
+`PointHitTest` used `Physics.Raycast` — the **single nearest** collider. If that collider was not
+this axis's pad or its placement, both flags stayed false and the touch did nothing for this pad.
+
+The HUD hangs large colliders named **`Ignore`** over each control cluster. They are deliberate
+**input shields**: their job is to stop a tap on the controls falling through to the world, and
+`InputSystem` honours exactly that, by name —
+
+```csharp
+if (hit.transform.name.Contains("ButtonInput")
+    || hit.transform.name.Contains("Axis")
+    || hit.transform.name.Contains("Ignore")
+    || hit.transform.name.Contains("Pad")) {
+    allowedTouch = false;
+}
+```
+
+`GameTouchInputAxis` never honoured the same convention, so a shield sitting in front of the zone
+it is shielding made the control under it unusable.
+
+It bit the **right** pad hardest. Under `HUDTemplate`:
+
+| | left (`InputLeft`) | right (`InputRight`) |
+| --- | --- | --- |
+| shields | 3, grouped under an `Ignores` node | **3, direct children** |
+| placement zone | `AxisInputPlacement-move`, **236.2 x 226.7** | `AxisInputPlacement-attack`, **150 x 150** |
+| travel limit (half extents) | ±118 x ±113 | **±75 x ±75** |
+
+The right shields are 376.7x353, 263.1x341.1 and 376.7x353, sitting at positive x / negative y —
+the right and lower part of the screen, exactly where the report said. Starting the touch further
+left, outside the shields, was the only way to get the stick to come to the thumb.
+
+`PointHitTest` now walks **all** hits (`RaycastNonAlloc` into a reused static buffer, nearest
+non-shield wins) and skips anything whose name contains `Ignore`. **Only the shields are skipped**
+— a real control still blocks the pad, which is the behaviour that was wanted all along.
+
+### Still open: the two zones are not the same size
+
+The attack zone is **less than half the area** of the move zone and its stick may only travel ±75
+against the move stick's ±118. That is authored prefab geometry, not code, and it is a design call
+— but it is the second half of "you can't place it easily on the right" and it is worth a look on
+a device now the shields are out of the way.
+
+### The rule
+
+**A single-hit raycast is the wrong tool in a HUD that stacks colliders.** There is a shield layer
+over the controls in this project and its convention is a name. Any hit test that has to see a
+control *through* that layer must walk the hits, not take the first one.
+
