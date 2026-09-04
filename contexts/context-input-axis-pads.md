@@ -129,6 +129,55 @@ left, outside the shields, was the only way to get the stick to come to the thum
 non-shield wins) and skips anything whose name contains `Ignore`. **Only the shields are skipped**
 — a real control still blocks the pad, which is the behaviour that was wanted all along.
 
+### CORRECTION (2026-09-04, measured live): the shields were NOT the cause
+
+The section above reasoned the shields out of the prefab YAML. A live probe then showed
+**all six `Ignore` colliders are inactive** — at the menu *and* inside a running round
+(`activeInHierarchy=False` on every one). They cannot have blocked anything.
+
+The change is kept: walking the hits and honouring the project's own `Ignore` convention is
+correct hygiene, and it makes the pad robust if those shields are ever switched on. **It is not
+the fix for the device report.**
+
+### THE ACTUAL CAUSE: the right pad's zone is 85% off the right edge of the screen
+
+Measured in a live round, `Screen = 2137 x 1357`:
+
+| zone | screen x | screen y | on screen? |
+| --- | --- | --- | --- |
+| `AxisInputPlacement-move` | **144 .. 576** | 48 .. 463 | fully |
+| `AxisInputPlacement-attack` | **2097 .. 2371** | 55 .. 330 | **only x 2097..2137 — a ~40px strip** |
+
+`PointHitTest` driven directly across the row confirms it:
+
+```
+x=1900:--  x=2000:--  x=2050:--  x=2100:place  x=2120:place  x=2136:place
+```
+
+Everything left of ~2100 returns nothing. The pad only answers in the sliver at the screen edge,
+which is exactly the "can't place it or move to shoot easily" report.
+
+**Why:** the two zones are anchored as mirrors but their collider centres are not.
+
+| | parent anchor | collider `center.x` | effect |
+| --- | --- | --- | --- |
+| move | `BottomLeft` | **+30.8** | pushed INWARD, onto the screen |
+| attack | `BottomRight` | **+3.4** | pushed OUTWARD, past the corner |
+
+The left pad's centre offset moves it toward the middle of the screen; the right pad's moves it
+further right, past its own anchor. The attack zone needs a **negative** `center.x` to mirror the
+left pad. It is a one-value change to the collider on `AxisInputPlacement-attack` in
+`HUDTemplate.prefab` — authored geometry, so it is a design call and has deliberately been left
+for a human, but the correction is roughly `-125` to sit flush inside the right edge, or about
+`-200` to give it the same edge margin the move pad has on the left.
+
+### Also found: the travel clamp never engages
+
+`GetPlacementTravelLimit` does `objectPlacement.GetComponent<BoxCollider>()`, but `objectPlacement`
+is `ContainerPlacement` and the collider is on its CHILD (`AxisInputPlacement-*`). So it returns
+`Vector2.zero` and both pads move **unclamped** — the zone-bounding feature described in section 1
+is inert in this HUD. Harmless today, but it is not doing what its comment says.
+
 ### Still open: the two zones are not the same size
 
 The attack zone is **less than half the area** of the move zone and its stick may only travel ±75
