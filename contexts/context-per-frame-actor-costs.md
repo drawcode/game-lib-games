@@ -1,11 +1,12 @@
 ---
 name: context-per-frame-actor-costs
-description: A sweep of every Update/FixedUpdate/LateUpdate on the gameplay path — the per-frame component lookups, layer-name lookups, string-building log calls and SendMessage reflection that ran once a frame PER ACTOR, plus two logic faults found alongside (attract force that could never run, and indicator cleanup parked behind the round gate).
+description: A sweep of every Update/FixedUpdate/LateUpdate on the gameplay path — the per-frame component lookups, layer-name lookups, string-building log calls and SendMessage reflection that ran once a frame PER ACTOR, plus two logic faults found alongside (attract force that could never run, and indicator cleanup parked behind the round gate). Now carries the FIRST live profiler capture: the item collect path, which this sweep missed, was 63% of a frame's GC allocation on its own.
 metadata:
   type: repo
   repo: game-lib-games
   path: Assets/Code/Libs/game-lib-games
   created: 2026-09-03
+  updated: 2026-09-05
 ---
 
 # What the actor update path was paying for every frame
@@ -98,9 +99,56 @@ the indicator — not above the whole method.
 
 ## Not verified
 
-None of this has been measured live or on a device — the Editor session this was written in does
-not get past the content-sync stage of boot, so there is no before/after profile capture. The
-changes are read off the code. `Assembly-CSharp` compiles clean and the console is clear.
+The table above is still read off the code — **none of those individual rows has a before/after
+number**. What HAS since been measured, with the profiler in a live round, is the item path
+below; it was not in the table at all, and it turned out to dominate everything in it.
+
+`Assembly-CSharp` compiles clean and the console is clear.
+
+## MEASURED, 2026-09-05 — the item path, which this sweep missed entirely
+
+First actual profiler capture of a live round (iteration 10 could not get one). The sweep above
+looked at actor Updates and never looked at `GamePlayerItem`, where the real cost was.
+
+**Before**, median frame in a running round, 84 active items:
+
+| sample | bytes | share of frame |
+| --- | --- | --- |
+| frame total | 39,068 | — |
+| `GamePlayerItem.Update()` | 22,916 | 63.1% |
+| └ `GetComponentNullErrorMessage` | 21,556 | 59.3% |
+| `AnimationEasing.Update()` | 3,408 | 9.4% |
+
+100% of frames exceeded an 8 KB GC budget.
+
+**The cause.** `GetCollectReach` asked the player actor for a `CharacterController` on every call,
+and it is called **once per item per frame**. The actor root carries none
+(`hasCharacterController=False` measured live), so all 84 lookups failed every frame and the
+`characterRadius` fallback is what was actually used. A failing `GetComponent` also builds its own
+error string.
+
+Micro-benchmarked in the Editor, 8,400 calls: **537 bytes and 2.5 µs per failing lookup.**
+
+**After** (`bb239bf`, resolve once per player instead of once per item per frame):
+`GamePlayerItem.Update()` **no longer appears among the frame's top allocators at all**, and the
+share of frames over the 8 KB budget fell from 100% to 60%.
+
+### Two cautions on those numbers
+
+- The after-capture ran with 8–16 items, not 84, so the **median figures are not like-for-like**.
+  The claim that rests on evidence is the marker's *disappearance* plus the per-call benchmark,
+  which is linear in item count — not the ratio of the two medians.
+- **The allocation half is Editor/development-build only** — `GetComponentNullErrorMessage` is a
+  diagnostic string. This was NOT verified against a release iOS build. What is removed on every
+  platform is the lookup itself: 83 of 84 native component searches per frame.
+
+### The lesson
+
+`GC.GetTotalMemory` in an unfocused Editor is not a usable per-frame allocation measure. It read
+1.4 MB/frame on the results screen; the profiler's median for the same period was **11.9 KB**. The
+difference is EditorLoop overhead divided by a low player framerate. Two separate readings from it
+were discarded this session before the profiler settled it — one where a collection landed
+mid-window and turned the delta negative. **Use the profiler's frame summary, not a heap delta.**
 
 ## Related
 
