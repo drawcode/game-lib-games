@@ -305,10 +305,8 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
 
         if (playerController != null) {
 
-            // Strictly on the actor root -- that is where the controller sets it up, and
-            // Get<T> would otherwise descend into children and find somebody else's.
             CharacterController characterController
-                = playerController.gameObject.GetComponent<CharacterController>();
+                = GetPlayerCharacterController(playerController);
 
             playerRadius = characterController != null
                 ? characterController.radius
@@ -316,6 +314,46 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         }
 
         return Mathf.Max(collectRange, playerRadius + GetCollectItemRadius() + collectPadding);
+    }
+
+    private static GamePlayerController cachedCharacterControllerOwner = null;
+    private static int cachedCharacterControllerFrame = -1;
+    private static CharacterController cachedCharacterController = null;
+
+    /// <summary>
+    /// The player actor's CharacterController, resolved at most once per player rather
+    /// than once per item per frame.
+    ///
+    /// Every item in the level asks the same question about the same actor, and this
+    /// level runs 84 of them. The actor root carries no CharacterController at all, so
+    /// all 84 lookups failed every frame and the characterRadius fallback below is what
+    /// was actually used -- and a GetComponent that finds nothing also builds its own
+    /// error string, which measured 21.5 KB of the 36 KB a live frame allocated.
+    ///
+    /// A miss is retried once per frame so a controller added after the actor spawns is
+    /// still picked up; a hit is held until the actor itself changes.
+    /// </summary>
+    public static CharacterController GetPlayerCharacterController(
+        GamePlayerController playerController) {
+
+        if (playerController == null) {
+            return null;
+        }
+
+        if (!object.ReferenceEquals(playerController, cachedCharacterControllerOwner)
+            || (cachedCharacterController == null
+                && cachedCharacterControllerFrame != Time.frameCount)) {
+
+            cachedCharacterControllerOwner = playerController;
+            cachedCharacterControllerFrame = Time.frameCount;
+
+            // Strictly on the actor root -- that is where the controller sets it up, and
+            // Get<T> would otherwise descend into children and find somebody else's.
+            cachedCharacterController
+                = playerController.gameObject.GetComponent<CharacterController>();
+        }
+
+        return cachedCharacterController;
     }
 
     public virtual void UpdateCollect() {
