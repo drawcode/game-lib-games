@@ -351,6 +351,11 @@ public class BaseUIPanel {
     public static string panelDialogDisplay = "panel-dialog-display";
     public static string panelDialogBackground = "panel-dialog-background";
     //
+    // The level-load prepare/tips overlay (the M.A.N. 9000 screen). Scene-resident like the
+    // three above, so this key exists ONLY to name its toolkit view
+    // (Resources/ui/views/panel-overlay-prepare.uxml).
+    public static string panelOverlayPrepare = "panel-overlay-prepare";
+    //
     // 3G: the notification toast. Same shape as the three above — UINotificationDisplay is a
     // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
     // key exists ONLY to name its toolkit view (Resources/ui/views/panel-notification.uxml).
