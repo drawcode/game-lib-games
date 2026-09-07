@@ -1065,8 +1065,14 @@ public class BaseUIController : GameObjectBehavior {
         // Leaving gameplay for the menus. Cooldown-guarded rather than forced, because
         // showUI() is also how showMain/showResults get here and a player can bounce
         // between screens far faster than a collection is worth.
+        //
+        // Delayed by the settle time because AnimateIn() below starts a tween on the very
+        // next frame. Undelayed, the collect landed one frame into that animation -- a
+        // safe point in the sense that nothing is being aimed at, but a visible stutter on
+        // the transition itself, which is the one place this was supposed to hide.
 
-        MemoryUtil.CollectAtSafePoint("ui-show");
+        MemoryUtil.CollectAtSafePoint(
+            "ui-show", false, MemoryUtil.uiTransitionSettleSeconds);
 
         hideGameCanvas();
         HandleInUIAudio();
