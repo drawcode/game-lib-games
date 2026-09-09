@@ -155,6 +155,12 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     }
 
     public virtual void load(string code) {
+        // GameItemData.Reset defaults type to BaseDataObjectKeys.item, which is the same string
+        // as GameItemType.item -- so an untyped load stays a plain item, as it always was.
+        load(code, GameItemType.item);
+    }
+
+    public virtual void load(string code, string itemType) {
         // Load by character code
 
         //float speed = 1f;
@@ -167,7 +173,10 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
         GameItemData itemData = new GameItemData();
         itemData.code = code;
-        //itemData.type = GameActorType.enemy;
+
+        // Which director asked for this. It rides the spawn message through to loadItemCo, which
+        // stamps it on the spawned object so itemsCount / itemWeaponsCount can tell them apart.
+        itemData.type = itemType;
         //itemData.speed = speed;
         //itemData.attack = attack;
         //itemData.scale = scale;
@@ -435,7 +444,7 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
             string code = selectByProbabilityItem.code;
 
-            GameItemController.Load(code);//, itemType);
+            GameItemController.Load(code, itemType);
         }
     }
 
@@ -578,7 +587,7 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
             //Debug.Log("directWeapons:selectByProbabilityItem:code: " + 
             //code); 
 
-            GameItemController.Load(code);//, itemType);
+            GameItemController.Load(code, itemType);
         }
     }
 

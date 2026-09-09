@@ -443,35 +443,70 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
     }
 
+    // THE ITEM DIRECTOR'S CAP DEPENDS ON THESE TWO.
+    //
+    // Both used to be stubs that returned a hard 0 with their bodies commented out. The item
+    // director gates every spawn on `spawnCount < spawnLimit`, and it reads spawnCount from here
+    // (BaseItemController.handleUpdate), so the gate was permanently open: it spawned an item AND
+    // a weapon on every periodic tick, forever, and nothing ever removed them.
+    //
+    // Measured live 2026-09-09 in a running round: spawnItemCount=0 against limit=3 while 8 real
+    // items were in the level; 10 director ticks took that to 28 and the counter never moved.
+    // Everything downstream scales with it -- an indicator per item, a tween per item, and the
+    // GC those produce.
+    //
+    // Level-authored items carry no type stamp and count toward the ITEM cap, not the weapon one.
+    // That is deliberate: the cap is meant to bound the item population of the level as a whole,
+    // so a level that already ships more items than its director's max simply spawns none until
+    // some are collected. Re-tune with the director min/max in the level data, not here.
+
+    private int itemsCountCached = 0;
+    private int itemWeaponsCountCached = 0;
+    private int itemsCountFrame = -1;
+
+    // One subtree walk per frame, shared by both getters -- handleUpdate reads them back to back
+    // every frame, and this is a full GetComponentsInChildren over every actor in the level.
+    public virtual void refreshLevelItemCounts() {
+
+        if (itemsCountFrame == Time.frameCount) {
+            return;
+        }
+
+        itemsCountFrame = Time.frameCount;
+        itemsCountCached = 0;
+        itemWeaponsCountCached = 0;
+
+        if (levelActorsContainerObject == null) {
+            return;
+        }
+
+        // No `true` argument on purpose: pooled items are returned by deactivating them, so an
+        // inactive item is a collected one and must not hold a slot against the cap.
+        foreach (BaseGamePlayerItem gamePlayerItem in
+                levelActorsContainerObject.GetComponentsInChildren<BaseGamePlayerItem>()) {
+
+            if (gamePlayerItem.itemType == GameItemType.weapon) {
+                itemWeaponsCountCached += 1;
+            }
+            else {
+                itemsCountCached += 1;
+            }
+        }
+    }
+
     public int itemsCount {
         get {
-            int countItems = 0;
+            refreshLevelItemCounts();
 
-            //foreach (GamePlayerController gamePlayerController in 
-            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-
-            //    if (gamePlayerController.IsSidekickControlled) {
-            //        countItems += 1;
-            //    }
-            //}
-
-            return countItems;
+            return itemsCountCached;
         }
     }
 
     public int itemWeaponsCount {
         get {
-            int countWeapons = 0;
+            refreshLevelItemCounts();
 
-            //foreach (GamePlayerController gamePlayerController in 
-            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-            //
-            //    if (gamePlayerController.IsSidekickControlled) {
-            //        countItems += 1;
-            //    }
-            //}
-
-            return countWeapons;
+            return itemWeaponsCountCached;
         }
     }
 
@@ -582,7 +617,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void OnGameItemDirectorData(GameItemData item) {
 
-        loadItem(item.code);
+        // Pass the DATA, not just the code. The director stamps the type it asked for (item /
+        // weapon) onto the message, and rebuilding a bare GameItemData from the code alone threw
+        // it away -- which left the spawned object with no way to say which cap it counts against.
+        loadItem(item);
     }
 
     // ---------------------------------------------------------------------
@@ -1852,6 +1890,18 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if (spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
+
+            // Stamp what this was spawned as before anything else can see it. Pooled items are
+            // reused, so this overwrites whatever the previous life left behind rather than
+            // assuming a fresh object.
+            BaseGamePlayerItem spawnItem =
+                spawnObj.GetComponentInChildren<BaseGamePlayerItem>(true);
+
+            if (spawnItem != null) {
+                spawnItem.itemCode = data.code;
+                spawnItem.itemType = data.type;
+            }
+
             GamePlayerIndicator.AddIndicator(spawnObj, item.code);
         }
     }

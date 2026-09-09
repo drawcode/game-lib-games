@@ -32,6 +32,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public string description = "";
     //public string gamePlayerItemCode = "item-coin";
 
+    // What the item director spawned this as. Stamped by BaseGameController.loadItemCo from the
+    // GameItemData that requested it, so a spawned item is self-describing at runtime and the
+    // director can count its own population (itemsCount / itemWeaponsCount).
+    //
+    // Left empty on items that were never spawned through the director -- level-authored items,
+    // editor-placed ones -- and those are counted as plain items, not weapons.
+    public string itemCode = "";
+    public string itemType = "";
+
     public double pointValue = 1.0;
     public Vector3 positionEnd = Vector3.zero;
     public bool floaty = false;
