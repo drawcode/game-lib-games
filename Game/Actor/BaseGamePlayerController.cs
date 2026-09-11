@@ -431,11 +431,17 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (currentControllerData.mountData.isMountedVehicle) {
+        // Belt and braces on the hottest path in the game. mountData is constructed at its
+        // declaration now, so this should never be null -- but this method runs on EVERY
+        // input-axis broadcast, and when it did throw, the cost was not one exception: it was
+        // ~438 exception stringifications per frame and 87% of all gameplay allocation. A null
+        // check is free; rebuilding a stack trace several hundred times a frame is not.
+        if (currentControllerData.mountData != null
+            && currentControllerData.mountData.isMountedVehicle) {
 
             currentControllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
-        else {
+        else if (currentControllerData.thirdPersonController != null) {
 
             currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
             currentControllerData.thirdPersonController.verticalInput = axisInput.y;

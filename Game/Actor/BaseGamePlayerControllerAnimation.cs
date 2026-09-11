@@ -1626,11 +1626,19 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (animationData.actorAnimation != null) {
-                        if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed = runCycleSpeed;
+
+                        // Four allocating indexer calls a frame became two. See the note in the
+                        // fade-in-run block below -- Animation[string] allocates every time.
+                        AnimationState runStateSpeed =
+                            animationData.actorAnimation[animationData.currentAnimationRun];
+                        AnimationState walkStateSpeed =
+                            animationData.actorAnimation[animationData.currentAnimationWalk];
+
+                        if (runStateSpeed != null) {
+                            runStateSpeed.normalizedSpeed = runCycleSpeed;
                         }
-                        if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
+                        if (walkStateSpeed != null) {
+                            walkStateSpeed.normalizedSpeed = walkCycleSpeed;
                         }
                     }
                 }
@@ -1645,58 +1653,57 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
                         if (animationData.actorAnimation != null) {
 
-                            if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
+                            // Animation's string indexer allocates an AnimationState wrapper on
+                            // EVERY call. This block used to call it up to five times a frame per
+                            // actor -- including the identical lookup twice in a row for a
+                            // duplicated null check. Resolve once and reuse.
+                            AnimationState runState =
+                                animationData.actorAnimation[animationData.currentAnimationRun];
 
-                                if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
+                            if (runState != null) {
 
-                                    animationData.actorAnimation[animationData.currentAnimationRun].blendMode = AnimationBlendMode.Blend;
+                                runState.blendMode = AnimationBlendMode.Blend;
 
-                                    if (animationData.thirdPersonController == null) {
-                                        animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                            runCycleSpeed;
-                                        //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
-                                    }
-                                    else {
+                                if (animationData.thirdPersonController == null) {
+                                    runState.normalizedSpeed = runCycleSpeed;
+                                    //animationData.actor.animation["run"].time = 0f;
+                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
+                                }
+                                else {
 
-                                        if (animationData.thirdPersonController.verticalInput2 != 0f
-                                            || animationData.thirdPersonController.horizontalInput2 != 0f) {
+                                    if (animationData.thirdPersonController.verticalInput2 != 0f
+                                        || animationData.thirdPersonController.horizontalInput2 != 0f) {
 
-                                            // if angle between axis is over 120 and less than 240 reverse run
-                                            animationData.angleTo = Vector3.Angle(
-                                                animationData.thirdPersonController.movementDirection,
-                                                animationData.thirdPersonController.aimingDirection);
+                                        // if angle between axis is over 120 and less than 240 reverse run
+                                        animationData.angleTo = Vector3.Angle(
+                                            animationData.thirdPersonController.movementDirection,
+                                            animationData.thirdPersonController.aimingDirection);
 
-                                            if (animationData.angleTo > 120 && animationData.angleTo < 240) {
-                                                animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    -runCycleSpeed * .9f;
-                                            }
-                                            else {
-                                                animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    runCycleSpeed;
-                                            }
-
-                                            //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
-                                            animationData.actorAnimation.Blend(animationData.currentAnimationRun);
+                                        if (animationData.angleTo > 120 && animationData.angleTo < 240) {
+                                            runState.normalizedSpeed = -runCycleSpeed * .9f;
                                         }
                                         else {
-                                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                runCycleSpeed;
-                                            //animationData.actor.animation["run"].time = 0f;
-                                            animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
+                                            runState.normalizedSpeed = runCycleSpeed;
                                         }
+
+                                        animationData.actorAnimation.Blend(animationData.currentAnimationRun);
+                                    }
+                                    else {
+                                        runState.normalizedSpeed = runCycleSpeed;
+                                        //animationData.actor.animation["run"].time = 0f;
+                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
                                     }
                                 }
                             }
                         }
                     }
-                    // We fade out jumpland quick otherwise we get sliding feet
-                    if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                        //actorAnimation.CrossFade(currentAnimationJump, 0);//, PlayMode.StopSameLayer);
-                    }
-                    if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                        //actorAnimation.CrossFade(currentAnimationSlide, 0);//, PlayMode.StopSameLayer);
-                    }
+                    // We fade out jumpland quick otherwise we get sliding feet.
+                    //
+                    // The two lookups that stood here resolved the jump and slide AnimationStates
+                    // only to test them against null -- both bodies are commented out, so they were
+                    // two allocating Animation indexer calls per frame doing nothing. They also sat
+                    // OUTSIDE the actorAnimation != null guard above, so on a Mecanim-less actor
+                    // with only an animator they were a latent NullReferenceException as well.
                 }
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, animationData.currentSpeed);

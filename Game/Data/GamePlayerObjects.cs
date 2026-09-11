@@ -303,7 +303,21 @@ public class BaseGamePlayerControllerData {
     public GamePlayerItemsData itemsData = null;
 
     // mounts
-    public GamePlayerMountData mountData = null;
+    //
+    // Constructed here, not left null. ResetRuntime() creates one, but it has exactly ONE caller,
+    // so any controller that never went through it carried a null -- and all 14 sites that read
+    // this field dereference it unguarded.
+    //
+    // What that cost: HandleThirdPersonControllerAxis reads mountData.isMountedVehicle on every
+    // input-axis broadcast, so the PLAYER's own controller threw a NullReferenceException on every
+    // axis event of every frame. Measured live 2026-09-10 in a round: exception stringification was
+    // 87% of ALL gameplay allocation -- 36 MB per 300 frames, ~438 per frame -- and it is what feeds
+    // the 19-58 ms GC.Collect spikes. The mount feature itself was never reached; the throw happened
+    // on the line that asks whether a mount exists.
+    //
+    // GamePlayerMountData is a plain class with an empty constructor, so this costs one small
+    // allocation per controller at construction and nothing per frame.
+    public GamePlayerMountData mountData = new GamePlayerMountData();
 
     // rpg
 
