@@ -672,9 +672,22 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
         float borderX = Mathf.Clamp(border, 0f, (uiRect.width * .5f) - 1f);
         float borderY = Mathf.Clamp(border, 0f, (uiRect.height * .5f) - 1f);
 
+        // The TOP edge gets its own, larger inset: the HUD readouts live there and a clamped
+        // indicator was landing behind them. edgeBorderTop is an absolute keep-out in these same
+        // container units (see GameIndicatorConfigs for how it was measured). Mathf.Max keeps it
+        // from ever being LOOSER than the general border, and the clamp to half the height keeps
+        // min < max -- Mathf.Clamp silently returns min when they invert, which is the trap the
+        // comment above describes.
+        //
+        // Sides and bottom deliberately keep the authored margin, so indicators still ride the
+        // outside of the screen and around the lower-left controls.
+        float borderTop = Mathf.Clamp(
+            Mathf.Max(border, GameIndicatorConfigs.edgeBorderTop),
+            0f, (uiRect.height * .5f) - 1f);
+
         indicatorObject.transform.localPosition = new Vector3(
             Mathf.Clamp(placedX, uiRect.xMin + borderX, uiRect.xMax - borderX),
-            Mathf.Clamp(placedY, uiRect.yMin + borderY, uiRect.yMax - borderY),
+            Mathf.Clamp(placedY, uiRect.yMin + borderY, uiRect.yMax - borderTop),
             indicatorObject.transform.localPosition.z);
     }
 
