@@ -1717,51 +1717,66 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actorAnimation != null) {
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                                if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationJump);
-                                }
+
+                            // Same treatment as the fade-in-run block above: Animation's string
+                            // indexer allocates an AnimationState on EVERY call, and this block
+                            // made ten of them a frame per actor -- jump twice, slide twice, walk
+                            // six times -- three of which were identical lookups repeated purely
+                            // for a duplicated null check. Ten becomes three.
+                            AnimationState jumpState =
+                                animationData.actorAnimation[animationData.currentAnimationJump];
+                            AnimationState slideState =
+                                animationData.actorAnimation[animationData.currentAnimationSlide];
+                            AnimationState walkState =
+                                animationData.actorAnimation[animationData.currentAnimationWalk];
+
+                            if (jumpState != null) {
+                                animationData.actorAnimation.CrossFade(animationData.currentAnimationJump);
                                 // We fade out jumpland realy quick otherwise we get sliding feet
                                 animationData.actorAnimation.Blend(animationData.currentAnimationJump, 0);
                             }
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                                if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationSlide);
-                                }
+
+                            if (slideState != null) {
+                                animationData.actorAnimation.CrossFade(animationData.currentAnimationSlide);
                                 // We fade out jumpland realy quick otherwise we get sliding feet
                                 animationData.actorAnimation.Blend(animationData.currentAnimationSlide, 0);
                             }
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
 
-                                if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
-                                    animationData.actorAnimation[animationData.currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
+                            if (walkState != null) {
 
-                                    if (animationData.thirdPersonController.verticalInput2 != 0f
-                                        || animationData.thirdPersonController.horizontalInput2 != 0f) {
-                                        // if angle between axis is over 120 and less than 240 reverse run
-                                        animationData.angleTo = Vector3.Angle(
-                                            animationData.thirdPersonController.movementDirection,
-                                            animationData.thirdPersonController.aimingDirection);
+                                walkState.blendMode = AnimationBlendMode.Blend;
 
-                                        if (animationData.angleTo > 120 && animationData.angleTo < 240) {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = -walkCycleSpeed * .9f;
-                                        }
-                                        else {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
-                                        }
-                                        animationData.actorAnimation.Blend(animationData.currentAnimationWalk);
+                                // GUARDED, which it was not before. The fade-in-run block above
+                                // null-checks thirdPersonController and the JUMPING block below
+                                // does too; this one dereferenced it bare, so an actor with a walk
+                                // clip but no third-person controller -- any agent -- threw here on
+                                // every frame it was walking. Falling through to the else is what
+                                // the run block does in the same situation.
+                                if (animationData.thirdPersonController != null
+                                    && (animationData.thirdPersonController.verticalInput2 != 0f
+                                        || animationData.thirdPersonController.horizontalInput2 != 0f)) {
+
+                                    // if angle between axis is over 120 and less than 240 reverse run
+                                    animationData.angleTo = Vector3.Angle(
+                                        animationData.thirdPersonController.movementDirection,
+                                        animationData.thirdPersonController.aimingDirection);
+
+                                    if (animationData.angleTo > 120 && animationData.angleTo < 240) {
+                                        walkState.normalizedSpeed = -walkCycleSpeed * .9f;
                                     }
                                     else {
-                                        animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = walkCycleSpeed;
-                                        //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
+                                        walkState.normalizedSpeed = walkCycleSpeed;
                                     }
 
-                                    SyncAnimationMessage(GameDataActionKeys.walk);
+                                    animationData.actorAnimation.Blend(animationData.currentAnimationWalk);
                                 }
+                                else {
+                                    walkState.normalizedSpeed = walkCycleSpeed;
+                                    //animationData.actor.animation["run"].time = 0f;
+                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
+                                }
+
+                                SyncAnimationMessage(GameDataActionKeys.walk);
                             }
                         }
                     }
