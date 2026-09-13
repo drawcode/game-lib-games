@@ -589,12 +589,22 @@ public class BaseGamePlayerControllerAnimationData {
 
             GamePlayerAnimationDataItem animationItem = items.Get<GamePlayerAnimationDataItem>(type);
 
-            if (animationItem.last_update + 1f < Time.time) {
+            code = animationItem.code;
+
+            // The once-a-second re-roll below returns a random variant for ONE call and never
+            // stores it. It costs ~309 allocations / 12.6 KB each time -- 94% of everything
+            // GamePlayerControllerAnimation.Update allocated (gameplay-tuning iteration 19).
+            //
+            // It is NOT dead, though: character data lists variants the model does not have (a
+            // droid given idle_04), and the play calls return early on a missing clip. For those
+            // actors the re-roll is the only thing that ever starts a clip that exists, which
+            // then keeps playing. So skip it only when the stored clip is already on the actor --
+            // there the re-roll only produced a one-frame cross-fade to another clip and back.
+            if (animationItem.last_update + 1f < Time.time
+                && !IsClipOnResolvedActor(code)) {
+
                 animationItem.last_update = Time.time;
                 code = GetDataAnimation(type);
-            }
-            else {
-                code = animationItem.code;
             }
 
         }
@@ -606,6 +616,21 @@ public class BaseGamePlayerControllerAnimationData {
         }
 
         return code;
+    }
+
+    // Legacy only, and only through the Animation Update already resolved for the CURRENT actor:
+    // anything else answers false, which keeps GetAnimation's original re-roll behaviour.
+    bool IsClipOnResolvedActor(string code) {
+
+        if (!isLegacy
+            || actor == null
+            || actorAnimation == null
+            || actorAnimationResolvedFor != actor
+            || string.IsNullOrEmpty(code)) {
+            return false;
+        }
+
+        return actorAnimation[code] != null;
     }
 
     public string GetDataAnimation(string type) {
