@@ -213,6 +213,7 @@ public class BaseUIPanel {
     public static string panelClassNameSettingsProfile = "GameUIPanelSettingsProfile";
     public static string panelClassNameSettingsHelp = "GameUIPanelSettingsHelp";
     public static string panelClassNameSettingsCredits = "GameUIPanelSettingsCredits";
+    public static string panelClassNameSettingsLanguage = "GameUIPanelSettingsLanguage";
     public static string panelClassNameGameMode = "GameUIPanelGameMode";
     public static string panelClassNameGameModeCoop = "GameUIPanelGameModeCoop";
     public static string panelClassNameGameModeMultiplayer = "GameUIPanelGameModeMultiplayer";
@@ -295,6 +296,7 @@ public class BaseUIPanel {
     public static string panelSettingsProfile = "panel-settings-profiles";
     public static string panelSettingsHelp = "panel-settings-help";
     public static string panelSettingsCredits = "panel-settings-credits";
+    public static string panelSettingsLanguage = "panel-settings-language";
     //
     public static string panelGameMode = "panel-game-mode";
     public static string panelGameModeCoop = "panel-game-mode-coop";
@@ -830,7 +832,8 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelSettingsControls)
                     || isUIPanel(GameUIPanel.panelSettingsHelp)
                     || isUIPanel(GameUIPanel.panelSettingsCredits)
-                    || isUIPanel(GameUIPanel.panelSettingsProfile)) {
+                    || isUIPanel(GameUIPanel.panelSettingsProfile)
+                    || isUIPanel(GameUIPanel.panelSettingsLanguage)) {
 
 #if ENABLE_FEATURE_SETTINGS
                     GameUIController.ShowSettings();
@@ -2007,6 +2010,26 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             BaseUIPanel.panelClassNameSettingsCredits
             //typeof(GameUIPanelSettingsCredits)
+            );
+    }
+
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_LANGUAGE
+
+    // ------------------------------------------------------------
+    // SETTINGS - LANGUAGE
+
+    public virtual void showSettingsLanguage() {
+        showUIPanel(
+            BaseUIPanel.panelClassNameSettingsLanguage,
+            GameUIPanel.panelSettingsLanguage,
+            "SETTINGS: LANGUAGE");
+    }
+
+    public virtual void hideSettingsLanguage() {
+        hideUIPanel(
+            BaseUIPanel.panelClassNameSettingsLanguage
             );
     }
 

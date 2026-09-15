@@ -233,6 +233,17 @@ public class BaseGameGlobal : GameObjectBehavior {
     }
 
     public virtual void InitLocalization() {
+
+        // Additive hook for the new runtime: resolves saved/system language, builds the
+        // fallback-chain string cache, and applies it. Idempotent, so it is safe even if a
+        // subclass also calls this more than once during boot.
+        GameLocalizationService.Init();
+
+        // Additive: OS-font fallbacks for the UI Toolkit text path (Dimbo-SDF is Latin-1 only).
+        // Must run after GameLocalizationService.Init() -- it reads L10n.CurrentCode to seed the
+        // right CJK font order for whatever locale just resolved.
+        Engine.UI.UIToolkitFontFallbacks.Init();
+
         string appDisplayCode = Locos.GetString(LocoKeys.app_display_code);
         string appDisplayName = Locos.GetString(LocoKeys.app_display_name);
         appDisplayCode = Locos.GetString(LocoKeys.app_display_code);
