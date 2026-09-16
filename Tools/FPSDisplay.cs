@@ -45,9 +45,22 @@ public class FPSDisplay : GameObjectBehavior {
 
     }
 
+    // The on-screen readout is a development aid: Editor and development builds only. The
+    // measurement keeps running everywhere (quality logic reads GetCurrentFPS), only the label
+    // is hidden in a release build.
+    public static bool showReadout {
+        get {
+            return Debug.isDebugBuild;
+        }
+    }
+
     // Use this for initialization
     void Start() {
         timeleft = updateInterval;
+
+        if (!showReadout && labelFPS != null) {
+            labelFPS.gameObject.SetActive(false);
+        }
     }
 
     public static float GetCurrentFPS() {
