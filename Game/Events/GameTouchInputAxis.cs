@@ -52,6 +52,14 @@ public class GameTouchInputAxis : GameObjectBehavior {
     // only restore was in the "nothing at all is pressed" branch.
     public float placementTravelLimit = 0f;
 
+    // TOUCH IS DRIVEN ELSEWHERE (the UI Toolkit HUD's virtual sticks). While true this component
+    // neither hit-tests touches/mouse nor resets the axis on idle frames — its idle ResetPad sends
+    // a zero axis EVERY frame, which would overwrite the toolkit stick's value each frame. The
+    // keyboard fallback keeps working, and releases the axis once when the keys come up.
+    public static bool touchDrivenExternally = false;
+
+    bool keyAxisActive = false;
+
     void Awake() {
 
     }
@@ -398,6 +406,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         releasedForNotRunning = false;
 
+        if (touchDrivenExternally) {
+            UpdateKeysOnly();
+            return;
+        }
+
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
 
@@ -493,6 +506,41 @@ public class GameTouchInputAxis : GameObjectBehavior {
             if (!placementTouched) {
                 RestorePlacement();
             }
+        }
+    }
+
+    void UpdateKeysOnly() {
+
+        if (!(axisName.IsEqualLowercase(InputSystemKeys.mainKey)
+            || axisName.IsEqualLowercase(InputSystemKeys.moveKey))) {
+            return;
+        }
+
+        Vector3 keyAxis = Vector3.zero;
+
+        if (InputSystem.isUpPress) {
+            keyAxis.y = 0.99f;
+        }
+
+        if (InputSystem.isLeftPress) {
+            keyAxis.x = -0.99f;
+        }
+
+        if (InputSystem.isDownPress) {
+            keyAxis.y = -0.99f;
+        }
+
+        if (InputSystem.isRightPress) {
+            keyAxis.x = 0.99f;
+        }
+
+        if (keyAxis.x != 0f || keyAxis.y != 0f) {
+            keyAxisActive = true;
+            GameController.SendInputAxisMessage(axisName, keyAxis);
+        }
+        else if (keyAxisActive) {
+            keyAxisActive = false;
+            GameController.SendInputAxisMessage(axisName, Vector3.zero);
         }
     }
 }
