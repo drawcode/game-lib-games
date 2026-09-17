@@ -357,6 +357,7 @@ public class BaseUIPanel {
     // three above, so this key exists ONLY to name its toolkit view
     // (Resources/ui/views/panel-overlay-prepare.uxml).
     public static string panelOverlayPrepare = "panel-overlay-prepare";
+    public static string panelOverviewMode = "panel-overview-mode";
     //
     // 3G: the notification toast. Same shape as the three above — UINotificationDisplay is a
     // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
