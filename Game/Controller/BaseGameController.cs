@@ -85,6 +85,16 @@ public class BaseGameController : GameObjectTimerBehavior {
     public float defaultLevelTime = 90;
     public string contentDisplayCode = "default";
     public bool isGameOver = false;
+
+    // Scaled-clock stamp of the last round-countdown tick. The countdown runs inside
+    // checkForGameOver, which is behind the IsTimerPerf gate, so it needs the time since the
+    // PREVIOUS tick and not the current frame's delta. Negative means "no tick yet".
+    // Time.time is the SCALED clock, so a pause (Time.timeScale = 0) costs the player nothing.
+    protected internal float lastGameTimeCountdown = -1f;
+    // A gap longer than this means the countdown was not running at all (level load, results,
+    // menus) rather than a slow tick, so it is not charged to the round.
+    protected internal float gameTimeCountdownGapLimit = 1f;
+
     public bool updateFingerNavigate = false;
 
     internal bool levelInitializing = false;
@@ -403,43 +413,80 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // PROPERTIES
 
+    // ALL THREE CHARACTER COUNTS COME OFF ONE SUBTREE WALK PER FRAME.
+    //
+    // BaseAIController.handleUpdate reads the enemy count and the sidekick count back to back,
+    // and its Update has no timer gate, so the two getters ran a full
+    // GetComponentsInChildren<GamePlayerController>() over every actor in the level -- two array
+    // allocations and two native walks -- every single frame. Same idiom as
+    // refreshLevelItemCounts below, one walk feeding all of them.
+    //
+    // characterActorsCount was childCount on the container, which is NOT a character count: the
+    // actors container also holds the spawned ITEMS (loadItemCo parents them here) and keeps
+    // pooled characters as deactivated children. Measured live it read 14 against 6 live
+    // GamePlayerControllers. It now counts the same population its enemy/sidekick siblings do.
+
+    private int characterActorsCountCached = 0;
+    private int characterActorEnemyCountCached = 0;
+    private int characterActorSidekickCountCached = 0;
+    private int characterActorsCountFrame = -1;
+
+    public virtual void refreshLevelCharacterCounts() {
+
+        if (characterActorsCountFrame == Time.frameCount) {
+            return;
+        }
+
+        characterActorsCountFrame = Time.frameCount;
+        characterActorsCountCached = 0;
+        characterActorEnemyCountCached = 0;
+        characterActorSidekickCountCached = 0;
+
+        if (levelActorsContainerObject == null) {
+            return;
+        }
+
+        // No `true` argument on purpose, matching what the two getters did before and what
+        // refreshLevelItemCounts does: a pooled character is returned by deactivating it, and an
+        // inactive character is not in the level for a spawn budget's purposes.
+        foreach (GamePlayerController gamePlayerController in
+                levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+
+            characterActorsCountCached += 1;
+
+            // Two independent tests, not an else-if: the flags are read off controller state and
+            // nothing here guarantees they are mutually exclusive.
+            if (gamePlayerController.IsAgentControlled) {
+                characterActorEnemyCountCached += 1;
+            }
+
+            if (gamePlayerController.IsSidekickControlled) {
+                characterActorSidekickCountCached += 1;
+            }
+        }
+    }
+
     public int characterActorsCount {
         get {
-            return levelActorsContainerObject.transform.childCount;
+            refreshLevelCharacterCounts();
+
+            return characterActorsCountCached;
         }
     }
 
     public int characterActorEnemyCount {
         get {
+            refreshLevelCharacterCounts();
 
-            int countEnemies = 0;
-
-            foreach (GamePlayerController gamePlayerController in
-                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-
-                if (gamePlayerController.IsAgentControlled) {
-                    countEnemies += 1;
-                }
-            }
-
-            return countEnemies;
+            return characterActorEnemyCountCached;
         }
     }
 
     public int characterActorSidekickCount {
         get {
+            refreshLevelCharacterCounts();
 
-            int countEnemies = 0;
-
-            foreach (GamePlayerController gamePlayerController in
-                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-
-                if (gamePlayerController.IsSidekickControlled) {
-                    countEnemies += 1;
-                }
-            }
-
-            return countEnemies;
+            return characterActorSidekickCountCached;
         }
     }
 
@@ -462,17 +509,28 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     private int itemsCountCached = 0;
     private int itemWeaponsCountCached = 0;
-    private int itemsCountFrame = -1;
+    private float itemsCountTime = -1f;
 
-    // One subtree walk per frame, shared by both getters -- handleUpdate reads them back to back
-    // every frame, and this is a full GetComponentsInChildren over every actor in the level.
+    // How stale these counts are allowed to get. The ONLY consumer is the item director's spawn
+    // gate (BaseItemController.handleUpdate feeds handlePeriodic), which decides roughly every
+    // 5-15 seconds, so a walk per frame was ~60x more often than anything could read a new
+    // answer. A second is still an order of magnitude fresher than the director needs.
+    internal float itemsCountInterval = 1f;
+
+    // One subtree walk per refresh, shared by both getters -- handleUpdate reads them back to
+    // back every frame, and this is a full GetComponentsInChildren over every actor in the level.
     public virtual void refreshLevelItemCounts() {
 
-        if (itemsCountFrame == Time.frameCount) {
+        // Chose a time throttle over keeping the count incrementally: spawn, collect, pool return
+        // and DestroyChildren would each have to stay in step with a running total forever, and a
+        // single missed decrement silently closes the spawn gate for the rest of the round.
+        // Re-walking is self-correcting and the walk is now rare.
+        if (itemsCountTime >= 0f
+           && Time.time - itemsCountTime < itemsCountInterval) {
             return;
         }
 
-        itemsCountFrame = Time.frameCount;
+        itemsCountTime = Time.time;
         itemsCountCached = 0;
         itemWeaponsCountCached = 0;
 
@@ -688,7 +746,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             return gamePlayerController;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        // GameObject.name marshals a NEW string out of native on every read, and this runs from
+        // collision contacts and per-agent action ticks. Read it once.
+        string goName = go.name;
+
+        if (goName.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
@@ -700,13 +762,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
 
-        if (gamePlayerController == null
-           && (go.name.Contains("Game")
-           || go.name.Contains("GamePlayerCollider"))) {
-            //&& (go.name.Contains("Helmet")
-            //|| go.name.Contains("Facemask"))) {
-
-            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+        // RESOLVED BY COMPONENT, not by name (2026-09-20). The two name lists here and in
+        // hasGamePlayerControllerObject did not agree and both were incomplete against the prefabs: the objects that carry
+        // GamePlayerCollision are named GamePlayerCollider, Helmet, Facemask and Main. A hit on a
+        // Helmet or Facemask passed hasGamePlayerControllerObject and then resolved to null in
+        // getGamePlayerControllerObject, so BaseGamePlayerItem.OnCollisionEnter saw true followed
+        // by null and the item silently failed to collect; a Main collider was missed by both.
+        // getGamePlayerControllerParent already answers null for anything without the component,
+        // so the name gate only ever excluded real player colliders.
+        if (gamePlayerController == null) {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
@@ -731,7 +795,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             return false;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        // One marshalled string per call, as in getGamePlayerControllerObject above.
+        string goName = go.name;
+
+        if (goName.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
@@ -743,12 +810,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
 
-        if (gamePlayerController == null
-           && (go.name.Contains("Game")
-           || go.name.Contains("Helmet")
-           || go.name.Contains("Facemask"))) {
-
-            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+        // RESOLVED BY COMPONENT, not by name (2026-09-20). The two name lists here and in
+        // getGamePlayerControllerObject did not agree and both were incomplete against the prefabs: the objects that carry
+        // GamePlayerCollision are named GamePlayerCollider, Helmet, Facemask and Main. A hit on a
+        // Helmet or Facemask passed hasGamePlayerControllerObject and then resolved to null in
+        // getGamePlayerControllerObject, so BaseGamePlayerItem.OnCollisionEnter saw true followed
+        // by null and the item silently failed to collect; a Main collider was missed by both.
+        // getGamePlayerControllerParent already answers null for anything without the component,
+        // so the name gate only ever excluded real player colliders.
+        if (gamePlayerController == null) {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
@@ -1975,6 +2045,11 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
+
+        // The level population just changed wholesale -- drop the cached counts rather than let
+        // the throttled item refresh hand the next round the last one's numbers.
+        itemsCountTime = -1f;
+        characterActorsCountFrame = -1;
     }
 
     public virtual void resetCurrentGamePlayer() {
@@ -2111,6 +2186,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
+
+        // The countdown is a REAL elapsed-time subtraction now, so its stamp belongs to the round
+        // that is starting -- a stale one would bill the new round for the gap since the last.
+        lastGameTimeCountdown = -1f;
     }
 
     public virtual void handlePostLoadLevelAssetsGameplayType() {
@@ -3314,6 +3393,34 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // GAME SCORE/CHECK GAME OVER
 
+
+    // Charge the round clock the time that has actually elapsed since the previous tick.
+    //
+    // checkForGameOver runs behind the IsTimerPerf(gameUpdateAll) gate, which passes about 30
+    // times a second while frames run far faster, so Time.deltaTime -- the delta of the single
+    // frame the tick landed on -- throws away the time of every frame the gate skipped. That made
+    // a "90 second" round run for minutes, by a factor that moved with framerate.
+    //
+    // A subclass that overrides checkForGameOver must call THIS, not SubtractTime(Time.deltaTime):
+    // the app's own override did the latter and silently kept the bug (measured 0.25x real time).
+    public virtual void SubtractRoundTimeElapsed() {
+
+        float gameTimeNow = Time.time;
+        float gameTimeDelta = gameTimeNow - lastGameTimeCountdown;
+
+        if (lastGameTimeCountdown < 0f
+           || gameTimeDelta < 0f
+           || gameTimeDelta > gameTimeCountdownGapLimit) {
+            // First tick of this round, or the countdown was not running in between (level load,
+            // results, menu). Charge a single frame and re-stamp.
+            gameTimeDelta = Time.deltaTime;
+        }
+
+        lastGameTimeCountdown = gameTimeNow;
+
+        runtimeData.SubtractTime(gameTimeDelta);
+    }
+
     public virtual void checkForGameOver() {
 
         //LogUtil.Log("CheckForGameOver:isGameOver:" + isGameOver);
@@ -3385,7 +3492,23 @@ public class BaseGameController : GameObjectTimerBehavior {
                     resultsGameDelayed();
                 }
 
-                runtimeData.SubtractTime(Time.deltaTime);
+                // THE ROUND CLOCK MUST RUN ON REAL SECONDS.
+                //
+                // This is the only tick the countdown gets, and it sits behind the
+                // IsTimerPerf(gameUpdateAll) gate in Update. That gate's interval is
+                // (1/30) * GameObjectTimer.currentModifier and currentModifier is 30/currentFPS,
+                // so the interval works out at roughly one frame period on any device -- the gate
+                // passes about every OTHER frame. Subtracting Time.deltaTime, the delta of the
+                // single frame the tick landed on, therefore threw away the time of every frame
+                // the gate skipped: a 90 second round ran for something closer to 180 seconds,
+                // and the exact factor moved with framerate, so it was not even the same round
+                // length on two devices.
+                //
+                // Subtract the time actually elapsed since the previous tick instead. The rest of
+                // checkForGameOver keeps its current gated cadence, which is why the fix is here
+                // and not a second SubtractTime call above the gate.
+
+                SubtractRoundTimeElapsed();
 
                 //if(runtimeData.timeExpired) {
                 // Change level/flash

@@ -21,11 +21,18 @@ public class FPSDisplay : GameObjectBehavior {
     public Text labelFPS;
 #endif
     public float lastFPS = 0f;
+
+    // The rate the throttle intervals are authored against (GameObjectTimer.GetFPSOffset).
+    public static float targetFPS = 30f;
     public static FPSDisplay Instance;
 
+    // An INACTIVE FPSDisplay never runs Update, so its lastFPS is frozen at whatever it last
+    // measured -- found live reading a stale 165.87 in a scene where both instances were
+    // inactive, which every IsTimerPerf gate and both spawn directors were dividing by.
+    // A frozen reading is worse than no reading, so only a live component counts.
     public static bool isInst {
         get {
-            if (Instance != null) {
+            if (Instance != null && Instance.isActiveAndEnabled) {
                 return true;
             }
             return false;
@@ -67,14 +74,16 @@ public class FPSDisplay : GameObjectBehavior {
         if (isInst) {
             return Instance.lastFPS;
         }
-        return 21f;
+        // No live display: answer the target rate, so the throttle modifier comes out at 1 and
+        // gates run at their authored interval rather than at a made-up 21fps penalty.
+        return targetFPS;
     }
 
     public static bool IsFPSLessThan(float val) {
-        if (isInst) {
-            return Instance.lastFPS < val;
-        }
-        return true;
+        // Answers off GetCurrentFPS so a missing display reads as the target rate, matching the
+        // throttle. It used to return true with no live display, i.e. "assume the worst", which
+        // silently put every isUnderNNFPS caller into its degraded path.
+        return GetCurrentFPS() < val;
     }
 
     public static bool isUnder15FPS {
@@ -135,18 +144,32 @@ public class FPSDisplay : GameObjectBehavior {
                     labelFPS.color = Color.Lerp(labelFPS.color, Color.yellow, Time.deltaTime);
                 }
                 else {
+                    // Unreachable: this is the else of fps < 27, so fps is already >= 27.
                     if (fps < 10) {
                         labelFPS.color = Color.Lerp(labelFPS.color, Color.red, Time.deltaTime);
                     }
                     else {
                         labelFPS.color = Color.Lerp(labelFPS.color, Color.green, Time.deltaTime);
                         //  DebugConsole.Log(format,level);
-                        timeleft = updateInterval;
-                        accum = 0.0F;
-                        frames = 0;
                     }
                 }
             }
+
+            // Close the measurement window here, always. These three used to be reset only
+            // in the innermost else, which needed a label AND fps >= 27 -- so the moment the
+            // framerate dipped under 27 (or the scene had no label at all) the window never
+            // closed: this block ran every frame, and accum / frames became a LIFETIME
+            // cumulative average rather than a current reading.
+            //
+            // lastFPS is now a rolling average over updateInterval again. That matters well
+            // beyond the readout: GameObjectTimer.currentModifier is 30 / lastFPS and
+            // multiplies EVERY IsTimerPerf gate in the game, and the spawn directors gate on
+            // it too. Those now follow the CURRENT framerate -- they throttle harder while a
+            // dip lasts and relax again once it clears, instead of being pinned to a
+            // lifetime average that a long session can never move.
+            timeleft = updateInterval;
+            accum = 0.0F;
+            frames = 0;
         }
     }
 }

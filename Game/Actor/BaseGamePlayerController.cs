@@ -141,6 +141,13 @@ public class BaseGamePlayerController : GameActor {
     public float attackRange = 12f;
     // within 6 yards
     public float attackDistance = 10f;
+
+    // Chest height for the ray attack's origin -- see CastAttack.
+    public float attackHeightOffset = 1.2f;
+
+    // Controllers already paid in the current CastAttack, so two colliders on one actor cannot
+    // score twice. Reused rather than allocated per cast.
+    List<GamePlayerController> castAttackHandled = new List<GamePlayerController>();
     public float lastStateEvaded = 0f;
     public float lastCollision = 0f;
     public float intervalCollision = .2f;
@@ -153,6 +160,29 @@ public class BaseGamePlayerController : GameActor {
     public float damageContact = .05f;
     public float intervalHit = .3f;
     public float intervalHitPlayer = .4f;
+
+    // Hits a NON-PLAYER actor survives. Nothing authors a hit limit for an agent:
+    // the character rpgs block carries only 1.0 multipliers, and runtimeData.hitLimit
+    // is the player's field default of 10. This is the named fallback that
+    // UpdateCharacterRuntimeState stamps onto every non-player actor, so the agent
+    // death check can read an authored value instead of re-rolling Random.Range
+    // every gated frame.
+
+    public static double agentHitLimitDefault = 3;
+
+    // Score for killing an enemy, awarded in Die() where the kill is already
+    // credited. Above the 10 a landed ray hit scores and the 1 a second the player
+    // earns for surviving, so the kill is the payoff rather than the hits into it.
+
+    public static double scoreKill = 25;
+
+    // PROTOTYPE kill switch, same idiom as UIPlatform.toolkitViewsEnabled.
+    // OFF (default): LoadWeapon still early-returns for every non-player, so nothing
+    // changes. ON: agents and sidekicks load a weapon from the same inventory the
+    // player uses, and an armed agent fires on the AI action tick. Flip it before the
+    // level loads -- weapons are bound during LoadCharacterCo.
+
+    public static bool agentWeaponsEnabled = false;
 
     // quality settings
 
@@ -1781,6 +1811,14 @@ public class BaseGamePlayerController : GameActor {
             if (gamePlayerController != null) {
                 return gamePlayerController;
             }
+
+            // A collider CHILD -- GamePlayerCollider, Helmet, Facemask, Main -- has no controller
+            // beneath it, only above it, so the search above answered null and the hit was thrown
+            // away. Measured: one RaycastAll returned both an actor's GamePlayerObject (resolved)
+            // and its GamePlayerCollider (dropped), so whether a ray attack counted depended on
+            // which of an actor's colliders the ray happened to reach first. Resolve upward
+            // through the collision component, the same way item collection now does.
+            return GameController.GetGamePlayerControllerObject(transform.gameObject, false);
         }
         return null;
     }
@@ -1952,6 +1990,17 @@ public class BaseGamePlayerController : GameActor {
         ResetPosition();
 
         SetRuntimeData(new GamePlayerRuntimeData());
+
+        // Init() has already set the controller state by the time LoadCharacter gets
+        // here, so this is the one place a fresh runtime data object can be given the
+        // non-player hit limit. Without it runtimeData.hitLimit stays the player's
+        // default of 10 and every agent would take eleven hits to kill. Tested
+        // positively rather than as !IsPlayerControlled: an actor whose state has not
+        // been set yet must NOT be handed the agent limit and then become the player.
+
+        if (IsAgentControlled || IsSidekickControlled) {
+            runtimeData.hitLimit = agentHitLimitDefault;
+        }
 
         currentControllerData.ResetRuntime();
 
@@ -2322,7 +2371,10 @@ public class BaseGamePlayerController : GameActor {
 
         UnloadWeapons();
 
-        if (!IsPlayerControlled) {
+        // PROTOTYPE: agents and sidekicks stay unarmed unless the kill switch is
+        // flipped. The weapon data already authors roles for them.
+
+        if (!IsPlayerControlled && !agentWeaponsEnabled) {
             return; // TODO enemy weapons
         }
 
@@ -2335,6 +2387,17 @@ public class BaseGamePlayerController : GameActor {
 
         if (gameWeaponData.data == null) {
             LogUtil.LogWarning("LoadWeapon: NULL gameWeaponData.data");
+            return;
+        }
+
+        // Only reachable for a non-player with agentWeaponsEnabled on. Honour the
+        // roles the weapon data already authors rather than handing an agent a
+        // hero-only weapon. Data that omits roles is left to the old behaviour.
+
+        if (!IsPlayerControlled
+            && gameWeaponData.data.roles != null
+            && !gameWeaponData.data.isEnemy
+            && !gameWeaponData.data.isSidekick) {
             return;
         }
 
@@ -2671,14 +2734,24 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (collision.contacts.Length > 0) {
-            foreach (ContactPoint contact in collision.contacts) {
+        // collision.contacts allocates a FRESH ContactPoint[] on every read, and this
+        // was reading it twice per collision event. contactCount/GetContact are the
+        // non-allocating pair. Loop shape, break and ordering are unchanged.
+
+        if (collision.contactCount > 0) {
+            for (int indexContact = 0; indexContact < collision.contactCount; indexContact++) {
+                ContactPoint contact = collision.GetContact(indexContact);
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
 
                 Transform t = contact.otherCollider.transform;
 
                 if (t.parent != null) {
                     string parentName = t.parent.name;
+
+                    // Transform.name marshals a NEW string on every read, and this was
+                    // read five times per contact point below.
+
+                    string tName = t.name;
 
                     // TODO make name recursion by depth limit, for now check three above.
                     string parentParentName = "";
@@ -2692,7 +2765,7 @@ public class BaseGamePlayerController : GameActor {
                     }
 
                     bool isGameColliderObstacle = parentName.Contains(nameGameColliderObstacle)
-                                      || t.name.Contains(nameGameColliderObstacle);
+                                      || tName.Contains(nameGameColliderObstacle);
 
                     if (isGameColliderObstacle) {
                         Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
@@ -2700,19 +2773,19 @@ public class BaseGamePlayerController : GameActor {
                     }
 
                     bool isObstacle = parentName.Contains(nameGameObstacle)
-                                      || t.name.Contains(nameGameObstacle);
+                                      || tName.Contains(nameGameObstacle);
 
                     bool isDamageObstacle = parentName.Contains(nameGameDamageObstacle)
-                                      || t.name.Contains(nameGameDamageObstacle);
+                                      || tName.Contains(nameGameDamageObstacle);
 
 
                     bool isLevelObject = parentName.Contains(nameGameItemObject)
                                          || parentParentName.Contains(nameGameItemObject)
                                          || parentParentParentName.Contains(nameGameItemObject)
-                                         || t.name.Contains(nameGameItemObject);
+                                         || tName.Contains(nameGameItemObject);
 
                     bool isPlayerObject =
-                        t.name.Contains(nameGamePlayerCollider);
+                        tName.Contains(nameGamePlayerCollider);
                     //|| t.name.Contains("GamePlayerObject");
 
                     if (!isObstacle && !isLevelObject && !isPlayerObject && !isDamageObstacle) {
@@ -3566,7 +3639,10 @@ public class BaseGamePlayerController : GameActor {
 #if USE_GAME_LIB_GAMES_UI
             GameHUD.Instance.ShowHitOne((float)(1.5 - runtimeData.health));
 #endif
-            ProgressScore(2 * power);
+            // No score for TAKING damage. This used to be ProgressScore(2 * power),
+            // which was the only combat score in the game and it paid the player for
+            // being hit. The kill is scored in Die() instead.
+
             DeviceUtil.Vibrate();
         }
         else {
@@ -3580,7 +3656,11 @@ public class BaseGamePlayerController : GameActor {
                 return;
             }
 
-            ProgressScore(-1);
+            // This used to be ProgressScore(-1) on the actor being hit. That is not
+            // a private counter on the enemy: ProgressScore broadcasts
+            // gameActionScore and writes GamePlayerProgress.SetStatScore, both
+            // player-wide, so landing a hit on an enemy docked the player a point.
+            // The kill is scored in Die().
         }
 
         if (GameController.IsGameplayTypeRunner()) {
@@ -4106,6 +4186,13 @@ public class BaseGamePlayerController : GameActor {
             GameController.CurrentGamePlayerController.runtimeData.kills += 1;
 
             GamePlayerProgress.SetStatKills(1f);
+
+            // Score the kill where the kill is already credited. Nothing used to
+            // award any score for a kill. ProgressScore writes the CALLER's own
+            // runtime data, broadcast and stat, so it has to be sent to the player
+            // controller rather than to this dying enemy.
+
+            GameController.CurrentGamePlayerController.ProgressScore(scoreKill);
         }
 
         /*
@@ -4271,7 +4358,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void CastAttack() {
 
-        if (controllerReady) {
+        // NEGATED 2026-09-20: this was the only one of the file's 17 controllerReady guards
+        // written without the `!`, so CastAttack returned whenever the actor WAS ready and the
+        // ray attack -- ScoreAttack / Hit(1f) / InputAttack -- had never run in normal play.
+        if (!controllerReady) {
             return;
         }
 
@@ -4295,29 +4385,58 @@ public class BaseGamePlayerController : GameActor {
 
         RaycastHit[] hits;
 
+        // aimingDirection is (0,0,0) whenever the player is not actively aiming -- measured live
+        // -- and a zero direction returns zero hits, so the ray landed nothing even once the
+        // guard above was fixed. Fall back to the facing the assignment started from.
         Vector3 directionAttack = transform.forward;
-        if (currentControllerData.thirdPersonController != null) {
+        if (currentControllerData.thirdPersonController != null
+            && currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
             directionAttack = currentControllerData.thirdPersonController.aimingDirection;
         }
 
-        //Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        // Cast from chest height, not from transform.position. The actor's origin sits at its
+        // FEET (y ~0.08) while an actor's own colliders span roughly y 0.1-4.3, so a ray from
+        // the origin passed underneath every target: measured 0 hits at +0.0 against a target
+        // 2.58 m away, 2 hits at +1.0.
+        Vector3 originAttack = transform.position + (Vector3.up * attackHeightOffset);
 
-        hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
+        //Debug.DrawRay(originAttack, directionAttack * attackDistance);
+
+        hits = Physics.RaycastAll(originAttack, directionAttack, attackDistance);
+
+        // ONE ACTOR PAYS ONCE PER CAST. An actor carries two enabled colliders that both resolve
+        // to it -- GamePlayerObject and GamePlayerCollider -- so a single torso hit appeared twice
+        // in this list and scored twice: measured +20 for one attack where the intended award is
+        // +10, and ScoreAttack broadcasts gameActionScore and writes SetStatScore, so the doubling
+        // reached the HUD and the saved stat. Hit() happened to be saved by its own intervalHit
+        // rate limit, which is why only the score showed it. Reused list, not a new HashSet per
+        // cast, because this runs per attack per actor.
+        castAttackHandled.Clear();
+
         int i = 0;
         while (i < hits.Length) {
             RaycastHit hit = hits[i];
             Transform hitObject = hit.transform;
 
-            if (hitObject.name.IndexOf("Game") > -1) {
-                if (hitObject != null) {
-                    GamePlayerController playerController = GetController(hitObject);
-                    if (playerController != null) {
+            // No name filter. It used to be `name.IndexOf("Game") > -1`, which discarded a hit on
+            // a Helmet, Facemask or Main collider BEFORE anything tried to resolve it, and made
+            // whether an attack counted depend on which collider the ray reached. GetController
+            // answers null for scenery, so it is the check that belongs here.
+            if (hitObject != null) {
+                GamePlayerController playerController = GetController(hitObject);
 
-                        ////Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
+                if (playerController != null
+                    && !castAttackHandled.Contains(playerController)) {
 
-                        if (AllowControllerInteraction(playerController)) {
-                            return;
-                        }
+                    castAttackHandled.Add(playerController);
+
+                    // AllowControllerInteraction is TRUE when the pair MAY interact -- every
+                    // other call site negates it. This guard did not, and it returned rather
+                    // than continued, so the ray only ever landed on a pair that is FORBIDDEN
+                    // to interact (a sidekick, a dead actor, one entering or exiting) and
+                    // abandoned every remaining hit in the list. Skip a disallowed hit and
+                    // keep scanning the rest.
+                    if (AllowControllerInteraction(playerController)) {
 
                         ScoreAttack();
 
@@ -4343,7 +4462,10 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void ScoreAttack(double score) {
-        runtimeData.score += score;
+        // ProgressScore, not a direct runtimeData write: the direct write skipped the
+        // gameActionScore broadcast and SetStatScore, so ray-hit score never reached the HUD
+        // or the saved stat. Every other award in this file goes through ProgressScore.
+        ProgressScore(score);
     }
 
     public virtual void ActionAttack() {
@@ -6015,6 +6137,12 @@ public class BaseGamePlayerController : GameActor {
         gameObject.DestroyGameObject(3f, GameConfigs.usePooledGamePlayers);
     }
 
+    // Which model the renderer cache was filled from, and which list it was filled
+    // into. See CheckVisibility.
+
+    GameObject renderersResolvedForModel = null;
+    List<SkinnedMeshRenderer> renderersResolvedInto = null;
+
     public virtual bool CheckVisibility() {
 
         if (!controllerReady) {
@@ -6025,7 +6153,30 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.renderers = new List<SkinnedMeshRenderer>();
         }
 
-        if (currentControllerData.renderers.Count == 0) {
+        // This used to refill whenever the list came back EMPTY, so an actor with no
+        // SkinnedMeshRenderer -- a droid, or any actor before its character model has
+        // loaded -- re-ran GetComponentsInChildren every gated frame, forever. Key the
+        // "already looked" answer on the loaded model instead, the same idiom as
+        // actorAnimationResolvedFor in BaseGamePlayerControllerAnimation. The list
+        // instance is part of the key because UpdateCharacterStates hands out a new
+        // GamePlayerControllerData (and so a new, empty list) on every character load,
+        // which a pooled model object reused for the same prefab would otherwise hide.
+
+        GameObject modelCurrent = null;
+
+        if (gamePlayerModelHolderModel != null
+            && gamePlayerModelHolderModel.transform.childCount > 0) {
+            modelCurrent = gamePlayerModelHolderModel.transform.GetChild(0).gameObject;
+        }
+
+        if (renderersResolvedForModel != modelCurrent
+            || renderersResolvedInto != currentControllerData.renderers) {
+
+            renderersResolvedForModel = modelCurrent;
+            renderersResolvedInto = currentControllerData.renderers;
+
+            currentControllerData.renderers.Clear();
+
             foreach (SkinnedMeshRenderer rendererSkinned in gamePlayerHolder.GetComponentsInChildren<SkinnedMeshRenderer>()) {
                 currentControllerData.renderers.Add(rendererSkinned);
             }
@@ -6184,7 +6335,14 @@ public class BaseGamePlayerController : GameActor {
             //}
 
             if (runtimeData != null) {
-                if (runtimeData.hitCount > UnityEngine.Random.Range(2, 4)) {
+
+                // Was UnityEngine.Random.Range(2, 4) -- the INT overload, so 2 or 3,
+                // redrawn on every gated frame. An agent's toughness changed frame to
+                // frame and no authored value could reach it. Same path the player
+                // branch below uses; UpdateCharacterRuntimeState seeds hitLimit for
+                // non-players from agentHitLimitDefault.
+
+                if (runtimeData.hitCount > runtimeData.hitLimit) {
                     Die();
                 }
             }
@@ -6206,8 +6364,13 @@ public class BaseGamePlayerController : GameActor {
                         Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection));
                 }
 
-                foreach (Transform t in gamePlayerModelHolderModel.transform) {
-                    t.localRotation = Quaternion.identity;
+                // foreach over a Transform boxes a non-generic IEnumerator every
+                // frame; childCount/GetChild does not.
+
+                Transform transformModelHolder = gamePlayerModelHolderModel.transform;
+
+                for (int indexChild = 0; indexChild < transformModelHolder.childCount; indexChild++) {
+                    transformModelHolder.GetChild(indexChild).localRotation = Quaternion.identity;
                 }
 
                 if (currentControllerData.thirdPersonController.aimingDirection.IsBiggerThanDeadzone(axisDeadZone)) {
@@ -6223,8 +6386,13 @@ public class BaseGamePlayerController : GameActor {
                     //currentControllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
                 }
 
-                foreach (Transform t in gamePlayerModelHolderModel.transform) {
-                    t.localRotation = Quaternion.identity;
+                // foreach over a Transform boxes a non-generic IEnumerator every
+                // frame; childCount/GetChild does not.
+
+                Transform transformModelHolder = gamePlayerModelHolderModel.transform;
+
+                for (int indexChild = 0; indexChild < transformModelHolder.childCount; indexChild++) {
+                    transformModelHolder.GetChild(indexChild).localRotation = Quaternion.identity;
                 }
             }
 
@@ -6345,16 +6513,23 @@ public class BaseGamePlayerController : GameActor {
         // fix after jump
         if (gamePlayerModelHolderModel != null) {
 
-            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+            // Only ever touched the FIRST child (the loop broke immediately), and
+            // foreach over a Transform boxes a non-generic IEnumerator every frame.
+
+            if (gamePlayerModelHolderModel.transform.childCount > 0) {
+
+                Transform transformModelChild = gamePlayerModelHolderModel.transform.GetChild(0);
 
                 if (currentControllerData.thirdPersonController != null) {
 
                     if (!currentControllerData.thirdPersonController.IsJumping()) {
 
-                        t.localPosition = Vector3.Lerp(t.localPosition, t.localPosition.WithY(0), 2 + Time.deltaTime);
+                        transformModelChild.localPosition = Vector3.Lerp(
+                            transformModelChild.localPosition,
+                            transformModelChild.localPosition.WithY(0),
+                            2 + Time.deltaTime);
                     }
                 }
-                break;
             }
         }
 
@@ -6438,6 +6613,21 @@ public class BaseGamePlayerController : GameActor {
 
                                     if (currentControllerData.power > 0 && currentControllerData.shouldTackle) {
                                         Tackle(currentControllerData.gamePlayerControllerHit, currentControllerData.power);
+                                    }
+
+                                    // PROTOTYPE: an armed agent fires on the same
+                                    // action tick that drives the tackle, so the
+                                    // weapon follows the existing AI cadence rather
+                                    // than a second timer -- Attack() keeps its own
+                                    // one-second gate. weaponPrimary is null unless
+                                    // agentWeaponsEnabled opened LoadWeapon, so this
+                                    // is inert by default. Face the target first;
+                                    // projectiles leave the weapon pointing forward.
+
+                                    if (agentWeaponsEnabled && weaponPrimary != null) {
+                                        transform.LookAt(
+                                            currentControllerData.gamePlayerControllerHit.transform);
+                                        Attack();
                                     }
                                 }
                             }

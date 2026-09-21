@@ -212,8 +212,14 @@ public class GameDamage : GameDamageBase {
             }
         }
 
-        if (other.tag != "Particle" && other.tag != "Player"
-            && other.tag != this.gameObject.tag) {
+        // GameObject.tag marshals a NEW string on every read -- four of them per
+        // projectile impact here. CompareTag reads none. The last test still reads
+        // this object's own tag, because it compares against ANOTHER object's tag
+        // and there is no allocation-free overload for that; three of the four are
+        // gone.
+
+        if (!other.CompareTag("Particle") && !other.CompareTag("Player")
+            && !other.CompareTag(this.gameObject.tag)) {
 
             doDamage = true;
         }

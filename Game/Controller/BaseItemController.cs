@@ -74,6 +74,13 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     //
     public float lastPeriodicSeconds = 0f;
     //
+    // The interval the CURRENT wait is running against, drawn once when the timer resets.
+    // It has to be held: rolling it inside the comparison re-rolled it every frame, and the
+    // elapsed time only has to beat the LOWEST roll it sees, so the window always fired at
+    // roughly its minimum. See handlePeriodic -- the range there is its own literal, these
+    // two fields below are not read by this controller.
+    protected float currentSpawnTimeSeconds = 0f;
+    //
     public float spawnTimeRangeMin = 3.2f;
     public float spawnTimeRangeLimit = 9.3f;
     //
@@ -741,9 +748,14 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
     public virtual void handlePeriodic() {
 
-        if (Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
+        if (currentSpawnTimeSeconds <= 0f) {
+            // First wait of the round, or a wait that has just been consumed.
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(5, 15);
+        }
+
+        if (Time.time > lastPeriodicSeconds + currentSpawnTimeSeconds) {
             lastPeriodicSeconds = Time.time;
-            // every second
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(5, 15);
             GameItemController.Direct();
         }
     }
