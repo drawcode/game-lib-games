@@ -1,15 +1,25 @@
 ---
 name: context-per-frame-actor-costs
-description: A sweep of every Update/FixedUpdate/LateUpdate on the gameplay path — the per-frame component lookups, layer-name lookups, string-building log calls and SendMessage reflection that ran once a frame PER ACTOR, plus two logic faults found alongside (attract force that could never run, and indicator cleanup parked behind the round gate). Now carries the FIRST live profiler capture: the item collect path, which this sweep missed, was 63% of a frame's GC allocation on its own.
+description: What the actor update path allocates, across three passes — the per-frame component and layer-name lookups and SendMessage reflection of the original sweep, the item collect path that was 63% of a frame on its own, and the 2026-09-20 pass that took a gameplay frame from 10,225 to ~8,100 B and corrected the actor counts. READ THE HEADER FIRST — until that pass every "per frame" claim here was literally true because the IsTimerPerf gate was broken, and actors now tick 26/s, so no B/frame number from an earlier pass is comparable with a later one.
 metadata:
   type: repo
   repo: game-lib-games
   path: Assets/Code/Libs/game-lib-games
   created: 2026-09-03
-  updated: 2026-09-05
+  updated: 2026-09-20
 ---
 
 # What the actor update path was paying for every frame
+
+> **The cadence under all of this changed on 2026-09-20.** Every `Update` named below sits behind
+> `gameObjectTimer.IsTimerPerf(...)`, and until that date the gate's modifier shrank its interval as
+> the framerate rose, so on a fast machine **every gate passed every frame** and "once a frame per
+> actor" was the literal truth. The modifier is clamped now: actors tick a measured **26/s** instead
+> of **127/s**, and the rate no longer follows the hardware. Two consequences for this file — the
+> per-second cost of every row below fell by roughly 5x on a 120fps machine without any of them
+> being touched again, and **a B/frame figure measured before that date cannot be compared with one
+> measured after it.** See `game-lib-engine/contexts/context-timer-throttle-design.md`.
+
 
 A scan of every `Update` / `FixedUpdate` / `LateUpdate` under `Game/` for work that does not
 change between frames. Everything below ran **once a frame, per actor**.
@@ -25,8 +35,10 @@ change between frames. Everything below ran **once a frame, per actor**.
 | `BaseGameActor.Update` | two interpolated `LogUtil.Log` calls | behind `LogUtil.loggingEnabled` |
 | `GameWeaponLauncher.Update` | `AimObject.tag == …` | `CompareTag` |
 
-Plus the big one, in the engine: `IsRenderersVisibleByCamera` allocated on every call and is
-reached from two of these paths. See
+Plus the big ones, in the engine: `IsRenderersVisibleByCamera` allocated on every call and is
+reached from two of these paths, and `SetParticleSystemStartColor` — driven off the player tint
+from `BaseGamePlayerController.cs:1193` — ran a `GetComponent` that always missed plus two
+`GetComponentsInChildren` arrays per call, ~2 KB/frame. Both in
 `game-lib-engine/contexts/context-renderer-visibility-allocations.md`.
 
 ## Three rules this pass is worth remembering for
@@ -155,3 +167,102 @@ mid-window and turned the delta negative. **Use the profiler's frame summary, no
 - `game-lib-engine/contexts/context-renderer-visibility-allocations.md` — the allocation half
 - `context-weapon-audio-particles-gc.md` — the earlier per-shot pass, same class of problem
 - workspace `context-profile-save-cost.md` — where the Debug.Log stack-trace cost was measured
+
+
+## MEASURED, 2026-09-20 — the third pass, and the gate that was hiding it
+
+Live round, level 1-1, 6 actors, Editor on desktop at 105–124fps.
+
+| | before | after |
+| --- | --- | --- |
+| whole frame GC | 10,225 B/frame | **~8,100 B/frame** (median) |
+| `GameController.Update` | 772 B/call | **0** |
+| `GamePlayerController.Update` | ~2,085 B/call (player, measured before its gate) | ~26 B/call |
+| `GamePlayerControllerAnimation.Update` | 438 B/call (2026-09-16) | ~70–78 B/call |
+| actor tick rate | 127/s, following the framerate | 26/s, framerate-independent |
+
+The two largest sources were both in the engine and are written up there: the particle tint
+(~2 KB/frame) and `InputSystem.updateTouchLaunch` (748 B/frame, and NOT throttled — it runs above
+`GameController.Update`'s gate). The rest of this pass is in `game-lib-games`, commit `c18933c`.
+
+### The fixes, and the class each one belongs to
+
+**`collision.contacts` allocates a fresh `ContactPoint[]` on every read**, and
+`BaseGamePlayerController.OnCollisionEnter` read it twice per collision event — once to test
+emptiness, once to iterate. `contactCount` / `GetContact(i)` is the non-allocating pair
+(`BaseGamePlayerController.cs:2741`). Exactly the same property-that-allocates trap as
+`Input.touches`.
+
+**`foreach` over a `Transform` boxes a non-generic `IEnumerator`.** `Transform` implements only
+`IEnumerable`, so every `foreach (Transform t in someTransform)` allocates. Three of them ran per
+frame per actor in the aim/jump-settle code; `childCount` / `GetChild(i)` does not allocate
+(`:6372`, `:6394`, `:6521`). One of the three only ever touched the first child — the loop body
+ended in an unconditional `break` — which is worth noticing before optimising a loop: it was not a
+loop.
+
+**`GameObject.tag` marshals a new string per read**; `GameDamage`'s impact test read four
+(`GameDamage.cs:221`). Three became `CompareTag`. The fourth compares against **another object's**
+tag, and there is no allocation-free overload for that, so it stays. Same class as
+`Transform.name`, which `BaseGameController.getGamePlayerControllerObject` (`:741`) and
+`hasGamePlayerControllerObject` (`:790`) read repeatedly — read once into a local.
+
+**A count used as a budget must count the population it claims to.** `characterActorsCount` was
+`levelActorsContainerObject.transform.childCount`, which is not a character count at all: the
+actors container also parents spawned **items**, and pooled characters are returned by
+**deactivating** them and left as children. Measured live it read **14 against 6 real
+`GamePlayerController`s**. All three counts now come off one subtree walk
+(`refreshLevelCharacterCounts`, `BaseGameController.cs:434`), verified exact at 6/2/4 against a
+direct walk.
+
+**Two getters read back to back is one walk, not two.** `BaseAIController.handleUpdate` reads the
+enemy count and the sidekick count on consecutive lines, and its `Update` has **no timer gate**, so
+the old getters ran two full `GetComponentsInChildren<GamePlayerController>()` sweeps over every
+actor in the level, every frame. The walk is memoised per `Time.frameCount` (`:434`) — and
+invalidated wholesale in the level teardown (`:2045`), because a throttled cache that survives a
+level change hands the next round the previous one's numbers.
+
+**`refreshLevelItemCounts` is throttled to 1 s** (`itemsCountInterval`, `:518`), not per frame. Its
+only consumer is the item director's spawn gate, which decides every 5–15 s — a per-frame walk was
+~60x more often than anything could read a new answer. **A time throttle was chosen over keeping a
+running total on purpose:** spawn, collect, pool return and `DestroyChildren` would all have to
+stay in step with an incremental count forever, and a single missed decrement silently closes the
+spawn gate for the rest of the round. Re-walking is self-correcting, and it is now rare.
+
+### The lesson worth keeping: an empty result is not a cache
+
+`CheckVisibility` (`BaseGamePlayerController.cs:6146`) refilled its renderer list whenever the list
+came back **empty**:
+
+```csharp
+if (currentControllerData.renderers.Count == 0) {   // "we haven't looked yet"
+```
+
+For an actor that genuinely has **no `SkinnedMeshRenderer`** — a droid, or any actor before its
+character model has finished loading — empty is the correct, permanent answer, so the sentinel read
+"not looked yet" forever and `GetComponentsInChildren` re-ran on every gated frame for the life of
+the actor. **A negative result needs its own key.** The cache is now keyed on the loaded model
+object (`:6172`), the same idiom as `actorAnimationResolvedFor` in
+`BaseGamePlayerControllerAnimation`, with the list *instance* in the key as well — because
+`UpdateCharacterStates` hands out a fresh `GamePlayerControllerData` (and so a new, empty list) on
+every character load, which a pooled model object reused for the same prefab would otherwise hide.
+
+### Still open
+
+- **~8.1 KB/frame is unattributed.** Two known Editor-only lines inside it: `GUIUtility.BeginGUI`
+  (2.9 KB) and `GetComponentNullErrorMessage` (2.4 KB).
+- That `GetComponentNullErrorMessage` is now attributed to **`ActorShadow.Update`,
+  `GamePlayerIndicator.LateUpdate` and `GamePlayerCollision.OnCollisionEnter`** — the same missing-
+  `GetComponent` defect as the item path above, in three more places, and a reminder that the first
+  sweep at the top of this file fixed `ActorShadow`'s `Camera.main` and layer lookup without ever
+  noticing the miss underneath them. Same fix as the engine's particle cache.
+- A one-off **261 KB frame** on actor spawn, inside `InitControlsCo`.
+- The residual ~2.1 B/call in the animation update (open since 2026-09-16).
+
+**NOT verified:** anything on a device. All of the above is the Editor on desktop, which
+*overstates* every allocation number that comes from a failed `GetComponent`.
+
+## Related (added 2026-09-20)
+
+- `game-lib-engine/contexts/context-timer-throttle-design.md` — the gate, and why the tick rate moved
+- `game-lib-engine/contexts/context-input-touch-launch-costs.md` — the un-throttled input path
+- `context-weapon-hitscan-and-gameover-latch.md` — the combat half of the same commit
