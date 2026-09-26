@@ -17,7 +17,9 @@ using UnityEngine;
 // Input read unchanged, so other games on this lib are unaffected.
 //
 // The map is evaluated once per frame by UnityHostDriver, which runs before default-order
-// Updates, so every reader in a frame sees the same evaluate.
+// Updates, so every reader in a frame sees the same evaluate. Gamepads reach it through
+// UnityInput's Input System source where that package is installed (left stick → move, right
+// stick → aim, which the attack pad sends like its touch stick).
 //
 // Known differences from the legacy key reads (both deliberate):
 //   - A diagonal reads magnitude 0.99, not (0.99, 0.99). Speed was already clamped to 1
@@ -32,6 +34,7 @@ public static class GameInputActions {
 
     public const string actionMove = "move";
     public const string actionRun = "run";
+    public const string actionAim = "aim";
 
     // Kill switch. Flip it at this source default (a runtime flip lands after boot); false puts
     // every caller back on its legacy Input read.
@@ -90,6 +93,20 @@ public static class GameInputActions {
         }
 
         Vec2 v = map.Axis2d(actionMove);
+        axis = new Vector3(v.x, v.y, 0f);
+        return true;
+    }
+
+    // The attack (aim) axis. Only a pad's right stick feeds it today; the touch stick still sends
+    // its own axis from BaseGameHUD. False when inactive; legacy had no key path for attack.
+    public static bool TryGetAim(out Vector3 axis) {
+
+        if (!active) {
+            axis = Vector3.zero;
+            return false;
+        }
+
+        Vec2 v = map.Axis2d(actionAim);
         axis = new Vector3(v.x, v.y, 0f);
         return true;
     }

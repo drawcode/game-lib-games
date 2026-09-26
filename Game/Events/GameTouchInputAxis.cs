@@ -453,8 +453,8 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         Vector3 keyAxis = Vector3.zero;
 
-        if (!handled && IsKeyAxis()) {
-            keyAxis = KeyAxis();
+        if (!handled && IsActionAxis()) {
+            keyAxis = ActionAxis();
         }
 
         if (keyAxis.x != 0f || keyAxis.y != 0f) {
@@ -494,11 +494,11 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void UpdateKeysOnly() {
 
-        if (!IsKeyAxis()) {
+        if (!IsActionAxis()) {
             return;
         }
 
-        Vector3 keyAxis = KeyAxis();
+        Vector3 keyAxis = ActionAxis();
 
         if (keyAxis.x != 0f || keyAxis.y != 0f) {
             keyAxisActive = true;
@@ -516,15 +516,21 @@ public class GameTouchInputAxis : GameObjectBehavior {
         return string.Equals(axisName, key, StringComparison.OrdinalIgnoreCase);
     }
 
-    bool IsKeyAxis() {
-        return IsAxis(InputSystemKeys.mainKey) || IsAxis(InputSystemKeys.moveKey);
+    bool IsActionAxis() {
+        return IsAxis(InputSystemKeys.mainKey) || IsAxis(InputSystemKeys.moveKey) || IsAxis(InputSystemKeys.attackKey);
     }
 
-    // The keyboard's move axis: the "move" action when GameInputActions is active, else the
-    // legacy key bools (later keys win, 0.99 per axis).
-    Vector3 KeyAxis() {
+    // This pad's axis from keys and gamepads: the "move" or "aim" action when GameInputActions
+    // is active, else the legacy key bools for move (later keys win, 0.99 per axis) and nothing
+    // for attack, which never had a key path.
+    Vector3 ActionAxis() {
 
         Vector3 keyAxis;
+
+        if (IsAxis(InputSystemKeys.attackKey)) {
+            GameInputActions.TryGetAim(out keyAxis);
+            return keyAxis;
+        }
 
         if (GameInputActions.TryGetMove(out keyAxis)) {
             return keyAxis;
