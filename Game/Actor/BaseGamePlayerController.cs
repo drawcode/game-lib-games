@@ -2610,6 +2610,32 @@ public class BaseGamePlayerController : GameActor {
     }
 
     // ------------------------------------------------------------------------
+    // AIM
+
+    // The one place that answers "which way is this actor attacking". Both the ray attack
+    // (CastAttack) and the weapon launcher's projectile direction come through here, so a
+    // bullet and a melee cast can never disagree about where the actor is pointing.
+    //
+    // It is deliberately NOT the weapon's own transform.forward. The weapon is parented to the
+    // `weapon` mount on the model's right-hand BONE, and LoadWeapon zeroes its local rotation,
+    // so the gun's forward is whatever the hand happens to be doing: measured live on
+    // character-bot-mega-2 facing (0,0,-1), the barrel swung 8deg -> 40deg -> 61deg off the
+    // actor's facing across one idle cycle, and firing along it sent bullets sideways.
+    //
+    // aimingDirection is (0,0,0) whenever the actor is not actively aiming -- measured live --
+    // and a zero direction casts nothing, so fall back to the actor's facing.
+    public virtual Vector3 GetAttackDirection() {
+
+        if (currentControllerData != null
+            && currentControllerData.thirdPersonController != null
+            && currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
+            return currentControllerData.thirdPersonController.aimingDirection.normalized;
+        }
+
+        return transform.forward;
+    }
+
+    // ------------------------------------------------------------------------
     // CONTROLLER
 
     public bool controllerReady {
@@ -4385,14 +4411,7 @@ public class BaseGamePlayerController : GameActor {
 
         RaycastHit[] hits;
 
-        // aimingDirection is (0,0,0) whenever the player is not actively aiming -- measured live
-        // -- and a zero direction returns zero hits, so the ray landed nothing even once the
-        // guard above was fixed. Fall back to the facing the assignment started from.
-        Vector3 directionAttack = transform.forward;
-        if (currentControllerData.thirdPersonController != null
-            && currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
-            directionAttack = currentControllerData.thirdPersonController.aimingDirection;
-        }
+        Vector3 directionAttack = GetAttackDirection();
 
         // Cast from chest height, not from transform.position. The actor's origin sits at its
         // FEET (y ~0.08) while an actor's own colliders span roughly y 0.1-4.3, so a ray from

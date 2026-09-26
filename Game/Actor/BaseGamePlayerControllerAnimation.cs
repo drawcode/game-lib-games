@@ -167,8 +167,39 @@ public class BaseGamePlayerControllerAnimationData {
 
     // Set per frame by the update: true when currentSpeed is the third person controller's own
     // integrated speed, false when the NavMeshAgent branch has replaced it with its 0-or-15
-    // stand-in. Agents have no continuous speed to follow, so their cadence is left alone.
+    // stand-in. Kept for anything outside this repo that reads it.
     public bool speedFromController = false;
+
+    // The cadence inputs, set per frame, and the reason agents animate at a real pace now.
+    //
+    // currentSpeed CANNOT be used for this. It is the branch selector -- `currentSpeed >
+    // walkSpeed` picks run over walk -- and for a NavMeshAgent actor it is deliberately a
+    // 0-or-15 stand-in that forces the run branch. Feeding the agent's true velocity into
+    // currentSpeed would drop every enemy into the walk clip instead. So the cadence gets its
+    // OWN pair of values and the branch selector is left exactly as it was:
+    //
+    //   speedCycleActual    - the real speed the leg cycle should follow
+    //   speedCycleReference - the speed the authored *SpeedScale values describe
+    //
+    // A reference of 0 means "no continuous speed available", and the cadence falls back to the
+    // authored constant.
+    public float speedCycleActual = 0f;
+    public float speedCycleReference = 0f;
+
+    // The fastest this actor has actually been SEEN to travel, with a slow decay.
+    //
+    // This exists because NavMeshAgent.speed is a CEILING the agents never come near: measured
+    // live, configured speeds of 13-22 against real velocities of 1.9-4.6. Using it as the
+    // reference put every ratio (0.03-0.15) far below animationSpeedCycleMin, so every agent
+    // clamped to the floor -- which just replaced one constant cadence with a slower constant.
+    //
+    // A high-water mark is self-calibrating instead: at cruise the actor IS its own maximum, so
+    // the cycle sits at 1.0 and sustained movement looks exactly as it does today; when it slows
+    // to turn, re-path or close the last metre of its route, the ratio drops and the legs slow
+    // with it. The decay lets a one-off velocity spike bleed off instead of pinning the
+    // reference high forever, and lets the mark follow an actor whose speed is changed at runtime.
+    public float speedCycleObservedMax = 0f;
+    public float speedCycleObservedDecay = .995f;
 
     // The speed the authored *SpeedScale values describe. trotSpeed is what the controller
     // settles at while moving -- walkSpeed only applies for the first trotAfterSeconds -- so
@@ -191,18 +222,13 @@ public class BaseGamePlayerControllerAnimationData {
 
     public float GetSpeedCycleScale() {
 
-        if (!speedFromController) {
-            return 1f;
-        }
-
-        float reference = GetSpeedCycleReference();
-
-        if (reference <= .01f) {
+        if (speedCycleReference <= .01f) {
             return 1f;
         }
 
         return Mathf.Clamp(
-            currentSpeed / reference, animationSpeedCycleMin, animationSpeedCycleMax);
+            speedCycleActual / speedCycleReference,
+            animationSpeedCycleMin, animationSpeedCycleMax);
     }
 
     // properties / helpers
@@ -1570,10 +1596,17 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
             animationData.currentSpeed = 0f;
             animationData.speedFromController = false;
+            animationData.speedCycleActual = 0f;
+            animationData.speedCycleReference = 0f;
 
             if (animationData.thirdPersonController != null) {
                 animationData.currentSpeed = animationData.thirdPersonController.GetSpeed();
                 animationData.speedFromController = true;
+
+                // Player-side cadence: follow the controller's integrated speed, measured
+                // against the speed it settles at while moving.
+                animationData.speedCycleActual = animationData.currentSpeed;
+                animationData.speedCycleReference = animationData.GetSpeedCycleReference();
             }
 
             if (animationData.gamePlayerController != null) {
@@ -1587,6 +1620,25 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                             //currentSpeed = navAgent.velocity.magnitude + 20;
 
                             animationData.speedFromController = false;
+
+                            // Agent-side cadence. The 0-or-15 stand-in below is kept as the
+                            // BRANCH selector, but the leg cycle now follows the agent's real
+                            // velocity against its own configured speed -- so an enemy that is
+                            // slowed, turning, or closing the last metre of its path animates at
+                            // the pace it is actually travelling instead of one fixed rate.
+                            // This is what made every bot's run cycle look constant: the branch
+                            // above reported "moving at 15" and the cadence had nothing else to
+                            // read, so it fell back to the authored constant for every agent.
+                            float agentVelocity = animationData.navAgent.velocity.magnitude;
+
+                            animationData.speedCycleObservedMax = Mathf.Max(
+                                animationData.speedCycleObservedMax
+                                    * animationData.speedCycleObservedDecay,
+                                agentVelocity);
+
+                            animationData.speedCycleActual = agentVelocity;
+                            animationData.speedCycleReference =
+                                animationData.speedCycleObservedMax;
 
                             if (animationData.navAgent.velocity.magnitude > 0f) {
                                 animationData.currentSpeed = 15f;
@@ -1626,7 +1678,18 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             // model is swapped (customisation, pooled reuse), and the old code's one virtue was
             // that it always matched the current actor. Keying the cache on the actor object keeps
             // that property at one reference comparison a frame.
-            if (animationData.actorAnimationResolvedFor != animationData.actor) {
+            // ALSO re-resolve while the cache is still EMPTY on a legacy actor. Keying only on
+            // "the actor changed" latched a NULL: an actor's model gets its Animation added
+            // asynchronously (the model load / InitControlsCo on spawn), so an actor resolved
+            // before its model finished loading stored actorAnimation == null, and because the
+            // actor reference never changed again it was never re-read. The early-out below then
+            // returned every frame and THAT ACTOR NEVER ANIMATED AGAIN for the rest of the round
+            // -- measured live on the player: resolvedFor == actor, actorAnimation == null, while
+            // actor.GetComponent<Animation>() returned a real component.
+            // A legacy actor is expected to have one, so retrying until it appears is correct and
+            // self-limiting; mecanim actors keep the cached-once behaviour and never re-look.
+            if (animationData.actorAnimationResolvedFor != animationData.actor
+                || (animationData.actorAnimation == null && animationData.isLegacy)) {
                 animationData.actorAnimation = animationData.actor.GetComponent<Animation>();
                 animationData.actorAnimationResolvedFor = animationData.actor;
             }
@@ -1747,26 +1810,25 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                             // indexer allocates an AnimationState on EVERY call, and this block
                             // made ten of them a frame per actor -- jump twice, slide twice, walk
                             // six times -- three of which were identical lookups repeated purely
-                            // for a duplicated null check. Ten becomes three.
-                            AnimationState jumpState =
-                                animationData.actorAnimation[animationData.currentAnimationJump];
-                            AnimationState slideState =
-                                animationData.actorAnimation[animationData.currentAnimationSlide];
+                            // for a duplicated null check. Ten is now ONE, with the jump and slide
+                            // lookups gone entirely (see below).
                             AnimationState walkState =
                                 animationData.actorAnimation[animationData.currentAnimationWalk];
 
-                            if (jumpState != null) {
-                                animationData.actorAnimation.CrossFade(animationData.currentAnimationJump);
-                                // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actorAnimation.Blend(animationData.currentAnimationJump, 0);
-                            }
-
-                            if (slideState != null) {
-                                animationData.actorAnimation.CrossFade(animationData.currentAnimationSlide);
-                                // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actorAnimation.Blend(animationData.currentAnimationSlide, 0);
-                            }
-
+                            // The jump and slide cross-fades that stood here are GONE, matching
+                            // the fade-in-run block above (where the same pair was removed as
+                            // dead). They were only ever dead by accident: jump/strafe entries
+                            // carried no "data_type": "preset", so the entry's own CODE was used
+                            // as the clip name, no model had a clip called "animation-jump-bot-1",
+                            // the lookup returned null and the bodies never ran.
+                            //
+                            // Authoring the presets correctly woke them up, and they are wrong:
+                            // jump is authored on LAYER 5 and run/walk/idle on LAYER 1, so in
+                            // legacy Animation the jump clip MASKS locomotion. Cross-fading it in
+                            // (then blending it straight back to 0) on every tick the actor spends
+                            // in the walk band left walking actors fighting their own jump clip.
+                            // The player's walkSpeed is 24, so that band is most of normal movement.
+                            // A real jump still animates -- the JUMPING block below calls Jump().
                             if (walkState != null) {
 
                                 walkState.blendMode = AnimationBlendMode.Blend;

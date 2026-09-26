@@ -480,7 +480,25 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                         Vector2 spread = Random.insideUnitCircle * (Spread / 100f);
 
-                        Vector3 direction = (this.transform.forward
+                        // AIM FROM THE ACTOR, NOT THE BARREL. The weapon hangs off the model's
+                        // right-hand BONE (the `weapon` mount) with its local rotation zeroed by
+                        // LoadWeapon, so this.transform.forward is the hand's animated pose --
+                        // measured live on character-bot-mega-2 facing (0,0,-1), the barrel read
+                        // 8deg, then 40deg, then 61deg off the actor's facing across a single idle
+                        // cycle. Firing along it sent bullets off at whatever angle the animation
+                        // happened to be holding. The spread cone still uses the weapon's own
+                        // right/up axes, which is what keeps scatter independent of facing.
+                        Vector3 aimForward = this.transform.forward;
+
+                        if (gamePlayerController == null) {
+                            gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
+                        }
+
+                        if (gamePlayerController != null) {
+                            aimForward = gamePlayerController.GetAttackDirection();
+                        }
+
+                        Vector3 direction = (aimForward
                             + (this.transform.right * spread.x)
                             + (this.transform.up * spread.y)).normalized;
 
