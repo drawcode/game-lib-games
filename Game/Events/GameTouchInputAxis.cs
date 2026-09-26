@@ -420,12 +420,7 @@ public class GameTouchInputAxis : GameObjectBehavior {
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
 
-        bool leftPressed = InputSystem.isLeftPress;
-        bool rightPressed = InputSystem.isRightPress;
-        bool upPressed = InputSystem.isUpPress;
-        bool downPressed = InputSystem.isDownPress;
-
-        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (IsAxis(InputSystemKeys.moveKey)) {
             //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
@@ -456,46 +451,28 @@ public class GameTouchInputAxis : GameObjectBehavior {
             RestorePlacement();
         }
 
-        if (!handled
-            && ((leftPressed
-            || rightPressed
-            || upPressed
-            || downPressed)
-            && (axisName.IsEqualLowercase(InputSystemKeys.mainKey)
-            || axisName.IsEqualLowercase(InputSystemKeys.moveKey)))) {
+        Vector3 keyAxis = Vector3.zero;
 
-            Vector3 axisInput = Vector3.zero;
+        if (!handled && IsKeyAxis()) {
+            keyAxis = KeyAxis();
+        }
 
-            if (upPressed) {
-                axisInput.y = 0.99f;
-            }
-
-            if (leftPressed) {
-                axisInput.x = -0.99f;
-            }
-
-            if (downPressed) {
-                axisInput.y = -0.99f;
-            }
-
-            if (rightPressed) {
-                axisInput.x = 0.99f;
-            }
+        if (keyAxis.x != 0f || keyAxis.y != 0f) {
 
             if (pad != null) {
                 Vector3 padPos = pad.localPosition;
-                padPos.x = -axisInput.x;
-                padPos.y = -axisInput.y;
-                padPos.z = -axisInput.y;
+                padPos.x = -keyAxis.x;
+                padPos.y = -keyAxis.y;
+                padPos.z = -keyAxis.y;
                 pad.localPosition = padPos;
             }
 
-            GameController.SendInputAxisMessage(axisName, axisInput);
+            GameController.SendInputAxisMessage(axisName, keyAxis);
 
             handled = true;
         }
 
-        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (IsAxis(InputSystemKeys.moveKey)) {
             //LogUtil.Log("handled:" + " handled:" + handled.ToString());
         }
 
@@ -517,12 +494,41 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     void UpdateKeysOnly() {
 
-        if (!(axisName.IsEqualLowercase(InputSystemKeys.mainKey)
-            || axisName.IsEqualLowercase(InputSystemKeys.moveKey))) {
+        if (!IsKeyAxis()) {
             return;
         }
 
-        Vector3 keyAxis = Vector3.zero;
+        Vector3 keyAxis = KeyAxis();
+
+        if (keyAxis.x != 0f || keyAxis.y != 0f) {
+            keyAxisActive = true;
+            GameController.SendInputAxisMessage(axisName, keyAxis);
+        }
+        else if (keyAxisActive) {
+            keyAxisActive = false;
+            GameController.SendInputAxisMessage(axisName, Vector3.zero);
+        }
+    }
+
+    // Ordinal, not IsEqualLowercase: that lowercases BOTH strings on every call, and these checks
+    // run per pad per frame. It was ~248 B/frame of garbage in a live round with no key down.
+    bool IsAxis(string key) {
+        return string.Equals(axisName, key, StringComparison.OrdinalIgnoreCase);
+    }
+
+    bool IsKeyAxis() {
+        return IsAxis(InputSystemKeys.mainKey) || IsAxis(InputSystemKeys.moveKey);
+    }
+
+    // The keyboard's move axis: the "move" action when GameInputActions is active, else the
+    // legacy key bools (later keys win, 0.99 per axis).
+    Vector3 KeyAxis() {
+
+        Vector3 keyAxis;
+
+        if (GameInputActions.TryGetMove(out keyAxis)) {
+            return keyAxis;
+        }
 
         if (InputSystem.isUpPress) {
             keyAxis.y = 0.99f;
@@ -540,13 +546,6 @@ public class GameTouchInputAxis : GameObjectBehavior {
             keyAxis.x = 0.99f;
         }
 
-        if (keyAxis.x != 0f || keyAxis.y != 0f) {
-            keyAxisActive = true;
-            GameController.SendInputAxisMessage(axisName, keyAxis);
-        }
-        else if (keyAxisActive) {
-            keyAxisActive = false;
-            GameController.SendInputAxisMessage(axisName, Vector3.zero);
-        }
+        return keyAxis;
     }
 }

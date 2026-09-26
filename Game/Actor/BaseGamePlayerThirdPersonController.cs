@@ -256,7 +256,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             var targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 
             // Pick speed modifier
-            if (Input.GetButton("Fire3")) {
+            if (GameInputActions.IsRunHeld()) {
                 targetSpeed *= runSpeed;
             }
             else if (Time.time - trotAfterSeconds > walkTimeStart) {
