@@ -3916,8 +3916,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //if(controlInputTouchFinger) {
 
-        if (touchPressed) {
+        // A held move stick owns movement outright; finger-navigate would fight it every frame.
+        bool moveStickHeld = GameTouchInputAxis.externalMoveHeld;
+
+        // Pointers a UI control has captured are skipped by id, not by position -- a stick
+        // follows its thumb off its own rect, and the aim thumb then steered the player.
+        if (moveStickHeld) {
+            // handled stays false
+        }
+        else if (touchPressed) {
             foreach (Touch touch in Input.touches) {
+
+                if (Engine.UI.UIPlatform.IsInputHeldByUI(touch.fingerId)) {
+                    continue;
+                }
+
                 handled = handleTouchInputPoint(touch.position);
 
                 if (handled)
@@ -3925,7 +3938,9 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
         else if (mousePressed) {
-            handled = handleTouchInputPoint(Input.mousePosition);
+            if (!Engine.UI.UIPlatform.IsInputHeldByUI(Engine.UI.UIPlatform.mouseInputId)) {
+                handled = handleTouchInputPoint(Input.mousePosition);
+            }
         }
         else {
             if (currentPlayerController != null) {
@@ -3941,6 +3956,15 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         //}
+
+        // Let go once when the finger lifts. Finger-navigate only ever SETS the move axis, and
+        // the legacy pad's idle ResetPad used to be what zeroed it every frame -- the toolkit HUD
+        // turns that off (touchDrivenExternally), so the player kept running to the last point.
+        // Zero input lets the controller's speed smoothing ease to a stop, as before.
+        if (touchHandled && !handled) {
+            sendInputAxisMessage(InputSystemKeys.moveKey,
+                moveStickHeld ? GameTouchInputAxis.externalMoveAxis : Vector3.zero);
+        }
 
         touchHandled = handled;
     }

@@ -58,6 +58,12 @@ public class GameTouchInputAxis : GameObjectBehavior {
     // keyboard fallback keeps working, and releases the axis once when the keys come up.
     public static bool touchDrivenExternally = false;
 
+    // The external MOVE stick's live state, written by whatever drives it. Finger-navigate
+    // (BaseGameController.handleInputTouch) writes the same move axis, so it must yield while
+    // the stick is held -- and hand the stick's value back, not a zero, when it lets go.
+    public static bool externalMoveHeld = false;
+    public static Vector3 externalMoveAxis = Vector3.zero;
+
     bool keyAxisActive = false;
 
     void Awake() {
