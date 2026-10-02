@@ -1473,31 +1473,67 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
 
-        yield return new WaitForSeconds(1f);
+        // REAL time. A scaled wait never finishes while Time.timeScale is 0, and everything below
+        // -- hiding the prepare overlay and releasing levelInitializing -- then never runs. A
+        // latched levelInitializing makes playGame() a silent no-op, so no further round could be
+        // started, Results' "continue" included (iter 25, items 21/22).
+        yield return new WaitForSecondsRealtime(1f);
 
-        if (currentGamePlayerController != null) {
-            currentGamePlayerController.PlayerEffectWarpFadeIn();
+        // The flag is released however this ends. A listener throwing in one of the broadcasts
+        // below would otherwise kill the coroutine with the flag still set. (A StopCoroutine skips
+        // a finally, which is why releaseLevelInitializing() is also called when a round starts
+        // and when it is quit.)
+        try {
+
+            // The round can already be running: a Ready that lands inside the wait above starts it.
+            // Bringing the white flash and the READY screen back up over live gameplay is how the
+            // prepare overlay stayed on screen for the whole round.
+            bool roundStarted = GameConfigs.isGameRunning;
+
+            if (currentGamePlayerController != null && !roundStarted) {
+                currentGamePlayerController.PlayerEffectWarpFadeIn();
+            }
+
+#if USE_GAME_LIB_GAMES_UI
+
+            if (!roundStarted) {
+                GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
+            }
+
+            UIPanelOverlayPrepare.HideAll();
+#endif
+
+            //UIPanelOverlayPrepare.Instance.HideStates();
+            //UIPanelOverlayPrepare.Instance.HideCamera();
+
+            Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
+
+            Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
+
+#if USE_GAME_LIB_GAMES_UI
+            if (!roundStarted) {
+                UIPanelOverviewMode.ShowDefault();
+            }
+#endif
         }
+        finally {
+            levelInitializing = false;
+        }
+    }
 
-#if USE_GAME_LIB_GAMES_UI
-
-        GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
-
-        UIPanelOverlayPrepare.HideAll();
-#endif
-
-        //UIPanelOverlayPrepare.Instance.HideStates();
-        //UIPanelOverlayPrepare.Instance.HideCamera();
-
-        Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
-
-        Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
-
-#if USE_GAME_LIB_GAMES_UI
-        UIPanelOverviewMode.ShowDefault();
-#endif
+    // The level-load sequence is over, whether or not initLevelFinishCo got to the end. Called
+    // when the player readies the round (UIPanelOverviewMode.Ready), when it reaches Results, and
+    // when it is quit, so
+    // neither a stopped coroutine nor an out-of-order InitFinish/Ready can leave the next
+    // playGame() gated or the prepare overlay up. NOT from onGameStarted: that runs at level
+    // prepare, while the loader is still legitimately up waiting for its tap.
+    public virtual void releaseLevelInitializing() {
 
         levelInitializing = false;
+
+#if USE_GAME_LIB_GAMES_UI
+        UIPanelOverlayPrepare.HideAll();
+#endif
     }
 
     public virtual void startLevel(string levelCode) {
@@ -2733,6 +2769,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void quitGameRunning() {
+        releaseLevelInitializing();
         reset();
         stopDirectors();
         gameRunningStateStopped();
@@ -2772,6 +2809,11 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void onGameResults() {
+
+        // A round that reached Results has finished loading. Results' Back is plain UI navigation
+        // (NavigateBack) and never passes onGameQuit, so this is the last point a stuck flag can
+        // be caught before the menu's next PLAY -- or Results' own continue -- hits the gate.
+        releaseLevelInitializing();
 
 #if USE_GAME_LIB_GAMES_UI
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
