@@ -5988,6 +5988,7 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.thirdPersonController =
                 gameObject.GetOrSet<GamePlayerThirdPersonController>();
 
+            currentControllerData.thirdPersonController.ownerController = this;
             currentControllerData.thirdPersonController.Init();
 
             HandleRPGProperties();

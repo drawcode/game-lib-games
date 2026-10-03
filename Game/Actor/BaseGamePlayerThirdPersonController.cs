@@ -124,6 +124,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public bool slideButton = false;
     public bool getUserInput = false;
     public bool isNetworked = false;
+
+    // The actor this drives, set by BaseGamePlayerController when it attaches this component.
+    // The run read is a global input, so only the player-controlled actor may act on it; null
+    // (a game that never sets it) keeps the legacy behaviour of every actor reading it.
+    public BaseGamePlayerController ownerController;
     //
     public Vector3 targetDirection = Vector3.zero;
     public Vector3 movementDirection = Vector3.zero;
@@ -145,6 +150,16 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual void Init() {
         controllerData = new GamePlayerThirdPersonControllerData();
+    }
+
+    // Holding run used to speed up every actor with this component, bots included.
+    bool IsRunHeldForThis() {
+
+        if (ownerController != null && !ownerController.IsPlayerControlled) {
+            return false;
+        }
+
+        return GameInputActions.IsRunHeld();
     }
 
     public virtual void UpdateSmoothedMovementDirection() {
@@ -256,7 +271,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             var targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 
             // Pick speed modifier
-            if (GameInputActions.IsRunHeld()) {
+            if (IsRunHeldForThis()) {
                 targetSpeed *= runSpeed;
             }
             else if (Time.time - trotAfterSeconds > walkTimeStart) {

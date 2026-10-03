@@ -5,6 +5,7 @@ using Agnostic.Host;
 using Agnostic.Input;
 
 using Engine.AgnosticHost;
+using Engine.Events;
 
 using UnityEngine;
 
@@ -36,6 +37,12 @@ public static class GameInputActions {
     public const string actionRun = "run";
     public const string actionAim = "aim";
 
+    // The HUD's on-screen sticks as virtual controls (ActionMap.SetVirtualAxis). A map that binds
+    // them gets touch through the same actions as keys and pads; one that does not leaves the HUD
+    // sending its axes directly, as before.
+    public const string controlTouchMove = "touch.stick.move";
+    public const string controlTouchAim = "touch.stick.aim";
+
     // Kill switch. Flip it at this source default (a runtime flip lands after boot); false puts
     // every caller back on its legacy Input read.
     public static bool enabled = true;
@@ -43,6 +50,9 @@ public static class GameInputActions {
     public static UnityHost host;
     public static ActionMap map;
     public static UnityHostDriver driver;
+
+    private static bool touchMoveBound;
+    private static bool touchAimBound;
 
     public static bool active {
         get {
@@ -58,6 +68,8 @@ public static class GameInputActions {
         host = null;
         map = null;
         driver = null;
+        touchMoveBound = false;
+        touchAimBound = false;
 
         if (!enabled) {
             return;
@@ -81,6 +93,62 @@ public static class GameInputActions {
 
         host = h;
         map = m;
+        touchMoveBound = IsBound(def, controlTouchMove);
+        touchAimBound = IsBound(def, controlTouchAim);
+    }
+
+    private static bool IsBound(ActionMapDef def, string control) {
+
+        foreach (ActionSetDef set in def.actionSets) {
+            foreach (ActionDef action in set.actions) {
+                foreach (BindingDef b in action.bindings) {
+                    if (string.Equals(b.control, control, StringComparison.Ordinal)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // An on-screen stick moved or let go. axisName is InputSystemKeys.moveKey or .attackKey; the
+    // axis is the stick's offset in axis units. True when the map took it: the caller must NOT
+    // send the axis too, because GameTouchInputAxis sends the move/aim action every frame (dead
+    // zone, clamp to 1 and the stronger-source rule included). False when inactive or the map has
+    // no binding for that stick, and the caller sends the axis itself, as before.
+    public static bool SetTouchStick(string axisName, Vector3 axis, bool released) {
+
+        if (!active) {
+            return false;
+        }
+
+        string control;
+
+        if (string.Equals(axisName, InputSystemKeys.moveKey, StringComparison.Ordinal)) {
+            if (!touchMoveBound) {
+                return false;
+            }
+            control = controlTouchMove;
+        }
+        else if (string.Equals(axisName, InputSystemKeys.attackKey, StringComparison.Ordinal)) {
+            if (!touchAimBound) {
+                return false;
+            }
+            control = controlTouchAim;
+        }
+        else {
+            return false;
+        }
+
+        if (released) {
+            map.ClearVirtual(control);
+        }
+        else {
+            map.SetVirtualAxis(control, new Vec2(axis.x, axis.y));
+        }
+
+        return true;
     }
 
     // The dasher move axis in the shape GameController.SendInputAxisMessage takes. False when
@@ -97,8 +165,8 @@ public static class GameInputActions {
         return true;
     }
 
-    // The attack (aim) axis. Only a pad's right stick feeds it today; the touch stick still sends
-    // its own axis from BaseGameHUD. False when inactive; legacy had no key path for attack.
+    // The attack (aim) axis: a pad's right stick, and the HUD's aim stick where the map binds
+    // touch.stick.aim. False when inactive; legacy had no key path for attack.
     public static bool TryGetAim(out Vector3 axis) {
 
         if (!active) {
@@ -111,7 +179,9 @@ public static class GameInputActions {
         return true;
     }
 
-    // Legacy: the Input Manager's Fire3 (left cmd, mouse 2, joystick button 2).
+    // Legacy: the Input Manager's Fire3 (left cmd, mouse 2, joystick button 2). A global read --
+    // callers that move more than the player gate it on who is asking (see
+    // BaseGamePlayerThirdPersonController.ownerController).
     public static bool IsRunHeld() {
 
         if (!active) {
