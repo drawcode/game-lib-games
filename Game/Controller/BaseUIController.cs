@@ -317,6 +317,18 @@ public class BaseUIPanel {
     public static string panelGameModeTrainingModeContent = "panel-game-mode-training-mode-content";
     public static string panelGameModeTrainingModeRPGHealth = "panel-game-mode-training-mode-rpg-health";
     public static string panelGameModeTrainingModeRPGEnergy = "panel-game-mode-training-mode-rpg-energy";
+    // B4 (2026-10-03): the training sub-screens' prefab codes, ADDITIVE. The two above them are
+    // wrong and kept for compatibility: panelGameModeTrainingModeChoice is "...-choice" (the
+    // prefab is "...-choice-quiz"), and panelGameModeTrainingModeCollection duplicates it (there
+    // are two collection prefabs, -safety and -smarts). The quiz/collection names carry a "Code"
+    // suffix because the app's GameUIPanel already declares panelGameModeTrainingModeChoiceQuiz /
+    // CollectionSmarts / CollectionSafety (PascalCase values, not prefab codes) and would hide a
+    // same-named field here. Each doubles as the panel's toolkit view key.
+    public static string panelGameModeTrainingModeTips = "panel-game-mode-training-mode-tips";
+    public static string panelGameModeTrainingModeTipsControls = "panel-game-mode-training-mode-tips-controls";
+    public static string panelGameModeTrainingModeChoiceQuizCode = "panel-game-mode-training-mode-choice-quiz";
+    public static string panelGameModeTrainingModeCollectionSafetyCode = "panel-game-mode-training-mode-collection-safety";
+    public static string panelGameModeTrainingModeCollectionSmartsCode = "panel-game-mode-training-mode-collection-smarts";
     //
     public static string panelStore = "panel-store";
     public static string panelCredits = "panel-credits";
@@ -342,8 +354,17 @@ public class BaseUIPanel {
     public static string panelCustomizeAudio = "panel-customize-audio";
     public static string panelCustomSafety = "panel-custom-safety";
     public static string panelCustomSmarts = "panelcustom-smarts";
+    // B7 (2026-10-03): the smarts prefab's real code, ADDITIVE. panelCustomSmarts above is missing
+    // the hyphen ("panelcustom-smarts") and is kept untouched for compatibility; the prefab (and so
+    // AppContentAssets.LoadAssetUI / syncPanelLoaded's name match) is "panel-custom-smarts". The
+    // "Code" suffix follows B4's naming for corrected keys. Doubles as the toolkit view key
+    // (Resources/ui/views/panel-custom-smarts.uxml). panelCustomSafety is already right.
+    public static string panelCustomSmartsCode = "panel-custom-smarts";
     //
     public static string panelCommunityCamera = "panel-community-camera";
+    public static string panelCommunityShare = "panel-community-share";
+    public static string panelCommunityBroadcast = "panel-community-broadcast";
+    public static string panelCommunityBackground = "panel-community-background";
     public static string panelCommunityComment = "panel-community-comment";
     //
     // 3F dialogs: the pause overlay and the modal dialog family are scene-resident singletons
@@ -363,6 +384,14 @@ public class BaseUIPanel {
     // (Resources/ui/views/panel-overlay-prepare.uxml).
     public static string panelOverlayPrepare = "panel-overlay-prepare";
     public static string panelOverviewMode = "panel-overview-mode";
+    //
+    // B5: the in-game mode overlays, the overview's siblings under GamePanelModes. Scene-resident,
+    // so these ONLY name views. The quiz cards are one layout: UIPanelModeTypeChoice and
+    // UIPanelModeTypeCollection both load panel-mode-type-choice; the tutorial's view is those
+    // cards plus its Steps strip; the controls overlay (no panel script in the scene) is its own.
+    public static string panelModeTypeChoice = "panel-mode-type-choice";
+    public static string panelModeTypeTutorial = "panel-mode-type-tutorial";
+    public static string panelModeTypeControls = "panel-mode-type-controls";
     //
     // 3G: the notification toast. Same shape as the three above — UINotificationDisplay is a
     // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
