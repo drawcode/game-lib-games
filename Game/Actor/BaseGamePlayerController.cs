@@ -4205,6 +4205,10 @@ public class BaseGamePlayerController : GameActor {
         if (IsPlayerControlled) {
             GamePlayerProgress.SetStatDeaths(1f);
         }
+        else if (IsSidekickControlled) {
+            // The player's own sidekick dying is not a kill: this branch used to be a bare else,
+            // so it credited a kill, the kill stat and scoreKill to the player.
+        }
         else {
 
             // update players kill runtime value
@@ -4484,6 +4488,16 @@ public class BaseGamePlayerController : GameActor {
         // ProgressScore, not a direct runtimeData write: the direct write skipped the
         // gameActionScore broadcast and SetStatScore, so ray-hit score never reached the HUD
         // or the saved stat. Every other award in this file goes through ProgressScore.
+        //
+        // Player only, like every other self-award in this file. CastAttack calls InputAttack on
+        // the actor it hits, so a struck enemy swings back through its OWN CastAttack, and a hit
+        // on the player landed here on the ENEMY -- whose ProgressScore writes the player-wide
+        // SetStatScore. The saved score stat grew with every enemy (and sidekick) hit while the
+        // round's own score did not, so stat and Results disagreed.
+        if (!IsPlayerControlled) {
+            return;
+        }
+
         ProgressScore(score);
     }
 

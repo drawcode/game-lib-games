@@ -2396,6 +2396,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         updateDirectors(false);
     }
 
+    readonly List<GameDataDirector> directorsMergedBase = new List<GameDataDirector>();
+
     public virtual void updateDirectors(bool run) {
 
         bool runAI = run;
@@ -2404,10 +2406,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (run) {
 
             List<GameDataDirector> directorsLevels = GameLevels.Current.data.directors;
-            List<GameDataDirector> directors = GameWorlds.Current.data.directors;
+            List<GameDataDirector> directorsWorld = GameWorlds.Current.data.directors;
 
-            if (directors == null) {
-                directors = new List<GameDataDirector>();
+            // Merged into a scratch list: this used to AddRange the level's directors into the
+            // WORLD's own data list, which grew every round and let a level inherit the previous
+            // level's entries. The "only when the world has directors" rule is kept as it was.
+            List<GameDataDirector> directors = directorsMergedBase;
+            directors.Clear();
+
+            if (directorsWorld != null) {
+                directors.AddRange(directorsWorld);
             }
 
             if (directorsLevels != null && directors.Count > 0) {
