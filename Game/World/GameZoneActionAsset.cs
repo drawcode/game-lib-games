@@ -162,6 +162,8 @@ public class GameZoneActionAsset : GameZoneAction {
         //containerEffectsDamage.Hide();
 
         if (gameZoneType == GameZoneKeys.action_none) {
+            // The zone's top-level Icon sits outside `container` and stays visible: twin it too.
+            SyncQuadTwins();
             return;
         }
 
@@ -269,6 +271,16 @@ public class GameZoneActionAsset : GameZoneAction {
 
 #endif
 
+        // After the rename, so the twins carry the action's icon UVs.
+        SyncQuadTwins();
+    }
+
+    // WORLD-SPACE ICONS. The zone's NGUI icons float in the level, so with the kill switch on they
+    // draw as runtime UIQuadSprite twins (a toolkit view cannot sit at a 3D position: overlay
+    // panels draw above every camera). Idempotent; rebuilt whenever LoadIcons renames the sprites.
+    // Covers this GameObject only (Container/ContainerIcons/* and the top-level Icon).
+    void SyncQuadTwins() {
+        Engine.UI.UIQuadSpriteTwins.Sync(gameObject);
     }
 
     public void LoadAsset() {

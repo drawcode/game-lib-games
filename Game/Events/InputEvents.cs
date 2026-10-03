@@ -3,14 +3,13 @@ using System.Collections;
 
 using UnityEngine;
 using Engine.Events;
-using UnityEngine.UI;
 
 public class InputEvents : GameObjectBehavior {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     UIInput currentObj;
 #else
-    GameObject currentObj;
+    Engine.UI.UIRef currentObj;
 #endif
     public static string EVENT_ITEM_CLICK = "event-input-item-click";
     public static string EVENT_ITEM_CHANGE = "event-input-item-change";
@@ -19,9 +18,11 @@ public class InputEvents : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         currentObj = GetComponent<UIInput>();
 #else
-        if(currentObj.Has<Text>()) {
-            currentObj = GetComponent<Text>().gameObject;
-        }
+        // B10: was a Has<Text>() probe on the still-null field (never matched). The change half
+        // goes through UIInputChange, raising the same broadcast as OnSubmit; it no-ops until the
+        // element's backend implements IUIInputChangeBackend (NGUIBackend deliberately does not).
+        currentObj = Engine.UI.UIRef.Of(gameObject);
+        Engine.UI.UIInputChange.SetInputHandlerChange(currentObj, OnSubmit);
 #endif
 
         if (currentObj != null) {

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameFPS : FPSDisplay {
 
@@ -18,7 +17,10 @@ public class FPSDisplay : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelFPS;
 #else
-    public Text labelFPS;
+    // B10: agnostic UIRef handle (was UGUI Text), the BaseGameHUD pattern. UIRef exposes no
+    // colour getter, so the tint lerps from labelFPSColor (white, then whatever was last set).
+    public Engine.UI.UIRef labelFPS;
+    Color labelFPSColor = Color.white;
 #endif
     public float lastFPS = 0f;
 
@@ -66,7 +68,11 @@ public class FPSDisplay : GameObjectBehavior {
         timeleft = updateInterval;
 
         if (!showReadout && labelFPS != null) {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
             labelFPS.gameObject.SetActive(false);
+#else
+            UIUtil.HideObject(labelFPS);
+#endif
         }
     }
 
@@ -141,15 +147,30 @@ public class FPSDisplay : GameObjectBehavior {
                 UIUtil.SetLabelValue(labelFPS, format);
 
                 if (fps < 27) {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                     labelFPS.color = Color.Lerp(labelFPS.color, Color.yellow, Time.deltaTime);
+#else
+                    labelFPSColor = Color.Lerp(labelFPSColor, Color.yellow, Time.deltaTime);
+                    UIUtil.SetLabelColor(labelFPS, labelFPSColor);
+#endif
                 }
                 else {
                     // Unreachable: this is the else of fps < 27, so fps is already >= 27.
                     if (fps < 10) {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                         labelFPS.color = Color.Lerp(labelFPS.color, Color.red, Time.deltaTime);
+#else
+                        labelFPSColor = Color.Lerp(labelFPSColor, Color.red, Time.deltaTime);
+                        UIUtil.SetLabelColor(labelFPS, labelFPSColor);
+#endif
                     }
                     else {
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
                         labelFPS.color = Color.Lerp(labelFPS.color, Color.green, Time.deltaTime);
+#else
+                        labelFPSColor = Color.Lerp(labelFPSColor, Color.green, Time.deltaTime);
+                        UIUtil.SetLabelColor(labelFPS, labelFPSColor);
+#endif
                         //  DebugConsole.Log(format,level);
                     }
                 }

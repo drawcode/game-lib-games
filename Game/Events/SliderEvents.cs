@@ -4,14 +4,13 @@ using System.Collections;
 using UnityEngine;
 
 using Engine.Events;
-using UnityEngine.UI;
 
 public class SliderEvents : GameObjectBehavior {
 
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     UISlider currentObj;
 #else
-    GameObject currentObj;
+    Engine.UI.UIRef currentObj;
 #endif
 
     public static string EVENT_ITEM_CLICK = "event-slider-item-click";
@@ -46,9 +45,7 @@ public class SliderEvents : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         currentObj = GetComponent<UISlider>();
 #else
-        if(currentObj.Has<Slider>()) {
-            currentObj = GetComponent<Slider>().gameObject;
-        }
+        currentObj = Engine.UI.UIRef.Of(gameObject);
 #endif
 
 
@@ -57,7 +54,10 @@ public class SliderEvents : GameObjectBehavior {
             currentObj.functionName = "OnSliderChange";
             currentObj.eventReceiver = gameObject;
 #else
-            // TODO Unity UI
+            // B10: the change half through the UI backend (a uGUI Slider's onValueChanged under
+            // the GameObject backend). It does not re-announce on start the way UISlider does, so
+            // the startedFrame guard in OnSliderChange simply never trips here.
+            UIUtil.SetSliderHandlerChange(currentObj, OnSliderChange);
 #endif
         }
 
