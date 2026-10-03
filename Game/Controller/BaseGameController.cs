@@ -3343,6 +3343,13 @@ public class BaseGameController : GameObjectTimerBehavior {
         processProgressCollections(
             runtimeData, currentGamePlayerController.runtimeData);
 
+        // The collections step credits currency AFTER the last save above (the one inside
+        // ProcessProgressRuntimeAchievements), and SyncProfile below writes nothing unless cloud
+        // sync is on -- so without this the round's coins reached disk only at the NEXT save, and
+        // an app kill on Results lost them. save() skips unchanged blobs, so this writes the rpg
+        // file and little else.
+        GameState.SaveProfile();
+
         yield return new WaitForEndOfFrame();
 
         if (!isAdvancing) {
