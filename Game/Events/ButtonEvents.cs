@@ -11,8 +11,6 @@ using UnityEngine;
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
 #endif
 
-using UnityEngine.UI;
-
 using Engine.Events;
 
 [Serializable]
