@@ -353,6 +353,11 @@ public class BaseUIPanel {
     public static string panelDialogDisplay = "panel-dialog-display";
     public static string panelDialogBackground = "panel-dialog-background";
     //
+    // B3: the RPG stat dialogs (UIPanelDialogRPGEnergy / Health / Defense, all on
+    // UIPanelDialogRPGObject). Scene-resident like the three above and they share ONE layout, so
+    // this single key names the one view they all load (Resources/ui/views/panel-dialog-rpg.uxml).
+    public static string panelDialogRPG = "panel-dialog-rpg";
+    //
     // The level-load prepare/tips overlay (the M.A.N. 9000 screen). Scene-resident like the
     // three above, so this key exists ONLY to name its toolkit view
     // (Resources/ui/views/panel-overlay-prepare.uxml).
@@ -363,6 +368,11 @@ public class BaseUIPanel {
     // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
     // key exists ONLY to name its toolkit view (Resources/ui/views/panel-notification.uxml).
     public static string panelNotification = "panel-notification";
+    //
+    // B2: the bottom TIP toast ("Weapon Loaded: ..."). Same shape again: UINotificationDisplayTip
+    // is scene-resident (GameSceneDynamic UILoad/.../AnchorBottom/BottomContainer), never
+    // catalog-loaded, so this key ONLY names its view (Resources/ui/views/panel-notification-tip.uxml).
+    public static string panelNotificationTip = "panel-notification-tip";
     //
     //
     public static string panelAR = "panel-ar";
