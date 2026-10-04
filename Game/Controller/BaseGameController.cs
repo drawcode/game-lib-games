@@ -2343,11 +2343,37 @@ public class BaseGameController : GameObjectTimerBehavior {
         changeGameState(GameStateGlobal.GameContentDisplay);
     }
 
+    // Pause and resume only mean something inside a round that is still going. Resume ends in
+    // gameRunningStateRun(), which sets GameStarted unconditionally, so a pause tapped in the
+    // game-over -> Results window (the HUD button is still live there), or a ResumeGame() from a
+    // dialog closed at Results or the menu (community close, RPG health/energy), put a "running"
+    // state on top of the Results UI: GameStarted + uiVisible, isGameRunning false, HUD inactive,
+    // and nothing left to advance it. Seen by the UI toolkit track twice, iter 26.
+    public virtual bool isRoundPausable {
+        get {
+            if (isGameOver) {
+                return false;
+            }
+
+            return gameState != GameStateGlobal.GameNotStarted
+                && gameState != GameStateGlobal.GameResults
+                && gameState != GameStateGlobal.GameQuit;
+        }
+    }
+
     public virtual void pauseGame() {
+        if (!isRoundPausable) {
+            return;
+        }
+
         changeGameState(GameStateGlobal.GamePause);
     }
 
     public virtual void resumeGame() {
+        if (!isRoundPausable) {
+            return;
+        }
+
         changeGameState(GameStateGlobal.GameResume);
     }
 
