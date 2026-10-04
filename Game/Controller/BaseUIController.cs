@@ -746,6 +746,13 @@ public class BaseUIController : GameObjectBehavior {
         menuChromeToken++;   // aborts any in-flight showUIPanelActionsCo (see there)
         GameUIPanelHeader.ShowNone();
         HideAllPanelsNow();
+
+        // Every panel is hidden now, so none is current. currentPanel doubles as showUIPanel's
+        // "already showing" dedup guard, and abortPanelShow only releases it for a show still in
+        // flight: Results -> CONTINUE went straight into the next level with currentPanel still
+        // "panel-results", so that round's Results show was swallowed and the game soft-locked on a
+        // blank screen (P gate, both paths).
+        currentPanel = "";
     }
 
     // Bumped whenever menu chrome is put away for a level load. A menu-panel show that was already
