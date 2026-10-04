@@ -1440,8 +1440,13 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelAR));
     }
 
+#endif
+
+#if ENABLE_FEATURE_VR
+
     // ------------------------------------------------------------
-    // VR
+    // VR (own define since 2026-10-04: these sat inside the AR block, so VR-only did not compile
+    // and an AR-only build referenced the VR-only GameUIPanelVRSettings)
 
     //public static virtual void ShowVRSettings() {
     //   if(isInst) {
