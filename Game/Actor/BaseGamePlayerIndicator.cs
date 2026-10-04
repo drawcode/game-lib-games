@@ -464,6 +464,16 @@ public class BaseGamePlayerIndicator : GameObjectBehavior {
 
             //Debug.Log("ScaleIndicator:scaleTo:" + scaleTo);
 
+            // Already there: re-issuing would tween to where it already is, and each issue
+            // allocates a TweenMeta plus the backend's own entry -- per indicator, per late tick.
+            // Far targets sit clamped at the floor size, so this is the common case.
+            Vector3 scaleNow = indicatorObject.transform.localScale;
+
+            if (Mathf.Abs(scaleNow.x - scaleTo) < .005f
+                && Mathf.Abs(scaleNow.y - scaleTo) < .005f) {
+                return;
+            }
+
             // Re-issued every late tick: the keyed internal backend replaces the
             // prior scale tween on this target, matching LeanTween's stacking here.
             TweenMeta scaleMeta = TweenUtil.GetMetaDefault(
