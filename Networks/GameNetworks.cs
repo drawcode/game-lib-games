@@ -225,6 +225,12 @@ public class GameNetworks : GameObjectBehavior {
     // -------------------------------------------------------------------------
     // NETWORK USER CHECK
 
+    // false: the third-party (Game Center / Google Play) name never drives the local profile.
+    // A game whose profiles are save slots with their own names (action-bots, 2026-10-04) turns
+    // this off, or every few seconds the check below renames/switches the player's chosen profile
+    // to the platform alias. Default true = the existing behaviour for every other game.
+    public static bool profileFollowsNetworkUsername = true;
+
     public static void CheckThirdPartyNetworkLoggedInUser() {
         if (instance != null) {
             instance.checkThirdPartyNetworkLoggedInUser();
@@ -247,7 +253,7 @@ public class GameNetworks : GameObjectBehavior {
         // This helps the final case of when a user changes gamecenter while the app
         // is running and the auth changed event is just not broadcasting.
 
-        if (GameGlobal.isReady) {
+        if (GameGlobal.isReady && profileFollowsNetworkUsername) {
 
             if (GameState.Instance != null
                 && GameProfiles.Current != null) {

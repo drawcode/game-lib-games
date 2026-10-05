@@ -27,5 +27,25 @@ metadata:
 ## Other dirs
 `Networks/`, `Tools/`, `Tests/`, `Assets/`, own `DEFINES.md`. Asmdef disabled (`game-lib-games.1asmdef`).
 
+## Topic contexts in this repo
+- [`context-input-axis-pads.md`](./context-input-axis-pads.md) — the virtual pads: floating
+  sticks whose zone collider moves with them, why `PointHitTest`'s return value is not an
+  idle flag, why the hit-test raycast must not be layer-masked, and how the `isGameRunning`
+  gate latches input into the next round.
+- [`context-animation-speed-cadence.md`](./context-animation-speed-cadence.md) — the legacy
+  walk/run cycle ran at a constant `normalizedSpeed`; it now follows speed, with the
+  NavMeshAgent branch excluded. Also flags the `walkSpeed = modifiedRunSpeed` copy-paste and
+  the run clip that never plays.
+- [`context-zone-action-indicators.md`](./context-zone-action-indicators.md) — an action
+  zone's off-screen indicator is built from `actionCode` at `gameInitLevelStart`, but a
+  placeholder zone is only typed a second later by `loadLevelActions`, so it resolved
+  `indicator-none`, drew nothing, and could never correct itself.
+- [`context-offscreen-indicator-dials.md`](./context-offscreen-indicator-dials.md) — the two
+  dials the edge indicators read (`GameIndicatorConfigs.scale`, `edgeBorderScale`), why a flat
+  border insets the top and bottom dots twice as far as the sides, and the deferred-`Destroy`
+  defect in `11c021e`'s stale-indicator replace path.
+- [`context-tween-port-map.md`](./context-tween-port-map.md),
+  [`context-progression-runtime-networks.md`](./context-progression-runtime-networks.md).
+
 ## Notes
 Depends on game-lib-engine. This is the most actively edited submodule (dirty in working tree; `LTDescr.cs`/LeanTween and URP-related churn nearby).

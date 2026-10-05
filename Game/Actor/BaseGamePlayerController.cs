@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -141,9 +141,48 @@ public class BaseGamePlayerController : GameActor {
     public float attackRange = 12f;
     // within 6 yards
     public float attackDistance = 10f;
+
+    // Chest height for the ray attack's origin -- see CastAttack.
+    public float attackHeightOffset = 1.2f;
+
+    // Controllers already paid in the current CastAttack, so two colliders on one actor cannot
+    // score twice. Reused rather than allocated per cast.
+    List<GamePlayerController> castAttackHandled = new List<GamePlayerController>();
     public float lastStateEvaded = 0f;
     public float lastCollision = 0f;
     public float intervalCollision = .2f;
+
+    // Contact damage the player takes off a one-unit bar from an enemy body or
+    // a damage obstacle, and the minimum gap between two hits landing on the
+    // same actor. A collision event reports EVERY contact point, so without a
+    // gap a single brush against a dog charged four or five times over.
+
+    public float damageContact = .05f;
+    public float intervalHit = .3f;
+    public float intervalHitPlayer = .4f;
+
+    // Hits a NON-PLAYER actor survives. Nothing authors a hit limit for an agent:
+    // the character rpgs block carries only 1.0 multipliers, and runtimeData.hitLimit
+    // is the player's field default of 10. This is the named fallback that
+    // UpdateCharacterRuntimeState stamps onto every non-player actor, so the agent
+    // death check can read an authored value instead of re-rolling Random.Range
+    // every gated frame.
+
+    public static double agentHitLimitDefault = 3;
+
+    // Score for killing an enemy, awarded in Die() where the kill is already
+    // credited. Above the 10 a landed ray hit scores and the 1 a second the player
+    // earns for surviving, so the kill is the payoff rather than the hits into it.
+
+    public static double scoreKill = 25;
+
+    // PROTOTYPE kill switch, same idiom as UIPlatform.toolkitViewsEnabled.
+    // OFF (default): LoadWeapon still early-returns for every non-player, so nothing
+    // changes. ON: agents and sidekicks load a weapon from the same inventory the
+    // player uses, and an armed agent fires on the AI action tick. Flip it before the
+    // level loads -- weapons are bound during LoadCharacterCo.
+
+    public static bool agentWeaponsEnabled = false;
 
     // quality settings
 
@@ -422,11 +461,17 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (currentControllerData.mountData.isMountedVehicle) {
+        // Belt and braces on the hottest path in the game. mountData is constructed at its
+        // declaration now, so this should never be null -- but this method runs on EVERY
+        // input-axis broadcast, and when it did throw, the cost was not one exception: it was
+        // ~438 exception stringifications per frame and 87% of all gameplay allocation. A null
+        // check is free; rebuilding a stack trace several hundred times a frame is not.
+        if (currentControllerData.mountData != null
+            && currentControllerData.mountData.isMountedVehicle) {
 
             currentControllerData.mountData.SetMountVehicleAxis(axisInput.x, axisInput.y);
         }
-        else {
+        else if (currentControllerData.thirdPersonController != null) {
 
             currentControllerData.thirdPersonController.horizontalInput = axisInput.x;
             currentControllerData.thirdPersonController.verticalInput = axisInput.y;
@@ -1215,17 +1260,14 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void GamePlayerModelHolderEase(float height = 0, float time = .5f, float delay = 0) {
 
-#if USE_EASING_LEANTWEEN
-        LeanTween.cancel(gamePlayerModelHolder);
+        // Gameplay object (not NGUI UI): explicit internal backend so coexistence
+        // routing never attaches NGUI tweener components to actor transforms.
+        TweenMeta easeMeta = TweenUtil.GetMetaDefault(
+            TweenLib.internalEasing, gamePlayerModelHolder, time, delay, true,
+            TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.once);
 
-        LeanTween
-            .moveLocalY(gamePlayerModelHolder, height, time)
-                .setEase(LeanTweenType.easeInOutQuad)
-                    .setDelay(delay);
-
-#else
-        gamePlayerModelHolder.transform.localPosition.WithY(height);
-#endif
+        TweenUtil.MoveToObject(
+            easeMeta, gamePlayerModelHolder.transform.localPosition.WithY(height));
     }
 
     public virtual void GamePlayerModelHolderEaseIn(float height = 0, float time = .5f, float delay = .1f) {
@@ -1625,11 +1667,26 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual bool IsPlayerControlled {
         get {
+            if (IsPlayerControlledState
+                || uniqueId == UniqueUtil.Instance.currentUniqueId) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    // Player controlled by controller/context state only, ignoring uniqueId.
+    // Actors are pooled and the player shares the GamePlayerObject prefab with
+    // agents, so a recycled instance can still carry the local player's
+    // uniqueId. Identity must be decided from state, or that instance stays
+    // flagged as the player for its whole next life.
+
+    public virtual bool IsPlayerControlledState {
+        get {
             if (controllerState == GamePlayerControllerState.ControllerPlayer
                 || contextState == GamePlayerContextState.ContextInput
                 || contextState == GamePlayerContextState.ContextInputVehicle
-                || contextState == GamePlayerContextState.ContextFollowInput
-                || uniqueId == UniqueUtil.Instance.currentUniqueId) {
+                || contextState == GamePlayerContextState.ContextFollowInput) {
                 return true;
             }
             return false;
@@ -1754,6 +1811,14 @@ public class BaseGamePlayerController : GameActor {
             if (gamePlayerController != null) {
                 return gamePlayerController;
             }
+
+            // A collider CHILD -- GamePlayerCollider, Helmet, Facemask, Main -- has no controller
+            // beneath it, only above it, so the search above answered null and the hit was thrown
+            // away. Measured: one RaycastAll returned both an actor's GamePlayerObject (resolved)
+            // and its GamePlayerCollider (dropped), so whether a ray attack counted depended on
+            // which of an actor's colliders the ray happened to reach first. Resolve upward
+            // through the collision component, the same way item collection now does.
+            return GameController.GetGamePlayerControllerObject(transform.gameObject, false);
         }
         return null;
     }
@@ -1903,6 +1968,19 @@ public class BaseGamePlayerController : GameActor {
 
         UpdateCharacterRuntimeState();
 
+        // The model, and everything cached from it, is replaced on load. The
+        // old model is pooled rather than destroyed, so a stale reference stays
+        // non-null and would route damage to whichever actor reuses it.
+
+        gameDamageManager = null;
+
+        // Drop anything the previous life scheduled on this instance. A pending
+        // Remove from an earlier death would otherwise fire on the actor that
+        // recycled it.
+
+        CancelInvoke("Remove");
+        CancelInvoke("RemoveMe");
+
         SetControllerData(new GamePlayerControllerData());
     }
 
@@ -1912,6 +1990,17 @@ public class BaseGamePlayerController : GameActor {
         ResetPosition();
 
         SetRuntimeData(new GamePlayerRuntimeData());
+
+        // Init() has already set the controller state by the time LoadCharacter gets
+        // here, so this is the one place a fresh runtime data object can be given the
+        // non-player hit limit. Without it runtimeData.hitLimit stays the player's
+        // default of 10 and every agent would take eleven hits to kill. Tested
+        // positively rather than as !IsPlayerControlled: an actor whose state has not
+        // been set yet must NOT be handed the agent limit and then become the player.
+
+        if (IsAgentControlled || IsSidekickControlled) {
+            runtimeData.hitLimit = agentHitLimitDefault;
+        }
 
         currentControllerData.ResetRuntime();
 
@@ -2034,25 +2123,27 @@ public class BaseGamePlayerController : GameActor {
 
                 initialScale = transform.localScale;
 
-                // Wire up collision object
+                // Wire up collision objects
 
-                GamePlayerCollision gamePlayerCollision;
+                string collisionTag = "Enemy";
 
-                if (gameObjectLoad.Has<GamePlayerCollision>()) {
-                    gamePlayerCollision = gameObjectLoad.Get<GamePlayerCollision>();
+                if (IsPlayerControlled) {
+                    collisionTag = "Player";
+                }
+                else if (IsSidekickControlled) {
+                    collisionTag = "Sidekick";
+                }
 
-                    if (IsPlayerControlled) {
-                        gamePlayerCollision.tag = "Player";
-                        tag = "Player";
-                    }
-                    else if (IsSidekickControlled) {
-                        gamePlayerCollision.tag = "Sidekick";
-                        tag = "Sidekick";
-                    }
-                    else {
-                        gamePlayerCollision.tag = "Enemy";
-                        tag = "Enemy";
-                    }
+                tag = collisionTag;
+
+                // Every hit area has to be wired, not just the first one found.
+                // A character may carry more than one, and an unwired one has no
+                // GameDamageManager and no tag, so hits landing on it are lost.
+
+                foreach (GamePlayerCollision gamePlayerCollision
+                        in gameObjectLoad.GetComponentsInChildren<GamePlayerCollision>(true)) {
+
+                    gamePlayerCollision.tag = collisionTag;
 
                     gamePlayerCollision.UpdateGameObjects();
                 }
@@ -2108,6 +2199,15 @@ public class BaseGamePlayerController : GameActor {
         LoadWeapons();
 
         currentControllerData.loadingCharacter = false;
+
+        // The capsule is sized in InitActorPlayerController, which can run before this
+        // coroutine has swapped the model in -- and a pooled actor reused for a
+        // different character would otherwise keep the previous life's size. Re-apply
+        // now that characterCode is definitely the character on screen. Idempotent.
+
+        ApplyCharacterCapsule();
+
+        ApplyCharacterHUDHeight();
 
         ResetPosition();
 
@@ -2273,7 +2373,10 @@ public class BaseGamePlayerController : GameActor {
 
         UnloadWeapons();
 
-        if (!IsPlayerControlled) {
+        // PROTOTYPE: agents and sidekicks stay unarmed unless the kill switch is
+        // flipped. The weapon data already authors roles for them.
+
+        if (!IsPlayerControlled && !agentWeaponsEnabled) {
             return; // TODO enemy weapons
         }
 
@@ -2286,6 +2389,17 @@ public class BaseGamePlayerController : GameActor {
 
         if (gameWeaponData.data == null) {
             LogUtil.LogWarning("LoadWeapon: NULL gameWeaponData.data");
+            return;
+        }
+
+        // Only reachable for a non-player with agentWeaponsEnabled on. Honour the
+        // roles the weapon data already authors rather than handing an agent a
+        // hero-only weapon. Data that omits roles is left to the old behaviour.
+
+        if (!IsPlayerControlled
+            && gameWeaponData.data.roles != null
+            && !gameWeaponData.data.isEnemy
+            && !gameWeaponData.data.isSidekick) {
             return;
         }
 
@@ -2498,6 +2612,32 @@ public class BaseGamePlayerController : GameActor {
     }
 
     // ------------------------------------------------------------------------
+    // AIM
+
+    // The one place that answers "which way is this actor attacking". Both the ray attack
+    // (CastAttack) and the weapon launcher's projectile direction come through here, so a
+    // bullet and a melee cast can never disagree about where the actor is pointing.
+    //
+    // It is deliberately NOT the weapon's own transform.forward. The weapon is parented to the
+    // `weapon` mount on the model's right-hand BONE, and LoadWeapon zeroes its local rotation,
+    // so the gun's forward is whatever the hand happens to be doing: measured live on
+    // character-bot-mega-2 facing (0,0,-1), the barrel swung 8deg -> 40deg -> 61deg off the
+    // actor's facing across one idle cycle, and firing along it sent bullets sideways.
+    //
+    // aimingDirection is (0,0,0) whenever the actor is not actively aiming -- measured live --
+    // and a zero direction casts nothing, so fall back to the actor's facing.
+    public virtual Vector3 GetAttackDirection() {
+
+        if (currentControllerData != null
+            && currentControllerData.thirdPersonController != null
+            && currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
+            return currentControllerData.thirdPersonController.aimingDirection.normalized;
+        }
+
+        return transform.forward;
+    }
+
+    // ------------------------------------------------------------------------
     // CONTROLLER
 
     public bool controllerReady {
@@ -2622,14 +2762,24 @@ public class BaseGamePlayerController : GameActor {
             return;
         }
 
-        if (collision.contacts.Length > 0) {
-            foreach (ContactPoint contact in collision.contacts) {
+        // collision.contacts allocates a FRESH ContactPoint[] on every read, and this
+        // was reading it twice per collision event. contactCount/GetContact are the
+        // non-allocating pair. Loop shape, break and ordering are unchanged.
+
+        if (collision.contactCount > 0) {
+            for (int indexContact = 0; indexContact < collision.contactCount; indexContact++) {
+                ContactPoint contact = collision.GetContact(indexContact);
                 //Debug.DrawRay(contact.point, contact.normal, Color.white);
 
                 Transform t = contact.otherCollider.transform;
 
                 if (t.parent != null) {
                     string parentName = t.parent.name;
+
+                    // Transform.name marshals a NEW string on every read, and this was
+                    // read five times per contact point below.
+
+                    string tName = t.name;
 
                     // TODO make name recursion by depth limit, for now check three above.
                     string parentParentName = "";
@@ -2643,7 +2793,7 @@ public class BaseGamePlayerController : GameActor {
                     }
 
                     bool isGameColliderObstacle = parentName.Contains(nameGameColliderObstacle)
-                                      || t.name.Contains(nameGameColliderObstacle);
+                                      || tName.Contains(nameGameColliderObstacle);
 
                     if (isGameColliderObstacle) {
                         Physics.IgnoreCollision(contact.thisCollider, contact.otherCollider);
@@ -2651,19 +2801,19 @@ public class BaseGamePlayerController : GameActor {
                     }
 
                     bool isObstacle = parentName.Contains(nameGameObstacle)
-                                      || t.name.Contains(nameGameObstacle);
+                                      || tName.Contains(nameGameObstacle);
 
                     bool isDamageObstacle = parentName.Contains(nameGameDamageObstacle)
-                                      || t.name.Contains(nameGameDamageObstacle);
+                                      || tName.Contains(nameGameDamageObstacle);
 
 
                     bool isLevelObject = parentName.Contains(nameGameItemObject)
                                          || parentParentName.Contains(nameGameItemObject)
                                          || parentParentParentName.Contains(nameGameItemObject)
-                                         || t.name.Contains(nameGameItemObject);
+                                         || tName.Contains(nameGameItemObject);
 
                     bool isPlayerObject =
-                        t.name.Contains(nameGamePlayerCollider);
+                        tName.Contains(nameGamePlayerCollider);
                     //|| t.name.Contains("GamePlayerObject");
 
                     if (!isObstacle && !isLevelObject && !isPlayerObject && !isDamageObstacle) {
@@ -2699,8 +2849,7 @@ public class BaseGamePlayerController : GameActor {
 
                             //  if(GameController.IsGameplayWorldTypeStationary()) {
 
-                            float power = .1f;
-                            runtimeData.health -= power;
+                            float power = damageContact;
 
                             Hit(power);
 
@@ -2781,8 +2930,7 @@ public class BaseGamePlayerController : GameActor {
 
                             // TODO config
 
-                            float power = .1f;
-                            runtimeData.health -= power;
+                            float power = damageContact;
 
                             //GamePlayerProgress.Instance.ProcessProgressSpins
                             //GameProfileCharacters.currentProgress.SubtractGamePlayerProgressHealth(power); // TODO get by skill upgrade
@@ -3190,12 +3338,17 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetPosition() {
 
-        foreach (Transform t in gamePlayerModelHolderModel.transform) {
-            t.position.Reset();
-            t.localPosition.Reset();
-            t.rotation.Reset();
-            t.localRotation.Reset();
-            t.rotation = Quaternion.Euler(0f, 0f, 0f);
+        // Reset doubles as Unity's editor Reset callback, so this runs the moment the
+        // component is added in the Inspector, before the holder is assigned.
+
+        if (gamePlayerModelHolderModel != null) {
+            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+                t.position.Reset();
+                t.localPosition.Reset();
+                t.rotation.Reset();
+                t.localRotation.Reset();
+                t.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
         }
 
         if (IsPlayerControlled) {
@@ -3208,8 +3361,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void ResetScale() {
 
-        foreach (Transform t in gamePlayerModelHolderModel.transform) {
-            t.localScale = Vector3.one;
+        if (gamePlayerModelHolderModel != null) {
+            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+                t.localScale = Vector3.one;
+            }
         }
 
         if (IsPlayerControlled) {
@@ -3234,7 +3389,7 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void Reset() {
 
-        if (IsPlayerControlled) {
+        if (IsPlayerControlledState) {
             uniqueId = UniqueUtil.Instance.currentUniqueId;
         }
         else {
@@ -3242,6 +3397,29 @@ public class BaseGamePlayerController : GameActor {
         }
 
         ResetPosition();
+
+        ReleaseMotionState();
+    }
+
+    // The player actor is scene-resident: a replay reuses the same GameObject, the same
+    // CharacterController and the same third person controller. Anything still carrying
+    // motion when the previous round ended therefore applies itself on the first frame of
+    // the new one -- the actor spawns drifting as though something had pushed it. `impact`
+    // only decays inside UpdatePhysicsState, which is itself behind the isGameRunning gate,
+    // so a round that ends mid-knockback keeps that knockback indefinitely.
+    //
+    // Reset() doubles as Unity's editor Reset callback, so nothing here may assume the
+    // runtime data exists yet.
+    public virtual void ReleaseMotionState() {
+
+        if (controllerData != null) {
+
+            controllerData.impact = Vector3.zero;
+
+            if (controllerData.thirdPersonController != null) {
+                controllerData.thirdPersonController.ReleaseInputAndMotion();
+            }
+        }
     }
 
     public virtual void Remove() {
@@ -3474,16 +3652,31 @@ public class BaseGamePlayerController : GameActor {
 
         if (IsPlayerControlled) {
 
+            // Only the enemy branch used to be gated, so the player paid for
+            // every contact point of every collision event.
+
+            if (currentControllerData != null) {
+                if (currentControllerData.lastHit + intervalHitPlayer < Time.time) {
+                    currentControllerData.lastHit = Time.time;
+                }
+                else {
+                    return;
+                }
+            }
+
 #if USE_GAME_LIB_GAMES_UI
             GameHUD.Instance.ShowHitOne((float)(1.5 - runtimeData.health));
 #endif
-            ProgressScore(2 * power);
+            // No score for TAKING damage. This used to be ProgressScore(2 * power),
+            // which was the only combat score in the game and it paid the player for
+            // being hit. The kill is scored in Die() instead.
+
             DeviceUtil.Vibrate();
         }
         else {
             //bool allow = false;
 
-            if (currentControllerData.lastHit + .3f < Time.time) {
+            if (currentControllerData.lastHit + intervalHit < Time.time) {
                 currentControllerData.lastHit = Time.time;
                 //allow = true;
             }
@@ -3491,7 +3684,11 @@ public class BaseGamePlayerController : GameActor {
                 return;
             }
 
-            ProgressScore(-1);
+            // This used to be ProgressScore(-1) on the actor being hit. That is not
+            // a private counter on the enemy: ProgressScore broadcasts
+            // gameActionScore and writes GamePlayerProgress.SetStatScore, both
+            // player-wide, so landing a hit on an enemy docked the player a point.
+            // The kill is scored in Die().
         }
 
         if (GameController.IsGameplayTypeRunner()) {
@@ -3993,10 +4190,26 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.impact = Vector3.zero;
 
             currentControllerData.dying = true;
+
+            // Corpse-inert. A dead actor keeps its CharacterController, which depenetrates
+            // against every live capsule it overlaps for the three seconds before Remove()
+            // recycles it -- so bodies shove the player and each other. The PLAYER keeps
+            // its capsule: its death ends the round and the camera still rides it.
+            //
+            // Pooled reuse hands GetOrSet<CharacterController> the same disabled component
+            // back, so InitActorCharacterController re-enables it on character load.
+
+            if (!IsPlayerControlled) {
+                SetControllersState(false);
+            }
         }
 
         if (IsPlayerControlled) {
             GamePlayerProgress.SetStatDeaths(1f);
+        }
+        else if (IsSidekickControlled) {
+            // The player's own sidekick dying is not a kill: this branch used to be a bare else,
+            // so it credited a kill, the kill stat and scoreKill to the player.
         }
         else {
 
@@ -4005,6 +4218,13 @@ public class BaseGamePlayerController : GameActor {
             GameController.CurrentGamePlayerController.runtimeData.kills += 1;
 
             GamePlayerProgress.SetStatKills(1f);
+
+            // Score the kill where the kill is already credited. Nothing used to
+            // award any score for a kill. ProgressScore writes the CALLER's own
+            // runtime data, broadcast and stat, so it has to be sent to the player
+            // controller rather than to this dying enemy.
+
+            GameController.CurrentGamePlayerController.ProgressScore(scoreKill);
         }
 
         /*
@@ -4170,7 +4390,10 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void CastAttack() {
 
-        if (controllerReady) {
+        // NEGATED 2026-09-20: this was the only one of the file's 17 controllerReady guards
+        // written without the `!`, so CastAttack returned whenever the actor WAS ready and the
+        // ray attack -- ScoreAttack / Hit(1f) / InputAttack -- had never run in normal play.
+        if (!controllerReady) {
             return;
         }
 
@@ -4194,29 +4417,51 @@ public class BaseGamePlayerController : GameActor {
 
         RaycastHit[] hits;
 
-        Vector3 directionAttack = transform.forward;
-        if (currentControllerData.thirdPersonController != null) {
-            directionAttack = currentControllerData.thirdPersonController.aimingDirection;
-        }
+        Vector3 directionAttack = GetAttackDirection();
 
-        //Debug.DrawRay(transform.position, directionAttack * attackDistance);
+        // Cast from chest height, not from transform.position. The actor's origin sits at its
+        // FEET (y ~0.08) while an actor's own colliders span roughly y 0.1-4.3, so a ray from
+        // the origin passed underneath every target: measured 0 hits at +0.0 against a target
+        // 2.58 m away, 2 hits at +1.0.
+        Vector3 originAttack = transform.position + (Vector3.up * attackHeightOffset);
 
-        hits = Physics.RaycastAll(transform.position, directionAttack, attackDistance);
+        //Debug.DrawRay(originAttack, directionAttack * attackDistance);
+
+        hits = Physics.RaycastAll(originAttack, directionAttack, attackDistance);
+
+        // ONE ACTOR PAYS ONCE PER CAST. An actor carries two enabled colliders that both resolve
+        // to it -- GamePlayerObject and GamePlayerCollider -- so a single torso hit appeared twice
+        // in this list and scored twice: measured +20 for one attack where the intended award is
+        // +10, and ScoreAttack broadcasts gameActionScore and writes SetStatScore, so the doubling
+        // reached the HUD and the saved stat. Hit() happened to be saved by its own intervalHit
+        // rate limit, which is why only the score showed it. Reused list, not a new HashSet per
+        // cast, because this runs per attack per actor.
+        castAttackHandled.Clear();
+
         int i = 0;
         while (i < hits.Length) {
             RaycastHit hit = hits[i];
             Transform hitObject = hit.transform;
 
-            if (hitObject.name.IndexOf("Game") > -1) {
-                if (hitObject != null) {
-                    GamePlayerController playerController = GetController(hitObject);
-                    if (playerController != null) {
+            // No name filter. It used to be `name.IndexOf("Game") > -1`, which discarded a hit on
+            // a Helmet, Facemask or Main collider BEFORE anything tried to resolve it, and made
+            // whether an attack counted depend on which collider the ray reached. GetController
+            // answers null for scenery, so it is the check that belongs here.
+            if (hitObject != null) {
+                GamePlayerController playerController = GetController(hitObject);
 
-                        ////Debug.Log("CastAttack:" + " currentUUID:" + uniqueId + " otherID:" + playerController.uniqueId);
+                if (playerController != null
+                    && !castAttackHandled.Contains(playerController)) {
 
-                        if (AllowControllerInteraction(playerController)) {
-                            return;
-                        }
+                    castAttackHandled.Add(playerController);
+
+                    // AllowControllerInteraction is TRUE when the pair MAY interact -- every
+                    // other call site negates it. This guard did not, and it returned rather
+                    // than continued, so the ray only ever landed on a pair that is FORBIDDEN
+                    // to interact (a sidekick, a dead actor, one entering or exiting) and
+                    // abandoned every remaining hit in the list. Skip a disallowed hit and
+                    // keep scanning the rest.
+                    if (AllowControllerInteraction(playerController)) {
 
                         ScoreAttack();
 
@@ -4242,7 +4487,20 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public virtual void ScoreAttack(double score) {
-        runtimeData.score += score;
+        // ProgressScore, not a direct runtimeData write: the direct write skipped the
+        // gameActionScore broadcast and SetStatScore, so ray-hit score never reached the HUD
+        // or the saved stat. Every other award in this file goes through ProgressScore.
+        //
+        // Player only, like every other self-award in this file. CastAttack calls InputAttack on
+        // the actor it hits, so a struck enemy swings back through its OWN CastAttack, and a hit
+        // on the player landed here on the ENEMY -- whose ProgressScore writes the player-wide
+        // SetStatScore. The saved score stat grew with every enemy (and sidekick) hit while the
+        // round's own score did not, so stat and Results disagreed.
+        if (!IsPlayerControlled) {
+            return;
+        }
+
+        ProgressScore(score);
     }
 
     public virtual void ActionAttack() {
@@ -4862,6 +5120,31 @@ public class BaseGamePlayerController : GameActor {
     // ------------------------------------------------------------------------
     // UPDATE PHYSICS
 
+    // Below this, an impact has no meaningful motion left in it. It decays by Lerp, which
+    // approaches zero without reaching it, so without a floor it stays "almost zero" forever.
+    public static float impactMoveThreshold = .0001f;
+
+    // CharacterController.Move DEPENETRATES on every call, even for zero motion. Every actor
+    // carries the same oversized capsule, so a call per frame shoves the actor out of whatever
+    // it overlaps. While alive the NavMeshAgent re-pins the transform each frame and hides it;
+    // once dead the agent is disabled and enemies have no gravity (no third person controller),
+    // so the drift accumulates permanently and the corpse creeps off the ground.
+    //
+    // So only move when there is actually an impact to apply, and never for a dead actor.
+
+    public virtual bool ShouldApplyImpactMove() {
+
+        if (currentControllerData == null) {
+            return false;
+        }
+
+        if (isDead || isExiting) {
+            return false;
+        }
+
+        return currentControllerData.impact.sqrMagnitude > impactMoveThreshold;
+    }
+
     public virtual void UpdatePhysicsState() {
 
         if (!controllerReady) {
@@ -4879,7 +5162,13 @@ public class BaseGamePlayerController : GameActor {
 
         if (GameController.IsGameplayType(GameplayType.gameDasher)) {
 
-            if (currentControllerData.characterController.enabled) {
+            // The CharacterController can be null/destroyed (e.g. while the game is paused, when the
+            // player actor is being torn down). Accessing .enabled on a destroyed Collider throws a
+            // NullReferenceException EVERY FRAME from Update -> UpdatePhysicsState, spamming the log and
+            // tanking input responsiveness (pre-existing; surfaced as pause lag/hang, 2026-07-20).
+            if (ShouldApplyImpactMove()
+                && currentControllerData.characterController != null
+                && currentControllerData.characterController.enabled) {
                 currentControllerData.characterController.Move(currentControllerData.impact * Time.deltaTime);
             }
 
@@ -5634,32 +5923,115 @@ public class BaseGamePlayerController : GameActor {
 
         currentControllerData.characterController = gameObject.GetOrSet<CharacterController>();
 
-        // TODO config
+        // A pooled actor that died with its capsule switched off (see Die) gets the SAME
+        // disabled component back here, and an actor whose capsule never re-enables cannot
+        // be moved or hit. Re-arm per life, before the sizing below.
 
-        //public float initialMaxWalkSpeed = 5f;
-        //public float initialMaxTrotSpeed = 15f;
-        //public float initialMaxRunSpeed = 20f;
-        //public float initialMaxJumpHeight = .5f;
-        //public float initialMaxExtraJumpHeight = 1f;
-        //public float characterSlopeLimit = 45;
-        //public float characterStepOffset = .3f;
-        //public float characterRadius = 1f;
-        //public float characterHeight = 2.5f;
+        currentControllerData.characterController.enabled = true;
 
-        currentControllerData.characterController.slopeLimit = 45;
-        currentControllerData.characterController.stepOffset = .3f;
-        currentControllerData.characterController.radius = characterRadius;
-        currentControllerData.characterController.height = characterHeight;
-        currentControllerData.characterController.center = characterCenter;//        new Vector3(0f, 2.39f, 0f);
-        //currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
+        // slopeLimit and stepOffset had the literals 45 and .3 here while the fields
+        // holding exactly those numbers sat unread three thousand lines up. Read them.
 
-        //
-        //currentControllerData.characterController.slopeLimit = 45;
-        //currentControllerData.characterController.stepOffset = .3f;
-        //currentControllerData.characterController.radius = 2.6f;// 1.67f;
-        //currentControllerData.characterController.height = 2.42f;
-        ////currentControllerData.characterController.center = new Vector3(0f, 1.79f, 0f);
-        //currentControllerData.characterController.center = new Vector3(0f, 2.22f, 0f);
+        currentControllerData.characterController.slopeLimit = characterSlopeLimit;
+        currentControllerData.characterController.stepOffset = characterStepOffset;
+
+        ApplyCharacterCapsule();
+    }
+
+    // ------------------------------------------------------------------------
+    // CHARACTER HUD HEIGHT
+    //
+    // The world health bar (GamePlayerHolder/HUD) sits at one prefab height, but the models
+    // differ a lot (droid-box top ~1.3, zombie-dog ~3.7 in holder units), so one height either
+    // floats far above the small bots or buries the bar in the big ones. An authored hud_height
+    // on the character data moves it; absent = the prefab's own value, so every character and
+    // game without the field is unchanged. Re-applied per character load like the capsule, so a
+    // pooled actor reused for another character takes the new height.
+
+    Vector3 hudPrefabLocalPosition;
+    bool hudPrefabLocalPositionRead = false;
+
+    public virtual void ApplyCharacterHUDHeight() {
+
+        if (gamePlayerHolder == null) {
+            return;
+        }
+
+        Transform hud = gamePlayerHolder.transform.Find("HUD");
+
+        if (hud == null) {
+            return;
+        }
+
+        if (!hudPrefabLocalPositionRead) {
+            hudPrefabLocalPositionRead = true;
+            hudPrefabLocalPosition = hud.localPosition;
+        }
+
+        GameCharacter characterData = GameCharacters.Instance.GetById(characterCode);
+
+        if (characterData != null
+            && characterData.data != null
+            && characterData.data.HasHudHeight()) {
+
+            hud.localPosition = hudPrefabLocalPosition.WithY((float)characterData.data.hud_height);
+        }
+        else {
+            hud.localPosition = hudPrefabLocalPosition;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // CHARACTER CAPSULE
+
+    /// <summary>
+    /// Size the movement capsule for the character this actor is actually wearing.
+    ///
+    /// Every actor used to get the same capsule -- radius 1.88, height 4.88, centre y
+    /// 2.39 -- no matter what was in it. Measured against the shipped models that is
+    /// roughly 4x too big for a droid (0.30 tall in model units, so 1.20 in actor-root
+    /// units) and too short for the boss (1.90 -> 7.60). An oversized capsule is not
+    /// cosmetic: CharacterController depenetrates against it, so a small enemy shoves
+    /// the player from well outside its own silhouette, and every actor's pickup reach
+    /// is derived from this radius in BaseGamePlayerItem.GetCollectReach.
+    ///
+    /// The authored size lives on the character record (capsule_radius/height/center_y)
+    /// and is OPTIONAL: a character with none keeps the serialised defaults, so this is
+    /// additive against data that has not been updated. Read by characterCode rather
+    /// than off the gameCharacter field, because InitControlsCo can run before
+    /// LoadCharacterCo has populated it.
+    /// </summary>
+    public virtual void ApplyCharacterCapsule() {
+
+        if (currentControllerData == null
+            || currentControllerData.characterController == null) {
+            return;
+        }
+
+        float radius = characterRadius;
+        float height = characterHeight;
+        Vector3 center = characterCenter;
+
+        GameCharacter characterData = GameCharacters.Instance.GetById(characterCode);
+
+        if (characterData != null
+            && characterData.data != null
+            && characterData.data.HasCapsule()) {
+
+            radius = (float)characterData.data.capsule_radius;
+            height = (float)characterData.data.capsule_height;
+            center = characterCenter.WithY((float)characterData.data.capsule_center_y);
+        }
+
+        // Unity silently clamps a capsule shorter than its own diameter into a sphere,
+        // which would make an authored "short and wide" actor taller than it asked for
+        // without saying so. Do the clamp here so the value we set is the value we get.
+
+        height = Mathf.Max(height, radius * 2f);
+
+        currentControllerData.characterController.radius = radius;
+        currentControllerData.characterController.height = height;
+        currentControllerData.characterController.center = center;
     }
 
     private void InitActorThirdPersonController() {
@@ -5675,6 +6047,7 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.thirdPersonController =
                 gameObject.GetOrSet<GamePlayerThirdPersonController>();
 
+            currentControllerData.thirdPersonController.ownerController = this;
             currentControllerData.thirdPersonController.Init();
 
             HandleRPGProperties();
@@ -5843,6 +6216,12 @@ public class BaseGamePlayerController : GameActor {
         gameObject.DestroyGameObject(3f, GameConfigs.usePooledGamePlayers);
     }
 
+    // Which model the renderer cache was filled from, and which list it was filled
+    // into. See CheckVisibility.
+
+    GameObject renderersResolvedForModel = null;
+    List<SkinnedMeshRenderer> renderersResolvedInto = null;
+
     public virtual bool CheckVisibility() {
 
         if (!controllerReady) {
@@ -5853,7 +6232,30 @@ public class BaseGamePlayerController : GameActor {
             currentControllerData.renderers = new List<SkinnedMeshRenderer>();
         }
 
-        if (currentControllerData.renderers.Count == 0) {
+        // This used to refill whenever the list came back EMPTY, so an actor with no
+        // SkinnedMeshRenderer -- a droid, or any actor before its character model has
+        // loaded -- re-ran GetComponentsInChildren every gated frame, forever. Key the
+        // "already looked" answer on the loaded model instead, the same idiom as
+        // actorAnimationResolvedFor in BaseGamePlayerControllerAnimation. The list
+        // instance is part of the key because UpdateCharacterStates hands out a new
+        // GamePlayerControllerData (and so a new, empty list) on every character load,
+        // which a pooled model object reused for the same prefab would otherwise hide.
+
+        GameObject modelCurrent = null;
+
+        if (gamePlayerModelHolderModel != null
+            && gamePlayerModelHolderModel.transform.childCount > 0) {
+            modelCurrent = gamePlayerModelHolderModel.transform.GetChild(0).gameObject;
+        }
+
+        if (renderersResolvedForModel != modelCurrent
+            || renderersResolvedInto != currentControllerData.renderers) {
+
+            renderersResolvedForModel = modelCurrent;
+            renderersResolvedInto = currentControllerData.renderers;
+
+            currentControllerData.renderers.Clear();
+
             foreach (SkinnedMeshRenderer rendererSkinned in gamePlayerHolder.GetComponentsInChildren<SkinnedMeshRenderer>()) {
                 currentControllerData.renderers.Add(rendererSkinned);
             }
@@ -6012,7 +6414,14 @@ public class BaseGamePlayerController : GameActor {
             //}
 
             if (runtimeData != null) {
-                if (runtimeData.hitCount > UnityEngine.Random.Range(2, 4)) {
+
+                // Was UnityEngine.Random.Range(2, 4) -- the INT overload, so 2 or 3,
+                // redrawn on every gated frame. An agent's toughness changed frame to
+                // frame and no authored value could reach it. Same path the player
+                // branch below uses; UpdateCharacterRuntimeState seeds hitLimit for
+                // non-players from agentHitLimitDefault.
+
+                if (runtimeData.hitCount > runtimeData.hitLimit) {
                     Die();
                 }
             }
@@ -6034,8 +6443,13 @@ public class BaseGamePlayerController : GameActor {
                         Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection));
                 }
 
-                foreach (Transform t in gamePlayerModelHolderModel.transform) {
-                    t.localRotation = Quaternion.identity;
+                // foreach over a Transform boxes a non-generic IEnumerator every
+                // frame; childCount/GetChild does not.
+
+                Transform transformModelHolder = gamePlayerModelHolderModel.transform;
+
+                for (int indexChild = 0; indexChild < transformModelHolder.childCount; indexChild++) {
+                    transformModelHolder.GetChild(indexChild).localRotation = Quaternion.identity;
                 }
 
                 if (currentControllerData.thirdPersonController.aimingDirection.IsBiggerThanDeadzone(axisDeadZone)) {
@@ -6051,8 +6465,13 @@ public class BaseGamePlayerController : GameActor {
                     //currentControllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
                 }
 
-                foreach (Transform t in gamePlayerModelHolderModel.transform) {
-                    t.localRotation = Quaternion.identity;
+                // foreach over a Transform boxes a non-generic IEnumerator every
+                // frame; childCount/GetChild does not.
+
+                Transform transformModelHolder = gamePlayerModelHolderModel.transform;
+
+                for (int indexChild = 0; indexChild < transformModelHolder.childCount; indexChild++) {
+                    transformModelHolder.GetChild(indexChild).localRotation = Quaternion.identity;
                 }
             }
 
@@ -6173,16 +6592,23 @@ public class BaseGamePlayerController : GameActor {
         // fix after jump
         if (gamePlayerModelHolderModel != null) {
 
-            foreach (Transform t in gamePlayerModelHolderModel.transform) {
+            // Only ever touched the FIRST child (the loop broke immediately), and
+            // foreach over a Transform boxes a non-generic IEnumerator every frame.
+
+            if (gamePlayerModelHolderModel.transform.childCount > 0) {
+
+                Transform transformModelChild = gamePlayerModelHolderModel.transform.GetChild(0);
 
                 if (currentControllerData.thirdPersonController != null) {
 
                     if (!currentControllerData.thirdPersonController.IsJumping()) {
 
-                        t.localPosition = Vector3.Lerp(t.localPosition, t.localPosition.WithY(0), 2 + Time.deltaTime);
+                        transformModelChild.localPosition = Vector3.Lerp(
+                            transformModelChild.localPosition,
+                            transformModelChild.localPosition.WithY(0),
+                            2 + Time.deltaTime);
                     }
                 }
-                break;
             }
         }
 
@@ -6266,6 +6692,21 @@ public class BaseGamePlayerController : GameActor {
 
                                     if (currentControllerData.power > 0 && currentControllerData.shouldTackle) {
                                         Tackle(currentControllerData.gamePlayerControllerHit, currentControllerData.power);
+                                    }
+
+                                    // PROTOTYPE: an armed agent fires on the same
+                                    // action tick that drives the tackle, so the
+                                    // weapon follows the existing AI cadence rather
+                                    // than a second timer -- Attack() keeps its own
+                                    // one-second gate. weaponPrimary is null unless
+                                    // agentWeaponsEnabled opened LoadWeapon, so this
+                                    // is inert by default. Face the target first;
+                                    // projectiles leave the weapon pointing forward.
+
+                                    if (agentWeaponsEnabled && weaponPrimary != null) {
+                                        transform.LookAt(
+                                            currentControllerData.gamePlayerControllerHit.transform);
+                                        Attack();
                                     }
                                 }
                             }

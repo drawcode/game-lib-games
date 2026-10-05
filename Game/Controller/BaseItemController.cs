@@ -74,6 +74,13 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     //
     public float lastPeriodicSeconds = 0f;
     //
+    // The interval the CURRENT wait is running against, drawn once when the timer resets.
+    // It has to be held: rolling it inside the comparison re-rolled it every frame, and the
+    // elapsed time only has to beat the LOWEST roll it sees, so the window always fired at
+    // roughly its minimum. See handlePeriodic -- the range there is its own literal, these
+    // two fields below are not read by this controller.
+    protected float currentSpawnTimeSeconds = 0f;
+    //
     public float spawnTimeRangeMin = 3.2f;
     public float spawnTimeRangeLimit = 9.3f;
     //
@@ -155,6 +162,12 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
     }
 
     public virtual void load(string code) {
+        // GameItemData.Reset defaults type to BaseDataObjectKeys.item, which is the same string
+        // as GameItemType.item -- so an untyped load stays a plain item, as it always was.
+        load(code, GameItemType.item);
+    }
+
+    public virtual void load(string code, string itemType) {
         // Load by character code
 
         //float speed = 1f;
@@ -167,7 +180,10 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
         GameItemData itemData = new GameItemData();
         itemData.code = code;
-        //itemData.type = GameActorType.enemy;
+
+        // Which director asked for this. It rides the spawn message through to loadItemCo, which
+        // stamps it on the spawned object so itemsCount / itemWeaponsCount can tell them apart.
+        itemData.type = itemType;
         //itemData.speed = speed;
         //itemData.attack = attack;
         //itemData.scale = scale;
@@ -435,7 +451,7 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
             string code = selectByProbabilityItem.code;
 
-            GameItemController.Load(code);//, itemType);
+            GameItemController.Load(code, itemType);
         }
     }
 
@@ -578,7 +594,7 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
             //Debug.Log("directWeapons:selectByProbabilityItem:code: " + 
             //code); 
 
-            GameItemController.Load(code);//, itemType);
+            GameItemController.Load(code, itemType);
         }
     }
 
@@ -732,9 +748,14 @@ public class BaseItemController : GameObjectBehavior, IBaseItemController {
 
     public virtual void handlePeriodic() {
 
-        if (Time.time > lastPeriodicSeconds + UnityEngine.Random.Range(5, 15)) {
+        if (currentSpawnTimeSeconds <= 0f) {
+            // First wait of the round, or a wait that has just been consumed.
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(5, 15);
+        }
+
+        if (Time.time > lastPeriodicSeconds + currentSpawnTimeSeconds) {
             lastPeriodicSeconds = Time.time;
-            // every second
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(5, 15);
             GameItemController.Direct();
         }
     }

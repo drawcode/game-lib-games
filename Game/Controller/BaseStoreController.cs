@@ -261,7 +261,7 @@ public class BaseStoreController : GameObjectBehavior {
                     record.data,
                     record.dataType,
                     record.receipt,
-                    "Purchase Complete:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
+                    L10n.TrOrDefault("game_ui_store_purchase_complete", "Purchase Complete:") + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     record.productId,
                     record.quantity);
@@ -302,7 +302,7 @@ public class BaseStoreController : GameObjectBehavior {
                     record.data,
                     record.dataType,
                     record.receipt,
-                    "Purchase FAILED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
+                    L10n.TrOrDefault("game_ui_store_purchase_failed", "Purchase FAILED:") + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     record.productId,
                     record.quantity);
@@ -343,7 +343,7 @@ public class BaseStoreController : GameObjectBehavior {
                     record.data,
                     record.dataType,
                     record.receipt,
-                    "Purchase CANCELLED:" + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
+                    L10n.TrOrDefault("game_ui_store_purchase_cancelled", "Purchase CANCELLED:") + itemPurchasing.product.GetCurrentProductInfoByLocale().display_name,
                     itemPurchasing.product.GetCurrentProductInfoByLocale().description,
                     product.code,
                     record.quantity);

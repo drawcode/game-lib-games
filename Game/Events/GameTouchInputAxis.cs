@@ -41,6 +41,31 @@ public class GameTouchInputAxis : GameObjectBehavior {
     public Vector3 anchorPoint = Vector3.zero;
     public Vector3 stretchPoint = Vector3.zero;
 
+    // How far the floating pad may travel from where it was authored, in the placement
+    // object's parent-local units. <= 0 derives it from the placement collider's own half
+    // extents -- the zone the pad is meant to live inside.
+    //
+    // Without a limit the pad walks: `objectPlacement.transform.position = worldPoint` had no
+    // bound at all, so dragging the left stick could carry it across the screen and park its
+    // collider on top of the right-hand ButtonInput* buttons, where it wins the raycast and
+    // they stop responding. It stayed there for as long as ANY finger was down, because the
+    // only restore was in the "nothing at all is pressed" branch.
+    public float placementTravelLimit = 0f;
+
+    // TOUCH IS DRIVEN ELSEWHERE (the UI Toolkit HUD's virtual sticks). While true this component
+    // neither hit-tests touches/mouse nor resets the axis on idle frames — its idle ResetPad sends
+    // a zero axis EVERY frame, which would overwrite the toolkit stick's value each frame. The
+    // keyboard fallback keeps working, and releases the axis once when the keys come up.
+    public static bool touchDrivenExternally = false;
+
+    // The external MOVE stick's live state, written by whatever drives it. Finger-navigate
+    // (BaseGameController.handleInputTouch) writes the same move axis, so it must yield while
+    // the stick is held -- and hand the stick's value back, not a zero, when it lets go.
+    public static bool externalMoveHeld = false;
+    public static Vector3 externalMoveAxis = Vector3.zero;
+
+    bool keyAxisActive = false;
+
     void Awake() {
 
     }
@@ -103,22 +128,83 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
     }
 
+    // Set by PointHitTest when a touch landed on this pad's placement zone. The method
+    // returns hitPad, which is FALSE on exactly the frames the placement is being dragged --
+    // so a caller that treats "did not hit the pad" as "this pad is idle" will undo the drag
+    // on every frame and the floating stick can never leave home.
+    public bool hitPlacementLast = false;
+
+    // The HUD's input shields. Named, not layered, because that is the convention already in
+    // use -- InputSystem tests the same substring to decide a tap must not reach the world.
+    private const string ignoreHitName = "Ignore";
+
+    // Reused by PointHitTest so the all-hits raycast does not allocate. This runs per touch,
+    // per axis, per frame. RaycastNonAlloc silently stops filling at the end of the buffer, so
+    // this is a cap rather than a count -- 32 is well clear of anything the HUD stacks in one
+    // place (the deepest cluster is the right-hand controls at 5).
+    private static readonly RaycastHit[] hitBuffer = new RaycastHit[32];
+
     public bool PointHitTest(Vector3 point) {
 
         bool hitPad = false;
         bool hitPlacement = false;
 
+        hitPlacementLast = false;
+
         if (collisionCamera != null) {
 
             Ray screenRay = collisionCamera.ScreenPointToRay(point);
-            RaycastHit hit;
-            if (Physics.Raycast(screenRay, out hit, Mathf.Infinity) && hit.transform != null) {
 
-                //Debug.Log("hit:" + hit.transform.gameObject.name);
+            // NOT layer-masked. Masking to collisionCamera.cullingMask looks obviously right
+            // and is not: the mask is only correct if the camera wired into this component is
+            // the one that draws the pad, and if it is not, NOTHING is ever hit and the control
+            // is silently dead. Do not re-add it without first checking, in a live round, that
+            // the mask contains the pad's layer.
+            //
+            // ALL hits, not just the nearest one, so the "Ignore" shields can be stepped over.
+            //
+            // The HUD hangs large colliders named "Ignore" over each control cluster; their job
+            // is to stop a tap on the controls falling through to the world, and InputSystem
+            // honours exactly that by name (`hit.transform.name.Contains("Ignore")` ->
+            // allowedTouch = false). This method never did. It took the single nearest collider
+            // and, if it was not this axis's pad or placement, gave up -- so a shield sitting in
+            // front of the zone it is shielding made the control under it unusable.
+            //
+            // It bit the RIGHT pad hardest: three Ignore boxes (377x353, 263x341, 377x353) hang
+            // directly under InputRight, over an AxisInputPlacement-attack zone that is only
+            // 150x150. Starting the touch further left -- outside the shields -- was the only
+            // way to get the stick to come to the thumb.
+            //
+            // Only the shields are skipped. A real control still blocks the pad, as it should.
+            int hitCount = Physics.RaycastNonAlloc(screenRay, hitBuffer, Mathf.Infinity);
 
-                hitObject = hit.transform.gameObject;
+            hitObject = null;
 
-                if (hitObject != null) {
+            float nearestDistance = float.MaxValue;
+
+            for (int h = 0; h < hitCount; h++) {
+
+                Transform hitTransform = hitBuffer[h].transform;
+
+                if (hitTransform == null) {
+                    continue;
+                }
+
+                if (hitTransform.name.Contains(ignoreHitName)) {
+                    continue;
+                }
+
+                if (hitBuffer[h].distance < nearestDistance) {
+                    nearestDistance = hitBuffer[h].distance;
+                    hitObject = hitTransform.gameObject;
+                }
+            }
+
+            if (hitObject != null) {
+
+                //Debug.Log("hit:" + hitObject.name);
+
+                {
                     axisPadObject = hitObject.Get<GameTouchInputAxisPad>();
                     if (axisPadObject != null) {
                         //if(hit.transform.gameObject == gameObject) {
@@ -190,13 +276,15 @@ public class GameTouchInputAxis : GameObjectBehavior {
                     }
                     else if (hitPlacement && !hitPad) {
 
-                        // MOVE IT
+                        // MOVE IT -- but only within the authored zone.
 
                         ResetPad();
 
                         ////Vector3 viewPos = collisionCamera.WorldToViewportPoint(point);  
 
-                        objectPlacement.transform.position = worldPoint;
+                        MovePlacement(worldPoint);
+
+                        hitPlacementLast = true;
 
                         anchorPoint = objectPlacement.transform.position;
                     }
@@ -205,6 +293,65 @@ public class GameTouchInputAxis : GameObjectBehavior {
         }
 
         return hitPad;
+    }
+
+    // The placement may only travel inside its own zone, so the pad cannot end up sitting on
+    // another control.
+    Vector2 GetPlacementTravelLimit() {
+
+        if (placementTravelLimit > 0f) {
+            return new Vector2(placementTravelLimit, placementTravelLimit);
+        }
+
+        BoxCollider box = objectPlacement.GetComponent<BoxCollider>();
+
+        if (box != null) {
+            Vector3 scale = objectPlacement.transform.localScale;
+            return new Vector2(
+                Mathf.Abs(box.size.x * scale.x) * .5f,
+                Mathf.Abs(box.size.y * scale.y) * .5f);
+        }
+
+        return Vector2.zero;
+    }
+
+    void MovePlacement(Vector3 worldPoint) {
+
+        if (objectPlacement == null) {
+            return;
+        }
+
+        Transform t = objectPlacement.transform;
+
+        Vector3 local = t.parent != null
+            ? t.parent.InverseTransformPoint(worldPoint)
+            : worldPoint;
+
+        Vector2 limit = GetPlacementTravelLimit();
+
+        // No limit derivable (objectPlacement carries no BoxCollider of its own) -- move
+        // unclamped, as this always did. Refusing to move would be a dead control, which is
+        // far worse than an unbounded one.
+        if (limit.x > 0f) {
+            local.x = Mathf.Clamp(
+                local.x, originalPlacement.x - limit.x, originalPlacement.x + limit.x);
+        }
+
+        if (limit.y > 0f) {
+            local.y = Mathf.Clamp(
+                local.y, originalPlacement.y - limit.y, originalPlacement.y + limit.y);
+        }
+
+        local.z = originalPlacement.z;
+
+        t.localPosition = local;
+    }
+
+    void RestorePlacement() {
+
+        if (objectPlacement != null) {
+            objectPlacement.transform.localPosition = originalPlacement;
+        }
     }
 
     void ResetPad() {
@@ -227,21 +374,53 @@ public class GameTouchInputAxis : GameObjectBehavior {
         }
     }
 
+    // True while the not-running release has already been applied, so it runs once per stop.
+    bool releasedForNotRunning = false;
+
     void Update() {
 
         if (!GameConfigs.isGameRunning) {
+
+            // The pad keeps whatever deflection it had when the round ended -- both the art and
+            // the cached axisInput -- because this whole method is behind the gate. Let it go
+            // once so the next round does not open with a stick already pushed over.
+            if (!releasedForNotRunning) {
+                releasedForNotRunning = true;
+
+                inUse = false;
+                anchorPoint = Vector3.zero;
+
+                if (objectPlacement != null) {
+                    objectPlacement.transform.localPosition = originalPlacement;
+                }
+
+                // Not ResetPad(): its move-pad branch is gated on the static
+                // GameController.touchHandled, which is itself frozen at whatever the last
+                // running frame left. Release unconditionally here.
+                axisInput.x = 0f;
+                axisInput.y = 0f;
+
+                GameController.SendInputAxisMessage(axisName, axisInput);
+
+                if (pad != null) {
+                    pad.localPosition = Vector3.zero;
+                }
+            }
+
+            return;
+        }
+
+        releasedForNotRunning = false;
+
+        if (touchDrivenExternally) {
+            UpdateKeysOnly();
             return;
         }
 
         bool mousePressed = InputSystem.isMousePressed;
         bool touchPressed = InputSystem.isTouchPressed;
 
-        bool leftPressed = InputSystem.isLeftPress;
-        bool rightPressed = InputSystem.isRightPress;
-        bool upPressed = InputSystem.isUpPress;
-        bool downPressed = InputSystem.isDownPress;
-
-        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (IsAxis(InputSystemKeys.moveKey)) {
             //Debug.Log("keysDown:" + " leftPressed:" + leftPressed.ToString()
             // + " rightPressed:" + rightPressed.ToString()
             // + " upPressed:" + upPressed.ToString()
@@ -252,67 +431,127 @@ public class GameTouchInputAxis : GameObjectBehavior {
 
         bool handled = false;
 
+        // Separate from `handled`, which means "this pad is being driven". A finger dragging
+        // the placement zone is using this control too -- it just has not reached the pad yet.
+        bool placementTouched = false;
+
         if (touchPressed) {// && controlsVisible) {
             foreach (Touch touch in Input.touches) {
                 handled = PointHitTest(touch.position);
+                placementTouched = placementTouched || hitPlacementLast;
                 if (handled)
                     break;
             }
         }
         else if (mousePressed) {//  && hideOnDesktopWeb) {
             handled = PointHitTest(Input.mousePosition);
+            placementTouched = hitPlacementLast;
         }
         else {
-            if (objectPlacement != null) {
-                objectPlacement.transform.localPosition = originalPlacement;
-            }
+            RestorePlacement();
         }
 
-        if (!handled
-            && ((leftPressed
-            || rightPressed
-            || upPressed
-            || downPressed)
-            && (axisName.IsEqualLowercase(InputSystemKeys.mainKey)
-            || axisName.IsEqualLowercase(InputSystemKeys.moveKey)))) {
+        Vector3 keyAxis = Vector3.zero;
 
-            Vector3 axisInput = Vector3.zero;
+        if (!handled && IsActionAxis()) {
+            keyAxis = ActionAxis();
+        }
 
-            if (upPressed) {
-                axisInput.y = 0.99f;
-            }
-
-            if (leftPressed) {
-                axisInput.x = -0.99f;
-            }
-
-            if (downPressed) {
-                axisInput.y = -0.99f;
-            }
-
-            if (rightPressed) {
-                axisInput.x = 0.99f;
-            }
+        if (keyAxis.x != 0f || keyAxis.y != 0f) {
 
             if (pad != null) {
                 Vector3 padPos = pad.localPosition;
-                padPos.x = -axisInput.x;
-                padPos.y = -axisInput.y;
-                padPos.z = -axisInput.y;
+                padPos.x = -keyAxis.x;
+                padPos.y = -keyAxis.y;
+                padPos.z = -keyAxis.y;
                 pad.localPosition = padPos;
             }
 
-            GameController.SendInputAxisMessage(axisName, axisInput);
+            GameController.SendInputAxisMessage(axisName, keyAxis);
 
             handled = true;
         }
 
-        if (axisName.IsEqualLowercase(InputSystemKeys.moveKey)) {
+        if (IsAxis(InputSystemKeys.moveKey)) {
             //LogUtil.Log("handled:" + " handled:" + handled.ToString());
         }
 
         if (!handled) {
             ResetPad();
+
+            // Not just when NOTHING is pressed: a finger on the OTHER pad kept touchPressed
+            // true, so a pad that had been dragged stayed where it was dragged to -- over
+            // whatever it had been carried on top of.
+            //
+            // But NOT while this pad's own placement is being dragged. PointHitTest returns
+            // hitPad, which is false on exactly those frames, so restoring here would undo the
+            // drag every frame and the floating stick could never leave home.
+            if (!placementTouched) {
+                RestorePlacement();
+            }
         }
+    }
+
+    void UpdateKeysOnly() {
+
+        if (!IsActionAxis()) {
+            return;
+        }
+
+        Vector3 keyAxis = ActionAxis();
+
+        if (keyAxis.x != 0f || keyAxis.y != 0f) {
+            keyAxisActive = true;
+            GameController.SendInputAxisMessage(axisName, keyAxis);
+        }
+        else if (keyAxisActive) {
+            keyAxisActive = false;
+            GameController.SendInputAxisMessage(axisName, Vector3.zero);
+        }
+    }
+
+    // Ordinal, not IsEqualLowercase: that lowercases BOTH strings on every call, and these checks
+    // run per pad per frame. It was ~248 B/frame of garbage in a live round with no key down.
+    bool IsAxis(string key) {
+        return string.Equals(axisName, key, StringComparison.OrdinalIgnoreCase);
+    }
+
+    bool IsActionAxis() {
+        return IsAxis(InputSystemKeys.mainKey) || IsAxis(InputSystemKeys.moveKey) || IsAxis(InputSystemKeys.attackKey);
+    }
+
+    // This pad's axis from keys and gamepads: the "move" or "aim" action when GameInputActions
+    // is active, else the legacy key bools for move (later keys win, 0.99 per axis) and nothing
+    // for attack, which never had a key path.
+    Vector3 ActionAxis() {
+
+        Vector3 keyAxis;
+
+        if (IsAxis(InputSystemKeys.attackKey)) {
+            GameInputActions.TryGetAim(out keyAxis);
+            return keyAxis;
+        }
+
+        if (GameInputActions.TryGetMove(out keyAxis)) {
+            return keyAxis;
+        }
+
+        if (InputSystem.isUpPress) {
+            keyAxis.y = 0.99f;
+        }
+
+        if (InputSystem.isLeftPress) {
+            keyAxis.x = -0.99f;
+        }
+
+        if (InputSystem.isDownPress) {
+            keyAxis.y = -0.99f;
+        }
+
+        if (InputSystem.isRightPress) {
+            keyAxis.x = 0.99f;
+        }
+
+        return keyAxis;
     }
 }

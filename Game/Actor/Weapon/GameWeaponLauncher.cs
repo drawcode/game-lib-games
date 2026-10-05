@@ -1,4 +1,4 @@
-#pragma warning disable 0108
+﻿#pragma warning disable 0108
 using System;
 using UnityEngine;
 using System.Collections;
@@ -39,6 +39,24 @@ public class GameWeaponLauncher : GameWeaponBase {
     public AudioClip SoundReloaded;
     private float timetolockcount = 0;
     private float nextFireTime = 0;
+
+    // GameProfiles.Current.GetAudioEffectsVolume() walks the profile's attribute
+    // dictionary and boxes a double. It was being called once per shot -- 25 times a
+    // second for the minigun -- purely to set a value that a player changes from a
+    // settings slider. Sample it a few times a second instead.
+
+    private float cachedEffectsVolume = -1f;
+    private float cachedEffectsVolumeTime = -99999f;
+    private const float effectsVolumeRefreshSeconds = 0.5f;
+
+    // AudioSource.PlayOneShot spawns a voice per call and nothing culls them. At the
+    // minigun's 25 shots/s a 0.3 s clip is ~8 concurrent voices from ONE weapon, and six
+    // firing actors saturate the 32 real voices the mixer has, after which it steals.
+    // Until an automatic weapon gets the fire loop + tail it should have, cap how often a
+    // launcher may START a voice. The bullets still leave at the authored fire rate.
+
+    private float lastGunSoundTime = -99999f;
+    public float gunSoundMinInterval = 0.06f;
     private GameObject target;
     private Vector3 torqueTemp;
     private float reloadTimeTemp;
@@ -57,7 +75,10 @@ public class GameWeaponLauncher : GameWeaponBase {
         if (!audio) {
             audio = this.GetComponent<AudioSource>();
             if (!audio) {
-                this.gameObject.AddComponent<AudioSource>();
+                // The result was being discarded, so on a weapon without an AudioSource
+                // this added a fresh one on every Start and still left audio null, which
+                // silenced the gun. [RequireComponent] normally prevents that case.
+                audio = this.gameObject.AddComponent<AudioSource>();
             }
         }
 
@@ -92,7 +113,11 @@ public class GameWeaponLauncher : GameWeaponBase {
 
     void FixedUpdate() {
 
-        if (GameConfigs.isGameRunning) {
+        // Run WHILE the game is running, like every other gameplay gate in the actor
+        // layer. These two were the only un-negated ones, which left the aim raycast
+        // and the reload timer running only when the game was not being played.
+
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -103,7 +128,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
     private void Update() {
 
-        if (GameConfigs.isGameRunning) {
+        if (!GameConfigs.isGameRunning) {
             return;
         }
 
@@ -125,12 +150,20 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                 for (int t = 0; t < TargetTag.Length; t++) {
 
-                    if (GameObject.FindGameObjectsWithTag(TargetTag[t]).Length > 0) {
+                    // One tag sweep per tag per FRAME, shared with every other seeker --
+                    // this used to call the allocating FindGameObjectsWithTag twice, per
+                    // weapon, per frame.
 
-                        GameObject[] objs = GameObject.FindGameObjectsWithTag(TargetTag[t]);
+                    GameObject[] objs = GameWeaponTargets.GetByTag(TargetTag[t]);
+
+                    if (objs.Length > 0) {
+
                         float distance = int.MaxValue;
 
-                        if (AimObject != null && AimObject.tag == TargetTag[t]) {
+                        // CompareTag, not `.tag ==`: the tag getter marshals a fresh managed
+                        // string out of the engine on every read, and this runs per tag, per
+                        // weapon, per frame.
+                        if (AimObject != null && AimObject.CompareTag(TargetTag[t])) {
 
                             float dis = Vector3.Distance(AimObject.transform.position, transform.position);
 
@@ -209,7 +242,7 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     if (SoundReloading) {
                         if (audio) {
-                            audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+                            ApplyEffectsVolume();
                             audio.PlayOneShot(SoundReloading);
                         }
                     }
@@ -307,32 +340,83 @@ public class GameWeaponLauncher : GameWeaponBase {
         target = null;
     }
 
+    private string projectileEffectName = null;
+    private string projectileEffectCode = null;
+
     public void NameEffect(GameObject bullet) {
+
+        if (bullet == null) {
+            return;
+        }
 
         if (gamePlayerController == null) {
             gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
         }
 
-        if (bullet != null) {
-            foreach (ParticleSystem particleSystem in bullet.GetComponentsInChildren<ParticleSystem>(true)) {
-                if (gamePlayerController == null) {
-                    break;
-                }
+        if (gamePlayerController == null
+            || gamePlayerController.weaponPrimary == null
+            || gamePlayerController.weaponPrimary.gameWeaponData == null) {
+            return;
+        }
 
-                if (gamePlayerController.weaponPrimary == null) {
-                    break;
-                }
+        string code = gamePlayerController.weaponPrimary.gameWeaponData.code;
 
-                if (gamePlayerController.weaponPrimary.gameWeaponData == null) {
-                    break;
-                }
+        // Build the name once per weapon rather than concatenating a fresh string on
+        // every shot of an auto weapon.
 
-                particleSystem.name = "projectile-" + gamePlayerController.weaponPrimary.gameWeaponData.code;
+        if (projectileEffectName == null || projectileEffectCode != code) {
+            projectileEffectCode = code;
+            projectileEffectName = "projectile-" + code;
+        }
+
+        // ...and apply it once per pooled bullet rather than once per shot. The old code
+        // allocated a GetComponentsInChildren array and wrote a native name on every
+        // particle system every time the gun fired -- for an object that is recycled and
+        // already carries the name from its last life.
+
+        GameProjectileEffect effect = bullet.GetComponent<GameProjectileEffect>();
+
+        if (effect == null) {
+            effect = bullet.AddComponent<GameProjectileEffect>();
+        }
+
+        if (effect.HasName(projectileEffectName)) {
+            return;
+        }
+
+        ParticleSystem[] particles = effect.GetParticles();
+
+        for (int i = 0; i < particles.Length; i++) {
+
+            if (particles[i] != null) {
+                particles[i].name = projectileEffectName;
             }
         }
+
+        effect.appliedName = projectileEffectName;
     }
 
     private int currentOuter = 0;
+
+    private void ApplyEffectsVolume() {
+
+        if (audio == null) {
+            return;
+        }
+
+        if (cachedEffectsVolume < 0f
+            || Time.time - cachedEffectsVolumeTime >= effectsVolumeRefreshSeconds) {
+
+            cachedEffectsVolume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+            cachedEffectsVolumeTime = Time.time;
+        }
+
+        // AudioSource.volume is a native setter; skip it when nothing moved.
+
+        if (audio.volume != cachedEffectsVolume) {
+            audio.volume = cachedEffectsVolume;
+        }
+    }
 
     public void Shoot() {
 
@@ -343,9 +427,13 @@ public class GameWeaponLauncher : GameWeaponBase {
 
         if (Ammo > 0) {
 
-            if (Time.time > nextFireTime + FireRate) {
+            // FireRate is the interval between shots. The old gate compared against
+            // nextFireTime + FireRate and then also added FireRate to nextFireTime,
+            // so every weapon actually fired at half its authored rate.
 
-                nextFireTime = Time.time;
+            if (Time.time >= nextFireTime) {
+
+                nextFireTime = Time.time + FireRate;
                 torqueTemp = TorqueSpeedAxis;
                 Ammo -= 1;
 
@@ -384,23 +472,54 @@ public class GameWeaponLauncher : GameWeaponBase {
 
                     if (Missile) {
 
-                        Vector3 spread = new Vector3(
-                            Random.Range(-Spread, Spread),
-                            Random.Range(-Spread, Spread),
-                            Random.Range(-Spread, Spread)) / 100;
+                        // Spread is a cone around the barrel, built from the weapon's
+                        // own right/up axes. The old version offset all three WORLD
+                        // axes, so how much a weapon scattered depended on which way
+                        // the player happened to be facing, and the world-forward
+                        // component only changed the vector's length.
 
-                        Vector3 direction = this.transform.forward + spread;
+                        Vector2 spread = Random.insideUnitCircle * (Spread / 100f);
+
+                        // AIM FROM THE ACTOR, NOT THE BARREL. The weapon hangs off the model's
+                        // right-hand BONE (the `weapon` mount) with its local rotation zeroed by
+                        // LoadWeapon, so this.transform.forward is the hand's animated pose --
+                        // measured live on character-bot-mega-2 facing (0,0,-1), the barrel read
+                        // 8deg, then 40deg, then 61deg off the actor's facing across a single idle
+                        // cycle. Firing along it sent bullets off at whatever angle the animation
+                        // happened to be holding. The spread cone still uses the weapon's own
+                        // right/up axes, which is what keeps scatter independent of facing.
+                        Vector3 aimForward = this.transform.forward;
+
+                        if (gamePlayerController == null) {
+                            gamePlayerController = gameObject.FindTypeAboveRecursive<GamePlayerController>();
+                        }
+
+                        if (gamePlayerController != null) {
+                            aimForward = gamePlayerController.GetAttackDirection();
+                        }
+
+                        Vector3 direction = (aimForward
+                            + (this.transform.right * spread.x)
+                            + (this.transform.up * spread.y)).normalized;
 
                         GameObject bullet = GameObjectHelper.CreateGameObject(
                             Missile, missileposition, missilerotate, true);
 
                         NameEffect(bullet);
 
+                        // AIM FIRST, THEN say it is launched. This assignment used to come after
+                        // the OnLaunched call below, which is fine for a projectile that flies
+                        // (it reads its own transform later, by which time it is aimed) but wrong
+                        // for a HITSCAN one: GameRayShoot casts its ray inside OnLaunched, so it
+                        // was casting along the pre-spread rotation the pool spawned it with.
+                        bullet.transform.forward = direction;
+
                         GameDamageBase damageBase = bullet.GetComponent<GameDamageBase>();
 
                         if (damageBase) {
                             damageBase.gamePlayerController = gamePlayerController;
                             damageBase.TargetTag = TargetTag;
+                            damageBase.OnLaunched();
                         }
 
                         GameWeaponBase weaponBase = bullet.GetComponent<GameWeaponBase>();
@@ -411,15 +530,43 @@ public class GameWeaponLauncher : GameWeaponBase {
                             weaponBase.TargetTag = TargetTag;
                         }
 
-                        bullet.transform.forward = direction;
+                        // TWO FIELDS OF THE SAME NAME, ON TWO DIFFERENT OBJECTS. This one -- the
+                        // LAUNCHER's -- decides whether to apply a launch impulse. The bullet's own
+                        // GameMoverBullet.RigidbodyProjectile decides whether physics drives it: when
+                        // that is FALSE the mover overwrites linearVelocity with forward * Speed in
+                        // every FixedUpdate, so an impulse (and the player-velocity inheritance below)
+                        // survives exactly one physics step and can only ever be a TELEPORT.
+                        //
+                        // ForceShoot 20000 / mass 1 with ForceMode.Force is 400 m/s for one 0.02s
+                        // step = 8 m of free travel (measured 8.03 / 7.76 / 6.63), and
+                        // projectile-normal's Rigidbody is Discrete, so that step is not swept:
+                        // every bullet from the minigun and the shotgun skipped the first 8 m and
+                        // passed straight through anything standing in it. Invisible at the old
+                        // ~400 m/s cruise; five steps' worth at the authored 80 m/s.
+                        //
+                        // Weapons whose projectile really is physics-driven (projectile-cannon) or
+                        // has no mover at all (projectile-ray, projectile-grenade) are untouched --
+                        // for them the impulse IS the motion.
+                        GameMoverBullet bulletMover = bullet.GetComponent<GameMoverBullet>();
 
-                        if (RigidbodyProjectile) {
+                        bool bulletIsVelocityDriven
+                            = bulletMover != null && !bulletMover.RigidbodyProjectile;
+
+                        if (RigidbodyProjectile && !bulletIsVelocityDriven) {
 
                             if (bullet.Has<Rigidbody>()) {
 
                                 Rigidbody rigid = bullet.Get<Rigidbody>();
 
                                 if (rigid != null) {
+
+                                    // A pooled bullet arrives carrying whatever velocity
+                                    // it had when it was recycled. Start it at rest, or
+                                    // the impulse below is added to a leftover vector and
+                                    // the shot leaves at an arbitrary angle.
+
+                                    rigid.linearVelocity = Vector3.zero;
+                                    rigid.angularVelocity = Vector3.zero;
 
                                     if (gamePlayerController != null
                                         && gamePlayerController.gameObject.GetRigidbody()) {
@@ -452,13 +599,15 @@ public class GameWeaponLauncher : GameWeaponBase {
                 }
 
                 if (SoundGun.Length > 0) {
-                    if (audio) {
-                        audio.volume = (float)GameProfiles.Current.GetAudioEffectsVolume();
+                    if (audio
+                        && Time.time - lastGunSoundTime >= gunSoundMinInterval) {
+
+                        lastGunSoundTime = Time.time;
+
+                        ApplyEffectsVolume();
                         audio.PlayOneShot(SoundGun[Random.Range(0, SoundGun.Length)]);
                     }
                 }
-
-                nextFireTime += FireRate;
             }
         }
 

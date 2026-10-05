@@ -34,6 +34,32 @@ namespace Engine.Game.Actor {
         Vector3 currentShadowPosition = Vector3.zero;
         Vector3 lastShadowPosition = Vector3.zero.WithY(-1);
 
+        // Both of these were resolved EVERY frame, per actor: LayerMask.NameToLayer is a string
+        // lookup into the layer table and Camera.main is a scene query. Neither answer changes
+        // while the level is up, so resolve each once and keep it.
+        //
+        // -1 is the "not resolved yet" marker; NameToLayer itself returns -1 for a layer that does
+        // not exist, in which case the shifted mask would be meaningless, so that case is held to
+        // the same retry path rather than being cached as a bad value.
+        static int terrainMaskCached = -1;
+        Camera shadowCamera;
+
+        static int GetTerrainMask() {
+
+            if (terrainMaskCached == -1) {
+
+                int layer = LayerMask.NameToLayer("GameGround");
+
+                if (layer < 0) {
+                    return 0;
+                }
+
+                terrainMaskCached = 1 << layer;
+            }
+
+            return terrainMaskCached;
+        }
+
         private void Start() {
 
         }
@@ -106,7 +132,11 @@ namespace Engine.Game.Actor {
                         //Debug.Log("ActorShadow scaleChange:" + scaleChange);
                     }
 
-                    if (gamePlayerObject.IsRenderersVisibleByCamera(Camera.main)) {
+                    if (shadowCamera == null) {
+                        shadowCamera = Camera.main;
+                    }
+
+                    if (gamePlayerObject.IsRenderersVisibleByCamera(shadowCamera)) {
 
                         //if (gamePlayerController.IsAgentState()) {
                         //Debug.Log("ActorShadow IsRenderersVisibleByCamera:gamePlayerController.IsAgentState:" + gamePlayerController.IsAgentState());
@@ -122,7 +152,7 @@ namespace Engine.Game.Actor {
                         Vector3 bottomPoint = objectParent.transform.position - Vector3.up * 1;
                         Vector3 collisionVector = bottomPoint - topPoint;
 
-                        int terrainMask = 1 << LayerMask.NameToLayer("GameGround");
+                        int terrainMask = GetTerrainMask();
 
                         if (Physics.Raycast(topPoint, collisionVector, out hit, 100.0f, terrainMask)) {
                             surfaceNormal = hit.normal;

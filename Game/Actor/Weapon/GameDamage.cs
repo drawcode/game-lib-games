@@ -24,6 +24,13 @@ public class GameDamage : GameDamageBase {
         initialTimeActive = TimeActive;
     }
 
+    // Set once Active() has run for this life. The object is not recycled immediately
+    // (the effect and trail need to finish), so without this a projectile that is still
+    // sitting in the world keeps re-triggering on further contacts -- spawning another
+    // effect and queueing another delayed recycle each time.
+
+    private bool spent = false;
+
     private void Reset() {
         Explosive = initialExplosive;
         ExplosionRadius = initialExplosiveRadius;
@@ -31,6 +38,7 @@ public class GameDamage : GameDamageBase {
         HitedActive = initialHitedActive;
         TimeActive = initialTimeActive;
         Explosive = initialExplosive;
+        spent = false;
     }
 
     private void Start() {
@@ -38,15 +46,49 @@ public class GameDamage : GameDamageBase {
         Reset();
 
         timetemp = Time.time;
+    }
 
-        if (!gamePlayerController || !gamePlayerController.collider)
-            return;
+    private Collider ignoredShooterCollider = null;
 
-        if (!collider.enabled || !gamePlayerController.collider.enabled) {
+    public override void OnLaunched() {
+
+        timetemp = Time.time;
+
+        // Physics.IgnoreCollision is a persistent property of the collider PAIR, and
+        // this object is pooled. Setting it in Start was doubly wrong: Start is re-sent
+        // before the launcher assigns gamePlayerController, so it paired against the
+        // PREVIOUS shooter, and the pairing was never undone -- a bullet accumulated
+        // ignores against every actor that had ever fired it and eventually flew
+        // straight through them.
+
+        Collider self = collider;
+
+        if (self == null) {
             return;
         }
 
-        Physics.IgnoreCollision(collider, gamePlayerController.collider);
+        if (ignoredShooterCollider != null) {
+
+            if (self.enabled && ignoredShooterCollider.enabled) {
+                Physics.IgnoreCollision(self, ignoredShooterCollider, false);
+            }
+
+            ignoredShooterCollider = null;
+        }
+
+        if (gamePlayerController == null) {
+            return;
+        }
+
+        Collider shooter = gamePlayerController.collider;
+
+        if (shooter == null || !shooter.enabled || !self.enabled) {
+            return;
+        }
+
+        Physics.IgnoreCollision(self, shooter, true);
+
+        ignoredShooterCollider = shooter;
     }
 
     private void Update() {
@@ -59,6 +101,12 @@ public class GameDamage : GameDamageBase {
     }
 
     public void Active() {
+
+        if (spent) {
+            return;
+        }
+
+        spent = true;
 
         if (!GameDamageDirector.AllowExplosion) {
             GameObjectHelper.DestroyGameObject(gameObject);
@@ -77,11 +125,25 @@ public class GameDamage : GameDamageBase {
         GameObjectHelper.DestroyGameObject(gameObject, 3, true);
     }
 
+    // Reused across explosions so the overlap query stops allocating a fresh array each
+    // time. Sized well above what an explosion radius of a few units can overlap; if it
+    // ever saturates the surplus is reported rather than silently dropped.
+    private static readonly Collider[] explosionHits = new Collider[128];
+
     private void ExplosionDamage() {
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, ExplosionRadius);
-        for (int i = 0; i < hitColliders.Length; i++) {
-            Collider hit = hitColliders[i];
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            transform.position, ExplosionRadius, explosionHits);
+
+        if (hitCount >= explosionHits.Length) {
+            LogUtil.LogWarning(
+                "GameDamage:ExplosionDamage: overlap buffer saturated at "
+                + explosionHits.Length + ", some targets may be missed. Radius: "
+                + ExplosionRadius);
+        }
+
+        for (int i = 0; i < hitCount; i++) {
+            Collider hit = explosionHits[i];
             if (!hit)
                 continue;
 
@@ -99,12 +161,14 @@ public class GameDamage : GameDamageBase {
         HandleApplyDamage(other);
     }
 
-    GameDamageManager damageManage = null;
-
     public void HandleApplyDamage(GameObject go) {
-        if (damageManage == null) {
-            damageManage = go.GetComponent<GameDamageManager>();
-        }
+
+        // Resolve per target. This object is pooled and reused, and an
+        // explosion applies damage to many targets in one pass, so the
+        // manager must never be cached across calls.
+
+        GameDamageManager damageManage = go.GetComponent<GameDamageManager>();
+
         if (damageManage != null) {
             if (damageManage.gamePlayerController != null && gamePlayerController != null) {
                 if (damageManage.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
@@ -123,30 +187,39 @@ public class GameDamage : GameDamageBase {
 
         bool doDamage = false;
 
-        if (other.transform.name == "GamePlayerCollider") {
-            GamePlayerCollision gamePlayerCollision =
-                other.Get<GamePlayerCollision>();
-            if (gamePlayerCollision != null) {
+        // Detect actor hit areas by component, not by object name. Character
+        // prefabs shared with other games do not always name them
+        // "GamePlayerCollider".
 
-                if (gamePlayerController == null) {
-                    return;
-                }
+        GamePlayerCollision gamePlayerCollision =
+            other.GetComponent<GamePlayerCollision>();
 
-                if (gamePlayerCollision.gamePlayerController == null) {
-                    return;
-                }
+        if (gamePlayerCollision != null) {
 
-                if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
-                    return;
-                }
-                else {
-                    doDamage = true;
-                }
+            if (gamePlayerController == null) {
+                return;
+            }
+
+            if (gamePlayerCollision.gamePlayerController == null) {
+                return;
+            }
+
+            if (gamePlayerCollision.gamePlayerController.uniqueId == gamePlayerController.uniqueId) {
+                return;
+            }
+            else {
+                doDamage = true;
             }
         }
 
-        if (other.tag != "Particle" && other.tag != "Player"
-            && other.tag != this.gameObject.tag) {
+        // GameObject.tag marshals a NEW string on every read -- four of them per
+        // projectile impact here. CompareTag reads none. The last test still reads
+        // this object's own tag, because it compares against ANOTHER object's tag
+        // and there is no allocation-free overload for that; three of the four are
+        // gone.
+
+        if (!other.CompareTag("Particle") && !other.CompareTag("Player")
+            && !other.CompareTag(this.gameObject.tag)) {
 
             doDamage = true;
         }

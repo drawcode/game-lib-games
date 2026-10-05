@@ -94,7 +94,13 @@ public class BaseGameActor : BaseGameObjectItem {
 		//}
 //
 		
-		LogUtil.Log("isMoving:" + isMoving);
+		// The two LogUtil.Log calls that were here ran EVERY frame, per actor. LogUtil checks
+		// loggingEnabled INSIDE the call, so the interpolated string was built and thrown away
+		// even with logging off -- per-frame garbage in a shipped build. Kept behind the flag so
+		// the diagnostic is still reachable, with the string built only when it is wanted.
+		if (LogUtil.loggingEnabled) {
+			LogUtil.Log("isMoving:" + isMoving);
+		}
 		
 		Vector3 acceleration = Vector3.zero;
         int i = 0;
@@ -103,7 +109,9 @@ public class BaseGameActor : BaseGameObjectItem {
             acceleration += accEvent.acceleration * accEvent.deltaTime;
             ++i;
         }
-		LogUtil.Log("acceleration:" + acceleration);
+		if (LogUtil.loggingEnabled) {
+			LogUtil.Log("acceleration:" + acceleration);
+		}
 		
 	}
 	

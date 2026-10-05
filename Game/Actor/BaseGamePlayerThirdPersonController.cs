@@ -70,6 +70,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     // The current x-z move speed
     public float moveSpeed = 0.0f;
 
+    // Resolved once, in the move path below, rather than per frame.
+    private CharacterController characterControllerCached;
+
     // The last collision flags returned from controller.Move
     public CollisionFlags collisionFlags;
 
@@ -121,6 +124,11 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
     public bool slideButton = false;
     public bool getUserInput = false;
     public bool isNetworked = false;
+
+    // The actor this drives, set by BaseGamePlayerController when it attaches this component.
+    // The run read is a global input, so only the player-controlled actor may act on it; null
+    // (a game that never sets it) keeps the legacy behaviour of every actor reading it.
+    public BaseGamePlayerController ownerController;
     //
     public Vector3 targetDirection = Vector3.zero;
     public Vector3 movementDirection = Vector3.zero;
@@ -142,6 +150,16 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
     public virtual void Init() {
         controllerData = new GamePlayerThirdPersonControllerData();
+    }
+
+    // Holding run used to speed up every actor with this component, bots included.
+    bool IsRunHeldForThis() {
+
+        if (ownerController != null && !ownerController.IsPlayerControlled) {
+            return false;
+        }
+
+        return GameInputActions.IsRunHeld();
     }
 
     public virtual void UpdateSmoothedMovementDirection() {
@@ -253,7 +271,7 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
             var targetSpeed = Mathf.Min(targetDirection.magnitude, 1.0f);
 
             // Pick speed modifier
-            if (Input.GetButton("Fire3")) {
+            if (IsRunHeldForThis()) {
                 targetSpeed *= runSpeed;
             }
             else if (Time.time - trotAfterSeconds > walkTimeStart) {
@@ -488,8 +506,22 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         }
 
         if (!GameConfigs.isGameRunning) {
+
+            // Everything below this gate stops running the moment the round ends, so whatever
+            // the pads and the movement integrator were holding at that instant is STILL held
+            // when the next round starts: the player actor is scene-resident and is not rebuilt
+            // between levels. A finger on the move pad as the level ends therefore spawns the
+            // replay already walking, which reads as a residual force. Let go once on the way
+            // out instead of latching it.
+            if (!releasedForNotRunning) {
+                releasedForNotRunning = true;
+                ReleaseInputAndMotion();
+            }
+
             return;
         }
+
+        releasedForNotRunning = false;
 
         //base.Update();
 
@@ -534,8 +566,20 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         Vector3 movement = moveDirection * (moveSpeed * (1 - verticalInput2 / 10)) + new Vector3(0, verticalSpeed, 0) + inAirVelocity;
         movement *= Time.deltaTime;
 
-        // Move the controller
-        CharacterController controller = GetComponent<CharacterController>();
+        // Move the controller.
+        //
+        // Cached: this was a GetComponent every frame, per actor. The component is on this same
+        // GameObject and does not change over the actor's life; a pooled actor coming back keeps
+        // the same one. Re-resolved if it is ever missing so a null cache cannot latch.
+        if (characterControllerCached == null) {
+            characterControllerCached = GetComponent<CharacterController>();
+        }
+
+        CharacterController controller = characterControllerCached;
+
+        if (controller == null) {
+            return;
+        }
         wallJumpContactNormal = Vector3.zero;
 
         //if(!isNetworked) {
@@ -660,6 +704,51 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
         jumping = false;
         sliding = false;
         //transform.position = Vector3.zero;
+
+        ReleaseInputAndMotion();
+    }
+
+    // True while the not-running release has already been applied, so it runs once per
+    // stop rather than every frame the game is not running.
+    bool releasedForNotRunning = false;
+
+    // Drop every piece of carried motion and every latched axis. Called when the round stops
+    // and again when the actor is reset for a new one, so a replay always begins at a
+    // standstill no matter which of the two paths a given flow takes.
+    public virtual void ReleaseInputAndMotion() {
+
+        horizontalInput = 0f;
+        verticalInput = 0f;
+        horizontalInput2 = 0f;
+        verticalInput2 = 0f;
+
+        jumpButton = false;
+        slideButton = false;
+        lastJumpButtonTime = -10f;
+        lastSlideButtonTime = -10f;
+
+        moveSpeed = 0f;
+        verticalSpeed = 0f;
+        inAirVelocity = Vector3.zero;
+
+        targetDirection = Vector3.zero;
+        movementDirection = Vector3.zero;
+        aimingDirection = Vector3.zero;
+
+        collisionFlags = CollisionFlags.None;
+        isMoving = false;
+        movingBack = false;
+        jumping = false;
+        jumpingReachedApex = false;
+        sliding = false;
+        walkTimeStart = Time.time;
+
+        // moveDirection is the facing, not a velocity -- UpdateSmoothedMovementDirection only
+        // ever rotates it and Quaternion.LookRotation needs it non-zero, so keep it a unit
+        // vector rather than zeroing it with the rest.
+        if (moveDirection.sqrMagnitude < .0001f) {
+            moveDirection = transform.TransformDirection(Vector3.forward);
+        }
     }
 
     public virtual void MoveTo(Vector3 move, bool local = true) {

@@ -44,12 +44,14 @@ public class GameObjectCallToAction : GameObjectBehavior {
 
     void AnimateScale() {
 
-#if USE_EASING_LEANTWEEN
-        LeanTween.scale(gameObject, Vector3.one * scale, scaleTime)
-            .setEase(LeanTweenType.easeInOutQuad)
-            .setLoopPingPong()
-            .setOnComplete(onScaleComplete);
-#endif
+        // stopCurrent false: rotate and scale pingPong on this object concurrently.
+        // Infinite pingPong never completes, so onScaleComplete stays unwired —
+        // LeanTween's setOnComplete never fired on pingPong loops either.
+        TweenMeta meta = TweenUtil.GetMetaDefault(
+            TweenLib.internalEasing, gameObject, scaleTime, 0f, false,
+            TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
+
+        TweenUtil.ScaleToObject(meta, Vector3.one * scale);
     }
 
     void onScaleComplete() {
@@ -66,12 +68,11 @@ public class GameObjectCallToAction : GameObjectBehavior {
 
     void AnimateRotate() {
 
-#if USE_EASING_LEANTWEEN
-        LeanTween.rotateLocal(gameObject, Vector3.zero.WithZ(rotate), rotateTime)
-            .setEase(LeanTweenType.easeInOutQuad)
-            .setLoopPingPong()
-            .setOnComplete(onRotateComplete);
-#endif
+        TweenMeta meta = TweenUtil.GetMetaDefault(
+            TweenLib.internalEasing, gameObject, rotateTime, 0f, false,
+            TweenCoord.local, TweenEaseType.quadEaseInOut, TweenLoopType.pingPong);
+
+        TweenUtil.RotateToObject(meta, Vector3.zero.WithZ(rotate));
     }
 
     void onRotateComplete() {

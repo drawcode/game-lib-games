@@ -102,7 +102,10 @@ public class GameDraggableEditor : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelButtonGameEdit;
 #else
-    public GameObject labelButtonGameEdit;
+    // B11.1: agnostic UIRef handle (was a bare GameObject, written through UIUtil's GameObject
+    // overload). Not serialized and unwired today; the toolkit HUD EDIT button (B11.2) owns its
+    // own label.
+    public Engine.UI.UIRef labelButtonGameEdit = Engine.UI.UIRef.none;
 #endif
 
     public void Awake() {
@@ -273,6 +276,12 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         Messenger<TapGesture>.RemoveListener(FingerGesturesMessages.OnDoubleTap,
             FingerGestures_OnDoubleTap);
+
+        // B11.1: the editor sheets' views can be built for panels that never woke up (the
+        // shipping scene keeps EditorContainer inactive), and Unity sends no OnDisable/OnDestroy
+        // to an object that was never awake -- so this, the one always-active editor object, is
+        // the teardown that releases them.
+        FreeEditorToolkitViews();
     }
 
     void OnEditStateHandler(GameDraggableEditEnum state) {
@@ -296,14 +305,20 @@ public class GameDraggableEditor : GameObjectBehavior {
             ShowUIPanelEditAssetButton();
             ShowUIPanelEditAsset();
         }
+        // B11 owner round 3: closing or saving a dialog brings the toolbar back (opening one hid
+        // it via HideAllEditDialogs / showUIPanelDialogItems). Items CLOSE and a USE pick already
+        // did (ShowUIPanelEditNow / ShowUIPanelEdit below).
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaSave) {
             HideUIPanelDialogMeta();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaClose) {
             HideUIPanelDialogMeta();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditItemsSave) {
             HideUIPanelDialogItems();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditItemsClose) {
             HideUIPanelDialogItems();
@@ -341,6 +356,9 @@ public class GameDraggableEditor : GameObjectBehavior {
 
 
 #if USE_GAME_LIB_GAMES_UI
+                // A toolkit row pick can come from a dark editor, whose sheet never set Instance.
+                ResolveEditorPanels();
+
                 if (UIPanelEditAsset.Instance.actionState != UIPanelEditAssetActionState.NONE) {
 
                     if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
@@ -941,9 +959,53 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public bool IsInputAllowed() {
         if (isEditing) {
+
+            // B11.1 POINTER GUARD: a gesture on a toolkit control (the editor's own sheets, the
+            // HUD) is the control's, not the level's. See IsPointerOverEditorUI.
+            if (isPointerPressOnUI() || IsPointerOverEditorUI(Input.mousePosition)) {
+                return false;
+            }
+
             return true;
         }
         return false;
+    }
+
+    // ----------------------------------------------------------------------
+    // B11.1 POINTER GUARD
+    //
+    // The editor reads the world straight off Input (a Physics.Raycast from Camera.main in grab,
+    // FingerGestures for the rest). The legacy editor sheets were NGUI, whose own UICamera ate the
+    // touch; a UI Toolkit view is not in the physics scene at all, so without this every tap on
+    // a toolkit button or slider ALSO grabs/drags/creates whatever level item is behind it.
+    //
+    // Two questions, the BaseGameController finger-navigate split: BY POSITION (UIPlatform.
+    // IsPointerOverUI -- a pickable toolkit element under the point) for where a press STARTS,
+    // and BY POINTER (IsInputHeldByUI) for a control that has captured it. Backend-agnostic:
+    // NGUIBackend answers false to both, so an all-NGUI product -- and this one with the kill
+    // switch off -- takes exactly the old path.
+
+    public static bool IsPointerOverEditorUI(Vector2 screenPos) {
+        return Engine.UI.UIPlatform.IsInputHeldByUI(Engine.UI.UIPlatform.mouseInputId)
+            || Engine.UI.UIPlatform.IsPointerOverUI(screenPos);
+    }
+
+    // Latched for the whole press, decided on its first frame. A slider drag starts on the
+    // slider and wanders off its rect, and toolkit sliders do not report a held pointer (only
+    // sticks do), so a per-frame position test would hand the rest of that drag to Grab the
+    // moment the thumb left the track. One pick per press, not per frame.
+    bool pointerPressStartedOnUI = false;
+
+    public bool isPointerPressOnUI() {
+
+        if (Input.GetMouseButtonDown(0)) {
+            pointerPressStartedOnUI = IsPointerOverEditorUI(Input.mousePosition);
+        }
+        else if (!Input.GetMouseButton(0)) {
+            pointerPressStartedOnUI = false;
+        }
+
+        return pointerPressStartedOnUI;
     }
 
     public void EditPlay() {
@@ -951,6 +1013,19 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         // Save to current level data...            
         SaveCurrentLevel();
+
+        // B11 owner round 3: the toolbar PLAY also leaves edit mode, exactly as the HUD PLAY
+        // (ButtonGameEdit -> EditEnable toggle) does -- label, editingEnabled, toolbar + dialogs.
+        if (GameDraggableEditor.isEditing) {
+            EditEnable();
+        }
+    }
+
+    // Only while still editing: a dialog closed by leaving edit mode must not bring it back.
+    void RestoreUIPanelEditAfterDialog() {
+        if (GameDraggableEditor.isEditing) {
+            ShowUIPanelEdit();
+        }
     }
 
     public void EditMeta() {
@@ -1025,11 +1100,18 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     // Toggles drag with mouse click
     public void updateToggleDrag() {
+
+        // B11.1 pointer guard: a press on a toolkit control neither toggles the grab nor drags the
+        // toggled item under it.
+        bool pressOnUI = isPointerPressOnUI();
+
         if (Input.GetMouseButtonDown(0)) {
-            Grab();
+            if (!pressOnUI) {
+                Grab();
+            }
         }
         else {
-            if (grabbed) {
+            if (grabbed && !pressOnUI) {
                 Drag();
             }
         }
@@ -1045,6 +1127,13 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     // Drags when user holds down button
     public void updateHoldDrag() {
+
+        // B11.1 pointer guard: the whole press belongs to the toolkit control it started on. The
+        // release branch below still runs (the latch clears once the button is up).
+        if (isPointerPressOnUI()) {
+            return;
+        }
+
         if (Input.GetMouseButton(0)) {
             if (grabbed) {
                 Drag();
@@ -1284,6 +1373,13 @@ public class GameDraggableEditor : GameObjectBehavior {
         //LogUtil.Log("EditModeCreateAsset");
         if (GameDraggableEditor.isEditing) {
             // add game draggable edit selected asset code if on
+
+            // B11.1 pointer guard. The choke point for BOTH double-tap creators: this class's
+            // DoubleTap (already behind IsInputAllowed) and Engine InputSystem.DoubleTap, which
+            // calls EditModeCreateAsset straight off the gesture with no UI test of its own.
+            if (IsPointerOverEditorUI(fingerPos)) {
+                return;
+            }
 
             //LogUtil.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
 
@@ -1910,6 +2006,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditToolsObject, 0f, Vector3.zero.WithY(0));
             TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(0), 0f);
         }
+
+        ToolkitShowEditTools();
     }
 
     public static void ShowUIPanelEdit() {
@@ -1923,6 +2021,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditToolsObject, .3f, Vector3.zero.WithY(0));
             TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(0), .3f);
         }
+
+        ToolkitShowEditTools();
 
         //HideHUD();
     }
@@ -1940,6 +2040,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditToolsObject, Vector3.zero.WithY(960), .3f);
         }
 
+        ToolkitHideEditTools();
+
         //ShowHUD();
     }
 
@@ -1952,6 +2054,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void showUIPanelEditAsset() {
 
 #if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
         UIPanelEditAsset.Instance.LoadData();
 #endif
 
@@ -1959,6 +2063,11 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditAssetObject, .3f, Vector3.zero.WithY(0));
             TweenUtil.MoveToObject(gameEditAssetObject, Vector3.zero.WithY(0), .3f);
         }
+
+        ToolkitShowEditAsset();
+
+        editAssetSheetShown = true;
+
         HideUIPanelEditAssetButton();
     }
 
@@ -1986,6 +2095,10 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditAssetObject, Vector3.zero.WithY(-960), .3f);
         }
 
+        ToolkitHideEditAsset();
+
+        editAssetSheetShown = false;
+
         //ShowHUD();
     }
 
@@ -2002,6 +2115,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditAssetButtonObject, Vector3.zero.WithY(0), .3f);
         }
 
+        ToolkitShowEditAssetButton();
+
         //HideHUD();
     }
 
@@ -2017,6 +2132,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditAssetButtonObject, Vector3.zero.WithY(960), .3f);
         }
 
+        ToolkitHideEditAssetButton();
+
         //ShowHUD();
     }
 
@@ -2026,12 +2143,31 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
     }
 
+    // B11.2: the TOOLKIT HUD EDIT button's state, read (not pushed) by BaseGameHUD every frame its
+    // view is up, so a view that loads late or is rebuilt picks the state up without a replay.
+    //
+    // editButtonRequested follows ShowUIPanelEditButton/HideUIPanelEditButton -- the calls
+    // BaseGameController makes at prepare/start while allowedEditing. editAssetSheetShown follows
+    // the asset sheet: the scene wires gameEditAssetButtonObject to the legacy HUD ButtonGameEdit,
+    // so legacy hides EDIT while the sheet is open, and the toolkit button mirrors exactly that.
+    // It deliberately does NOT mirror the other HideUIPanelEditAssetButton callers (EditPlay,
+    // leaving edit mode, the round reset): through that wire the legacy EDIT button is parked
+    // off-screen from the first reset on and only returns on a grab, so mirroring it 1:1 would
+    // leave the toolkit button unreachable. Owner B11 O1: visible to everyone, on request.
+    public static bool editButtonRequested = false;
+    public static bool editAssetSheetShown = false;
+
+    // B11.1: no toolkit call here. The EDIT button is the HUD's (BaseGameHUD + panel-hud view,
+    // B11.2): the toolkit HUD suppresses its legacy ButtonGameEdit and the view must carry a
+    // ButtonGameEdit of its own, shown while BaseGameController allows editing. Its click already
+    // reaches EditEnable by name.
     public void showUIPanelEditButton() {
         if (gameEditButtonObject != null) {
             //TweenPosition.Begin(gameEditButtonObject, .3f, Vector3.zero.WithY(0));
             TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(0), .3f);
         }
 
+        editButtonRequested = true;
     }
 
     public static void HideUIPanelEditButton() {
@@ -2046,6 +2182,7 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(960), .3f);
         }
 
+        editButtonRequested = false;
     }
 
     public static bool SetDialogState(bool active) {
@@ -2074,6 +2211,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         GameDraggableEditor.HideAllEditDialogs();
 
 #if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
         if (UIPanelDialogEditMeta.isInst) {
             UIPanelDialogEditMeta.Instance.LoadData();
         }
@@ -2085,6 +2224,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditDialogMetaObject, .3f, Vector3.zero.WithX(0));
             TweenUtil.MoveToObject(gameEditDialogMetaObject, Vector3.zero.WithY(0), .3f);
         }
+
+        ToolkitShowDialogMeta();
     }
 
     public static void HideUIPanelDialogMeta() {
@@ -2098,6 +2239,9 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditDialogMetaObject, 0f, Vector3.zero.WithX(3000));
             TweenUtil.MoveToObject(gameEditDialogMetaObject, Vector3.zero.WithY(3000), 0f);
         }
+
+        ToolkitHideDialogMeta();
+
         SetDialogState(false);
     }
 
@@ -2114,6 +2258,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         GameDraggableEditor.editingEnabled = !dialogActive;
 
 #if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
         if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.NONE) {
             HideAllEditDialogs();
         }
@@ -2123,7 +2269,11 @@ public class GameDraggableEditor : GameObjectBehavior {
             if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
                 UIPanelDialogEditItems.Instance.filterType = UIPanelDialogEditItemsFilter.levelAssets;
             }
-            else if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_ITEM) {
+            // B11.1 (defect 1): this branch tested SELECT_ITEM a second time, so it could never run
+            // and the destroy-effect picker listed level assets. With it fixed the effect filter is
+            // live, and UIPanelDialogEditItemsFilter.Matches lets it select the catalog's actual
+            // "effects" key (defect 2).
+            else if (UIPanelEditAsset.Instance.actionState == UIPanelEditAssetActionState.SELECT_EFFECT) {
                 UIPanelDialogEditItems.Instance.filterType = UIPanelDialogEditItemsFilter.levelEffect;
             }
             else {
@@ -2138,6 +2288,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             //TweenPosition.Begin(gameEditDialogItemsObject, .3f, Vector3.zero.WithX(0));
             TweenUtil.MoveToObject(gameEditDialogItemsObject, Vector3.zero.WithY(0), .3f);
         }
+
+        ToolkitShowDialogItems();
 
         HideUIPanelEdit();
     }
@@ -2154,7 +2306,199 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditDialogItemsObject, Vector3.zero.WithY(3000), 0f);
         }
 
+        ToolkitHideDialogItems();
+
         SetDialogState(false);
+    }
+
+    // ----------------------------------------------------------------------
+    // UI TOOLKIT (B11.1)
+    //
+    // Every show*/hide* above keeps its legacy position tween untouched and then drives the
+    // matching sheet's toolkit view. The sheets are games-ui types, hence USE_GAME_LIB_GAMES_UI
+    // (the same gate as the existing UIPanelEditAsset / UIPanelDialogEdit* calls here).
+    //
+    // A panel's ShowEditorView only REQUESTS its view: with the kill switch off, or no view for
+    // the key in this product, nothing loads and nothing changes -- the legacy sheet is the sheet.
+    //
+    // ResolveEditorPanels exists because in the shipping scene the sheets never wake up
+    // (GameSceneDynamic keeps EditorContainer inactive), so their Awake never set Instance and
+    // the existing `UIPanelEditAsset.Instance.actionState` reads would throw the moment a toolkit
+    // button reached them. It finds them under this object (inactive included) and fills the
+    // empty Instance slots -- ONLY with the toolkit path on, so a kill-switched or all-NGUI
+    // session sees exactly the old (unset) statics. A product whose sheets do wake up already has
+    // them set, and this changes nothing.
+
+#if USE_GAME_LIB_GAMES_UI
+    UIPanelEditTools editorPanelTools;
+    UIPanelEditAsset editorPanelAsset;
+    UIPanelDialogEditMeta editorPanelMeta;
+    UIPanelDialogEditItems editorPanelItems;
+#endif
+
+    public void ResolveEditorPanels() {
+
+#if USE_GAME_LIB_GAMES_UI
+        if (!Engine.UI.UIPlatform.toolkitViewsEnabled) {
+            return;
+        }
+
+        if (editorPanelTools == null) {
+            editorPanelTools = UIPanelEditTools.Instance != null
+                ? UIPanelEditTools.Instance : GetComponentInChildren<UIPanelEditTools>(true);
+        }
+
+        if (editorPanelAsset == null) {
+            editorPanelAsset = UIPanelEditAsset.Instance != null
+                ? UIPanelEditAsset.Instance : GetComponentInChildren<UIPanelEditAsset>(true);
+        }
+
+        if (editorPanelMeta == null) {
+            editorPanelMeta = UIPanelDialogEditMeta.Instance != null
+                ? UIPanelDialogEditMeta.Instance : GetComponentInChildren<UIPanelDialogEditMeta>(true);
+        }
+
+        if (editorPanelItems == null) {
+            editorPanelItems = UIPanelDialogEditItems.Instance != null
+                ? UIPanelDialogEditItems.Instance : GetComponentInChildren<UIPanelDialogEditItems>(true);
+        }
+
+        if (UIPanelEditTools.Instance == null && editorPanelTools != null) {
+            UIPanelEditTools.Instance = editorPanelTools;
+        }
+
+        if (UIPanelEditAsset.Instance == null && editorPanelAsset != null) {
+            UIPanelEditAsset.Instance = editorPanelAsset;
+        }
+
+        if (UIPanelDialogEditMeta.Instance == null && editorPanelMeta != null) {
+            UIPanelDialogEditMeta.Instance = editorPanelMeta;
+        }
+
+        if (UIPanelDialogEditItems.Instance == null && editorPanelItems != null) {
+            UIPanelDialogEditItems.Instance = editorPanelItems;
+        }
+#endif
+    }
+
+    void ToolkitShowEditTools() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelTools != null) {
+            editorPanelTools.ShowEditorView();
+        }
+#endif
+    }
+
+    void ToolkitHideEditTools() {
+#if USE_GAME_LIB_GAMES_UI
+        if (editorPanelTools != null) {
+            editorPanelTools.HideEditorView();
+        }
+#endif
+    }
+
+    // The EDIT ASSET button lives IN the toolbar view (GameEditTools/.../GameEditAssetButton),
+    // so it is a state on the toolbar panel rather than a view of its own.
+    void ToolkitShowEditAssetButton() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelTools != null) {
+            editorPanelTools.ShowAssetToolsButton();
+        }
+#endif
+    }
+
+    void ToolkitHideEditAssetButton() {
+#if USE_GAME_LIB_GAMES_UI
+        if (editorPanelTools != null) {
+            editorPanelTools.HideAssetToolsButton();
+        }
+#endif
+    }
+
+    void ToolkitShowEditAsset() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelAsset != null) {
+            editorPanelAsset.ShowEditorView();
+        }
+#endif
+    }
+
+    void ToolkitHideEditAsset() {
+#if USE_GAME_LIB_GAMES_UI
+        if (editorPanelAsset != null) {
+            editorPanelAsset.HideEditorView();
+        }
+#endif
+    }
+
+    void ToolkitShowDialogMeta() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelMeta != null) {
+            editorPanelMeta.ShowEditorView();
+        }
+#endif
+    }
+
+    void ToolkitHideDialogMeta() {
+#if USE_GAME_LIB_GAMES_UI
+        if (editorPanelMeta != null) {
+            editorPanelMeta.HideEditorView();
+        }
+#endif
+    }
+
+    void ToolkitShowDialogItems() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelItems != null) {
+            editorPanelItems.ShowEditorView();
+        }
+#endif
+    }
+
+    void ToolkitHideDialogItems() {
+#if USE_GAME_LIB_GAMES_UI
+        if (editorPanelItems != null) {
+            editorPanelItems.HideEditorView();
+        }
+#endif
+    }
+
+    // Only the panels this editor resolved (it never searches during teardown). A sheet that
+    // woke up frees its own view from its OnDisable as well; Free is idempotent.
+    //
+    // ReferenceEquals for the three UIAppPanel sheets: on a scene unload a dark sheet may already
+    // read as destroyed (Unity's ==) while its view and its toolkit-owned Messenger subscription
+    // are still live, and their Free paths touch only managed state for exactly that case. The
+    // items dialog's Free is UIPanelBase's, which is not written for a destroyed host, so it keeps
+    // the Unity test.
+    void FreeEditorToolkitViews() {
+#if USE_GAME_LIB_GAMES_UI
+        if (!ReferenceEquals(editorPanelTools, null)) {
+            editorPanelTools.FreeEditorView();
+        }
+
+        if (!ReferenceEquals(editorPanelAsset, null)) {
+            editorPanelAsset.FreeEditorView();
+        }
+
+        if (!ReferenceEquals(editorPanelMeta, null)) {
+            editorPanelMeta.FreeEditorView();
+        }
+
+        if (editorPanelItems != null) {
+            editorPanelItems.FreeEditorView();
+        }
+#endif
     }
 
     // ----------------------------------------------------------------------

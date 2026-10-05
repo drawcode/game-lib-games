@@ -2330,10 +2330,18 @@ List<string> codes = new List<string>();
         yield return null;
     }
 
+    // Off by default: SetStatisticValue runs for every stat write during a round (several keys
+    // per score event, at least once a second), and the concatenation and boxing happen before
+    // LogUtil's own switch is checked -- which is on in every build anyway. Measured ~800 B/frame
+    // of log string, stack-trace and console write in a live round (gameplay iter 26).
+    public static bool logStatisticValues = false;
+
     public virtual void SetStatisticValue(bool sendToGameverses, string key, object keyValue) {
         if (keyValue != null) {
 
-            LogUtil.Log("SetStatisticValue:" + key + " :" + keyValue);
+            if (logStatisticValues) {
+                LogUtil.Log("SetStatisticValue:" + key + " :" + keyValue);
+            }
 
             GameProfileStatistics.Current.SetStatisticValue(key, keyValue);
 

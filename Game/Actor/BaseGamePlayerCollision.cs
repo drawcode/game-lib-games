@@ -24,7 +24,13 @@ public class BaseGamePlayerCollision : GameObjectBehavior {
         }
 
         if (gameDamageManager == null) {
-            gameDamageManager = gameObject.GetOrSet<GameDamageManager>();
+
+            // Must live on this same object: damage is applied by looking the
+            // manager up on the collider that was hit, so a manager found on a
+            // child would leave this hit area doing nothing.
+
+            gameDamageManager = gameObject.GetOrSet<GameDamageManager>(false);
+
             gameDamageManager.UpdateGameObjects();
         }
     }

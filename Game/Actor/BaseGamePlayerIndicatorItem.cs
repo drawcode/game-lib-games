@@ -2,10 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-#else
-using UnityEngine.UI;
-#endif
 
 public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
 
@@ -14,7 +10,9 @@ public class BaseGamePlayerIndicatorItem : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelValue;
 #else
-    public Text labelValue;
+    // B10: agnostic UIRef handles (was UGUI), the BaseGameHUD pattern. Unbound (null) until
+    // something binds them by name; every UIUtil call no-ops on a null ref.
+    public Engine.UI.UIRef labelValue;
 #endif
     public GameObject containerEffects;
     public GameObject backerObject;

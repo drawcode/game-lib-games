@@ -14,6 +14,27 @@ public class BaseGameActorShadow : GameObjectBehavior {
 	public Vector3 surfaceRightVector;
 	public Vector3 surfaceForwardVector;
 
+	// LayerMask.NameToLayer is a string lookup and this ran every frame, per actor. The answer
+	// cannot change while the level is up. -1 marks "not resolved yet"; NameToLayer also returns
+	// -1 for a missing layer, which must NOT be cached as a mask, so it retries instead.
+	static int terrainMaskCached = -1;
+
+	static int GetTerrainMask() {
+
+		if (terrainMaskCached == -1) {
+
+			int layer = LayerMask.NameToLayer("Terrain");
+
+			if (layer < 0) {
+				return 0;
+			}
+
+			terrainMaskCached = 1 << layer;
+		}
+
+		return terrainMaskCached;
+	}
+
 	public virtual void Start() {
 
 	}
@@ -33,7 +54,7 @@ public class BaseGameActorShadow : GameObjectBehavior {
 			Vector3 bottomPoint = objectParent.transform.position - Vector3.up * 1;
 			Vector3 collisionVector = bottomPoint - topPoint;
 
-			int terrainMask = 1 << LayerMask.NameToLayer("Terrain");
+			int terrainMask = GetTerrainMask();
 			if (Physics.Raycast(topPoint, collisionVector, out hit, 100.0f, terrainMask)) {
 				surfaceNormal = hit.normal;
 

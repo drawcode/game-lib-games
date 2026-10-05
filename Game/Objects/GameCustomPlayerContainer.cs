@@ -160,6 +160,31 @@ public class GameCustomPlayerContainer : MonoBehaviour {
         initialized = true;
     }
 
+    // The easing keys were concatenated from the 36-char uuid on every Update, twice per container
+    // per frame (~648 B/frame measured across the live containers, gameplay iter 26). Built once,
+    // and rebuilt only if uuid is ever reassigned.
+    string easingKeysUuid;
+    string easingKeyScale;
+    string easingKeyRotation;
+
+    void EnsureEasingKeys() {
+        if (!ReferenceEquals(easingKeysUuid, uuid)) {
+            easingKeysUuid = uuid;
+            easingKeyScale = "scale-" + uuid;
+            easingKeyRotation = "rotation-" + uuid;
+        }
+    }
+
+    string KeyScale() {
+        EnsureEasingKeys();
+        return easingKeyScale;
+    }
+
+    string KeyRotation() {
+        EnsureEasingKeys();
+        return easingKeyRotation;
+    }
+
     public void UpdateScale() {
 
         if (containerPlayerDisplay == null) {
@@ -174,7 +199,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             return;
         }
 
-        string keyScale = "scale-" + uuid;
+        string keyScale = KeyScale();
 
         if (AnimationEasing.EaseExists(keyScale)) {
 
@@ -228,7 +253,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
             return;
         }
 
-        string keyScale = "scale-" + uuid;
+        string keyScale = KeyScale();
 
         //Debug.Log("HandleContainerScale:" + " valStart:" + valStart + " valEnd:" + valEnd);
 
@@ -265,7 +290,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
 
         containerRotator.ResetRigidBodiesVelocity();
 
-        string keyRotation = "rotation-" + uuid;
+        string keyRotation = KeyRotation();
 
         //Debug.Log("HandleContainerRotation:" + " valStart:" + valStart + " valEnd:" + valEnd);
 
@@ -314,7 +339,7 @@ public class GameCustomPlayerContainer : MonoBehaviour {
                 rotateObject.RotateSpeedAlongY = 2;
             }
 
-            string keyRotation = "rotation-" + uuid;
+            string keyRotation = KeyRotation();
 
             if (AnimationEasing.EaseExists(keyRotation)) {
 

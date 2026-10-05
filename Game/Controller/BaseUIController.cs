@@ -213,6 +213,7 @@ public class BaseUIPanel {
     public static string panelClassNameSettingsProfile = "GameUIPanelSettingsProfile";
     public static string panelClassNameSettingsHelp = "GameUIPanelSettingsHelp";
     public static string panelClassNameSettingsCredits = "GameUIPanelSettingsCredits";
+    public static string panelClassNameSettingsLanguage = "GameUIPanelSettingsLanguage";
     public static string panelClassNameGameMode = "GameUIPanelGameMode";
     public static string panelClassNameGameModeCoop = "GameUIPanelGameModeCoop";
     public static string panelClassNameGameModeMultiplayer = "GameUIPanelGameModeMultiplayer";
@@ -269,6 +270,7 @@ public class BaseUIPanel {
     public static string panelInGame = "panel-in-game";
     public static string panelHeader = "panel-header";
     public static string panelFooter = "panel-footer";
+    public static string panelLoader = "panel-loader";
     public static string panelNavigation = "panel-navigation";
     public static string panelMenu = "panel-menu";
     public static string panelMain = "panel-main";
@@ -279,11 +281,22 @@ public class BaseUIPanel {
     public static string panelHUD = "panel-hud";
     //
     public static string panelSettings = "panel-settings";
-    public static string panelSettingsAudio = "panel-settings-Audio";
-    public static string panelSettingsControls = "panel-settings-Controls";
-    public static string panelSettingsProfile = "panel-settings-profile";
+    // FIX (2026-07-13, tween-flip regression triage): these three codes did not match
+    // their AppContentAsset data/prefab codes ("panel-settings-Audio"/"-Controls" had
+    // stray capitals; "panel-settings-profile" was singular vs the data's plural
+    // "panel-settings-profiles"). AppContentAssets.LoadAssetUI resolves codes via an
+    // exact-match lookup, so every one of these silently returned null and
+    // syncPanelLoaded never parented anything into UIContainer -- the panel was never
+    // instantiated, hence "header + background render, all content absent" for these
+    // three sub-panels specifically. This is a pre-existing (2018-07-10) data bug,
+    // unrelated to the tween backend; verified via a direct runtime LoadAssetUI probe
+    // during this session (see context-tween-backend-design.md gate learning #9).
+    public static string panelSettingsAudio = "panel-settings-audio";
+    public static string panelSettingsControls = "panel-settings-controls";
+    public static string panelSettingsProfile = "panel-settings-profiles";
     public static string panelSettingsHelp = "panel-settings-help";
     public static string panelSettingsCredits = "panel-settings-credits";
+    public static string panelSettingsLanguage = "panel-settings-language";
     //
     public static string panelGameMode = "panel-game-mode";
     public static string panelGameModeCoop = "panel-game-mode-coop";
@@ -304,6 +317,18 @@ public class BaseUIPanel {
     public static string panelGameModeTrainingModeContent = "panel-game-mode-training-mode-content";
     public static string panelGameModeTrainingModeRPGHealth = "panel-game-mode-training-mode-rpg-health";
     public static string panelGameModeTrainingModeRPGEnergy = "panel-game-mode-training-mode-rpg-energy";
+    // B4 (2026-10-03): the training sub-screens' prefab codes, ADDITIVE. The two above them are
+    // wrong and kept for compatibility: panelGameModeTrainingModeChoice is "...-choice" (the
+    // prefab is "...-choice-quiz"), and panelGameModeTrainingModeCollection duplicates it (there
+    // are two collection prefabs, -safety and -smarts). The quiz/collection names carry a "Code"
+    // suffix because the app's GameUIPanel already declares panelGameModeTrainingModeChoiceQuiz /
+    // CollectionSmarts / CollectionSafety (PascalCase values, not prefab codes) and would hide a
+    // same-named field here. Each doubles as the panel's toolkit view key.
+    public static string panelGameModeTrainingModeTips = "panel-game-mode-training-mode-tips";
+    public static string panelGameModeTrainingModeTipsControls = "panel-game-mode-training-mode-tips-controls";
+    public static string panelGameModeTrainingModeChoiceQuizCode = "panel-game-mode-training-mode-choice-quiz";
+    public static string panelGameModeTrainingModeCollectionSafetyCode = "panel-game-mode-training-mode-collection-safety";
+    public static string panelGameModeTrainingModeCollectionSmartsCode = "panel-game-mode-training-mode-collection-smarts";
     //
     public static string panelStore = "panel-store";
     public static string panelCredits = "panel-credits";
@@ -329,9 +354,62 @@ public class BaseUIPanel {
     public static string panelCustomizeAudio = "panel-customize-audio";
     public static string panelCustomSafety = "panel-custom-safety";
     public static string panelCustomSmarts = "panelcustom-smarts";
+    // B7 (2026-10-03): the smarts prefab's real code, ADDITIVE. panelCustomSmarts above is missing
+    // the hyphen ("panelcustom-smarts") and is kept untouched for compatibility; the prefab (and so
+    // AppContentAssets.LoadAssetUI / syncPanelLoaded's name match) is "panel-custom-smarts". The
+    // "Code" suffix follows B4's naming for corrected keys. Doubles as the toolkit view key
+    // (Resources/ui/views/panel-custom-smarts.uxml). panelCustomSafety is already right.
+    public static string panelCustomSmartsCode = "panel-custom-smarts";
     //
     public static string panelCommunityCamera = "panel-community-camera";
+    public static string panelCommunityShare = "panel-community-share";
+    public static string panelCommunityBroadcast = "panel-community-broadcast";
+    public static string panelCommunityBackground = "panel-community-background";
     public static string panelCommunityComment = "panel-community-comment";
+    //
+    // 3F dialogs: the pause overlay and the modal dialog family are scene-resident singletons
+    // (UIPanelPause / UIPanelDialogBackground / UIPanelDialogDisplay), not catalog-loaded, so they
+    // had no panel-key. A key is only needed as the toolkit view-key (Resources/ui/views/<key>).
+    public static string panelPause = "panel-pause";
+    public static string panelDialogDisplay = "panel-dialog-display";
+    public static string panelDialogBackground = "panel-dialog-background";
+    //
+    // B3: the RPG stat dialogs (UIPanelDialogRPGEnergy / Health / Defense, all on
+    // UIPanelDialogRPGObject). Scene-resident like the three above and they share ONE layout, so
+    // this single key names the one view they all load (Resources/ui/views/panel-dialog-rpg.uxml).
+    public static string panelDialogRPG = "panel-dialog-rpg";
+    //
+    // The level-load prepare/tips overlay (the M.A.N. 9000 screen). Scene-resident like the
+    // three above, so this key exists ONLY to name its toolkit view
+    // (Resources/ui/views/panel-overlay-prepare.uxml).
+    public static string panelOverlayPrepare = "panel-overlay-prepare";
+    public static string panelOverviewMode = "panel-overview-mode";
+    //
+    // B5: the in-game mode overlays, the overview's siblings under GamePanelModes. Scene-resident,
+    // so these ONLY name views. The quiz cards are one layout: UIPanelModeTypeChoice and
+    // UIPanelModeTypeCollection both load panel-mode-type-choice; the tutorial's view is those
+    // cards plus its Steps strip; the controls overlay (no panel script in the scene) is its own.
+    public static string panelModeTypeChoice = "panel-mode-type-choice";
+    public static string panelModeTypeTutorial = "panel-mode-type-tutorial";
+    public static string panelModeTypeControls = "panel-mode-type-controls";
+    //
+    // 3G: the notification toast. Same shape as the three above — UINotificationDisplay is a
+    // prefab-resident singleton (Prefabs/Panels/UIOverlay.prefab), never catalog-loaded, so this
+    // key exists ONLY to name its toolkit view (Resources/ui/views/panel-notification.uxml).
+    public static string panelNotification = "panel-notification";
+    //
+    // B2: the bottom TIP toast ("Weapon Loaded: ..."). Same shape again: UINotificationDisplayTip
+    // is scene-resident (GameSceneDynamic UILoad/.../AnchorBottom/BottomContainer), never
+    // catalog-loaded, so this key ONLY names its view (Resources/ui/views/panel-notification-tip.uxml).
+    public static string panelNotificationTip = "panel-notification-tip";
+    //
+    // B11: the level editor. Same shape again: the four sheets live in UIEditor.prefab under
+    // GameDraggableEditor (scene-resident, never catalog-loaded), so these keys ONLY name their
+    // views (Resources/ui/views/<key>). A product without the view stays on its NGUI sheet.
+    public static string panelLevelEditorTools = "panel-level-editor-tools";
+    public static string panelLevelEditorAsset = "panel-level-editor-asset";
+    public static string panelLevelEditorMeta = "panel-level-editor-meta";
+    public static string panelLevelEditorItems = "panel-level-editor-items";
     //
     //
     public static string panelAR = "panel-ar";
@@ -579,7 +657,20 @@ public class BaseUIController : GameObjectBehavior {
 
     public IEnumerator showUIPanelActionsCo(string objName, string panelCode, string title) {
 
+        // This coroutine spans several WaitForEndOfFrame yields, so a level start can land
+        // MID-FLIGHT. Without these checks it goes on to re-show the header (ShowTitle below) and
+        // animate the menu screen back IN — after hidePanelsForLevelLoad, and potentially after
+        // onGameStarted -> hideUI — leaving menu chrome sitting on top of gameplay. Toolkit views
+        // composite above the ENTIRE NGUI camera stack, so that chrome also covered the NGUI
+        // prepare/loader overlay ("header and old screens cover the loader", 2026-07-20).
+        int token = menuChromeToken;
+
         yield return new WaitForEndOfFrame();
+
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
 
         AnalyticsNetworks.LogEventSceneChange(panelCode, title);
 
@@ -604,9 +695,19 @@ public class BaseUIController : GameObjectBehavior {
 
         yield return new WaitForEndOfFrame();
 
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
+
         broadcastUIMessageAnimateIn(objName); // animate in
 
         yield return new WaitForEndOfFrame();
+
+        if (token != menuChromeToken) {
+            abortPanelShow(panelCode);
+            yield break;
+        }
 
         // TODO base
         GameCustomController.BroadcastCustomSync();
@@ -638,6 +739,42 @@ public class BaseUIController : GameObjectBehavior {
 
         foreach (UIPanelBase baseItem in FindObjectsOfType(typeof(UIPanelBase))) {
             baseItem.AnimateOut();
+        }
+    }
+
+    // Put the toolkit menu chrome (the always-on header + whatever menu screen is up) away EARLY —
+    // the moment the level-load/prepare overlay appears — instead of waiting for the late
+    // onGameStarted -> hideUI. A toolkit view draws above the ENTIRE NGUI camera stack, so the NGUI
+    // UIPanelOverlayPrepare loader would otherwise be COVERED by the still-shown header + menu until
+    // gameplay actually starts (2026-07-20 user report: "header and old screens cover the loader").
+    // This is ONLY the visual hide — no camera teardown, no in-game audio swap, no HUD — so it can't
+    // trip the "Backgrounds inactive" camera-ordering race, and the later hideUI stays idempotent.
+    // Call this BEFORE showing the prepare overlay so the overlay itself isn't hidden by it.
+    public virtual void hidePanelsForLevelLoad() {
+        menuChromeToken++;   // aborts any in-flight showUIPanelActionsCo (see there)
+        GameUIPanelHeader.ShowNone();
+        HideAllPanelsNow();
+
+        // Every panel is hidden now, so none is current. currentPanel doubles as showUIPanel's
+        // "already showing" dedup guard, and abortPanelShow only releases it for a show still in
+        // flight: Results -> CONTINUE went straight into the next level with currentPanel still
+        // "panel-results", so that round's Results show was swallowed and the game soft-locked on a
+        // blank screen (P gate, both paths).
+        currentPanel = "";
+    }
+
+    // Bumped whenever menu chrome is put away for a level load. A menu-panel show that was already
+    // in flight compares against it and aborts instead of re-showing chrome over the game.
+    private int menuChromeToken = 0;
+
+    // A level start superseded this menu-panel show. currentPanel was claimed up front in
+    // showUIPanel (before the coroutine ran), and it doubles as the "already showing" dedup guard —
+    // so it has to be released here, or navigating back to the SAME panel after the level would be
+    // silently swallowed and leave the screen blank.
+    private void abortPanelShow(string panelCode) {
+
+        if (currentPanel == panelCode) {
+            currentPanel = "";
         }
     }
 
@@ -750,7 +887,8 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelSettingsControls)
                     || isUIPanel(GameUIPanel.panelSettingsHelp)
                     || isUIPanel(GameUIPanel.panelSettingsCredits)
-                    || isUIPanel(GameUIPanel.panelSettingsProfile)) {
+                    || isUIPanel(GameUIPanel.panelSettingsProfile)
+                    || isUIPanel(GameUIPanel.panelSettingsLanguage)) {
 
 #if ENABLE_FEATURE_SETTINGS
                     GameUIController.ShowSettings();
@@ -945,11 +1083,17 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void hideUI(bool now) {
 
-        //LogUtil.Log("HideUI");  
+        //LogUtil.Log("HideUI");
 
         uiVisible = false;
 
         showGameCanvas();
+
+        // The header lives under always-on, which HideAllPanels deliberately skips — under NGUI
+        // that was harmless because the loading screen drew over it by depth. A toolkit header
+        // draws above ALL cameras, so it must be explicitly put away when gameplay takes over or
+        // it lingers on top of the load screen.
+        GameUIPanelHeader.ShowNone();
 
         if (now) {
             HideAllPanelsNow();
@@ -975,6 +1119,19 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void showUI() {
         //LogUtil.Log("ShowUI");
         uiVisible = true;
+
+        // Leaving gameplay for the menus. Cooldown-guarded rather than forced, because
+        // showUI() is also how showMain/showResults get here and a player can bounce
+        // between screens far faster than a collection is worth.
+        //
+        // Delayed by the settle time because AnimateIn() below starts a tween on the very
+        // next frame. Undelayed, the collect landed one frame into that animation -- a
+        // safe point in the sense that nothing is being aimed at, but a visible stutter on
+        // the transition itself, which is the one place this was supposed to hide.
+
+        MemoryUtil.CollectAtSafePoint(
+            "ui-show", false, MemoryUtil.uiTransitionSettleSeconds);
+
         hideGameCanvas();
         HandleInUIAudio();
 
@@ -1291,8 +1448,13 @@ public class BaseUIController : GameObjectBehavior {
             typeof(GameUIPanelAR));
     }
 
+#endif
+
+#if ENABLE_FEATURE_VR
+
     // ------------------------------------------------------------
-    // VR
+    // VR (own define since 2026-10-04: these sat inside the AR block, so VR-only did not compile
+    // and an AR-only build referenced the VR-only GameUIPanelVRSettings)
 
     //public static virtual void ShowVRSettings() {
     //   if(isInst) {
@@ -1908,6 +2070,26 @@ public class BaseUIController : GameObjectBehavior {
         hideUIPanel(
             BaseUIPanel.panelClassNameSettingsCredits
             //typeof(GameUIPanelSettingsCredits)
+            );
+    }
+
+#endif
+
+#if ENABLE_FEATURE_SETTINGS_LANGUAGE
+
+    // ------------------------------------------------------------
+    // SETTINGS - LANGUAGE
+
+    public virtual void showSettingsLanguage() {
+        showUIPanel(
+            BaseUIPanel.panelClassNameSettingsLanguage,
+            GameUIPanel.panelSettingsLanguage,
+            "SETTINGS: LANGUAGE");
+    }
+
+    public virtual void hideSettingsLanguage() {
+        hideUIPanel(
+            BaseUIPanel.panelClassNameSettingsLanguage
             );
     }
 
@@ -2537,14 +2719,21 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void OnButtonClickObjectEventHandler(
         GameObject buttonObject) {
 
-        Debug.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
+        // These two were raw Debug.Log on the CLICK path, so they ran in shipping builds: ~0.4ms
+        // each with ScriptOnly stack traces (measured), and the second one built the string by
+        // serialising the button's data dictionary to JSON whether or not anything read it —
+        // argument evaluation happens before the call. LogUtil.Log is gated on loggingEnabled, and
+        // the ToJson now happens inside that gate.
+        LogUtil.Log("OnButtonClickObjectEventHandler:" + buttonObject.name);
 
         Dictionary<string, object> data = new Dictionary<string, object>();
 
         if (buttonObject.Has<GameObjectData>()) {
             data = buttonObject.Get<GameObjectData>().ToDictionary();
 
-            Debug.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
+            if (LogUtil.loggingEnabled) {
+                LogUtil.Log("OnButtonClickObjectEventHandler:" + " data:" + data.ToJson());
+            }
 
             //OnButtonClickDataEventHandler(buttonObject.name, data);
 
@@ -3117,6 +3306,25 @@ public class BaseUIController : GameObjectBehavior {
 
                 if (dataAppContentState != null) {
                     // TODO check content state validity
+                    GameController.ChangeGameStates(dataAppContentState);
+                }
+            }
+
+            // Toolkit bridge fallback (list wave): toolkit list rows carry the play payload
+            // $-encoded in the ELEMENT NAME (ButtonGamePlay$<appContentState>$<missionCode>,
+            // written by loadDataMissionsToolkit) because VisualElements have no
+            // GameObjectData — the name-only click bus is the only channel.
+            if (dataType == null
+                && UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay + "$", buttonName)) {
+
+                string[] segments = buttonName.Split('$');
+
+                if (segments.Length >= 3) {
+
+                    dataType = BaseDataObjectKeys.mission;
+                    dataCode = segments[2];
+                    dataAppContentState = segments[1];
+
                     GameController.ChangeGameStates(dataAppContentState);
                 }
             }

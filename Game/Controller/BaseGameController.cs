@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -85,6 +85,16 @@ public class BaseGameController : GameObjectTimerBehavior {
     public float defaultLevelTime = 90;
     public string contentDisplayCode = "default";
     public bool isGameOver = false;
+
+    // Scaled-clock stamp of the last round-countdown tick. The countdown runs inside
+    // checkForGameOver, which is behind the IsTimerPerf gate, so it needs the time since the
+    // PREVIOUS tick and not the current frame's delta. Negative means "no tick yet".
+    // Time.time is the SCALED clock, so a pause (Time.timeScale = 0) costs the player nothing.
+    protected internal float lastGameTimeCountdown = -1f;
+    // A gap longer than this means the countdown was not running at all (level load, results,
+    // menus) rather than a slow tick, so it is not charged to the round.
+    protected internal float gameTimeCountdownGapLimit = 1f;
+
     public bool updateFingerNavigate = false;
 
     internal bool levelInitializing = false;
@@ -403,75 +413,158 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // PROPERTIES
 
+    // ALL THREE CHARACTER COUNTS COME OFF ONE SUBTREE WALK PER FRAME.
+    //
+    // BaseAIController.handleUpdate reads the enemy count and the sidekick count back to back,
+    // and its Update has no timer gate, so the two getters ran a full
+    // GetComponentsInChildren<GamePlayerController>() over every actor in the level -- two array
+    // allocations and two native walks -- every single frame. Same idiom as
+    // refreshLevelItemCounts below, one walk feeding all of them.
+    //
+    // characterActorsCount was childCount on the container, which is NOT a character count: the
+    // actors container also holds the spawned ITEMS (loadItemCo parents them here) and keeps
+    // pooled characters as deactivated children. Measured live it read 14 against 6 live
+    // GamePlayerControllers. It now counts the same population its enemy/sidekick siblings do.
+
+    private int characterActorsCountCached = 0;
+    private int characterActorEnemyCountCached = 0;
+    private int characterActorSidekickCountCached = 0;
+    private int characterActorsCountFrame = -1;
+
+    public virtual void refreshLevelCharacterCounts() {
+
+        if (characterActorsCountFrame == Time.frameCount) {
+            return;
+        }
+
+        characterActorsCountFrame = Time.frameCount;
+        characterActorsCountCached = 0;
+        characterActorEnemyCountCached = 0;
+        characterActorSidekickCountCached = 0;
+
+        if (levelActorsContainerObject == null) {
+            return;
+        }
+
+        // No `true` argument on purpose, matching what the two getters did before and what
+        // refreshLevelItemCounts does: a pooled character is returned by deactivating it, and an
+        // inactive character is not in the level for a spawn budget's purposes.
+        foreach (GamePlayerController gamePlayerController in
+                levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+
+            characterActorsCountCached += 1;
+
+            // Two independent tests, not an else-if: the flags are read off controller state and
+            // nothing here guarantees they are mutually exclusive.
+            if (gamePlayerController.IsAgentControlled) {
+                characterActorEnemyCountCached += 1;
+            }
+
+            if (gamePlayerController.IsSidekickControlled) {
+                characterActorSidekickCountCached += 1;
+            }
+        }
+    }
+
     public int characterActorsCount {
         get {
-            return levelActorsContainerObject.transform.childCount;
+            refreshLevelCharacterCounts();
+
+            return characterActorsCountCached;
         }
     }
 
     public int characterActorEnemyCount {
         get {
+            refreshLevelCharacterCounts();
 
-            int countEnemies = 0;
-
-            foreach (GamePlayerController gamePlayerController in
-                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-
-                if (gamePlayerController.IsAgentControlled) {
-                    countEnemies += 1;
-                }
-            }
-
-            return countEnemies;
+            return characterActorEnemyCountCached;
         }
     }
 
     public int characterActorSidekickCount {
         get {
+            refreshLevelCharacterCounts();
 
-            int countEnemies = 0;
+            return characterActorSidekickCountCached;
+        }
+    }
 
-            foreach (GamePlayerController gamePlayerController in
-                    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
+    // THE ITEM DIRECTOR'S CAP DEPENDS ON THESE TWO.
+    //
+    // Both used to be stubs that returned a hard 0 with their bodies commented out. The item
+    // director gates every spawn on `spawnCount < spawnLimit`, and it reads spawnCount from here
+    // (BaseItemController.handleUpdate), so the gate was permanently open: it spawned an item AND
+    // a weapon on every periodic tick, forever, and nothing ever removed them.
+    //
+    // Measured live 2026-09-09 in a running round: spawnItemCount=0 against limit=3 while 8 real
+    // items were in the level; 10 director ticks took that to 28 and the counter never moved.
+    // Everything downstream scales with it -- an indicator per item, a tween per item, and the
+    // GC those produce.
+    //
+    // Level-authored items carry no type stamp and count toward the ITEM cap, not the weapon one.
+    // That is deliberate: the cap is meant to bound the item population of the level as a whole,
+    // so a level that already ships more items than its director's max simply spawns none until
+    // some are collected. Re-tune with the director min/max in the level data, not here.
 
-                if (gamePlayerController.IsSidekickControlled) {
-                    countEnemies += 1;
-                }
+    private int itemsCountCached = 0;
+    private int itemWeaponsCountCached = 0;
+    private float itemsCountTime = -1f;
+
+    // How stale these counts are allowed to get. The ONLY consumer is the item director's spawn
+    // gate (BaseItemController.handleUpdate feeds handlePeriodic), which decides roughly every
+    // 5-15 seconds, so a walk per frame was ~60x more often than anything could read a new
+    // answer. A second is still an order of magnitude fresher than the director needs.
+    internal float itemsCountInterval = 1f;
+
+    // One subtree walk per refresh, shared by both getters -- handleUpdate reads them back to
+    // back every frame, and this is a full GetComponentsInChildren over every actor in the level.
+    public virtual void refreshLevelItemCounts() {
+
+        // Chose a time throttle over keeping the count incrementally: spawn, collect, pool return
+        // and DestroyChildren would each have to stay in step with a running total forever, and a
+        // single missed decrement silently closes the spawn gate for the rest of the round.
+        // Re-walking is self-correcting and the walk is now rare.
+        if (itemsCountTime >= 0f
+           && Time.time - itemsCountTime < itemsCountInterval) {
+            return;
+        }
+
+        itemsCountTime = Time.time;
+        itemsCountCached = 0;
+        itemWeaponsCountCached = 0;
+
+        if (levelActorsContainerObject == null) {
+            return;
+        }
+
+        // No `true` argument on purpose: pooled items are returned by deactivating them, so an
+        // inactive item is a collected one and must not hold a slot against the cap.
+        foreach (BaseGamePlayerItem gamePlayerItem in
+                levelActorsContainerObject.GetComponentsInChildren<BaseGamePlayerItem>()) {
+
+            if (gamePlayerItem.itemType == GameItemType.weapon) {
+                itemWeaponsCountCached += 1;
             }
-
-            return countEnemies;
+            else {
+                itemsCountCached += 1;
+            }
         }
     }
 
     public int itemsCount {
         get {
-            int countItems = 0;
+            refreshLevelItemCounts();
 
-            //foreach (GamePlayerController gamePlayerController in 
-            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-
-            //    if (gamePlayerController.IsSidekickControlled) {
-            //        countItems += 1;
-            //    }
-            //}
-
-            return countItems;
+            return itemsCountCached;
         }
     }
 
     public int itemWeaponsCount {
         get {
-            int countWeapons = 0;
+            refreshLevelItemCounts();
 
-            //foreach (GamePlayerController gamePlayerController in 
-            //    levelActorsContainerObject.GetComponentsInChildren<GamePlayerController>()) {
-            //
-            //    if (gamePlayerController.IsSidekickControlled) {
-            //        countItems += 1;
-            //    }
-            //}
-
-            return countWeapons;
+            return itemWeaponsCountCached;
         }
     }
 
@@ -582,7 +675,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal virtual void OnGameItemDirectorData(GameItemData item) {
 
-        loadItem(item.code);
+        // Pass the DATA, not just the code. The director stamps the type it asked for (item /
+        // weapon) onto the message, and rebuilding a bare GameItemData from the code alone threw
+        // it away -- which left the spawned object with no way to say which cap it counts against.
+        loadItem(item);
     }
 
     // ---------------------------------------------------------------------
@@ -650,7 +746,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             return gamePlayerController;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        // GameObject.name marshals a NEW string out of native on every read, and this runs from
+        // collision contacts and per-agent action ticks. Read it once.
+        string goName = go.name;
+
+        if (goName.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
@@ -662,13 +762,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
 
-        if (gamePlayerController == null
-           && (go.name.Contains("Game")
-           || go.name.Contains("GamePlayerCollider"))) {
-            //&& (go.name.Contains("Helmet")
-            //|| go.name.Contains("Facemask"))) {
-
-            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+        // RESOLVED BY COMPONENT, not by name (2026-09-20). The two name lists here and in
+        // hasGamePlayerControllerObject did not agree and both were incomplete against the prefabs: the objects that carry
+        // GamePlayerCollision are named GamePlayerCollider, Helmet, Facemask and Main. A hit on a
+        // Helmet or Facemask passed hasGamePlayerControllerObject and then resolved to null in
+        // getGamePlayerControllerObject, so BaseGamePlayerItem.OnCollisionEnter saw true followed
+        // by null and the item silently failed to collect; a Main collider was missed by both.
+        // getGamePlayerControllerParent already answers null for anything without the component,
+        // so the name gate only ever excluded real player colliders.
+        if (gamePlayerController == null) {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
@@ -693,7 +795,10 @@ public class BaseGameController : GameObjectTimerBehavior {
             return false;
         }
 
-        if (go.name.Contains("GamePlayerObject")) {
+        // One marshalled string per call, as in getGamePlayerControllerObject above.
+        string goName = go.name;
+
+        if (goName.Contains("GamePlayerObject")) {
 
             gamePlayerController = getGamePlayerController(go);
 
@@ -705,12 +810,15 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
 
-        if (gamePlayerController == null
-           && (go.name.Contains("Game")
-           || go.name.Contains("Helmet")
-           || go.name.Contains("Facemask"))) {
-
-            //LogUtil.Log("GameObjectChoice:HelmetFacemask:" + go.name);
+        // RESOLVED BY COMPONENT, not by name (2026-09-20). The two name lists here and in
+        // getGamePlayerControllerObject did not agree and both were incomplete against the prefabs: the objects that carry
+        // GamePlayerCollision are named GamePlayerCollider, Helmet, Facemask and Main. A hit on a
+        // Helmet or Facemask passed hasGamePlayerControllerObject and then resolved to null in
+        // getGamePlayerControllerObject, so BaseGamePlayerItem.OnCollisionEnter saw true followed
+        // by null and the item silently failed to collect; a Main collider was missed by both.
+        // getGamePlayerControllerParent already answers null for anything without the component,
+        // so the name gate only ever excluded real player colliders.
+        if (gamePlayerController == null) {
 
             gamePlayerController = getGamePlayerControllerParent(go);
 
@@ -1183,8 +1291,80 @@ public class BaseGameController : GameObjectTimerBehavior {
             //    GameLevels.Instance.ChangeCurrentAbsolute("1-1");
             //}
 
+            // A level must never start with no app content state. AppModes is driven ONLY from
+            // AppContentStates.ChangeState (it reads the state's `key`), and everything the mode
+            // dispatch guards -- the countdown in checkForGameOver, the health game-over, the
+            // per-mode level items, the results scoring -- is silently skipped when no mode
+            // matches. The mode-select buttons do set it, but any route that reaches PLAY without
+            // passing one leaves it empty. Measured 2026-08-29: 90.000s still remaining after a
+            // level had been running for minutes, and the level could never end.
+            restoreAppContentStateIfUnset();
+
+            loadPlayerCharacterIfUnset();
+
             loadStartLevel();
         }
+    }
+
+    // The player actor is SCENE-RESIDENT (`currentGamePlayerController`, wired in the scene) and
+    // nothing on the level-start path ever initialises it. The only thing that does is tapping the
+    // player object on the main menu -- BaseGameUIPanelMain -> GameController
+    // .LoadCurrentProfileCharacter -> loadProfileCharacter -> changeCharacterModel ->
+    // ChangeCharacter, which is what sets ControllerPlayer + ContextInput and loads the model.
+    //
+    // Any route into a level that does not pass that tap leaves the actor ControllerNotSet /
+    // ContextNotSet with an empty model holder. `IsPlayerControlled` is then false, so
+    // LoadWeapon(code) returns at its own `if (!IsPlayerControlled)` guard and NOBODY IN THE LEVEL
+    // CARRIES A WEAPON -- measured 2026-08-29 in a live arcade level: zero GamePlayerWeapon
+    // components, six actors, all of them agents or sidekicks.
+    //
+    // Only ever fills in an UNINITIALISED player. A character the player chose is already the
+    // profile character this reloads, so a live actor is left alone.
+    public virtual void loadPlayerCharacterIfUnset() {
+
+        if (currentGamePlayerController == null) {
+            return;
+        }
+
+        bool characterLoaded
+            = currentGamePlayerController.gamePlayerModelHolderModel != null
+                && currentGamePlayerController.gamePlayerModelHolderModel.transform.childCount > 0;
+
+        if (currentGamePlayerController.IsPlayerControlled && characterLoaded) {
+            return;
+        }
+
+        LogUtil.Log("playGame: player actor is not initialised, loading the profile character");
+
+        loadCurrentProfileCharacter();
+    }
+
+    // The product's content state when nothing else has chosen one. Override per game.
+    public virtual string defaultAppContentStateCode {
+        get {
+            return AppContentStateMeta.appContentStateGameArcade;
+        }
+    }
+
+    // Only ever FILLS IN an empty content state -- it never overrides one the player's own
+    // navigation set, so a mode button still wins. The profile has persisted the last state all
+    // along (SetCurrentAppContentState, written from ChangeState) and nothing ever read it back;
+    // this is that read, with defaultAppContentStateCode as the last resort.
+    public virtual void restoreAppContentStateIfUnset() {
+
+        if (!string.IsNullOrEmpty(AppContentStates.Current.code)) {
+            return;
+        }
+
+        string code = GameProfiles.Current.GetCurrentAppContentState(defaultAppContentStateCode);
+
+        if (AppContentStates.Instance.GetByCode(code) == null) {
+            code = defaultAppContentStateCode;
+        }
+
+        LogUtil.Log("playGame: no app content state set, restoring:" + code);
+
+        changeGameStates(code);
     }
 
     public virtual void initLevel(string levelCode) {
@@ -1205,6 +1385,13 @@ public class BaseGameController : GameObjectTimerBehavior {
         //return;
 
 #if USE_GAME_LIB_GAMES_UI
+
+        // Put the toolkit menu chrome (header + previous menu screen) away NOW, before the loader
+        // shows. Toolkit views composite above the whole NGUI camera stack, so the NGUI prepare/
+        // loader overlay below would otherwise be covered by the header + menu until the late
+        // onGameStarted -> HideUI (2026-07-20 user report). Must run BEFORE ShowDefault so it does
+        // not hide the prepare overlay itself.
+        GameUIController.HidePanelsForLevelLoad();
 
         UIPanelOverlayPrepare.ShowDefault();
 
@@ -1286,31 +1473,67 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         Messenger<string>.Broadcast(GameMessages.gameInitLevelStart, levelCode);
 
-        yield return new WaitForSeconds(1f);
+        // REAL time. A scaled wait never finishes while Time.timeScale is 0, and everything below
+        // -- hiding the prepare overlay and releasing levelInitializing -- then never runs. A
+        // latched levelInitializing makes playGame() a silent no-op, so no further round could be
+        // started, Results' "continue" included (iter 25, items 21/22).
+        yield return new WaitForSecondsRealtime(1f);
 
-        if (currentGamePlayerController != null) {
-            currentGamePlayerController.PlayerEffectWarpFadeIn();
+        // The flag is released however this ends. A listener throwing in one of the broadcasts
+        // below would otherwise kill the coroutine with the flag still set. (A StopCoroutine skips
+        // a finally, which is why releaseLevelInitializing() is also called when a round starts
+        // and when it is quit.)
+        try {
+
+            // The round can already be running: a Ready that lands inside the wait above starts it.
+            // Bringing the white flash and the READY screen back up over live gameplay is how the
+            // prepare overlay stayed on screen for the whole round.
+            bool roundStarted = GameConfigs.isGameRunning;
+
+            if (currentGamePlayerController != null && !roundStarted) {
+                currentGamePlayerController.PlayerEffectWarpFadeIn();
+            }
+
+#if USE_GAME_LIB_GAMES_UI
+
+            if (!roundStarted) {
+                GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
+            }
+
+            UIPanelOverlayPrepare.HideAll();
+#endif
+
+            //UIPanelOverlayPrepare.Instance.HideStates();
+            //UIPanelOverlayPrepare.Instance.HideCamera();
+
+            Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
+
+            Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
+
+#if USE_GAME_LIB_GAMES_UI
+            if (!roundStarted) {
+                UIPanelOverviewMode.ShowDefault();
+            }
+#endif
         }
+        finally {
+            levelInitializing = false;
+        }
+    }
 
-#if USE_GAME_LIB_GAMES_UI
-
-        GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
-
-        UIPanelOverlayPrepare.HideAll();
-#endif
-
-        //UIPanelOverlayPrepare.Instance.HideStates();
-        //UIPanelOverlayPrepare.Instance.HideCamera();
-
-        Messenger<string>.Broadcast(GameMessages.gameInitLevelEnd, levelCode);
-
-        Messenger<string>.Broadcast(GameMessages.gameLevelStart, levelCode);
-
-#if USE_GAME_LIB_GAMES_UI
-        UIPanelOverviewMode.ShowDefault();
-#endif
+    // The level-load sequence is over, whether or not initLevelFinishCo got to the end. Called
+    // when the player readies the round (UIPanelOverviewMode.Ready), when it reaches Results, and
+    // when it is quit, so
+    // neither a stopped coroutine nor an out-of-order InitFinish/Ready can leave the next
+    // playGame() gated or the prepare overlay up. NOT from onGameStarted: that runs at level
+    // prepare, while the loader is still legitimately up waiting for its tap.
+    public virtual void releaseLevelInitializing() {
 
         levelInitializing = false;
+
+#if USE_GAME_LIB_GAMES_UI
+        UIPanelOverlayPrepare.HideAll();
+#endif
     }
 
     public virtual void startLevel(string levelCode) {
@@ -1773,6 +1996,18 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         if (spawnObj != null && levelActorsContainerObject != null) {
             spawnObj.transform.parent = levelActorsContainerObject.transform;
+
+            // Stamp what this was spawned as before anything else can see it. Pooled items are
+            // reused, so this overwrites whatever the previous life left behind rather than
+            // assuming a fresh object.
+            BaseGamePlayerItem spawnItem =
+                spawnObj.GetComponentInChildren<BaseGamePlayerItem>(true);
+
+            if (spawnItem != null) {
+                spawnItem.itemCode = data.code;
+                spawnItem.itemType = data.type;
+            }
+
             GamePlayerIndicator.AddIndicator(spawnObj, item.code);
         }
     }
@@ -1846,6 +2081,11 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (levelActorsContainerObject != null) {
             levelActorsContainerObject.DestroyChildren(GameConfigs.usePooledGamePlayers);
         }
+
+        // The level population just changed wholesale -- drop the cached counts rather than let
+        // the throttled item refresh hand the next round the last one's numbers.
+        itemsCountTime = -1f;
+        characterActorsCountFrame = -1;
     }
 
     public virtual void resetCurrentGamePlayer() {
@@ -1982,6 +2222,10 @@ public class BaseGameController : GameObjectTimerBehavior {
         runtimeData = new GameGameRuntimeData();
         runtimeData.ResetTime(defaultLevelTime);
         isGameOver = false;
+
+        // The countdown is a REAL elapsed-time subtraction now, so its stamp belongs to the round
+        // that is starting -- a stale one would bill the new round for the gap since the last.
+        lastGameTimeCountdown = -1f;
     }
 
     public virtual void handlePostLoadLevelAssetsGameplayType() {
@@ -2059,7 +2303,28 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //GameController.Reset();
 
+        // RELEASE THE GAME-OVER LATCH. checkForGameOver does all its work inside `if (!isGameOver)`,
+        // and nothing was clearing the flag: resetRuntimeData() is the only thing that sets it back
+        // to false, it is reached only from reset(), and the two calls to reset() on this path
+        // (here and in startGame) are both commented out. restartGame() calls it, which is why
+        // RESTARTING a level always worked.
+        //
+        // So the first round to end set isGameOver = true and it stayed true for the life of the
+        // process: the SECOND level played through to its end and then simply never asked for
+        // results -- no game over, no panel, the worlds backer left on screen. Exactly one line is
+        // needed here; calling the full reset() would also tear down the level actors and swap the
+        // runtime data, which is what the commented-out call was presumably avoiding.
+        isGameOver = false;
+
         Debug.Log("prepareGame:" + " levelCode:" + levelCode);
+
+        // Free the level being left BEFORE the next one's assets land, so the two never
+        // have to be resident at once. This is a loading screen -- a long frame here is
+        // invisible, and it is the cheapest memory the game will ever get. Forced,
+        // because a level load is worth a collection every single time and cannot be
+        // spammed the way a menu transition can.
+
+        MemoryUtil.CollectAtSafePoint("level-prepare-" + levelCode, true);
 
         loadLevelAssets(levelCode);
 
@@ -2078,11 +2343,37 @@ public class BaseGameController : GameObjectTimerBehavior {
         changeGameState(GameStateGlobal.GameContentDisplay);
     }
 
+    // Pause and resume only mean something inside a round that is still going. Resume ends in
+    // gameRunningStateRun(), which sets GameStarted unconditionally, so a pause tapped in the
+    // game-over -> Results window (the HUD button is still live there), or a ResumeGame() from a
+    // dialog closed at Results or the menu (community close, RPG health/energy), put a "running"
+    // state on top of the Results UI: GameStarted + uiVisible, isGameRunning false, HUD inactive,
+    // and nothing left to advance it. Seen by the UI toolkit track twice, iter 26.
+    public virtual bool isRoundPausable {
+        get {
+            if (isGameOver) {
+                return false;
+            }
+
+            return gameState != GameStateGlobal.GameNotStarted
+                && gameState != GameStateGlobal.GameResults
+                && gameState != GameStateGlobal.GameQuit;
+        }
+    }
+
     public virtual void pauseGame() {
+        if (!isRoundPausable) {
+            return;
+        }
+
         changeGameState(GameStateGlobal.GamePause);
     }
 
     public virtual void resumeGame() {
+        if (!isRoundPausable) {
+            return;
+        }
+
         changeGameState(GameStateGlobal.GameResume);
     }
 
@@ -2131,6 +2422,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         updateDirectors(false);
     }
 
+    readonly List<GameDataDirector> directorsMergedBase = new List<GameDataDirector>();
+
     public virtual void updateDirectors(bool run) {
 
         bool runAI = run;
@@ -2139,10 +2432,16 @@ public class BaseGameController : GameObjectTimerBehavior {
         if (run) {
 
             List<GameDataDirector> directorsLevels = GameLevels.Current.data.directors;
-            List<GameDataDirector> directors = GameWorlds.Current.data.directors;
+            List<GameDataDirector> directorsWorld = GameWorlds.Current.data.directors;
 
-            if (directors == null) {
-                directors = new List<GameDataDirector>();
+            // Merged into a scratch list: this used to AddRange the level's directors into the
+            // WORLD's own data list, which grew every round and let a level inherit the previous
+            // level's entries. The "only when the world has directors" rule is kept as it was.
+            List<GameDataDirector> directors = directorsMergedBase;
+            directors.Clear();
+
+            if (directorsWorld != null) {
+                directors.AddRange(directorsWorld);
             }
 
             if (directorsLevels != null && directors.Count > 0) {
@@ -2191,6 +2490,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateStopped(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.STOPPED;
         lastGameState = gameState;
@@ -2199,9 +2499,22 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // PAUSED
 
+    // The 1s delay is DELIBERATE: it covers the pause menu's show choreography
+    // (durationDelayShow .5 + durationShow .45 == .95s) so the menu is already on screen when the
+    // freeze lands. Freezing immediately was tried and reverted (2026-07-23) — UIPanelPause now
+    // animates on the UNSCALED clock, so the menu does still slide in at Time.timeScale == 0, but
+    // the player was left staring at a frozen game with NO menu for that ~1s. The unscaled clock
+    // stays: it makes the entrance robust if the freeze ever lands mid-animation.
     public virtual void gameRunningStatePause() {
         gameRunningStatePauseDelayed(1);
     }
+
+    // Bumped every time the running state is (re)decided. A delayed pause captures the value it
+    // was scheduled with, so it can tell whether something SUPERSEDED it (resume/quit/restart, or
+    // another pause) during the delay window. Deliberately NOT a gameState comparison: the pause
+    // flow does not guarantee gameState == GamePause for the whole window, and an over-strict
+    // check silently swallowed the freeze entirely (menu opened, game never paused, 2026-07-23).
+    private int gameRunningStateToken = 0;
 
     public virtual void gameRunningStatePauseDelayed(float delay) {
         StartCoroutine(gameRunningStatePauseDelayedCo(delay));
@@ -2209,7 +2522,17 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     IEnumerator gameRunningStatePauseDelayedCo(float delay) {
 
+        int token = ++gameRunningStateToken;
+
         yield return new WaitForSeconds(delay);
+
+        // The game can be RESUMED (or quit) inside the delay window, and nothing cancels this
+        // coroutine — without this guard it lands timeScale=0 on an already-resumed game: gameplay
+        // frozen with no pause menu, and the pause button now reads as "resume".
+        // (Surfaced as pause lag/hang/"takes lots of clicks", 2026-07-21.)
+        if (token != gameRunningStateToken) {
+            yield break;
+        }
 
         gameRunningStatePause(0f);
     }
@@ -2228,6 +2551,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateRun(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause (this is the resume path)
         gameSetTimeScale(timeScale);
         gameRunningState = GameRunningState.RUNNING;
         lastGameState = gameState;
@@ -2241,6 +2565,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateContent(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameRunningState = GameRunningState.PAUSED;
         lastGameState = gameState;
         gameState = GameStateGlobal.GameContentDisplay;
@@ -2254,6 +2579,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void gameRunningStateOverlay(float timeScale) {
+        gameRunningStateToken++;   // supersedes any pending delayed pause
         gameRunningState = GameRunningState.PAUSED;
         lastGameState = gameState;
         gameState = GameStateGlobal.GameOverlay;
@@ -2477,6 +2803,7 @@ public class BaseGameController : GameObjectTimerBehavior {
     }
 
     public virtual void quitGameRunning() {
+        releaseLevelInitializing();
         reset();
         stopDirectors();
         gameRunningStateStopped();
@@ -2517,6 +2844,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void onGameResults() {
 
+        // A round that reached Results has finished loading. Results' Back is plain UI navigation
+        // (NavigateBack) and never passes onGameQuit, so this is the last point a stuck flag can
+        // be caught before the menu's next PLAY -- or Results' own continue -- hits the gate.
+        releaseLevelInitializing();
+
 #if USE_GAME_LIB_GAMES_UI
         GameUIPanelOverlays.Instance.ShowOverlayWhiteStatic();
 #endif
@@ -2534,6 +2866,25 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void changeGameState(GameStateGlobal gameStateTo) {
         lastGameState = gameState;
         gameState = gameStateTo;
+
+        // Memory reclamation is driven from the one place that already knows whether a
+        // frame spike would be felt. While the round is live MemoryUtil only slices
+        // incrementally; a full collect and an asset unload wait for a transition, where
+        // a long frame is already hidden behind a screen change.
+
+        bool memoryBusy = gameState == GameStateGlobal.GameStarted
+            || gameState == GameStateGlobal.GameResume;
+
+        MemoryUtil.SetBusy(memoryBusy);
+
+        // GamePrepare is deliberately absent -- prepareGame() already collects, and it
+        // does it BEFORE loading rather than after.
+
+        if (gameState == GameStateGlobal.GameResults
+            || gameState == GameStateGlobal.GameQuit) {
+
+            MemoryUtil.CollectAtSafePoint("game-state-" + gameStateTo);
+        }
 
         Messenger<GameStateGlobal>.Broadcast(GameMessages.gameActionState, gameState);
 
@@ -3026,6 +3377,13 @@ public class BaseGameController : GameObjectTimerBehavior {
         processProgressCollections(
             runtimeData, currentGamePlayerController.runtimeData);
 
+        // The collections step credits currency AFTER the last save above (the one inside
+        // ProcessProgressRuntimeAchievements), and SyncProfile below writes nothing unless cloud
+        // sync is on -- so without this the round's coins reached disk only at the NEXT save, and
+        // an app kill on Results lost them. save() skips unchanged blobs, so this writes the rpg
+        // file and little else.
+        GameState.SaveProfile();
+
         yield return new WaitForEndOfFrame();
 
         if (!isAdvancing) {
@@ -3038,9 +3396,10 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GamePlayerProgress.Instance.ProcessProgressLeaderboards();
 
-        //GC.Collect();
-        //GC.WaitForPendingFinalizers();
-        //yield return new WaitForSeconds(8f);
+        // Do NOT put a GC.Collect() back here. advanceToResults() above lands on
+        // GameStateGlobal.GameResults, and changeGameState hands that to
+        // MemoryUtil.CollectAtSafePoint -- which collects AND unloads, off the
+        // gameplay frame and coalesced against everything else that asked.
     }
 
     //public static void ProcessProgressCollections(
@@ -3117,6 +3476,34 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     // GAME SCORE/CHECK GAME OVER
 
+
+    // Charge the round clock the time that has actually elapsed since the previous tick.
+    //
+    // checkForGameOver runs behind the IsTimerPerf(gameUpdateAll) gate, which passes about 30
+    // times a second while frames run far faster, so Time.deltaTime -- the delta of the single
+    // frame the tick landed on -- throws away the time of every frame the gate skipped. That made
+    // a "90 second" round run for minutes, by a factor that moved with framerate.
+    //
+    // A subclass that overrides checkForGameOver must call THIS, not SubtractTime(Time.deltaTime):
+    // the app's own override did the latter and silently kept the bug (measured 0.25x real time).
+    public virtual void SubtractRoundTimeElapsed() {
+
+        float gameTimeNow = Time.time;
+        float gameTimeDelta = gameTimeNow - lastGameTimeCountdown;
+
+        if (lastGameTimeCountdown < 0f
+           || gameTimeDelta < 0f
+           || gameTimeDelta > gameTimeCountdownGapLimit) {
+            // First tick of this round, or the countdown was not running in between (level load,
+            // results, menu). Charge a single frame and re-stamp.
+            gameTimeDelta = Time.deltaTime;
+        }
+
+        lastGameTimeCountdown = gameTimeNow;
+
+        runtimeData.SubtractTime(gameTimeDelta);
+    }
+
     public virtual void checkForGameOver() {
 
         //LogUtil.Log("CheckForGameOver:isGameOver:" + isGameOver);
@@ -3188,7 +3575,23 @@ public class BaseGameController : GameObjectTimerBehavior {
                     resultsGameDelayed();
                 }
 
-                runtimeData.SubtractTime(Time.deltaTime);
+                // THE ROUND CLOCK MUST RUN ON REAL SECONDS.
+                //
+                // This is the only tick the countdown gets, and it sits behind the
+                // IsTimerPerf(gameUpdateAll) gate in Update. That gate's interval is
+                // (1/30) * GameObjectTimer.currentModifier and currentModifier is 30/currentFPS,
+                // so the interval works out at roughly one frame period on any device -- the gate
+                // passes about every OTHER frame. Subtracting Time.deltaTime, the delta of the
+                // single frame the tick landed on, therefore threw away the time of every frame
+                // the gate skipped: a 90 second round ran for something closer to 180 seconds,
+                // and the exact factor moved with framerate, so it was not even the same round
+                // length on two devices.
+                //
+                // Subtract the time actually elapsed since the previous tick instead. The rest of
+                // checkForGameOver keeps its current gated cadence, which is why the fix is here
+                // and not a second SubtractTime call above the gate.
+
+                SubtractRoundTimeElapsed();
 
                 //if(runtimeData.timeExpired) {
                 // Change level/flash
@@ -3231,9 +3634,14 @@ public class BaseGameController : GameObjectTimerBehavior {
                 //touchPos.Normalize();
                 //var touchPosNormalized = touchPos.normalized;
 
+                // VIEWPORT coordinates, 0..1 across the screen. This used to be
+                // `point.normalized` -- a unit vector, which has nothing to do with where on
+                // the screen the touch is, so the corner test below could never fire and
+                // finger-navigate ran over the on-screen controls it exists to avoid.
                 var pointNormalized = point;
-                pointNormalized.Normalize();
-                pointNormalized = pointNormalized.normalized;
+                pointNormalized.x = Screen.width > 0 ? point.x / Screen.width : 0f;
+                pointNormalized.y = Screen.height > 0 ? point.y / Screen.height : 0f;
+                pointNormalized.z = 0f;
 
                 //LogUtil.Log("directionNormal:" + directionNormal);
                 //LogUtil.Log("controlInputTouchOnScreen:" + controlInputTouchOnScreen);
@@ -3591,8 +3999,21 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //if(controlInputTouchFinger) {
 
-        if (touchPressed) {
+        // A held move stick owns movement outright; finger-navigate would fight it every frame.
+        bool moveStickHeld = GameTouchInputAxis.externalMoveHeld;
+
+        // Pointers a UI control has captured are skipped by id, not by position -- a stick
+        // follows its thumb off its own rect, and the aim thumb then steered the player.
+        if (moveStickHeld) {
+            // handled stays false
+        }
+        else if (touchPressed) {
             foreach (Touch touch in Input.touches) {
+
+                if (Engine.UI.UIPlatform.IsInputHeldByUI(touch.fingerId)) {
+                    continue;
+                }
+
                 handled = handleTouchInputPoint(touch.position);
 
                 if (handled)
@@ -3600,7 +4021,9 @@ public class BaseGameController : GameObjectTimerBehavior {
             }
         }
         else if (mousePressed) {
-            handled = handleTouchInputPoint(Input.mousePosition);
+            if (!Engine.UI.UIPlatform.IsInputHeldByUI(Engine.UI.UIPlatform.mouseInputId)) {
+                handled = handleTouchInputPoint(Input.mousePosition);
+            }
         }
         else {
             if (currentPlayerController != null) {
@@ -3616,6 +4039,15 @@ public class BaseGameController : GameObjectTimerBehavior {
         }
 
         //}
+
+        // Let go once when the finger lifts. Finger-navigate only ever SETS the move axis, and
+        // the legacy pad's idle ResetPad used to be what zeroed it every frame -- the toolkit HUD
+        // turns that off (touchDrivenExternally), so the player kept running to the last point.
+        // Zero input lets the controller's speed smoothing ease to a stop, as before.
+        if (touchHandled && !handled) {
+            sendInputAxisMessage(InputSystemKeys.moveKey,
+                moveStickHeld ? GameTouchInputAxis.externalMoveAxis : Vector3.zero);
+        }
 
         touchHandled = handled;
     }
@@ -4779,6 +5211,23 @@ public class BaseGameController : GameObjectTimerBehavior {
         else if (GameKeyCodes.isActionProfileSync) {
             GameState.SyncProfile();
         }
+
+        // MEMORY
+
+        // busy has to follow the signal that actually tracks a live level. It was pushed
+        // ONLY from changeGameState, off gameState == GameStarted -- but gameState is
+        // already GameStarted at the MAIN MENU and does not change when a round begins, so
+        // once the first round ended (GameResults -> SetBusy(false)) it never went true
+        // again. Measured live: isGameRunning True for a whole round with busy False and
+        // twelve full collects behind it -- exactly the window MemoryUtil exists to keep
+        // blocking collections out of.
+        //
+        // SetBusy early-returns when the value has not changed, so this costs a bool
+        // compare per frame, and the false edge is still the safe point that services
+        // everything the round queued up. Placed ABOVE the isGameRunning early-return so
+        // the END of a round is seen at all.
+
+        MemoryUtil.SetBusy(GameConfigs.isGameRunning);
 
         // UPDATE
 

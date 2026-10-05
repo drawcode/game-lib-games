@@ -93,6 +93,10 @@ public class BaseGamePlayerControllerAnimationData {
 
     public Animation actorAnimation;
 
+    // The actor object actorAnimation was resolved from. Used to re-resolve on actor swap
+    // instead of calling GetComponent every frame.
+    public GameObject actorAnimationResolvedFor;
+
     public bool isJumping;
     public bool isSliding;
     public bool isCapeFlying;
@@ -146,6 +150,85 @@ public class BaseGamePlayerControllerAnimationData {
 
             return gamePlayerController.controllerData.thirdPersonController;
         }
+    }
+
+    // SPEED-FOLLOWING ANIMATION CADENCE
+    //
+    // A legacy AnimationState's normalizedSpeed is cycles per second, and it was written as a
+    // CONSTANT here -- runSpeedScale / walkSpeedScale -- so the leg cycle ran at one fixed rate
+    // whatever the actor was actually doing. The controller's speed is not fixed: moveSpeed
+    // lerps up from a standstill and swaps target between walkSpeed and trotSpeed after
+    // trotAfterSeconds, so the feet slid against the ground whenever the two disagreed.
+    //
+    // The cadence is now the authored scale times the ratio of real speed to the speed that
+    // scale describes, clamped so it can neither freeze nor blur into a scribble.
+    public float animationSpeedCycleMin = .45f;
+    public float animationSpeedCycleMax = 1.75f;
+
+    // Set per frame by the update: true when currentSpeed is the third person controller's own
+    // integrated speed, false when the NavMeshAgent branch has replaced it with its 0-or-15
+    // stand-in. Kept for anything outside this repo that reads it.
+    public bool speedFromController = false;
+
+    // The cadence inputs, set per frame, and the reason agents animate at a real pace now.
+    //
+    // currentSpeed CANNOT be used for this. It is the branch selector -- `currentSpeed >
+    // walkSpeed` picks run over walk -- and for a NavMeshAgent actor it is deliberately a
+    // 0-or-15 stand-in that forces the run branch. Feeding the agent's true velocity into
+    // currentSpeed would drop every enemy into the walk clip instead. So the cadence gets its
+    // OWN pair of values and the branch selector is left exactly as it was:
+    //
+    //   speedCycleActual    - the real speed the leg cycle should follow
+    //   speedCycleReference - the speed the authored *SpeedScale values describe
+    //
+    // A reference of 0 means "no continuous speed available", and the cadence falls back to the
+    // authored constant.
+    public float speedCycleActual = 0f;
+    public float speedCycleReference = 0f;
+
+    // The fastest this actor has actually been SEEN to travel, with a slow decay.
+    //
+    // This exists because NavMeshAgent.speed is a CEILING the agents never come near: measured
+    // live, configured speeds of 13-22 against real velocities of 1.9-4.6. Using it as the
+    // reference put every ratio (0.03-0.15) far below animationSpeedCycleMin, so every agent
+    // clamped to the floor -- which just replaced one constant cadence with a slower constant.
+    //
+    // A high-water mark is self-calibrating instead: at cruise the actor IS its own maximum, so
+    // the cycle sits at 1.0 and sustained movement looks exactly as it does today; when it slows
+    // to turn, re-path or close the last metre of its route, the ratio drops and the legs slow
+    // with it. The decay lets a one-off velocity spike bleed off instead of pinning the
+    // reference high forever, and lets the mark follow an actor whose speed is changed at runtime.
+    public float speedCycleObservedMax = 0f;
+    public float speedCycleObservedDecay = .995f;
+
+    // The speed the authored *SpeedScale values describe. trotSpeed is what the controller
+    // settles at while moving -- walkSpeed only applies for the first trotAfterSeconds -- so
+    // anchoring there leaves sustained movement looking as it does today and changes only the
+    // ramp in and out of it.
+    public float GetSpeedCycleReference() {
+
+        if (thirdPersonController == null) {
+            return 0f;
+        }
+
+        float reference = thirdPersonController.trotSpeed;
+
+        if (reference <= .01f) {
+            reference = thirdPersonController.walkSpeed;
+        }
+
+        return reference;
+    }
+
+    public float GetSpeedCycleScale() {
+
+        if (speedCycleReference <= .01f) {
+            return 1f;
+        }
+
+        return Mathf.Clamp(
+            speedCycleActual / speedCycleReference,
+            animationSpeedCycleMin, animationSpeedCycleMax);
     }
 
     // properties / helpers
@@ -532,12 +615,22 @@ public class BaseGamePlayerControllerAnimationData {
 
             GamePlayerAnimationDataItem animationItem = items.Get<GamePlayerAnimationDataItem>(type);
 
-            if (animationItem.last_update + 1f < Time.time) {
+            code = animationItem.code;
+
+            // The once-a-second re-roll below returns a random variant for ONE call and never
+            // stores it. It costs ~309 allocations / 12.6 KB each time -- 94% of everything
+            // GamePlayerControllerAnimation.Update allocated (gameplay-tuning iteration 19).
+            //
+            // It is NOT dead, though: character data lists variants the model does not have (a
+            // droid given idle_04), and the play calls return early on a missing clip. For those
+            // actors the re-roll is the only thing that ever starts a clip that exists, which
+            // then keeps playing. So skip it only when the stored clip is already on the actor --
+            // there the re-roll only produced a one-frame cross-fade to another clip and back.
+            if (animationItem.last_update + 1f < Time.time
+                && !IsClipOnResolvedActor(code)) {
+
                 animationItem.last_update = Time.time;
                 code = GetDataAnimation(type);
-            }
-            else {
-                code = animationItem.code;
             }
 
         }
@@ -549,6 +642,21 @@ public class BaseGamePlayerControllerAnimationData {
         }
 
         return code;
+    }
+
+    // Legacy only, and only through the Animation Update already resolved for the CURRENT actor:
+    // anything else answers false, which keeps GetAnimation's original re-roll behaviour.
+    bool IsClipOnResolvedActor(string code) {
+
+        if (!isLegacy
+            || actor == null
+            || actorAnimation == null
+            || actorAnimationResolvedFor != actor
+            || string.IsNullOrEmpty(code)) {
+            return false;
+        }
+
+        return actorAnimation[code] != null;
     }
 
     public string GetDataAnimation(string type) {
@@ -1487,9 +1595,18 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
         if (animationData.isRunning) {
 
             animationData.currentSpeed = 0f;
+            animationData.speedFromController = false;
+            animationData.speedCycleActual = 0f;
+            animationData.speedCycleReference = 0f;
 
             if (animationData.thirdPersonController != null) {
                 animationData.currentSpeed = animationData.thirdPersonController.GetSpeed();
+                animationData.speedFromController = true;
+
+                // Player-side cadence: follow the controller's integrated speed, measured
+                // against the speed it settles at while moving.
+                animationData.speedCycleActual = animationData.currentSpeed;
+                animationData.speedCycleReference = animationData.GetSpeedCycleReference();
             }
 
             if (animationData.gamePlayerController != null) {
@@ -1501,6 +1618,27 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                     if (animationData.navAgent != null) {
                         if (animationData.navAgent.enabled) {
                             //currentSpeed = navAgent.velocity.magnitude + 20;
+
+                            animationData.speedFromController = false;
+
+                            // Agent-side cadence. The 0-or-15 stand-in below is kept as the
+                            // BRANCH selector, but the leg cycle now follows the agent's real
+                            // velocity against its own configured speed -- so an enemy that is
+                            // slowed, turning, or closing the last metre of its path animates at
+                            // the pace it is actually travelling instead of one fixed rate.
+                            // This is what made every bot's run cycle look constant: the branch
+                            // above reported "moving at 15" and the cadence had nothing else to
+                            // read, so it fell back to the authored constant for every agent.
+                            float agentVelocity = animationData.navAgent.velocity.magnitude;
+
+                            animationData.speedCycleObservedMax = Mathf.Max(
+                                animationData.speedCycleObservedMax
+                                    * animationData.speedCycleObservedDecay,
+                                agentVelocity);
+
+                            animationData.speedCycleActual = agentVelocity;
+                            animationData.speedCycleReference =
+                                animationData.speedCycleObservedMax;
 
                             if (animationData.navAgent.velocity.magnitude > 0f) {
                                 animationData.currentSpeed = 15f;
@@ -1535,7 +1673,26 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 return;
             }
 
-            animationData.actorAnimation = animationData.actor.GetComponent<Animation>();
+            // Re-resolved only when the ACTOR CHANGED, not every frame. This was an unconditional
+            // GetComponent per frame, per actor. It cannot simply be cached once either: the actor
+            // model is swapped (customisation, pooled reuse), and the old code's one virtue was
+            // that it always matched the current actor. Keying the cache on the actor object keeps
+            // that property at one reference comparison a frame.
+            // ALSO re-resolve while the cache is still EMPTY on a legacy actor. Keying only on
+            // "the actor changed" latched a NULL: an actor's model gets its Animation added
+            // asynchronously (the model load / InitControlsCo on spawn), so an actor resolved
+            // before its model finished loading stored actorAnimation == null, and because the
+            // actor reference never changed again it was never re-read. The early-out below then
+            // returned every frame and THAT ACTOR NEVER ANIMATED AGAIN for the rest of the round
+            // -- measured live on the player: resolvedFor == actor, actorAnimation == null, while
+            // actor.GetComponent<Animation>() returned a real component.
+            // A legacy actor is expected to have one, so retrying until it appears is correct and
+            // self-limiting; mecanim actors keep the cached-once behaviour and never re-look.
+            if (animationData.actorAnimationResolvedFor != animationData.actor
+                || (animationData.actorAnimation == null && animationData.isLegacy)) {
+                animationData.actorAnimation = animationData.actor.GetComponent<Animation>();
+                animationData.actorAnimationResolvedFor = animationData.actor;
+            }
 
             if ((animationData.actorAnimation == null && animationData.animator == null)) {
                 ////Debug.Log("animationData NULL:" + " uniqueId:" + animationData.gamePlayerController.uniqueId);
@@ -1547,14 +1704,29 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
             animationData.currentAnimationJump = animationData.animationCodeJump;
             animationData.currentAnimationSlide = animationData.animationCodeSlide;
 
+            // Cycles per second for this frame: the authored cadence scaled by how fast the
+            // actor is really moving. Constant before -- which is what made the run cycle keep
+            // one pace while the character sped up and slowed down.
+            float speedCycleScale = animationData.GetSpeedCycleScale();
+            float runCycleSpeed = animationData.runSpeedScale * speedCycleScale;
+            float walkCycleSpeed = animationData.walkSpeedScale * speedCycleScale;
+
             if (isLegacy) {
                 if (animationData.actor != null) {
                     if (animationData.actorAnimation != null) {
-                        if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed = animationData.runSpeedScale;
+
+                        // Four allocating indexer calls a frame became two. See the note in the
+                        // fade-in-run block below -- Animation[string] allocates every time.
+                        AnimationState runStateSpeed =
+                            animationData.actorAnimation[animationData.currentAnimationRun];
+                        AnimationState walkStateSpeed =
+                            animationData.actorAnimation[animationData.currentAnimationWalk];
+
+                        if (runStateSpeed != null) {
+                            runStateSpeed.normalizedSpeed = runCycleSpeed;
                         }
-                        if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
-                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
+                        if (walkStateSpeed != null) {
+                            walkStateSpeed.normalizedSpeed = walkCycleSpeed;
                         }
                     }
                 }
@@ -1569,64 +1741,63 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
                         if (animationData.actorAnimation != null) {
 
-                            if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
+                            // Animation's string indexer allocates an AnimationState wrapper on
+                            // EVERY call. This block used to call it up to five times a frame per
+                            // actor -- including the identical lookup twice in a row for a
+                            // duplicated null check. Resolve once and reuse.
+                            AnimationState runState =
+                                animationData.actorAnimation[animationData.currentAnimationRun];
 
-                                if (animationData.actorAnimation[animationData.currentAnimationRun] != null) {
+                            if (runState != null) {
 
-                                    animationData.actorAnimation[animationData.currentAnimationRun].blendMode = AnimationBlendMode.Blend;
+                                runState.blendMode = AnimationBlendMode.Blend;
 
-                                    if (animationData.thirdPersonController == null) {
-                                        animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                            animationData.runSpeedScale;
-                                        //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
-                                    }
-                                    else {
+                                if (animationData.thirdPersonController == null) {
+                                    runState.normalizedSpeed = runCycleSpeed;
+                                    //animationData.actor.animation["run"].time = 0f;
+                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
+                                }
+                                else {
 
-                                        if (animationData.thirdPersonController.verticalInput2 != 0f
-                                            || animationData.thirdPersonController.horizontalInput2 != 0f) {
+                                    if (animationData.thirdPersonController.verticalInput2 != 0f
+                                        || animationData.thirdPersonController.horizontalInput2 != 0f) {
 
-                                            // if angle between axis is over 120 and less than 240 reverse run
-                                            animationData.angleTo = Vector3.Angle(
-                                                animationData.thirdPersonController.movementDirection,
-                                                animationData.thirdPersonController.aimingDirection);
+                                        // if angle between axis is over 120 and less than 240 reverse run
+                                        animationData.angleTo = Vector3.Angle(
+                                            animationData.thirdPersonController.movementDirection,
+                                            animationData.thirdPersonController.aimingDirection);
 
-                                            if (animationData.angleTo > 120 && animationData.angleTo < 240) {
-                                                animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    -animationData.runSpeedScale * .9f;
-                                            }
-                                            else {
-                                                animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                    animationData.runSpeedScale;
-                                            }
-
-                                            //animationData.actor.animation["run"].time = animationData.actor.animation["run"].length;
-                                            animationData.actorAnimation.Blend(animationData.currentAnimationRun);
+                                        if (animationData.angleTo > 120 && animationData.angleTo < 240) {
+                                            runState.normalizedSpeed = -runCycleSpeed * .9f;
                                         }
                                         else {
-                                            animationData.actorAnimation[animationData.currentAnimationRun].normalizedSpeed =
-                                                animationData.runSpeedScale;
-                                            //animationData.actor.animation["run"].time = 0f;
-                                            animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
+                                            runState.normalizedSpeed = runCycleSpeed;
                                         }
+
+                                        animationData.actorAnimation.Blend(animationData.currentAnimationRun);
+                                    }
+                                    else {
+                                        runState.normalizedSpeed = runCycleSpeed;
+                                        //animationData.actor.animation["run"].time = 0f;
+                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationRun, .5f);
                                     }
                                 }
                             }
                         }
                     }
-                    // We fade out jumpland quick otherwise we get sliding feet
-                    if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                        //actorAnimation.CrossFade(currentAnimationJump, 0);//, PlayMode.StopSameLayer);
-                    }
-                    if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                        //actorAnimation.CrossFade(currentAnimationSlide, 0);//, PlayMode.StopSameLayer);
-                    }
+                    // We fade out jumpland quick otherwise we get sliding feet.
+                    //
+                    // The two lookups that stood here resolved the jump and slide AnimationStates
+                    // only to test them against null -- both bodies are commented out, so they were
+                    // two allocating Animation indexer calls per frame doing nothing. They also sat
+                    // OUTSIDE the actorAnimation != null guard above, so on a Mecanim-less actor
+                    // with only an animator they were a latent NullReferenceException as well.
                 }
                 else if (isMecanim) {
                     SetFloat(GameDataActionKeys.speed, animationData.currentSpeed);
                 }
 
-                SendMessage("SyncAnimation", GameDataActionKeys.run, SendMessageOptions.DontRequireReceiver);
+                SyncAnimationMessage(GameDataActionKeys.run);
             }
             // Fade in walk
             else if (animationData.currentSpeed > 0.1) {
@@ -1634,51 +1805,65 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
                 if (isLegacy) {
                     if (animationData.actor != null) {
                         if (animationData.actorAnimation != null) {
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                                if (animationData.actorAnimation[animationData.currentAnimationJump] != null) {
-                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationJump);
-                                }
-                                // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actorAnimation.Blend(animationData.currentAnimationJump, 0);
-                            }
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                                if (animationData.actorAnimation[animationData.currentAnimationSlide] != null) {
-                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationSlide);
-                                }
-                                // We fade out jumpland realy quick otherwise we get sliding feet
-                                animationData.actorAnimation.Blend(animationData.currentAnimationSlide, 0);
-                            }
-                            //
-                            if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
 
-                                if (animationData.actorAnimation[animationData.currentAnimationWalk] != null) {
-                                    animationData.actorAnimation[animationData.currentAnimationWalk].blendMode = AnimationBlendMode.Blend;
+                            // Same treatment as the fade-in-run block above: Animation's string
+                            // indexer allocates an AnimationState on EVERY call, and this block
+                            // made ten of them a frame per actor -- jump twice, slide twice, walk
+                            // six times -- three of which were identical lookups repeated purely
+                            // for a duplicated null check. Ten is now ONE, with the jump and slide
+                            // lookups gone entirely (see below).
+                            AnimationState walkState =
+                                animationData.actorAnimation[animationData.currentAnimationWalk];
 
-                                    if (animationData.thirdPersonController.verticalInput2 != 0f
-                                        || animationData.thirdPersonController.horizontalInput2 != 0f) {
-                                        // if angle between axis is over 120 and less than 240 reverse run
-                                        animationData.angleTo = Vector3.Angle(
-                                            animationData.thirdPersonController.movementDirection,
-                                            animationData.thirdPersonController.aimingDirection);
+                            // The jump and slide cross-fades that stood here are GONE, matching
+                            // the fade-in-run block above (where the same pair was removed as
+                            // dead). They were only ever dead by accident: jump/strafe entries
+                            // carried no "data_type": "preset", so the entry's own CODE was used
+                            // as the clip name, no model had a clip called "animation-jump-bot-1",
+                            // the lookup returned null and the bodies never ran.
+                            //
+                            // Authoring the presets correctly woke them up, and they are wrong:
+                            // jump is authored on LAYER 5 and run/walk/idle on LAYER 1, so in
+                            // legacy Animation the jump clip MASKS locomotion. Cross-fading it in
+                            // (then blending it straight back to 0) on every tick the actor spends
+                            // in the walk band left walking actors fighting their own jump clip.
+                            // The player's walkSpeed is 24, so that band is most of normal movement.
+                            // A real jump still animates -- the JUMPING block below calls Jump().
+                            if (walkState != null) {
 
-                                        if (animationData.angleTo > 120 && animationData.angleTo < 240) {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = -animationData.walkSpeedScale * .9f;
-                                        }
-                                        else {
-                                            animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
-                                        }
-                                        animationData.actorAnimation.Blend(animationData.currentAnimationWalk);
+                                walkState.blendMode = AnimationBlendMode.Blend;
+
+                                // GUARDED, which it was not before. The fade-in-run block above
+                                // null-checks thirdPersonController and the JUMPING block below
+                                // does too; this one dereferenced it bare, so an actor with a walk
+                                // clip but no third-person controller -- any agent -- threw here on
+                                // every frame it was walking. Falling through to the else is what
+                                // the run block does in the same situation.
+                                if (animationData.thirdPersonController != null
+                                    && (animationData.thirdPersonController.verticalInput2 != 0f
+                                        || animationData.thirdPersonController.horizontalInput2 != 0f)) {
+
+                                    // if angle between axis is over 120 and less than 240 reverse run
+                                    animationData.angleTo = Vector3.Angle(
+                                        animationData.thirdPersonController.movementDirection,
+                                        animationData.thirdPersonController.aimingDirection);
+
+                                    if (animationData.angleTo > 120 && animationData.angleTo < 240) {
+                                        walkState.normalizedSpeed = -walkCycleSpeed * .9f;
                                     }
                                     else {
-                                        animationData.actorAnimation[animationData.currentAnimationWalk].normalizedSpeed = animationData.walkSpeedScale;
-                                        //animationData.actor.animation["run"].time = 0f;
-                                        animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
+                                        walkState.normalizedSpeed = walkCycleSpeed;
                                     }
 
-                                    SendMessage("SyncAnimation", GameDataActionKeys.walk, SendMessageOptions.DontRequireReceiver);
+                                    animationData.actorAnimation.Blend(animationData.currentAnimationWalk);
                                 }
+                                else {
+                                    walkState.normalizedSpeed = walkCycleSpeed;
+                                    //animationData.actor.animation["run"].time = 0f;
+                                    animationData.actorAnimation.CrossFade(animationData.currentAnimationWalk, .5f);
+                                }
+
+                                SyncAnimationMessage(GameDataActionKeys.walk);
                             }
                         }
                     }
@@ -1789,4 +1974,65 @@ public class BaseGamePlayerControllerAnimation : GameObjectTimerBehavior {
 
         }
         */
+
+    // SendMessage does a reflection lookup for the handler on EVERY call, and the two run/walk
+    // sites below call it once a frame for as long as an actor is moving -- per actor.
+    //
+    // The receivers ("SyncAnimation") are the networking components: NetworkSyncAnimation and
+    // GameNetworkPlayerContainer. Neither is present on a single-player actor, so in the common
+    // case every one of those calls was paying the lookup to find nothing. All the OTHER
+    // SendMessage("SyncAnimation") sites in this class are event driven -- jump, skill, walljump --
+    // and are left as they are; the cost only matters where it repeats per frame.
+    //
+    // Probed by reflection rather than by referencing the types, because the receivers live in
+    // game-lib-engine and game-lib-gameverses and gameverses is behind a compile flag here.
+    private bool syncAnimationReceiverChecked = false;
+    private System.Action<string> syncAnimationCall = null;
+
+    protected virtual void SyncAnimationMessage(string animationValue) {
+
+        if (!syncAnimationReceiverChecked) {
+
+            syncAnimationReceiverChecked = true;
+
+            MonoBehaviour[] behaviours = GetComponents<MonoBehaviour>();
+
+            for (int i = 0; i < behaviours.Length; i++) {
+
+                if (behaviours[i] == null) {
+                    continue;
+                }
+
+                System.Reflection.MethodInfo method = behaviours[i].GetType().GetMethod(
+                    "SyncAnimation",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new System.Type[] { typeof(string) },
+                    null);
+
+                if (method == null) {
+                    continue;
+                }
+
+                // Bound ONCE into a delegate. MethodInfo.Invoke would have to box the argument
+                // into a fresh object[] on every call, which would just trade SendMessage's
+                // per-frame cost for a per-frame allocation.
+                syncAnimationCall = (System.Action<string>)System.Delegate.CreateDelegate(
+                    typeof(System.Action<string>), behaviours[i], method, false);
+
+                if (syncAnimationCall != null) {
+                    break;
+                }
+            }
+        }
+
+        // Nothing on this object handles it -- which is what DontRequireReceiver was papering
+        // over. Skip the call entirely rather than paying the lookup to find nothing.
+        if (syncAnimationCall == null) {
+            return;
+        }
+
+        syncAnimationCall(animationValue);
+    }
+
 }

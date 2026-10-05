@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 
 using UnityEngine;
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-#else
-using UnityEngine.UI;
-#endif
 
 // using Engine.Data.Json;
 using Engine.Events;
@@ -36,8 +32,10 @@ public class GameObjectChoice : BaseGameObjectLevel {
     public UILabel labelResponse;
     public UILabel labelResponseShadow;
 #else
-    public Text labelResponse;
-    public Text labelResponseShadow;
+    // B10: agnostic UIRef handles (was UGUI), the BaseGameHUD pattern. Unbound (null) until
+    // something binds them by name; every UIUtil call no-ops on a null ref.
+    public Engine.UI.UIRef labelResponse;
+    public Engine.UI.UIRef labelResponseShadow;
 #endif
 
     public AppContentChoice appContentChoice;
@@ -93,6 +91,12 @@ public class GameObjectChoice : BaseGameObjectLevel {
 
         if (isUI) {
             gameObject.SetLayerRecursively("UIDialog");
+        }
+        else {
+            // World-space choice marker (brain/backer sprites): runtime UIQuadSprite twins with the
+            // kill switch on (a toolkit view cannot sit at a 3D position). The UILabel answer text
+            // has no world-space non-NGUI path yet and keeps drawing through NGUI.
+            Engine.UI.UIQuadSpriteTwins.Sync(gameObject);
         }
     }
 

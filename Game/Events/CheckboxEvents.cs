@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 
 using UnityEngine;
-using UnityEngine.UI;
 using Engine.Events;
 
 public class CheckboxEvents : GameObjectBehavior {
@@ -10,7 +9,7 @@ public class CheckboxEvents : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     UICheckbox currentObj;
 #else
-    GameObject currentObj;
+    Engine.UI.UIRef currentObj;
 #endif
     public static string EVENT_ITEM_CLICK = "event-checkbox-item-click";
     public static string EVENT_ITEM_CHANGE = "event-checkbox-item-change";
@@ -20,9 +19,10 @@ public class CheckboxEvents : GameObjectBehavior {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
         currentObj = GetComponent<UICheckbox>();
 #else
-        if(currentObj.Has<Toggle>()) {
-            currentObj = GetComponent<Toggle>().gameObject;
-        }
+        // B10: the change half through the UI backend (a uGUI Toggle's onValueChanged under the
+        // GameObject backend), raising the same broadcast NGUI's OnActivate SendMessage does.
+        currentObj = Engine.UI.UIRef.Of(gameObject);
+        UIUtil.SetToggleHandlerChange(currentObj, OnActivate);
 #endif
 
         if (currentObj != null) {
@@ -33,11 +33,8 @@ public class CheckboxEvents : GameObjectBehavior {
 
     void OnClick() {
 
-        int camIndex = 0;
-
-#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
-        camIndex = UICamera.currentTouchID;
-#endif
+        // See InputEvents: pointer identity now comes from the registered UI backend.
+        int camIndex = UIUtil.GetPointerId(gameObject);
 
         Messenger<string, int>.Broadcast(CheckboxEvents.EVENT_ITEM_CLICK, transform.name, camIndex);
     }

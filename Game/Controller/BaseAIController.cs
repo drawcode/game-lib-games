@@ -80,6 +80,12 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
     //
     public float lastPeriodicSeconds = 0f;
     //
+    // The interval the CURRENT wait is running against, drawn once when the timer resets.
+    // It has to be held: rolling it inside the comparison re-rolled it every frame, and the
+    // elapsed time only has to beat the LOWEST roll it sees, so the authored window below
+    // always fired at roughly its minimum.
+    protected float currentSpawnTimeSeconds = 0f;
+    //
     public float spawnTimeRangeMin = 3.2f;
     public float spawnTimeRangeLimit = 9.3f;
     //
@@ -534,8 +540,14 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
     public virtual void handlePeriodic() {
 
-        if (lastPeriodicSeconds > UnityEngine.Random.Range(spawnTimeRangeMin, spawnTimeRangeLimit)) {
+        if (currentSpawnTimeSeconds <= 0f) {
+            // First wait of the round, or a wait that has just been consumed.
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(spawnTimeRangeMin, spawnTimeRangeLimit);
+        }
+
+        if (lastPeriodicSeconds > currentSpawnTimeSeconds) {
             lastPeriodicSeconds = 0f;
+            currentSpawnTimeSeconds = UnityEngine.Random.Range(spawnTimeRangeMin, spawnTimeRangeLimit);
             GameAIController.DirectAI();
         }
 

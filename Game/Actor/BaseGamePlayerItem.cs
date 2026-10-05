@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,6 +32,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public string description = "";
     //public string gamePlayerItemCode = "item-coin";
 
+    // What the item director spawned this as. Stamped by BaseGameController.loadItemCo from the
+    // GameItemData that requested it, so a spawned item is self-describing at runtime and the
+    // director can count its own population (itemsCount / itemWeaponsCount).
+    //
+    // Left empty on items that were never spawned through the director -- level-authored items,
+    // editor-placed ones -- and those are counted as plain items, not weapons.
+    public string itemCode = "";
+    public string itemType = "";
+
     public double pointValue = 1.0;
     public Vector3 positionEnd = Vector3.zero;
     public bool floaty = false;
@@ -40,6 +49,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     public bool allowCollect = false;
     public bool isCollecting = false;
     public float collectRange = 8f;
+
+    // How far above or below the player an item may sit and still be collectable.
+    // The collect test is a CYLINDER, not a sphere -- see UpdateCollect.
+    public float collectHeightRange = 6f;
+
+    // Slack between the player's capsule surface and the item's collider surface at
+    // which the item is taken. Both bodies are solid, so a centre-to-centre range
+    // smaller than the sum of their radii can never be satisfied by walking.
+    public float collectPadding = 1f;
     //
     string gamePlayerItemCode = "";
     GameItem gameItem = null;
@@ -128,6 +146,15 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
     }
 
     public virtual void CollectContent() {
+
+        // allowCollect is the arming gate RevealCollectCo sets once the item has actually
+        // revealed itself. It was written by Reset/RevealCollectCo and read by NOBODY, so an
+        // item could be taken in the frame it spawned, before its reveal ran. Both collect
+        // paths -- the UpdateCollect cylinder test and OnCollisionEnter -- land here.
+
+        if (!allowCollect) {
+            return;
+        }
 
         if (!isCollecting) {
 
@@ -251,25 +278,140 @@ public class BaseGamePlayerItem : GameObjectBehavior, IGamePlayerItem {
         }
     }
 
+    /// <summary>
+    /// Horizontal half-extent of this item's own collider, in world units, so an
+    /// oversized pickup collider does not push the player out of its own collect range.
+    /// </summary>
+    public virtual float GetCollectItemRadius() {
+
+        Collider itemCollider = collider;
+
+        if (itemCollider == null) {
+            itemCollider = GetComponentInChildren<Collider>();
+        }
+
+        if (itemCollider == null) {
+            return 0f;
+        }
+
+        Vector3 extents = itemCollider.bounds.extents;
+
+        return Mathf.Max(extents.x, extents.z);
+    }
+
+    /// <summary>
+    /// How far apart the player's and the item's CENTRES may be horizontally.
+    ///
+    /// Both bodies are solid: the player capsule is radius 1.88 and the coin/health
+    /// spheres are radius 2 and 3, so physics stops the player 3.88 and 4.88 units from
+    /// the item's centre respectively. An authored collectRange of 3 was therefore
+    /// unreachable on foot -- which is why these had to be jumped on to be picked up.
+    /// Never let the usable range fall below "surfaces touching, plus a little".
+    /// </summary>
+    public virtual float GetCollectReach(GamePlayerController playerController) {
+
+        float playerRadius = 0f;
+
+        if (playerController != null) {
+
+            CharacterController characterController
+                = GetPlayerCharacterController(playerController);
+
+            playerRadius = characterController != null
+                ? characterController.radius
+                : playerController.characterRadius;
+        }
+
+        return Mathf.Max(collectRange, playerRadius + GetCollectItemRadius() + collectPadding);
+    }
+
+    private static GamePlayerController cachedCharacterControllerOwner = null;
+    private static int cachedCharacterControllerFrame = -1;
+    private static CharacterController cachedCharacterController = null;
+
+    /// <summary>
+    /// The player actor's CharacterController, resolved at most once per player rather
+    /// than once per item per frame.
+    ///
+    /// Every item in the level asks the same question about the same actor, and this
+    /// level runs 84 of them. The actor root carries no CharacterController at all, so
+    /// all 84 lookups failed every frame and the characterRadius fallback below is what
+    /// was actually used -- and a GetComponent that finds nothing also builds its own
+    /// error string, which measured 21.5 KB of the 36 KB a live frame allocated.
+    ///
+    /// A miss is retried once per frame so a controller added after the actor spawns is
+    /// still picked up; a hit is held until the actor itself changes.
+    /// </summary>
+    public static CharacterController GetPlayerCharacterController(
+        GamePlayerController playerController) {
+
+        if (playerController == null) {
+            return null;
+        }
+
+        if (!object.ReferenceEquals(playerController, cachedCharacterControllerOwner)
+            || (cachedCharacterController == null
+                && cachedCharacterControllerFrame != Time.frameCount)) {
+
+            cachedCharacterControllerOwner = playerController;
+            cachedCharacterControllerFrame = Time.frameCount;
+
+            // Strictly on the actor root -- that is where the controller sets it up, and
+            // Get<T> would otherwise descend into children and find somebody else's.
+            cachedCharacterController
+                = playerController.gameObject.GetComponent<CharacterController>();
+        }
+
+        return cachedCharacterController;
+    }
+
     public virtual void UpdateCollect() {
 
-        GameObject go = GameController.CurrentGamePlayerController.gameObject;
+        if (isCollecting) {
+            return;
+        }
+
+        GamePlayerController currentPlayerController = GameController.CurrentGamePlayerController;
+
+        if (currentPlayerController == null) {
+            return;
+        }
+
+        GameObject go = currentPlayerController.gameObject;
 
         if (go != null) {
 
             Vector3 playerPosition = go.transform.position;
             Vector3 itemPosition = transform.position;
 
-            if (Vector3.Distance(playerPosition, itemPosition) <= collectRange) {
-                //foreach(Collider collide in Physics.OverlapSphere(transform.position, collectRange)) {
+            // Cylinder, not sphere. The old test was a 3D distance, so the item's height
+            // above the player was charged against the same budget as the horizontal
+            // gap. An item resting on the ground sits a full collider-radius up (2 for
+            // the coin, 3 for health) while the player's origin is at their feet, so for
+            // health the vertical offset alone consumed the entire authored range of 3
+            // before any horizontal distance was counted. Jumping was the only way to
+            // shrink that vertical term -- exactly the reported symptom.
 
-                GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+            float horizontalX = playerPosition.x - itemPosition.x;
+            float horizontalZ = playerPosition.z - itemPosition.z;
+            float horizontalDistanceSqr = (horizontalX * horizontalX) + (horizontalZ * horizontalZ);
 
-                if (gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+            float reach = GetCollectReach(currentPlayerController);
 
-                    if (gamePlayerController.IsPlayerControlled) {
-                        CollectContent();
-                    }
+            if (horizontalDistanceSqr > reach * reach) {
+                return;
+            }
+
+            if (Mathf.Abs(playerPosition.y - itemPosition.y) > collectHeightRange) {
+                return;
+            }
+
+            GamePlayerController gamePlayerController = GameController.GetGamePlayerControllerObject(go, true);
+
+            if (gamePlayerController != null && !gamePlayerController.controllerData.dying) {
+
+                if (gamePlayerController.IsPlayerControlled) {
+                    CollectContent();
                 }
             }
         }
