@@ -2047,6 +2047,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         ToolkitShowEditAsset();
 
+        editAssetSheetShown = true;
+
         HideUIPanelEditAssetButton();
     }
 
@@ -2075,6 +2077,8 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
 
         ToolkitHideEditAsset();
+
+        editAssetSheetShown = false;
 
         //ShowHUD();
     }
@@ -2120,6 +2124,20 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
     }
 
+    // B11.2: the TOOLKIT HUD EDIT button's state, read (not pushed) by BaseGameHUD every frame its
+    // view is up, so a view that loads late or is rebuilt picks the state up without a replay.
+    //
+    // editButtonRequested follows ShowUIPanelEditButton/HideUIPanelEditButton -- the calls
+    // BaseGameController makes at prepare/start while allowedEditing. editAssetSheetShown follows
+    // the asset sheet: the scene wires gameEditAssetButtonObject to the legacy HUD ButtonGameEdit,
+    // so legacy hides EDIT while the sheet is open, and the toolkit button mirrors exactly that.
+    // It deliberately does NOT mirror the other HideUIPanelEditAssetButton callers (EditPlay,
+    // leaving edit mode, the round reset): through that wire the legacy EDIT button is parked
+    // off-screen from the first reset on and only returns on a grab, so mirroring it 1:1 would
+    // leave the toolkit button unreachable. Owner B11 O1: visible to everyone, on request.
+    public static bool editButtonRequested = false;
+    public static bool editAssetSheetShown = false;
+
     // B11.1: no toolkit call here. The EDIT button is the HUD's (BaseGameHUD + panel-hud view,
     // B11.2): the toolkit HUD suppresses its legacy ButtonGameEdit and the view must carry a
     // ButtonGameEdit of its own, shown while BaseGameController allows editing. Its click already
@@ -2130,6 +2148,7 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(0), .3f);
         }
 
+        editButtonRequested = true;
     }
 
     public static void HideUIPanelEditButton() {
@@ -2144,6 +2163,7 @@ public class GameDraggableEditor : GameObjectBehavior {
             TweenUtil.MoveToObject(gameEditButtonObject, Vector3.zero.WithY(960), .3f);
         }
 
+        editButtonRequested = false;
     }
 
     public static bool SetDialogState(bool active) {
