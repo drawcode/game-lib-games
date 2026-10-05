@@ -403,6 +403,14 @@ public class BaseUIPanel {
     // catalog-loaded, so this key ONLY names its view (Resources/ui/views/panel-notification-tip.uxml).
     public static string panelNotificationTip = "panel-notification-tip";
     //
+    // B11: the level editor. Same shape again: the four sheets live in UIEditor.prefab under
+    // GameDraggableEditor (scene-resident, never catalog-loaded), so these keys ONLY name their
+    // views (Resources/ui/views/<key>). A product without the view stays on its NGUI sheet.
+    public static string panelLevelEditorTools = "panel-level-editor-tools";
+    public static string panelLevelEditorAsset = "panel-level-editor-asset";
+    public static string panelLevelEditorMeta = "panel-level-editor-meta";
+    public static string panelLevelEditorItems = "panel-level-editor-items";
+    //
     //
     public static string panelAR = "panel-ar";
     public static string panelARSettings = "panel-ar-settings";
