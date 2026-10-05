@@ -305,14 +305,20 @@ public class GameDraggableEditor : GameObjectBehavior {
             ShowUIPanelEditAssetButton();
             ShowUIPanelEditAsset();
         }
+        // B11 owner round 3: closing or saving a dialog brings the toolbar back (opening one hid
+        // it via HideAllEditDialogs / showUIPanelDialogItems). Items CLOSE and a USE pick already
+        // did (ShowUIPanelEditNow / ShowUIPanelEdit below).
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaSave) {
             HideUIPanelDialogMeta();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaClose) {
             HideUIPanelDialogMeta();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditItemsSave) {
             HideUIPanelDialogItems();
+            RestoreUIPanelEditAfterDialog();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditItemsClose) {
             HideUIPanelDialogItems();
@@ -1007,6 +1013,19 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         // Save to current level data...            
         SaveCurrentLevel();
+
+        // B11 owner round 3: the toolbar PLAY also leaves edit mode, exactly as the HUD PLAY
+        // (ButtonGameEdit -> EditEnable toggle) does -- label, editingEnabled, toolbar + dialogs.
+        if (GameDraggableEditor.isEditing) {
+            EditEnable();
+        }
+    }
+
+    // Only while still editing: a dialog closed by leaving edit mode must not bring it back.
+    void RestoreUIPanelEditAfterDialog() {
+        if (GameDraggableEditor.isEditing) {
+            ShowUIPanelEdit();
+        }
     }
 
     public void EditMeta() {
