@@ -2207,6 +2207,8 @@ public class BaseGamePlayerController : GameActor {
 
         ApplyCharacterCapsule();
 
+        ApplyCharacterHUDHeight();
+
         ResetPosition();
 
         currentControllerData.initialized = true;
@@ -5934,6 +5936,49 @@ public class BaseGamePlayerController : GameActor {
         currentControllerData.characterController.stepOffset = characterStepOffset;
 
         ApplyCharacterCapsule();
+    }
+
+    // ------------------------------------------------------------------------
+    // CHARACTER HUD HEIGHT
+    //
+    // The world health bar (GamePlayerHolder/HUD) sits at one prefab height, but the models
+    // differ a lot (droid-box top ~1.3, zombie-dog ~3.7 in holder units), so one height either
+    // floats far above the small bots or buries the bar in the big ones. An authored hud_height
+    // on the character data moves it; absent = the prefab's own value, so every character and
+    // game without the field is unchanged. Re-applied per character load like the capsule, so a
+    // pooled actor reused for another character takes the new height.
+
+    Vector3 hudPrefabLocalPosition;
+    bool hudPrefabLocalPositionRead = false;
+
+    public virtual void ApplyCharacterHUDHeight() {
+
+        if (gamePlayerHolder == null) {
+            return;
+        }
+
+        Transform hud = gamePlayerHolder.transform.Find("HUD");
+
+        if (hud == null) {
+            return;
+        }
+
+        if (!hudPrefabLocalPositionRead) {
+            hudPrefabLocalPositionRead = true;
+            hudPrefabLocalPosition = hud.localPosition;
+        }
+
+        GameCharacter characterData = GameCharacters.Instance.GetById(characterCode);
+
+        if (characterData != null
+            && characterData.data != null
+            && characterData.data.HasHudHeight()) {
+
+            hud.localPosition = hudPrefabLocalPosition.WithY((float)characterData.data.hud_height);
+        }
+        else {
+            hud.localPosition = hudPrefabLocalPosition;
+        }
     }
 
     // ------------------------------------------------------------------------
