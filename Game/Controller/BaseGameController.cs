@@ -3321,7 +3321,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // TOTAL SCORES
 
         GamePlayerProgress.SetStatScore(currentGamePlayerController.runtimeData.score);
-        GamePlayerProgress.SetStatXP(currentGamePlayerController.runtimeData.totalScoreValue);
+        GamePlayerProgress.SetStatXP(currentGamePlayerController.runtimeData.totalXPValue);
 
         yield return new WaitForEndOfFrame();
 
@@ -3329,7 +3329,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         GamePlayerProgress.SetStatHighScore(currentGamePlayerController.runtimeData.score);
         GamePlayerProgress.SetStatHighScores(currentGamePlayerController.runtimeData.scores);
-        GamePlayerProgress.SetStatHighXP(currentGamePlayerController.runtimeData.totalScoreValue);
+        GamePlayerProgress.SetStatHighXP(currentGamePlayerController.runtimeData.totalXPValue);
 
         yield return new WaitForEndOfFrame();
 
@@ -3349,7 +3349,7 @@ public class BaseGameController : GameObjectTimerBehavior {
         // TODO by skill/RPG
 
         GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressXP(
-            currentGamePlayerController.runtimeData.totalScoreValue);
+            currentGamePlayerController.runtimeData.totalXPValue);
 
         GameProfileCharacters.Current.CurrentCharacterAddGamePlayerProgressEnergyAndHealth(
             -UnityEngine.Random.Range(.01f, .05f),
