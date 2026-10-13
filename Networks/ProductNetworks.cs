@@ -30,6 +30,8 @@ using UnityEngine;
 
 #if PURCHASE_USE_UNITY
 using UnityEngine.Purchasing;
+
+using Engine.Content;
 #endif
 
 // using Engine.Data.Json;
@@ -480,8 +482,30 @@ public class ProductNetworks : GameObjectBehavior {
         GoogleIAB.purchaseProduct(code);
 #elif PURCHASE_USE_UNITY
         productManager.PurchaseProduct(code);
+#elif (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
+        // Mobile build with no store backend compiled in (no PURCHASE_USE_* define): fail the
+        // purchase. The branch below grants for free and must never run on a device.
+        Debug.LogError("ProductNetworks: no store backend compiled in (define PURCHASE_USE_UNITY) - purchase of " +
+            code + " refused.");
+
+        purchaseProcessCompleted = true;
+
+        BroadcastProductNetworksFailed(
+            ProductNetworkRecord.Create(
+                code,
+                "Product Purchase",
+                "No store backend for:" + code,
+                false,
+                null,
+                "",
+                "",
+                code,
+                quantity,
+                ProductNetworkType.typeThirdParty,
+                ProductNetworkStoreType.typeApple,
+                ProductNetworkConsumableType.consumable));
 #else
-        // Web/PC
+        // Web/PC (and the Editor): grants immediately, for testing without a store.
         purchaseProcessCompleted = true;
 
         ProductNetworkRecord data =
