@@ -49,7 +49,10 @@ public enum AdNetworkType {
     iAds,
     Chartboost,
     Tapjoy,
-    Vungle
+    Vungle,
+    // Modern providers (AdNetworksProviders.cs) - appended to keep existing values stable.
+    LevelPlay,
+    AdmobDirect
 }
 
 public enum AdBanner {
@@ -113,7 +116,8 @@ public class AdNetworksMessages {
     public static string facebookLike = "ad-networks-facebook-like";
 }
 
-public class AdNetworks : GameObjectBehavior
+// Legacy vendors live here; LevelPlay / direct AdMob live in AdNetworksProviders.cs.
+public partial class AdNetworks : GameObjectBehavior
 #if AD_USE_UNITY
     //#if UNITY_IPHONE || UNITY_ANDROID  || UNITY_WEBGL
     //, IUnityAdsListener // Implement for the events, annoyingly in an interface now...
@@ -325,6 +329,9 @@ public class AdNetworks : GameObjectBehavior
     }
 
     public void Init() {
+
+        // No-op unless AdNetworks.Configure() set up modern providers.
+        providersInit();
 
 #if AD_USE_UNITY && AD_USE_UNITY_ORIG
         unityAdsInit();
@@ -1345,6 +1352,14 @@ public class AdNetworks : GameObjectBehavior
         AdDisplayType bannerType = AdDisplayType.Banner,
         AdPosition position = AdPosition.BottomCenter) {
 
+        if (adsSuppressed(AdFormat.Banner)) {
+            return;
+        }
+
+        if (providersShowBanner(position)) {
+            return;
+        }
+
         bool hasAd = false;
 
 #if AD_USE_IAD
@@ -1366,6 +1381,8 @@ public class AdNetworks : GameObjectBehavior
     }
 
     public void hideBannerAd() {
+
+        providersHideBanner();
 
 #if AD_USE_IAD
         iadHideBannerAd();
@@ -1394,13 +1411,23 @@ public class AdNetworks : GameObjectBehavior
 
     //
 
-    public static void IsVideoAdAvailable() {
+    // Was void (result discarded); bool is source compatible with existing statement calls.
+    public static bool IsVideoAdAvailable() {
         if (Instance != null) {
-            Instance.isVideoAdAvailable();
+            return Instance.isVideoAdAvailable();
         }
+        return false;
     }
 
     public bool isVideoAdAvailable() {
+
+        if (adsSuppressed(AdFormat.Rewarded)) {
+            return false;
+        }
+
+        if (providersIsReady(AdFormat.Rewarded)) {
+            return true;
+        }
 
 #if PROMO_USE_VUNGLE
         return vungleIsAdvertAvailable();
@@ -1417,11 +1444,24 @@ public class AdNetworks : GameObjectBehavior
 
     public static void ShowVideoAd(bool showCloseButtons = true, string code = null) {
         if (Instance != null) {
-            Instance.showVideoAd(showCloseButtons);
+            Instance.showVideoAd(showCloseButtons, code);
         }
     }
 
     public void showVideoAd(bool showCloseButtons = true, string code = null) {
+
+        // Legacy meaning: close buttons = rewarded video, none = plain fullscreen video.
+        AdFormat format = showCloseButtons ? AdFormat.Rewarded : AdFormat.Interstitial;
+
+        if (adsSuppressed(format)) {
+            return;
+        }
+
+        if (format == AdFormat.Rewarded
+            ? providersShowRewarded(providersPlacement(code))
+            : providersShowInterstitial(providersPlacement(code))) {
+            return;
+        }
 
 #if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
@@ -1454,6 +1494,14 @@ public class AdNetworks : GameObjectBehavior
     }
 
     public void showVideoAdIncentivized(bool showCloseButtons = true, string code = null, string user = null) {
+
+        if (adsSuppressed(AdFormat.Rewarded)) {
+            return;
+        }
+
+        if (providersShowRewarded(providersPlacement(code))) {
+            return;
+        }
 
 #if PROMO_USE_VUNGLE
         if (vungleIsAdvertAvailable()) {
@@ -1517,6 +1565,14 @@ public class AdNetworks : GameObjectBehavior
 
     public void showFullscreenAd() {
 
+        if (adsSuppressed(AdFormat.Interstitial)) {
+            return;
+        }
+
+        if (providersShowInterstitial(null)) {
+            return;
+        }
+
 #if PROMO_USE_TAPJOY
         tapjoyShowFullscreenAd();
 #endif
@@ -1548,6 +1604,14 @@ public class AdNetworks : GameObjectBehavior
 
     public void showInterstitial() {
 
+        if (adsSuppressed(AdFormat.Interstitial)) {
+            return;
+        }
+
+        if (providersShowInterstitial(null)) {
+            return;
+        }
+
 #if PROMO_USE_CHARTBOOST
         chartboostShowInterstitial();
 #endif
@@ -1555,9 +1619,13 @@ public class AdNetworks : GameObjectBehavior
 
     // ----------------------------------------------------------------------
 
+    // Legacy: the ad facade quits on Android back. Apps that handle back themselves
+    // (BaseGameGlobal.HandleBackButton override) turn this off.
+    public static bool backButtonQuits = true;
+
     public static void HandleAdUpdate() {
 #if UNITY_ANDROID
-        if (Application.platform == RuntimePlatform.Android) {
+        if (backButtonQuits && Application.platform == RuntimePlatform.Android) {
             if (Input.GetKeyUp(KeyCode.Escape)) {
 #if PROMO_USE_CHARTBOOST
                 //if (Chartboost..onBackPressed())
