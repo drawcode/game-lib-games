@@ -1384,16 +1384,62 @@ public class GameDraggableEditor : GameObjectBehavior {
             //LogUtil.Log("EditModeCreateAsset:assetCodeCreating:" + assetCodeCreating);
 
             if (!string.IsNullOrEmpty(assetCodeCreating)) {
+
+                Vector3 levelPoint;
+
+                if (!ScreenToLevelPoint(fingerPos, out levelPoint)) {
+                    return;
+                }
+
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
                 itemAsset.code = assetCodeCreating;
                 GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
-                gameLevelItemStep.position_data.x = (Input.mousePosition.x - Screen.width) / 100;
-                gameLevelItemStep.position_data.y = (Input.mousePosition.y - Screen.height) / 100;
-                gameLevelItemStep.position_data.z = 0;
+                gameLevelItemStep.position_data.x = levelPoint.x;
+                gameLevelItemStep.position_data.y = levelPoint.y;
+                gameLevelItemStep.position_data.z = levelPoint.z;
                 itemAsset.steps.Add(gameLevelItemStep);
                 GameDraggableEditor.LoadLevelItem(itemAsset);
             }
         }
+    }
+
+    // Where a tap lands in the level: the point under the finger on the level's ground plane (y 0 on
+    // a 3D canvas, z 0 on a 2D one), through Camera.main. position_data is a WORLD position
+    // (loadLevelItem places at step.position_data + local_position_data). The legacy create used
+    // (mouse - Screen.width) / 100, which ignored the camera and put every new item off to one side.
+    //
+    // A plane, not Physics.Raycast: from this camera the ray's first collider is often an item or a
+    // character far up the screen (measured: an asteroid at y 7). The intersection is taken on the
+    // whole line, not the forward ray only: the main camera is orthographic and its ray origins can
+    // sit past the ground for the lower part of the screen.
+    public static bool ScreenToLevelPoint(Vector2 screenPos, out Vector3 levelPoint) {
+
+        levelPoint = Vector3.zero;
+
+        if (!isInst || Camera.main == null) {
+            return false;
+        }
+
+        Ray ray = Camera.main.ScreenPointToRay(screenPos);
+
+        if (Instance.gameDraggableCanvasType == GameDraggableCanvasType.CANVAS_2D) {
+
+            if (Mathf.Abs(ray.direction.z) < 0.0001f) {
+                return false;
+            }
+
+            levelPoint = ray.origin + ray.direction * (-ray.origin.z / ray.direction.z);
+            levelPoint.z = 0f;
+            return true;
+        }
+
+        if (Mathf.Abs(ray.direction.y) < 0.0001f) {
+            return false;
+        }
+
+        levelPoint = ray.origin + ray.direction * (-ray.origin.y / ray.direction.y);
+        levelPoint.y = 0f;
+        return true;
     }
 
     // ----------------------------------------------------------------------

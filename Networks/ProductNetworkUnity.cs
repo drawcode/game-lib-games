@@ -8,6 +8,8 @@ using UnityEngine;
 #if PURCHASE_USE_UNITY
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
+
+using Engine.Game.App;
 #endif
 
 public class ProductNetworkUnityMessages {
@@ -82,7 +84,7 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
                             builder.AddProduct(product.GetPlatformProductCode(), ProductType.NonConsumable);
                         }
                         else if(dataItem.data_type == typeSubscription) {
-                            builder.AddProduct(product.GetPlatformProductCode(), ProductType.Subscription, new IDs() {
+                            builder.AddProduct(product.GetPlatformProductCode(), ProductType.Subscription, new StoreSpecificIds() {
                                 { product.GetPlatformProductCode(PlatformKeys.ios), AppleAppStore.Name },
                                 { product.GetPlatformProductCode(PlatformKeys.android), GooglePlay.Name },
                             });
@@ -147,12 +149,12 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
             // Begin the asynchronous process of restoring purchases. Expect a confirmation response in 
             // the Action<bool> below, and ProcessPurchase if there are previously purchased products to restore.
 
-            apple.RestoreTransactions((result) => {
+            apple.RestoreTransactions((result, message) => {
 
-                // The first phase of restoration. If no more responses are received on ProcessPurchase then 
+                // The first phase of restoration. If no more responses are received on ProcessPurchase then
                 // no purchases are available to be restored.
 
-                Debug.Log("RestorePurchases continuing: " + result + ". If no further messages, no purchases available to restore.");
+                Debug.Log("RestorePurchases continuing: " + result + " " + message + ". If no further messages, no purchases available to restore.");
 
             });
 
@@ -182,6 +184,11 @@ public class ProductNetworkUnity : MonoBehaviour, IStoreListener {
     public void OnInitializeFailed(InitializationFailureReason error) {
         // Purchasing set-up has not succeeded. Check error for reason. Consider sharing this reason with the user.
         Debug.Log("OnInitializeFailed InitializationFailureReason:" + error);
+    }
+
+    // Required by IStoreListener in Unity IAP 4.x+/5.x.
+    public void OnInitializeFailed(InitializationFailureReason error, string message) {
+        Debug.Log("OnInitializeFailed InitializationFailureReason:" + error + " message:" + message);
     }
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args) {

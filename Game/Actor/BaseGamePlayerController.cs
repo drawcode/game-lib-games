@@ -6924,6 +6924,41 @@ public class BaseGamePlayerController : GameActor {
         HandlePlayerAliveStateLate();
     }
 
+    // SIDEKICK NEAR XP (owner, 2026-10-11). A sidekick's hits never score for the player, but
+    // staying near one earns XP over time. Charged from each sidekick's own Update, so there is
+    // no actor scan, and at most once per frame however many sidekicks are near: a flat rate,
+    // not per sidekick. Called above the IsTimerPerf gate, which ticks a sidekick only every
+    // other frame and would drop the time in between.
+    //
+    // 12 is just past the sidekick follow distance (agentDistance 10, InitActorAgentFollow), so
+    // a sidekick at its spot pays and one off chasing an enemy (attract 20, limit 40) does not.
+    public static float sidekickNearXPRadius = 12f;
+    public static double sidekickNearXPPerSecond = 1;
+
+    private static int sidekickNearXPFrame = -1;
+
+    public virtual void UpdateSidekickNearXP() {
+
+        if (!IsSidekickControlled || sidekickNearXPFrame == Time.frameCount) {
+            return;
+        }
+
+        GamePlayerController player = GameController.CurrentGamePlayerController;
+
+        if (player == null || (object)player == this || !player.IsPlayerControlled
+            || player.runtimeData == null || !player.runtimeData.IsAlive) {
+            return;
+        }
+
+        if ((player.transform.position - transform.position).sqrMagnitude
+            > sidekickNearXPRadius * sidekickNearXPRadius) {
+            return;
+        }
+
+        sidekickNearXPFrame = Time.frameCount;
+        player.runtimeData.sidekickNearTime += Time.deltaTime;
+    }
+
     public override void Update() {
 
         // Run only in game state
@@ -6943,6 +6978,8 @@ public class BaseGamePlayerController : GameActor {
         UpdatePhysicsState();
 
         HandlePlayerEffectWarpAnimateTick();
+
+        UpdateSidekickNearXP();
 
         if (!gameObjectTimer.IsTimerPerf(
                 GameObjectTimerKeys.gameUpdateAll, IsPlayerControlled ? 1 : 2)) {

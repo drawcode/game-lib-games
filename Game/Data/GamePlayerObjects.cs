@@ -53,6 +53,25 @@ public class BaseGamePlayerRuntimeData {
         }
     }
 
+    // Seconds this round the player had a sidekick near (BaseGamePlayerController.
+    // UpdateSidekickNearXP). XP only: it stays out of totalScoreValue so score and high score
+    // are unchanged.
+    public double sidekickNearTime = 0;
+
+    public double sidekickNearXP {
+        get {
+            return Math.Floor(sidekickNearTime * BaseGamePlayerController.sidekickNearXPPerSecond);
+        }
+    }
+
+    // THIS ROUND's XP grant: the score total plus the sidekick-near bonus. Round end and the
+    // Results XP EARNED row both read this, so they stay in step.
+    public virtual float totalXPValue {
+        get {
+            return totalScoreValue + (float)sidekickNearXP;
+        }
+    }
+
     public double hitHealthRemaining {
         get {
             return hitCount > 0 ? ((hitLimit - hitCount) / hitLimit) : 1;

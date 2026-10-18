@@ -441,6 +441,12 @@ public class BaseGameGlobal : GameObjectBehavior {
         Application.Quit();
     }
 
+    // Android back / Escape. Legacy behaviour quits from anywhere; apps override to
+    // navigate (and set AdNetworks.backButtonQuits = false so it doesn't quit as well).
+    public virtual void HandleBackButton() {
+        QuitGame();
+    }
+
     int screenshotCount = 1;
 
     public virtual void Update() {
@@ -449,7 +455,7 @@ public class BaseGameGlobal : GameObjectBehavior {
 
 #if !UNITY_IPHONE
         if(Input.GetKeyDown(KeyCode.Escape)) {
-            QuitGame();
+            HandleBackButton();
             //if(AlertDialog.Instance.IsReady()) {
             //  AlertDialog.Instance.ShowAlertQuitDialog();
             //}

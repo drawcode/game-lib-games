@@ -63,9 +63,107 @@ public class FPSDisplay : GameObjectBehavior {
         }
     }
 
+    // TOOLKIT READOUT. The legacy readout is one NGUI label in the scene that draws on every
+    // screen. Its toolkit twin is a tiny always-on view (panel-fps) that this component loads
+    // itself, in the notification band so it sits above screens, the HUD and dialogs like the
+    // legacy label. Dev builds only, like the label. The HUD's own copy stands down while it is up
+    // (hasToolkitReadout).
+    public const string toolkitViewKey = "panel-fps";
+
+    private Engine.UI.UIRef toolkitView;
+    private bool toolkitLoadRequested;
+    private readonly Engine.UI.UIViewLabel toolkitLabel = new Engine.UI.UIViewLabel("LabelFPS");
+
+    public static bool hasToolkitReadout {
+        get {
+            return isInst && Instance.toolkitView != null && Instance.toolkitView.alive;
+        }
+    }
+
+    void LoadToolkitReadout() {
+
+        if (toolkitLoadRequested || !showReadout || !Engine.UI.UIPlatform.toolkitViewsEnabled) {
+            return;
+        }
+
+        Engine.UI.IUIBackend backend = Engine.UI.UIPlatform.viewBackend;
+
+        if (backend == null) {
+            return;
+        }
+
+        toolkitLoadRequested = true;
+
+        backend.LoadView(toolkitViewKey, Engine.UI.UILayers.notification, (Engine.UI.UIRef view) => {
+
+            if (view == null || !view.alive) {
+                return;
+            }
+
+            if (this == null) {
+                backend.DestroyView(view);
+                return;
+            }
+
+            toolkitView = view;
+
+            // The legacy label would draw under the view.
+            HideLegacyReadout();
+        });
+    }
+
+    // Hide the legacy label WITHOUT deactivating its GameObject: this component sits on that
+    // GameObject, and an inactive FPSDisplay never runs Update -- the measurement stops,
+    // GetCurrentFPS falls back to targetFPS (the HUD read a flat "30.00 FPS") and every
+    // IsTimerPerf gate and spawn director loses its framerate signal. Only the widget goes.
+    public void HideLegacyReadout() {
+
+        if (labelFPS == null) {
+            return;
+        }
+
+#if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
+        labelFPS.enabled = false;
+#endif
+    }
+
+    void WriteToolkitReadout(float fps, string text) {
+
+        if (toolkitView == null || !toolkitView.alive) {
+            return;
+        }
+
+        toolkitLabel.Set(toolkitView, text);
+
+        // Same thresholds as the legacy lerp targets and the HUD copy.
+        Color color = Color.green;
+
+        if (fps < 10f) {
+            color = Color.red;
+        }
+        else if (fps < 27f) {
+            color = Color.yellow;
+        }
+
+        UIUtil.SetLabelColor(toolkitLabel.Resolve(toolkitView), color);
+    }
+
+    void OnDestroy() {
+
+        if (toolkitView != null && toolkitView.alive && Engine.UI.UIPlatform.viewBackend != null) {
+            Engine.UI.UIPlatform.viewBackend.DestroyView(toolkitView);
+        }
+
+        toolkitView = null;
+    }
+
     // Use this for initialization
     void Start() {
         timeleft = updateInterval;
+
+        if (Instance == this) {
+            LoadToolkitReadout();
+        }
 
         if (!showReadout && labelFPS != null) {
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
@@ -139,6 +237,10 @@ public class FPSDisplay : GameObjectBehavior {
             // display two fractional digits (f2 format)
             float fps = accum / frames;
             lastFPS = fps;
+
+            if (toolkitView != null) {
+                WriteToolkitReadout(fps, System.String.Format("{0:F2} FPS", fps));
+            }
 
             if (labelFPS != null) {
 

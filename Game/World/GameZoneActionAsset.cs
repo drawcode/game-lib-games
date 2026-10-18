@@ -258,18 +258,16 @@ public class GameZoneActionAsset : GameZoneAction {
                 spriteIcon.spriteName = spriteName;
             }
         }
-#else
-        // TODO Unity UI
+#endif
 
-        foreach(SpriteRenderer spriteIcon in
-               containerIcons.GetList<SpriteRenderer>("Icon")) {
-
-            if(spriteName.IsNotNullOrEmpty()) {
-                spriteIcon.sprite.name = spriteName;
+        // BAKED UIQuadSprite icons (they carry the atlas sprite table), in both builds: the runtime
+        // twin sync below never rebuilds a baked quad, so it must be renamed here.
+        if (spriteName.IsNotNullOrEmpty()) {
+            foreach (Engine.UI.UIQuadSprite quadIcon in
+                    containerIcons.GetList<Engine.UI.UIQuadSprite>("Icon")) {
+                quadIcon.SetSprite(spriteName);
             }
         }
-
-#endif
 
         // After the rename, so the twins carry the action's icon UVs.
         SyncQuadTwins();
