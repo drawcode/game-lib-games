@@ -99,6 +99,54 @@ public class GameDraggableEditor : GameObjectBehavior {
     public static bool deferTap = false;
     public static bool dialogActive = false;
 
+    // ----------------------------------------------------------------------
+    // PER-GAME TUNING (additive; every default is OFF = the legacy behaviour)
+    //
+    // Static so a game sets them once at boot without touching the scene component or the
+    // shared prefab (Action Bikes: AppLevelEditorConfigs in its game layer). A game that sets
+    // none of them -- Action Bots -- runs exactly the old editor.
+
+    // CANVAS_3D: rotation gestures and keys turn the item around Y (yaw, a piece lying on the
+    // ground) instead of Z (roll, the 2D-canvas legacy).
+    public static bool rotateAroundY3D = false;
+
+    // Position snap in world units on the level plane (x/z on CANVAS_3D, x/y on CANVAS_2D),
+    // applied by drag and by create to the item's PIVOT (not its bounds centre). 0 = off.
+    public static float snapGridSize = 0f;
+
+    // Finer snap while Shift is held (small props next to big tiles). 0 = Shift does nothing.
+    public static float snapGridSizeFine = 0f;
+
+    // Per-item grid: the first code prefix (case-insensitive) that matches the item being
+    // dragged or created wins over snapGridSize (e.g. 1 m tiles in a 10 m kit). Shift still
+    // selects snapGridSizeFine when that is set.
+    public static Dictionary<string, float> snapGridSizeByCodePrefix = new Dictionary<string, float>();
+
+    // Yaw snap in degrees (rotateAroundY3D only). Gesture deltas accumulate and the item steps
+    // to the nearest multiple, so slow twists still get there. 0 = free rotation.
+    public static float snapYawDegrees = 0f;
+
+    // Finer yaw snap while Shift is held. 0 = Shift does nothing.
+    public static float snapYawDegreesFine = 0f;
+
+    // Keyboard yaw step while an item is selected: ']' turns right, '[' left (with Shift:
+    // snapYawDegreesFine when set). 0 = no keys.
+    public static float rotateKeyStepDegrees = 0f;
+
+    // Grab when ANY collider under the pointer belongs to a level item (the nearest such hit),
+    // not only when the first hit is tagged dragTag. Big pieces (track tiles) carry their own
+    // colliders, which stop the ray before it reaches any drag handle.
+    public static bool grabAnyLevelItemCollider = false;
+
+    // Level item codes (case-insensitive substring) grabAnyLevelItemCollider never picks, e.g.
+    // a ground terrain that lies under everything.
+    public static List<string> grabAnyLevelItemSkipCodes = new List<string>();
+
+    // CANVAS_3D drag on the grabbed item's own horizontal plane instead of Physics.Raycast. A
+    // raycast lands on whatever is under the pointer -- the item's own ramp, a taller neighbour --
+    // and the item jumps with it.
+    public static bool dragOnLevelPlane = false;
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelButtonGameEdit;
 #else
@@ -143,6 +191,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             else {
                 UpdateHoldDrag();
             }
+
+            UpdateRotateKeys();
         }
 
         // if editing keep current position
@@ -691,8 +741,143 @@ public class GameDraggableEditor : GameObjectBehavior {
         GameObject go = GameDraggableEditor.GetCurrentSpriteObject();
 
         if (go != null) {
-            GameObjectHelper.RotateObjectZ(go, delta);
+
+            if (isYawRotation) {
+                RotateObjectYaw(go, delta);
+            }
+            else {
+                GameObjectHelper.RotateObjectZ(go, delta);
+            }
         }
+    }
+
+    // rotateAroundY3D on a 3D canvas.
+    public bool isYawRotation {
+        get {
+            return rotateAroundY3D && gameDraggableCanvasType == GameDraggableCanvasType.CANVAS_3D;
+        }
+    }
+
+    // The unsnapped yaw the gestures have asked for, kept per object: a twist arrives as many
+    // small deltas, and snapping each one on its own would round every one of them away.
+    GameObject yawObject;
+    float yawFree = 0f;
+
+    public void RotateObjectYaw(GameObject go, float delta) {
+
+        if (go == null) {
+            return;
+        }
+
+        if (GetSnapYawDegrees() <= 0f) {
+            go.transform.Rotate(0f, delta, 0f, Space.World);
+            return;
+        }
+
+        Vector3 euler = go.transform.eulerAngles;
+
+        // Restart from the item's real yaw when it changed under us (another item, a load, the
+        // asset sheet).
+        if (go != yawObject
+            || Mathf.Abs(Mathf.DeltaAngle(SnapYaw(yawFree), euler.y)) > 0.01f) {
+            yawObject = go;
+            yawFree = euler.y;
+        }
+
+        yawFree += delta;
+
+        go.transform.eulerAngles = euler.WithY(SnapYaw(yawFree));
+    }
+
+    public static float SnapYaw(float yaw) {
+
+        float snap = GetSnapYawDegrees();
+
+        if (snap <= 0f) {
+            return yaw;
+        }
+
+        return Mathf.Repeat(Mathf.Round(yaw / snap) * snap, 360f);
+    }
+
+    public static bool isSnapFineHeld {
+        get {
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        }
+    }
+
+    public static float GetSnapYawDegrees() {
+
+        if (snapYawDegreesFine > 0f && isSnapFineHeld) {
+            return snapYawDegreesFine;
+        }
+
+        return snapYawDegrees;
+    }
+
+    // The grid for the item being dragged or created (assetCodeCreating is set by both).
+    public static float GetSnapGridSize() {
+
+        if (snapGridSizeFine > 0f && isSnapFineHeld) {
+            return snapGridSizeFine;
+        }
+
+        if (snapGridSizeByCodePrefix != null && snapGridSizeByCodePrefix.Count > 0
+            && isInst && !string.IsNullOrEmpty(Instance.assetCodeCreating)) {
+
+            string code = Instance.assetCodeCreating.ToLowerInvariant();
+
+            foreach (KeyValuePair<string, float> pair in snapGridSizeByCodePrefix) {
+                if (!string.IsNullOrEmpty(pair.Key) && code.StartsWith(pair.Key.ToLowerInvariant())) {
+                    return pair.Value;
+                }
+            }
+        }
+
+        return snapGridSize;
+    }
+
+    void UpdateRotateKeys() {
+
+        if (rotateKeyStepDegrees <= 0f || !isEditing) {
+            return;
+        }
+
+        float step = 0f;
+
+        float keyStep = snapYawDegreesFine > 0f && isSnapFineHeld ? snapYawDegreesFine : rotateKeyStepDegrees;
+
+        if (Input.GetKeyDown(KeyCode.RightBracket)) {
+            step = keyStep;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftBracket)) {
+            step = -keyStep;
+        }
+
+        if (step != 0f) {
+            RotateCurrentObject(step);
+        }
+    }
+
+    // Grid snap on the level plane (GetSnapGridSize; 0 = unchanged). The height axis is kept.
+    public static Vector3 SnapToGrid(Vector3 position) {
+
+        float grid = GetSnapGridSize();
+
+        if (grid <= 0f) {
+            return position;
+        }
+
+        position.x = Mathf.Round(position.x / grid) * grid;
+
+        if (GetCanvasType() == GameDraggableCanvasType.CANVAS_2D) {
+            position.y = Mathf.Round(position.y / grid) * grid;
+        }
+        else {
+            position.z = Mathf.Round(position.z / grid) * grid;
+        }
+
+        return position;
     }
 
     public void SpinCurrentObject(Vector2 fingerPos, Vector2 delta) {
@@ -839,7 +1024,9 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public void RotationMove(Vector2 fingerPos1, Vector2 fingerPos2, float rotationAngleDelta) {
         if (GameDraggableEditor.isEditing) {
-            RotateCurrentObject(rotationAngleDelta);
+            // A twist reports counter-clockwise on screen as positive; seen from above, that
+            // is a negative turn around Y. Roll (Z) keeps the legacy sign.
+            RotateCurrentObject(isYawRotation ? -rotationAngleDelta : rotationAngleDelta);
         }
     }
 
@@ -1175,7 +1362,22 @@ public class GameDraggableEditor : GameObjectBehavior {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit)) {
                 grabbed = hit.transform;
-                if (grabbed.tag == dragTag) {
+
+                bool grabbable = grabbed.tag == dragTag;
+
+                // grabAnyLevelItemCollider: the first hit is a piece's own collider (or a
+                // neighbour's), not a drag handle -- take the nearest level item on the ray.
+                if (!grabbable && grabAnyLevelItemCollider) {
+
+                    Transform levelItemHit = FindLevelItemOnRay(ray);
+
+                    if (levelItemHit != null) {
+                        grabbed = levelItemHit;
+                        grabbable = true;
+                    }
+                }
+
+                if (grabbable) {
                     /*
                     if(grabbed.parent){
                         grabbed = grabbed.parent.transform;
@@ -1205,7 +1407,13 @@ public class GameDraggableEditor : GameObjectBehavior {
                     //grabLayerMask = grabbed.gameObject.layer;
                     //grabbed.gameObject.layer = LayerMask.NameToLayer("nodrag");
                     //now immediately do another raycast to calculate the offset
-                    if (Physics.Raycast(ray, out hit)) {
+                    Vector3 planePoint;
+
+                    if (isDragOnLevelPlane
+                        && RayToLevelPlane(ray, grabbed.position.y, out planePoint)) {
+                        grabOffset = grabbed.position - planePoint;
+                    }
+                    else if (Physics.Raycast(ray, out hit)) {
                         grabOffset = grabbed.position - hit.point;
                     }
                     else {
@@ -1236,6 +1444,18 @@ public class GameDraggableEditor : GameObjectBehavior {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+        if (grabbed != null && isDragOnLevelPlane) {
+
+            Vector3 planePoint;
+
+            if (RayToLevelPlane(ray, grabbed.position.y, out planePoint)) {
+                float grabbedInitialY = grabbed.position.y;
+                grabbed.position = SnapToGrid((planePoint + grabOffset).WithY(grabbedInitialY));
+            }
+
+            return;
+        }
+
         if (Physics.Raycast(ray, out hit)) {
 
             if (grabbed != null) {
@@ -1250,9 +1470,93 @@ public class GameDraggableEditor : GameObjectBehavior {
                     grabbed.position = hit.point + grabOffset;
                     grabbed.position = grabbed.position.WithY(grabbedInitialY);
                 }
+
+                if (GetSnapGridSize() > 0f) {
+                    grabbed.position = SnapToGrid(grabbed.position);
+                }
                 ///LogUtil.Log("pos:" + grabbed.position);
             }
         }
+    }
+
+    // dragOnLevelPlane on a 3D canvas.
+    public bool isDragOnLevelPlane {
+        get {
+            return dragOnLevelPlane && gameDraggableCanvasType == GameDraggableCanvasType.CANVAS_3D;
+        }
+    }
+
+    // Where the ray's LINE crosses the horizontal plane at `height` (the whole line, as in
+    // ScreenToLevelPoint: an orthographic camera's ray origins can sit below the plane).
+    public static bool RayToLevelPlane(Ray ray, float height, out Vector3 point) {
+
+        point = Vector3.zero;
+
+        if (Mathf.Abs(ray.direction.y) < 0.0001f) {
+            return false;
+        }
+
+        point = ray.origin + ray.direction * ((height - ray.origin.y) / ray.direction.y);
+        point.y = height;
+        return true;
+    }
+
+    // grabAnyLevelItemCollider: the nearest hit on the ray that belongs to a GameDraggableLevelItem
+    // (not one of grabAnyLevelItemSkipCodes), or null. Non-alloc: hold-drag calls Grab every frame
+    // while the button is down over nothing.
+    static readonly RaycastHit[] levelItemRayHits = new RaycastHit[32];
+
+    public Transform FindLevelItemOnRay(Ray ray) {
+
+        int count = Physics.RaycastNonAlloc(ray, levelItemRayHits, Mathf.Infinity);
+
+        Transform nearest = null;
+        float nearestDistance = float.MaxValue;
+
+        for (int i = 0; i < count; i++) {
+
+            RaycastHit rayHit = levelItemRayHits[i];
+
+            if (rayHit.collider == null || rayHit.distance >= nearestDistance) {
+                continue;
+            }
+
+            GameObject levelItemObject =
+                rayHit.collider.gameObject.FindTypeAboveObject<GameDraggableLevelItem>();
+
+            if (levelItemObject == null || IsGrabAnySkipped(levelItemObject)) {
+                continue;
+            }
+
+            nearest = levelItemObject.transform;
+            nearestDistance = rayHit.distance;
+        }
+
+        return nearest;
+    }
+
+    bool IsGrabAnySkipped(GameObject levelItemObject) {
+
+        if (grabAnyLevelItemSkipCodes == null || grabAnyLevelItemSkipCodes.Count == 0) {
+            return false;
+        }
+
+        GameDraggableLevelItem levelItem = levelItemObject.GetComponent<GameDraggableLevelItem>();
+
+        if (levelItem == null || levelItem.gameLevelItemAsset == null
+            || string.IsNullOrEmpty(levelItem.gameLevelItemAsset.code)) {
+            return false;
+        }
+
+        string code = levelItem.gameLevelItemAsset.code.ToLowerInvariant();
+
+        foreach (string skip in grabAnyLevelItemSkipCodes) {
+            if (!string.IsNullOrEmpty(skip) && code.Contains(skip.ToLowerInvariant())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ----------------------------------------------------------------------
@@ -1390,6 +1694,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                 if (!ScreenToLevelPoint(fingerPos, out levelPoint)) {
                     return;
                 }
+
+                // No-op unless snapGridSize is set.
+                levelPoint = SnapToGrid(levelPoint);
 
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
                 itemAsset.code = assetCodeCreating;
@@ -1883,6 +2190,10 @@ public class GameDraggableEditor : GameObjectBehavior {
                     // add a new level asset item
 
                     GameLevelItemAsset newAsset = new GameLevelItemAsset();
+                    // The saved copy keeps the live item's uuid, so the NEXT save finds it and
+                    // updates it in place. With a fresh uuid every SAVE (and PLAY, which saves)
+                    // appended the item again, and a saved layout came back with stacked copies.
+                    newAsset.uuid = gameLevelItemAsset.uuid;
                     newAsset.code = gameLevelItemAsset.code;
                     newAsset.physics_type = gameLevelItemAsset.physics_type;
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
