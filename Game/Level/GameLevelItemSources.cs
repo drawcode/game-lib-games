@@ -131,6 +131,51 @@ public class GameLevelItemSources {
         return items != null && items.Count > 0;
     }
 
+    // Drops the grid's "empty" placeholders (the loader skips them; 1-1 saved 920 of 1158 entries,
+    // 1.7 MB). Returns how many were removed.
+    public static int StripEmpty(GameLevelItem item) {
+
+        if (item == null || item.level_items == null) {
+            return 0;
+        }
+
+        return item.level_items.RemoveAll(
+            asset => asset == null || asset.code == BaseDataObjectKeys.empty);
+    }
+
+    // The player's saved file for a level code (versioned, in the app cache).
+    public static string GetSavedPath(string code) {
+        string path = GameLevelItems.Instance.GetPathItem(GameLevelItems.Instance.DATA_KEY, code, "items");
+        return Engine.Content.Contents.GetFileVersioned(path);
+    }
+
+    // Drops the player's saved level so the level plays shipped/generated again. The old file is
+    // kept beside it as .bak (one level of undo: rename it back). Writes an empty item rather than
+    // deleting, the same file a level that was never saved has.
+    public static void ClearSaved(string code) {
+
+        if (string.IsNullOrEmpty(code)) {
+            return;
+        }
+
+        string path = GetSavedPath(code);
+
+        try {
+            if (System.IO.File.Exists(path)) {
+                System.IO.File.Copy(path, path + ".bak", true);
+            }
+        }
+        catch (Exception e) {
+            LogUtil.LogError("GameLevelItemSources: could not back up " + path + ": " + e.Message);
+        }
+
+        GameLevelItem empty = new GameLevelItem();
+        empty.code = code;
+        GameLevelItems.Instance.SaveItem(GameLevelItems.Instance.DATA_KEY, code, empty);
+
+        LogUtil.Log("GameLevelItemSources: cleared saved " + code);
+    }
+
     public static string GetShippedResourcePath(string layoutCode) {
         return ContentsConfig.contentRootFolder + "/" + ContentsConfig.contentAppFolder
             + "/version/" + shippedFolder + GameLevelItems.Instance.DATA_KEY + "-" + layoutCode + ".json";
