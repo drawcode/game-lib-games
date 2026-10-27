@@ -1181,6 +1181,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void loadLevelItems() {
 
+        // A saved or shipped level plays as authored; only a level without one is generated
+        // (see GameLevelItemSources for the keys and order).
+        if (GameLevelItemSources.ApplyCurrent(GameLevels.Current.code)) {
+            return;
+        }
+
         bool updated = false;
 
         // Load level items by game type....
