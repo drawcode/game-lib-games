@@ -45,7 +45,7 @@ public class GrapplingHook : MonoBehaviour {
 
         //Check to make sure we actually hit something that can be grappled.
         //The Raycast distance can be change to another value to set a certain distance a player can grapple to.
-        if (Input.GetButtonDown("Fire1")) {
+        if (GameInputActions.WasFirePressed()) {
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 5000)) {
                 if (hit.collider) {
                     hitPoint = hit.point;
@@ -60,7 +60,7 @@ public class GrapplingHook : MonoBehaviour {
         }
 
         //If the mouse button is still held after hitting something, continue to swing.
-        if (Input.GetButton("Fire1")) {
+        if (GameInputActions.IsFireHeld()) {
             if (canGrapple) {
                 line.enabled = true;
                 Vector3 v = transform.position - hookAnchor.position;
@@ -96,7 +96,7 @@ public class GrapplingHook : MonoBehaviour {
         }
         //When the mouse is let go, the player stops moving
         //
-        if (Input.GetButtonUp("Fire1")) {
+        if (GameInputActions.WasFireReleased()) {
             line.enabled = false;
             canGrapple = false;
             Swinging = false;

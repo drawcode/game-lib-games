@@ -36,7 +36,8 @@ public class GameWeaponController : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetButton("Fire1")) {
+        // The map's `fire` when it defines one, else Input Manager Fire1 (GameInputActions).
+        if (GameInputActions.IsFireHeld()) {
             LaunchWeapon();
         }
 
