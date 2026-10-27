@@ -115,6 +115,8 @@ public class BaseUIButtonNames {
     public static string buttonGameModeTraining = "ButtonGameModeTraining";
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
     public static string buttonGamePlay = "ButtonGamePlay";
+    // PLAY -> worlds from any menu screen, and Results CONTINUE (iter 31).
+    public static string buttonGamePlayWorlds = "ButtonGamePlayWorlds";
     public static string buttonGameModePlay = "ButtonGameModePlay";
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
@@ -3280,6 +3282,13 @@ public class BaseUIController : GameObjectBehavior {
             GameStoreController.PurchasesRestore();
         }
 
+        // PLAY -> the worlds picker, from Results CONTINUE and the menu PLAY buttons (iter 31,
+        // owner). Exact name: the generic ButtonGamePlay branch below starts a level, and Results'
+        // REPLAY is that element.
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayWorlds, buttonName)) {
+            GamePlayWorlds();
+        }
+
         // LAST 
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)
@@ -3593,6 +3602,21 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void GameContinue() {
         GameController.QuitGame();
+    }
+
+    // Keeps the mode the player is in (missions or arcade) and opens its worlds; arcade when no
+    // world-based mode is current yet.
+    public virtual void GamePlayWorlds() {
+#if ENABLE_FEATURE_GAME_MODE
+        string state = AppContentStates.Current != null ? AppContentStates.Current.code : null;
+
+        if (state != AppContentStateMeta.appContentStateGameArcade
+            && state != AppContentStateMeta.appContentStateGameMissions) {
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+        }
+
+        GameUIController.ShowGameWorlds();
+#endif
     }
 
     public virtual void GameRestart() {

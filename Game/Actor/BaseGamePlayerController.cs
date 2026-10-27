@@ -1394,15 +1394,16 @@ public class BaseGamePlayerController : GameActor {
                 //    " currentControllerData.effectWarpEnd:" + currentControllerData.effectWarpEnd);
             }
             else {
-                if (currentControllerData.effectWarpCurrent != currentControllerData.effectWarpEnd) {
-                    currentControllerData.effectWarpEnabled = false;
-                    currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
-                    SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
-                    //Debug.Log("HandlePlayerEffectWarpAnimateTick:FINALIZE" +
-                    //    " currentControllerData.effectWarpCurrent: " + currentControllerData.effectWarpCurrent +
-                    //    " currentControllerData.effectWarpStart:" + currentControllerData.effectWarpStart +
-                    //    " currentControllerData.effectWarpEnd:" + currentControllerData.effectWarpEnd);
-                }
+                // Finished -- including a warp asked to animate to where it already is (current ==
+                // end). Keeping the flag set there latched it for good, and effectWarpEnabled blocks
+                // move input and locks rotation.
+                currentControllerData.effectWarpEnabled = false;
+                currentControllerData.effectWarpCurrent = currentControllerData.effectWarpEnd;
+                SetPlayerEffectWarp(currentControllerData.effectWarpCurrent);
+                //Debug.Log("HandlePlayerEffectWarpAnimateTick:FINALIZE" +
+                //    " currentControllerData.effectWarpCurrent: " + currentControllerData.effectWarpCurrent +
+                //    " currentControllerData.effectWarpStart:" + currentControllerData.effectWarpStart +
+                //    " currentControllerData.effectWarpEnd:" + currentControllerData.effectWarpEnd);
             }
 
             // LOCK ROTATION AND POSITIONING WHEN BEAMING
