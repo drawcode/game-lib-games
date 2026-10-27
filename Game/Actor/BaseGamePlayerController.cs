@@ -6432,6 +6432,12 @@ public class BaseGamePlayerController : GameActor {
 
         }
         else if (IsPlayerState()) {
+
+            // SKILL from the action map (key/pad press); nothing else sends it for the player.
+            if (GameInputActions.WasSkillPressedByMap()) {
+                SendSkill();
+            }
+
             if (currentControllerData.thirdPersonController.aimingDirection != Vector3.zero) {
 
                 //gamePlayerHolder.transform.rotation = Quaternion.LookRotation(currentControllerData.thirdPersonController.aimingDirection);
@@ -6460,6 +6466,13 @@ public class BaseGamePlayerController : GameActor {
                 }
             }
             else {
+
+                // FIRE from the action map with the aim stick idle: shoot along the current facing,
+                // through the same SendAttack the aim branch above takes (Attack keeps its own
+                // cooldown and auto-weapon rules). Map only, so with the map off nothing changes.
+                if (GameInputActions.IsFireHeldByMap()) {
+                    SendAttack();
+                }
 
                 if (currentControllerData.mountData.isMountedVehicle) {
                     //currentControllerData.mountData.mountVehicle.SetMountWeaponRotatorLocal(Vector3.zero);
