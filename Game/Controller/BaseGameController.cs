@@ -1496,11 +1496,20 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if USE_GAME_LIB_GAMES_UI
 
-            if (!roundStarted) {
-                GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
-            }
+            // The level-load white flash goes whether or not the round has started: this only
+            // HIDES it, and nothing else does, so skipping it for a started round left that round
+            // playing under an opaque white sheet.
+            GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
 
-            UIPanelOverlayPrepare.HideAll();
+            // Ready() already dismissed the prepare overlay (releaseLevelInitializing). Doing it
+            // again over a LIVE round is not harmless: its HideStates() closes the RPG health and
+            // energy dialogs, and their AnimateOut -> HideContent -> ContentPause() puts the game
+            // in GameContentDisplay. A READY tapped inside the wait above (a fast double tap on the
+            // play arrow) started the round, this paused it, the READY screen was already gone and
+            // the white flash was never hidden: a white screen with no way forward.
+            if (!roundStarted) {
+                UIPanelOverlayPrepare.HideAll();
+            }
 #endif
 
             //UIPanelOverlayPrepare.Instance.HideStates();

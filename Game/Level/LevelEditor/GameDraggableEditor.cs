@@ -1060,6 +1060,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
             UIUtil.SetLabelValue(labelButtonGameEdit, "EDIT");
 
+            SpawnCharacterMarkers();
+
             GameDraggableEditor.editingEnabled = false;
             HideUIPanelEdit();
             HideAllEditDialogs();
@@ -1393,6 +1395,15 @@ public class GameDraggableEditor : GameObjectBehavior {
 
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
                 itemAsset.code = assetCodeCreating;
+
+                // A character is placed as an ACTOR item (the same data a level uses to spawn one at
+                // round start): without the type it took the level-asset path, found no prefab and
+                // left an empty draggable. Explicit spawn = at this point; placed bots are enemies.
+                if (CanCreateCharacter(assetCodeCreating)) {
+                    itemAsset.type = BaseDataObjectKeys.character;
+                    itemAsset.data_type = GameSpawnType.explicitType;
+                    itemAsset.display_type = GameActorType.enemy;
+                }
                 GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
                 gameLevelItemStep.position_data.x = levelPoint.x;
                 gameLevelItemStep.position_data.y = levelPoint.y;
@@ -1738,7 +1749,11 @@ public class GameDraggableEditor : GameObjectBehavior {
                     return;
                 }
 
-                if (gameLevelItemAsset.type == BaseDataObjectKeys.character) {
+                // While EDITING a character is a draggable marker showing its model (so it can be
+                // moved, selected, deleted and saved like any item); leaving edit mode swaps each
+                // marker for the live actor (SpawnCharacterMarkers). Outside the editor it queues
+                // for round start as before.
+                if (gameLevelItemAsset.type == BaseDataObjectKeys.character && !GameDraggableEditor.isEditing) {
                     // Handle player
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         gameLevelItemAsset.position_data = step.position_data;// * .1f;
@@ -1785,6 +1800,8 @@ public class GameDraggableEditor : GameObjectBehavior {
                         dragLevelItem.gameLevelItemAsset = gameLevelItemAsset;
                         //dragLevelItem.gameLevelItemObject.transform.localScale = 
                         // dragLevelItem.gameLevelItemObject.transform.localScale * .1f;
+
+                        // A character's marker model loads through LoadSprite like any sprite.
                         dragLevelItem.LoadData();
 
                         goLevelItem.transform.parent = levelItemsContainerObject.transform;
@@ -1829,6 +1846,116 @@ public class GameDraggableEditor : GameObjectBehavior {
     }
 
     // ----------------------------------------------------------------------
+
+    // CHARACTERS IN THE EDITOR (iter 40)
+    //
+    // Only a code with a GameCharacter row can become an actor (loadActorCo looks it up); a code that
+    // is only a model (character-bot-1/-2, character-zombie-1 in action-bots) cannot be placed.
+    public static bool CanCreateCharacter(string code) {
+        return !string.IsNullOrEmpty(code)
+            && GameCharacters.Instance != null
+            && GameCharacters.Instance.GetById(code) != null;
+    }
+
+    // The marker's visual: the character's model, unpooled (the marker is destroyed when it becomes
+    // an actor). No AI, no physics of its own — the draggable container carries those.
+    public static void LoadCharacterMarkerModel(GameDraggableLevelItem dragLevelItem) {
+
+        if (dragLevelItem == null || dragLevelItem.gameLevelItemObject == null
+            || dragLevelItem.gameLevelItemAsset == null) {
+            return;
+        }
+
+        dragLevelItem.RemoveGameLevelItems();
+
+        GameObject model = AppContentAssets.LoadAsset(
+            dragLevelItem.gameLevelItemAsset.code, Vector3.zero, Quaternion.identity, false);
+
+        if (model == null) {
+            return;
+        }
+
+        model.transform.parent = dragLevelItem.gameLevelItemObject.transform;
+        model.transform.localPosition = Vector3.zero;
+        model.transform.localRotation = Quaternion.identity;
+
+        // The actor wears the model under GamePlayerObject's model holder (x4 in action-bots); a
+        // marker at the model's own scale read as a speck next to the bot it becomes.
+        model.transform.localScale = CharacterModelScale();
+    }
+
+    static Vector3 characterModelScale = Vector3.zero;
+
+    // The model holder's scale inside the actor prefab (GamePlayerObject), read once.
+    static Vector3 CharacterModelScale() {
+
+        if (characterModelScale != Vector3.zero) {
+            return characterModelScale;
+        }
+
+        characterModelScale = Vector3.one;
+
+        GameObject prefab = PrefabsPool.PoolPrefab(
+            PathUtil.Combine(ContentPaths.appCacheVersionSharedPrefabCharacters, "GamePlayerObject"));
+
+        if (prefab != null) {
+
+            BaseGamePlayerController controller =
+                prefab.GetComponentInChildren<BaseGamePlayerController>(true);
+
+            if (controller != null && controller.gamePlayerModelHolderModel != null) {
+
+                Vector3 s = Vector3.one;
+                Transform root = controller.transform;
+
+                for (Transform p = controller.gamePlayerModelHolderModel.transform; p != null && p != root.parent; p = p.parent) {
+                    s = Vector3.Scale(s, p.localScale);
+                }
+
+                characterModelScale = s;
+            }
+        }
+
+        return characterModelScale;
+    }
+
+    // Leaving edit mode: every character marker becomes the live actor where it stands, and the
+    // marker goes. Its level data (saved by PLAY/SAVE) is untouched — the next level load spawns
+    // the actor from it again.
+    public void SpawnCharacterMarkers() {
+
+        if (levelItemsContainerObject == null) {
+            return;
+        }
+
+        List<GameDraggableLevelItem> markers = new List<GameDraggableLevelItem>();
+
+        foreach (Transform t in levelItemsContainerObject.transform) {
+
+            GameDraggableLevelItem item = t.GetComponent<GameDraggableLevelItem>();
+
+            if (item != null && item.gameLevelItemAsset != null
+                && item.gameLevelItemAsset.type == BaseDataObjectKeys.character) {
+                markers.Add(item);
+            }
+        }
+
+        for (int i = 0; i < markers.Count; i++) {
+
+            GameDraggableLevelItem marker = markers[i];
+            GameLevelItemAsset asset = marker.gameLevelItemAsset;
+
+            GameController.LoadActor(
+                asset.code,
+                asset.type,
+                string.IsNullOrEmpty(asset.data_type) ? GameSpawnType.explicitType : asset.data_type,
+                string.IsNullOrEmpty(asset.display_type) ? GameActorType.enemy : asset.display_type,
+                marker.transform.position,
+                marker.transform.rotation);
+
+            Destroy(marker.gameObject);
+        }
+    }
 
     public static void SaveCurrentLevel() {
         SaveCurrentLevel(levelItemsContainerObject);
@@ -1885,6 +2012,14 @@ public class GameDraggableEditor : GameObjectBehavior {
                     GameLevelItemAsset newAsset = new GameLevelItemAsset();
                     newAsset.code = gameLevelItemAsset.code;
                     newAsset.physics_type = gameLevelItemAsset.physics_type;
+
+                    // Same uuid as the draggable's asset, or the next save does not find it and adds
+                    // the item AGAIN (every save duplicated every newly placed item). The type
+                    // fields make a placed character spawn as an actor when the level loads.
+                    newAsset.uuid = gameLevelItemAsset.uuid;
+                    newAsset.type = gameLevelItemAsset.type;
+                    newAsset.data_type = gameLevelItemAsset.data_type;
+                    newAsset.display_type = gameLevelItemAsset.display_type;
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
                         step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
