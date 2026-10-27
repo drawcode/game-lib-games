@@ -117,6 +117,8 @@ public class BaseUIButtonNames {
     public static string buttonGamePlay = "ButtonGamePlay";
     // PLAY -> worlds from any menu screen, and Results CONTINUE (iter 31).
     public static string buttonGamePlayWorlds = "ButtonGamePlayWorlds";
+    // Plays like ButtonGameModePlay (contains-match) and enters the level to create it: EDIT shows.
+    public static string buttonGameModePlayEdit = "ButtonGameModePlayEdit";
     public static string buttonGameModePlay = "ButtonGameModePlay";
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
@@ -3294,6 +3296,15 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay + "$", buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
+
+            // A fresh level entry decides whether the HUD offers EDIT (iter 33): only the level
+            // select's EDIT play button creates; exact ButtonGamePlay (Results REPLAY) keeps it.
+            if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEdit, buttonName)) {
+                GameDraggableEditor.levelCreateRequested = true;
+            }
+            else if (!UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
+                GameDraggableEditor.levelCreateRequested = false;
+            }
 
             object dataType = null;
             object dataCode = null;

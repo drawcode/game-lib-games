@@ -3356,8 +3356,116 @@ public class BaseGamePlayerController : GameActor {
             if (GameController.IsGameplayTypeRunner()) {
                 //return;
             }
+
+            // A placement jump, not movement: no follow-effect streak along it (iter 33).
+            StopFollowEffectsForJump();
+
             gameObject.ResetPosition();
+
+            RestartFollowEffectsAfterJump();
         }
+    }
+
+    // FOLLOW EFFECTS WAIT FOR THE ROUND (iter 33, owner: "follow particle systems should only start
+    // when the level starts and movement happens, not in placing the character to the start point
+    // from last point"). The player's world-space systems (CFX3 Fire Trail, Game, EffectCircleFollow,
+    // the embers) emit by distance and leave what they spawned where it spawned, so each placement
+    // jump between rounds drew a ~20 unit streak across the map: measured on REPLAY, the level load
+    // moved the player (10,18) -> (0,0) -> back, and READY's ResetPosition (0,0) again, 62-124
+    // particles along the path each time. They are held stopped and cleared from level init until
+    // READY (levelPlayerReadied), and released the frame after - READY's reset is synchronous, so
+    // they restart at the start point and draw only once the player moves.
+    private bool followEffectsHeld = false;
+    private readonly List<ParticleSystem> followEffectsStopped = new List<ParticleSystem>();
+    private static readonly List<ParticleSystem> followEffectsScratch = new List<ParticleSystem>();
+
+    public virtual void SyncFollowEffectsHeld() {
+
+        if (!IsPlayerControlled) {
+            return;
+        }
+
+        bool hold = GameController.isInst && !GameController.Instance.levelPlayerReadied;
+
+        if (hold == followEffectsHeld) {
+            return;
+        }
+
+        followEffectsHeld = hold;
+
+        if (hold) {
+
+            followEffectsStopped.Clear();
+
+            GetComponentsInChildren<ParticleSystem>(false, followEffectsScratch);
+
+            foreach (ParticleSystem ps in followEffectsScratch) {
+
+                if (ps.main.simulationSpace != ParticleSystemSimulationSpace.World) {
+                    continue;
+                }
+
+                if (ps.isPlaying) {
+                    followEffectsStopped.Add(ps);
+                }
+
+                ps.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+
+            followEffectsScratch.Clear();
+        }
+        else {
+
+            foreach (ParticleSystem ps in followEffectsStopped) {
+                if (ps != null) {
+                    ps.Clear(false);
+                    ps.Play(false);
+                }
+            }
+
+            followEffectsStopped.Clear();
+        }
+    }
+
+    // ResetPosition's own guard: a reset can run before initLevelCo clears levelPlayerReadied (the
+    // first jump on REPLAY), so the hold alone does not cover it.
+    private readonly List<ParticleSystem> followEffectsJumpStopped = new List<ParticleSystem>();
+
+    private void StopFollowEffectsForJump() {
+
+        followEffectsJumpStopped.Clear();
+
+        GetComponentsInChildren<ParticleSystem>(false, followEffectsScratch);
+
+        foreach (ParticleSystem ps in followEffectsScratch) {
+            if (ps.main.simulationSpace == ParticleSystemSimulationSpace.World && ps.isPlaying) {
+                followEffectsJumpStopped.Add(ps);
+                ps.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+        }
+
+        followEffectsScratch.Clear();
+    }
+
+    private void RestartFollowEffectsAfterJump() {
+
+        // Held ones restart when the hold releases instead.
+        if (!followEffectsHeld) {
+            foreach (ParticleSystem ps in followEffectsJumpStopped) {
+                if (ps != null) {
+                    ps.Play(false);
+                }
+            }
+        }
+        else {
+            foreach (ParticleSystem ps in followEffectsJumpStopped) {
+                if (ps != null && !followEffectsStopped.Contains(ps)) {
+                    followEffectsStopped.Add(ps);
+                }
+            }
+        }
+
+        followEffectsJumpStopped.Clear();
     }
 
     public virtual void ResetScale() {
@@ -6974,6 +7082,9 @@ public class BaseGamePlayerController : GameActor {
     }
 
     public override void Update() {
+
+        // Before the gates: the hold matters exactly while the round is NOT running.
+        SyncFollowEffectsHeld();
 
         // Run only in game state
 

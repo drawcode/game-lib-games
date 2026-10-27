@@ -2381,6 +2381,17 @@ public class GameDraggableEditor : GameObjectBehavior {
     public static bool editButtonRequested = false;
     public static bool editAssetSheetShown = false;
 
+    // Iter 33 (owner: "the EDIT button should only appear if you create a level"): set by the
+    // level select's ButtonGameModePlayEdit, cleared by any other fresh level entry (mode PLAY, a
+    // mission row) in BaseUIController; REPLAY keeps it. The HUD shows EDIT only while it is set.
+    public static bool levelCreateRequested = false;
+
+    // Statics survive Play sessions with domain reload off.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetLevelCreateRequested() {
+        levelCreateRequested = false;
+    }
+
     // B11.1: no toolkit call here. The EDIT button is the HUD's (BaseGameHUD + panel-hud view,
     // B11.2): the toolkit HUD suppresses its legacy ButtonGameEdit and the view must carry a
     // ButtonGameEdit of its own, shown while BaseGameController allows editing. Its click already
