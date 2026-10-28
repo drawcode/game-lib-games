@@ -149,20 +149,58 @@ public class GameLevelItemSources {
         return Engine.Content.Contents.GetFileVersioned(path);
     }
 
-    // Drops the player's saved level so the level plays shipped/generated again. The old file is
-    // kept beside it as .bak (one level of undo: rename it back). Writes an empty item rather than
-    // deleting, the same file a level that was never saved has.
-    public static void ClearSaved(string code) {
+    public static string GetSavedBackupPath(string code) {
+        return GetSavedPath(code) + ".bak";
+    }
+
+    // A level file on disk, or null when it is missing or cannot be read.
+    static GameLevelItem ReadLevelFile(string path) {
+
+        try {
+            if (!System.IO.File.Exists(path)) {
+                return null;
+            }
+
+            return System.IO.File.ReadAllText(path).FromJson<GameLevelItem>();
+        }
+        catch (Exception e) {
+            LogUtil.LogError("GameLevelItemSources: could not read " + path + ": " + e.Message);
+            return null;
+        }
+    }
+
+    // RESET's undo: the .bak holds a layout to put back.
+    public static bool HasSavedBackup(string code) {
 
         if (string.IsNullOrEmpty(code)) {
-            return;
+            return false;
+        }
+
+        GameLevelItem backup = ReadLevelFile(GetSavedBackupPath(code));
+
+        return backup != null && HasItems(backup.level_items);
+    }
+
+    // Drops the player's saved level so the level plays shipped/generated again. The old file is
+    // kept beside it as .bak (one level of undo: RestoreSaved). Only a save WITH items is backed
+    // up, so a second RESET (on the now-empty file) cannot overwrite the .bak with nothing.
+    // Writes an empty item rather than deleting, the same file a level that was never saved has.
+    // Returns true when a save was backed up (there is something to undo).
+    public static bool ClearSaved(string code) {
+
+        if (string.IsNullOrEmpty(code)) {
+            return false;
         }
 
         string path = GetSavedPath(code);
+        bool backedUp = false;
 
         try {
-            if (System.IO.File.Exists(path)) {
-                System.IO.File.Copy(path, path + ".bak", true);
+            GameLevelItem saved = ReadLevelFile(path);
+
+            if (saved != null && HasItems(saved.level_items)) {
+                System.IO.File.Copy(path, GetSavedBackupPath(code), true);
+                backedUp = true;
             }
         }
         catch (Exception e) {
@@ -174,6 +212,39 @@ public class GameLevelItemSources {
         GameLevelItems.Instance.SaveItem(GameLevelItems.Instance.DATA_KEY, code, empty);
 
         LogUtil.Log("GameLevelItemSources: cleared saved " + code);
+
+        return backedUp;
+    }
+
+    // Undoes ClearSaved: the .bak becomes the player's save again and is removed, so the next
+    // RESET backs up afresh. Returns the restored level, or null when there is nothing to restore.
+    public static GameLevelItem RestoreSaved(string code) {
+
+        if (string.IsNullOrEmpty(code)) {
+            return null;
+        }
+
+        string backupPath = GetSavedBackupPath(code);
+        GameLevelItem backup = ReadLevelFile(backupPath);
+
+        if (backup == null || !HasItems(backup.level_items)) {
+            return null;
+        }
+
+        backup.code = code;
+        GameLevelItems.Instance.SaveItem(GameLevelItems.Instance.DATA_KEY, code, backup);
+
+        try {
+            System.IO.File.Delete(backupPath);
+        }
+        catch (Exception e) {
+            LogUtil.LogError("GameLevelItemSources: could not remove " + backupPath + ": " + e.Message);
+        }
+
+        LogUtil.Log("GameLevelItemSources: restored saved " + code
+            + " (" + backup.level_items.Count + " items)");
+
+        return backup;
     }
 
     public static string GetShippedResourcePath(string layoutCode) {

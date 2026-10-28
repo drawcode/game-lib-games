@@ -86,7 +86,33 @@ public class GameDraggableEditor : GameObjectBehavior {
     // the asset sheet all start with a grab), an item created, or the level settings saved. PLAY
     // saves only then, so opening the editor and pressing PLAY no longer freezes a generated level
     // into a saved one. SAVE always saves. Cleared by every level item load (start, reload, reset).
-    public static bool levelEdited = false;
+    // An edit also ends RESET's undo (resetUndoCode): the edit is newer than the backup.
+    public static bool levelEdited {
+        get {
+            return _levelEdited;
+        }
+        set {
+            _levelEdited = value;
+
+            if (value && resetUndoCode != null) {
+                resetUndoCode = null;
+                ApplyResetButton();
+            }
+        }
+    }
+
+    static bool _levelEdited = false;
+
+    // The level whose RESET can still be undone: set when RESET backed up a save, cleared by
+    // the undo, an edit or SAVE. While it is the current level, the RESET button reads UNDO.
+    public static string resetUndoCode = null;
+
+    public static bool resetUndoAvailable {
+        get {
+            return resetUndoCode != null && GameLevels.Current != null
+                && resetUndoCode == GameLevels.Current.code;
+        }
+    }
 
     public string dragTag = "drag";
     public GameDraggableCanvasType gameDraggableCanvasType = GameDraggableCanvasType.CANVAS_2D;
@@ -352,7 +378,13 @@ public class GameDraggableEditor : GameObjectBehavior {
             EditSave();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEditReset) {
-            EditReset();
+
+            if (resetUndoAvailable) {
+                EditResetUndo();
+            }
+            else {
+                EditReset();
+            }
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEdit) {
             EditEnable();
@@ -1089,6 +1121,10 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         // Save to current level data...            
         SaveCurrentLevel();
+
+        // the save replaces what RESET backed up as the thing to keep
+        resetUndoCode = null;
+        ApplyResetButton();
     }
 
     public void EditReload() {
@@ -1103,7 +1139,7 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         ResetAssetPanelRemoveDeselect();
 
-        GameLevelItemSources.ClearSaved(code);
+        bool backedUp = GameLevelItemSources.ClearSaved(code);
 
         GameLevelItems.Current = new GameLevelItem();
         GameLevelItems.Current.code = code;
@@ -1112,8 +1148,46 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         ReloadLevelItems();
 
+        // after the reload: the load clears levelEdited, which would end the undo
+        resetUndoCode = backedUp ? code : null;
+        ApplyResetButton();
+
         LogUtil.Log("EditReset: " + code + " now plays " + GameLevelItemSources.currentSource
+            + " (" + GameLevelItems.Current.level_items.Count + " items, undo " + backedUp + ")");
+    }
+
+    // UNDO (the RESET button right after a RESET): the backed-up save becomes the level again.
+    public void EditResetUndo() {
+
+        string code = GameLevels.Current.code;
+
+        ResetAssetPanelRemoveDeselect();
+
+        resetUndoCode = null;
+
+        GameLevelItem restored = GameLevelItemSources.RestoreSaved(code);
+
+        if (restored != null) {
+
+            // loadLevelItems reads the saved layout from Current (see GameLevelItemSources)
+            GameLevelItems.Current = restored;
+
+            GameController.Instance.loadLevelItems();
+
+            ReloadLevelItems();
+        }
+
+        ApplyResetButton();
+
+        LogUtil.Log("EditResetUndo: " + code + " now plays " + GameLevelItemSources.currentSource
             + " (" + GameLevelItems.Current.level_items.Count + " items)");
+    }
+
+    // RESET or UNDO on the toolbar, from resetUndoAvailable.
+    public static void ApplyResetButton() {
+        if (isInst) {
+            Instance.ToolkitApplyResetButton();
+        }
     }
 
     public void ResetAssetPanelRemoveDeselect() {
@@ -2650,6 +2724,16 @@ public class GameDraggableEditor : GameObjectBehavior {
 #if USE_GAME_LIB_GAMES_UI
         if (editorPanelTools != null) {
             editorPanelTools.HideAssetToolsButton();
+        }
+#endif
+    }
+
+    void ToolkitApplyResetButton() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelTools != null) {
+            editorPanelTools.ApplyResetButton();
         }
 #endif
     }
