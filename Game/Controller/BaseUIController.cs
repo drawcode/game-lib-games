@@ -119,6 +119,9 @@ public class BaseUIButtonNames {
     public static string buttonGamePlayWorlds = "ButtonGamePlayWorlds";
     // Plays like ButtonGameModePlay (contains-match) and enters the level to create it: EDIT shows.
     public static string buttonGameModePlayEdit = "ButtonGameModePlayEdit";
+    // Worlds screen EDIT (iter 34): creates the next free level code in the current world
+    // (GameLevelCodes) and enters it to create; contains-matches both names above.
+    public static string buttonGameModePlayEditWorld = "ButtonGameModePlayEditWorld";
     public static string buttonGameModePlay = "ButtonGameModePlay";
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
@@ -3301,6 +3304,19 @@ public class BaseUIController : GameObjectBehavior {
             // select's EDIT play button creates; exact ButtonGamePlay (Results REPLAY) keeps it.
             if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEdit, buttonName)) {
                 GameDraggableEditor.levelCreateRequested = true;
+
+                // the worlds screen's EDIT makes a new level rather than opening the current one
+                if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEditWorld, buttonName)) {
+
+                    string levelCreated = GameLevelCodes.CreateInWorld(GameWorlds.Current);
+
+                    if (string.IsNullOrEmpty(levelCreated)) {
+                        GameDraggableEditor.levelCreateRequested = false;
+                        return;
+                    }
+
+                    GameLevels.Instance.ChangeCurrent(levelCreated);
+                }
             }
             else if (!UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
                 GameDraggableEditor.levelCreateRequested = false;
