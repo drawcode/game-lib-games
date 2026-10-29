@@ -3395,7 +3395,9 @@ public class BaseUIController : GameObjectBehavior {
 
                                 string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
-                                levelTo = string.Format("{0}-{1}", worldTo, appContentCollect.GetLevelSuffixRandom());
+                                // skips level rows above the bot's level (content gating, iter 35)
+                                levelTo = string.Format("{0}-{1}", worldTo,
+                                    GameContentGate.PickLevelSuffix(worldTo, appContentCollect.GetAllowedLevelSuffixList()));
                                 GameLevels.Instance.ChangeCurrent(levelTo);
                             }
                         }
