@@ -3365,6 +3365,13 @@ public class BaseUIController : GameObjectBehavior {
 
                 if (segments.Length >= 3) {
 
+                    // a "more to come" mission is a no-op, before any state changes (content gating)
+                    AppContentCollect gated = AppContentCollects.Instance.GetById(segments[2]);
+
+                    if (gated != null && !GameContentGate.IsUnlocked(gated)) {
+                        return;
+                    }
+
                     dataType = BaseDataObjectKeys.mission;
                     dataCode = segments[2];
                     dataAppContentState = segments[1];
@@ -3384,6 +3391,11 @@ public class BaseUIController : GameObjectBehavior {
                     if (!string.IsNullOrEmpty(code)) {
 
                         AppContentCollect appContentCollect = AppContentCollects.Instance.GetById(code);
+
+                        // a "more to come" mission never starts (content gating)
+                        if (appContentCollect != null && !GameContentGate.IsUnlocked(appContentCollect)) {
+                            return;
+                        }
 
                         if (appContentCollect != null) {
 
