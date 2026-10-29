@@ -8,8 +8,8 @@ using Engine.Game.App.BaseApp;
 
 // Content gating by bot level (Action Bots iter 35, owner 2026-10-28): roster items, levels and
 // worlds carry an optional `min_level` (GameDataObject.min_level, absent = 0 = always). The level
-// is the CURRENT bot's, derived from that bot's XP through a threshold table in data, so switching
-// bots changes what is unlocked.
+// is the CURRENT bot's, derived from that bot's XP through the level rows of
+// `game-content-level-data` (GameContentLevels), so switching bots changes what is unlocked.
 //
 // Locked content is hidden, except the next `teaser_count` locked items (lowest min_level first),
 // which screens show greyed as "more to come". Spawning and the READY VS card never use a teaser.
@@ -22,38 +22,37 @@ using Engine.Game.App.BaseApp;
 // onGameStarted), and IsSpawnUnlocked reads the snapshot, so XP picked up mid-round never adds
 // enemies mid-round. Screens read the live level.
 //
-// Game-agnostic: until a game calls Load, the XP table is empty, every bot is level 0, and only
-// items with no min_level pass - which, with no min_level in data, is everything.
+// Game-agnostic: a game with no level rows has every bot at level 0, and only items with no
+// min_level pass - which, with no min_level in data, is everything.
 public static class GameContentGate {
 
     public const string gateKey = "content-lock";
     public const string teasersGateKey = "content-lock-teasers";
 
-    [Serializable]
-    public class Data {
-        // XP needed to reach level 1, 2, 3 ... ascending. Level = how many entries the XP has reached.
-        public List<double> xp_levels = new List<double>();
-        public int teaser_count = 2;
-    }
+    public const int defaultTeaserCount = 2;
 
-    static Data data = new Data();
+    // XP thresholds ascending, with the level each one reaches (parallel lists).
+    static List<double> xpThresholds = new List<double>();
+    static List<int> xpThresholdLevels = new List<int>();
+    static int teaserCountData = defaultTeaserCount;
+    static bool loaded;
 
     // >= 0 forces the bot level (tests and probes); never set by the game.
     public static double levelOverride = -1;
 
     static double roundLevel = -1;
 
-    public static string loadedFrom { get; private set; }
-
     public static List<double> xpLevels {
         get {
-            return data.xp_levels;
+            EnsureLoaded();
+            return xpThresholds;
         }
     }
 
     public static int teaserCount {
         get {
-            return FeatureGates.IsOn(teasersGateKey, true) ? Mathf.Max(0, data.teaser_count) : 0;
+            EnsureLoaded();
+            return FeatureGates.IsOn(teasersGateKey, true) ? Mathf.Max(0, teaserCountData) : 0;
         }
     }
 
@@ -63,54 +62,95 @@ public static class GameContentGate {
         }
     }
 
-    public static void Load(string resourcePath) {
-
-        loadedFrom = resourcePath;
-
-        TextAsset asset = Resources.Load<TextAsset>(resourcePath);
-
-        if (asset == null) {
-            Debug.LogWarning("GameContentGate: no data at Resources/" + resourcePath + " - every bot is level 0");
-            data = new Data();
-            return;
+    static void EnsureLoaded() {
+        if (!loaded) {
+            Reload();
         }
-
-        LoadJson(asset.text);
     }
 
-    public static void LoadJson(string json) {
+    // Re-read GameContentLevels (after a data edit, or after a test loaded its own rows).
+    public static void Reload() {
+        Load(GameContentLevels.Instance.GetAll());
+    }
 
-        Data loaded = null;
+    // Active `level` rows give the thresholds (a row without `level` is the next one up, in xp
+    // order); the `settings` row gives teaser_count. Anything unreadable is skipped.
+    public static void Load(List<GameContentLevel> rows) {
 
-        try {
-            loaded = string.IsNullOrEmpty(json) ? null : JsonUtility.FromJson<Data>(json);
+        loaded = true;
+        teaserCountData = defaultTeaserCount;
+
+        List<GameContentLevel> levels = new List<GameContentLevel>();
+
+        if (rows != null) {
+            foreach (GameContentLevel row in rows) {
+
+                if (row == null || !row.active) {
+                    continue;
+                }
+
+                if (row.type == GameContentLevel.typeSettings) {
+                    if (row.teaser_count >= 0) {
+                        teaserCountData = row.teaser_count;
+                    }
+                }
+                else if (row.type == GameContentLevel.typeLevel && row.xp > 0) {
+                    levels.Add(row);
+                }
+            }
         }
-        catch (Exception e) {
-            Debug.LogWarning("GameContentGate: unreadable data - every bot is level 0: " + e.Message);
+
+        levels.Sort((a, b) => a.xp.CompareTo(b.xp));
+
+        xpThresholds = new List<double>();
+        xpThresholdLevels = new List<int>();
+
+        int last = 0;
+
+        foreach (GameContentLevel row in levels) {
+            last = row.level > 0 ? row.level : last + 1;
+            xpThresholds.Add(row.xp);
+            xpThresholdLevels.Add(last);
         }
-
-        data = loaded ?? new Data();
-
-        if (data.xp_levels == null) {
-            data.xp_levels = new List<double>();
-        }
-
-        data.xp_levels.Sort();
     }
 
     // LEVEL
 
     public static int LevelForXP(double xp) {
 
+        EnsureLoaded();
+
         int level = 0;
 
-        for (int i = 0; i < data.xp_levels.Count; i++) {
-            if (xp >= data.xp_levels[i]) {
-                level = i + 1;
+        for (int i = 0; i < xpThresholds.Count; i++) {
+            if (xp >= xpThresholds[i]) {
+                level = Mathf.Max(level, xpThresholdLevels[i]);
             }
         }
 
         return level;
+    }
+
+    // The XP the next level needs, or -1 at the top of the table.
+    public static double NextLevelXP(double xp) {
+
+        EnsureLoaded();
+
+        for (int i = 0; i < xpThresholds.Count; i++) {
+            if (xp < xpThresholds[i]) {
+                return xpThresholds[i];
+            }
+        }
+
+        return -1;
+    }
+
+    // The current bot's XP (0 with no profile).
+    public static double CurrentXP() {
+
+        GameProfilePlayerProgressItem progress = GameProfileCharacters.currentProgress;
+
+        return progress == null ? 0 : progress.GetGamePlayerProgressXP(0);
     }
 
     // The current bot's level, live.
@@ -120,13 +160,7 @@ public static class GameContentGate {
             return levelOverride;
         }
 
-        GameProfilePlayerProgressItem progress = GameProfileCharacters.currentProgress;
-
-        if (progress == null) {
-            return 0;
-        }
-
-        return LevelForXP(progress.GetGamePlayerProgressXP(0));
+        return LevelForXP(CurrentXP());
     }
 
     public static void BeginRound() {
