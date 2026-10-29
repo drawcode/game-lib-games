@@ -414,6 +414,19 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
                 foreach (GamePresetItem item in presetItems) {
                     if (item.type == actorType) {
+
+                        // A code with no character data, or whose model is not
+                        // in the asset data, loads no model: LoadCharacterCo
+                        // bails (or LoadAsset returns null) and the pooled
+                        // actor stays an empty shell (effects + shadow) that
+                        // still counts as a spawn. Skip it rather than spawn a
+                        // ghost (iter 33: the 21 new bots' models were never
+                        // registered in app-content-asset-data).
+
+                        if (!IsSpawnableCharacter(item.code)) {
+                            continue;
+                        }
+
                         probs.Add((float)item.probability);
                         presetItemsAppend.Add(item);
                     }
@@ -465,6 +478,21 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
             GameAIController.Load(code, actorType);
         }
+    }
+
+    public static bool IsSpawnableCharacter(string code) {
+
+        GameCharacter character = GameCharacters.Instance.GetById(code);
+
+        if (character == null || character.data == null) {
+            return false;
+        }
+
+        GameDataModel model = character.data.GetModel();
+
+        return model != null
+            && !string.IsNullOrEmpty(model.code)
+            && AppContentAssets.Instance.GetByCode(model.code) != null;
     }
 
     public virtual void directAIEnemies() {

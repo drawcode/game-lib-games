@@ -51,6 +51,7 @@ public class GameDraggableEditorButtons {
     public static string buttonEditRestart = "ButtonGameEditRestart";
     public static string buttonEditReload = "ButtonGameEditReload";
     public static string buttonEditSave = "ButtonGameEditSave";
+    public static string buttonEditReset = "ButtonGameEditReset";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
     //ButtonGameLevelItemObject$" + asset.code
 
@@ -80,6 +81,13 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public Vector3 currentEditorPosition;
     public static bool editingEnabled = false;
+
+    // Something in the level was touched since it loaded: an item grabbed (move, rotate, delete and
+    // the asset sheet all start with a grab), an item created, or the level settings saved. PLAY
+    // saves only then, so opening the editor and pressing PLAY no longer freezes a generated level
+    // into a saved one. SAVE always saves. Cleared by every level item load (start, reload, reset).
+    public static bool levelEdited = false;
+
     public string dragTag = "drag";
     public GameDraggableCanvasType gameDraggableCanvasType = GameDraggableCanvasType.CANVAS_2D;
     public GameDraggableCanvasMode gameDraggableCanvasMode = GameDraggableCanvasMode.EDITING;
@@ -309,6 +317,7 @@ public class GameDraggableEditor : GameObjectBehavior {
         // it via HideAllEditDialogs / showUIPanelDialogItems). Items CLOSE and a USE pick already
         // did (ShowUIPanelEditNow / ShowUIPanelEdit below).
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaSave) {
+            levelEdited = true;
             HideUIPanelDialogMeta();
             RestoreUIPanelEditAfterDialog();
         }
@@ -341,6 +350,9 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEditSave) {
             EditSave();
+        }
+        else if (buttonName == GameDraggableEditorButtons.buttonEditReset) {
+            EditReset();
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEdit) {
             EditEnable();
@@ -1011,8 +1023,11 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void EditPlay() {
         HideAllUIEditPanels();
 
-        // Save to current level data...            
-        SaveCurrentLevel();
+        // Save to current level data -- only when something changed, or when the level already
+        // plays a save (re-saving it is harmless). See levelEdited.
+        if (levelEdited || GameLevelItemSources.currentSource == GameLevelItemSourceKeys.saved) {
+            SaveCurrentLevel();
+        }
 
         // B11 owner round 3: the toolbar PLAY also leaves edit mode, exactly as the HUD PLAY
         // (ButtonGameEdit -> EditEnable toggle) does -- label, editingEnabled, toolbar + dialogs.
@@ -1078,6 +1093,27 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public void EditReload() {
         ReloadLevelItems();
+    }
+
+    // RESET: drop the player's save for this level (kept as .bak) and put back what the level plays
+    // without one -- its shipped layout, else a freshly generated grid. Stays in edit mode.
+    public void EditReset() {
+
+        string code = GameLevels.Current.code;
+
+        ResetAssetPanelRemoveDeselect();
+
+        GameLevelItemSources.ClearSaved(code);
+
+        GameLevelItems.Current = new GameLevelItem();
+        GameLevelItems.Current.code = code;
+
+        GameController.Instance.loadLevelItems();
+
+        ReloadLevelItems();
+
+        LogUtil.Log("EditReset: " + code + " now plays " + GameLevelItemSources.currentSource
+            + " (" + GameLevelItems.Current.level_items.Count + " items)");
     }
 
     public void ResetAssetPanelRemoveDeselect() {
@@ -1178,6 +1214,7 @@ public class GameDraggableEditor : GameObjectBehavior {
             if (Physics.Raycast(ray, out hit)) {
                 grabbed = hit.transform;
                 if (grabbed.tag == dragTag) {
+                    levelEdited = true;
                     /*
                     if(grabbed.parent){
                         grabbed = grabbed.parent.transform;
@@ -1410,6 +1447,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                 gameLevelItemStep.position_data.z = levelPoint.z;
                 itemAsset.steps.Add(gameLevelItemStep);
                 GameDraggableEditor.LoadLevelItem(itemAsset);
+                levelEdited = true;
             }
         }
     }
@@ -1656,6 +1694,8 @@ public class GameDraggableEditor : GameObjectBehavior {
     }
 
     public void loadLevelItemsCo(GameLevelItem gameLevelItem) {
+
+        levelEdited = false;
 
         List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 
@@ -2032,6 +2072,9 @@ public class GameDraggableEditor : GameObjectBehavior {
             }
         }
 
+        // The grid's "empty" placeholders are never loaded; without them 1-1 saves 238 of 1158.
+        GameLevelItemSources.StripEmpty(GameLevelItems.Current);
+
         GameLevelItems.Instance.Save();
     }
 
@@ -2337,6 +2380,17 @@ public class GameDraggableEditor : GameObjectBehavior {
     // leave the toolkit button unreachable. Owner B11 O1: visible to everyone, on request.
     public static bool editButtonRequested = false;
     public static bool editAssetSheetShown = false;
+
+    // Iter 33 (owner: "the EDIT button should only appear if you create a level"): set by the
+    // level select's ButtonGameModePlayEdit, cleared by any other fresh level entry (mode PLAY, a
+    // mission row) in BaseUIController; REPLAY keeps it. The HUD shows EDIT only while it is set.
+    public static bool levelCreateRequested = false;
+
+    // Statics survive Play sessions with domain reload off.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetLevelCreateRequested() {
+        levelCreateRequested = false;
+    }
 
     // B11.1: no toolkit call here. The EDIT button is the HUD's (BaseGameHUD + panel-hud view,
     // B11.2): the toolkit HUD suppresses its legacy ButtonGameEdit and the view must carry a

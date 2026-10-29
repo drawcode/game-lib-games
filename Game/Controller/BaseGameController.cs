@@ -99,6 +99,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal bool levelInitializing = false;
 
+    // True once the player has readied the current level (UIPanelOverviewMode.Ready). The READY
+    // screen also comes back mid-round from the HUD's M.A.N. 9000 tap, and readying there must not
+    // re-run the level-start player sequence over a live round. Cleared when a level starts loading.
+    public bool levelPlayerReadied = false;
+
     // CUSTOM
 
     public string currentGameZone = GameZoneKeys.goal_right;
@@ -1176,6 +1181,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void loadLevelItems() {
 
+        // A saved or shipped level plays as authored; only a level without one is generated
+        // (see GameLevelItemSources for the keys and order).
+        if (GameLevelItemSources.ApplyCurrent(GameLevels.Current.code)) {
+            return;
+        }
+
         bool updated = false;
 
         // Load level items by game type....
@@ -1375,6 +1386,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
+        levelPlayerReadied = false;
 
         //resetRuntimeData();
 
