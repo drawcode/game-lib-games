@@ -427,6 +427,11 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
                             continue;
                         }
 
+                        // above the bot's level when the round started (iter 35)
+                        if (!GameContentGate.IsSpawnUnlocked(item)) {
+                            continue;
+                        }
+
                         probs.Add((float)item.probability);
                         presetItemsAppend.Add(item);
                     }
@@ -497,7 +502,7 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
     // The distinct character codes the current level can spawn for an actor type, most likely
     // first - the same source directAICharacters picks from (the level's character presets, else
-    // the world's), spawnable codes only. For screens that show the roster before the round
+    // the world's), spawnable and level-unlocked codes only. For screens that show the roster before the round
     // (the READY screen's VS card, iter 34). Not a hot path: it allocates its result.
     public static List<string> GetLevelCharacterCodes(string actorType, int max) {
 
@@ -533,7 +538,8 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
             foreach (GamePresetItem item in preset.data.items) {
 
-                if (item.type != actorType || !IsSpawnableCharacter(item.code)) {
+                if (item.type != actorType || !IsSpawnableCharacter(item.code)
+                    || !GameContentGate.IsSpawnUnlocked(item)) {
                     continue;
                 }
 

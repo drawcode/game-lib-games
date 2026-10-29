@@ -2782,6 +2782,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         AnalyticsNetworks.LogEventLevelStart();
 
+        // the round spawns from the bot level it started with (content gating, iter 35)
+        GameContentGate.BeginRound();
+
         runDirectorsDelayed(runDirectorsDelay);
 
         processQueues();
