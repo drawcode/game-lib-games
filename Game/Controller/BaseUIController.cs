@@ -3117,6 +3117,14 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
             UIPanelCommunityCamera.TakePhoto();
         }
+        // CommunityFeatures.nativeShare: every share/save button opens the platform sheet with the
+        // photo (it lists the player's own apps and "save image"); the uploaders need dead SDKs.
+        else if (CommunityFeatures.nativeShare
+            && (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)
+                || UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveTwitter, buttonName)
+                || UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveLibrary, buttonName))) {
+            UIPanelCommunityCamera.SharePhoto();
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)) {
             GameCommunitySocialController.StartPhotoUploadToFacebook();
         }
