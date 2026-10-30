@@ -115,6 +115,13 @@ public class BaseUIButtonNames {
     public static string buttonGameModeTraining = "ButtonGameModeTraining";
     public static string buttonGameModeTutorial = "ButtonGameModeTutorial";
     public static string buttonGamePlay = "ButtonGamePlay";
+    // PLAY -> worlds from any menu screen, and Results CONTINUE (iter 31).
+    public static string buttonGamePlayWorlds = "ButtonGamePlayWorlds";
+    // Plays like ButtonGameModePlay (contains-match) and enters the level to create it: EDIT shows.
+    public static string buttonGameModePlayEdit = "ButtonGameModePlayEdit";
+    // Worlds screen EDIT (iter 34): creates the next free level code in the current world
+    // (GameLevelCodes) and enters it to create; contains-matches both names above.
+    public static string buttonGameModePlayEditWorld = "ButtonGameModePlayEditWorld";
     public static string buttonGameModePlay = "ButtonGameModePlay";
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
@@ -3110,6 +3117,14 @@ public class BaseUIController : GameObjectBehavior {
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraTakePhoto, buttonName)) {
             UIPanelCommunityCamera.TakePhoto();
         }
+        // CommunityFeatures.nativeShare: every share/save button opens the platform sheet with the
+        // photo (it lists the player's own apps and "save image"); the uploaders need dead SDKs.
+        else if (CommunityFeatures.nativeShare
+            && (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)
+                || UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveTwitter, buttonName)
+                || UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveLibrary, buttonName))) {
+            UIPanelCommunityCamera.SharePhoto();
+        }
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameCommunityCameraSaveFacebook, buttonName)) {
             GameCommunitySocialController.StartPhotoUploadToFacebook();
         }
@@ -3280,11 +3295,40 @@ public class BaseUIController : GameObjectBehavior {
             GameStoreController.PurchasesRestore();
         }
 
+        // PLAY -> the worlds picker, from Results CONTINUE and the menu PLAY buttons (iter 31,
+        // owner). Exact name: the generic ButtonGamePlay branch below starts a level, and Results'
+        // REPLAY is that element.
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlayWorlds, buttonName)) {
+            GamePlayWorlds();
+        }
+
         // LAST 
 
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGamePlay + "$", buttonName)
             || UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlay, buttonName)) {
+
+            // A fresh level entry decides whether the HUD offers EDIT (iter 33): only the level
+            // select's EDIT play button creates; exact ButtonGamePlay (Results REPLAY) keeps it.
+            if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEdit, buttonName)) {
+                GameDraggableEditor.levelCreateRequested = true;
+
+                // the worlds screen's EDIT makes a new level rather than opening the current one
+                if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEditWorld, buttonName)) {
+
+                    string levelCreated = GameLevelCodes.CreateInWorld(GameWorlds.Current);
+
+                    if (string.IsNullOrEmpty(levelCreated)) {
+                        GameDraggableEditor.levelCreateRequested = false;
+                        return;
+                    }
+
+                    GameLevels.Instance.ChangeCurrent(levelCreated);
+                }
+            }
+            else if (!UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
+                GameDraggableEditor.levelCreateRequested = false;
+            }
 
             object dataType = null;
             object dataCode = null;
@@ -3321,6 +3365,13 @@ public class BaseUIController : GameObjectBehavior {
 
                 if (segments.Length >= 3) {
 
+                    // a "more to come" mission is a no-op, before any state changes (content gating)
+                    AppContentCollect gated = AppContentCollects.Instance.GetById(segments[2]);
+
+                    if (gated != null && !GameContentGate.IsUnlocked(gated)) {
+                        return;
+                    }
+
                     dataType = BaseDataObjectKeys.mission;
                     dataCode = segments[2];
                     dataAppContentState = segments[1];
@@ -3341,6 +3392,11 @@ public class BaseUIController : GameObjectBehavior {
 
                         AppContentCollect appContentCollect = AppContentCollects.Instance.GetById(code);
 
+                        // a "more to come" mission never starts (content gating)
+                        if (appContentCollect != null && !GameContentGate.IsUnlocked(appContentCollect)) {
+                            return;
+                        }
+
                         if (appContentCollect != null) {
 
                             AppContentCollects.Instance.ChangeCurrent(code);
@@ -3351,7 +3407,9 @@ public class BaseUIController : GameObjectBehavior {
 
                                 string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
-                                levelTo = string.Format("{0}-{1}", worldTo, appContentCollect.GetLevelSuffixRandom());
+                                // skips level rows above the bot's level (content gating, iter 35)
+                                levelTo = string.Format("{0}-{1}", worldTo,
+                                    GameContentGate.PickLevelSuffix(worldTo, appContentCollect.GetAllowedLevelSuffixList()));
                                 GameLevels.Instance.ChangeCurrent(levelTo);
                             }
                         }
@@ -3593,6 +3651,21 @@ public class BaseUIController : GameObjectBehavior {
 
     public virtual void GameContinue() {
         GameController.QuitGame();
+    }
+
+    // Keeps the mode the player is in (missions or arcade) and opens its worlds; arcade when no
+    // world-based mode is current yet.
+    public virtual void GamePlayWorlds() {
+#if ENABLE_FEATURE_GAME_MODE
+        string state = AppContentStates.Current != null ? AppContentStates.Current.code : null;
+
+        if (state != AppContentStateMeta.appContentStateGameArcade
+            && state != AppContentStateMeta.appContentStateGameMissions) {
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+        }
+
+        GameUIController.ShowGameWorlds();
+#endif
     }
 
     public virtual void GameRestart() {

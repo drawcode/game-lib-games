@@ -414,6 +414,24 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
                 foreach (GamePresetItem item in presetItems) {
                     if (item.type == actorType) {
+
+                        // A code with no character data, or whose model is not
+                        // in the asset data, loads no model: LoadCharacterCo
+                        // bails (or LoadAsset returns null) and the pooled
+                        // actor stays an empty shell (effects + shadow) that
+                        // still counts as a spawn. Skip it rather than spawn a
+                        // ghost (iter 33: the 21 new bots' models were never
+                        // registered in app-content-asset-data).
+
+                        if (!IsSpawnableCharacter(item.code)) {
+                            continue;
+                        }
+
+                        // above the bot's level when the round started (iter 35)
+                        if (!GameContentGate.IsSpawnUnlocked(item)) {
+                            continue;
+                        }
+
                         probs.Add((float)item.probability);
                         presetItemsAppend.Add(item);
                     }
@@ -465,6 +483,100 @@ public class BaseAIController : GameObjectBehavior, IBaseAIController {
 
             GameAIController.Load(code, actorType);
         }
+    }
+
+    public static bool IsSpawnableCharacter(string code) {
+
+        GameCharacter character = GameCharacters.Instance.GetById(code);
+
+        if (character == null || character.data == null) {
+            return false;
+        }
+
+        GameDataModel model = character.data.GetModel();
+
+        return model != null
+            && !string.IsNullOrEmpty(model.code)
+            && AppContentAssets.Instance.GetByCode(model.code) != null;
+    }
+
+    // The distinct character codes the current level can spawn for an actor type, most likely
+    // first - the same source directAICharacters picks from (the level's character presets, else
+    // the world's), spawnable and level-unlocked codes only. For screens that show the roster before the round
+    // (the READY screen's VS card, iter 34). Not a hot path: it allocates its result.
+    public static List<string> GetLevelCharacterCodes(string actorType, int max) {
+
+        List<string> codes = new List<string>();
+        List<float> probabilities = new List<float>();
+
+        List<GameDataCharacterPreset> presets = null;
+
+        if (GameLevels.Current != null && GameLevels.Current.data != null
+            && GameLevels.Current.data.HasCharacterPresets()) {
+            presets = GameLevels.Current.data.character_presets;
+        }
+        else if (GameWorlds.Current != null && GameWorlds.Current.data != null
+                 && GameWorlds.Current.data.HasCharacterPresets()) {
+            presets = GameWorlds.Current.data.character_presets;
+        }
+
+        if (presets == null) {
+            return codes;
+        }
+
+        foreach (GameDataCharacterPreset characterPreset in presets) {
+
+            if (characterPreset.type != actorType) {
+                continue;
+            }
+
+            GamePreset preset = GamePresets.Get(characterPreset.code);
+
+            if (preset == null || preset.data == null || preset.data.items == null) {
+                continue;
+            }
+
+            foreach (GamePresetItem item in preset.data.items) {
+
+                if (item.type != actorType || !IsSpawnableCharacter(item.code)
+                    || !GameContentGate.IsSpawnUnlocked(item)) {
+                    continue;
+                }
+
+                int at = codes.IndexOf(item.code);
+
+                if (at >= 0) {
+                    probabilities[at] += (float)item.probability;
+                }
+                else {
+                    codes.Add(item.code);
+                    probabilities.Add((float)item.probability);
+                }
+            }
+        }
+
+        // insertion sort by probability, descending; stable, so ties keep roster order
+        for (int i = 1; i < codes.Count; i++) {
+
+            string code = codes[i];
+            float probability = probabilities[i];
+            int j = i - 1;
+
+            while (j >= 0 && probabilities[j] < probability) {
+                codes[j + 1] = codes[j];
+                probabilities[j + 1] = probabilities[j];
+                j--;
+            }
+
+            codes[j + 1] = code;
+            probabilities[j + 1] = probability;
+        }
+
+        if (max > 0 && codes.Count > max) {
+            codes.RemoveRange(max, codes.Count - max);
+        }
+
+        return codes;
     }
 
     public virtual void directAIEnemies() {

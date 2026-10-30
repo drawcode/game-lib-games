@@ -39,103 +39,9 @@ using Engine.Events;
 using Engine.Utility;
 using Engine.Game.Data;
 
-public class ProductNetworkType {
-    public static string typeLocal = "local";
-    public static string typeServer = "server";
-    public static string typeThirdParty = "third-party";
-}
-
-public class ProductNetworkStoreType {
-    public static string typeGameverses = "gameverses";
-    public static string typeGoogle = "external-google";
-    public static string typeApple = "external-apple";
-    public static string typeAmazon = "external-amazon";
-    public static string typeSamsung = "external-samsung";
-}
-
-public class ProductNetworkConsumableType {
-    public static string consumable = "consumable";
-    public static string nonconsumable = "nonconsumable";
-    public static string subscription = "subscription";
-}
-
-public class ProductNetworkMessages {
-    public static string productPurchaseSuccess = "product-network-success";
-    public static string productPurchaseFailed = "product-network-failed";
-    public static string productPurchaseCancelled = "product-network-cancelled";
-    public static string productPurchaseProgress = "product-network-progress";
-    public static string productPurchaseProgressStarted = "product-network-progress-started";
-    public static string productPurchaseProgressCompleted = "product-network-progress-completed";
-}
-
-public class ProductNetworkRecord : DataObjectItem {
-    public bool success = false;
-    public object data;
-    public string dataType;
-    public string receipt = "";
-    public DateTime datePurchased;
-    public string code = "";
-    public string displayName = "";
-    public string description = "";
-    public string productPurchaseType = ProductNetworkType.typeLocal;
-    public string productStoreType = ProductNetworkStoreType.typeApple;
-    public string productNetworkConsumableType = ProductNetworkConsumableType.consumable;
-    public string productId = "";
-    public int quantity = 1;
-
-    public ProductNetworkRecord() {
-        Reset();
-    }
-
-    public override void Reset() {
-        base.Reset();
-        success = false;
-        data = null;
-        dataType = "object";
-        receipt = "";
-        datePurchased = DateTime.Now;
-        code = "";
-        displayName = "";
-        description = "";
-        productId = "";
-        quantity = 1;
-        productPurchaseType = ProductNetworkType.typeLocal;
-        productStoreType = ProductNetworkStoreType.typeApple;
-        productNetworkConsumableType = ProductNetworkConsumableType.consumable;
-    }
-
-    public static ProductNetworkRecord Create(
-        string code,
-        string displayName,
-        string description,
-        bool success,
-        object data,
-        string dataType,
-        string receipt,
-        string productId,
-        int productQuantity,
-        string productPurchaseType,
-        string productStoreType,
-        string productNetworkConsumableType) {
-
-        ProductNetworkRecord record = new ProductNetworkRecord();
-        record.success = success;
-        record.data = data;
-        record.dataType = dataType;
-        record.receipt = receipt;
-        record.datePurchased = DateTime.Now;
-        record.code = code;
-        record.displayName = displayName;
-        record.description = description;
-        record.productId = productId;
-        record.quantity = productQuantity;
-        record.productPurchaseType = productPurchaseType;
-        record.productStoreType = productStoreType;
-        record.productNetworkConsumableType = productNetworkConsumableType;
-
-        return record;
-    }
-}
+// ProductNetworkType, ProductNetworkStoreType, ProductNetworkConsumableType,
+// ProductNetworkMessages and ProductNetworkRecord live in game-lib-networks
+// (Networks/ProductNetworkTypes.cs) since 2026-10-26, next to AdRemoval.
 
 public class ProductNetworks : GameObjectBehavior {
 
@@ -337,6 +243,15 @@ public class ProductNetworks : GameObjectBehavior {
     }
 
     // INIT
+
+    // AdRemoval (game-lib-networks) has no store of its own: its Direct path buys and restores
+    // through these. Static, like the calls it replaces, so no ProductNetworks instance is needed
+    // before a purchase.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void wireAdRemoval() {
+        AdRemoval.purchaseDirectHandler = code => PurchaseProduct(code, 1);
+        AdRemoval.restoreDirectHandler = RestoreTransactions;
+    }
 
     public static void Init() {
         instance.init();

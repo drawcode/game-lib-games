@@ -48,4 +48,4 @@ metadata:
   [`context-progression-runtime-networks.md`](./context-progression-runtime-networks.md).
 
 ## Notes
-Depends on game-lib-engine. This is the most actively edited submodule (dirty in working tree; `LTDescr.cs`/LeanTween and URP-related churn nearby).
+Depends on game-lib-engine and, since 2026-10-26, **game-lib-networks** (sibling submodule at `Assets/Code/Libs/game-lib-networks`): ads, ad removal and the IAP data types moved there from `Networks/`; `ProductNetworks` stays here and wires `AdRemoval`'s Direct path at startup. This is the most actively edited submodule (dirty in working tree; `LTDescr.cs`/LeanTween and URP-related churn nearby).

@@ -21,6 +21,37 @@ public class GameZoneActionAsset : GameZoneAction {
     public GameDamageManager gameDamageManager;
     public float hitPoints = 5000f;
 
+    // ACTION PROGRESS BAR (iter 31, owner). Repair / build / defend / destroy play effects and
+    // animations but never said how much was LEFT. A small billboard bar over the zone shows it:
+    // blue filling up for the constructive actions, orange for what is left of a target under
+    // attack -- both distinct from the actor bars (sidekicks green, enemies red). An app without
+    // the prefab gets no bar.
+    public static bool actionProgressBarEnabled = true;
+    public static string actionProgressBarPath = "ui/prefabs/progress-action-bar";
+    // Sized and placed from the building itself (iter 31 captures: a 41 x 24 unit hangar hid a
+    // fixed bar inside it, and a bar above its TOP projected off the top of the screen through
+    // the tilted gameplay camera). So: width a share of the footprint, on the building's FRONT
+    // edge (-z, the side the camera and the player face) at a share of its height. The height
+    // rises with the build animation, so it is re-read twice a second and only ever raised.
+    public static float actionProgressBarWidthShare = .3f;
+    public static float actionProgressBarHeightShare = .25f;
+    public static float actionProgressBarMinHeight = 3f;
+    public static float actionProgressBarFlatten = .6f;
+    public static float actionProgressBarMinScale = 3f;
+    public static float actionProgressBarMaxScale = 16f;
+    const float actionProgressBarBaseWidth = .9f;   // prefab bar width at scale 1
+    public static Color actionProgressColorBuild = new Color(0f, 140f / 255f, 220f / 255f, 1f);
+    public static Color actionProgressColorAttack = new Color(1f, 121f / 255f, 0f, 1f);
+    public static Color actionProgressColorTrack = new Color(1f, 1f, 1f, .35f);
+
+    GameObject actionProgressBar;
+    Engine.UI.UIQuadSprite actionProgressFill;
+    float actionProgressShown = -1f;
+    bool actionProgressVisible = false;
+    readonly List<Renderer> actionProgressRenderers = new List<Renderer>();
+    float actionProgressTop = 0f;
+    float actionProgressPlaceTime = 0f;
+
     public override void Start() {
         base.Start();
 
@@ -336,8 +367,138 @@ public class GameZoneActionAsset : GameZoneAction {
                 }
 
                 AssetAnimationReset();
+
+                LoadActionProgressBar();
             }
         }
+    }
+
+    public void LoadActionProgressBar() {
+
+        if (!actionProgressBarEnabled) {
+            return;
+        }
+
+        if (actionProgressBar == null) {
+
+            GameObject prefab = Resources.Load<GameObject>(actionProgressBarPath);
+
+            if (prefab == null) {
+                return;
+            }
+
+            actionProgressBar = Instantiate(prefab, transform);
+
+            foreach (Engine.UI.UIQuadSprite quad in actionProgressBar.GetComponentsInChildren<Engine.UI.UIQuadSprite>(true)) {
+                if (quad.fillAxis != Engine.UI.UIQuadSprite.FillAxis.None) {
+                    actionProgressFill = quad;
+                }
+                else {
+                    // A light track: the actor bar's dark backer vanished on the dark building
+                    // pads, and the empty part IS the "how much is left".
+                    quad.SetColor(actionProgressColorTrack);
+                }
+            }
+        }
+
+        if (actionProgressFill != null) {
+            actionProgressFill.SetColor(isActionCodeAttack ? actionProgressColorAttack : actionProgressColorBuild);
+        }
+
+        PlaceActionProgressBar(true);
+
+        actionProgressShown = -1f;
+        actionProgressVisible = true;
+        SetActionProgressVisible(false);
+    }
+
+    void PlaceActionProgressBar(bool fit) {
+
+        if (actionProgressBar == null) {
+            return;
+        }
+
+        if (fit) {
+            actionProgressRenderers.Clear();
+            if (containerAssets != null) {
+                containerAssets.GetComponentsInChildren<Renderer>(actionProgressRenderers);
+            }
+            actionProgressTop = 0f;
+        }
+
+        if (actionProgressRenderers.Count == 0) {
+            return;
+        }
+
+        Bounds b = actionProgressRenderers[0].bounds;
+
+        for (int i = 1; i < actionProgressRenderers.Count; i++) {
+            if (actionProgressRenderers[i] != null) {
+                b.Encapsulate(actionProgressRenderers[i].bounds);
+            }
+        }
+
+        float top = Mathf.Max(actionProgressBarMinHeight,
+            (b.max.y - transform.position.y) * actionProgressBarHeightShare);
+
+        if (fit) {
+            float width = Mathf.Max(b.size.x, b.size.z) * actionProgressBarWidthShare;
+            float scale = Mathf.Clamp(width / actionProgressBarBaseWidth,
+                actionProgressBarMinScale, actionProgressBarMaxScale);
+            // Flatter than the actor bar: at building scale its 66 x 10 fill read as a slab.
+            actionProgressBar.transform.localScale = new Vector3(scale, scale * actionProgressBarFlatten, scale);
+        }
+
+        if (fit || top > actionProgressTop) {
+            actionProgressTop = top;
+            Vector3 front = new Vector3(b.center.x, transform.position.y + top, b.min.z);
+            actionProgressBar.transform.position = front;
+        }
+    }
+
+    void SetActionProgressVisible(bool visible) {
+
+        if (actionProgressBar == null || visible == actionProgressVisible) {
+            return;
+        }
+
+        actionProgressVisible = visible;
+        actionProgressBar.SetActive(visible);
+    }
+
+    // Remaining HP for an attack, progress toward done for the others. Shown only while the
+    // action is under way; writes the fill only on a change.
+    void UpdateActionProgressBar() {
+
+        if (actionProgressBar == null) {
+            return;
+        }
+
+        bool active = loaded && !isActionCodeNone && !isActionCodeSave && !actionCompleted;
+
+        SetActionProgressVisible(active);
+
+        if (!active || actionProgressFill == null) {
+            return;
+        }
+
+        // The building rises with its own animation, whether or not the value moves (a target
+        // nobody is shooting): follow its top a couple of times a second.
+        if (Time.time >= actionProgressPlaceTime) {
+            actionProgressPlaceTime = Time.time + .5f;
+            PlaceActionProgressBar(false);
+        }
+
+        float value = isActionCodeAttack
+            ? Mathf.Clamp01(GetDamageValue() / hitPoints)
+            : Mathf.Clamp01(currentCreateProgress);
+
+        if (Mathf.Abs(value - actionProgressShown) < .002f) {
+            return;
+        }
+
+        actionProgressShown = value;
+        actionProgressFill.SetFillAmount(value);
     }
 
     public float GetDamageValue() {
@@ -609,5 +770,7 @@ public class GameZoneActionAsset : GameZoneAction {
         HandleUpdateState(power, Time.deltaTime);
 
         HandleUpdateAction();
+
+        UpdateActionProgressBar();
     }
 }
