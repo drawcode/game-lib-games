@@ -6763,9 +6763,10 @@ public class BaseGamePlayerController : GameActor {
             //float currentSpeed = 0;
 
             if (currentControllerData.mountData.isMountedVehicle) {
-                // a vehicle without a drive component (rider vehicles before their arcade host) reports 0
+                // the drive component's speed, else the arcade host's; a vehicle with neither reports 0
                 GameVehicleDrive driver = currentControllerData.mountData.mountVehicle.driver;
-                currentControllerData.currentSpeed = driver != null ? driver.currentSpeed : 0f;
+                IGameVehicleMountDriver arcade = currentControllerData.mountData.mountVehicle.arcade;
+                currentControllerData.currentSpeed = driver != null ? driver.currentSpeed : arcade != null ? arcade.speed : 0f;
             }
             else {
                 currentControllerData.currentSpeed = currentControllerData.thirdPersonController.moveSpeed;

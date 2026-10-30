@@ -532,6 +532,12 @@ public class BaseGamePlayerMountData {
         }
     }
 
+    public void SetMountVehicleSticks(Vector2 move, Vector2 aim, int buttons) {
+        if (mountVehicle != null) {
+            mountVehicle.SetMountVehicleSticks(move, aim, buttons);
+        }
+    }
+
     public void SetMountWeaponRotator(Vector3 rt) {
         if (mountVehicle != null) {
             mountVehicle.SetMountWeaponRotator(rt);
