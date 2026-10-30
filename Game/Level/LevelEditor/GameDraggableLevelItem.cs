@@ -104,6 +104,16 @@ public class GameDraggableLevelItem : GameObjectBehavior {
 
     public void LoadSprite(string spriteCode) {
 
+        // A placed CHARACTER (type "character") has no level-asset prefab: its marker shows the
+        // character's model. Every reload path (Start -> Init, LoadData) comes through here, so the
+        // marker survives them (iter 40: Init cleared the model a frame after placement).
+        if (gameLevelItemAsset != null
+            && gameLevelItemAsset.type == BaseDataObjectKeys.character
+            && spriteCode == gameLevelItemAsset.code) {
+            GameDraggableEditor.LoadCharacterMarkerModel(this);
+            return;
+        }
+
         if (gameLevelItemObject != null) {
 
             RemoveGameLevelItems();

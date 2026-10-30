@@ -51,6 +51,7 @@ public class GameDraggableEditorButtons {
     public static string buttonEditRestart = "ButtonGameEditRestart";
     public static string buttonEditReload = "ButtonGameEditReload";
     public static string buttonEditSave = "ButtonGameEditSave";
+    public static string buttonEditReset = "ButtonGameEditReset";
     public static string buttonGameLevelItemObject = "ButtonGameLevelItemObject";
     //ButtonGameLevelItemObject$" + asset.code
 
@@ -80,6 +81,39 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public Vector3 currentEditorPosition;
     public static bool editingEnabled = false;
+
+    // Something in the level was touched since it loaded: an item grabbed (move, rotate, delete and
+    // the asset sheet all start with a grab), an item created, or the level settings saved. PLAY
+    // saves only then, so opening the editor and pressing PLAY no longer freezes a generated level
+    // into a saved one. SAVE always saves. Cleared by every level item load (start, reload, reset).
+    // An edit also ends RESET's undo (resetUndoCode): the edit is newer than the backup.
+    public static bool levelEdited {
+        get {
+            return _levelEdited;
+        }
+        set {
+            _levelEdited = value;
+
+            if (value && resetUndoCode != null) {
+                resetUndoCode = null;
+                ApplyResetButton();
+            }
+        }
+    }
+
+    static bool _levelEdited = false;
+
+    // The level whose RESET can still be undone: set when RESET backed up a save, cleared by
+    // the undo, an edit or SAVE. While it is the current level, the RESET button reads UNDO.
+    public static string resetUndoCode = null;
+
+    public static bool resetUndoAvailable {
+        get {
+            return resetUndoCode != null && GameLevels.Current != null
+                && resetUndoCode == GameLevels.Current.code;
+        }
+    }
+
     public string dragTag = "drag";
     public GameDraggableCanvasType gameDraggableCanvasType = GameDraggableCanvasType.CANVAS_2D;
     public GameDraggableCanvasMode gameDraggableCanvasMode = GameDraggableCanvasMode.EDITING;
@@ -359,6 +393,7 @@ public class GameDraggableEditor : GameObjectBehavior {
         // it via HideAllEditDialogs / showUIPanelDialogItems). Items CLOSE and a USE pick already
         // did (ShowUIPanelEditNow / ShowUIPanelEdit below).
         else if (buttonName == GameDraggableEditorButtons.buttonGameEditMetaSave) {
+            levelEdited = true;
             HideUIPanelDialogMeta();
             RestoreUIPanelEditAfterDialog();
         }
@@ -391,6 +426,15 @@ public class GameDraggableEditor : GameObjectBehavior {
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEditSave) {
             EditSave();
+        }
+        else if (buttonName == GameDraggableEditorButtons.buttonEditReset) {
+
+            if (resetUndoAvailable) {
+                EditResetUndo();
+            }
+            else {
+                EditReset();
+            }
         }
         else if (buttonName == GameDraggableEditorButtons.buttonEdit) {
             EditEnable();
@@ -1198,8 +1242,11 @@ public class GameDraggableEditor : GameObjectBehavior {
     public void EditPlay() {
         HideAllUIEditPanels();
 
-        // Save to current level data...            
-        SaveCurrentLevel();
+        // Save to current level data -- only when something changed, or when the level already
+        // plays a save (re-saving it is harmless). See levelEdited.
+        if (levelEdited || GameLevelItemSources.currentSource == GameLevelItemSourceKeys.saved) {
+            SaveCurrentLevel();
+        }
 
         // B11 owner round 3: the toolbar PLAY also leaves edit mode, exactly as the HUD PLAY
         // (ButtonGameEdit -> EditEnable toggle) does -- label, editingEnabled, toolbar + dialogs.
@@ -1247,6 +1294,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
             UIUtil.SetLabelValue(labelButtonGameEdit, "EDIT");
 
+            SpawnCharacterMarkers();
+
             GameDraggableEditor.editingEnabled = false;
             HideUIPanelEdit();
             HideAllEditDialogs();
@@ -1259,10 +1308,73 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         // Save to current level data...            
         SaveCurrentLevel();
+
+        // the save replaces what RESET backed up as the thing to keep
+        resetUndoCode = null;
+        ApplyResetButton();
     }
 
     public void EditReload() {
         ReloadLevelItems();
+    }
+
+    // RESET: drop the player's save for this level (kept as .bak) and put back what the level plays
+    // without one -- its shipped layout, else a freshly generated grid. Stays in edit mode.
+    public void EditReset() {
+
+        string code = GameLevels.Current.code;
+
+        ResetAssetPanelRemoveDeselect();
+
+        bool backedUp = GameLevelItemSources.ClearSaved(code);
+
+        GameLevelItems.Current = new GameLevelItem();
+        GameLevelItems.Current.code = code;
+
+        GameController.Instance.loadLevelItems();
+
+        ReloadLevelItems();
+
+        // after the reload: the load clears levelEdited, which would end the undo
+        resetUndoCode = backedUp ? code : null;
+        ApplyResetButton();
+
+        LogUtil.Log("EditReset: " + code + " now plays " + GameLevelItemSources.currentSource
+            + " (" + GameLevelItems.Current.level_items.Count + " items, undo " + backedUp + ")");
+    }
+
+    // UNDO (the RESET button right after a RESET): the backed-up save becomes the level again.
+    public void EditResetUndo() {
+
+        string code = GameLevels.Current.code;
+
+        ResetAssetPanelRemoveDeselect();
+
+        resetUndoCode = null;
+
+        GameLevelItem restored = GameLevelItemSources.RestoreSaved(code);
+
+        if (restored != null) {
+
+            // loadLevelItems reads the saved layout from Current (see GameLevelItemSources)
+            GameLevelItems.Current = restored;
+
+            GameController.Instance.loadLevelItems();
+
+            ReloadLevelItems();
+        }
+
+        ApplyResetButton();
+
+        LogUtil.Log("EditResetUndo: " + code + " now plays " + GameLevelItemSources.currentSource
+            + " (" + GameLevelItems.Current.level_items.Count + " items)");
+    }
+
+    // RESET or UNDO on the toolbar, from resetUndoAvailable.
+    public static void ApplyResetButton() {
+        if (isInst) {
+            Instance.ToolkitApplyResetButton();
+        }
     }
 
     public void ResetAssetPanelRemoveDeselect() {
@@ -1378,6 +1490,7 @@ public class GameDraggableEditor : GameObjectBehavior {
                 }
 
                 if (grabbable) {
+                    levelEdited = true;
                     /*
                     if(grabbed.parent){
                         grabbed = grabbed.parent.transform;
@@ -1700,12 +1813,22 @@ public class GameDraggableEditor : GameObjectBehavior {
 
                 GameLevelItemAsset itemAsset = new GameLevelItemAsset();
                 itemAsset.code = assetCodeCreating;
+
+                // A character is placed as an ACTOR item (the same data a level uses to spawn one at
+                // round start): without the type it took the level-asset path, found no prefab and
+                // left an empty draggable. Explicit spawn = at this point; placed bots are enemies.
+                if (CanCreateCharacter(assetCodeCreating)) {
+                    itemAsset.type = BaseDataObjectKeys.character;
+                    itemAsset.data_type = GameSpawnType.explicitType;
+                    itemAsset.display_type = GameActorType.enemy;
+                }
                 GameLevelItemAssetStep gameLevelItemStep = new GameLevelItemAssetStep();
                 gameLevelItemStep.position_data.x = levelPoint.x;
                 gameLevelItemStep.position_data.y = levelPoint.y;
                 gameLevelItemStep.position_data.z = levelPoint.z;
                 itemAsset.steps.Add(gameLevelItemStep);
                 GameDraggableEditor.LoadLevelItem(itemAsset);
+                levelEdited = true;
             }
         }
     }
@@ -1953,6 +2076,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
     public void loadLevelItemsCo(GameLevelItem gameLevelItem) {
 
+        levelEdited = false;
+
         List<GameLevelItemAsset> gameLevelItemAssets = gameLevelItem.level_items;
 
         //LogUtil.Log("loadLevelItemsCo:gameLevelItemAssets.Count:" + gameLevelItemAssets.Count);
@@ -2045,7 +2170,11 @@ public class GameDraggableEditor : GameObjectBehavior {
                     return;
                 }
 
-                if (gameLevelItemAsset.type == BaseDataObjectKeys.character) {
+                // While EDITING a character is a draggable marker showing its model (so it can be
+                // moved, selected, deleted and saved like any item); leaving edit mode swaps each
+                // marker for the live actor (SpawnCharacterMarkers). Outside the editor it queues
+                // for round start as before.
+                if (gameLevelItemAsset.type == BaseDataObjectKeys.character && !GameDraggableEditor.isEditing) {
                     // Handle player
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         gameLevelItemAsset.position_data = step.position_data;// * .1f;
@@ -2092,6 +2221,8 @@ public class GameDraggableEditor : GameObjectBehavior {
                         dragLevelItem.gameLevelItemAsset = gameLevelItemAsset;
                         //dragLevelItem.gameLevelItemObject.transform.localScale = 
                         // dragLevelItem.gameLevelItemObject.transform.localScale * .1f;
+
+                        // A character's marker model loads through LoadSprite like any sprite.
                         dragLevelItem.LoadData();
 
                         goLevelItem.transform.parent = levelItemsContainerObject.transform;
@@ -2136,6 +2267,116 @@ public class GameDraggableEditor : GameObjectBehavior {
     }
 
     // ----------------------------------------------------------------------
+
+    // CHARACTERS IN THE EDITOR (iter 40)
+    //
+    // Only a code with a GameCharacter row can become an actor (loadActorCo looks it up); a code that
+    // is only a model (character-bot-1/-2, character-zombie-1 in action-bots) cannot be placed.
+    public static bool CanCreateCharacter(string code) {
+        return !string.IsNullOrEmpty(code)
+            && GameCharacters.Instance != null
+            && GameCharacters.Instance.GetById(code) != null;
+    }
+
+    // The marker's visual: the character's model, unpooled (the marker is destroyed when it becomes
+    // an actor). No AI, no physics of its own — the draggable container carries those.
+    public static void LoadCharacterMarkerModel(GameDraggableLevelItem dragLevelItem) {
+
+        if (dragLevelItem == null || dragLevelItem.gameLevelItemObject == null
+            || dragLevelItem.gameLevelItemAsset == null) {
+            return;
+        }
+
+        dragLevelItem.RemoveGameLevelItems();
+
+        GameObject model = AppContentAssets.LoadAsset(
+            dragLevelItem.gameLevelItemAsset.code, Vector3.zero, Quaternion.identity, false);
+
+        if (model == null) {
+            return;
+        }
+
+        model.transform.parent = dragLevelItem.gameLevelItemObject.transform;
+        model.transform.localPosition = Vector3.zero;
+        model.transform.localRotation = Quaternion.identity;
+
+        // The actor wears the model under GamePlayerObject's model holder (x4 in action-bots); a
+        // marker at the model's own scale read as a speck next to the bot it becomes.
+        model.transform.localScale = CharacterModelScale();
+    }
+
+    static Vector3 characterModelScale = Vector3.zero;
+
+    // The model holder's scale inside the actor prefab (GamePlayerObject), read once.
+    static Vector3 CharacterModelScale() {
+
+        if (characterModelScale != Vector3.zero) {
+            return characterModelScale;
+        }
+
+        characterModelScale = Vector3.one;
+
+        GameObject prefab = PrefabsPool.PoolPrefab(
+            PathUtil.Combine(ContentPaths.appCacheVersionSharedPrefabCharacters, "GamePlayerObject"));
+
+        if (prefab != null) {
+
+            BaseGamePlayerController controller =
+                prefab.GetComponentInChildren<BaseGamePlayerController>(true);
+
+            if (controller != null && controller.gamePlayerModelHolderModel != null) {
+
+                Vector3 s = Vector3.one;
+                Transform root = controller.transform;
+
+                for (Transform p = controller.gamePlayerModelHolderModel.transform; p != null && p != root.parent; p = p.parent) {
+                    s = Vector3.Scale(s, p.localScale);
+                }
+
+                characterModelScale = s;
+            }
+        }
+
+        return characterModelScale;
+    }
+
+    // Leaving edit mode: every character marker becomes the live actor where it stands, and the
+    // marker goes. Its level data (saved by PLAY/SAVE) is untouched — the next level load spawns
+    // the actor from it again.
+    public void SpawnCharacterMarkers() {
+
+        if (levelItemsContainerObject == null) {
+            return;
+        }
+
+        List<GameDraggableLevelItem> markers = new List<GameDraggableLevelItem>();
+
+        foreach (Transform t in levelItemsContainerObject.transform) {
+
+            GameDraggableLevelItem item = t.GetComponent<GameDraggableLevelItem>();
+
+            if (item != null && item.gameLevelItemAsset != null
+                && item.gameLevelItemAsset.type == BaseDataObjectKeys.character) {
+                markers.Add(item);
+            }
+        }
+
+        for (int i = 0; i < markers.Count; i++) {
+
+            GameDraggableLevelItem marker = markers[i];
+            GameLevelItemAsset asset = marker.gameLevelItemAsset;
+
+            GameController.LoadActor(
+                asset.code,
+                asset.type,
+                string.IsNullOrEmpty(asset.data_type) ? GameSpawnType.explicitType : asset.data_type,
+                string.IsNullOrEmpty(asset.display_type) ? GameActorType.enemy : asset.display_type,
+                marker.transform.position,
+                marker.transform.rotation);
+
+            Destroy(marker.gameObject);
+        }
+    }
 
     public static void SaveCurrentLevel() {
         SaveCurrentLevel(levelItemsContainerObject);
@@ -2190,12 +2431,16 @@ public class GameDraggableEditor : GameObjectBehavior {
                     // add a new level asset item
 
                     GameLevelItemAsset newAsset = new GameLevelItemAsset();
-                    // The saved copy keeps the live item's uuid, so the NEXT save finds it and
-                    // updates it in place. With a fresh uuid every SAVE (and PLAY, which saves)
-                    // appended the item again, and a saved layout came back with stacked copies.
-                    newAsset.uuid = gameLevelItemAsset.uuid;
                     newAsset.code = gameLevelItemAsset.code;
                     newAsset.physics_type = gameLevelItemAsset.physics_type;
+
+                    // Same uuid as the draggable's asset, or the next save does not find it and adds
+                    // the item AGAIN (every save duplicated every newly placed item). The type
+                    // fields make a placed character spawn as an actor when the level loads.
+                    newAsset.uuid = gameLevelItemAsset.uuid;
+                    newAsset.type = gameLevelItemAsset.type;
+                    newAsset.data_type = gameLevelItemAsset.data_type;
+                    newAsset.display_type = gameLevelItemAsset.display_type;
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
                         step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
@@ -2207,6 +2452,9 @@ public class GameDraggableEditor : GameObjectBehavior {
                 }
             }
         }
+
+        // The grid's "empty" placeholders are never loaded; without them 1-1 saves 238 of 1158.
+        GameLevelItemSources.StripEmpty(GameLevelItems.Current);
 
         GameLevelItems.Instance.Save();
     }
@@ -2514,6 +2762,17 @@ public class GameDraggableEditor : GameObjectBehavior {
     public static bool editButtonRequested = false;
     public static bool editAssetSheetShown = false;
 
+    // Iter 33 (owner: "the EDIT button should only appear if you create a level"): set by the
+    // level select's ButtonGameModePlayEdit, cleared by any other fresh level entry (mode PLAY, a
+    // mission row) in BaseUIController; REPLAY keeps it. The HUD shows EDIT only while it is set.
+    public static bool levelCreateRequested = false;
+
+    // Statics survive Play sessions with domain reload off.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetLevelCreateRequested() {
+        levelCreateRequested = false;
+    }
+
     // B11.1: no toolkit call here. The EDIT button is the HUD's (BaseGameHUD + panel-hud view,
     // B11.2): the toolkit HUD suppresses its legacy ButtonGameEdit and the view must carry a
     // ButtonGameEdit of its own, shown while BaseGameController allows editing. Its click already
@@ -2772,6 +3031,16 @@ public class GameDraggableEditor : GameObjectBehavior {
 #if USE_GAME_LIB_GAMES_UI
         if (editorPanelTools != null) {
             editorPanelTools.HideAssetToolsButton();
+        }
+#endif
+    }
+
+    void ToolkitApplyResetButton() {
+#if USE_GAME_LIB_GAMES_UI
+        ResolveEditorPanels();
+
+        if (editorPanelTools != null) {
+            editorPanelTools.ApplyResetButton();
         }
 #endif
     }
