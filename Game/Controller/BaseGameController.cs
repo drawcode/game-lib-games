@@ -99,6 +99,11 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     internal bool levelInitializing = false;
 
+    // True once the player has readied the current level (UIPanelOverviewMode.Ready). The READY
+    // screen also comes back mid-round from the HUD's M.A.N. 9000 tap, and readying there must not
+    // re-run the level-start player sequence over a live round. Cleared when a level starts loading.
+    public bool levelPlayerReadied = false;
+
     // CUSTOM
 
     public string currentGameZone = GameZoneKeys.goal_right;
@@ -1176,6 +1181,12 @@ public class BaseGameController : GameObjectTimerBehavior {
 
     public virtual void loadLevelItems() {
 
+        // A saved or shipped level plays as authored; only a level without one is generated
+        // (see GameLevelItemSources for the keys and order).
+        if (GameLevelItemSources.ApplyCurrent(GameLevels.Current.code)) {
+            return;
+        }
+
         bool updated = false;
 
         // Load level items by game type....
@@ -1375,6 +1386,7 @@ public class BaseGameController : GameObjectTimerBehavior {
 
         //LogUtil.Log("GAME START FLOW: STEP #5: startLevelCo: levelCode:" + levelCode);
         levelInitializing = true;
+        levelPlayerReadied = false;
 
         //resetRuntimeData();
 
@@ -1496,11 +1508,20 @@ public class BaseGameController : GameObjectTimerBehavior {
 
 #if USE_GAME_LIB_GAMES_UI
 
-            if (!roundStarted) {
-                GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
-            }
+            // The level-load white flash goes whether or not the round has started: this only
+            // HIDES it, and nothing else does, so skipping it for a started round left that round
+            // playing under an opaque white sheet.
+            GameUIPanelOverlays.Instance.HideOverlayWhiteFlashOut();
 
-            UIPanelOverlayPrepare.HideAll();
+            // Ready() already dismissed the prepare overlay (releaseLevelInitializing). Doing it
+            // again over a LIVE round is not harmless: its HideStates() closes the RPG health and
+            // energy dialogs, and their AnimateOut -> HideContent -> ContentPause() puts the game
+            // in GameContentDisplay. A READY tapped inside the wait above (a fast double tap on the
+            // play arrow) started the round, this paused it, the READY screen was already gone and
+            // the white flash was never hidden: a white screen with no way forward.
+            if (!roundStarted) {
+                UIPanelOverlayPrepare.HideAll();
+            }
 #endif
 
             //UIPanelOverlayPrepare.Instance.HideStates();
@@ -2760,6 +2781,9 @@ public class BaseGameController : GameObjectTimerBehavior {
 #endif
 
         AnalyticsNetworks.LogEventLevelStart();
+
+        // the round spawns from the bot level it started with (content gating, iter 35)
+        GameContentGate.BeginRound();
 
         runDirectorsDelayed(runDirectorsDelay);
 

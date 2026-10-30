@@ -36,6 +36,8 @@ public static class GameInputActions {
     public const string actionMove = "move";
     public const string actionRun = "run";
     public const string actionAim = "aim";
+    public const string actionFire = "fire";
+    public const string actionSkill = "skill";
 
     // The HUD's on-screen sticks as virtual controls (ActionMap.SetVirtualAxis). A map that binds
     // them gets touch through the same actions as keys and pads; one that does not leaves the HUD
@@ -54,6 +56,11 @@ public static class GameInputActions {
     private static bool touchMoveBound;
     private static bool touchAimBound;
 
+    // Whether the shipped map defines these actions at all. A map without them leaves every fire
+    // reader on its legacy Input read, so a game that ships an older map loses nothing.
+    private static bool fireDefined;
+    private static bool skillDefined;
+
     public static bool active {
         get {
             return enabled && map != null && driver != null;
@@ -70,6 +77,8 @@ public static class GameInputActions {
         driver = null;
         touchMoveBound = false;
         touchAimBound = false;
+        fireDefined = false;
+        skillDefined = false;
 
         if (!enabled) {
             return;
@@ -95,6 +104,21 @@ public static class GameInputActions {
         map = m;
         touchMoveBound = IsBound(def, controlTouchMove);
         touchAimBound = IsBound(def, controlTouchAim);
+        fireDefined = IsDefined(def, actionFire);
+        skillDefined = IsDefined(def, actionSkill);
+    }
+
+    private static bool IsDefined(ActionMapDef def, string actionId) {
+
+        foreach (ActionSetDef set in def.actionSets) {
+            foreach (ActionDef action in set.actions) {
+                if (string.Equals(action.id, actionId, StringComparison.Ordinal)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static bool IsBound(ActionMapDef def, string control) {
@@ -189,6 +213,49 @@ public static class GameInputActions {
         }
 
         return map.Held(actionRun);
+    }
+
+    // FIRE as an action (the dasher slice's gap 3). The player has no legacy fire binding: in the
+    // twin-stick game a shot comes from deflecting the aim stick (BaseGamePlayerController sends
+    // SendAttack while aiming). This adds a held button that fires along the current facing --
+    // the only way to shoot from a keyboard. Map only: false when inactive or when the map has
+    // no `fire` action, so nothing changes for a game that does not bind it.
+    public static bool IsFireHeldByMap() {
+        return active && fireDefined && map.Held(actionFire);
+    }
+
+    // The same button for readers that DID have a legacy binding (Input Manager Fire1: left ctrl,
+    // mouse 0): the map when it defines `fire`, else Fire1 exactly as before.
+    public static bool IsFireHeld() {
+
+        if (!active || !fireDefined) {
+            return Input.GetButton("Fire1");
+        }
+
+        return map.Held(actionFire);
+    }
+
+    public static bool WasFirePressed() {
+
+        if (!active || !fireDefined) {
+            return Input.GetButtonDown("Fire1");
+        }
+
+        return map.Pressed(actionFire);
+    }
+
+    public static bool WasFireReleased() {
+
+        if (!active || !fireDefined) {
+            return Input.GetButtonUp("Fire1");
+        }
+
+        return map.Released(actionFire);
+    }
+
+    // SKILL: a press edge. Map only; legacy had no skill binding.
+    public static bool WasSkillPressedByMap() {
+        return active && skillDefined && map.Pressed(actionSkill);
     }
 
     private class Loop : ICoreLoop {
