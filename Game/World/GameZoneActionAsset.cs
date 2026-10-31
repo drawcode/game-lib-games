@@ -33,12 +33,14 @@ public class GameZoneActionAsset : GameZoneAction {
     // the tilted gameplay camera). So: width a share of the footprint, on the building's FRONT
     // edge (-z, the side the camera and the player face) at a share of its height. The height
     // rises with the build animation, so it is re-read twice a second and only ever raised.
-    public static float actionProgressBarWidthShare = .3f;
+    // Owner, 2026-10-31: "a bit too big" - width share and both scale clamps at ~78% of iter 31's
+    // .3 / 3 / 16.
+    public static float actionProgressBarWidthShare = .235f;
     public static float actionProgressBarHeightShare = .25f;
     public static float actionProgressBarMinHeight = 3f;
     public static float actionProgressBarFlatten = .6f;
-    public static float actionProgressBarMinScale = 3f;
-    public static float actionProgressBarMaxScale = 16f;
+    public static float actionProgressBarMinScale = 2.3f;
+    public static float actionProgressBarMaxScale = 12.5f;
     const float actionProgressBarBaseWidth = .9f;   // prefab bar width at scale 1
     public static Color actionProgressColorBuild = new Color(0f, 140f / 255f, 220f / 255f, 1f);
     public static Color actionProgressColorAttack = new Color(1f, 121f / 255f, 0f, 1f);

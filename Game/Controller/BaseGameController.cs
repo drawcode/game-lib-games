@@ -2680,6 +2680,17 @@ public class BaseGameController : GameObjectTimerBehavior {
     public virtual void handleContentOverview() {
 
         if (contentDisplayCode == GameContentDisplayTypes.gameModeContentOverview) {
+
+            // onGamePrepare asks for the overview in the same call that starts the level, so the
+            // READY dialog opened under the loader + tips and both were on screen (owner,
+            // 2026-10-31: "the loader with tips loads; when the prepare is ready, the player hits
+            // PLAY, and only then should the READY dialog ease in. No overlap"). While the level
+            // is initializing, initLevelFinishCo shows READY after PLAY instead. The HUD's
+            // M.A.N. 9000 re-show runs over a live round, where levelInitializing is false.
+            if (levelInitializing) {
+                return;
+            }
+
 #if USE_GAME_LIB_GAMES_UI
             UIPanelOverviewMode.ShowDefault();
 #endif
