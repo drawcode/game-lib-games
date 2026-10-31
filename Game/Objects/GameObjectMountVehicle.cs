@@ -15,6 +15,11 @@ public class GameObjectMountVehicle : GameObjectMount {
     public Transform exitPoint;  // where the rider is put on exit (unset: the rider stays where it is)
     public Transform seatPoint;  // rider socket for open vehicles without a seat mesh
 
+    // A vehicle model other than GameVehicleDrive (the arcade host, Action Bikes). Attached on mount through
+    // attachArcade, which a title that builds the arcade core sets; unset, every arcade branch is skipped.
+    public IGameVehicleMountDriver arcade;
+    public static System.Func<GameObject, IGameVehicleMountDriver> attachArcade;
+
     public override void Awake() {
         base.Awake();
     }
@@ -81,12 +86,20 @@ public class GameObjectMountVehicle : GameObjectMount {
 
         if (isMounted) {
             OnRiderMounted(objectMounted);
+
+            if (arcade != null) {
+                arcade.OnRiderMounted(objectMounted);
+            }
         }
     }
 
     public override void Unmount() {
         if (isMounted) {
             OnRiderUnmounted(objectMounted);
+
+            if (arcade != null) {
+                arcade.OnRiderUnmounted(objectMounted);
+            }
         }
 
         base.Unmount();
@@ -102,6 +115,10 @@ public class GameObjectMountVehicle : GameObjectMount {
 
         if (driver == null) {
             driver = gameObject.FindTypeAboveRecursive<GameVehicleDrive>();
+        }
+
+        if (driver == null && arcade == null && attachArcade != null) {
+            arcade = attachArcade(vehicleObject);
         }
 
         objectMounted.transform.position = gameObject.transform.position;
@@ -245,6 +262,21 @@ public class GameObjectMountVehicle : GameObjectMount {
         if (driver != null) {
             driver.vehicleDriveData.inputAxisHorizontal = h;
             driver.vehicleDriveData.inputAxisVertical = v;
+        }
+        else if (arcade != null) {
+            arcade.SetMoveStick(h, v);
+        }
+    }
+
+    // Both sticks and the vehicle buttons (VehicleButtons bits) for the arcade host; GameVehicleDrive takes the axis only.
+    public void SetMountVehicleSticks(Vector2 move, Vector2 aim, int buttons) {
+        if (arcade != null) {
+            arcade.SetMoveStick(move.x, move.y);
+            arcade.SetAimStick(aim.x, aim.y);
+            arcade.SetButtons(buttons);
+        }
+        else {
+            SetMountVehicleAxis(move.x, move.y);
         }
     }
 
