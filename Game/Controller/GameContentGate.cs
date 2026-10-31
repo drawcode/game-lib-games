@@ -18,6 +18,12 @@ using Engine.Game.App.BaseApp;
 //   content-lock          off = nothing is gated (tuning, probes)
 //   content-lock-teasers  off = locked content is fully hidden, no teasers
 //
+// Test content (owner 2026-10-31): rows tagged "test" (Action Bots' x-90..93 test missions) are
+// for dev only. They show while the `dev-test-content` gate is on, which defaults to
+// Debug.isDebugBuild - on in the Editor and development builds, off in release builds - so the
+// data file only names the key to force it either way. Hidden test content is never unlocked
+// either, so a stale play payload can't start it.
+//
 // A round keeps what it started with: BeginRound() snapshots the level (BaseGameController
 // onGameStarted), and IsSpawnUnlocked reads the snapshot, so XP picked up mid-round never adds
 // enemies mid-round. Screens read the live level.
@@ -28,6 +34,9 @@ public static class GameContentGate {
 
     public const string gateKey = "content-lock";
     public const string teasersGateKey = "content-lock-teasers";
+    public const string testContentGateKey = "dev-test-content";
+
+    public const string testTag = "test";
 
     public const int defaultTeaserCount = 2;
 
@@ -60,6 +69,17 @@ public static class GameContentGate {
         get {
             return FeatureGates.IsOn(gateKey, true);
         }
+    }
+
+    public static bool showTestContent {
+        get {
+            return FeatureGates.IsOn(testContentGateKey, Debug.isDebugBuild);
+        }
+    }
+
+    // A "test" row while test content is off: left out of every list and never unlocked.
+    public static bool IsHiddenTest(GameDataObject item) {
+        return item != null && !showTestContent && item.HasTag(testTag);
     }
 
     static void EnsureLoaded() {
@@ -183,7 +203,7 @@ public static class GameContentGate {
     }
 
     public static bool IsUnlocked(GameDataObject item) {
-        return item == null || IsUnlocked(item.min_level, CurrentLevel());
+        return item == null || (!IsHiddenTest(item) && IsUnlocked(item.min_level, CurrentLevel()));
     }
 
     // For spawns and the VS card: the round's level, not the live one.
@@ -237,7 +257,7 @@ public static class GameContentGate {
 
         foreach (T item in items) {
 
-            if (item == null) {
+            if (item == null || IsHiddenTest(item)) {
                 continue;
             }
 
@@ -263,7 +283,7 @@ public static class GameContentGate {
 
         foreach (T item in items) {
 
-            if (item == null) {
+            if (item == null || IsHiddenTest(item)) {
                 continue;
             }
 
