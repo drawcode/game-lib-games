@@ -181,6 +181,12 @@ public class GameDraggableEditor : GameObjectBehavior {
     // and the item jumps with it.
     public static bool dragOnLevelPlane = false;
 
+    // Level-item codes starting with one of these load from the vehicle prefab folder
+    // (ContentPaths.appCacheVersionSharedPrefabVehicles) instead of levelassets, so a layout can park
+    // vehicles ("V": { "code": "vehicle-...", "type": "vehicle" }). Empty (the default) = every level
+    // item loads from levelassets, as before.
+    public static List<string> vehicleCodePrefixes = new List<string>();
+
 #if USE_UI_NGUI_2_7 || USE_UI_NGUI_3
     public UILabel labelButtonGameEdit;
 #else
@@ -1885,6 +1891,14 @@ public class GameDraggableEditor : GameObjectBehavior {
         //string resourcePath = ContentPaths.appShipCachePathShared.Replace(Application.dataPath, "");      
         //resourcePath = PathUtil.Combine(resourcePath, spriteCode);
         string resourcePath = ContentPaths.appCacheVersionSharedPrefabLevelAssets + spriteCode;
+
+        for (int i = 0; i < vehicleCodePrefixes.Count; i++) {
+            if (spriteCode.StartsWith(vehicleCodePrefixes[i])) {
+                resourcePath = ContentPaths.appCacheVersionSharedPrefabVehicles + spriteCode;
+                break;
+            }
+        }
+
         return resourcePath;
     }
 
