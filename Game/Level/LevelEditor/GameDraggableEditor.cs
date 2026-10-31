@@ -558,19 +558,8 @@ public class GameDraggableEditor : GameObjectBehavior {
 
         HandleFingerGesturesOnTap(fingerPos);
 
-        LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + gesture.Taps);
-        LogUtil.Log("FingerGestures_OnDoubleTap:gesture.ElapsedTime:" + gesture.ElapsedTime);
-
-        //LogUtil.Log("FingerGestures_OnDoubleTap:gesture.Taps:" + );
-
-        if (gesture.ElapsedTime < .08) {
-
-            //if (GetCurrentDraggableObject() != null) {
-            //     DoubleTapObject(GetCurrentDraggableObject(), gesture.Position);
-            //}
-
-            HandleFingerGesturesOnDoubleTap(gesture.Position);
-        }
+        // Placing is the double tap's (EnsureDoubleTapRecognizer). This used to place on any tap
+        // pressed for under .08 s as well, which made a quick double tap place twice.
     }
 
     public void TapObject(GameObject go, Vector2 fingerPos, bool allowTap) {
@@ -1085,6 +1074,36 @@ public class GameDraggableEditor : GameObjectBehavior {
         ShowUIPanelDialogItems();
     }
 
+    // A double tap places the picked item (owner, 2026-10-31: "placing items ... seems broken as
+    // they don't place"). The scene's FingerGestures broadcaster only carries a ONE-tap
+    // recognizer, so OnDoubleTap never fired and the only route left was OnTap's "quick press"
+    // test (ElapsedTime < .08), which a normal tap (~.1-.15 s) fails. This adds the two-tap
+    // recognizer once, on the broadcaster, which forwards its OnDoubleTap message.
+    public static float doubleTapMaxDelay = .4f;
+
+    static void EnsureDoubleTapRecognizer() {
+
+        Engine.Events.FingerGesturesBroadcaster broadcaster =
+            UnityEngine.Object.FindAnyObjectByType<Engine.Events.FingerGesturesBroadcaster>();
+
+        if (broadcaster == null) {
+            return;
+        }
+
+        foreach (TapRecognizer existing in broadcaster.GetComponents<TapRecognizer>()) {
+            if (existing.RequiredTaps == 2) {
+                return;
+            }
+        }
+
+        TapRecognizer doubleTap = broadcaster.gameObject.AddComponent<TapRecognizer>();
+        doubleTap.RequiredTaps = 2;
+        doubleTap.MaxDelayBetweenTaps = doubleTapMaxDelay;
+        doubleTap.EventMessageName = FingerGesturesDoubleTapMessage;
+    }
+
+    const string FingerGesturesDoubleTapMessage = "OnDoubleTap";
+
     public void EditEnable() {
         //HideHUD();
         //HideUIPanelEditButton();
@@ -1100,6 +1119,8 @@ public class GameDraggableEditor : GameObjectBehavior {
             //HideUIPanelEditButton();
             ShowUIPanelEdit();
             GameDraggableEditor.editingEnabled = true;
+
+            EnsureDoubleTapRecognizer();
 
             LogUtil.Log("EditEnable:editingEnabled:", editingEnabled);
         }
