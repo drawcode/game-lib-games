@@ -108,6 +108,11 @@ public class BaseUIButtonNames {
     public static string buttonGameModeArcade = "ButtonGameModeArcade";
     public static string buttonGameModeChallenge = "ButtonGameModeChallenge";
     public static string buttonGameModeCoop = "ButtonGameModeCoop";
+    // CREATE (iter 43, owner): the mode-select tile that opens the CREATE screen (NEW LEVEL + MY
+    // LEVELS). Coop's tile stays in the view, hidden.
+    public static string buttonGameModeCreate = "ButtonGameModeCreate";
+    // Main's PLAY (iter 43, owner): opens SELECT GAMEPLAY MODE, where CREATE lives.
+    public static string buttonGameModeSelect = "ButtonGameModeSelect";
     public static string buttonGameModeMultiplayerCoop = "ButtonGameModeMultiplayerCoop";
     public static string buttonGameModeMultiplayerMatchup = "ButtonGameModeMultiplayerMatchup";
     public static string buttonGameModeMultiplayer = "ButtonGameModeMultiplayer";
@@ -122,6 +127,9 @@ public class BaseUIButtonNames {
     // Worlds screen EDIT (iter 34): creates the next free level code in the current world
     // (GameLevelCodes) and enters it to create; contains-matches both names above.
     public static string buttonGameModePlayEditWorld = "ButtonGameModePlayEditWorld";
+    // CREATE screen MY LEVELS row: ButtonGameModePlayEditLevel$<created level code> reopens that
+    // level to edit (contains-matches buttonGameModePlayEdit).
+    public static string buttonGameModePlayEditLevel = "ButtonGameModePlayEditLevel";
     public static string buttonGameModePlay = "ButtonGameModePlay";
     public static string buttonGameNetworkStopGame = "ButtonGameNetworkStopGame";
     public static string buttonGameNetworkStartGame = "ButtonGameNetworkStartGame";
@@ -223,6 +231,7 @@ public class BaseUIPanel {
     public static string panelClassNameSettingsLanguage = "GameUIPanelSettingsLanguage";
     public static string panelClassNameGameMode = "GameUIPanelGameMode";
     public static string panelClassNameGameModeCoop = "GameUIPanelGameModeCoop";
+    public static string panelClassNameGameModeCreate = "GameUIPanelGameModeCreate";
     public static string panelClassNameGameModeMultiplayer = "GameUIPanelGameModeMultiplayer";
     public static string panelClassNameGameModeMultiplayerCoop = "GameUIPanelGameModeMultiplayerCoop";
     public static string panelClassNameGameModeMultiplayerMatchup = "GameUIPanelGameModeMultiplayerMatchup";
@@ -307,6 +316,7 @@ public class BaseUIPanel {
     //
     public static string panelGameMode = "panel-game-mode";
     public static string panelGameModeCoop = "panel-game-mode-coop";
+    public static string panelGameModeCreate = "panel-game-mode-create";
     public static string panelGameModeMultiplayer = "panel-game-mode-multiplayer";
     public static string panelGameModeMultiplayerCoop = "panel-game-mode-multiplayer-coop";
     public static string panelGameModeMultiplayerMatchup = "panel-game-mode-multiplayer-matchup";
@@ -930,6 +940,7 @@ public class BaseUIController : GameObjectBehavior {
                     || isUIPanel(GameUIPanel.panelGameModeCareer)
                     || isUIPanel(GameUIPanel.panelGameModeChallenge)
                     || isUIPanel(GameUIPanel.panelGameModeCoop)
+                    || isUIPanel(GameUIPanel.panelGameModeCreate)
                     || isUIPanel(GameUIPanel.panelGameModeMissions)
                     || isUIPanel(GameUIPanel.panelGameModeMultiplayer)
                     || isUIPanel(GameUIPanel.panelGameModeMultiplayerCoop)
@@ -1220,6 +1231,23 @@ public class BaseUIController : GameObjectBehavior {
 
 #endif
 
+
+    // ------------------------------------------------------------
+    // GAME MODE - CREATE (iter 43): no feature define; an app without the panel-game-mode-create
+    // asset never shows it, because nothing it draws has the tile.
+
+    public virtual void showGameModeCreate() {
+        showUIPanel(
+            BaseUIPanel.panelClassNameGameModeCreate,
+            BaseUIPanel.panelGameModeCreate,
+            "CREATE");
+    }
+
+    public virtual void hideGameModeCreate() {
+        hideUIPanel(
+            BaseUIPanel.panelClassNameGameModeCreate
+            );
+    }
 
 #if ENABLE_FEATURE_GAME_MODE_COOP
 
@@ -2913,6 +2941,18 @@ public class BaseUIController : GameObjectBehavior {
         }
 #endif
 
+#if ENABLE_FEATURE_GAME_MODE
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeSelect, buttonName)) {
+            GameUIController.ShowGameMode();
+        }
+#endif
+
+        // CREATE plays under the arcade rules, the same rounds the worlds-screen EDIT made (iter 34-42)
+        else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCreate, buttonName)) {
+            GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+            showGameModeCreate();
+        }
+
 #if ENABLE_FEATURE_GAME_MODE_CHALLENGE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeChallenge, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameChallenge);
@@ -3313,7 +3353,8 @@ public class BaseUIController : GameObjectBehavior {
             if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEdit, buttonName)) {
                 GameDraggableEditor.levelCreateRequested = true;
 
-                // the worlds screen's EDIT makes a new level rather than opening the current one
+                // NEW LEVEL (CREATE screen; the worlds screen's EDIT before iter 43) makes a new level
+                // rather than opening the current one
                 if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEditWorld, buttonName)) {
 
                     string levelCreated = GameLevelCodes.CreateInWorld(GameWorlds.Current);
@@ -3324,6 +3365,18 @@ public class BaseUIController : GameObjectBehavior {
                     }
 
                     GameLevels.Instance.ChangeCurrent(levelCreated);
+                }
+                // MY LEVELS row: reopen a created level (its row may be from an earlier session)
+                else if (UIUtil.IsButtonClickedLike(BaseUIButtonNames.buttonGameModePlayEditLevel + "$", buttonName)) {
+
+                    string levelEdit = buttonName.Substring(buttonName.IndexOf('$') + 1);
+
+                    if (!GameLevelCodes.IsCreated(levelEdit) || !GameLevelCodes.EnsureRow(levelEdit)) {
+                        GameDraggableEditor.levelCreateRequested = false;
+                        return;
+                    }
+
+                    GameLevels.Instance.ChangeCurrent(levelEdit);
                 }
             }
             else if (!UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGamePlay, buttonName)) {
