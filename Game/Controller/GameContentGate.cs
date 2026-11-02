@@ -233,6 +233,121 @@ public static class GameContentGate {
         return from[UnityEngine.Random.Range(0, from.Count)];
     }
 
+    // The same pick for a mission row's level kind: returns the level code, "<kind>-<world>-<n>"
+    // or the older bare "<world>-<n>" when only that row exists (GameLevelCodes.Resolve).
+    public static string PickLevelCode(string kind, int worldNum, List<int> suffixes) {
+
+        if (suffixes == null || suffixes.Count == 0) {
+            return GameLevelCodes.Resolve(kind, worldNum, 0);
+        }
+
+        List<string> codes = new List<string>();
+        List<string> open = new List<string>();
+
+        foreach (int suffix in suffixes) {
+            string code = GameLevelCodes.Resolve(kind, worldNum, suffix);
+            codes.Add(code);
+            if (IsUnlocked(GameLevels.Instance.GetByCode(code))) {
+                open.Add(code);
+            }
+        }
+
+        List<string> from = open.Count > 0 ? open : codes;
+        return from[UnityEngine.Random.Range(0, from.Count)];
+    }
+
+    // MISSION SETS (arcade P4, owner call A3): a mission row's `mission_set` (1, 2, ...) groups it;
+    // set 1 is open, and set k + 1 opens once setOpenCount of set k's missions are done. A row
+    // without mission_set (0) is in no set and always open, so data without sets plays as before.
+    // Returns the missions in open sets (source order); the next locked set's missions go in
+    // `nextSet`, for screens to show as teasers. Allocates; not for a hot path.
+    public static string missionSetKey = "mission_set";
+    public static int setOpenCount = 2;
+
+    public static int MissionSet(GameDataObject item) {
+
+        object raw;
+
+        if (item == null || !item.TryGetValue(missionSetKey, out raw) || raw == null) {
+            return 0;
+        }
+
+        try {
+            return Math.Max(0, Convert.ToInt32(raw));
+        }
+        catch (Exception) {
+            return 0;
+        }
+    }
+
+    public static List<T> OpenMissionSets<T>(List<T> missions, Func<T, bool> done, List<T> nextSet)
+        where T : GameDataObject {
+
+        List<T> open = new List<T>();
+
+        if (nextSet != null) {
+            nextSet.Clear();
+        }
+
+        if (missions == null) {
+            return open;
+        }
+
+        // the highest open set: 1, then each set whose predecessor has setOpenCount done
+        List<int> sets = new List<int>();
+
+        foreach (T mission in missions) {
+            int set = MissionSet(mission);
+            if (set > 0 && !sets.Contains(set)) {
+                sets.Add(set);
+            }
+        }
+
+        sets.Sort();
+
+        int openTo = sets.Count > 0 ? sets[0] : 0;
+
+        for (int i = 0; i + 1 < sets.Count; i++) {
+
+            int doneCount = 0;
+
+            foreach (T mission in missions) {
+                if (MissionSet(mission) == sets[i] && done != null && done(mission)) {
+                    doneCount++;
+                }
+            }
+
+            if (doneCount < setOpenCount) {
+                break;
+            }
+
+            openTo = sets[i + 1];
+        }
+
+        int next = 0;
+
+        foreach (int set in sets) {
+            if (set > openTo) {
+                next = set;
+                break;
+            }
+        }
+
+        foreach (T mission in missions) {
+
+            int set = MissionSet(mission);
+
+            if (set <= openTo) {
+                open.Add(mission);
+            }
+            else if (set == next && nextSet != null) {
+                nextSet.Add(mission);
+            }
+        }
+
+        return open;
+    }
+
     // For screens: the unlocked items in source order, plus the next teaserCount locked ones
     // (lowest min_level first, source order on ties), which also go in `teasers` when given.
     // Allocates its result; not for a hot path.

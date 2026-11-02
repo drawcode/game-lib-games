@@ -152,7 +152,7 @@ namespace Game.Level.Tests {
         public void Row_IsMarkedArcadeAndGenerated_AndIsNoMissionLevel() {
             Dictionary<string, object> row = Row(battle, 3);
 
-            Assert.AreEqual("arcade-battle-1-3", row["code"]);
+            Assert.AreEqual("arcade-1-4", row["code"]);
             Assert.AreEqual("world-1", row["world_code"]);
             Assert.AreEqual(GameArcadeLevelKeys.arcade, Data(row)[GameArcadeLevelKeys.level_kind]);
             Assert.AreEqual(GameLevelItemSourceKeys.generated, Data(row)[GameLevelItemSourceKeys.level_items_source]);
@@ -223,7 +223,7 @@ namespace Game.Level.Tests {
         public void Row_LoadsAsAGameLevel_WithItsDirectors() {
             GameLevel level = Row(battle, 0).ToJson().FromJson<GameLevel>();
 
-            Assert.AreEqual("arcade-battle-1-0", level.code);
+            Assert.AreEqual("arcade-1-1", level.code);
 
             GameDataDirector enemy = null;
             foreach (GameDataDirector director in level.data.directors) {
@@ -275,6 +275,63 @@ namespace Game.Level.Tests {
                     }
                 }
             }
+        }
+
+        // Level kinds (owner 2026-11-01): "<kind>-<world>-<n>" for every kind, arcade included.
+        [Test]
+        public void Codes_AreArcadeWorldNumber_OneBlockPerType() {
+            Assert.AreEqual("arcade-1-1", GameArcadeLevels.Code(battle, 1, 0));
+            Assert.AreEqual("arcade-1-10", GameArcadeLevels.Code(battle, 1, GameArcadeLevels.tierMax));
+            Assert.AreEqual("arcade-2-11", GameArcadeLevels.Code(GameArcadeLevelKeys.rescue, 2, 0));
+            Assert.AreEqual("arcade-3-50", GameArcadeLevels.Code(GameArcadeLevelKeys.repair, 3, 99));
+
+            HashSet<string> codes = new HashSet<string>();
+            foreach (string playType in GameArcadeLevels.playTypes) {
+                for (int tier = 0; tier <= GameArcadeLevels.tierMax; tier++) {
+                    Assert.IsTrue(codes.Add(GameArcadeLevels.Code(playType, 1, tier)), playType + " " + tier);
+                }
+            }
+            Assert.AreEqual(GameArcadeLevels.playTypeActions.Count, GameArcadeLevels.playTypes.Length);
+        }
+
+        [Test]
+        public void MissionLevels_PrefixedCodeFirst_ThenBare_ByTheMissionsLevelKind() {
+            List<object> levelRows = new List<object> {
+                new Dictionary<string, object> { { "code", "mission-1-5" } },
+                new Dictionary<string, object> { { "code", "1-5" } },
+                new Dictionary<string, object> { { "code", "1-6" } },
+                new Dictionary<string, object> { { "code", "test-1-1" } },
+            };
+            Dictionary<string, object> mission = new Dictionary<string, object> {
+                { "data", new Dictionary<string, object> { { "level_num_suffix_list", new List<object> { 5, 6, 7 } } } },
+            };
+            Dictionary<string, object> testMission = new Dictionary<string, object> {
+                { "data", new Dictionary<string, object> {
+                    { "level_kind", "test" }, { "level_num_suffix_list", new List<object> { 1 } } } },
+            };
+
+            List<IDictionary<string, object>> levels = GameArcadeLevels.MissionLevels(mission, 1, levelRows);
+            Assert.AreEqual(2, levels.Count, "5 and 6 exist, 7 does not");
+            Assert.AreEqual("mission-1-5", levels[0]["code"], "the prefixed row wins over the bare one");
+            Assert.AreEqual("1-6", levels[1]["code"], "a bare row still plays (older data)");
+
+            Assert.AreEqual("test-1-1", GameArcadeLevels.MissionLevels(testMission, 1, levelRows)[0]["code"]);
+        }
+
+        [Test]
+        public void LevelCodes_KindIsThePrefix_BareReadsAsMission() {
+            Assert.AreEqual("mission", GameLevelCodes.Kind("mission-1-4"));
+            Assert.AreEqual("mission", GameLevelCodes.Kind("1-4"));
+            Assert.AreEqual("tutorial", GameLevelCodes.Kind("tutorial-2-1"));
+            Assert.AreEqual("test", GameLevelCodes.Kind("test-3-4"));
+            Assert.AreEqual("arcade", GameLevelCodes.Kind(GameArcadeLevels.Code(battle, 1, 2)));
+            Assert.AreEqual("create", GameLevelCodes.Kind("create-1-3"));
+            Assert.IsNull(GameLevelCodes.Kind(""));
+            Assert.IsNull(GameLevelCodes.Kind("nodash"));
+            Assert.AreEqual("tutorial-1-2", GameLevelCodes.Format("tutorial", 1, 2));
+            Assert.AreEqual("1-2", GameLevelCodes.Format("", 1, 2));
+            Assert.AreEqual("1-3", GameLevelCodes.DisplayName("mission-1-3"));
+            Assert.AreEqual("1-3", GameLevelCodes.DisplayName("create-1-3"));
         }
 
         // The arcade list's rows (P2): each loads with its play_type, leads with the type's goal

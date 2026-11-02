@@ -4,7 +4,19 @@ using Engine.Game.App;
 using Engine.Game.App.BaseApp;
 using Engine.Utility;
 
-// Level codes are "<world_num>-<n>" (game-level-data rows). A new level created from the worlds
+// LEVEL KINDS (owner, 2026-11-01): a shipped level code is "<kind>-<world_num>-<n>", numbered from 1
+// per kind and world, and the prefix says what the level is for:
+//
+//   mission-1-4    played by mission rows (level_num_suffix_list, with the row's level_kind)
+//   tutorial-1-1   a level that exercises one action
+//   test-1-2       dev-only levels for test missions
+//   arcade-1-12    GENERATED at runtime (GameArcadeLevels), never shipped
+//   create-1-3     made by the player in CREATE, never shipped
+//
+// A bare "<world_num>-<n>" is the older form (Action Bikes still ships it) and reads as a mission;
+// the lookups below try the prefixed code first and fall back to the bare one.
+//
+// Older note: level codes were "<world_num>-<n>" (game-level-data rows). A new level created from the worlds
 // screen takes the first n in its world that nothing already uses, so it can never open or
 // overwrite another level's layout:
 //
@@ -34,8 +46,70 @@ public class GameLevelCodes {
     public static string createdPrefix = "create-";
     public static int maxCreatedNum = 999;
 
+    public static string missionKind = "mission";
+    public static string tutorialKind = "tutorial";
+    public static string testKind = "test";
+    public static string arcadeKind = "arcade";
+    public static string createdKind = "create";
+
     public static string Format(int worldNum, int levelNum) {
         return worldNum + "-" + levelNum;
+    }
+
+    // "<kind>-<world>-<n>"; an empty kind gives the bare form
+    public static string Format(string kind, int worldNum, int levelNum) {
+        return string.IsNullOrEmpty(kind) ? Format(worldNum, levelNum) : kind + "-" + Format(worldNum, levelNum);
+    }
+
+    // The kind prefix, or mission for a bare "<world>-<n>" code; null for null/empty.
+    public static string Kind(string code) {
+
+        if (string.IsNullOrEmpty(code)) {
+            return null;
+        }
+
+        int dash = code.IndexOf('-');
+
+        if (dash <= 0) {
+            return null;
+        }
+
+        string head = code.Substring(0, dash);
+        int ignored;
+
+        return int.TryParse(head, out ignored) ? missionKind : head.ToLowerInvariant();
+    }
+
+    public static bool IsKind(string code, string kind) {
+        return Kind(code) == kind;
+    }
+
+    // The level a row asks for: "<kind>-<world>-<n>" when that row exists, else the bare
+    // "<world>-<n>" when it exists (older data), else the prefixed code.
+    public static string Resolve(string kind, int worldNum, int levelNum) {
+
+        string code = Format(string.IsNullOrEmpty(kind) ? missionKind : kind, worldNum, levelNum);
+
+        if (GameLevels.Instance.GetById(code) != null) {
+            return code;
+        }
+
+        string bare = Format(worldNum, levelNum);
+
+        return GameLevels.Instance.GetById(bare) != null ? bare : code;
+    }
+
+    // A mission row's level kind: data.level_kind, else mission (test missions say "test").
+    public static string MissionLevelKind(AppContentCollect mission) {
+
+        object kind;
+
+        if (mission != null && mission.data != null
+            && mission.data.TryGetValue(GameArcadeLevelKeys.level_kind, out kind) && kind != null) {
+            return kind.ToString();
+        }
+
+        return missionKind;
     }
 
     public static string FormatCreated(int worldNum, int levelNum) {
@@ -219,7 +293,7 @@ public class GameLevelCodes {
             + (template != null ? " from " + template.code : ""));
     }
 
-    // "create-1-3" -> "1-3" (the namespace is not shown); an official code is its own name.
+    // "create-1-3" and "mission-1-3" -> "1-3" (the kind is not shown); a bare "1-3" -> "3", as before.
     public static string DisplayName(string code) {
 
         if (IsCreated(code)) {
@@ -293,14 +367,26 @@ public class GameLevelCodes {
 
     static GameLevel GetTemplate(GameWorld world, int worldNum) {
 
-        GameLevel first = GameLevels.Instance.GetById(Format(worldNum, 1));
+        GameLevel first = GameLevels.Instance.GetById(Resolve(missionKind, worldNum, 1));
 
         if (first != null) {
             return first;
         }
 
+        // else the world's first mission row (a tutorial, test or generated arcade row has
+        // the wrong presets for a new level), else its first row
         List<GameLevel> levels = GameLevels.Instance.GetByWorldId(world.code);
 
-        return levels != null && levels.Count > 0 ? levels[0] : null;
+        if (levels == null || levels.Count == 0) {
+            return null;
+        }
+
+        foreach (GameLevel level in levels) {
+            if (level != null && IsKind(level.code, missionKind)) {
+                return level;
+            }
+        }
+
+        return levels[0];
     }
 }

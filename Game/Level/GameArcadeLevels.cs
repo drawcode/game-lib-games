@@ -58,8 +58,20 @@ public static partial class GameArcadeLevels {
 
     static readonly string[] copiedRowKeys = { "world_code", "display_name", "name", "description" };
 
+    // Play types in code order: each gets a block of tierMax + 1 level numbers (battle 1-10,
+    // rescue 11-20, ...), so a generated code is "arcade-<world>-<n>" like every other level kind
+    // (GameLevelCodes) and still names one type and tier.
+    public static string[] playTypes = {
+        GameArcadeLevelKeys.battle, GameArcadeLevelKeys.rescue, GameArcadeLevelKeys.attack,
+        GameArcadeLevelKeys.build, GameArcadeLevelKeys.repair,
+    };
+
     public static string Code(string playType, int worldNum, int tier) {
-        return "arcade-" + playType + "-" + worldNum + "-" + ClampTier(tier);
+        int index = Array.IndexOf(playTypes, playType);
+        if (index < 0) {
+            return GameArcadeLevelKeys.arcade + "-" + playType + "-" + worldNum + "-" + ClampTier(tier);
+        }
+        return GameArcadeLevelKeys.arcade + "-" + worldNum + "-" + (index * (tierMax + 1) + ClampTier(tier) + 1);
     }
 
     public static int ClampTier(int tier) {
@@ -203,15 +215,20 @@ public static partial class GameArcadeLevels {
         return sorted;
     }
 
-    // The level rows a mission can play in a world (<world>-<suffix> for its suffix list).
+    // The level rows a mission can play in a world: "<kind>-<world>-<suffix>" for its suffix list,
+    // kind from the mission's data.level_kind (mission when absent), else the older bare
+    // "<world>-<suffix>" (GameLevelCodes.Resolve, without the engine).
     public static List<IDictionary<string, object>> MissionLevels(
         IDictionary<string, object> mission, int worldNum, IEnumerable levelRows) {
 
         List<IDictionary<string, object>> levels = new List<IDictionary<string, object>>();
+        IDictionary<string, object> missionData = Dict(Get(mission, "data"));
+        string kind = Str(Get(missionData, GameArcadeLevelKeys.level_kind)) ?? GameArcadeLevelKeys.mission;
 
-        foreach (object suffix in List(Get(Dict(Get(mission, "data")), "level_num_suffix_list"))) {
+        foreach (object suffix in List(Get(missionData, "level_num_suffix_list"))) {
 
-            IDictionary<string, object> level = LevelRow(levelRows, worldNum + "-" + (int)Num(suffix, 0));
+            string bare = worldNum + "-" + (int)Num(suffix, 0);
+            IDictionary<string, object> level = LevelRow(levelRows, kind + "-" + bare) ?? LevelRow(levelRows, bare);
 
             if (level != null) {
                 levels.Add(level);
