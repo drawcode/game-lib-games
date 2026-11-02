@@ -3477,11 +3477,12 @@ public class BaseUIController : GameObjectBehavior {
 
                             if (appContentCollect.data != null) {
 
-                                string levelTo = "2-1";
                                 int worldTo = GameWorlds.Current.data.world_num;
-                                // skips level rows above the bot's level (content gating, iter 35)
-                                levelTo = string.Format("{0}-{1}", worldTo,
-                                    GameContentGate.PickLevelSuffix(worldTo, appContentCollect.GetAllowedLevelSuffixList()));
+                                // "<kind>-<world>-<n>" from the row's level kind (GameLevelCodes); skips
+                                // level rows above the bot's level (content gating, iter 35)
+                                string levelTo = GameContentGate.PickLevelCode(
+                                    GameLevelCodes.MissionLevelKind(appContentCollect), worldTo,
+                                    appContentCollect.GetAllowedLevelSuffixList());
                                 GameLevels.Instance.ChangeCurrent(levelTo);
                             }
                         }
@@ -3730,6 +3731,16 @@ public class BaseUIController : GameObjectBehavior {
     public virtual void GamePlayWorlds() {
 #if ENABLE_FEATURE_GAME_MODE
         string state = AppContentStates.Current != null ? AppContentStates.Current.code : null;
+
+        // Results CONTINUE after an arcade round goes back to where arcade rounds start (owner,
+        // 2026-11-01): the arcade entry, which is the arcade list in a game that has one
+        if (isUIPanel(GameUIPanel.panelResults)
+            && state == AppContentStateMeta.appContentStateGameArcade
+            && GameLevels.Current != null
+            && GameLevelCodes.IsKind(GameLevels.Current.code, GameLevelCodes.arcadeKind)) {
+            showGameModeArcadeEntry();
+            return;
+        }
 
         if (state != AppContentStateMeta.appContentStateGameArcade
             && state != AppContentStateMeta.appContentStateGameMissions) {
