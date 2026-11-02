@@ -365,6 +365,100 @@ public class GameLevelCodes {
         return codes;
     }
 
+    // MY LEVELS (iter 45, owner): the player's name for a created level lives in its saved file
+    // (display_name), so it survives restarts without a row. Null when it has none.
+    public static string CreatedName(string code) {
+
+        GameLevelItem item = ReadCreated(code);
+
+        if (item == null || string.IsNullOrEmpty(item.display_name)) {
+            return null;
+        }
+
+        return item.display_name;
+    }
+
+    // Names a saved created level; an empty name clears it. The file keeps its time, so MY LEVELS
+    // keeps its order, and the editor's open copy takes the name too (its next SAVE writes it).
+    public static bool RenameCreated(string code, string name) {
+
+        GameLevelItem item = ReadCreated(code);
+
+        if (item == null) {
+            return false;
+        }
+
+        name = string.IsNullOrEmpty(name) ? "" : name.Trim();
+
+        string path = GameLevelItemSources.GetSavedPath(code);
+
+        try {
+            DateTime written = System.IO.File.GetLastWriteTimeUtc(path);
+
+            item.display_name = name;
+            GameLevelItems.Instance.SaveItem(GameLevelItems.Instance.DATA_KEY, code, item);
+            System.IO.File.SetLastWriteTimeUtc(path, written);
+        }
+        catch (Exception e) {
+            LogUtil.LogError("GameLevelCodes: could not rename " + code + ": " + e.Message);
+            return false;
+        }
+
+        if (GameLevelItems.Current != null && GameLevelItems.Current.code == code) {
+            GameLevelItems.Current.display_name = name;
+        }
+
+        return true;
+    }
+
+    // Removes a created level for good: its save and its RESET backup. Only create- codes, so an
+    // official level's save can never go this way. True when anything was removed.
+    public static bool DeleteCreated(string code) {
+
+        if (!IsCreated(code)) {
+            return false;
+        }
+
+        bool removed = false;
+
+        foreach (string path in new string[] {
+            GameLevelItemSources.GetSavedPath(code),
+            GameLevelItemSources.GetSavedBackupPath(code) }) {
+
+            try {
+                if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path)) {
+                    System.IO.File.Delete(path);
+                    removed = true;
+                }
+            }
+            catch (Exception e) {
+                LogUtil.LogError("GameLevelCodes: could not delete " + path + ": " + e.Message);
+            }
+        }
+
+        if (removed) {
+            LogUtil.Log("GameLevelCodes: deleted created level " + code);
+        }
+
+        return removed;
+    }
+
+    // A created level's saved file, or null when it is not a create, not saved or unreadable.
+    static GameLevelItem ReadCreated(string code) {
+
+        if (!IsCreated(code) || !HasSavedItems(code)) {
+            return null;
+        }
+
+        try {
+            return System.IO.File.ReadAllText(GameLevelItemSources.GetSavedPath(code)).FromJson<GameLevelItem>();
+        }
+        catch (Exception e) {
+            LogUtil.LogError("GameLevelCodes: could not read " + code + ": " + e.Message);
+            return null;
+        }
+    }
+
     static GameLevel GetTemplate(GameWorld world, int worldNum) {
 
         GameLevel first = GameLevels.Instance.GetById(Resolve(missionKind, worldNum, 1));
