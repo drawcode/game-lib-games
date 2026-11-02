@@ -22,6 +22,13 @@ public static partial class GameArcadeLevels {
         return row != null && row.type == GameArcadeLevelKeys.arcade;
     }
 
+    // A row naming a feature_gate lists and starts only while that gate is on (off by default).
+    public static bool IsGatedOff(AppContentCollect row) {
+        object gate;
+        return row != null && row.TryGetValue(GameArcadeLevelKeys.feature_gate, out gate) && gate != null
+            && !FeatureGates.IsOn(gate.ToString(), false);
+    }
+
     public static string PlayType(AppContentCollect row) {
         object value;
         return row != null && row.TryGetValue(GameArcadeLevelKeys.play_type, out value) && value != null
@@ -73,17 +80,23 @@ public static partial class GameArcadeLevels {
             return;
         }
 
-        List<object> goals = Goals(playType, stage, AppContentCollects.Instance.items);
-
-        if (goals == null) {
-            return;
-        }
-
         object val = null;
 
-        foreach (object goal in goals) {
-            if (Str(Get(Dict(goal), "code")) == actionCode) {
-                val = Get(Dict(Get(Dict(goal), "data")), "val");
+        if (playType == GameArcadeLevelKeys.waves) {
+            // clear the stage's waves (GameArcadeWaves), not the battle missions' kill goal
+            val = (double)GameArcadeWaves.GoalKills(stage);
+        }
+        else {
+            List<object> goals = Goals(playType, stage, AppContentCollects.Instance.items);
+
+            if (goals == null) {
+                return;
+            }
+
+            foreach (object goal in goals) {
+                if (Str(Get(Dict(goal), "code")) == actionCode) {
+                    val = Get(Dict(Get(Dict(goal), "data")), "val");
+                }
             }
         }
 
@@ -105,7 +118,7 @@ public static partial class GameArcadeLevels {
 
         string playType = PlayType(row);
 
-        if (!IsArcade(row) || ActionFor(playType) == null || GameWorlds.Current == null) {
+        if (!IsArcade(row) || IsGatedOff(row) || ActionFor(playType) == null || GameWorlds.Current == null) {
             return null;
         }
 
@@ -113,7 +126,11 @@ public static partial class GameArcadeLevels {
 
         ApplyGoal(row, stage);
 
-        return GenerateCurrent(playType, stage, UnityEngine.Random.Range(0, int.MaxValue));
+        object enemyPreset;
+        row.TryGetValue(GameArcadeLevelKeys.enemy_preset, out enemyPreset);
+
+        return GenerateCurrent(playType, stage, UnityEngine.Random.Range(0, int.MaxValue),
+            enemyPreset != null ? enemyPreset.ToString() : null);
     }
 
     // Called when an arcade round ends: if the current level is the current arcade row's
@@ -158,6 +175,11 @@ public static partial class GameArcadeLevels {
     // registers it and makes it current. Returns null, and changes nothing, when the type has no
     // mission levels in this world.
     public static GameLevel GenerateCurrent(string playType, int tier, int seed) {
+        return GenerateCurrent(playType, tier, seed, null);
+    }
+
+    // The same, with the enemies taken from one preset when enemyPreset is set (UseEnemyPreset).
+    public static GameLevel GenerateCurrent(string playType, int tier, int seed, string enemyPreset) {
 
         if (GameWorlds.Current == null) {
             return null;
@@ -170,6 +192,8 @@ public static partial class GameArcadeLevels {
         if (row == null) {
             return null;
         }
+
+        UseEnemyPreset(row, enemyPreset);
 
         GameLevel level = Register(row);
         GameLevels.Instance.ChangeCurrent(level.code);
