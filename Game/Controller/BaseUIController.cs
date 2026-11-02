@@ -1706,6 +1706,13 @@ public class BaseUIController : GameObjectBehavior {
     //   }
     //}
 
+    // Where the mode-select ARCADE tile goes after it sets the arcade state: the worlds picker by
+    // default. A game with an arcade list (Action Bots, arcade P2 in contexts
+    // games/shared/context-arcade-vs-missions.md) overrides this to show it.
+    public virtual void showGameModeArcadeEntry() {
+        GameUIController.ShowGameWorlds();
+    }
+
     public virtual void showGameModeArcade() {
         showUIPanel(
             //typeof(GameUIPanelGameModeArcade),
@@ -2936,8 +2943,7 @@ public class BaseUIController : GameObjectBehavior {
 #if ENABLE_FEATURE_GAME_MODE_ARCADE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
-            //GameUIController.ShowGameModeArcade();
-            GameUIController.ShowGameWorlds();
+            showGameModeArcadeEntry();
         }
 #endif
 
@@ -3450,7 +3456,20 @@ public class BaseUIController : GameObjectBehavior {
                             return;
                         }
 
-                        if (appContentCollect != null) {
+                        // an arcade row plays a level generated for its type and stage, never a
+                        // mission level (GameArcadeLevels); a type with no levels in this world
+                        // starts nothing
+                        if (GameArcadeLevels.IsArcade(appContentCollect)) {
+
+                            if (GameArcadeLevels.StartRound(appContentCollect) == null) {
+                                return;
+                            }
+
+                            AppContentCollects.Instance.ChangeCurrent(code);
+
+                            Debug.Log("ACTION:" + " arcade:" + code + " level:" + GameLevels.Current.code);
+                        }
+                        else if (appContentCollect != null) {
 
                             AppContentCollects.Instance.ChangeCurrent(code);
 
