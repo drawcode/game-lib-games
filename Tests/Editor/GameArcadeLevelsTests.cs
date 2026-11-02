@@ -276,5 +276,43 @@ namespace Game.Level.Tests {
                 }
             }
         }
+
+        // The arcade list's rows (P2): each loads with its play_type, leads with the type's goal
+        // and generates in every world it lists.
+        [Test]
+        public void ShippedArcadeRows_LoadAndGenerateInTheirWorlds() {
+            TextAsset collectText = Resources.Load<TextAsset>("drawlabs/action-bots/version/data/app-content-collection-data.json");
+            TextAsset levelText = Resources.Load<TextAsset>("drawlabs/action-bots/version/data/game-level-data.json");
+
+            if (collectText == null || levelText == null) {
+                Assert.Ignore("no Action Bots data in this project");
+            }
+
+            List<AppContentCollect> collects = collectText.text.FromJson<List<AppContentCollect>>();
+            List<GameLevel> shippedLevels = levelText.text.FromJson<List<GameLevel>>();
+            int arcadeRows = 0;
+
+            foreach (AppContentCollect row in collects) {
+
+                if (!GameArcadeLevels.IsArcade(row)) {
+                    continue;
+                }
+
+                arcadeRows++;
+
+                string playType = GameArcadeLevels.PlayType(row);
+
+                Assert.IsNotNull(GameArcadeLevels.ActionFor(playType), row.code + " play_type " + playType);
+                Assert.AreEqual(GameArcadeLevels.ActionFor(playType), row.data.data[0].code, row.code + " first action");
+                Assert.IsNotEmpty(row.data.world_num_list, row.code);
+
+                foreach (int world in row.data.world_num_list) {
+                    Assert.IsNotNull(GameArcadeLevels.Generate(playType, world, 0, 0, collects, shippedLevels),
+                        row.code + " world " + world);
+                }
+            }
+
+            Assert.AreEqual(GameArcadeLevels.playTypeActions.Count, arcadeRows, "one arcade row per play type");
+        }
     }
 }
