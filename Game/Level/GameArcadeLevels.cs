@@ -37,6 +37,12 @@ public class GameArcadeLevelKeys {
     public static string attack = "attack";
     public static string build = "build";
     public static string repair = "repair";
+    public static string waves = "waves";
+
+    // arcade row keys: a FeatureGates key that must be on for the row to list or start, and the
+    // enemy preset its generated level spawns from instead of the entry level's
+    public static string feature_gate = "feature_gate";
+    public static string enemy_preset = "enemy_preset";
 }
 
 public static partial class GameArcadeLevels {
@@ -54,6 +60,8 @@ public static partial class GameArcadeLevels {
         { GameArcadeLevelKeys.attack, "action-attack" },
         { GameArcadeLevelKeys.build, "action-build" },
         { GameArcadeLevelKeys.repair, "action-repair" },
+        // zombie waves (P5) are a kill mode generated from the battle missions
+        { GameArcadeLevelKeys.waves, "action-kill" },
     };
 
     static readonly string[] copiedRowKeys = { "world_code", "display_name", "name", "description" };
@@ -63,7 +71,7 @@ public static partial class GameArcadeLevels {
     // (GameLevelCodes) and still names one type and tier.
     public static string[] playTypes = {
         GameArcadeLevelKeys.battle, GameArcadeLevelKeys.rescue, GameArcadeLevelKeys.attack,
-        GameArcadeLevelKeys.build, GameArcadeLevelKeys.repair,
+        GameArcadeLevelKeys.build, GameArcadeLevelKeys.repair, GameArcadeLevelKeys.waves,
     };
 
     public static string Code(string playType, int worldNum, int tier) {
@@ -124,6 +132,28 @@ public static partial class GameArcadeLevels {
         row["data"] = data;
 
         return row;
+    }
+
+    // The row's enemies come from one preset: every enemy entry in character_presets is replaced by
+    // {code: presetCode, type: enemy} (zombie waves spawn only zombies). Other presets stay.
+    public static void UseEnemyPreset(Dictionary<string, object> row, string presetCode) {
+
+        Dictionary<string, object> data = Dict(Get(row, "data")) as Dictionary<string, object>;
+
+        if (data == null || string.IsNullOrEmpty(presetCode)) {
+            return;
+        }
+
+        List<object> presets = new List<object>();
+
+        foreach (object preset in List(Get(data, "character_presets"))) {
+            if (Str(Get(Dict(preset), "type")) != "enemy") {
+                presets.Add(preset);
+            }
+        }
+
+        presets.Insert(0, new Dictionary<string, object> { { "code", presetCode }, { "type", "enemy" } });
+        data["character_presets"] = presets;
     }
 
     // The type's action goal for a tier: 1 at tier 0, rising to the largest goal any of the

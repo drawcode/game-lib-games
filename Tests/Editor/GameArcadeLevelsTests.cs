@@ -334,6 +334,57 @@ namespace Game.Level.Tests {
             Assert.AreEqual("1-3", GameLevelCodes.DisplayName("create-1-3"));
         }
 
+        // ZOMBIE WAVES (P5)
+        [Test]
+        public void Waves_SizesGoalsAndCaps() {
+            Assert.AreEqual(4, GameArcadeWaves.WaveSize(1));
+            Assert.AreEqual(8, GameArcadeWaves.WaveSize(3));
+            Assert.AreEqual(4, GameArcadeWaves.WaveSize(0), "a wave before the first plays as the first");
+            Assert.AreEqual(10, GameArcadeWaves.GoalKills(0), "stage 0 clears waves 1-2: 4 + 6");
+            Assert.AreEqual(54, GameArcadeWaves.GoalKills(GameArcadeLevels.tierMax), "top stage clears 6 waves");
+            Assert.AreEqual(6, GameArcadeWaves.AliveCap(0));
+            Assert.AreEqual(10, GameArcadeWaves.AliveCap(99));
+            for (int stage = 1; stage <= GameArcadeLevels.tierMax; stage++) {
+                Assert.GreaterOrEqual(GameArcadeWaves.GoalKills(stage), GameArcadeWaves.GoalKills(stage - 1));
+            }
+        }
+
+        [Test]
+        public void Waves_SpawnTarget_FillsTheWave_UnderTheCap_AndNeverDespawns() {
+            Assert.AreEqual(4, GameArcadeWaves.SpawnTarget(4, 0, 0, 6), "a fresh wave of 4");
+            Assert.AreEqual(6, GameArcadeWaves.SpawnTarget(10, 0, 0, 6), "capped");
+            Assert.AreEqual(6, GameArcadeWaves.SpawnTarget(10, 3, 2, 6), "5 left to spawn, cap 6");
+            Assert.AreEqual(3, GameArcadeWaves.SpawnTarget(10, 7, 3, 6), "all spawned: hold what is alive");
+            Assert.AreEqual(5, GameArcadeWaves.SpawnTarget(4, 0, 5, 6), "more alive than needed: none despawn");
+        }
+
+        [Test]
+        public void Waves_GenerateFromBattle_InTheirOwnCodeBlock_WithTheZombiePreset() {
+            Dictionary<string, object> waves = Row(GameArcadeLevelKeys.waves, 0);
+
+            Assert.IsNotNull(waves, "waves is a kill mode: it generates from the battle missions");
+            Assert.AreEqual("arcade-1-51", waves["code"]);
+            Assert.AreEqual("arcade-1-60", GameArcadeLevels.Code(GameArcadeLevelKeys.waves, 1, 99));
+            Assert.AreEqual(GameArcadeLevelKeys.waves, Data(waves)[GameArcadeLevelKeys.play_type]);
+
+            Dictionary<string, object> row = new Dictionary<string, object> {
+                { "data", new Dictionary<string, object> { { "character_presets", new List<object> {
+                    new Dictionary<string, object> { { "code", "world-roster" }, { "type", "enemy" } },
+                    new Dictionary<string, object> { { "code", "droids" }, { "type", "sidekick" } },
+                } } } },
+            };
+            GameArcadeLevels.UseEnemyPreset(row, "zombies");
+            List<object> presets = (List<object>)Data(row)["character_presets"];
+
+            Assert.AreEqual(2, presets.Count);
+            Assert.AreEqual("zombies", ((IDictionary<string, object>)presets[0])["code"]);
+            Assert.AreEqual("enemy", ((IDictionary<string, object>)presets[0])["type"]);
+            Assert.AreEqual("droids", ((IDictionary<string, object>)presets[1])["code"], "sidekicks stay");
+
+            GameArcadeLevels.UseEnemyPreset(waves, null);
+            Assert.IsFalse(Data(waves).ContainsKey("character_presets"), "no preset: the row is unchanged");
+        }
+
         // The arcade list's rows (P2): each loads with its play_type, leads with the type's goal
         // and generates in every world it lists.
         [Test]
