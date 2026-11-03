@@ -19,6 +19,13 @@ public class GameRaceNodeMarker : MonoBehaviour {
         if (editing != shown) {
             Apply(editing);
         }
+
+#if USE_AGNOSTIC_VEHICLE
+        // The racing line through the nodes, drawn while editing.
+        if (editing) {
+            GameRaceNodePreview.Ensure(renderers.Length > 0 && renderers[0] != null ? renderers[0].sharedMaterial : null);
+        }
+#endif
     }
 
     void Apply(bool show) {
