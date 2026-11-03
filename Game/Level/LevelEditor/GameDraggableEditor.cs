@@ -1807,6 +1807,14 @@ public class GameDraggableEditor : GameObjectBehavior {
         EditEnable();
     }
 
+    // Called with each item the editor creates, before it is loaded; default off.
+    public static System.Action<GameLevelItemAsset> onLevelItemCreating;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetLevelItemHooks() {
+        onLevelItemCreating = null;
+    }
+
     public static void EditModeCreateAsset(Vector2 fingerPos) {
         if (isInst) {
             Instance.editModeCreateAsset(fingerPos);
@@ -1854,6 +1862,13 @@ public class GameDraggableEditor : GameObjectBehavior {
                 gameLevelItemStep.position_data.y = levelPoint.y;
                 gameLevelItemStep.position_data.z = levelPoint.z;
                 itemAsset.steps.Add(gameLevelItemStep);
+
+                // A game fills per-item data for codes it knows (an AI node's order and width).
+                // Null by default: Action Bots places items exactly as before.
+                if (onLevelItemCreating != null) {
+                    onLevelItemCreating(itemAsset);
+                }
+
                 GameDraggableEditor.LoadLevelItem(itemAsset);
                 levelEdited = true;
             }
@@ -2453,6 +2468,11 @@ public class GameDraggableEditor : GameObjectBehavior {
                         // update
                         found = true;
 
+                        // The item's own data (an AI node's order and width) goes with it.
+                        if (itemAsset != gameLevelItemAsset && gameLevelItemAsset.data != null) {
+                            itemAsset.data = gameLevelItemAsset.data;
+                        }
+
                         foreach (GameLevelItemAssetStep step in itemAsset.steps) {
                             step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
                             step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
@@ -2476,6 +2496,12 @@ public class GameDraggableEditor : GameObjectBehavior {
                     newAsset.type = gameLevelItemAsset.type;
                     newAsset.data_type = gameLevelItemAsset.data_type;
                     newAsset.display_type = gameLevelItemAsset.display_type;
+
+                    // Without this a newly placed item lost its data on the first save.
+                    if (gameLevelItemAsset.data != null) {
+                        newAsset.data = gameLevelItemAsset.data;
+                    }
+
                     foreach (GameLevelItemAssetStep step in gameLevelItemAsset.steps) {
                         step.position_data.FromVector3(gameDraggableLevelItem.transform.position);
                         step.rotation_data.FromVector3(gameDraggableLevelItem.gameLevelItemObject.transform.rotation.eulerAngles);
