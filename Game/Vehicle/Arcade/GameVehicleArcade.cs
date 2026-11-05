@@ -23,6 +23,12 @@ using UnityEngine;
 // - Events: each frame's steps merge into frameEvents, and Messenger<GameVehicleArcade> broadcasts messageEvents
 //   when any flag is set.
 // - Statics: Bikes enters Play without a domain reload; the registration below runs again on every Play.
+// The race's AI rider (or a test autopilot) on GameVehicleArcade.driverOverride: called once per fixed step before
+// the input is mapped. Sticks are in the frame of the yaw it leaves in cameraYaw (the camera's yaw on entry).
+public interface IGameVehicleArcadeDriver {
+    void Drive(GameVehicleArcade arcade, int step, ref Sticks sticks, ref float cameraYaw);
+}
+
 [DefaultExecutionOrder(-50)]   // before the mount and the player controller, so the rider tracks this frame's pose
 public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
@@ -37,6 +43,16 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public Transform cameraTransform;   // unset = Camera.main
     public Transform visual;
     public int stepCount;
+
+    // Race seams (Action Bikes R2), all off by default:
+    // - driverOverride fills the sticks and the camera yaw each fixed step, and input maps without a rider (an AI
+    //   rider, or a test autopilot on the player's bike);
+    // - controlModeOverride (ControlMode, -1 = off) replaces the profile's D8 choice, so an AI does not ride in the
+    //   player's mode;
+    // - hold zeroes the input (the grid before GO).
+    public IGameVehicleArcadeDriver driverOverride;
+    public int controlModeOverride = -1;
+    public bool hold;
 
     public GameVehicleArcadeConfig config { get; private set; }
     public ControlTuning control { get { return controlTuning; } }
@@ -152,6 +168,10 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         controlTuning = config.control;
         string mode = GameProfiles.Current != null ? GameProfiles.Current.GetAttributeStringValue(GameVehicleControlModes.profileKey) : "";
         controlTuning.mode = VehicleTuningJson.ResolveMode(mode, config.control.mode);
+
+        if (controlModeOverride >= 0) {
+            controlTuning.mode = controlModeOverride;
+        }
     }
 
     // IGameVehicleMountDriver
@@ -225,7 +245,19 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
         for (int i = 0; i < steps; i++) {
             previous = state;
-            input = rider != null ? StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning) : default(VehicleInput);
+
+            if (hold) {
+                input = default(VehicleInput);
+            }
+            else if (driverOverride != null) {
+                float driverYaw = cameraYaw;
+                driverOverride.Drive(this, stepCount, ref sticks, ref driverYaw);
+                input = StickMapper.Map(in sticks, driverYaw, in state, in controlTuning);
+            }
+            else {
+                input = rider != null ? StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning) : default(VehicleInput);
+            }
+
             VehicleEvents ev = default(VehicleEvents);
             VehicleModel.Step(ref state, in input, in config.tuning, world, fixedDt, ref ev);
             Merge(ref frameEvents, in ev);
