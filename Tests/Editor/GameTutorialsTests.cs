@@ -88,7 +88,7 @@ namespace Game.Level.Tests {
 
         [Test]
         public void DoneIsPerTutorialAndStartsFalse() {
-            BaseGameProfileMode profile = new BaseGameProfileMode();
+            GameProfileTracking profile = new GameProfileTracking();
             AppContentCollect attack = ByCode("tutorial-attack");
             AppContentCollect build = ByCode("tutorial-build");
 
@@ -102,20 +102,28 @@ namespace Game.Level.Tests {
 
         [Test]
         public void DoneSurvivesAJsonRoundTrip() {
-            BaseGameProfileMode profile = new BaseGameProfileMode();
+            GameProfileTracking profile = new GameProfileTracking();
             AppContentCollect repair = ByCode("tutorial-repair");
 
             GameTutorials.MarkDone(profile, repair);
 
-            BaseGameProfileMode loaded = profile.ToJson().FromJson<BaseGameProfileMode>();
+            GameProfileTracking loaded = profile.ToJson().FromJson<GameProfileTracking>();
 
             Assert.IsTrue(GameTutorials.IsDone(loaded, repair));
         }
 
         [Test]
+        public void TheFlagIsATrackingMarkerUnderTheTutorialGroup() {
+            GameProfileTracking tracking = new GameProfileTracking();
+            GameTutorials.MarkDone(tracking, ByCode("tutorial-build"));
+            Assert.IsTrue(tracking.IsSet("tutorial", "tutorial-build"));
+            CollectionAssert.AreEqual(new List<string> { "tutorial-build" }, tracking.Codes(GameTutorials.collectType));
+        }
+
+        [Test]
         public void NoProfileOrRowIsNotDone() {
-            Assert.IsFalse(GameTutorials.IsDone(null, ByCode("tutorial-attack")));
-            Assert.IsFalse(GameTutorials.IsDone(new BaseGameProfileMode(), null));
+            Assert.IsFalse(GameTutorials.IsDone((GameProfileTracking)null, ByCode("tutorial-attack")));
+            Assert.IsFalse(GameTutorials.IsDone(new GameProfileTracking(), null));
         }
     }
 }
