@@ -16,8 +16,9 @@ using Engine.Game.Data;
 // useTutorialGate virtual is on (off by default).
 public static class GameTutorials {
 
-    // the row type, and the profile content-collect type the done flags live under
+    // the row type, and the GameProfileTracking group the done flags live under
     public static string collectType = "tutorial";
+    // unused since the flags moved to GameProfileTracking (kept: public lib surface)
     public static string doneKey = "tutorial_done";
 
     public static bool IsTutorial(AppContentCollect row) {
@@ -64,31 +65,30 @@ public static class GameTutorials {
         return null;
     }
 
-    // DONE FLAGS: one per tutorial row, in the profile (content-collect "tutorial", key = row code)
+    // DONE FLAGS: one per tutorial row, in the gameplay tracking blob (GameProfileTracking,
+    // "tutorial:<row code>"), not the mode blob, so one-off markers don't grow the mission data.
 
-    public static bool IsDone(BaseGameProfileMode profile, AppContentCollect tutorial) {
-
-        if (profile == null || tutorial == null) {
-            return false;
-        }
-
-        GameProfileContentCollectItem item = profile.GetContentCollectItem(collectType, tutorial.code);
-
-        object raw;
-
-        // read without Get<bool>: a JSON load can hand back a string or a number
-        if (item == null || !item.TryGetValue(doneKey, out raw) || raw == null) {
-            return false;
-        }
-
-        string text = raw.ToString().ToLowerInvariant();
-        return text == "true" || text == "1";
+    public static bool IsDone(GameProfileTracking tracking, AppContentCollect tutorial) {
+        return tracking != null && tutorial != null && tracking.IsSet(collectType, tutorial.code);
     }
 
     // Only in memory: the caller's round end saves the profile (BaseGameController results).
+    public static void MarkDone(GameProfileTracking tracking, AppContentCollect tutorial) {
+        if (tracking != null && tutorial != null) {
+            tracking.Mark(collectType, tutorial.code);
+        }
+    }
+
+    // The first cut kept the flag in the mode blob; these now read and write the tracking blob.
+    [System.Obsolete("Use the GameProfileTracking overload; the flag lives in the tracking blob.")]
+    public static bool IsDone(BaseGameProfileMode profile, AppContentCollect tutorial) {
+        return profile != null && IsDone(GameProfileTracking.Current, tutorial);
+    }
+
+    [System.Obsolete("Use the GameProfileTracking overload; the flag lives in the tracking blob.")]
     public static void MarkDone(BaseGameProfileMode profile, AppContentCollect tutorial) {
-        if (profile != null && tutorial != null) {
-            profile.SetContentCollectValue(collectType, tutorial.code, doneKey, true);
+        if (profile != null) {
+            MarkDone(GameProfileTracking.Current, tutorial);
         }
     }
 
@@ -98,7 +98,7 @@ public static class GameTutorials {
 
         AppContentCollect tutorial = For(mission, AppContentCollects.Instance.items);
 
-        if (tutorial == null || IsDone(GameProfileModes.Current, tutorial)) {
+        if (tutorial == null || IsDone(GameProfileTracking.Current, tutorial)) {
             return null;
         }
 
@@ -129,7 +129,7 @@ public static class GameTutorials {
             return false;
         }
 
-        MarkDone(GameProfileModes.Current, row);
+        MarkDone(GameProfileTracking.Current, row);
         return true;
     }
 }
