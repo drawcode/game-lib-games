@@ -3459,6 +3459,11 @@ public class BaseGameController : GameObjectTimerBehavior {
             GameProfileRPGs.Current.AddCurrency(collectScore);
 #endif
         }
+
+#if USE_GAME_LIB_GAMES
+        // a tutorial round, won or lost, marks its tutorial done (saved by the caller)
+        GameTutorials.RecordRound();
+#endif
     }
 
     public virtual void advanceToResults() {

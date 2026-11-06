@@ -1706,6 +1706,14 @@ public class BaseUIController : GameObjectBehavior {
     //   }
     //}
 
+    // Whether a mission's first start plays its type's tutorial first (GameTutorials). Off by
+    // default; a game with tutorial rows (Action Bots) turns it on.
+    public virtual bool useTutorialGate {
+        get {
+            return false;
+        }
+    }
+
     // Where the mode-select ARCADE tile goes after it sets the arcade state: the worlds picker by
     // default. A game with an arcade list (Action Bots, arcade P2 in contexts
     // games/shared/context-arcade-vs-missions.md) overrides this to show it.
@@ -3470,6 +3478,20 @@ public class BaseUIController : GameObjectBehavior {
                             Debug.Log("ACTION:" + " arcade:" + code + " level:" + GameLevels.Current.code);
                         }
                         else if (appContentCollect != null) {
+
+                            // the tutorial route: the first start of a mission whose type has a
+                            // tutorial plays that tutorial, under its own row (GameTutorials)
+                            if (useTutorialGate && GameWorlds.Current != null && GameWorlds.Current.data != null) {
+
+                                AppContentCollect tutorial =
+                                    GameTutorials.Pending(appContentCollect, GameWorlds.Current.data.world_num);
+
+                                if (tutorial != null) {
+                                    Debug.Log("ACTION:" + " tutorial:" + tutorial.code + " before:" + code);
+                                    appContentCollect = tutorial;
+                                    code = tutorial.code;
+                                }
+                            }
 
                             AppContentCollects.Instance.ChangeCurrent(code);
 
