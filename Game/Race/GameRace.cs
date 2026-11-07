@@ -72,6 +72,9 @@ public static class GameRace {
     private const float settleSpeed = 0.2f;
 
     private static readonly Action<int> stepHandler = OnStep;
+    private const float respawnClear = 3f;
+    // Sideways tries for a taken respawn spot, as fractions of the half width: width/4 then 0.8 of width/2, either side.
+    private static readonly float[] spreadFractions = { 0.5f, -0.5f, 0.8f, -0.8f };
     private static readonly GameVehicleArcadeStepper.BumpHandler bumpHandler = OnBump;
 
     private static GameRaceHudState hudState;
@@ -513,6 +516,7 @@ public static class GameRace {
 
         if (state == RaceSession.running || state == RaceSession.finishing) {
             RiderAheadRule();
+            HoldGrace();
             pairCount = 0;
 
             for (int i = 0; i < racerCount; i++) {
@@ -580,6 +584,60 @@ public static class GameRace {
                 arc.frameEvents.flags |= (int)VehicleEventFlags.bailed;
             }
         }
+    }
+
+    // A respawned rider keeps its bump grace while it still overlaps another rider: grace only expires once clear.
+    // Two fixed steps, as the arcade takes one off at the start of the next step before the bumps look at it.
+    private static void HoldGrace() {
+
+        float hold = RaceSession.fixedDt * 2f;
+
+        for (int i = 0; i < racerCount; i++) {
+
+            GameVehicleArcade a = arcades[i];
+
+            if (a.config == null || a.contactGrace <= 0f || a.contactGrace >= hold) {
+                continue;
+            }
+
+            for (int j = 0; j < racerCount; j++) {
+
+                GameVehicleArcade b = arcades[j];
+
+                if (j == i || b.config == null || Finished(j)) {
+                    continue;
+                }
+
+                float r = a.config.tuning.BumpRadius() + b.config.tuning.BumpRadius();
+                float dx = b.state.position.x - a.state.position.x;
+                float dz = b.state.position.z - a.state.position.z;
+
+                if (dx * dx + dz * dz < r * r) {
+                    a.contactGrace = hold;
+                    break;
+                }
+            }
+        }
+    }
+
+    // True when another racer stands within respawnClear metres (ground plane) of p.
+    private static bool SpotTaken(int self, Vector3 p) {
+
+        for (int j = 0; j < racerCount; j++) {
+
+            if (j == self || arcades[j].config == null) {
+                continue;
+            }
+
+            float dx = arcades[j].state.position.x - p.x;
+            float dz = arcades[j].state.position.z - p.z;
+
+            if (dx * dx + dz * dz < respawnClear * respawnClear) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool Finished(int i) {
@@ -698,6 +756,16 @@ public static class GameRace {
             Vector3 p = UnityFrame.ToUnity(track.PointAt(s));
             Vector3 t = UnityFrame.ToUnity(track.TangentAt(s));
             t.y = 0f;
+            t = t.sqrMagnitude > 1e-8f ? t.normalized : Vector3.forward;
+
+            // Another rider on the spot (bumped together, respawned together): slide sideways, inside the track.
+            Vector3 right = Vector3.Cross(Vector3.up, t);
+            float half = track.WidthAt(s) * 0.5f;
+
+            for (int k = 0; k < spreadFractions.Length && SpotTaken(i, p); k++) {
+                p = UnityFrame.ToUnity(track.PointAt(s)) + right * (half * spreadFractions[k]);
+            }
+
             a.ResetAt(p + Vector3.up * rules.respawnLift,
                 Quaternion.LookRotation(t.sqrMagnitude > 1e-8f ? t : Vector3.forward, Vector3.up));
         }
