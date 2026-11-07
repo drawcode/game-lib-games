@@ -47,6 +47,7 @@ public static class GameRace {
     public static int playerSlotOverride = -1;      // tests: the player's grid slot (-1 = by rules)
     public static int qualifiedPlayerSlot = -1;     // qualifying: the slot it earned, used once then reset
     public static uint seedOverride;                // 0 = none
+    public static int aiRidersOverride = -1;        // the AI rider count in place of the rules' (a solo time trial = 0); -1 = off
     public static string defaultVehicleCode = "vehicle-bike-dirt-1";   // when the rules name none
     public static string playerName = "Player";
     public static Action<int> onAfterStep;          // after the race rules each step (ghosts, probes); the stepper's step count
@@ -111,6 +112,7 @@ public static class GameRace {
         playerSlotOverride = -1;
         qualifiedPlayerSlot = -1;
         seedOverride = 0;
+        aiRidersOverride = -1;
         defaultVehicleCode = "vehicle-bike-dirt-1";
         playerName = "Player";
         onAfterStep = null;
@@ -144,6 +146,11 @@ public static class GameRace {
         }
 
         rules = GameRaceRules.FromCurrentLevel();
+
+        if (aiRidersOverride >= 0) {
+            rules.aiRiders = Mathf.Min(aiRidersOverride, 11);
+        }
+
         GameDraggableLevelItem gridItem;
         track = GameRaceTrackBuilder.Build(container, rules.defaultWidth, out lowestY, out gridItem);
 
