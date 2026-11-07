@@ -340,6 +340,7 @@ public static class GameRace {
         GameVehicleArcadeStepper.onBump = bumpHandler;
         GameVehicleArcadeStepper.enabled = true;
         playerRespawns = 0;
+        GameRaceGoals.Begin();
         active = true;
 
         // Ghosts: the recorder loads the track's file, the player spawns the best lap's bike where the mode wants it.
@@ -587,6 +588,7 @@ public static class GameRace {
         FillHud();
         GameRaceGhostRecorder.OnStep(step);
         GameRaceGhostPlayer.OnStep(step);
+        GameRaceGoals.OnStep();
 
         if (onAfterStep != null) {
             onAfterStep(step);

@@ -3505,6 +3505,7 @@ public class BaseUIController : GameObjectBehavior {
                                 string levelTo = GameContentGate.PickLevelCode(
                                     GameLevelCodes.MissionLevelKind(appContentCollect), worldTo,
                                     appContentCollect.GetAllowedLevelSuffixList());
+                                levelTo = GameLevelCodes.MissionLevelCode(appContentCollect) ?? levelTo;
                                 GameLevels.Instance.ChangeCurrent(levelTo);
                             }
                         }

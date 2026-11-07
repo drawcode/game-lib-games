@@ -112,6 +112,21 @@ public class GameLevelCodes {
         return missionKind;
     }
 
+    // A mission row that names its level (data.level_code, e.g. a race row "race-stadium-1") plays exactly
+    // that level when its row exists; else null and the kind/suffix pick applies.
+    public static string MissionLevelCode(AppContentCollect mission) {
+
+        object code;
+
+        if (mission != null && mission.data != null
+            && mission.data.TryGetValue("level_code", out code) && code != null
+            && GameLevels.Instance.GetById(code.ToString()) != null) {
+            return code.ToString();
+        }
+
+        return null;
+    }
+
     public static string FormatCreated(int worldNum, int levelNum) {
         return createdPrefix + Format(worldNum, levelNum);
     }
