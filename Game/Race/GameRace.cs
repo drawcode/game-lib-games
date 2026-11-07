@@ -38,6 +38,8 @@ public struct GameRaceHudState {
 // - Respawn: a bailed rider waits respawnDelay (its own timer, the core's bail timer padded to stay frozen), a missed
 //   checkpoint waits missRespawn, an off-course rider offCourseTime, a fallen one at once; then it is put on its last
 //   checkpoint facing the track, with contactGrace seconds of no bumps.
+// - Ghosts: GameRaceGhostRecorder records the player's laps and GameRaceGhostPlayer chases the best one in a time trial;
+//   both are called from here (a second seam next to onAfterStep, which stays free for probes) and inert off a race.
 // - Statics: Bikes enters Play without a domain reload; the reset below runs again on every Play.
 public static class GameRace {
 
@@ -50,6 +52,7 @@ public static class GameRace {
     public static int aiRidersOverride = -1;        // the AI rider count in place of the rules' (a solo time trial = 0); -1 = off
     public static string defaultVehicleCode = "vehicle-bike-dirt-1";   // when the rules name none
     public static string playerName = "Player";
+    public static bool ghostEnabled;                // the time trial chases the player's best ghost (a race with no AI riders does too)
     public static Action<int> onAfterStep;          // after the race rules each step (ghosts, probes); the stepper's step count
 
     public static bool active { get; private set; }
@@ -61,6 +64,8 @@ public static class GameRace {
     public static int racerCount { get; private set; }
     public static int playerIndex { get; private set; }
     public static GameObjectMountVehicle playerMount { get; private set; }
+    public static string playerVehicleCode { get; private set; }
+    public static int playerRespawns { get; private set; }     // times the player was put back on the track this race
 
     public static bool isDone {
         get {
@@ -116,6 +121,7 @@ public static class GameRace {
         qualifiedPlayerSlot = -1;
         seedOverride = 0;
         aiRidersOverride = -1;
+        ghostEnabled = false;
         defaultVehicleCode = "vehicle-bike-dirt-1";
         playerName = "Player";
         onAfterStep = null;
@@ -276,6 +282,7 @@ public static class GameRace {
 
             if (isPlayer) {
                 playerMount = mount;
+                playerVehicleCode = code;
             }
 
             if (!isPlayer || autopilotPlayer) {
@@ -314,7 +321,13 @@ public static class GameRace {
         GameVehicleArcadeStepper.onFixedStep = stepHandler;
         GameVehicleArcadeStepper.onBump = bumpHandler;
         GameVehicleArcadeStepper.enabled = true;
+        playerRespawns = 0;
         active = true;
+
+        // Ghosts: the recorder loads the track's file, the player spawns the best lap's bike where the mode wants it.
+        GameLevel level = GameLevels.Current;
+        GameRaceGhostRecorder.Begin(level != null ? level.code : "", track, playerVehicleCode);
+        GameRaceGhostPlayer.Begin(container, playerVehicleCode);
         return true;
     }
 
@@ -391,6 +404,10 @@ public static class GameRace {
 
     public static void End() {
 
+        // Ghosts first: the recorder writes this session's laps, the player's bike goes with the level.
+        GameRaceGhostRecorder.End();
+        GameRaceGhostPlayer.End();
+
         if (GameVehicleArcadeStepper.onFixedStep == stepHandler) {
             GameVehicleArcadeStepper.onFixedStep = null;
         }
@@ -448,6 +465,7 @@ public static class GameRace {
         racerNames = null;
         slotPos = null;
         playerMount = null;
+        playerVehicleCode = null;
         track = null;
         session = null;
         racerCount = 0;
@@ -546,6 +564,8 @@ public static class GameRace {
         }
 
         FillHud();
+        GameRaceGhostRecorder.OnStep(step);
+        GameRaceGhostPlayer.OnStep(step);
 
         if (onAfterStep != null) {
             onAfterStep(step);
@@ -768,6 +788,10 @@ public static class GameRace {
 
             a.ResetAt(p + Vector3.up * rules.respawnLift,
                 Quaternion.LookRotation(t.sqrMagnitude > 1e-8f ? t : Vector3.forward, Vector3.up));
+        }
+
+        if (i == playerIndex) {
+            playerRespawns++;
         }
 
         a.contactGrace = rules.contactGrace;
