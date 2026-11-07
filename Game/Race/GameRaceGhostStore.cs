@@ -128,7 +128,21 @@ public static class GameRaceGhostStore {
     // Adds a lap recorded on the track with this hash and applies the keep rule to that track's laps.
     public static void Add(GameRaceGhostFile file, GameRaceGhostLap lap, string trackHash) {
 
-        // Laps of an older hash keep it before the file takes the new one.
+        AdoptHash(file, trackHash);
+        lap.trackHash = trackHash;
+        file.laps.Add(lap);
+        Prune(file);
+        file.bestLapTime = BestLapTime(file, trackHash);
+    }
+
+    // The file takes the track's hash. Laps of an older hash keep it first; the AI best laps were set on that
+    // older track, so they go.
+    private static void AdoptHash(GameRaceGhostFile file, string trackHash) {
+
+        if (file.trackHash == trackHash) {
+            return;
+        }
+
         for (int i = 0; i < file.laps.Count; i++) {
             if (string.IsNullOrEmpty(file.laps[i].trackHash)) {
                 file.laps[i].trackHash = file.trackHash;
@@ -136,10 +150,31 @@ public static class GameRaceGhostStore {
         }
 
         file.trackHash = trackHash;
-        lap.trackHash = trackHash;
-        file.laps.Add(lap);
-        Prune(file);
-        file.bestLapTime = BestLapTime(file, trackHash);
+        file.aiBestLaps.Clear();
+    }
+
+    // Records an AI profile's race lap on the track with this hash; the file keeps the faster of it and the
+    // lap already there. True when the file changed.
+    public static bool SetAiBest(GameRaceGhostFile file, string profileCode, float lapTime, string trackHash) {
+
+        if (string.IsNullOrEmpty(profileCode) || !(lapTime > 0f) || float.IsInfinity(lapTime)) {
+            return false;
+        }
+
+        AdoptHash(file, trackHash);
+        float old;
+
+        if (file.aiBestLaps.TryGetValue(profileCode, out old) && old <= lapTime) {
+            return false;
+        }
+
+        file.aiBestLaps[profileCode] = lapTime;
+        return true;
+    }
+
+    // The AI best laps that belong to the track with this hash (never null; empty when the track changed).
+    public static Dictionary<string, float> AiBestLaps(GameRaceGhostFile file, string trackHash) {
+        return file != null && file.trackHash == trackHash ? file.aiBestLaps : new Dictionary<string, float>();
     }
 
     // Drops this track's laps outside best 3 + last 5. Laps of other hashes stay.

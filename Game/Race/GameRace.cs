@@ -47,7 +47,8 @@ public static class GameRace {
     public static bool enabled;                     // the title turns the race on
     public static bool autopilotPlayer;             // tests: an AI drives the player's bike
     public static int playerSlotOverride = -1;      // tests: the player's grid slot (-1 = by rules)
-    public static int qualifiedPlayerSlot = -1;     // qualifying: the slot it earned, used once then reset
+    public static string[] qualifiedOrder;          // qualifying: the rider ids in grid-slot order (GameRaceQualifying), used by the next Begin then cleared
+    public static int lapsOverride = -1;            // the lap count in place of the rules' (a qualifying lap = 1); -1 = off
     public static uint seedOverride;                // 0 = none
     public static int aiRidersOverride = -1;        // the AI rider count in place of the rules' (a solo time trial = 0); -1 = off
     public static string defaultVehicleCode = "vehicle-bike-dirt-1";   // when the rules name none
@@ -98,6 +99,7 @@ public static class GameRace {
     private static int lapTimesPerRacer;
     private static string[] racerCodes;
     private static string[] racerNames;
+    private static string[] profileCodes;       // the AI profile code per racer, "" for the player
     private static Vector3[] slotPos;
     private static Quaternion slotRot;
     private static RaceRules coreRules;
@@ -118,7 +120,8 @@ public static class GameRace {
         enabled = false;
         autopilotPlayer = false;
         playerSlotOverride = -1;
-        qualifiedPlayerSlot = -1;
+        qualifiedOrder = null;
+        lapsOverride = -1;
         seedOverride = 0;
         aiRidersOverride = -1;
         ghostEnabled = false;
@@ -160,6 +163,10 @@ public static class GameRace {
             rules.aiRiders = Mathf.Min(aiRidersOverride, 11);
         }
 
+        if (lapsOverride > 0) {
+            rules.laps = lapsOverride;
+        }
+
         GameDraggableLevelItem gridItem;
         track = GameRaceTrackBuilder.Build(container, rules.defaultWidth, out lowestY, out gridItem);
 
@@ -192,13 +199,23 @@ public static class GameRace {
 
         GameRaceGrid.Slots(origin, slotRot, spec, slotPos);
 
-        int player = playerSlotOverride;
+        // A qualified grid is used once, and only when it is for this many riders and nothing pins the player's slot.
+        string[] grid = qualifiedOrder;
+        qualifiedOrder = null;
 
-        if (player < 0) {
-            player = qualifiedPlayerSlot;
+        if (grid != null && (grid.Length != n || playerSlotOverride >= 0)) {
+            grid = null;
         }
 
-        qualifiedPlayerSlot = -1;
+        int player = playerSlotOverride;
+
+        if (player < 0 && grid != null) {
+            player = Array.IndexOf(grid, GameRaceQualifying.playerId);
+        }
+
+        if (player < 0) {
+            player = rules.playerSlot;
+        }
 
         if (player < 0) {
             player = rules.playerSlot;
@@ -218,10 +235,10 @@ public static class GameRace {
             GameRaceAiProfiles.Row row = null;
 
             if (!isPlayer) {
-                row = rules.aiProfiles.Length > 0 ? GameRaceAiProfiles.Get(rules.aiProfiles[ai % rules.aiProfiles.Length]) : null;
+                row = grid != null ? GameRaceAiProfiles.Get(grid[i]) : null;
 
                 if (row == null) {
-                    row = GameRaceAiProfiles.At(ai);
+                    row = GameRaceQualifying.AiRow(rules, ai);
                 }
 
                 ai++;
@@ -247,6 +264,7 @@ public static class GameRace {
 
             racerCodes[i] = racerCode;
             racerNames[i] = racerName;
+            profileCodes[i] = row != null && !isPlayer ? row.code : "";
 
             GameObject go = GameDraggableEditor.LoadSprite(container, code, Vector3.one);
 
@@ -364,6 +382,7 @@ public static class GameRace {
         dvB = new float[pairs];
         racerCodes = new string[n];
         racerNames = new string[n];
+        profileCodes = new string[n];
         slotPos = new Vector3[n];
     }
 
@@ -463,6 +482,7 @@ public static class GameRace {
         dvB = null;
         racerCodes = null;
         racerNames = null;
+        profileCodes = null;
         slotPos = null;
         playerMount = null;
         playerVehicleCode = null;
@@ -557,6 +577,7 @@ public static class GameRace {
         if (!resultsMade && session.state == RaceSession.done) {
             resultsMade = true;
             lastResults = BuildResults();
+            RecordAiBestLaps();
 
             for (int i = 0; i < racerCount; i++) {
                 arcades[i].hold = true;
@@ -863,6 +884,16 @@ public static class GameRace {
         }
 
         return results;
+    }
+
+    // The AI riders' best laps of this race go to the track's ghost file (ai_best_laps): the next qualifying
+    // takes them as the AIs' times. The recorder saves them with the player's laps.
+    private static void RecordAiBestLaps() {
+        for (int i = 0; i < racerCount; i++) {
+            if (i != playerIndex) {
+                GameRaceGhostRecorder.RecordAiBest(profileCodes[i], racers[i].bestLapTime);
+            }
+        }
     }
 
     private static void FillHud() {

@@ -211,6 +211,9 @@ public class GameRaceGhostFile {
     public string track = "";
     public string trackHash = "";
     public float bestLapTime;
+
+    // ai_best_laps: each AI profile's best race lap on the track with trackHash (seconds), for qualifying.
+    public readonly Dictionary<string, float> aiBestLaps = new Dictionary<string, float>();
     public readonly List<GameRaceGhostLap> laps = new List<GameRaceGhostLap>();
     public readonly List<KeyValuePair<string, JsonData>> extras = new List<KeyValuePair<string, JsonData>>();
 
@@ -246,6 +249,9 @@ public class GameRaceGhostFile {
             switch (key) {
                 case "kind": case "track": case "track_hash": case "best_lap_time": case "laps":
                     break;
+                case "ai_best_laps":
+                    ReadAiBestLaps(root[key], file.aiBestLaps);
+                    break;
                 default:
                     file.extras.Add(new KeyValuePair<string, JsonData>(key, root[key]));
                     break;
@@ -273,6 +279,27 @@ public class GameRaceGhostFile {
         return file;
     }
 
+    // Tolerant: anything but an object of positive numbers is skipped.
+    private static void ReadAiBestLaps(JsonData d, Dictionary<string, float> into) {
+
+        if (d == null || !d.IsObject) {
+            return;
+        }
+
+        foreach (string code in d.Keys) {
+
+            JsonData v = d[code];
+
+            if (v != null && (v.IsDouble || v.IsInt || v.IsLong)) {
+                float time = VehicleTuningJson.Number(v, 0f);
+
+                if (time > 0f && !float.IsInfinity(time) && !float.IsNaN(time)) {
+                    into[code] = time;
+                }
+            }
+        }
+    }
+
     public string ToJson() {
 
         StringBuilder sb = new StringBuilder(4096);
@@ -283,6 +310,20 @@ public class GameRaceGhostFile {
         GameRaceGhostLap.Prop(w, "track_hash", trackHash);
         w.WritePropertyName("best_lap_time");
         w.Write(Math.Round((double)bestLapTime, 3));
+
+        if (aiBestLaps.Count > 0) {
+            List<string> codes = new List<string>(aiBestLaps.Keys);
+            codes.Sort(StringComparer.Ordinal);
+            w.WritePropertyName("ai_best_laps");
+            w.WriteObjectStart();
+
+            for (int i = 0; i < codes.Count; i++) {
+                w.WritePropertyName(codes[i]);
+                w.Write(Math.Round((double)aiBestLaps[codes[i]], 3));
+            }
+
+            w.WriteObjectEnd();
+        }
 
         for (int i = 0; i < extras.Count; i++) {
             w.WritePropertyName(extras[i].Key);

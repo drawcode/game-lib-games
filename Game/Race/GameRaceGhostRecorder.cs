@@ -110,6 +110,14 @@ public static class GameRaceGhostRecorder {
         dirty = !GameRaceGhostStore.Save(levelCode, file);
     }
 
+    // An AI rider's best race lap, kept in the track's file (ai_best_laps) and written with the player's laps.
+    public static void RecordAiBest(string profileCode, float lapTime) {
+
+        if (recording && file != null && GameRaceGhostStore.SetAiBest(file, profileCode, lapTime, trackHash)) {
+            dirty = true;
+        }
+    }
+
     public static void End() {
 
         Save();
