@@ -68,6 +68,8 @@ public static class GameRace {
     }
 
     private const int pairMax = 15;
+    private const int settleMaxSteps = 120;
+    private const float settleSpeed = 0.2f;
 
     private static readonly Action<int> stepHandler = OnStep;
     private static readonly GameVehicleArcadeStepper.BumpHandler bumpHandler = OnBump;
@@ -92,6 +94,8 @@ public static class GameRace {
     private static RaceRules coreRules;
     private static float lowestY;
     private static bool resultsMade;
+    private static bool countdownWanted;
+    private static int settleSteps;
 
     private static readonly int[] pairA = new int[pairMax];
     private static readonly int[] pairB = new int[pairMax];
@@ -231,6 +235,14 @@ public static class GameRace {
                 return false;
             }
 
+            // Riders touch through VehicleModel.Bump (circles). The solid bodies would wall each other off in the hull
+            // sweep before the bump radius is reached, so the race bikes keep their triggers (mount, pickups) only.
+            foreach (Collider body in go.GetComponentsInChildren<Collider>(true)) {
+                if (!body.isTrigger) {
+                    body.enabled = false;
+                }
+            }
+
             mounts[i] = mount;
             mount.arcade = arcade;
             arcades[i] = arcade;
@@ -270,6 +282,7 @@ public static class GameRace {
         session = new RaceSession(rules.countdown, rules.finishWait);
         lastResults = null;
         resultsMade = false;
+        countdownWanted = false;
         pairCount = 0;
         FillHud();
         GameVehicleArcadeStepper.onFixedStep = stepHandler;
@@ -298,13 +311,32 @@ public static class GameRace {
         slotPos = new Vector3[n];
     }
 
-    // The grid goes live: the countdown starts, and the AI riders' seat riders show.
+    // The grid goes live: the countdown starts once every bike has settled on the ground (at most settleMaxSteps
+    // after the call), so the first number is shown over bikes at rest.
     public static void StartCountdown() {
 
         if (!active || session.state != RaceSession.staged) {
             return;
         }
 
+        countdownWanted = true;
+        settleSteps = 0;
+    }
+
+    private static bool AllSettled() {
+
+        for (int i = 0; i < racerCount; i++) {
+            if ((arcades[i].state.flags & (int)VehicleFlags.grounded) == 0 || arcades[i].state.speed > settleSpeed) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void BeginCountdown() {
+
+        countdownWanted = false;
         session.Begin();
 
         for (int i = 0; i < racerCount; i++) {
@@ -312,8 +344,6 @@ public static class GameRace {
                 mounts[i].riderSeat.enabled = true;
             }
         }
-
-        FillHud();
     }
 
     public static void End() {
@@ -363,6 +393,7 @@ public static class GameRace {
         racerCount = 0;
         playerIndex = 0;
         pairCount = 0;
+        countdownWanted = false;
     }
 
     // ------------------------------------------------------------------ the stepper hooks
@@ -405,6 +436,10 @@ public static class GameRace {
             return;
         }
 
+        if (countdownWanted && session.state == RaceSession.staged && (++settleSteps >= settleMaxSteps || AllSettled())) {
+            BeginCountdown();
+        }
+
         int ev = session.Step();
 
         if ((ev & (int)RaceSessionEvents.go) != 0) {
@@ -412,6 +447,10 @@ public static class GameRace {
                 arcades[i].hold = false;
             }
         }
+
+        // The rules object is live (tests change it): the core copy follows the two distances.
+        coreRules.missDistance = rules.missDistance;
+        coreRules.wrongWayDistance = rules.wrongWayDistance;
 
         string state = session.state;
 
