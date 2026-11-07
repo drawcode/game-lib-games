@@ -443,6 +443,8 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         }
 
         into.impactSpeed = Mathf.Max(into.impactSpeed, ev.impactSpeed);
+        into.bumpDv = Mathf.Max(into.bumpDv, ev.bumpDv);
+        into.bumpSideDv = Mathf.Max(into.bumpSideDv, ev.bumpSideDv);
     }
 
     private static Transform FindDeep(Transform root, string name) {
