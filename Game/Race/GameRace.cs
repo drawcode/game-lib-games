@@ -67,7 +67,6 @@ public static class GameRace {
         }
     }
 
-    private const int pairMax = 15;
     private const int settleMaxSteps = 120;
     private const float settleSpeed = 0.2f;
 
@@ -87,6 +86,7 @@ public static class GameRace {
     private static int[] missSteps;
     private static int[] offSteps;
     private static float[] lapTimes;
+    private static int lapTimesPerRacer;
     private static string[] racerCodes;
     private static string[] racerNames;
     private static Vector3[] slotPos;
@@ -97,10 +97,10 @@ public static class GameRace {
     private static bool countdownWanted;
     private static int settleSteps;
 
-    private static readonly int[] pairA = new int[pairMax];
-    private static readonly int[] pairB = new int[pairMax];
-    private static readonly float[] dvA = new float[pairMax];
-    private static readonly float[] dvB = new float[pairMax];
+    private static int[] pairA;
+    private static int[] pairB;
+    private static float[] dvA;
+    private static float[] dvB;
     private static int pairCount;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -213,8 +213,24 @@ public static class GameRace {
 
             string code = row != null && !string.IsNullOrEmpty(row.vehicleCode) ? row.vehicleCode
                 : !string.IsNullOrEmpty(rules.vehicleCode) ? rules.vehicleCode : defaultVehicleCode;
-            racerCodes[i] = isPlayer ? "player" : "ai-" + (row != null ? row.code : i.ToString());
-            racerNames[i] = isPlayer ? playerName : (row != null ? row.displayName : racerCodes[i]);
+            string racerCode = isPlayer ? "player" : "ai-" + (row != null ? row.code : i.ToString());
+            string racerName = isPlayer ? playerName : (row != null ? row.displayName : racerCode);
+
+            // More AIs than profiles repeat a row: suffix the repeats so udids and names stay unique.
+            string baseCode = racerCode;
+            int repeat = 1;
+
+            while (CodeTaken(racerCode, i)) {
+                repeat++;
+                racerCode = baseCode + "-" + repeat;
+            }
+
+            if (repeat > 1) {
+                racerName = racerName + " " + repeat;
+            }
+
+            racerCodes[i] = racerCode;
+            racerNames[i] = racerName;
 
             GameObject go = GameDraggableEditor.LoadSprite(container, code, Vector3.one);
 
@@ -292,6 +308,17 @@ public static class GameRace {
         return true;
     }
 
+    private static bool CodeTaken(string code, int before) {
+
+        for (int j = 0; j < before; j++) {
+            if (racerCodes[j] == code) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static void Allocate(int n) {
 
         arcades = new GameVehicleArcade[n];
@@ -305,7 +332,13 @@ public static class GameRace {
         respawnSteps = new int[n];
         missSteps = new int[n];
         offSteps = new int[n];
-        lapTimes = new float[n * Mathf.Max(1, rules.laps)];
+        lapTimesPerRacer = Mathf.Max(1, rules.laps);
+        lapTimes = new float[n * lapTimesPerRacer];
+        int pairs = Mathf.Max(1, n * (n - 1) / 2);
+        pairA = new int[pairs];
+        pairB = new int[pairs];
+        dvA = new float[pairs];
+        dvB = new float[pairs];
         racerCodes = new string[n];
         racerNames = new string[n];
         slotPos = new Vector3[n];
@@ -356,7 +389,20 @@ public static class GameRace {
             GameVehicleArcadeStepper.onBump = null;
         }
 
-        GameVehicleArcadeStepper.enabled = false;
+        // Only this race's own stepper: a race that never began must not switch off someone else's.
+        if (active) {
+            GameVehicleArcadeStepper.enabled = false;
+        }
+
+        if (arcades != null) {
+            for (int i = 0; i < arcades.Length; i++) {
+                if (arcades[i] != null) {
+                    arcades[i].driverOverride = null;
+                    arcades[i].controlModeOverride = -1;
+                    arcades[i].hold = true;
+                }
+            }
+        }
 
         if (roots != null) {
             for (int i = 0; i < roots.Length; i++) {
@@ -384,6 +430,10 @@ public static class GameRace {
         missSteps = null;
         offSteps = null;
         lapTimes = null;
+        pairA = null;
+        pairB = null;
+        dvA = null;
+        dvB = null;
         racerCodes = null;
         racerNames = null;
         slotPos = null;
@@ -400,7 +450,7 @@ public static class GameRace {
 
     private static void OnBump(GameVehicleArcade a, GameVehicleArcade b, float impulse, in VehicleEvents ea, in VehicleEvents eb) {
 
-        if (!active || pairCount >= pairMax) {
+        if (!active || pairCount >= pairA.Length) {
             return;
         }
 
@@ -467,6 +517,10 @@ public static class GameRace {
             if (AllFinished()) {
                 session.AllFinished();
             }
+            else if (state == RaceSession.running && racerCount > 1 && AllAiFinished()) {
+                // The player never finished: the finish wait starts as if it had, and it is placed by progress.
+                session.PlayerFinished();
+            }
         }
 
         pairCount = 0;
@@ -503,7 +557,8 @@ public static class GameRace {
                 continue;
             }
 
-            float d = racers[a].progress - racers[b].progress;
+            // Signed gap along the track, wrapped: a lapped backmarker is behind whatever the lap counts say.
+            float d = track.DeltaS(racers[b].s, racers[a].s);
 
             if (Mathf.Abs(d) < rules.bumpAheadMin) {
                 continue;
@@ -526,6 +581,17 @@ public static class GameRace {
 
     private static bool Bailed(int i) {
         return (arcades[i].state.flags & (int)VehicleFlags.bailed) != 0;
+    }
+
+    private static bool AllAiFinished() {
+
+        for (int i = 0; i < racerCount; i++) {
+            if (i != playerIndex && !Finished(i)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool AllFinished() {
@@ -559,8 +625,8 @@ public static class GameRace {
         if ((rev & (int)RaceEvents.lap) != 0) {
             int lapIndex = racers[i].lap - 1;
 
-            if (lapIndex >= 0 && i * rules.laps + lapIndex < lapTimes.Length) {
-                lapTimes[i * rules.laps + lapIndex] = racers[i].lastLapTime;
+            if (lapIndex >= 0 && lapIndex < lapTimesPerRacer) {
+                lapTimes[i * lapTimesPerRacer + lapIndex] = racers[i].lastLapTime;
             }
         }
 
@@ -617,6 +683,7 @@ public static class GameRace {
 
         if ((racers[i].flags & (int)RaceFlags.started) == 0) {
             a.ResetAt(slotPos[i] + Vector3.up * rules.respawnLift, slotRot);
+            RaceProgress.Init(track, out racers[i], a.state.position);
         }
         else {
             RaceProgress.Respawn(track, ref racers[i]);
@@ -689,8 +756,8 @@ public static class GameRace {
             player.place = racers[i].place;
             player.totalTime = Finished(i) ? racers[i].finishTime : session.raceTime;
 
-            for (int l = 0; l < racers[i].lap && l < rules.laps; l++) {
-                player.lapTimes.Add(lapTimes[i * rules.laps + l]);
+            for (int l = 0; l < racers[i].lap && l < lapTimesPerRacer; l++) {
+                player.lapTimes.Add(lapTimes[i * lapTimesPerRacer + l]);
             }
 
             results.players.Add(player);

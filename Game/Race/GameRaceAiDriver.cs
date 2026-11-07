@@ -24,6 +24,11 @@ public class GameRaceAiDriver : IGameVehicleArcadeDriver {
 
     public void Drive(GameVehicleArcade arcade, int step, ref Sticks sticks, ref float cameraYaw) {
 
+        if (!GameRace.active || GameRace.track == null) {
+            sticks = default(Sticks);
+            return;
+        }
+
         RaceRival rival;
         GameRace.NearestRival(index, out rival);
         sticks = RaceAi.Steer(GameRace.track, in arcade.state, in profile, ref memory, in rival, step, seed,
