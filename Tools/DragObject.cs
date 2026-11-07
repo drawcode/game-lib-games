@@ -1,3 +1,4 @@
+using Input = Engine.InputCompat;
 using UnityEngine;
 using System.Collections;
 

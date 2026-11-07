@@ -1,3 +1,4 @@
+using Input = Engine.InputCompat;
 //#define BROADCAST_USE_EVERYPLAY
 //#define BROADCAST_USE_TWITCH
 

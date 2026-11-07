@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Input = Engine.InputCompat;
+using UnityEngine;
 using System.Collections;
 
 /// <summary>

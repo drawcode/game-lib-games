@@ -1,3 +1,4 @@
+using Input = Engine.InputCompat;
 #pragma warning disable 0169
 #pragma warning disable 0618
 #pragma warning disable 0649
