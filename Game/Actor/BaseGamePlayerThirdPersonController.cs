@@ -577,7 +577,9 @@ public class BaseGamePlayerThirdPersonController : GameObjectTimerBehavior {
 
         CharacterController controller = characterControllerCached;
 
-        if (controller == null) {
+        // A mounted rider's controller is disabled (the vehicle carries it): Move on it logs an error every frame,
+        // thousands a second, enough to stall the Editor's console.
+        if (controller == null || !controller.enabled) {
             return;
         }
         wallJumpContactNormal = Vector3.zero;
