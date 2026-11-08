@@ -1,4 +1,5 @@
 #define DEV
+using Input = Engine.InputCompat;
 using System;
 using System.IO;
 using System.Collections;
