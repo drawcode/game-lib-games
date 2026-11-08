@@ -967,6 +967,9 @@ public class BaseUIController : GameObjectBehavior {
 
                 }
 #endif
+                else if (isUIPanel(BaseUIPanel.panelWorlds) && handleWorldsBack()) {
+                    handled = true;
+                }
                 else {
                     GameUIController.ShowMain();
                     handled = true;
@@ -1720,6 +1723,26 @@ public class BaseUIController : GameObjectBehavior {
     // games/shared/context-arcade-vs-missions.md) overrides this to show it.
     public virtual void showGameModeArcadeEntry() {
         GameUIController.ShowGameWorlds();
+    }
+
+    // Whether every mode-select tile goes through the planet picker, and the worlds panel's list
+    // then shows that mode's rows (GameWorldsList). Off by default; the view needs the list's
+    // arcade and created templates.
+    public virtual bool useWorldsList {
+        get {
+            return false;
+        }
+    }
+
+    protected void beginWorldsList(GameWorldsListKind kind) {
+        if (useWorldsList) {
+            GameWorldsList.Begin(kind);
+        }
+    }
+
+    // BACK on the worlds panel. True when the game handled it; false goes to the main menu.
+    public virtual bool handleWorldsBack() {
+        return false;
     }
 
     public virtual void showGameModeArcade() {
@@ -2952,6 +2975,7 @@ public class BaseUIController : GameObjectBehavior {
 #if ENABLE_FEATURE_GAME_MODE_ARCADE
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeArcade, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
+            beginWorldsList(GameWorldsListKind.arcade);
             showGameModeArcadeEntry();
         }
 #endif
@@ -2965,7 +2989,14 @@ public class BaseUIController : GameObjectBehavior {
         // CREATE plays under the arcade rules, the same rounds the worlds-screen EDIT made (iter 34-42)
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeCreate, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameArcade);
-            showGameModeCreate();
+
+            if (useWorldsList) {
+                GameWorldsList.Begin(GameWorldsListKind.created);
+                GameUIController.ShowGameWorlds();
+            }
+            else {
+                showGameModeCreate();
+            }
         }
 
 #if ENABLE_FEATURE_GAME_MODE_CHALLENGE
@@ -3001,6 +3032,7 @@ public class BaseUIController : GameObjectBehavior {
 #if ENABLE_FEATURE_WORLDS
         else if (UIUtil.IsButtonClicked(BaseUIButtonNames.buttonGameModeMissions, buttonName)) {
             GameController.ChangeGameStates(AppContentStateMeta.appContentStateGameMissions);
+            beginWorldsList(GameWorldsListKind.missions);
             GameUIController.ShowGameWorlds();
         }
 #endif
