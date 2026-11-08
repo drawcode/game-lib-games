@@ -14,9 +14,30 @@ using Engine.Utility;
 // ends moves that world's stage up one, and a failed round leaves it.
 public static partial class GameArcadeLevels {
 
-    // profile content-collect type and attribute holding the stages
+    // LEGACY home of the stages (read only): profile mode-blob content-collect type and attribute
     public static string stageCollectType = "arcade";
     public static string stageKey = "arcade_stage";
+
+    // The stages live in the gameplay tracking blob since 2026-11-06: one typed item, a map of
+    // "<row code>-<world code>" -> stage, inline or in a sidecar when it grows (GameProfileTracking).
+    // A key not in the map yet reads the legacy mode-blob value, so no saved stage is lost.
+    public static string stageTrackingGroup = "arcade";
+    public static string stageTrackingCode = "stages";
+    public static string stageTrackingType = "arcade-stages";
+
+    static IDictionary<string, object> TrackedStages() {
+        return GameProfileTracking.Current.GetItem(
+            stageTrackingGroup, stageTrackingCode, stageTrackingType) as IDictionary<string, object>;
+    }
+
+    static int ToStage(object raw) {
+        try {
+            return raw == null ? 0 : ClampTier(Convert.ToInt32(raw));
+        }
+        catch (Exception) {
+            return 0;
+        }
+    }
 
     public static bool IsArcade(AppContentCollect row) {
         return row != null && row.type == GameArcadeLevelKeys.arcade;
@@ -43,7 +64,18 @@ public static partial class GameArcadeLevels {
     // long or double, and Get<int> would throw and write a default into the profile.
     public static int Stage(AppContentCollect row, string worldCode) {
 
-        if (row == null || GameProfileModes.Current == null) {
+        if (row == null) {
+            return 0;
+        }
+
+        IDictionary<string, object> tracked = TrackedStages();
+        object stage;
+
+        if (tracked != null && tracked.TryGetValue(StageKey(row, worldCode), out stage)) {
+            return ToStage(stage);
+        }
+
+        if (GameProfileModes.Current == null) {
             return 0;
         }
 
@@ -65,8 +97,19 @@ public static partial class GameArcadeLevels {
     }
 
     public static void SetStage(AppContentCollect row, string worldCode, int stage) {
-        GameProfileModes.Current.SetContentCollectValue(
-            stageCollectType, StageKey(row, worldCode), stageKey, ClampTier(stage));
+
+        Dictionary<string, object> stages = new Dictionary<string, object>();
+        IDictionary<string, object> tracked = TrackedStages();
+
+        if (tracked != null) {
+            foreach (KeyValuePair<string, object> pair in tracked) {
+                stages[pair.Key] = pair.Value;
+            }
+        }
+
+        stages[StageKey(row, worldCode)] = ClampTier(stage);
+
+        GameProfileTracking.Current.SetItem(stageTrackingGroup, stageTrackingCode, stageTrackingType, stages);
     }
 
     // Sets the row's type action to the stage's goal (Goals), so the list, the HUD and the
