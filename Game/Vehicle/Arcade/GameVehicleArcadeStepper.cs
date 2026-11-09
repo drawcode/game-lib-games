@@ -24,6 +24,11 @@ public static class GameVehicleArcadeStepper {
     public static bool enabled;
     public static System.Action<int> onFixedStep;   // after every arcade's step and the bumps; the stepper's step count
 
+    // One call per bumping pair per step (impulse j > 0), with each vehicle's own bump events; the race records the
+    // pairs here and applies its "rider ahead" rule in onFixedStep.
+    public delegate void BumpHandler(GameVehicleArcade a, GameVehicleArcade b, float impulse, in VehicleEvents ea, in VehicleEvents eb);
+    public static BumpHandler onBump;
+
     private static readonly List<GameVehicleArcade> arcades = new List<GameVehicleArcade>(16);
     private static Runner runner;
     private static int drivenFrame = -1;
@@ -38,6 +43,7 @@ public static class GameVehicleArcadeStepper {
     private static void Reset() {
         enabled = false;
         onFixedStep = null;
+        onBump = null;
         arcades.Clear();
         runner = null;
         drivenFrame = -1;
@@ -123,11 +129,15 @@ public static class GameVehicleArcadeStepper {
 
                         VehicleEvents ea = default(VehicleEvents);
                         VehicleEvents eb = default(VehicleEvents);
-                        VehicleModel.Bump(ref a.state, in a.config.tuning, ref ea, ref b.state, in b.config.tuning, ref eb);
+                        float impulse = VehicleModel.Bump(ref a.state, in a.config.tuning, ref ea, ref b.state, in b.config.tuning, ref eb);
                         GameVehicleArcade.Merge(ref a.stepEvents, in ea);
                         GameVehicleArcade.Merge(ref a.frameEvents, in ea);
                         GameVehicleArcade.Merge(ref b.stepEvents, in eb);
                         GameVehicleArcade.Merge(ref b.frameEvents, in eb);
+
+                        if (impulse > 0f && onBump != null) {
+                            onBump(a, b, impulse, in ea, in eb);
+                        }
                     }
                 }
 

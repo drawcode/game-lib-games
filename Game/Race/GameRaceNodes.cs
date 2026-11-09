@@ -47,7 +47,7 @@ public static class GameRaceNodes {
         return raw as IDictionary;
     }
 
-    static bool TryNumber(IDictionary node, string key, out double value) {
+    internal static bool TryNumber(IDictionary node, string key, out double value) {
 
         value = 0;
 

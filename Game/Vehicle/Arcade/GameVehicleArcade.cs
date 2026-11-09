@@ -61,6 +61,10 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public VehicleEvents stepEvents;
     public float contactGrace;
 
+    // The last fixed step's raw sticks and the camera yaw its mapping used (race ghosts record them).
+    public Sticks stepSticks { get { return sticks; } }
+    public float stepCameraYaw { get; private set; }
+
     public GameVehicleArcadeConfig config { get; private set; }
     public ControlTuning control { get { return controlTuning; } }
     public GameVehicleArcadeRide ride { get; private set; }
@@ -274,6 +278,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public void StepOnce(float cameraYaw) {
 
         previous = state;
+        stepCameraYaw = cameraYaw;
 
         if (contactGrace > 0f) {
             contactGrace = Mathf.Max(0f, contactGrace - fixedDt);
@@ -285,6 +290,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         else if (driverOverride != null) {
             float driverYaw = cameraYaw;
             driverOverride.Drive(this, stepCount, ref sticks, ref driverYaw);
+            stepCameraYaw = driverYaw;
             input = StickMapper.Map(in sticks, driverYaw, in state, in controlTuning);
         }
         else {
@@ -327,6 +333,13 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             w.localRotation = from * Quaternion.AngleAxis(WheelSpin(i) * Mathf.Rad2Deg, config.wheelAxis);
             wheelWritten[i] = w.localRotation;
         }
+    }
+
+    // Poses a vehicle that is never stepped (a race ghost) between two states, exactly as the loop poses a ridden one.
+    public void PoseFrom(in VehicleState from, in VehicleState to, float alpha) {
+        previous = from;
+        state = to;
+        Pose(alpha);
     }
 
     private void Pose(float alpha) {
@@ -443,6 +456,8 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         }
 
         into.impactSpeed = Mathf.Max(into.impactSpeed, ev.impactSpeed);
+        into.bumpDv = Mathf.Max(into.bumpDv, ev.bumpDv);
+        into.bumpSideDv = Mathf.Max(into.bumpSideDv, ev.bumpSideDv);
     }
 
     private static Transform FindDeep(Transform root, string name) {
