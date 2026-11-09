@@ -22,6 +22,8 @@ using UnityEngine;
 //   direct) over data.control.mode, resolved on every mount so a Settings change applies to the next ride.
 // - Events: each frame's steps merge into frameEvents, and Messenger<GameVehicleArcade> broadcasts messageEvents
 //   when any flag is set.
+// - Stepper: with GameVehicleArcadeStepper.enabled, one central clock steps every arcade (StepOnce, EndFrame) so
+//   vehicle-vs-vehicle contact runs in phase; off by default, and then Update steps this vehicle alone as before.
 // - Statics: Bikes enters Play without a domain reload; the registration below runs again on every Play.
 // The race's AI rider (or a test autopilot) on GameVehicleArcade.driverOverride: called once per fixed step before
 // the input is mapped. Sticks are in the frame of the yaw it leaves in cameraYaw (the camera's yaw on entry).
@@ -53,6 +55,11 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public IGameVehicleArcadeDriver driverOverride;
     public int controlModeOverride = -1;
     public bool hold;
+
+    // Stepper seams: the last fixed step's events (the stepper merges its Bump events in), and a countdown in
+    // seconds, per fixed step, while above zero the stepper skips this vehicle's bumps.
+    public VehicleEvents stepEvents;
+    public float contactGrace;
 
     public GameVehicleArcadeConfig config { get; private set; }
     public ControlTuning control { get { return controlTuning; } }
@@ -236,6 +243,11 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             return;
         }
 
+        // The stepper drove this frame (it runs first): nothing left to do here.
+        if (GameVehicleArcadeStepper.Drives(this)) {
+            return;
+        }
+
         // Frozen outside a running round (menus, results, pause): nothing should coast behind a panel.
         clock.timeScale = Time.timeScale;
         clock.paused = !GameConfigs.isGameRunning || GameConfigs.isGamePaused;
@@ -244,27 +256,52 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         float cameraYaw = CameraYaw();
 
         for (int i = 0; i < steps; i++) {
-            previous = state;
-
-            if (hold) {
-                input = default(VehicleInput);
-            }
-            else if (driverOverride != null) {
-                float driverYaw = cameraYaw;
-                driverOverride.Drive(this, stepCount, ref sticks, ref driverYaw);
-                input = StickMapper.Map(in sticks, driverYaw, in state, in controlTuning);
-            }
-            else {
-                input = rider != null ? StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning) : default(VehicleInput);
-            }
-
-            VehicleEvents ev = default(VehicleEvents);
-            VehicleModel.Step(ref state, in input, in config.tuning, world, fixedDt, ref ev);
-            Merge(ref frameEvents, in ev);
-            stepCount++;
+            StepOnce(cameraYaw);
         }
 
-        Pose(clock.fixedAlpha);
+        EndFrame(clock.fixedAlpha);
+    }
+
+    private void OnEnable() {
+        GameVehicleArcadeStepper.Add(this);
+    }
+
+    private void OnDisable() {
+        GameVehicleArcadeStepper.Remove(this);
+    }
+
+    // One fixed step: input, VehicleModel.Step, this step's events into stepEvents and frameEvents.
+    public void StepOnce(float cameraYaw) {
+
+        previous = state;
+
+        if (contactGrace > 0f) {
+            contactGrace = Mathf.Max(0f, contactGrace - fixedDt);
+        }
+
+        if (hold) {
+            input = default(VehicleInput);
+        }
+        else if (driverOverride != null) {
+            float driverYaw = cameraYaw;
+            driverOverride.Drive(this, stepCount, ref sticks, ref driverYaw);
+            input = StickMapper.Map(in sticks, driverYaw, in state, in controlTuning);
+        }
+        else {
+            input = rider != null ? StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning) : default(VehicleInput);
+        }
+
+        VehicleEvents ev = default(VehicleEvents);
+        VehicleModel.Step(ref state, in input, in config.tuning, world, fixedDt, ref ev);
+        stepEvents = ev;
+        Merge(ref frameEvents, in ev);
+        stepCount++;
+    }
+
+    // After the frame's steps: pose at alpha between the last two, the ride clips, the event broadcast.
+    public void EndFrame(float alpha) {
+
+        Pose(alpha);
 
         if (ride != null) {
             ride.Update(this, Time.time);
@@ -366,7 +403,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
     // Camera yaw in the vehicle convention, so stick up is always away from the camera. A camera looking straight
     // down has no forward on the ground, so its up stands in.
-    private float CameraYaw() {
+    public float CameraYaw() {
 
         Transform cam = cameraTransform;
 
@@ -388,7 +425,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         return f.x * f.x + f.z * f.z > 1e-8f ? Mathf.Atan2(-f.x, f.z) : 0f;
     }
 
-    private static void Merge(ref VehicleEvents into, in VehicleEvents ev) {
+    public static void Merge(ref VehicleEvents into, in VehicleEvents ev) {
 
         if (ev.flags == 0) {
             return;
