@@ -1988,6 +1988,13 @@ public class BaseGamePlayerController : GameActor {
 
     public virtual void UpdateCharacterRuntimeState() {
 
+        // ResetRuntime below replaces mountData while a vehicle may still hold this rider, which left a half-mounted
+        // player (model hidden, controllers off, weapons holder destroyed with the level). Get off first.
+        if (currentControllerData != null && currentControllerData.mountData != null
+            && currentControllerData.mountData.isMountedVehicleObject) {
+            Unmount();
+        }
+
         ResetScale();
         ResetPosition();
 
