@@ -249,11 +249,23 @@ public class BaseGameLevelSprite : GameObjectBehavior {
             return;
         }
 
-        currentSpeedRotation = gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3();
+        // A sprite with no draggable item or item asset (one placed outside the level editor), or an asset row without
+        // speed_rotation, has nothing to spin: the other methods already return early on !isReady.
+        if (!isReady) {
+            return;
+        }
+
+        var speedRotation = gameDraggableLevelItem.gameLevelItemAsset.speed_rotation;
+
+        if (speedRotation == null) {
+            return;
+        }
+
+        currentSpeedRotation = speedRotation.GetVector3();
 
         if (lastSpeedRotation != currentSpeedRotation
             && currentSpeedRotation != Vector3.zero) {
-            transform.Rotate(gameDraggableLevelItem.gameLevelItemAsset.speed_rotation.GetVector3() * Time.deltaTime);
+            transform.Rotate(currentSpeedRotation * Time.deltaTime);
             lastSpeedRotation = currentSpeedRotation;
         }
     }
