@@ -225,6 +225,24 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         sticks.brake = brake;
     }
 
+    // Undo SetPedals: the stick's y drives throttle and brake again and the pedal air pitch goes back off. For a
+    // title that lets the player switch from a pedal layout back to the one-pad layout.
+    public void UseStickPedals() {
+
+        if (pedalsFromStick) {
+            return;
+        }
+
+        pedalsFromStick = true;
+        controlTuning.airPedalPitch = 0f;
+        sticks.throttle = Mathf.Max(0f, sticks.move.y);
+        sticks.brake = Mathf.Max(0f, -sticks.move.y);
+    }
+
+    public bool PedalsFromStick {
+        get { return pedalsFromStick; }
+    }
+
     public void OnRiderMounted(GameObject go) {
         rider = go;
         world.ignore1 = go != null ? go.transform : null;
