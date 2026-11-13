@@ -46,6 +46,14 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public Transform visual;
     public int stepCount;
 
+    // Drive assist (D20), null by default. Created lazily in the rider branch of StepOnce when ResolveControl wants
+    // it, so an AI arcade or a ghost never has one. stepAssist is the last assisted step's trace.
+    public IGameVehicleArcadeAssist assist;
+    public DriveAssistTrace stepAssist;
+
+    // The Vehicle folder takes no dependency on Game/Race: GameDriveAssist registers its factory here.
+    public static System.Func<GameVehicleArcade, IGameVehicleArcadeAssist> assistFactory;
+
     // Race seams (Action Bikes R2), all off by default:
     // - driverOverride fills the sticks and the camera yaw each fixed step, and input maps without a rider (an AI
     //   rider, or a test autopilot on the player's bike);
@@ -69,6 +77,8 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public ControlTuning control { get { return controlTuning; } }
     public GameVehicleArcadeRide ride { get; private set; }
 
+    public UnityVehicleWorld vehicleWorld { get { return world; } }
+
     public float speed {
         get {
             return state.speed;
@@ -80,6 +90,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     private VehicleState previous;
     private Sticks sticks;
     private bool pedalsFromStick = true;
+    private bool assistWanted;
     private ControlTuning controlTuning;
     private float rootScale = 1f;
     private Vector3 visualBasePosition;
@@ -172,6 +183,10 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         VehicleModel.Reset(ref state, UnityFrame.ToCore(position), YawOf(rotation * Vector3.forward));
         previous = state;
         clock.Reset();
+
+        if (assist != null) {
+            assist.Reset();
+        }
     }
 
     public void ResolveControl() {
@@ -184,12 +199,24 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             controlTuning.mode = controlModeOverride;
         }
 
+        string assistMode = GameProfiles.Current != null ? GameProfiles.Current.GetAttributeStringValue(GameVehicleDriveAssistModes.profileKey) : "";
+        assistWanted = AssistWanted(assistMode, in config.assist);
+
+        if (!assistWanted) {
+            assist = null;
+        }
+
         // While the pedals come from the stick's y, the stick already pitches the bike in the air (damped by
         // airPitchScale): pedal pitch on top would add the same y back the other way. It applies once real pedals
         // arrive (SetPedals).
         if (pedalsFromStick) {
             controlTuning.airPedalPitch = 0f;
         }
+    }
+
+    // "off" turns it off; "on" and "" (never picked) follow the data.
+    public static bool AssistWanted(string mode, in DriveAssistTuning tuning) {
+        return mode != GameVehicleDriveAssistModes.off && tuning.enabled != 0;
     }
 
     // IGameVehicleMountDriver
@@ -305,8 +332,20 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             stepCameraYaw = driverYaw;
             input = StickMapper.Map(in sticks, driverYaw, in state, in controlTuning);
         }
+        else if (rider != null) {
+            input = StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning);
+
+            if (assistWanted && assist == null && assistFactory != null) {
+                assist = assistFactory(this);
+            }
+
+            // stepEvents still holds the previous step's events here; Apply reads its wallHit.
+            if (assist != null) {
+                input = assist.Apply(this, stepCount, in input);
+            }
+        }
         else {
-            input = rider != null ? StickMapper.Map(in sticks, cameraYaw, in state, in controlTuning) : default(VehicleInput);
+            input = default(VehicleInput);
         }
 
         VehicleEvents ev = default(VehicleEvents);
