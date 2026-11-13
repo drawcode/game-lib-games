@@ -183,6 +183,13 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         if (controlModeOverride >= 0) {
             controlTuning.mode = controlModeOverride;
         }
+
+        // While the pedals come from the stick's y, the stick already pitches the bike in the air (damped by
+        // airPitchScale): pedal pitch on top would add the same y back the other way. It applies once real pedals
+        // arrive (SetPedals).
+        if (pedalsFromStick) {
+            controlTuning.airPedalPitch = 0f;
+        }
     }
 
     // IGameVehicleMountDriver
@@ -208,6 +215,11 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
     // Direct mode only: throttle and brake from their own actions. Once called, the stick no longer drives them.
     public void SetPedals(float throttle, float brake) {
+
+        if (pedalsFromStick && config != null) {
+            controlTuning.airPedalPitch = config.control.airPedalPitch;
+        }
+
         pedalsFromStick = false;
         sticks.throttle = throttle;
         sticks.brake = brake;
