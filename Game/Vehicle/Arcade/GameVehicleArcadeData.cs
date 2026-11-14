@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 
+using Agnostic.Framing;
 using Agnostic.Vehicle;
 
 using Engine.AgnosticHost;
@@ -23,6 +24,8 @@ public class GameVehicleArcadeConfig {
     public string visual = "vehicle";            // data.host.visual: the child that leans and pitches
     public string[] wheels = new string[0];      // data.host.wheels: wheel bones in probe order
     public Vector3 wheelAxis = Vector3.right;    // data.host.wheel_axis: local spin axis, sign = forward roll
+    public FrameTuning camera = FrameTuning.Defaults();   // data.camera (D21): enabled 0 without the block
+    public string cameraMode = GameCameraModes.follow;    // data.camera.mode: the default until the player picks
 }
 
 // game-vehicle-data rows, read raw with LitJson: the typed GameVehicle loader keeps no `tuning` block. A row
@@ -141,7 +144,73 @@ public static class GameVehicleArcadeData {
             }
         }
 
+        if (VehicleTuningJson.Has(data, "camera")) {
+            c.camera = ParseFrame(data["camera"]);
+            string mode = VehicleTuningJson.Str(data["camera"], "mode");
+            c.cameraMode = mode == GameCameraModes.iso ? GameCameraModes.iso : GameCameraModes.follow;
+        }
+
         return c;
+    }
+
+    // data.camera (D21 plan section 4). A missing block is FrameTuning.Defaults() (enabled 0); a block without
+    // "enabled" is on. Keys are the FrameTuning field names, angles as <name>Deg. yawDeg is the Unity euler y of the
+    // camera (45 = looking toward +X +Z), so the core yaw is its negative. Insets are an "inset" object {l, r, t, b}.
+    // projection is "ortho" or "perspective".
+    public static FrameTuning ParseFrame(JsonData n) {
+
+        FrameTuning t = FrameTuning.Defaults();
+
+        if (n == null || !n.IsObject) {
+            return t;
+        }
+
+        t.enabled = VehicleTuningJson.Num(n, "enabled", 1f) > 0.5f ? 1 : 0;
+        t.projection = VehicleTuningJson.Str(n, "projection") == "perspective" ? FrameTuning.perspective : FrameTuning.orthographic;
+        t.yaw = -VehicleTuningJson.Num(n, "yawDeg", -t.yaw / VehicleMath.degToRad) * VehicleMath.degToRad;
+        t.pitch = VehicleTuningJson.Num(n, "pitchDeg", t.pitch / VehicleMath.degToRad) * VehicleMath.degToRad;
+        t.pitchMax = VehicleTuningJson.Num(n, "pitchMaxDeg", t.pitchMax / VehicleMath.degToRad) * VehicleMath.degToRad;
+        t.fov = VehicleTuningJson.Num(n, "fovDeg", t.fov / VehicleMath.degToRad) * VehicleMath.degToRad;
+        t.sizeMin = VehicleTuningJson.Num(n, "sizeMin", t.sizeMin);
+        t.sizeMax = VehicleTuningJson.Num(n, "sizeMax", t.sizeMax);
+        t.freeRideSize = VehicleTuningJson.Num(n, "freeRideSize", t.freeRideSize);
+        t.distMin = VehicleTuningJson.Num(n, "distMin", t.distMin);
+        t.distMax = VehicleTuningJson.Num(n, "distMax", t.distMax);
+        t.backOff = VehicleTuningJson.Num(n, "backOff", t.backOff);
+        t.near = VehicleTuningJson.Num(n, "near", t.near);
+        t.far = VehicleTuningJson.Num(n, "far", t.far);
+
+        if (VehicleTuningJson.Has(n, "inset")) {
+            JsonData i = n["inset"];
+            t.insetLeft = VehicleTuningJson.Num(i, "l", t.insetLeft);
+            t.insetRight = VehicleTuningJson.Num(i, "r", t.insetRight);
+            t.insetTop = VehicleTuningJson.Num(i, "t", t.insetTop);
+            t.insetBottom = VehicleTuningJson.Num(i, "b", t.insetBottom);
+        }
+
+        t.aheadBase = VehicleTuningJson.Num(n, "aheadBase", t.aheadBase);
+        t.aheadTime = VehicleTuningJson.Num(n, "aheadTime", t.aheadTime);
+        t.aheadMin = VehicleTuningJson.Num(n, "aheadMin", t.aheadMin);
+        t.aheadMax = VehicleTuningJson.Num(n, "aheadMax", t.aheadMax);
+        t.sampleStep = VehicleTuningJson.Num(n, "sampleStep", t.sampleStep);
+        t.focusBias = VehicleTuningJson.Num(n, "focusBias", t.focusBias);
+        t.edgeShare = VehicleTuningJson.Num(n, "edgeShare", t.edgeShare);
+        t.bikeRadius = VehicleTuningJson.Num(n, "bikeRadius", t.bikeRadius);
+        t.rivalsInFrame = VehicleTuningJson.Num(n, "rivalsInFrame", t.rivalsInFrame) > 0.5f ? 1 : 0;
+        t.rivalRange = VehicleTuningJson.Num(n, "rivalRange", t.rivalRange);
+        t.airLookTime = VehicleTuningJson.Num(n, "airLookTime", t.airLookTime);
+        t.focusTau = VehicleTuningJson.Num(n, "focusTau", t.focusTau);
+        t.focusYTau = VehicleTuningJson.Num(n, "focusYTau", t.focusYTau);
+        t.focusYAirTau = VehicleTuningJson.Num(n, "focusYAirTau", t.focusYAirTau);
+        t.zoomOutTau = VehicleTuningJson.Num(n, "zoomOutTau", t.zoomOutTau);
+        t.zoomInTau = VehicleTuningJson.Num(n, "zoomInTau", t.zoomInTau);
+        t.deadBand = VehicleTuningJson.Num(n, "deadBand", t.deadBand);
+        t.pitchRaiseTau = VehicleTuningJson.Num(n, "pitchRaiseTau", t.pitchRaiseTau);
+        t.pitchRelaxTau = VehicleTuningJson.Num(n, "pitchRelaxTau", t.pitchRelaxTau);
+        t.occlusionMargin = VehicleTuningJson.Num(n, "occlusionMargin", t.occlusionMargin);
+        t.snapDistance = VehicleTuningJson.Num(n, "snapDistance", t.snapDistance);
+        t.switchBlend = VehicleTuningJson.Num(n, "switchBlend", t.switchBlend);
+        return t;
     }
 
     private static string[] Strings(JsonData d, string key) {
