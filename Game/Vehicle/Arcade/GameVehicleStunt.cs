@@ -59,13 +59,12 @@ public class GameVehicleStunt {
         Ready = false;
     }
 
-    // Before VehicleModel.Step. `input` is the step's input (the assist's output); the stunt bit is added to it. a.state
+    // Before VehicleModel.Step. `input` is the step's input (the assist's output); StickMapper passes the stunt bit. a.state
     // is still the pre-step state here, as the core wants.
     public void BeforeStep(GameVehicleArcade a, ref VehicleInput input) {
 
         stepClean = false;
         StuntTuning tuning = a.config.stunt;
-        input.buttons |= a.StuntButton();
 
         if ((a.state.flags & (int)VehicleFlags.bailed) != 0) {
             state = default(StuntState);
