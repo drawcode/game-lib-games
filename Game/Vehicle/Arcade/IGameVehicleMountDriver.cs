@@ -30,3 +30,12 @@ public static class GameVehicleControlModes {
     public const string heading = "heading";   // Settings: "Point to steer"
     public const string direct = "direct";     // Settings: "Classic"
 }
+
+// The player's drive assist choice (D20), the profile attribute ResolveControl reads. "" (never picked) = the vehicle
+// class's data.assist.enabled.
+public static class GameVehicleDriveAssistModes {
+
+    public const string profileKey = "vehicle-drive-assist";
+    public const string on = "on";
+    public const string off = "off";
+}
