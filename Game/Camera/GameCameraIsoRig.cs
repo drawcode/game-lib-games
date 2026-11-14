@@ -16,9 +16,10 @@ using UnityEngine;
 // - Apply(mode, arcade): iso saves the camera's pose, projection, size, clip planes and the follower's enabled flag,
 //   disables GameIsoCameraSmoothFollow and blends to the iso pose over switchBlend. follow restores all of it. A row
 //   with no data.camera block (enabled 0) never goes iso, so Action Bots and old rows keep today's camera.
-// - Steering frame: in iso the arcade's cameraTransform is the rig's own steerFrame child, already turned to the
-//   destination pose, so a point-to-steer stick frame changes once on the switch and not over the blend. follow
-//   resets it to null (= Camera.main).
+// - Steering frame: in iso the arcade's cameraTransform is the rig's own steerFrame (a hidden root object, not a child
+//   of the camera, so the blend and the occlusion pitch never turn it), set to the destination iso yaw, so a
+//   point-to-steer stick frame changes once on the switch and not over the blend. follow resets it to null
+//   (= Camera.main).
 // - Snaps: the first frame, a new arcade, a new round and GameRace.playerRespawns changing jump with no smoothing.
 // - Statics: Bikes enters Play without a domain reload; the registration below runs again on every Play.
 [DefaultExecutionOrder(100)]
@@ -100,6 +101,17 @@ public class GameCameraIsoRig : MonoBehaviour {
     }
 
     void OnDestroy() {
+
+        if (steerFrame != null) {
+            if (Application.isPlaying) {
+                Destroy(steerFrame.gameObject);
+            }
+            else {
+                DestroyImmediate(steerFrame.gameObject);
+            }
+
+            steerFrame = null;
+        }
 
         if (Current == this) {
             Current = null;
@@ -226,9 +238,11 @@ public class GameCameraIsoRig : MonoBehaviour {
             return;
         }
 
-        Transform existing = transform.Find(steerFrameName);
-        steerFrame = existing != null ? existing : new GameObject(steerFrameName).transform;
-        steerFrame.SetParent(transform, false);
+        // A root-level object, never a child of the camera: the camera's rotation changes through the blend and the
+        // occlusion pitch, and a child would compose with it. Owned by the rig, destroyed with it.
+        GameObject go = new GameObject(steerFrameName);
+        go.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave;
+        steerFrame = go.transform;
     }
 
     // The iso orientation at the base pitch, in world space.

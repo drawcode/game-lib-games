@@ -123,6 +123,25 @@ namespace Game.Race.Tests {
         }
 
         [Test]
+        public void SteerFrameKeepsTheIsoYawThroughTheBlend() {
+            rig.Apply(GameCameraModes.iso, on, arcade);
+            Assert.AreEqual(45f, SteerYaw(), 0.01f);
+
+            for (int i = 0; i < 6; i++) {
+                rig.Tick(0.05f, 0);
+                Assert.AreEqual(45f, SteerYaw(), 0.01f, "tick " + i);
+            }
+
+            Assert.IsFalse(rig.steerFrame.IsChildOf(camGo.transform));
+        }
+
+        float SteerYaw() {
+            Vector3 f = rig.steerFrame.forward;
+            f.y = 0f;
+            return Vector3.SignedAngle(Vector3.forward, f, Vector3.up);
+        }
+
+        [Test]
         public void RespawnCountChangeSnaps() {
             arcade.state.position = new Vec3(0f, 0f, 0f);
             rig.Apply(GameCameraModes.iso, on, arcade);
