@@ -316,9 +316,8 @@ public class GameCameraIsoRig : MonoBehaviour {
         }
 
         float pitchTarget = OcclusionTarget(s.position, basis);
-        CameraFraming.Step(ref mem, in solve, pitchTarget, grounded ? 1 : 0, snap, dt, in frame);
-
-        if (snap != 0) {
+        // Step reports every snap: the snap flag, the first frame, and a focus jump past snapDistance.
+        if (CameraFraming.Step(ref mem, in solve, pitchTarget, grounded ? 1 : 0, snap, dt, in frame) != 0) {
             snaps++;
         }
 

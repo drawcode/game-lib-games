@@ -154,6 +154,17 @@ namespace Game.Race.Tests {
             rig.Tick(1f / 60f, 1);
             Assert.AreEqual(before + 1, rig.snaps);
         }
+
+        [Test]
+        public void FocusJumpCountsASnap() {
+            arcade.state.position = new Vec3(0f, 0f, 0f);
+            rig.Apply(GameCameraModes.iso, on, arcade);
+            rig.Tick(1f / 60f, 0);
+            int before = rig.snaps;
+            arcade.state.position = new Vec3(40f, 0f, 0f);  // past snapDistance with the same respawn count
+            rig.Tick(1f / 60f, 0);
+            Assert.AreEqual(before + 1, rig.snaps);
+        }
     }
 }
 #endif
