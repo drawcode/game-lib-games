@@ -228,6 +228,7 @@ public static class GameRace {
         playerIndex = Mathf.Clamp(player, 0, n - 1);
         racerCount = n;
         int ai = 0;
+        string[] vehicleCodes = new string[n];
 
         for (int i = 0; i < n; i++) {
 
@@ -262,6 +263,7 @@ public static class GameRace {
                 racerName = racerName + " " + repeat;
             }
 
+            vehicleCodes[i] = code;
             racerCodes[i] = racerCode;
             racerNames[i] = racerName;
             profileCodes[i] = row != null && !isPlayer ? row.code : "";
@@ -329,6 +331,9 @@ public static class GameRace {
                 Debug.LogWarning("GameRace: slot " + i + " is past the start line (progress " + racers[i].progress + ")");
             }
         }
+
+        // D22: seeded distinct skins, the default included (pooled sprites keep their last swap). Off without palette data.
+        GameRacerLook.BeginRace(roots, mounts, vehicleCodes, playerIndex, seed);
 
         session = new RaceSession(rules.countdown, rules.finishWait);
         lastResults = null;
@@ -465,6 +470,7 @@ public static class GameRace {
 
     private static void Clear() {
 
+        GameRacerLook.Reset();
         arcades = null;
         mounts = null;
         drivers = null;
