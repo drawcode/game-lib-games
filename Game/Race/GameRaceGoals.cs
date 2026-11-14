@@ -17,6 +17,7 @@ using Agnostic.Vehicle;
 //   race_clean_laps  laps finished with no bail and no respawn in them
 //   air_time         the longest single jump, seconds
 //   tricks           tricks landed in the round
+//   stunts           clean stunts landed in the round (D24; sketchy ones count)
 //   lap_time_max     the best lap, seconds; wins at <= val (no lap finished = never)
 public static class GameRaceGoals {
 
@@ -25,6 +26,7 @@ public static class GameRaceGoals {
     public const string cleanLaps = "race_clean_laps";
     public const string airTime = "air_time";
     public const string tricks = "tricks";
+    public const string stunts = "stunts";
     public const string lapTimeMax = "lap_time_max";
 
     public const string compareAtMost = "less-than-or-equal-to";
@@ -32,6 +34,7 @@ public static class GameRaceGoals {
 
     public static float bestAir { get; private set; }         // longest jump so far, seconds
     public static int tricksLanded { get; private set; }
+    public static int stuntsLanded { get; private set; }
     public static int cleanLapCount { get; private set; }
     public static int crashes { get; private set; }           // bails and respawns of the player
     public static float bestLap { get; private set; }         // 0 = no lap finished
@@ -50,6 +53,7 @@ public static class GameRaceGoals {
     public static void Reset() {
         bestAir = 0f;
         tricksLanded = 0;
+        stuntsLanded = 0;
         cleanLapCount = 0;
         crashes = 0;
         bestLap = 0f;
@@ -80,6 +84,10 @@ public static class GameRaceGoals {
         }
 
         Tally(r.lap, r.lastLapTime, arcade.stepEvents.flags, arcade.state.airTime, GameRace.playerRespawns);
+
+        if (arcade.stunt != null && arcade.stunt.stepClean) {
+            TallyStunt();
+        }
 
         if ((r.flags & (int)RaceFlags.finished) != 0) {
             closed = true;
@@ -130,8 +138,13 @@ public static class GameRaceGoals {
         }
     }
 
+    // One clean stunt landed (sketchy included). Public so tests can drive it.
+    public static void TallyStunt() {
+        stuntsLanded++;
+    }
+
     public static bool IsKind(string kind) {
-        return kind == placeMax || kind == win || kind == cleanLaps || kind == airTime || kind == tricks
+        return kind == placeMax || kind == win || kind == cleanLaps || kind == airTime || kind == tricks || kind == stunts
             || kind == lapTimeMax;
     }
 
@@ -159,6 +172,9 @@ public static class GameRaceGoals {
         }
         else if (kind == tricks) {
             value = tricksLanded;
+        }
+        else if (kind == stunts) {
+            value = stuntsLanded;
         }
         else if (kind == lapTimeMax) {
             value = bestLap > 0f ? bestLap : double.MaxValue;
