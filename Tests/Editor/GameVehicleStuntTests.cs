@@ -1,4 +1,5 @@
 #if USE_AGNOSTIC_VEHICLE
+using Agnostic.Core;
 using Agnostic.Vehicle;
 
 using Engine.AgnosticHost;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace Game.Race.Tests {
 
     // The D24 stunt host seam: no data means no stunt, only the player's rider branch steps it, ResetAt clears it, the
-    // rider's stats are read once on mount, the data block parses, and the stunts goal.
+    // rider's stats are read once on mount, the take-off boost, the data block parses, and the stunts goal.
     public class GameVehicleStuntTests {
 
         class Driver : IGameVehicleArcadeDriver {
@@ -130,6 +131,157 @@ namespace Game.Race.Tests {
             Assert.AreEqual((int)StuntPhase.start, arcade.stunt.phase);
             Assert.AreEqual(0.8f, arcade.stepStunt.timeToLand, 1e-6f);
             Assert.AreEqual(0, arcade.stunt.landCount);
+        }
+
+        // The take-off boost (D24): popMax x power m/s on the airborne event of a stunt-length jump with a flat landing.
+
+        StuntTuning BoostTuning() {
+            StuntTuning t = StuntTuning.Defaults();
+            t.enabled = 1;
+            return t;
+        }
+
+        // A bike that has just left the ground at (0, y, 0), climbing at `vy`.
+        VehicleState Airborne(float y, float vy) {
+            VehicleState v = new VehicleState();
+            v.position = new Vec3(0f, y, 0f);
+            v.velocity = new Vec3(0f, vy, 0f);
+            v.speed = Mathf.Abs(vy);
+            v.flags = 0;
+            return v;
+        }
+
+        VehicleTestWorld FlatWorld() {
+            VehicleTestWorld w = new VehicleTestWorld();
+            VehicleTestWorld.Ground g = new VehicleTestWorld.Ground();
+            g.y = 0f;
+            w.grounds.Add(g);
+            return w;
+        }
+
+        StuntStats Power(float p) {
+            StuntStats s = new StuntStats();
+            s.power = p;
+            return s;
+        }
+
+        [Test]
+        public void TakeoffOnAFlatLandingBoostsByPopMaxTimesPower() {
+            StuntTuning t = BoostTuning();
+            VehicleTuning vt = VehicleTuning.Defaults();
+            DriveAssistTuning a = DriveAssistTuning.Defaults();
+            Assert.AreEqual(1.2f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
+            Assert.AreEqual(0.24f, GameVehicleStunt.BoostFor(in t, Power(0.2f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(0f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a));
+        }
+
+        [Test]
+        public void TakeoffOnASlopeLandingIsCancelled() {
+            StuntTuning t = BoostTuning();
+            VehicleTuning vt = VehicleTuning.Defaults();
+            DriveAssistTuning a = DriveAssistTuning.Defaults();
+
+            // A wide ramp (slope 0.5, normal.y about 0.89) under the bike: the landing is not flat.
+            VehicleTestWorld w = FlatWorld();
+            VehicleTestWorld.Ramp r = new VehicleTestWorld.Ramp();
+            r.start = Vec3.zero;
+            r.yaw = 0f;
+            r.length = 20f;
+            r.width = 20f;
+            r.height = 10f;
+            w.ramps.Add(r);
+            VehicleState v = Airborne(5.5f, 5.5f);
+            v.position = VehicleMath.Forward(0f) * 10f + new Vec3(0f, 5.5f, 0f);
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), v, in vt, w, in a));
+        }
+
+        [Test]
+        public void TakeoffWithShortAirGetsNoBoost() {
+            StuntTuning t = BoostTuning();
+            VehicleTuning vt = VehicleTuning.Defaults();
+            DriveAssistTuning a = DriveAssistTuning.Defaults();
+
+            // A whoop: about 0.2 s of air, under minAir + the gate air time (0.55 s).
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 1f), in vt, FlatWorld(), in a));
+        }
+
+        [Test]
+        public void TakeoffBoostIsOffWhenTheStuntIsDisabled() {
+            StuntTuning t = BoostTuning();
+            t.enabled = 0;
+            VehicleTuning vt = VehicleTuning.Defaults();
+            DriveAssistTuning a = DriveAssistTuning.Defaults();
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a));
+        }
+
+        [Test]
+        public void ThePlayersTakeoffEventBoostsVelocityOnceAndOnlyOnce() {
+            arcade.Init(Config(true));
+            arcade.OnRiderMounted(riderGo);
+            arcade.riderStats = Power(1f);
+
+            // No colliders under the test arcade: the forecast finds no landing, which is a long flat fall (boost given).
+            arcade.state.flags &= ~(int)VehicleFlags.grounded;
+            arcade.state.velocity = new Vec3(0f, 5.5f, 0f);
+            VehicleEvents ev = default(VehicleEvents);
+            ev.flags = (int)VehicleEventFlags.airborne;
+            arcade.stunt.AfterStep(arcade, ref ev);
+            Assert.AreEqual(6.7f, arcade.state.velocity.y, 1e-5f);
+            Assert.AreEqual(1, arcade.stunt.boostCount);
+            Assert.AreEqual(1.2f, arcade.stunt.lastBoost, 1e-5f);
+            Assert.AreEqual(1.2f, arcade.stepStunt.takeoffBoost, 1e-5f);
+
+            // The steps after the take-off carry no airborne event: nothing more is added.
+            ev = default(VehicleEvents);
+
+            for (int i = 0; i < 5; i++) {
+                arcade.stunt.AfterStep(arcade, ref ev);
+            }
+
+            Assert.AreEqual(6.7f, arcade.state.velocity.y, 1e-5f);
+            Assert.AreEqual(1, arcade.stunt.boostCount);
+        }
+
+        [Test]
+        public void ABailedTakeoffGetsNoBoost() {
+            arcade.Init(Config(true));
+            arcade.OnRiderMounted(riderGo);
+            arcade.riderStats = Power(1f);
+            arcade.state.flags &= ~(int)VehicleFlags.grounded;
+            arcade.state.velocity = new Vec3(0f, 5.5f, 0f);
+            VehicleEvents ev = default(VehicleEvents);
+            ev.flags = (int)(VehicleEventFlags.airborne | VehicleEventFlags.bailed);
+            arcade.stunt.AfterStep(arcade, ref ev);
+            Assert.AreEqual(5.5f, arcade.state.velocity.y, 1e-5f);
+            Assert.AreEqual(0, arcade.stunt.boostCount);
+        }
+
+        [Test]
+        public void AiAndGhostTakeoffsGetNoBoost() {
+
+            // The AI branch (a driver override) and a ghost (hold) never reach the stunt host's AfterStep.
+            arcade.Init(Config(true));
+            arcade.riderStats = Power(1f);
+            arcade.driverOverride = new Driver();
+
+            for (int i = 0; i < 5; i++) {
+                arcade.StepOnce(0f);
+            }
+
+            Assert.AreEqual(0, arcade.stunt.boostCount);
+            Assert.AreEqual(0f, arcade.stepStunt.takeoffBoost);
+
+            arcade.driverOverride = null;
+            arcade.hold = true;
+            arcade.OnRiderMounted(riderGo);
+            arcade.riderStats = Power(1f);
+
+            for (int i = 0; i < 5; i++) {
+                arcade.StepOnce(0f);
+            }
+
+            Assert.AreEqual(0, arcade.stunt.boostCount);
+            Assert.AreEqual(0f, arcade.stepStunt.takeoffBoost);
         }
 
         [Test]
