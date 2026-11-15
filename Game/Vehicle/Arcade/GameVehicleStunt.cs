@@ -23,7 +23,8 @@ public struct GameVehicleStuntTrace {
 // - Forecast: LandingForecast.Predict every 2nd airborne step. When the drive assist already ran this step its
 //   forecast is reused (GameVehicleArcade.assistForecast); otherwise it is run here, so the assist off costs one
 //   more forecast on the player only.
-// - Pop: only when the forecast landing normal is flat (StuntTuning.popFlatDot).
+// - Pop: only when the forecast landing normal is flat (StuntTuning.popFlatDot), judged before the pop by the core and
+//   again on the popped arc here (one extra forecast on the start step).
 // - Nothing allocates per step.
 public class GameVehicleStunt {
 
@@ -77,7 +78,21 @@ public class GameVehicleStunt {
         Stunt.Step(in tuning, in a.riderStats, in a.state, input.buttons, timeToLand, forecast.normal.y, a.assist != null, ref state,
             GameVehicleArcade.fixedDt, out ev);
 
-        if (ev.started != 0) {
+        if (ev.started != 0 && ev.popDv > 0f) {
+
+            // The core judged the landing from the arc before the pop. The pop moves the landing, so check the popped
+            // arc too: a landing it moves onto a slope (the next ramp face) gets no pop.
+            VehicleState popped = a.state;
+            popped.velocity.y += ev.popDv;
+            LandingForecast after;
+            LandingForecast.Predict(in popped, in a.config.tuning, a.vehicleWorld, in a.config.assist, out after);
+
+            if (after.hit != 0 && after.normal.y < tuning.popFlatDot) {
+                ev.popDv = 0f;
+            }
+        }
+
+        if (ev.started != 0 && ev.popDv > 0f) {
             a.state.velocity.y += ev.popDv;
             a.state.speed = a.state.velocity.length;
         }
