@@ -208,6 +208,52 @@ namespace Game.Race.Tests {
         }
 
         [Test]
+        public void StuntStatsDefaultTo02WhenTheProfileHasNoKeys() {
+            GameProfile saved = GameProfiles.Current;
+            GameProfiles.Current = new GameProfile();
+
+            try {
+                arcade.Init(Config(true));
+                arcade.OnRiderMounted(riderGo);
+                Assert.AreEqual(0.2f, arcade.riderStats.speed, 1e-6f);
+                Assert.AreEqual(0.2f, arcade.riderStats.power, 1e-6f);
+                Assert.AreEqual(0.2f, arcade.riderStats.health, 1e-6f);
+            }
+            finally {
+                GameProfiles.Current = saved;
+            }
+        }
+
+        [Test]
+        public void StoredStuntStatsAreReadOnMountAndClamped() {
+            GameProfile saved = GameProfiles.Current;
+            GameProfile profile = new GameProfile();
+            StuntStats s = new StuntStats();
+            s.speed = 0.9f;
+            s.power = 1.5f;
+            s.health = 0f;
+            GameStuntStatKeys.Write(profile, s);
+            GameProfiles.Current = profile;
+
+            try {
+                arcade.Init(Config(true));
+                arcade.OnRiderMounted(riderGo);
+                Assert.AreEqual(0.9f, arcade.riderStats.speed, 1e-6f);
+                Assert.AreEqual(1f, arcade.riderStats.power, 1e-6f);
+                Assert.AreEqual(0f, arcade.riderStats.health, 1e-6f);
+            }
+            finally {
+                GameProfiles.Current = saved;
+            }
+        }
+
+        [Test]
+        public void ParsesPopFlatDotAndDefaultsIt() {
+            Assert.AreEqual(0.97f, VehicleTuningJson.ParseStunt(JsonMapper.ToObject("{\"enabled\":1}")).popFlatDot, 1e-6f);
+            Assert.AreEqual(0.9f, VehicleTuningJson.ParseStunt(JsonMapper.ToObject("{\"popFlatDot\":0.9}")).popFlatDot, 1e-6f);
+        }
+
+        [Test]
         public void StuntsGoalCountsCleanStunts() {
             double v;
             Assert.IsTrue(GameRaceGoals.IsKind(GameRaceGoals.stunts));

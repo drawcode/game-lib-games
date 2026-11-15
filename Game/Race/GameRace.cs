@@ -93,6 +93,7 @@ public static class GameRace {
     private static Vec3[] prev;
     private static float[] lateral;
     private static int[] respawnSteps;
+    private static int[] stuntBailSeg;      // per racer: the segment a stunt bail landed on, -1 = not a stunt bail
     private static int[] missSteps;
     private static int[] offSteps;
     private static float[] lapTimes;
@@ -377,6 +378,12 @@ public static class GameRace {
         prev = new Vec3[n];
         lateral = new float[n];
         respawnSteps = new int[n];
+        stuntBailSeg = new int[n];
+
+        for (int k = 0; k < n; k++) {
+            stuntBailSeg[k] = -1;
+        }
+
         missSteps = new int[n];
         offSteps = new int[n];
         lapTimesPerRacer = Mathf.Max(1, rules.laps);
@@ -480,6 +487,7 @@ public static class GameRace {
         prev = null;
         lateral = null;
         respawnSteps = null;
+        stuntBailSeg = null;
         missSteps = null;
         offSteps = null;
         lapTimes = null;
@@ -727,7 +735,10 @@ public static class GameRace {
 
         GameVehicleArcade a = arcades[i];
 
+        bool stuntBailNow = false;
+
         if ((a.stepEvents.flags & (int)VehicleEventFlags.bailed) != 0 && respawnSteps[i] == 0) {
+            stuntBailNow = a.stepStunt.landResult == GameVehicleStunt.landBail;
             respawnSteps[i] = Mathf.Max(1, Mathf.RoundToInt(rules.respawnDelay * RaceSession.stepsPerSecond));
             a.state.bailTimer = rules.respawnDelay + 1f;
         }
@@ -735,6 +746,10 @@ public static class GameRace {
         Vec3 pos = a.state.position;
         int rev = RaceProgress.Step(track, ref racers[i], in coreRules, prev[i], pos, session.raceTime, RaceSession.fixedDt);
         prev[i] = pos;
+
+        if (stuntBailNow) {
+            stuntBailSeg[i] = racers[i].seg;
+        }
 
         if ((rev & (int)RaceEvents.lap) != 0) {
             int lapIndex = racers[i].lap - 1;
@@ -800,7 +815,12 @@ public static class GameRace {
             RaceProgress.Init(track, out racers[i], a.state.position);
         }
         else {
-            RaceProgress.Respawn(track, ref racers[i]);
+
+            // A stunt bail goes past the jump (RespawnPast), anything else back to the last checkpoint.
+            if (stuntBailSeg[i] < 0 || !RespawnPast(track, ref racers[i], stuntBailSeg[i])) {
+                RaceProgress.Respawn(track, ref racers[i]);
+            }
+
             float s = racers[i].s;
             Vector3 p = UnityFrame.ToUnity(track.PointAt(s));
             Vector3 t = UnityFrame.ToUnity(track.TangentAt(s));
@@ -826,12 +846,43 @@ public static class GameRace {
         a.contactGrace = rules.contactGrace;
         prev[i] = a.state.position;
         respawnSteps[i] = 0;
+        stuntBailSeg[i] = -1;
         missSteps[i] = 0;
         offSteps[i] = 0;
 
         if (drivers[i] != null) {
             drivers[i].ResetMemory();
         }
+    }
+
+    // Puts a racer whose stunt bail landed on segment `landingSeg` on the next track node past it, so a jump that bails
+    // is not replayed from before. The race flow is kept whole: the next checkpoint is counted when that node is it, and
+    // a node past the next checkpoint, the line or a missed checkpoint give false (the caller then respawns as usual).
+    // Pure: it only edits `r`.
+    public static bool RespawnPast(RaceTrack track, ref RaceRacer r, int landingSeg) {
+
+        if ((r.flags & (int)RaceFlags.started) == 0 || (r.flags & (int)RaceFlags.missed) != 0 || landingSeg < 0 || landingSeg >= track.nodeCount) {
+            return false;
+        }
+
+        int node = landingSeg + 1;
+
+        if (node >= track.nodeCount || (r.nextCheckpoint != 0 && node > r.nextCheckpoint)) {
+            return false;
+        }
+
+        if (node == r.nextCheckpoint) {
+            r.lastCheckpoint = node;
+            r.nextCheckpoint = track.NextCheckpoint(node);
+        }
+
+        r.flags &= ~((int)RaceFlags.missed | (int)RaceFlags.wrongWay);
+        r.wrongWayDist = 0f;
+        r.seg = node;
+        r.s = track.NodeS(node);
+        r.progress = r.lap * track.length + r.s;
+        r.gateProgress = r.progress;
+        return true;
     }
 
     // The nearest other unfinished racer, from the cached arrays of the last step.

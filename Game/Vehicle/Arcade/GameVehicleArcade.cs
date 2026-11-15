@@ -58,15 +58,15 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
     // Stunt (D24): null unless the data row has an enabled stunt block, and only the player's rider branch steps it
     // (never an AI, a ghost or a vehicle with no data). stepStunt is the last step's trace; riderStats is the mounted
-    // rider's RPG, read once in OnRiderMounted.
+    // rider's stunt stats (GameStuntStatKeys), read once in OnRiderMounted.
     public GameVehicleStunt stunt;
     public GameVehicleStuntTrace stepStunt;
     public StuntStats riderStats;
 
-    // Where OnRiderMounted reads the stats from; null = the current profile character (a test or a probe replaces it).
+    // Where OnRiderMounted reads the stats from; null = the current profile (a test or a probe replaces it).
     public static System.Func<StuntStats> riderStatsSource;
 
-    public const float defaultRiderStat = 0.2f;
+    public const float defaultRiderStat = GameStuntStatKeys.defaultStat;
 
     // The Vehicle folder takes no dependency on Game/Race: GameDriveAssist registers its factory here.
     public static System.Func<GameVehicleArcade, IGameVehicleArcadeAssist> assistFactory;
@@ -320,8 +320,8 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         LeaveLevelItem();
     }
 
-    // The mounted rider's speed, attack (Bikes shows it as POWER) and health, 0..1, from the current profile character's
-    // RPG item. Once per mount, never per step; 0.2 each when there is no profile or no stunt on this vehicle.
+    // The mounted rider's own stunt speed, power and health, 0..1, from the profile (GameStuntStatKeys; not the on-foot
+    // RPG fields). Once per mount, never per step; 0.2 each when a key is missing or this vehicle has no stunt.
     private void ReadRiderStats() {
 
         riderStats = new StuntStats();
@@ -338,14 +338,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             return;
         }
 
-        GameProfileCharacter characters = GameProfileCharacters.Current;
-        GameProfileRPGItem rpg = characters != null ? characters.GetCurrentCharacterRPG() : null;
-
-        if (rpg != null) {
-            riderStats.speed = (float)rpg.GetSpeed();
-            riderStats.power = (float)rpg.GetAttack();
-            riderStats.health = (float)rpg.GetHealth();
-        }
+        riderStats = GameStuntStatKeys.Read(GameProfiles.Current);
     }
 
     // A layout vehicle sits under its GameDraggableLevelItem, which hides everything under it once the player is

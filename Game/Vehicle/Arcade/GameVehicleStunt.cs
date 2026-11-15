@@ -23,7 +23,7 @@ public struct GameVehicleStuntTrace {
 // - Forecast: LandingForecast.Predict every 2nd airborne step. When the drive assist already ran this step its
 //   forecast is reused (GameVehicleArcade.assistForecast); otherwise it is run here, so the assist off costs one
 //   more forecast on the player only.
-// - Buttons: StickMapper does not pass VehicleButtons.stunt, so BeforeStep puts it back from the sticks.
+// - Pop: only when the forecast landing normal is flat (StuntTuning.popFlatDot).
 // - Nothing allocates per step.
 public class GameVehicleStunt {
 
@@ -74,7 +74,7 @@ public class GameVehicleStunt {
         Ready = Stunt.Ready(in tuning, in a.state, in state, timeToLand);
 
         StuntEvents ev;
-        Stunt.Step(in tuning, in a.riderStats, in a.state, input.buttons, timeToLand, a.assist != null, ref state,
+        Stunt.Step(in tuning, in a.riderStats, in a.state, input.buttons, timeToLand, forecast.normal.y, a.assist != null, ref state,
             GameVehicleArcade.fixedDt, out ev);
 
         if (ev.started != 0) {
