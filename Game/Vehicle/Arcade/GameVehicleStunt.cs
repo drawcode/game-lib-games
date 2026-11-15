@@ -29,8 +29,9 @@ public struct GameVehicleStuntTrace {
 //   to the post-step velocity.y. The drive assist's stamped forecast (assistForecast) is of the pre-step, grounded
 //   state at that moment (no landing), so it is never reusable here: the host runs LandingForecast.Predict on the
 //   airborne state (one forecast at take-off, one more for the boosted arc). Stunt.TakeoffBoost gives the dv for a
-//   stunt-length jump with a flat landing; the boosted arc is forecast again and the boost is cancelled when it lands on
-//   a slope (normal.y < popFlatDot). At most once per take-off; the player's rider only, as the whole host is.
+//   stunt-length jump with a flat landing; a forecast with no hit inside the horizon gives no boost (nothing known to
+//   land on); the boosted arc is forecast again and the boost is cancelled when it lands on a slope (normal.y <
+//   popFlatDot). At most once per take-off; the player's rider only, as the whole host is.
 // - Nothing allocates per step.
 public class GameVehicleStunt {
 
@@ -172,12 +173,18 @@ public class GameVehicleStunt {
     }
 
     // The boost for a vehicle that has just left the ground (`airborne` is its post-step state): the core's TakeoffBoost on
-    // the forecast of the unboosted arc, cancelled (0) when the boosted arc lands on a slope. Pure, no allocation.
+    // the forecast of the unboosted arc (0 when that forecast has no hit), cancelled (0) when the boosted arc lands on a
+    // slope. Pure, no allocation.
     public static float BoostFor(in StuntTuning tuning, in StuntStats stats, in VehicleState airborne, in VehicleTuning vt,
                                  IVehicleWorld world, in DriveAssistTuning assist) {
 
         LandingForecast f;
         LandingForecast.Predict(in airborne, in vt, world, in assist, out f);
+
+        if (f.hit == 0) {
+            return 0f;
+        }
+
         float dv = Stunt.TakeoffBoost(in tuning, in stats, f.timeToLand, f.normal.y);
 
         if (dv <= 0f) {

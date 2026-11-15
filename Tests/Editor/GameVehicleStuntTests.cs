@@ -21,6 +21,7 @@ namespace Game.Race.Tests {
 
         GameObject go;
         GameObject riderGo;
+        GameObject floor;
         GameVehicleArcade arcade;
         int sourceCalls;
 
@@ -38,6 +39,7 @@ namespace Game.Race.Tests {
         public void TearDown() {
             GameVehicleArcade.riderStatsSource = null;
             Object.DestroyImmediate(riderGo);
+            Object.DestroyImmediate(floor);
             Object.DestroyImmediate(go);
         }
 
@@ -170,9 +172,9 @@ namespace Game.Race.Tests {
             StuntTuning t = BoostTuning();
             VehicleTuning vt = VehicleTuning.Defaults();
             DriveAssistTuning a = DriveAssistTuning.Defaults();
-            Assert.AreEqual(1.2f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
-            Assert.AreEqual(0.24f, GameVehicleStunt.BoostFor(in t, Power(0.2f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
-            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(0f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a));
+            Assert.AreEqual(1.2f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.6f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
+            Assert.AreEqual(0.24f, GameVehicleStunt.BoostFor(in t, Power(0.2f), Airborne(0.6f, 5.5f), in vt, FlatWorld(), in a), 1e-5f);
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(0f), Airborne(0.6f, 5.5f), in vt, FlatWorld(), in a));
         }
 
         [Test]
@@ -201,8 +203,31 @@ namespace Game.Race.Tests {
             VehicleTuning vt = VehicleTuning.Defaults();
             DriveAssistTuning a = DriveAssistTuning.Defaults();
 
-            // A whoop: about 0.2 s of air, under minAir + the gate air time (0.55 s).
-            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 1f), in vt, FlatWorld(), in a));
+            // A whoop: starts 0.3 m above the plane the arc is lowered to (travel is 0.3) climbing at 1 m/s, so it really lands, in
+            // about 0.33 s of air (hit 1, normal up), under minAir + the gate air time (0.6 s).
+            VehicleState v = Airborne(vt.travel + 0.3f, 1f);
+            LandingForecast f;
+            LandingForecast.Predict(in v, in vt, FlatWorld(), in a, out f);
+            Assert.AreEqual(1, f.hit);
+            Assert.Less(f.timeToLand, 0.5f);
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), v, in vt, FlatWorld(), in a));
+        }
+
+        [Test]
+        public void TakeoffWithNoForecastHitGetsNoBoost() {
+            StuntTuning t = BoostTuning();
+            VehicleTuning vt = VehicleTuning.Defaults();
+            DriveAssistTuning a = DriveAssistTuning.Defaults();
+
+            // No ground under the arc at all: the forecast has no hit, timeToLand is the horizon: nothing known to land on.
+            VehicleState v = Airborne(0.6f, 5.5f);
+            LandingForecast f;
+            LandingForecast.Predict(in v, in vt, new VehicleTestWorld(), in a, out f);
+            Assert.AreEqual(0, f.hit);
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), v, in vt, new VehicleTestWorld(), in a));
+
+            // The same arc over a flat ground does boost.
+            Assert.AreEqual(1.2f, GameVehicleStunt.BoostFor(in t, Power(1f), v, in vt, FlatWorld(), in a), 1e-5f);
         }
 
         [Test]
@@ -211,7 +236,7 @@ namespace Game.Race.Tests {
             t.enabled = 0;
             VehicleTuning vt = VehicleTuning.Defaults();
             DriveAssistTuning a = DriveAssistTuning.Defaults();
-            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.1f, 5.5f), in vt, FlatWorld(), in a));
+            Assert.AreEqual(0f, GameVehicleStunt.BoostFor(in t, Power(1f), Airborne(0.6f, 5.5f), in vt, FlatWorld(), in a));
         }
 
         [Test]
@@ -220,7 +245,12 @@ namespace Game.Race.Tests {
             arcade.OnRiderMounted(riderGo);
             arcade.riderStats = Power(1f);
 
-            // No colliders under the test arcade: the forecast finds no landing, which is a long flat fall (boost given).
+            // A flat box 3 m under the arc: the forecast lands on it after about 1.3 s of air (a forecast with no hit gives no boost).
+            floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.transform.position = new Vector3(0f, -4f, 0f);
+            floor.transform.localScale = new Vector3(40f, 2f, 40f);
+            Physics.SyncTransforms();
+            arcade.state.position = Vec3.zero;
             arcade.state.flags &= ~(int)VehicleFlags.grounded;
             arcade.state.velocity = new Vec3(0f, 5.5f, 0f);
             VehicleEvents ev = default(VehicleEvents);
