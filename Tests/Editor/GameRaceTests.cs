@@ -74,6 +74,61 @@ namespace Game.Race.Tests {
             Assert.AreEqual(-(spec.back + 3 * spec.rowGap), slots[6].z, 1e-4f);
         }
 
+        // A square track of 4 nodes, nodes 1 and 3 checkpoints; the racer is on the second lap's way, started.
+        static RaceTrack SquareTrack() {
+            RaceNode[] nodes = {
+                new RaceNode(UnityFrame.ToCore(new Vector3(0f, 0f, -30f)), 12f, 0),
+                new RaceNode(UnityFrame.ToCore(new Vector3(40f, 0f, 0f)), 12f, 1),
+                new RaceNode(UnityFrame.ToCore(new Vector3(0f, 0f, 30f)), 12f, 0),
+                new RaceNode(UnityFrame.ToCore(new Vector3(-40f, 0f, 0f)), 12f, 1)
+            };
+            return new RaceTrack(nodes);
+        }
+
+        [Test]
+        public void RespawnPast_PutsTheRacerOnTheNextNodeAndCountsAReachedCheckpoint() {
+
+            RaceTrack track = SquareTrack();
+            RaceRacer r = new RaceRacer();
+            r.flags = (int)RaceFlags.started;
+            r.lap = 1;
+            r.lastCheckpoint = 0;
+            r.nextCheckpoint = 1;
+
+            Assert.IsTrue(GameRace.RespawnPast(track, ref r, 0));
+            Assert.AreEqual(1, r.seg);
+            Assert.AreEqual(track.NodeS(1), r.s, 1e-4f);
+            Assert.AreEqual(1, r.lastCheckpoint);
+            Assert.AreEqual(3, r.nextCheckpoint);
+            Assert.AreEqual(track.length + track.NodeS(1), r.progress, 1e-3f);
+
+            // Node 2 is not a checkpoint: nothing is counted, the next checkpoint stays 3.
+            Assert.IsTrue(GameRace.RespawnPast(track, ref r, 1));
+            Assert.AreEqual(2, r.seg);
+            Assert.AreEqual(1, r.lastCheckpoint);
+            Assert.AreEqual(3, r.nextCheckpoint);
+        }
+
+        [Test]
+        public void RespawnPast_RefusesWhenItWouldSkipACheckpointCrossTheLineOrBeforeStart() {
+
+            RaceTrack track = SquareTrack();
+            RaceRacer r = new RaceRacer();
+            r.flags = (int)RaceFlags.started;
+            r.lastCheckpoint = 1;
+            r.nextCheckpoint = 3;
+
+            // Segment 3 ends at the line (node 0), and segment 3's next node would pass the checkpoint at 3 from 1.
+            Assert.IsFalse(GameRace.RespawnPast(track, ref r, 3));
+            r.nextCheckpoint = 1;
+            Assert.IsFalse(GameRace.RespawnPast(track, ref r, 2));
+            Assert.IsFalse(GameRace.RespawnPast(track, ref r, -1));
+            r.flags = (int)(RaceFlags.started | RaceFlags.missed);
+            Assert.IsFalse(GameRace.RespawnPast(track, ref r, 0));
+            r.flags = 0;
+            Assert.IsFalse(GameRace.RespawnPast(track, ref r, 0));
+        }
+
         [Test]
         public void Slots_FallbackBehindNodeZero() {
 

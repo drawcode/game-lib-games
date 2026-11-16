@@ -17,6 +17,7 @@ public class GameVehicleArcadeConfig {
     public string vehicleClass;
     public VehicleTuning tuning;                 // data.tuning, with data.surfaces folded in
     public DriveAssistTuning assist;             // data.assist (D20); a missing block is enabled 0
+    public StuntTuning stunt;                    // data.stunt (D24); a missing block is enabled 0
     public ControlTuning control;                // data.control; mode is the class default (D8)
     public List<string> surfaces = new List<string>();
     public int layerMask = Physics.DefaultRaycastLayers;   // data.host.layers
@@ -119,6 +120,7 @@ public static class GameVehicleArcadeData {
         c.tuning.surfaces = VehicleTuningJson.ParseSurfaces(VehicleTuningJson.Has(data, "surfaces") ? data["surfaces"] : null, c.surfaces);
         c.control = VehicleTuningJson.ParseControl(VehicleTuningJson.Has(data, "control") ? data["control"] : null, c.tuning.wheelie);
         c.assist = VehicleTuningJson.ParseAssist(VehicleTuningJson.Has(data, "assist") ? data["assist"] : null);
+        c.stunt = VehicleTuningJson.ParseStunt(VehicleTuningJson.Has(data, "stunt") ? data["stunt"] : null);
 
         if (VehicleTuningJson.Has(data, "rider")) {
             c.ridePresets = VehicleTuningJson.Str(data["rider"], "ride_presets");

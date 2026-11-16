@@ -18,6 +18,11 @@ using UnityEngine;
 // still airborne, the rider holds <clip>_loop if the model has one, else goes back to jump-up. Landing cuts any
 // air clip for jump-down. Trick clips must move only the rider: a clip that turns the whole vehicle (salto) would
 // fight the core's own rotation, so it stays out of these slots.
+//
+// Stunts (D24) are the button's rider poses, from the stunt and stunt-spin slots (rows animation-ride-stunt-<presets>
+// and animation-ride-stunt-spin-<presets>), driven by the arcade's GameVehicleStunt phase rather than by Choose: start
+// plays a pose at the stunt's rate, hold plays its _loop, recover cross-fades back to jump-up over the stunt's recover
+// time. The pose is round robin over the clips of both slots (deterministic). A bail is the ordinary fail path.
 public class GameVehicleArcadeRide {
 
     public const float fade = 0.2f;
@@ -29,20 +34,20 @@ public class GameVehicleArcadeRide {
 
     public const int idle = 0, drive = 1, driveFast = 2, turnLeft = 3, turnRight = 4, turnFastLeft = 5, turnFastRight = 6,
         nitro = 7, jumpUp = 8, jumpDown = 9, trick = 10, fail = 11, hitLeft = 12, hitRight = 13, obstacle = 14,
-        spin = 15, slotCount = 16;
+        spin = 15, stunt = 16, stuntSpin = 17, slotCount = 18;
 
     public static readonly string[] slotNames = {
         "idle", "drive", "drive-fast", "turn-left", "turn-right", "turn-fast-left", "turn-fast-right",
-        "nitro", "jump-up", "jump-down", "trick", "fail", "hit-left", "hit-right", "obstacle", "spin"
+        "nitro", "jump-up", "jump-down", "trick", "fail", "hit-left", "hit-right", "obstacle", "spin", "stunt", "stunt-spin"
     };
 
     // Where a slot with no clip goes; -1 = keep what is playing.
     private static readonly int[] fallback = {
-        -1, idle, drive, drive, drive, turnLeft, turnRight, driveFast, -1, -1, jumpUp, -1, -1, -1, -1, trick
+        -1, idle, drive, drive, drive, turnLeft, turnRight, driveFast, -1, -1, jumpUp, -1, -1, -1, -1, trick, jumpUp, stunt
     };
 
     // 0 loops, 1 one-shots, 2 the crash.
-    private static readonly int[] priority = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1 };
+    private static readonly int[] priority = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1, 0, 0 };
 
     private readonly Animation anim;
     private readonly List<string>[] clips = new List<string>[slotCount];
@@ -52,6 +57,8 @@ public class GameVehicleArcadeRide {
     public string clip = "";
     public bool airTricked;     // a trick pose has played since takeoff
     private float holdUntil;
+    private int poseCount;      // stunts posed so far, the round robin index
+    private string poseClip = "";
 
     public GameVehicleArcadeRide(Animation anim, string presets) {
 
@@ -92,6 +99,10 @@ public class GameVehicleArcadeRide {
             return;
         }
 
+        if (UpdateStunt(arcade, time)) {
+            return;
+        }
+
         bool airborne = (arcade.state.flags & (int)VehicleFlags.grounded) == 0
             && (arcade.frameEvents.flags & (int)VehicleEventFlags.landed) == 0;
 
@@ -117,6 +128,85 @@ public class GameVehicleArcadeRide {
         }
 
         Play(want, time);
+    }
+
+    // The stunt poses. True while start or hold owns the clip (nothing else plays then); recover starts the cross-fade
+    // to jump-up and hands over to the regular choice, which then finds jump-up already playing.
+    private bool UpdateStunt(GameVehicleArcade arcade, float time) {
+
+        GameVehicleStunt host = arcade.stunt;
+
+        if (host == null || (arcade.state.flags & (int)VehicleFlags.bailed) != 0) {
+            return false;
+        }
+
+        int phase = host.state.phase;
+        bool posing = slot == stunt || slot == stuntSpin;
+
+        if (phase == (int)StuntPhase.start || phase == (int)StuntPhase.hold) {
+
+            int pool = clips[stunt].Count + clips[stuntSpin].Count;
+
+            if (pool == 0) {
+                return false;
+            }
+
+            if (!posing) {
+                PlayPose(poseCount++ % pool, host.state.rate);
+            }
+            else if (phase == (int)StuntPhase.hold && !clip.EndsWith(loopSuffix, System.StringComparison.Ordinal)) {
+                string loop = clip + loopSuffix;
+
+                if (anim[loop] != null) {
+                    ResetSpeed();
+                    clip = loop;
+                    anim.CrossFade(clip, fade);
+                }
+            }
+
+            return true;
+        }
+
+        if (posing) {
+            ResetSpeed();
+        }
+
+        if (posing && phase == (int)StuntPhase.recover) {
+            int up = Resolve(jumpUp);
+
+            if (up >= 0) {
+                Play(up, time, host.state.recover);
+            }
+        }
+
+        return false;
+    }
+
+    // Pose `index` of the stunt clips then the stunt-spin clips, at `rate`.
+    private void PlayPose(int index, float rate) {
+
+        int s = index < clips[stunt].Count ? stunt : stuntSpin;
+        int i = s == stunt ? index : index - clips[stunt].Count;
+        slot = s;
+        clip = clips[s][i];
+        poseClip = clip;
+        holdUntil = 0f;
+        anim[clip].speed = rate;
+        anim.CrossFade(clip, fade);
+    }
+
+    // The pose clip and its loop run at their own speed again for the next user.
+    private void ResetSpeed() {
+
+        if (poseClip.Length == 0) {
+            return;
+        }
+
+        if (anim[poseClip] != null) {
+            anim[poseClip].speed = 1f;
+        }
+
+        poseClip = "";
     }
 
     public static int Choose(GameVehicleArcade arcade, bool airTricked) {
@@ -218,7 +308,7 @@ public class GameVehicleArcadeRide {
         return s;
     }
 
-    private void Play(int s, float time) {
+    private void Play(int s, float time, float fadeTime = fade) {
 
         List<string> list = clips[s];
         List<float> w = weights[s];
@@ -243,7 +333,7 @@ public class GameVehicleArcadeRide {
         slot = s;
         clip = list[chosen];
         airTricked |= IsAirPose(s);
-        anim.CrossFade(clip, fade);
+        anim.CrossFade(clip, fadeTime);
         holdUntil = priority[s] > 0 ? time + anim[clip].length : 0f;
     }
 }

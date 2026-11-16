@@ -60,6 +60,10 @@ public class GameDriveAssist : IGameVehicleArcadeAssist {
             airSteps++;
         }
 
+        // The stunt host reuses this step's forecast instead of running its own.
+        a.assistForecast = forecast;
+        a.assistForecastStep = a.stepCount;
+
         VehicleInput output = DriveAssist.Step(in mapped, in a.state, in a.config.tuning, in control, in sense, in forecast,
             a.stepEvents.flags, in tuning, ref memory, GameVehicleArcade.fixedDt, out a.stepAssist);
         return output;

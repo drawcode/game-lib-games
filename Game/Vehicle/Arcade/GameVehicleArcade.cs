@@ -4,6 +4,7 @@ using Agnostic.Vehicle;
 
 using Engine.AgnosticHost;
 using Engine.Events;
+using Engine.Game.App.BaseApp;
 
 using UnityEngine;
 
@@ -50,6 +51,22 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     // it, so an AI arcade or a ghost never has one. stepAssist is the last assisted step's trace.
     public IGameVehicleArcadeAssist assist;
     public DriveAssistTrace stepAssist;
+
+    // The assist's forecast of the step it last ran (stamped with stepCount), so the stunt host does not forecast again.
+    public LandingForecast assistForecast;
+    public int assistForecastStep = -1;
+
+    // Stunt (D24): null unless the data row has an enabled stunt block, and only the player's rider branch steps it
+    // (never an AI, a ghost or a vehicle with no data). stepStunt is the last step's trace; riderStats is the mounted
+    // rider's stunt stats (GameStuntStatKeys), read once in OnRiderMounted.
+    public GameVehicleStunt stunt;
+    public GameVehicleStuntTrace stepStunt;
+    public StuntStats riderStats;
+
+    // Where OnRiderMounted reads the stats from; null = the current profile (a test or a probe replaces it).
+    public static System.Func<StuntStats> riderStatsSource;
+
+    public const float defaultRiderStat = GameStuntStatKeys.defaultStat;
 
     // The Vehicle folder takes no dependency on Game/Race: GameDriveAssist registers its factory here.
     public static System.Func<GameVehicleArcade, IGameVehicleArcadeAssist> assistFactory;
@@ -175,6 +192,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         }
 
         ride = new GameVehicleArcadeRide(GetComponentInChildren<Animation>(true), c.ridePresets);
+        stunt = c.stunt.enabled != 0 ? new GameVehicleStunt() : null;
         ResolveControl();
         ResetAt(transform.position, transform.rotation);
     }
@@ -183,6 +201,12 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         VehicleModel.Reset(ref state, UnityFrame.ToCore(position), YawOf(rotation * Vector3.forward));
         previous = state;
         clock.Reset();
+        stepStunt = default(GameVehicleStuntTrace);
+        assistForecastStep = -1;
+
+        if (stunt != null) {
+            stunt.Reset();
+        }
 
         if (assist != null) {
             assist.Reset();
@@ -237,7 +261,24 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     }
 
     public void SetButtons(int buttons) {
-        sticks.buttons = buttons;
+        sticks.buttons = stunt != null ? buttons : buttons & ~(int)VehicleButtons.stunt;
+    }
+
+    // The STUNT button (D24), the way SetPedals reaches the arcade: held = pressed. The other buttons stay as set.
+    // Ignored (the bit stays clear) when the data row has no stunt block.
+    public void SetStunt(bool held) {
+
+        if (held && stunt != null) {
+            sticks.buttons |= (int)VehicleButtons.stunt;
+        }
+        else {
+            sticks.buttons &= ~(int)VehicleButtons.stunt;
+        }
+    }
+
+    // The stunt bit of this step's sticks, 0 when the stunt is off.
+    public int StuntButton() {
+        return stunt != null ? sticks.buttons & (int)VehicleButtons.stunt : 0;
     }
 
     // Direct mode only: throttle and brake from their own actions. Once called, the stick no longer drives them.
@@ -274,8 +315,30 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         rider = go;
         world.ignore1 = go != null ? go.transform : null;
         sticks = default(Sticks);
+        ReadRiderStats();
         ResolveControl();
         LeaveLevelItem();
+    }
+
+    // The mounted rider's own stunt speed, power and health, 0..1, from the profile (GameStuntStatKeys; not the on-foot
+    // RPG fields). Once per mount, never per step; 0.2 each when a key is missing or this vehicle has no stunt.
+    private void ReadRiderStats() {
+
+        riderStats = new StuntStats();
+        riderStats.speed = defaultRiderStat;
+        riderStats.power = defaultRiderStat;
+        riderStats.health = defaultRiderStat;
+
+        if (stunt == null) {
+            return;
+        }
+
+        if (riderStatsSource != null) {
+            riderStats = riderStatsSource();
+            return;
+        }
+
+        riderStats = GameStuntStatKeys.Read(GameProfiles.Current);
     }
 
     // A layout vehicle sits under its GameDraggableLevelItem, which hides everything under it once the player is
@@ -361,6 +424,10 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
             if (assist != null) {
                 input = assist.Apply(this, stepCount, in input);
             }
+
+            if (stunt != null) {
+                stunt.BeforeStep(this, ref input);
+            }
         }
         else {
             input = default(VehicleInput);
@@ -368,6 +435,11 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
         VehicleEvents ev = default(VehicleEvents);
         VehicleModel.Step(ref state, in input, in config.tuning, world, fixedDt, ref ev);
+
+        if (stunt != null && !hold && driverOverride == null && rider != null) {
+            stunt.AfterStep(this, ref ev);
+        }
+
         stepEvents = ev;
         Merge(ref frameEvents, in ev);
         stepCount++;
