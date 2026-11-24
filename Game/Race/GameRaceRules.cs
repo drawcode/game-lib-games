@@ -74,7 +74,30 @@ public class GameRaceRules {
             data.TryGetValue(keyRace, out race);
         }
 
-        return Parse(race as IDictionary);
+        return Parse(Merge(race as IDictionary, GameRace.rulesOverride));
+    }
+
+    // Career: the override's keys replace the same keys of the base block, key by key, so a track keeps the keys the
+    // override does not name (its default_width). Neither side is changed. A null override returns the base as it is.
+    public static IDictionary Merge(IDictionary baseRace, IDictionary over) {
+
+        if (over == null || over.Count == 0) {
+            return baseRace;
+        }
+
+        Dictionary<string, object> merged = new Dictionary<string, object>();
+
+        if (baseRace != null) {
+            foreach (DictionaryEntry e in baseRace) {
+                merged[e.Key.ToString()] = e.Value;
+            }
+        }
+
+        foreach (DictionaryEntry e in over) {
+            merged[e.Key.ToString()] = e.Value;
+        }
+
+        return merged;
     }
 
     public static GameRaceRules Parse(IDictionary race) {
