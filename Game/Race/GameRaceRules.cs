@@ -34,6 +34,8 @@ public class GameRaceRules {
     public float fallDepth = 10f;                     // metres under the lowest level item
     public float respawnLift = 0.5f;
     public float bumpAheadFloor = 3f;                 // m/s of bump delta-v that bails the rider ahead; 0 = off
+    public float bumpGraceAfterGo = 0f;               // seconds after GO in which a bump never bails either rider; 0 = off
+    public float respawnPairStagger = 0f;             // seconds each later bailed rider near another waiting one waits extra; 0 = off
     public float bumpAheadMin = 0.3f;                 // metres of progress between two riders before "ahead" counts
     public float aiLateralAccel = 20f;                // RaceAi's lateral budget
     public uint seed = 0;                             // 0 = time-based
@@ -124,6 +126,8 @@ public class GameRaceRules {
         r.fallDepth = Num(race, "fall_depth", r.fallDepth);
         r.respawnLift = Num(race, "respawn_lift", r.respawnLift);
         r.bumpAheadFloor = Math.Max(0f, Num(race, "bump_ahead_floor", r.bumpAheadFloor));
+        r.bumpGraceAfterGo = Math.Max(0f, Num(race, "bump_grace_after_go", r.bumpGraceAfterGo));
+        r.respawnPairStagger = Math.Max(0f, Num(race, "respawn_pair_stagger", r.respawnPairStagger));
         r.bumpAheadMin = Math.Max(0f, Num(race, "bump_ahead_min", r.bumpAheadMin));
         r.aiLateralAccel = Num(race, "ai_lateral_accel", r.aiLateralAccel);
 
