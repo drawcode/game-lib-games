@@ -1,5 +1,6 @@
 #if USE_AGNOSTIC_VEHICLE
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -51,6 +52,8 @@ public static class GameRace {
     public static int lapsOverride = -1;            // the lap count in place of the rules' (a qualifying lap = 1); -1 = off
     public static uint seedOverride;                // 0 = none
     public static int aiRidersOverride = -1;        // the AI rider count in place of the rules' (a solo time trial = 0); -1 = off
+    public static IDictionary rulesOverride;        // career: race block keys merged over the level row's (GameRaceRules.Merge); null = off
+    public static string playerVehicleOverride;     // career: the player's vehicle code alone (the AI keep theirs); null or empty = off
     public static string defaultVehicleCode = "vehicle-bike-dirt-1";   // when the rules name none
     public static string playerName = "Player";
     public static bool ghostEnabled;                // the time trial chases the player's best ghost (a race with no AI riders does too)
@@ -125,6 +128,8 @@ public static class GameRace {
         lapsOverride = -1;
         seedOverride = 0;
         aiRidersOverride = -1;
+        rulesOverride = null;
+        playerVehicleOverride = null;
         ghostEnabled = false;
         defaultVehicleCode = "vehicle-bike-dirt-1";
         playerName = "Player";
@@ -248,6 +253,11 @@ public static class GameRace {
 
             string code = row != null && !string.IsNullOrEmpty(row.vehicleCode) ? row.vehicleCode
                 : !string.IsNullOrEmpty(rules.vehicleCode) ? rules.vehicleCode : defaultVehicleCode;
+
+            if (isPlayer && !string.IsNullOrEmpty(playerVehicleOverride)) {
+                code = playerVehicleOverride;
+            }
+
             string racerCode = isPlayer ? "player" : "ai-" + (row != null ? row.code : i.ToString());
             string racerName = isPlayer ? playerName : (row != null ? row.displayName : racerCode);
 
