@@ -304,7 +304,7 @@ public class GameCameraIsoRig : MonoBehaviour {
         }
 
         if (!grounded && n < pointCapacity) {
-            float g = VehicleModel.gravity * (arcade.config != null ? arcade.config.tuning.gravityMul : 1f);
+            float g = VehicleModel.gravity * (arcade.config != null ? arcade.tuning.gravityMul : 1f);
             points[n++] = CameraFraming.AirPoint(s.position, s.velocity, CameraFraming.AirLookTime(s.velocity.y, g, in frame), g);
         }
 

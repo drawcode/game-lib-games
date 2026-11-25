@@ -54,7 +54,7 @@ public class GameDriveAssist : IGameVehicleArcadeAssist {
         else {
 
             if (airSteps % forecastEvery == 0) {
-                LandingForecast.Predict(in a.state, in a.config.tuning, a.vehicleWorld, in tuning, out forecast);
+                LandingForecast.Predict(in a.state, in a.tuning, a.vehicleWorld, in tuning, out forecast);
             }
 
             airSteps++;
@@ -64,7 +64,7 @@ public class GameDriveAssist : IGameVehicleArcadeAssist {
         a.assistForecast = forecast;
         a.assistForecastStep = a.stepCount;
 
-        VehicleInput output = DriveAssist.Step(in mapped, in a.state, in a.config.tuning, in control, in sense, in forecast,
+        VehicleInput output = DriveAssist.Step(in mapped, in a.state, in a.tuning, in control, in sense, in forecast,
             a.stepEvents.flags, in tuning, ref memory, GameVehicleArcade.fixedDt, out a.stepAssist);
         return output;
     }
