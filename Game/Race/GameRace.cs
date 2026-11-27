@@ -38,7 +38,8 @@ public struct GameRaceHudState {
 // - Frame: the track is in the core frame (UnityFrame), so lateral and a profile's line offset keep their sides.
 // - Respawn: a bailed rider waits respawnDelay (its own timer, the core's bail timer padded to stay frozen), a missed
 //   checkpoint waits missRespawn, an off-course rider offCourseTime, a fallen one at once; then it is put on its last
-//   checkpoint facing the track, with contactGrace seconds of no bumps.
+//   checkpoint facing the track, with contactGrace seconds of no bumps. respawn_pair_stagger (default 0) adds that many
+//   seconds per rider already waiting nearby; bump_grace_after_go (default 0) lets no bump bail anyone just after GO.
 // - Ghosts: GameRaceGhostRecorder records the player's laps and GameRaceGhostPlayer chases the best one in a time trial;
 //   both are called from here (a second seam next to onAfterStep, which stays free for probes) and inert off a race.
 // - Statics: Bikes enters Play without a domain reload; the reset below runs again on every Play.
@@ -622,7 +623,7 @@ public static class GameRace {
     // A bump knocks the rider ahead off, not the one behind: it is the one that was hit from behind or cut up.
     private static void RiderAheadRule() {
 
-        if (rules.bumpAheadFloor <= 0f) {
+        if (rules.bumpAheadFloor <= 0f || InBumpGrace(session.raceTime, rules.bumpGraceAfterGo)) {
             return;
         }
 
@@ -651,6 +652,31 @@ public static class GameRace {
                 arc.frameEvents.flags |= (int)VehicleEventFlags.bailed;
             }
         }
+    }
+
+    // True while a bump must not bail anyone: the first `grace` seconds after GO (0 = never). The bump impulse still applies.
+    public static bool InBumpGrace(float raceTime, float grace) {
+        return grace > 0f && raceTime < grace;
+    }
+
+    // The respawn wait in steps for the rank-th rider (0 = first) bailed on the same spot: each later one waits `stagger`
+    // seconds longer, so a pair does not come back on top of each other. stagger 0 = the base wait for all.
+    public static int StaggeredRespawnSteps(float delay, float stagger, int rank) {
+        return Mathf.Max(1, Mathf.RoundToInt((delay + stagger * Mathf.Max(0, rank)) * RaceSession.stepsPerSecond));
+    }
+
+    // How many other racers already wait to respawn within respawnClear metres along the track of racer i.
+    private static int StaggerRank(int i) {
+
+        int rank = 0;
+
+        for (int j = 0; j < racerCount; j++) {
+            if (j != i && respawnSteps[j] > 0 && Mathf.Abs(track.DeltaS(racers[j].s, racers[i].s)) < respawnClear) {
+                rank++;
+            }
+        }
+
+        return rank;
     }
 
     // A respawned rider keeps its bump grace while it still overlaps another rider: grace only expires once clear.
@@ -749,8 +775,9 @@ public static class GameRace {
 
         if ((a.stepEvents.flags & (int)VehicleEventFlags.bailed) != 0 && respawnSteps[i] == 0) {
             stuntBailNow = a.stepStunt.landResult == GameVehicleStunt.landBail;
-            respawnSteps[i] = Mathf.Max(1, Mathf.RoundToInt(rules.respawnDelay * RaceSession.stepsPerSecond));
-            a.state.bailTimer = rules.respawnDelay + 1f;
+            int rank = rules.respawnPairStagger > 0f ? StaggerRank(i) : 0;
+            respawnSteps[i] = StaggeredRespawnSteps(rules.respawnDelay, rules.respawnPairStagger, rank);
+            a.state.bailTimer = rules.respawnDelay + rules.respawnPairStagger * rank + 1f;
         }
 
         Vec3 pos = a.state.position;
