@@ -91,6 +91,11 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     public float stepCameraYaw { get; private set; }
 
     public GameVehicleArcadeConfig config { get; private set; }
+
+    // This vehicle's tuning (D28): a copy of config.tuning with the upgrade levels applied. Every read in the host, the
+    // stepper, the race and the assist uses this, never config.tuning, so the cached per-code config stays untouched.
+    public VehicleTuning tuning;
+    public UpgradeLevels upgradeLevels { get; private set; }
     public ControlTuning control { get { return controlTuning; } }
     public GameVehicleArcadeRide ride { get; private set; }
 
@@ -156,6 +161,8 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
 
         config = c;
         vehicleCode = c.code;
+        tuning = c.tuning;
+        upgradeLevels = new UpgradeLevels();
 
         Rigidbody body = GetComponent<Rigidbody>();
 
@@ -195,6 +202,26 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         stunt = c.stunt.enabled != 0 ? new GameVehicleStunt() : null;
         ResolveControl();
         ResetAt(transform.position, transform.rotation);
+    }
+
+    // Sets the upgrade levels (0 = stock) and rebuilds the instance tuning from the config. No levels leaves the copy
+    // equal to the config's tuning, bit for bit. Call before the round steps; a change mid-ride takes effect next step.
+    public void SetUpgrades(UpgradeLevels levels) {
+
+        upgradeLevels = levels;
+
+        if (config == null) {
+            return;
+        }
+
+        if (levels.speed == 0 && levels.accel == 0 && levels.handling == 0 && levels.boost == 0 && levels.air == 0 && levels.toughness == 0) {
+            tuning = config.tuning;
+            return;
+        }
+
+        VehicleTuning applied;
+        Upgrade.Apply(in config.tuning, in levels, in config.upgrades, out applied);
+        tuning = applied;
     }
 
     public void ResetAt(Vector3 position, Quaternion rotation) {
@@ -434,7 +461,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
         }
 
         VehicleEvents ev = default(VehicleEvents);
-        VehicleModel.Step(ref state, in input, in config.tuning, world, fixedDt, ref ev);
+        VehicleModel.Step(ref state, in input, in tuning, world, fixedDt, ref ev);
 
         if (stunt != null && !hold && driverOverride == null && rider != null) {
             stunt.AfterStep(this, ref ev);
@@ -520,7 +547,7 @@ public class GameVehicleArcade : MonoBehaviour, IGameVehicleMountDriver {
     // the air: the hull's centre.
     private Vector3 Pivot(float pitchDeg) {
 
-        VehicleTuning t = config.tuning;
+        VehicleTuning t = tuning;
         float k = 1f / rootScale;
 
         if ((state.flags & (int)VehicleFlags.grounded) == 0) {

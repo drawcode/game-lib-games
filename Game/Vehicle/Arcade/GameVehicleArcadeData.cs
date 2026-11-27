@@ -14,6 +14,7 @@ using UnityEngine;
 public class GameVehicleArcadeConfig {
 
     public string code;
+    public UpgradeTable upgrades;                // data.upgrades (D28): multipliers per level; no block = no tables = x1
     public string vehicleClass;
     public VehicleTuning tuning;                 // data.tuning, with data.surfaces folded in
     public DriveAssistTuning assist;             // data.assist (D20); a missing block is enabled 0
@@ -121,6 +122,7 @@ public static class GameVehicleArcadeData {
         c.control = VehicleTuningJson.ParseControl(VehicleTuningJson.Has(data, "control") ? data["control"] : null, c.tuning.wheelie);
         c.assist = VehicleTuningJson.ParseAssist(VehicleTuningJson.Has(data, "assist") ? data["assist"] : null);
         c.stunt = VehicleTuningJson.ParseStunt(VehicleTuningJson.Has(data, "stunt") ? data["stunt"] : null);
+        c.upgrades = ParseUpgrades(VehicleTuningJson.Has(data, "upgrades") ? data["upgrades"] : null);
 
         if (VehicleTuningJson.Has(data, "rider")) {
             c.ridePresets = VehicleTuningJson.Str(data["rider"], "ride_presets");
@@ -153,6 +155,48 @@ public static class GameVehicleArcadeData {
         }
 
         return c;
+    }
+
+    // data.upgrades (D28 plan section 3): {"stats": {"speed": {"mul": [1, 1.04, ...], "cost": [...]}, ...}}. Only the
+    // multipliers are read here (costs are the store's). A missing block, stat or "mul" array is no table (x1 at every
+    // level); non-numbers in an array count as 1; entries past UpgradeCurve.maxLevels are dropped.
+    public static UpgradeTable ParseUpgrades(JsonData n) {
+
+        UpgradeTable t = new UpgradeTable();
+
+        if (n == null || !n.IsObject || !VehicleTuningJson.Has(n, "stats")) {
+            return t;
+        }
+
+        JsonData stats = n["stats"];
+        t.speed = ParseCurve(stats, "speed");
+        t.accel = ParseCurve(stats, "accel");
+        t.handling = ParseCurve(stats, "handling");
+        t.boost = ParseCurve(stats, "boost");
+        t.air = ParseCurve(stats, "air");
+        t.toughness = ParseCurve(stats, "toughness");
+        return t;
+    }
+
+    private static UpgradeCurve ParseCurve(JsonData stats, string key) {
+
+        if (!stats.IsObject || !VehicleTuningJson.Has(stats, key) || !VehicleTuningJson.Has(stats[key], "mul")) {
+            return new UpgradeCurve();
+        }
+
+        JsonData mul = stats[key]["mul"];
+
+        if (!mul.IsArray) {
+            return new UpgradeCurve();
+        }
+
+        float[] values = new float[mul.Count];
+
+        for (int i = 0; i < values.Length; i++) {
+            values[i] = VehicleTuningJson.Number(mul[i], 1f);
+        }
+
+        return UpgradeCurve.From(values);
     }
 
     // data.camera (D21 plan section 4). A missing block is FrameTuning.Defaults() (enabled 0); a block without

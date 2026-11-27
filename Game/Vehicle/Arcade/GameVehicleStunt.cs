@@ -128,7 +128,7 @@ public class GameVehicleStunt {
         int result = landBail;
 
         if (!modelBailed && s.bail != 0) {
-            VehicleModel.Bail(ref a.state, in a.config.tuning, ref ev);
+            VehicleModel.Bail(ref a.state, in a.tuning, ref ev);
         }
         else if (!modelBailed && s.landedClean != 0) {
             result = s.sketchy != 0 ? landSketchy : landClean;
@@ -156,7 +156,7 @@ public class GameVehicleStunt {
             return;
         }
 
-        float dv = BoostFor(in a.config.stunt, in a.riderStats, in a.state, in a.config.tuning, a.vehicleWorld, in a.config.assist);
+        float dv = BoostFor(in a.config.stunt, in a.riderStats, in a.state, in a.tuning, a.vehicleWorld, in a.config.assist);
 
         if (dv <= 0f) {
             return;
@@ -219,7 +219,7 @@ public class GameVehicleStunt {
         else {
 
             if (airSteps % forecastEvery == 0) {
-                LandingForecast.Predict(in a.state, in a.config.tuning, a.vehicleWorld, in tuning, out forecast);
+                LandingForecast.Predict(in a.state, in a.tuning, a.vehicleWorld, in tuning, out forecast);
             }
 
             airSteps++;

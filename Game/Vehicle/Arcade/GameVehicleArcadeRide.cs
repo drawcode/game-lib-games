@@ -242,7 +242,7 @@ public class GameVehicleArcadeRide {
             return idle;
         }
 
-        bool fast = s.speed > fastFrac * arcade.config.tuning.maxSpeed;
+        bool fast = s.speed > fastFrac * arcade.tuning.maxSpeed;
         float steer = arcade.input.steer;
 
         if (steer > turnSteer) {

@@ -648,7 +648,7 @@ public static class GameRace {
 
             if (dv > rules.bumpAheadFloor) {
                 GameVehicleArcade arc = arcades[ahead];
-                VehicleModel.Bail(ref arc.state, in arc.config.tuning, ref arc.stepEvents);
+                VehicleModel.Bail(ref arc.state, in arc.tuning, ref arc.stepEvents);
                 arc.frameEvents.flags |= (int)VehicleEventFlags.bailed;
             }
         }
@@ -701,7 +701,7 @@ public static class GameRace {
                     continue;
                 }
 
-                float r = a.config.tuning.BumpRadius() + b.config.tuning.BumpRadius();
+                float r = a.tuning.BumpRadius() + b.tuning.BumpRadius();
                 float dx = b.state.position.x - a.state.position.x;
                 float dz = b.state.position.z - a.state.position.z;
 

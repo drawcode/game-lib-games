@@ -129,7 +129,7 @@ public static class GameVehicleArcadeStepper {
 
                         VehicleEvents ea = default(VehicleEvents);
                         VehicleEvents eb = default(VehicleEvents);
-                        float impulse = VehicleModel.Bump(ref a.state, in a.config.tuning, ref ea, ref b.state, in b.config.tuning, ref eb);
+                        float impulse = VehicleModel.Bump(ref a.state, in a.tuning, ref ea, ref b.state, in b.tuning, ref eb);
                         GameVehicleArcade.Merge(ref a.stepEvents, in ea);
                         GameVehicleArcade.Merge(ref a.frameEvents, in ea);
                         GameVehicleArcade.Merge(ref b.stepEvents, in eb);
