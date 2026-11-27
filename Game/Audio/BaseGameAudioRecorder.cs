@@ -1,5 +1,8 @@
 //#define AUDIO_RECORDER_USE_PLUGIN
-#if !UNITY_WEBGL
+// GAME_NO_MICROPHONE leaves every recorder path off: Microphone is never linked, so iOS builds
+// with an empty microphoneUsageDescription pass Unity's FeatureExtractor. Record() returns false,
+// IsRecording() false, Pause()/Stop() do nothing.
+#if !UNITY_WEBGL && !GAME_NO_MICROPHONE
 #define AUDIO_RECORDER_USE_UNITY
 #endif
 
