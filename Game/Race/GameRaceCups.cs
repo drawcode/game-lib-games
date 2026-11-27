@@ -107,6 +107,7 @@ public static class GameRaceCups {
     public static void Load(string json) {
 
         rows = new List<Row>();
+        warned.Clear();
 
         if (string.IsNullOrEmpty(json)) {
             return;
