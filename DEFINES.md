@@ -245,6 +245,25 @@ EVERYPLAY_ANDROID
 NO_GPGS
 ```
 
+## STRIP PLATFORM APIS
+
+Off by default. Set in Player Settings > Scripting Define Symbols (iOS and Android) so
+Unity's iOS FeatureExtractor does not find the API linked while the usage string is empty.
+
+### No microphone
+
+```c#
+GAME_NO_MICROPHONE
+```
+
+BaseGameAudioRecorder never references `Microphone`: Record() returns false, IsRecording() false,
+Pause()/Stop() do nothing. Public API unchanged.
+
+### No location
+
+Set `GAME_NO_LOCATION` (see game-lib-engine DEFINES.md). game-lib-games has no live
+`LocationService` use (BaseGameGlobal.InitGeolocation is commented out).
+
 ## ACTION BOTS DEFINES
 
 ### IOS
