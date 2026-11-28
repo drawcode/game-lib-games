@@ -1111,6 +1111,69 @@ public class BaseGameController : GameObjectTimerBehavior {
         loadLevelAssets(GameLevels.Current.code);
     }
 
+    // LEVEL EDGE DISPLAY (additive, off by default): one generated mesh that shows where the
+    // boundaryEdgeObject rectangle ends. A game turns it on by overriding useBoundaryEdgeDisplay.
+    // Display only - the walls and clamps that stop the player are unchanged.
+
+    public virtual bool useBoundaryEdgeDisplay {
+        get { return false; }
+    }
+
+    public virtual Color boundaryEdgeDisplayColor {
+        get { return Color.white; }
+    }
+
+    BoundaryEdgeDisplay boundaryEdgeDisplay;
+
+    // Ground height for the edge: the corner objects' own y unless overridden.
+    public virtual float getBoundaryEdgeDisplayGroundY() {
+        return Mathf.Max(
+            boundaryEdgeObjectBottomLeft.transform.position.y,
+            boundaryEdgeObjectBottomRight.transform.position.y,
+            boundaryEdgeObjectTopLeft.transform.position.y,
+            boundaryEdgeObjectTopRight.transform.position.y);
+    }
+
+    public virtual void updateBoundaryEdgeDisplay() {
+
+        if (!useBoundaryEdgeDisplay) {
+            return;
+        }
+
+        if (boundaryEdgeObjectBottomLeft == null
+            || boundaryEdgeObjectBottomRight == null
+            || boundaryEdgeObjectTopLeft == null
+            || boundaryEdgeObjectTopRight == null
+            || levelContainerObject == null) {
+            return;
+        }
+
+        if (boundaryEdgeDisplay == null) {
+            boundaryEdgeDisplay = BoundaryEdgeDisplay.Ensure(levelContainerObject.transform);
+        }
+
+        // x = minX, y = minZ, width/height = extents on x/z
+        Rect rect = getBoundaryEdgeDisplayRect();
+
+        boundaryEdgeDisplay.Build(
+            rect.xMin, rect.yMin, rect.xMax, rect.yMax,
+            getBoundaryEdgeDisplayGroundY(),
+            boundaryEdgeDisplayColor);
+    }
+
+    // The rectangle to draw, on x/z (Rect.y is world z). Default: the boundaryEdgeObject corners,
+    // read the same way as getRandomSpawnLocation (x from the bottom pair, z from the left pair).
+    // A game whose walls stand inside the corners overrides this to draw where the player stops.
+    public virtual Rect getBoundaryEdgeDisplayRect() {
+        float x0 = boundaryEdgeObjectBottomLeft.transform.position.x;
+        float x1 = boundaryEdgeObjectBottomRight.transform.position.x;
+        float z0 = boundaryEdgeObjectBottomLeft.transform.position.z;
+        float z1 = boundaryEdgeObjectTopLeft.transform.position.z;
+        return Rect.MinMaxRect(
+            Mathf.Min(x0, x1), Mathf.Min(z0, z1),
+            Mathf.Max(x0, x1), Mathf.Max(z0, z1));
+    }
+
     public virtual void loadLevelAssets(string code) {
 
         // LogUtil.Log("GAME START FLOW: STEP #10: loadLevelAssets: code:" + code);
@@ -1135,6 +1198,8 @@ public class BaseGameController : GameObjectTimerBehavior {
         GameDraggableEditor.LoadLevelItems();
 
         handlePostLoadLevelAssetsGameplayType();
+
+        updateBoundaryEdgeDisplay();
 
         // Find actions and make them current actions or none
 
